@@ -15,10 +15,10 @@ export default function BlockedContentPage() {
   ];
 
   return (
-    <SelfHealingErrorBoundary pageName="Blocked Content" fallbackRoute="/settings">
+    <SelfHealingErrorBoundary pageName={t('pages:blockedContent.title', 'Blocked Content')} fallbackRoute="/settings">
       <SEO
-        title="Blocked Content | Mundo Tango"
-        description="Manage content you've hidden from your feed. Review and unblock posts or comments you previously blocked on Mundo Tango."
+        title={t('pages:blockedContent.seoTitle', 'Blocked Content | Mundo Tango')}
+        description={t('pages:blockedContent.seoDescription', "Manage content you've hidden from your feed. Review and unblock posts or comments you previously blocked on Mundo Tango.")}
       />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
@@ -37,15 +37,15 @@ export default function BlockedContentPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <Shield className="w-3 h-3 mr-1.5" />
-                Content Management
+                {t('pages:blockedContent.contentManagement', 'Content Management')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
-                Blocked Content
+                {t('pages:blockedContent.title', 'Blocked Content')}
               </h1>
               
               <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-                Manage content you've hidden from your feed
+                {t('pages:blockedContent.subtitle', "Manage content you've hidden from your feed")}
               </p>
             </motion.div>
           </div>
@@ -71,11 +71,11 @@ export default function BlockedContentPage() {
                       <CardContent className="py-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-semibold">{content.type} by {content.author}</p>
-                            <p className="text-sm text-muted-foreground">Reason: {content.reason}</p>
+                            <p className="font-semibold">{t('pages:blockedContent.contentBy', '{{type}} by {{author}}', { type: content.type, author: content.author })}</p>
+                            <p className="text-sm text-muted-foreground">{t('pages:blockedContent.reason', 'Reason: {{reason}}', { reason: content.reason })}</p>
                           </div>
                           <Button variant="outline" size="sm" data-testid={`button-unblock-${content.id}`}>
-                            Unblock
+                            {t('pages:blockedContent.unblock', 'Unblock')}
                           </Button>
                         </div>
                       </CardContent>
@@ -87,8 +87,8 @@ export default function BlockedContentPage() {
               <Card>
                 <CardContent className="py-16 text-center text-muted-foreground">
                   <EyeOff className="mx-auto h-16 w-16 mb-6 opacity-30" />
-                  <h3 className="text-xl font-serif font-bold mb-2">No blocked content</h3>
-                  <p>You haven't blocked any content yet</p>
+                  <h3 className="text-xl font-serif font-bold mb-2">{t('pages:blockedContent.noBlockedContent', 'No blocked content')}</h3>
+                  <p>{t('pages:blockedContent.noBlockedContentDesc', "You haven't blocked any content yet")}</p>
                 </CardContent>
               </Card>
             )}

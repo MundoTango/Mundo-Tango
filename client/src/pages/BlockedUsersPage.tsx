@@ -16,10 +16,10 @@ export default function BlockedUsersPage() {
   ];
 
   return (
-    <SelfHealingErrorBoundary pageName="Blocked Users" fallbackRoute="/settings">
+    <SelfHealingErrorBoundary pageName={t('pages:blockedUsers.title', 'Blocked Users')} fallbackRoute="/settings">
       <SEO
-        title="Blocked Users | Mundo Tango"
-        description="Manage your blocked users list. View and unblock users you've previously blocked from interacting with your Mundo Tango profile."
+        title={t('pages:blockedUsers.seoTitle', 'Blocked Users | Mundo Tango')}
+        description={t('pages:blockedUsers.seoDescription', "Manage your blocked users list. View and unblock users you've previously blocked from interacting with your Mundo Tango profile.")}
       />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
@@ -38,15 +38,15 @@ export default function BlockedUsersPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <Shield className="w-3 h-3 mr-1.5" />
-                Privacy Management
+                {t('pages:blockedUsers.privacyManagement', 'Privacy Management')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
-                Blocked Users
+                {t('pages:blockedUsers.title', 'Blocked Users')}
               </h1>
               
               <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-                Manage users you've blocked from your account
+                {t('pages:blockedUsers.subtitle', "Manage users you've blocked from your account")}
               </p>
             </motion.div>
           </div>
@@ -82,7 +82,7 @@ export default function BlockedUsersPage() {
                             </div>
                           </div>
                           <Button variant="outline" size="sm" data-testid={`button-unblock-${user.id}`}>
-                            Unblock
+                            {t('pages:blockedUsers.unblock', 'Unblock')}
                           </Button>
                         </div>
                       </CardContent>
@@ -94,8 +94,8 @@ export default function BlockedUsersPage() {
               <Card>
                 <CardContent className="py-16 text-center text-muted-foreground">
                   <UserX className="mx-auto h-16 w-16 mb-6 opacity-30" />
-                  <h3 className="text-xl font-serif font-bold mb-2">No blocked users</h3>
-                  <p>You haven't blocked anyone yet</p>
+                  <h3 className="text-xl font-serif font-bold mb-2">{t('pages:blockedUsers.noBlockedUsers', 'No blocked users')}</h3>
+                  <p>{t('pages:blockedUsers.noBlockedUsersDesc', "You haven't blocked anyone yet")}</p>
                 </CardContent>
               </Card>
             )}

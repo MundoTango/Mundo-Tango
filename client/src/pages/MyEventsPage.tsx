@@ -60,7 +60,7 @@ export default function MyEventsPage() {
           <div className="max-w-6xl mx-auto px-6 py-12">
             <Card>
               <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground">Please log in to view your events</p>
+                <p className="text-muted-foreground">{t('pages:myEvents.loginRequired', 'Please log in to view your events')}</p>
               </CardContent>
             </Card>
           </div>
@@ -82,16 +82,16 @@ export default function MyEventsPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
               <div>
                 <h1 className="text-4xl font-serif font-bold mb-2" data-testid="text-page-title">
-                  My Events
+                  {t('pages:myEvents.title', 'My Events')}
                 </h1>
                 <p className="text-muted-foreground" data-testid="text-page-description">
-                  Manage your RSVPs and events you've created
+                  {t('pages:myEvents.subtitle', 'Manage your RSVPs and events you\'ve created')}
                 </p>
               </div>
               <Link href="/events/create">
                 <Button data-testid="button-create-event">
                   <Plus className="mr-2 h-4 w-4" />
-                  Create Event
+                  {t('pages:myEvents.createEvent', 'Create Event')}
                 </Button>
               </Link>
             </div>
@@ -100,10 +100,10 @@ export default function MyEventsPage() {
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
               <TabsList className="grid w-full max-w-md grid-cols-2" data-testid="tabs-events">
                 <TabsTrigger value="attending" data-testid="tab-attending">
-                  Attending ({attendingEvents?.length || 0})
+                  {t('pages:myEvents.tabAttending', 'Attending')} ({attendingEvents?.length || 0})
                 </TabsTrigger>
                 <TabsTrigger value="created" data-testid="tab-created">
-                  Created ({createdEvents?.length || 0})
+                  {t('pages:myEvents.tabCreated', 'Created')} ({createdEvents?.length || 0})
                 </TabsTrigger>
               </TabsList>
 
@@ -125,12 +125,12 @@ export default function MyEventsPage() {
                   <Card>
                     <CardContent className="pt-12 pb-12 text-center">
                       <Calendar className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">No upcoming events</h3>
+                      <h3 className="text-lg font-semibold mb-2">{t('pages:myEvents.noUpcoming', 'No upcoming events')}</h3>
                       <p className="text-muted-foreground mb-6">
-                        You haven't RSVP'd to any events yet
+                        {t('pages:myEvents.noRsvp', 'You haven\'t RSVP\'d to any events yet')}
                       </p>
                       <Link href="/events">
-                        <Button data-testid="button-browse-events">Browse Events</Button>
+                        <Button data-testid="button-browse-events">{t('pages:myEvents.browseEvents', 'Browse Events')}</Button>
                       </Link>
                     </CardContent>
                   </Card>
@@ -155,14 +155,14 @@ export default function MyEventsPage() {
                   <Card>
                     <CardContent className="pt-12 pb-12 text-center">
                       <Plus className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">No events created</h3>
+                      <h3 className="text-lg font-semibold mb-2">{t('pages:myEvents.noCreated', 'No events created')}</h3>
                       <p className="text-muted-foreground mb-6">
-                        You haven't created any events yet
+                        {t('pages:myEvents.noCreatedYet', 'You haven\'t created any events yet')}
                       </p>
                       <Link href="/events/create">
                         <Button data-testid="button-create-first-event">
                           <Plus className="mr-2 h-4 w-4" />
-                          Create Your First Event
+                          {t('pages:myEvents.createFirstEvent', 'Create Your First Event')}
                         </Button>
                       </Link>
                     </CardContent>
@@ -186,14 +186,15 @@ function EventCard({
   index: number; 
   type: "attending" | "created";
 }) {
+  const { t } = useTranslation(["pages", "common"]);
   const imageUrl = event.imageUrl || "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&auto=format&fit=crop";
 
   const formatEventDateTime = (dateString: string): string => {
-    return safeDateFormat(dateString, "MMM dd, yyyy", "Date TBD");
+    return safeDateFormat(dateString, "MMM dd, yyyy", t('pages:myEvents.dateTBD', 'Date TBD'));
   };
 
   const formatEventTime = (dateString: string): string => {
-    return safeDateFormat(dateString, "h:mm a", "Time TBD");
+    return safeDateFormat(dateString, "h:mm a", t('pages:myEvents.timeTBD', 'Time TBD'));
   };
 
   const isUpcoming = new Date(event.startDate) > new Date();
@@ -222,10 +223,10 @@ function EventCard({
               {event.eventType}
             </Badge>
             {!isUpcoming && (
-              <Badge className="bg-gray-500 text-white">Past</Badge>
+              <Badge className="bg-gray-500 text-white">{t('pages:myEvents.past', 'Past')}</Badge>
             )}
             {isFull && (
-              <Badge className="bg-red-500 text-white">Full</Badge>
+              <Badge className="bg-red-500 text-white">{t('pages:myEvents.full', 'Full')}</Badge>
             )}
           </div>
           <div className="absolute bottom-3 left-3 right-3 text-white">
@@ -251,14 +252,14 @@ function EventCard({
           <div className="flex items-center gap-2 text-sm">
             <Users className="h-4 w-4 text-primary flex-shrink-0" />
             <span data-testid={`text-event-attendees-${event.id}`}>
-              {event.currentAttendees} {event.maxAttendees ? `/ ${event.maxAttendees}` : ""} attending
+              {event.currentAttendees} {event.maxAttendees ? `/ ${event.maxAttendees}` : ""} {t('pages:myEvents.attending', 'attending')}
             </span>
           </div>
           {type === "attending" && event.rsvpStatus && (
             <div className="flex items-center gap-2 text-sm">
               <Clock className="h-4 w-4 text-primary flex-shrink-0" />
               <Badge variant="outline">
-                {event.rsvpStatus === "going" ? "Going" : event.rsvpStatus}
+                {event.rsvpStatus === "going" ? t('pages:myEvents.going', 'Going') : event.rsvpStatus}
               </Badge>
             </div>
           )}
@@ -271,7 +272,7 @@ function EventCard({
               className="w-full"
               data-testid={`button-view-${event.id}`}
             >
-              View Details
+              {t('pages:myEvents.viewDetails', 'View Details')}
             </Button>
           </Link>
           {type === "created" && (

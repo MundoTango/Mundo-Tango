@@ -66,10 +66,10 @@ export default function MarketplaceOrdersPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-[#40E0D0] to-[#1E90FF] bg-clip-text text-transparent">
-              My Orders
+              {t('pages:marketplaceOrders.title', 'My Orders')}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Track and manage your marketplace orders
+              {t('pages:marketplaceOrders.subtitle', 'Track and manage your marketplace orders')}
             </p>
           </div>
         </div>
@@ -82,28 +82,28 @@ export default function MarketplaceOrdersPage() {
             backdropFilter: "blur(16px)",
           }}
         >
-          <span className="text-sm font-medium">Filter by status:</span>
+          <span className="text-sm font-medium">{t('pages:marketplaceOrders.filterByStatus', 'Filter by status:')}</span>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="All orders" />
+              <SelectValue placeholder={t('pages:marketplaceOrders.allOrders', 'All orders')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Orders</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="shipped">Shipped</SelectItem>
-              <SelectItem value="delivered">Delivered</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem value="all">{t('pages:marketplaceOrders.statusAll', 'All Orders')}</SelectItem>
+              <SelectItem value="pending">{t('pages:marketplaceOrders.statusPending', 'Pending')}</SelectItem>
+              <SelectItem value="processing">{t('pages:marketplaceOrders.statusProcessing', 'Processing')}</SelectItem>
+              <SelectItem value="shipped">{t('pages:marketplaceOrders.statusShipped', 'Shipped')}</SelectItem>
+              <SelectItem value="delivered">{t('pages:marketplaceOrders.statusDelivered', 'Delivered')}</SelectItem>
+              <SelectItem value="cancelled">{t('pages:marketplaceOrders.statusCancelled', 'Cancelled')}</SelectItem>
             </SelectContent>
           </Select>
           <span className="text-sm text-muted-foreground ml-auto">
-            {filteredOrders.length} orders
+            {filteredOrders.length} {t('pages:marketplaceOrders.ordersCount', 'orders')}
           </span>
         </div>
 
         {/* Orders List */}
         {isLoading ? (
-          <div className="text-center py-12 text-muted-foreground">Loading orders...</div>
+          <div className="text-center py-12 text-muted-foreground">{t('pages:marketplaceOrders.loading', 'Loading orders...')}</div>
         ) : filteredOrders.length === 0 ? (
           <Card
             style={{
@@ -113,8 +113,8 @@ export default function MarketplaceOrdersPage() {
           >
             <CardContent className="py-12 text-center">
               <Package className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground mb-4">No orders found</p>
-              <Button variant="outline">Browse Marketplace</Button>
+              <p className="text-muted-foreground mb-4">{t('pages:marketplaceOrders.noOrders', 'No orders found')}</p>
+              <Button variant="outline">{t('pages:marketplaceOrders.browseMarketplace', 'Browse Marketplace')}</Button>
             </CardContent>
           </Card>
         ) : (
@@ -131,9 +131,9 @@ export default function MarketplaceOrdersPage() {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-lg">Order {order.id}</CardTitle>
+                      <CardTitle className="text-lg">{t('pages:marketplaceOrders.order', 'Order')} {order.id}</CardTitle>
                       <p className="text-sm text-muted-foreground">
-                        Placed {safeDateDistance(order.date, { addSuffix: true })}
+                        {t('pages:marketplaceOrders.placed', 'Placed')} {safeDateDistance(order.date, { addSuffix: true })}
                       </p>
                     </div>
                     <OrderStatusBadge status={order.status} />
@@ -162,7 +162,7 @@ export default function MarketplaceOrdersPage() {
                       {order.trackingNumber && (
                         <>
                           <span className="text-muted-foreground">•</span>
-                          <span className="text-muted-foreground">Tracking: {order.trackingNumber}</span>
+                          <span className="text-muted-foreground">{t('pages:marketplaceOrders.tracking', 'Tracking:')} {order.trackingNumber}</span>
                         </>
                       )}
                     </div>
@@ -178,23 +178,23 @@ export default function MarketplaceOrdersPage() {
                     {order.status === "delivered" && (
                       <Button variant="outline" size="sm">
                         <Star className="w-3 h-3 mr-1" />
-                        Leave Review
+                        {t('pages:marketplaceOrders.leaveReview', 'Leave Review')}
                       </Button>
                     )}
                     {order.status === "shipped" || order.status === "delivered" ? (
                       <Button variant="outline" size="sm">
                         <Package className="w-3 h-3 mr-1" />
-                        Track Package
+                        {t('pages:marketplaceOrders.trackPackage', 'Track Package')}
                       </Button>
                     ) : null}
                     <Button variant="outline" size="sm">
                       <Download className="w-3 h-3 mr-1" />
-                      Download Invoice
+                      {t('pages:marketplaceOrders.downloadInvoice', 'Download Invoice')}
                     </Button>
                     {order.status === "delivered" && (
                       <Button variant="outline" size="sm" className="ml-auto">
                         <RefreshCw className="w-3 h-3 mr-1" />
-                        Reorder
+                        {t('pages:marketplaceOrders.reorder', 'Reorder')}
                       </Button>
                     )}
                   </div>

@@ -68,25 +68,25 @@ export default function LifeCEODashboardPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Brain className="w-3 h-3 mr-1" />
-                  AI-Powered Life Management
+                  {t('pages:lifeCEO.aiPoweredManagement', 'AI-Powered Life Management')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 tracking-tight leading-tight" data-testid="heading-hero">
-                  Your Life CEO Dashboard
+                  {t('pages:lifeCEO.heroTitle', 'Your Life CEO Dashboard')}
                 </h1>
                 
                 <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-10 leading-relaxed">
-                  16 specialized AI agents working 24/7 to optimize every dimension of your life
+                  {t('pages:lifeCEO.heroSubtitle', '16 specialized AI agents working 24/7 to optimize every dimension of your life')}
                 </p>
 
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Button size="lg" className="bg-white text-black hover:bg-white/90 text-base px-8" data-testid="button-explore-agents">
                     <Brain className="mr-2 h-5 w-5" />
-                    Explore Agents
+                    {t('pages:lifeCEO.exploreAgents', 'Explore Agents')}
                   </Button>
                   <Button size="lg" variant="outline" className="border-white/30 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 text-base px-8" data-testid="button-view-insights">
                     <Sparkles className="mr-2 h-5 w-5" />
-                    View Insights
+                    {t('pages:lifeCEO.viewInsights', 'View Insights')}
                   </Button>
                 </div>
               </motion.div>
@@ -129,10 +129,10 @@ export default function LifeCEODashboardPage() {
               <FadeInSection delay={0.2}>
                 <div className="mb-16 text-center">
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-4" data-testid="heading-agents">
-                    Your AI Agent Network
+                    {t('pages:lifeCEO.yourAgentNetwork', 'Your AI Agent Network')}
                   </h2>
                   <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                    Each agent specializes in a domain of your life, learning your patterns and optimizing for your success
+                    {t('pages:lifeCEO.agentNetworkDescription', 'Each agent specializes in a domain of your life, learning your patterns and optimizing for your success')}
                   </p>
                 </div>
               </FadeInSection>
@@ -174,7 +174,7 @@ export default function LifeCEODashboardPage() {
                           <div className="flex items-center justify-between pt-3 border-t border-border/50">
                             <div className="flex items-center gap-2">
                               <Target className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-sm text-muted-foreground">{agent.tasks} active tasks</span>
+                              <span className="text-sm text-muted-foreground">{t('pages:lifeCEO.activeTasks', '{{count}} active tasks', { count: agent.tasks })}</span>
                             </div>
                           </div>
                         </CardContent>
@@ -189,10 +189,10 @@ export default function LifeCEODashboardPage() {
                 <div className="mb-8">
                   <div className="flex items-center justify-between mb-8">
                     <h3 className="text-2xl md:text-3xl font-serif font-bold" data-testid="heading-activity">
-                      Recent Activity
+                      {t('pages:lifeCEO.recentActivity', 'Recent Activity')}
                     </h3>
                     <Button variant="ghost" className="group" data-testid="button-view-all">
-                      View All
+                      {t('pages:lifeCEO.viewAll', 'View All')}
                       <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </div>
@@ -233,13 +233,13 @@ export default function LifeCEODashboardPage() {
                   </div>
                   <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
                     <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">
-                      Ready to Optimize Your Life?
+                      {t('pages:lifeCEO.readyToOptimize', 'Ready to Optimize Your Life?')}
                     </h3>
                     <p className="text-lg text-white/90 mb-8 max-w-2xl">
-                      Let AI agents handle the complexity while you focus on what matters most
+                      {t('pages:lifeCEO.letAIHandle', 'Let AI agents handle the complexity while you focus on what matters most')}
                     </p>
                     <Button size="lg" className="bg-white text-black hover:bg-white/90 text-base px-8" data-testid="button-get-started">
-                      Get Started
+                      {t('pages:lifeCEO.getStarted', 'Get Started')}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </div>

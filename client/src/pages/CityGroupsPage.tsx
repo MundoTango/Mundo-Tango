@@ -40,10 +40,10 @@ export default function CityGroupsPage() {
     mutationFn: (groupId: number) => apiRequest(`/api/groups/${groupId}/join`, "POST"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
-      toast({ title: "Joined group successfully!" });
+      toast({ title: t('pages:cityGroups.joinedSuccess', 'Joined group successfully!') });
     },
     onError: () => {
-      toast({ title: "Failed to join group", variant: "destructive" });
+      toast({ title: t('pages:cityGroups.joinedError', 'Failed to join group'), variant: "destructive" });
     },
   });
 
@@ -51,10 +51,10 @@ export default function CityGroupsPage() {
     mutationFn: (groupId: number) => apiRequest(`/api/groups/${groupId}/leave`, "POST"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
-      toast({ title: "Left group successfully" });
+      toast({ title: t('pages:cityGroups.leftSuccess', 'Left group successfully') });
     },
     onError: () => {
-      toast({ title: "Failed to leave group", variant: "destructive" });
+      toast({ title: t('pages:cityGroups.leftError', 'Failed to leave group'), variant: "destructive" });
     },
   });
 
@@ -63,14 +63,14 @@ export default function CityGroupsPage() {
       <div className="container mx-auto p-4 space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold" data-testid="heading-city-groups">City Groups</h1>
-            <p className="text-muted-foreground">Connect with tango dancers in your city</p>
+            <h1 className="text-3xl font-bold" data-testid="heading-city-groups">{t('pages:cityGroups.title', 'City Groups')}</h1>
+            <p className="text-muted-foreground">{t('pages:cityGroups.subtitle', 'Connect with tango dancers in your city')}</p>
           </div>
           
           <Button data-testid="button-create-group" asChild>
             <Link href="/groups/create">
               <Plus className="h-4 w-4 mr-2" />
-              Create City Group
+              {t('pages:cityGroups.createCityGroup', 'Create City Group')}
             </Link>
           </Button>
         </div>
@@ -80,7 +80,7 @@ export default function CityGroupsPage() {
             <UnifiedLocationPicker
               mode="city"
               value={searchQuery}
-              placeholder="Search city groups..."
+              placeholder={t('pages:cityGroups.searchPlaceholder', 'Search city groups...')}
               onChange={(location, coords, parsed) => {
                 const { city } = extractCityCountry(location);
                 setSearchQuery(city || location);
@@ -139,17 +139,17 @@ export default function CityGroupsPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground line-clamp-2">
-                      {group.description || "No description available"}
+                      {group.description || t('pages:cityGroups.noDescription', 'No description available')}
                     </p>
                     <div className="mt-4 flex items-center gap-2">
                       <Badge variant="secondary">
                         <Users className="h-3 w-3 mr-1" />
-                        {memberCount} members
+                        {t('pages:cityGroups.members', '{{count}} members', { count: memberCount })}
                       </Badge>
                       {group.postCount > 0 && (
                         <Badge variant="outline">
                           <TrendingUp className="h-3 w-3 mr-1" />
-                          {group.postCount} posts
+                          {t('pages:cityGroups.posts', '{{count}} posts', { count: group.postCount })}
                         </Badge>
                       )}
                     </div>
@@ -162,7 +162,7 @@ export default function CityGroupsPage() {
                       disabled={joinMutation.isPending}
                       data-testid={`button-join-${group.id}`}
                     >
-                      Join Group
+                      {t('pages:cityGroups.joinGroup', 'Join Group')}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -173,14 +173,14 @@ export default function CityGroupsPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No city groups found</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('pages:cityGroups.noGroupsFound', 'No city groups found')}</h3>
               <p className="text-muted-foreground mb-4">
-                {searchQuery ? "Try adjusting your search" : "Be the first to create a city group"}
+                {searchQuery ? t('pages:cityGroups.tryAdjustingSearch', 'Try adjusting your search') : t('pages:cityGroups.beFirstToCreate', 'Be the first to create a city group')}
               </p>
               <Button asChild>
                 <Link href="/groups/create">
                   <Plus className="h-4 w-4 mr-2" />
-                  Create City Group
+                  {t('pages:cityGroups.createCityGroup', 'Create City Group')}
                 </Link>
               </Button>
             </CardContent>

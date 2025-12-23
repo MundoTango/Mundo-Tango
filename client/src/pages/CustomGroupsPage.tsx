@@ -36,12 +36,12 @@ export default function CustomGroupsPage() {
     mutationFn: (data: any) => apiRequest("/api/groups", "POST", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
-      toast({ title: "Group created successfully!" });
+      toast({ title: t('pages:customGroups.groupCreatedSuccess', 'Group created successfully!') });
       setIsCreateDialogOpen(false);
       setNewGroup({ name: "", description: "", type: "custom", visibility: "public", joinApproval: true });
     },
     onError: () => {
-      toast({ title: "Failed to create group", variant: "destructive" });
+      toast({ title: t('pages:customGroups.failedToCreateGroup', 'Failed to create group'), variant: "destructive" });
     },
   });
 
@@ -49,13 +49,13 @@ export default function CustomGroupsPage() {
     mutationFn: (groupId: number) => apiRequest(`/api/groups/${groupId}/join`, "POST"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
-      toast({ title: "Joined group successfully!" });
+      toast({ title: t('pages:customGroups.joinedSuccess', 'Joined group successfully!') });
     },
   });
 
   const handleCreate = () => {
     if (!newGroup.name || !newGroup.description) {
-      toast({ title: "Please fill in all required fields", variant: "destructive" });
+      toast({ title: t('pages:customGroups.fillRequiredFields', 'Please fill in all required fields'), variant: "destructive" });
       return;
     }
     createMutation.mutate(newGroup);
@@ -66,47 +66,47 @@ export default function CustomGroupsPage() {
       <div className="container mx-auto p-4 space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold" data-testid="heading-custom-groups">Custom Groups</h1>
-            <p className="text-muted-foreground">Create and join interest-based tango communities</p>
+            <h1 className="text-3xl font-bold" data-testid="heading-custom-groups">{t('pages:customGroups.title', 'Custom Groups')}</h1>
+            <p className="text-muted-foreground">{t('pages:customGroups.subtitle', 'Create and join interest-based tango communities')}</p>
           </div>
           
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button data-testid="button-create-group">
                 <Plus className="h-4 w-4 mr-2" />
-                Create Group
+                {t('pages:customGroups.createGroup', 'Create Group')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create Custom Group</DialogTitle>
+                <DialogTitle>{t('pages:customGroups.createCustomGroup', 'Create Custom Group')}</DialogTitle>
                 <DialogDescription>
-                  Create a community for your specific interests
+                  {t('pages:customGroups.createDescription', 'Create a community for your specific interests')}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Group Name</Label>
+                  <Label htmlFor="name">{t('pages:customGroups.groupName', 'Group Name')}</Label>
                   <Input
                     id="name"
-                    placeholder="e.g., Tango Music Lovers"
+                    placeholder={t('pages:customGroups.groupNamePlaceholder', 'e.g., Tango Music Lovers')}
                     value={newGroup.name}
                     onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
                     data-testid="input-group-name"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description">{t('pages:customGroups.description', 'Description')}</Label>
                   <Textarea
                     id="description"
-                    placeholder="Describe your group..."
+                    placeholder={t('pages:customGroups.descriptionPlaceholder', 'Describe your group...')}
                     value={newGroup.description}
                     onChange={(e) => setNewGroup({ ...newGroup, description: e.target.value })}
                     data-testid="input-group-description"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="visibility">Privacy</Label>
+                  <Label htmlFor="visibility">{t('pages:customGroups.privacy', 'Privacy')}</Label>
                   <Select
                     value={newGroup.visibility}
                     onValueChange={(value) => setNewGroup({ ...newGroup, visibility: value })}
@@ -118,19 +118,19 @@ export default function CustomGroupsPage() {
                       <SelectItem value="public">
                         <div className="flex items-center gap-2">
                           <Globe className="h-4 w-4" />
-                          Public - Anyone can find and join
+                          {t('pages:customGroups.public', 'Public - Anyone can find and join')}
                         </div>
                       </SelectItem>
                       <SelectItem value="private">
                         <div className="flex items-center gap-2">
                           <Lock className="h-4 w-4" />
-                          Private - Invite only
+                          {t('pages:customGroups.private', 'Private - Invite only')}
                         </div>
                       </SelectItem>
                       <SelectItem value="secret">
                         <div className="flex items-center gap-2">
                           <EyeOff className="h-4 w-4" />
-                          Secret - Hidden from search
+                          {t('pages:customGroups.secret', 'Secret - Hidden from search')}
                         </div>
                       </SelectItem>
                     </SelectContent>
@@ -143,7 +143,7 @@ export default function CustomGroupsPage() {
                   disabled={createMutation.isPending}
                   data-testid="button-submit-group"
                 >
-                  Create Group
+                  {t('pages:customGroups.createGroup', 'Create Group')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -153,7 +153,7 @@ export default function CustomGroupsPage() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search custom groups..."
+            placeholder={t('pages:customGroups.searchPlaceholder', 'Search custom groups...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -205,12 +205,12 @@ export default function CustomGroupsPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground line-clamp-3">
-                      {group.description || "No description available"}
+                      {group.description || t('pages:customGroups.noDescription', 'No description available')}
                     </p>
                     <div className="mt-4">
                       <Badge variant="secondary">
                         <Users className="h-3 w-3 mr-1" />
-                        {memberCount} members
+                        {t('pages:customGroups.members', '{{count}} members', { count: memberCount })}
                       </Badge>
                     </div>
                   </CardContent>
@@ -222,7 +222,7 @@ export default function CustomGroupsPage() {
                       disabled={joinMutation.isPending}
                       data-testid={`button-join-${group.id}`}
                     >
-                      Join Group
+                      {t('pages:customGroups.joinGroup', 'Join Group')}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -233,13 +233,13 @@ export default function CustomGroupsPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No groups found</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('pages:customGroups.noGroupsFound', 'No groups found')}</h3>
               <p className="text-muted-foreground mb-4">
-                {searchQuery ? "Try a different search" : "Be the first to create a custom group"}
+                {searchQuery ? t('pages:customGroups.tryDifferentSearch', 'Try a different search') : t('pages:customGroups.beFirstToCreate', 'Be the first to create a custom group')}
               </p>
               <Button onClick={() => setIsCreateDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Create Group
+                {t('pages:customGroups.createGroup', 'Create Group')}
               </Button>
             </CardContent>
           </Card>

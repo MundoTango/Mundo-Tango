@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
+import { useTranslation } from 'react-i18next';
 
 interface PageHealth {
   id: number;
@@ -28,6 +29,7 @@ interface PageHealth {
  * - Review AI-generated fixes
  */
 export default function SelfHealingPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { toast } = useToast();
   const [scanning, setScanning] = useState(false);
 
@@ -44,14 +46,18 @@ export default function SelfHealingPage() {
       const result = await response.json();
       
       toast({
-        title: 'Scan completed',
-        description: `Scanned ${result.scanned} pages. ${result.healthy} healthy, ${result.unhealthy} unhealthy.`,
+        title: t('pages:agents.scanCompleted', 'Scan completed'),
+        description: t('pages:agents.scanDescription', 'Scanned {{scanned}} pages. {{healthy}} healthy, {{unhealthy}} unhealthy.', { 
+          scanned: result.scanned, 
+          healthy: result.healthy, 
+          unhealthy: result.unhealthy 
+        }),
       });
       
       queryClient.invalidateQueries({ queryKey: ['/api/admin/self-healing/dashboard'] });
     } catch (error: any) {
       toast({
-        title: 'Scan failed',
+        title: t('pages:agents.scanFailed', 'Scan failed'),
         description: error.message,
         variant: 'destructive',
       });
@@ -75,13 +81,13 @@ export default function SelfHealingPage() {
   const unhealthyPages = pageHealth.filter(p => p.status === 'unhealthy').length;
 
   return (
-    <SelfHealingErrorBoundary pageName="Self-Healing Dashboard" fallbackRoute="/platform">
+    <SelfHealingErrorBoundary pageName={t('pages:agents.selfHealingDashboard', 'Self-Healing Dashboard')} fallbackRoute="/platform">
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Self-Healing Dashboard</h1>
+          <h1 className="text-3xl font-bold">{t('pages:agents.selfHealingDashboard', 'Self-Healing Dashboard')}</h1>
           <p className="text-muted-foreground mt-2">
-            Automated page validation with Playwright + AI fixes
+            {t('pages:agents.automatedValidation', 'Automated page validation with Playwright + AI fixes')}
           </p>
         </div>
         <Button 
@@ -90,15 +96,15 @@ export default function SelfHealingPage() {
           data-testid="button-scan-pages"
         >
           <RefreshCw className={`h-4 w-4 mr-2 ${scanning ? 'animate-spin' : ''}`} />
-          {scanning ? 'Scanning...' : 'Run Scan'}
+          {scanning ? t('pages:agents.scanning', 'Scanning...') : t('pages:agents.runScan', 'Run Scan')}
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>Total Pages</CardTitle>
-            <CardDescription>Monitored endpoints</CardDescription>
+            <CardTitle>{t('pages:agents.totalPages', 'Total Pages')}</CardTitle>
+            <CardDescription>{t('pages:agents.monitoredEndpoints', 'Monitored endpoints')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold">{pageHealth.length}</div>
@@ -109,9 +115,9 @@ export default function SelfHealingPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-500" />
-              Healthy
+              {t('pages:agents.healthy', 'Healthy')}
             </CardTitle>
-            <CardDescription>No issues detected</CardDescription>
+            <CardDescription>{t('pages:agents.noIssuesDetected', 'No issues detected')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold text-green-600">{healthyPages}</div>
@@ -122,9 +128,9 @@ export default function SelfHealingPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-red-500" />
-              Unhealthy
+              {t('pages:agents.unhealthy', 'Unhealthy')}
             </CardTitle>
-            <CardDescription>Requires attention</CardDescription>
+            <CardDescription>{t('pages:agents.requiresAttention', 'Requires attention')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold text-red-600">{unhealthyPages}</div>
@@ -134,14 +140,14 @@ export default function SelfHealingPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Page Health Status</CardTitle>
-          <CardDescription>Detailed validation results</CardDescription>
+          <CardTitle>{t('pages:agents.pageHealthStatus', 'Page Health Status')}</CardTitle>
+          <CardDescription>{t('pages:agents.detailedValidationResults', 'Detailed validation results')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {pageHealth.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">
-                No pages scanned yet. Click "Run Scan" to start.
+                {t('pages:agents.noPagesScanned', 'No pages scanned yet. Click "Run Scan" to start.')}
               </p>
             ) : (
               pageHealth.map((page: any) => (
@@ -163,20 +169,20 @@ export default function SelfHealingPage() {
                       {page.page_path}
                     </p>
                     <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
-                      <span>Elements: {page.total_elements}</span>
+                      <span>{t('pages:agents.elements', 'Elements')}: {page.total_elements}</span>
                       {page.missing_testids > 0 && (
                         <span className="text-yellow-600">
-                          Missing testIds: {page.missing_testids}
+                          {t('pages:agents.missingTestIds', 'Missing testIds')}: {page.missing_testids}
                         </span>
                       )}
                       {page.broken_links > 0 && (
                         <span className="text-red-600">
-                          Broken links: {page.broken_links}
+                          {t('pages:agents.brokenLinks', 'Broken links')}: {page.broken_links}
                         </span>
                       )}
                       {page.js_errors > 0 && (
                         <span className="text-red-600">
-                          JS errors: {page.js_errors}
+                          {t('pages:agents.jsErrors', 'JS errors')}: {page.js_errors}
                         </span>
                       )}
                     </div>

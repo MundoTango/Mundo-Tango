@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { useToast } from "@/hooks/use-toast";
 import { SiTiktok } from "react-icons/si";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { useTranslation } from 'react-i18next';
 
 const TANGO_ROLES = [
   { value: "dancer", label: "Dancer", icon: UserCircle },
@@ -91,6 +92,7 @@ const ACTIVITY_FEED = [
 ];
 
 export default function ProfilePrototypePage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("posts");
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editData, setEditData] = useState({

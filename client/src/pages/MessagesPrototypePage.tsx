@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Send, MoreVertical, Phone, Video, Star, Archive, MessageSquare } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const CONVERSATIONS = [
   {
@@ -66,6 +67,7 @@ const MESSAGES = [
 ];
 
 export default function MessagesPrototypePage() {
+  const { t } = useTranslation();
   const [selectedChat, setSelectedChat] = useState(CONVERSATIONS[0]);
   const [messageInput, setMessageInput] = useState("");
 

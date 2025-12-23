@@ -59,8 +59,8 @@ export default function FinancialDashboardPage() {
             <LayoutDashboard className="h-6 w-6" style={{ color: '#40E0D0' }} />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Financial Dashboard</h1>
-            <p className="text-muted-foreground">Monitor your portfolios and investments</p>
+            <h1 className="text-3xl font-bold">{t('pages:financialDashboard.title', 'Financial Dashboard')}</h1>
+            <p className="text-muted-foreground">{t('pages:financialDashboard.subtitle', 'Monitor your portfolios and investments')}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -70,14 +70,14 @@ export default function FinancialDashboardPage() {
             data-testid="button-add-account"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Account
+            {t('pages:financialDashboard.addAccount', 'Add Account')}
           </Button>
           <Button 
             onClick={() => navigate('/financial/trading')}
             data-testid="button-make-trade"
           >
             <TrendingUp className="h-4 w-4 mr-2" />
-            Make Trade
+            {t('pages:financialDashboard.makeTrade', 'Make Trade')}
           </Button>
         </div>
       </div>
@@ -96,7 +96,7 @@ export default function FinancialDashboardPage() {
           data-testid="card-total-value"
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Portfolio Value</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:financialDashboard.totalPortfolioValue', 'Total Portfolio Value')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -126,7 +126,7 @@ export default function FinancialDashboardPage() {
           }}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Cash Balance</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:financialDashboard.cashBalance', 'Cash Balance')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -138,7 +138,7 @@ export default function FinancialDashboardPage() {
               </div>
             )}
             <p className="text-xs text-muted-foreground mt-1">
-              Available for trading
+              {t('pages:financialDashboard.availableForTrading', 'Available for trading')}
             </p>
           </CardContent>
         </Card>
@@ -151,7 +151,7 @@ export default function FinancialDashboardPage() {
           }}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Invested Value</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:financialDashboard.investedValue', 'Invested Value')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -163,7 +163,7 @@ export default function FinancialDashboardPage() {
               </div>
             )}
             <p className="text-xs text-muted-foreground mt-1">
-              Currently in positions
+              {t('pages:financialDashboard.currentlyInPositions', 'Currently in positions')}
             </p>
           </CardContent>
         </Card>
@@ -176,7 +176,7 @@ export default function FinancialDashboardPage() {
           }}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Portfolios</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:financialDashboard.activePortfolios', 'Active Portfolios')}</CardTitle>
             <PieChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -186,7 +186,7 @@ export default function FinancialDashboardPage() {
               <div className="text-2xl font-bold">{portfolios?.length || 0}</div>
             )}
             <p className="text-xs text-muted-foreground mt-1">
-              Portfolio accounts
+              {t('pages:financialDashboard.portfolioAccounts', 'Portfolio accounts')}
             </p>
           </CardContent>
         </Card>
@@ -197,13 +197,13 @@ export default function FinancialDashboardPage() {
         {/* Portfolios */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Your Portfolios</h2>
+            <h2 className="text-xl font-semibold">{t('pages:financialDashboard.yourPortfolios', 'Your Portfolios')}</h2>
             <Button 
               size="sm"
               variant="outline"
               onClick={() => navigate('/financial/portfolios')}
             >
-              View All
+              {t('common:viewAll', 'View All')}
             </Button>
           </div>
           {portfoliosLoading ? (
@@ -227,13 +227,13 @@ export default function FinancialDashboardPage() {
                 border: '1px solid rgba(64, 224, 208, 0.1)',
               }}
             >
-              <p className="text-muted-foreground mb-4">No portfolios yet</p>
+              <p className="text-muted-foreground mb-4">{t('pages:financialDashboard.noPortfolios', 'No portfolios yet')}</p>
               <Button 
                 onClick={() => navigate('/financial/portfolios')}
                 data-testid="button-create-portfolio"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Create Portfolio
+                {t('pages:financialDashboard.createPortfolio', 'Create Portfolio')}
               </Button>
             </Card>
           )}
@@ -254,13 +254,13 @@ export default function FinancialDashboardPage() {
       >
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Recent Trades</CardTitle>
+            <CardTitle>{t('pages:financialDashboard.recentTrades', 'Recent Trades')}</CardTitle>
             <Button 
               size="sm"
               variant="outline"
               onClick={() => navigate('/financial/trading')}
             >
-              View All
+              {t('common:viewAll', 'View All')}
             </Button>
           </div>
         </CardHeader>
@@ -312,7 +312,7 @@ export default function FinancialDashboardPage() {
               ))}
             </div>
           ) : (
-            <p className="text-muted-foreground text-center py-8">No trades yet</p>
+            <p className="text-muted-foreground text-center py-8">{t('pages:financialDashboard.noTrades', 'No trades yet')}</p>
           )}
         </CardContent>
       </Card>
@@ -325,7 +325,7 @@ export default function FinancialDashboardPage() {
           onClick={() => navigate('/financial/insights')}
         >
           <TrendingUp className="h-6 w-6" style={{ color: '#40E0D0' }} />
-          <span>View AI Insights</span>
+          <span>{t('pages:financialDashboard.viewAiInsights', 'View AI Insights')}</span>
         </Button>
         <Button
           variant="outline"
@@ -333,7 +333,7 @@ export default function FinancialDashboardPage() {
           onClick={() => navigate('/financial/portfolios')}
         >
           <PieChart className="h-6 w-6" style={{ color: '#40E0D0' }} />
-          <span>Manage Portfolios</span>
+          <span>{t('pages:financialDashboard.managePortfolios', 'Manage Portfolios')}</span>
         </Button>
         <Button
           variant="outline"
@@ -341,7 +341,7 @@ export default function FinancialDashboardPage() {
           onClick={() => navigate('/financial/accounts')}
         >
           <Plus className="h-6 w-6" style={{ color: '#40E0D0' }} />
-          <span>Connect Accounts</span>
+          <span>{t('pages:financialDashboard.connectAccounts', 'Connect Accounts')}</span>
         </Button>
       </div>
     </div>

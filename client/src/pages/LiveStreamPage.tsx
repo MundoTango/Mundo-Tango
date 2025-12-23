@@ -19,7 +19,7 @@ export default function LiveStreamPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Live Streams" fallbackRoute="/feed">
-      <PageLayout title="Live Streams" showBreadcrumbs>
+      <PageLayout title={t('pages:liveStream.title', 'Live Streams')} showBreadcrumbs>
         
         {/* Editorial Hero Section - 16:9 */}
         <div className="relative aspect-video w-full overflow-hidden mb-16" data-testid="hero-livestream">
@@ -35,20 +35,20 @@ export default function LiveStreamPage() {
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-livestream">
               <Radio className="w-3 h-3 mr-1" />
-              Live Streams
+              {t('pages:liveStream.liveStreams', 'Live Streams')}
             </Badge>
             
             <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight leading-tight max-w-4xl" data-testid="heading-hero">
-              Experience Tango Live
+              {t('pages:liveStream.heroTitle', 'Experience Tango Live')}
             </h1>
             
             <p className="text-xl text-white/90 max-w-2xl mb-8">
-              Watch live performances, join interactive classes, and connect with tango artists from around the world
+              {t('pages:liveStream.heroSubtitle', 'Watch live performances, join interactive classes, and connect with tango artists from around the world')}
             </p>
 
             <Button className="bg-white text-black hover:bg-white/90" size="lg" data-testid="button-create-stream">
               <Radio className="h-4 w-4 mr-2" />
-              Create Stream
+              {t('pages:liveStream.createStream', 'Create Stream')}
             </Button>
           </motion.div>
         </div>
@@ -57,10 +57,10 @@ export default function LiveStreamPage() {
       <div className="container mx-auto max-w-6xl">
 
         {isLoading ? (
-          <div className="text-center py-12">Loading streams...</div>
+          <div className="text-center py-12">{t('pages:liveStream.loadingStreams', 'Loading streams...')}</div>
         ) : streams && Array.isArray(streams) && streams.length > 0 ? (
           <div className="space-y-6">
-            <h2 className="text-3xl font-serif font-bold mb-8">Live Now</h2>
+            <h2 className="text-3xl font-serif font-bold mb-8">{t('pages:liveStream.liveNow', 'Live Now')}</h2>
             <div className="grid gap-6 md:grid-cols-2">
               {streams.filter((s: any) => s.isLive).map((stream: any, idx: number) => (
                 <motion.div
@@ -75,7 +75,7 @@ export default function LiveStreamPage() {
                     <div className="absolute top-2 left-2">
                       <Badge variant="destructive" className="flex items-center gap-1">
                         <Radio className="h-3 w-3" />
-                        LIVE
+                        {t('pages:liveStream.live', 'LIVE')}
                       </Badge>
                     </div>
                     <div className="absolute top-2 right-2">
@@ -93,7 +93,7 @@ export default function LiveStreamPage() {
                     <Link href={`/live-stream/${stream.id}`}>
                       <Button className="w-full" data-testid={`button-watch-${stream.id}`}>
                         <Radio className="h-4 w-4 mr-2" />
-                        Watch Live
+                        {t('pages:liveStream.watchLive', 'Watch Live')}
                       </Button>
                     </Link>
                   </CardContent>
@@ -103,7 +103,7 @@ export default function LiveStreamPage() {
             </div>
 
             <div>
-              <h2 className="text-3xl font-serif font-bold mb-8 mt-16">Upcoming Streams</h2>
+              <h2 className="text-3xl font-serif font-bold mb-8 mt-16">{t('pages:liveStream.upcomingStreams', 'Upcoming Streams')}</h2>
               <div className="space-y-4">
                 {streams.filter((s: any) => !s.isLive).map((stream: any, idx: number) => (
                   <motion.div
@@ -124,7 +124,7 @@ export default function LiveStreamPage() {
                               <h3 className="font-serif font-bold text-lg">{stream.title}</h3>
                               <p className="text-sm text-muted-foreground">{stream.host}</p>
                             </div>
-                            <Badge variant="outline">Scheduled</Badge>
+                            <Badge variant="outline">{t('pages:liveStream.scheduled', 'Scheduled')}</Badge>
                           </div>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                             <div className="flex items-center gap-1">
@@ -134,12 +134,12 @@ export default function LiveStreamPage() {
                             {stream.registrations && (
                               <div className="flex items-center gap-1">
                                 <Users className="h-4 w-4" />
-                                {stream.registrations} registered
+                                {stream.registrations} {t('pages:liveStream.registered', 'registered')}
                               </div>
                             )}
                           </div>
                           <Button variant="outline" size="sm" data-testid={`button-remind-${stream.id}`} onClick={(e) => e.preventDefault()}>
-                            Set Reminder
+                            {t('pages:liveStream.setReminder', 'Set Reminder')}
                           </Button>
                         </div>
                       </div>
@@ -154,8 +154,8 @@ export default function LiveStreamPage() {
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
               <Radio className="mx-auto h-12 w-12 mb-4 opacity-50" />
-              <p>No live streams at the moment</p>
-              <p className="text-sm mt-2">Check back later for upcoming events</p>
+              <p>{t('pages:liveStream.noStreams', 'No live streams at the moment')}</p>
+              <p className="text-sm mt-2">{t('pages:liveStream.checkBackLater', 'Check back later for upcoming events')}</p>
             </CardContent>
           </Card>
         )}

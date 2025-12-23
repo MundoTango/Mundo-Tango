@@ -12,11 +12,11 @@ import { motion } from "framer-motion";
 export default function HelpPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
-    <PageLayout title="How Can We Help?" showBreadcrumbs>
-<SelfHealingErrorBoundary pageName="Help Center" fallbackRoute="/">
+    <PageLayout title={t('pages:help.title', 'How Can We Help?')} showBreadcrumbs>
+<SelfHealingErrorBoundary pageName={t('pages:help.pageName', 'Help Center')} fallbackRoute="/">
       <SEO
-        title="Help & Support | Mundo Tango"
-        description="Get help and support for Mundo Tango. Find answers in our FAQ, contact our support team, or chat with us live. We're here to help you navigate the platform."
+        title={t('pages:help.seoTitle', 'Help & Support | Mundo Tango')}
+        description={t('pages:help.seoDescription', "Get help and support for Mundo Tango. Find answers in our FAQ, contact our support team, or chat with us live. We're here to help you navigate the platform.")}
       />
 <div className="min-h-screen bg-background">
       {/* Editorial Hero Section */}
@@ -37,10 +37,10 @@ export default function HelpPage() {
             transition={{ delay: 0.3, duration: 0.8 }}
           >
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6" data-testid="heading-page-title">
-              How Can We Help?
+              {t('pages:help.heroTitle', 'How Can We Help?')}
             </h1>
             <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light" data-testid="text-hero-subtitle">
-              Find answers and get support
+              {t('pages:help.heroSubtitle', 'Find answers and get support')}
             </p>
           </motion.div>
         </div>
@@ -55,10 +55,10 @@ export default function HelpPage() {
             <Card className="hover-elevate cursor-pointer" data-testid="card-faq">
               <CardHeader>
                 <Book className="h-8 w-8 text-primary mb-2" />
-                <CardTitle className="text-base">FAQ</CardTitle>
+                <CardTitle className="text-base">{t('pages:help.faq', 'FAQ')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">Browse frequently asked questions</p>
+                <p className="text-sm text-muted-foreground">{t('pages:help.faqDescription', 'Browse frequently asked questions')}</p>
               </CardContent>
             </Card>
           </Link>
@@ -67,10 +67,10 @@ export default function HelpPage() {
             <Card className="hover-elevate cursor-pointer" data-testid="card-contact">
               <CardHeader>
                 <Mail className="h-8 w-8 text-primary mb-2" />
-                <CardTitle className="text-base">Contact Support</CardTitle>
+                <CardTitle className="text-base">{t('pages:help.contactSupport', 'Contact Support')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">Get in touch with our team</p>
+                <p className="text-sm text-muted-foreground">{t('pages:help.contactDescription', 'Get in touch with our team')}</p>
               </CardContent>
             </Card>
           </Link>
@@ -78,25 +78,25 @@ export default function HelpPage() {
           <Card className="hover-elevate cursor-pointer" data-testid="card-chat">
             <CardHeader>
               <MessageCircle className="h-8 w-8 text-primary mb-2" />
-              <CardTitle className="text-base">Live Chat</CardTitle>
+              <CardTitle className="text-base">{t('pages:help.liveChat', 'Live Chat')}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Chat with us in real-time</p>
+              <p className="text-sm text-muted-foreground">{t('pages:help.liveChatDescription', 'Chat with us in real-time')}</p>
             </CardContent>
           </Card>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Popular Topics</CardTitle>
+            <CardTitle>{t('pages:help.popularTopics', 'Popular Topics')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {[
-              "How do I reset my password?",
-              "How do I RSVP to an event?",
-              "How do I find dancers in my area?",
-              "How do I upgrade my account?",
-              "How do I report inappropriate content?"
+              t('pages:help.topic1', 'How do I reset my password?'),
+              t('pages:help.topic2', 'How do I RSVP to an event?'),
+              t('pages:help.topic3', 'How do I find dancers in my area?'),
+              t('pages:help.topic4', 'How do I upgrade my account?'),
+              t('pages:help.topic5', 'How do I report inappropriate content?')
             ].map((topic, i) => (
               <Button
                 key={i}

@@ -62,7 +62,7 @@ export default function BillingHistory() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-muted-foreground">Loading billing history...</p>
+        <p className="text-muted-foreground">{t('pages:billingHistory.loading', 'Loading billing history...')}</p>
       </div>
     );
   }
@@ -71,9 +71,9 @@ export default function BillingHistory() {
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Billing History</h1>
+          <h1 className="text-3xl font-bold mb-2">{t('pages:billingHistory.title', 'Billing History')}</h1>
           <p className="text-muted-foreground">
-            View and manage your invoices and payment history
+            {t('pages:billingHistory.subtitle', 'View and manage your invoices and payment history')}
           </p>
         </div>
 
@@ -81,8 +81,8 @@ export default function BillingHistory() {
           {/* Payment Method Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Payment Method</CardTitle>
-              <CardDescription>Your default payment method</CardDescription>
+              <CardTitle className="text-lg">{t('pages:billingHistory.paymentMethod', 'Payment Method')}</CardTitle>
+              <CardDescription>{t('pages:billingHistory.defaultPaymentMethod', 'Your default payment method')}</CardDescription>
             </CardHeader>
             <CardContent>
               {paymentMethod ? (
@@ -93,15 +93,15 @@ export default function BillingHistory() {
                       •••• •••• •••• {paymentMethod.last4}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Expires {paymentMethod.expMonth}/{paymentMethod.expYear}
+                      {t('pages:billingHistory.expires', 'Expires {{month}}/{{year}}', { month: paymentMethod.expMonth, year: paymentMethod.expYear })}
                     </p>
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No payment method on file</p>
+                <p className="text-sm text-muted-foreground">{t('pages:billingHistory.noPaymentMethod', 'No payment method on file')}</p>
               )}
               <Button variant="outline" className="w-full mt-4" data-testid="button-update-payment">
-                Update Payment Method
+                {t('pages:billingHistory.updatePaymentMethod', 'Update Payment Method')}
               </Button>
             </CardContent>
           </Card>
@@ -109,8 +109,8 @@ export default function BillingHistory() {
           {/* Stats Cards */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Total Paid</CardTitle>
-              <CardDescription>All time</CardDescription>
+              <CardTitle className="text-lg">{t('pages:billingHistory.totalPaid', 'Total Paid')}</CardTitle>
+              <CardDescription>{t('pages:billingHistory.allTime', 'All time')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold" data-testid="text-total-paid">
@@ -124,8 +124,8 @@ export default function BillingHistory() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Invoices</CardTitle>
-              <CardDescription>Total count</CardDescription>
+              <CardTitle className="text-lg">{t('pages:billingHistory.invoices', 'Invoices')}</CardTitle>
+              <CardDescription>{t('pages:billingHistory.totalCount', 'Total count')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold" data-testid="text-invoice-count">
@@ -142,7 +142,7 @@ export default function BillingHistory() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by invoice ID or plan..."
+                  placeholder={t('pages:billingHistory.searchPlaceholder', 'Search by invoice ID or plan...')}
                   className="pl-10"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -152,13 +152,13 @@ export default function BillingHistory() {
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-full sm:w-48" data-testid="select-status-filter">
                   <Filter className="mr-2 h-4 w-4" />
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder={t('pages:billingHistory.filterByStatus', 'Filter by status')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="failed">Failed</SelectItem>
+                  <SelectItem value="all">{t('pages:billingHistory.allStatus', 'All Status')}</SelectItem>
+                  <SelectItem value="paid">{t('pages:billingHistory.paid', 'Paid')}</SelectItem>
+                  <SelectItem value="pending">{t('pages:billingHistory.pending', 'Pending')}</SelectItem>
+                  <SelectItem value="failed">{t('pages:billingHistory.failed', 'Failed')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -168,27 +168,27 @@ export default function BillingHistory() {
         {/* Invoices Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Invoice History</CardTitle>
+            <CardTitle>{t('pages:billingHistory.invoiceHistory', 'Invoice History')}</CardTitle>
             <CardDescription>
-              {filteredInvoices.length} {filteredInvoices.length === 1 ? "invoice" : "invoices"} found
+              {t('pages:billingHistory.invoicesFound', '{{count}} invoices found', { count: filteredInvoices.length })}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {filteredInvoices.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">No invoices found</p>
+                <p className="text-muted-foreground">{t('pages:billingHistory.noInvoices', 'No invoices found')}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Invoice ID</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Plan</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('pages:billingHistory.invoiceId', 'Invoice ID')}</TableHead>
+                      <TableHead>{t('pages:billingHistory.date', 'Date')}</TableHead>
+                      <TableHead>{t('pages:billingHistory.plan', 'Plan')}</TableHead>
+                      <TableHead>{t('pages:billingHistory.amount', 'Amount')}</TableHead>
+                      <TableHead>{t('pages:billingHistory.status', 'Status')}</TableHead>
+                      <TableHead className="text-right">{t('pages:billingHistory.actions', 'Actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -211,7 +211,7 @@ export default function BillingHistory() {
                           <div className="flex items-center justify-end gap-2">
                             <Link href={`/billing/invoice/${invoice.id}`}>
                               <Button variant="outline" size="sm" data-testid={`button-view-${invoice.id}`}>
-                                View
+                                {t('common:view', 'View')}
                               </Button>
                             </Link>
                             {invoice.pdfUrl && (

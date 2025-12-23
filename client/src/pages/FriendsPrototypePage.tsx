@@ -15,6 +15,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "wouter";
 import { Search, UserPlus, UserMinus, MessageCircle, MoreVertical, Users, UserCheck, Clock, Mail, Heart } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const tangoHeroImage = "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?q=80&w=2070&auto=format&fit=crop";
 
@@ -63,6 +64,7 @@ interface FriendSuggestion {
 }
 
 export default function FriendsPrototypePage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("all");

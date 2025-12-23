@@ -82,10 +82,10 @@ export default function AnalyticsPage() {
 
   if (isLoading || !analytics) {
     return (
-      <SelfHealingErrorBoundary pageName="Analytics" fallbackRoute="/platform">
+      <SelfHealingErrorBoundary pageName={t('pages:analytics.title', 'Analytics')} fallbackRoute="/platform">
         <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center py-8" data-testid="loading-analytics">
-            Loading analytics...
+            {t('pages:analytics.loading', 'Loading analytics...')}
           </div>
         </div>
       </SelfHealingErrorBoundary>
@@ -95,10 +95,10 @@ export default function AnalyticsPage() {
   const successRate = ((analytics.overview.successfulDeployments / analytics.overview.totalDeployments) * 100).toFixed(1);
 
   return (
-    <SelfHealingErrorBoundary pageName="Analytics" fallbackRoute="/platform">
+    <SelfHealingErrorBoundary pageName={t('pages:analytics.title', 'Analytics')} fallbackRoute="/platform">
       <SEO 
-        title="Platform Analytics"
-        description="Monitor deployment metrics, API usage, performance tracking, and error analysis for Mundo Tango platform operations"
+        title={t('pages:analytics.seoTitle', 'Platform Analytics')}
+        description={t('pages:analytics.seoDescription', 'Monitor deployment metrics, API usage, performance tracking, and error analysis for Mundo Tango platform operations')}
         ogImage="/og-image.png"
       />
       <div className="min-h-screen bg-background">
@@ -118,15 +118,15 @@ export default function AnalyticsPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <BarChart3 className="w-3 h-3 mr-1.5" />
-                Platform Analytics
+                {t('pages:analytics.platformAnalytics', 'Platform Analytics')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                Analytics Dashboard
+                {t('pages:analytics.dashboard', 'Analytics Dashboard')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                Platform usage metrics and deployment statistics
+                {t('pages:analytics.subtitle', 'Platform usage metrics and deployment statistics')}
               </p>
             </motion.div>
           </div>
@@ -146,7 +146,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Deployments</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analytics.totalDeployments', 'Total Deployments')}</CardTitle>
             <Server className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -155,14 +155,14 @@ export default function AnalyticsPage() {
             </div>
             <div className="flex items-center text-xs text-muted-foreground mt-1">
               <ArrowUp className="w-3 h-3 mr-1 text-green-500" />
-              <span>12% from last month</span>
+              <span>{t('pages:analytics.fromLastMonth', '12% from last month')}</span>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analytics.successRate', 'Success Rate')}</CardTitle>
             <Zap className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -170,14 +170,14 @@ export default function AnalyticsPage() {
               {successRate}%
             </div>
             <div className="text-xs text-muted-foreground mt-1">
-              {analytics.overview.successfulDeployments} successful
+              {t('pages:analytics.successful', '{{count}} successful', { count: analytics.overview.successfulDeployments })}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Deploy Time</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analytics.avgDeployTime', 'Avg Deploy Time')}</CardTitle>
             <Server className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -186,14 +186,14 @@ export default function AnalyticsPage() {
             </div>
             <div className="flex items-center text-xs text-muted-foreground mt-1">
               <ArrowDown className="w-3 h-3 mr-1 text-green-500" />
-              <span>8% faster</span>
+              <span>{t('pages:analytics.faster', '8% faster')}</span>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Failed Deploys</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analytics.failedDeploys', 'Failed Deploys')}</CardTitle>
             <AlertTriangle className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -201,7 +201,7 @@ export default function AnalyticsPage() {
               {analytics.overview.failedDeployments}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
-              {((analytics.overview.failedDeployments / analytics.overview.totalDeployments) * 100).toFixed(1)}% failure rate
+              {t('pages:analytics.failureRate', '{{rate}}% failure rate', { rate: ((analytics.overview.failedDeployments / analytics.overview.totalDeployments) * 100).toFixed(1) })}
             </div>
           </CardContent>
         </Card>
@@ -210,8 +210,8 @@ export default function AnalyticsPage() {
       {/* Deployments Chart */}
       <Card>
         <CardHeader>
-          <CardTitle>Deployments (Last 7 Days)</CardTitle>
-          <CardDescription>Daily deployment activity</CardDescription>
+          <CardTitle>{t('pages:analytics.deploymentsLast7Days', 'Deployments (Last 7 Days)')}</CardTitle>
+          <CardDescription>{t('pages:analytics.dailyDeploymentActivity', 'Daily deployment activity')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={250}>
@@ -229,40 +229,40 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total API Requests</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analytics.totalApiRequests', 'Total API Requests')}</CardTitle>
             <Users className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold" data-testid="text-total-requests">
               {analytics.apiUsage.totalRequests.toLocaleString()}
             </div>
-            <div className="text-xs text-muted-foreground mt-1">Last 30 days</div>
+            <div className="text-xs text-muted-foreground mt-1">{t('pages:analytics.last30Days', 'Last 30 days')}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Response Time</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analytics.avgResponseTime', 'Avg Response Time')}</CardTitle>
             <Zap className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold" data-testid="text-avg-response-time">
               {analytics.apiUsage.avgResponseTime}ms
             </div>
-            <div className="text-xs text-muted-foreground mt-1">Across all endpoints</div>
+            <div className="text-xs text-muted-foreground mt-1">{t('pages:analytics.acrossAllEndpoints', 'Across all endpoints')}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Error Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analytics.errorRate', 'Error Rate')}</CardTitle>
             <AlertTriangle className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600" data-testid="text-error-rate">
               {analytics.apiUsage.errorRate}%
             </div>
-            <div className="text-xs text-muted-foreground mt-1">Target: &lt;1%</div>
+            <div className="text-xs text-muted-foreground mt-1">{t('pages:analytics.target', 'Target: <1%')}</div>
           </CardContent>
         </Card>
       </div>
@@ -270,8 +270,8 @@ export default function AnalyticsPage() {
       {/* API Requests Chart */}
       <Card>
         <CardHeader>
-          <CardTitle>API Requests by Hour (Today)</CardTitle>
-          <CardDescription>Hourly request volume</CardDescription>
+          <CardTitle>{t('pages:analytics.apiRequestsByHour', 'API Requests by Hour (Today)')}</CardTitle>
+          <CardDescription>{t('pages:analytics.hourlyRequestVolume', 'Hourly request volume')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={250}>
@@ -293,13 +293,13 @@ export default function AnalyticsPage() {
       {/* Top Errors */}
       <Card>
         <CardHeader>
-          <CardTitle>Top Errors</CardTitle>
-          <CardDescription>Most frequent errors in the last 24 hours</CardDescription>
+          <CardTitle>{t('pages:analytics.topErrors', 'Top Errors')}</CardTitle>
+          <CardDescription>{t('pages:analytics.topErrorsDesc', 'Most frequent errors in the last 24 hours')}</CardDescription>
         </CardHeader>
         <CardContent>
           {analytics.topErrors.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No errors detected
+              {t('pages:analytics.noErrors', 'No errors detected')}
             </div>
           ) : (
             <div className="space-y-3">
@@ -314,11 +314,11 @@ export default function AnalyticsPage() {
                     <div>
                       <div className="font-medium">{error.message}</div>
                       <div className="text-sm text-muted-foreground">
-                        Last occurred: {new Date(error.lastOccurred).toLocaleString()}
+                        {t('pages:analytics.lastOccurred', 'Last occurred: {{date}}', { date: new Date(error.lastOccurred).toLocaleString() })}
                       </div>
                     </div>
                   </div>
-                  <Badge variant="destructive">{error.count} occurrences</Badge>
+                  <Badge variant="destructive">{t('pages:analytics.occurrences', '{{count}} occurrences', { count: error.count })}</Badge>
                 </div>
               ))}
             </div>

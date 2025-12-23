@@ -48,7 +48,7 @@ export default function PaymentIntegration() {
         });
         if (error) {
           toast({
-            title: "Payment Error",
+            title: t('pages:paymentIntegration.paymentError', 'Payment Error'),
             description: error.message,
             variant: "destructive",
           });
@@ -58,8 +58,8 @@ export default function PaymentIntegration() {
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to initialize checkout",
+        title: t('pages:paymentIntegration.error', 'Error'),
+        description: t('pages:paymentIntegration.checkoutFailed', 'Failed to initialize checkout'),
         variant: "destructive",
       });
       setIsProcessing(false);
@@ -74,7 +74,7 @@ export default function PaymentIntegration() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-muted-foreground">Loading payment details...</p>
+        <p className="text-muted-foreground">{t('pages:paymentIntegration.loadingPaymentDetails', 'Loading payment details...')}</p>
       </div>
     );
   }
@@ -83,9 +83,9 @@ export default function PaymentIntegration() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
         <AlertCircle className="h-12 w-12 text-destructive" />
-        <h1 className="text-2xl font-bold">Plan Not Found</h1>
+        <h1 className="text-2xl font-bold">{t('pages:paymentIntegration.planNotFound', 'Plan Not Found')}</h1>
         <Button onClick={() => setLocation("/subscription")}>
-          View Available Plans
+          {t('pages:paymentIntegration.viewAvailablePlans', 'View Available Plans')}
         </Button>
       </div>
     );
@@ -103,28 +103,28 @@ export default function PaymentIntegration() {
           data-testid="button-back"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Plans
+          {t('pages:paymentIntegration.backToPlans', 'Back to Plans')}
         </Button>
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Order Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
-              <CardDescription>Review your subscription details</CardDescription>
+              <CardTitle>{t('pages:paymentIntegration.orderSummary', 'Order Summary')}</CardTitle>
+              <CardDescription>{t('pages:paymentIntegration.reviewSubscription', 'Review your subscription details')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h3 className="font-semibold text-lg">{plan.name} Plan</h3>
+                <h3 className="font-semibold text-lg">{plan.name} {t('pages:paymentIntegration.plan', 'Plan')}</h3>
                 <Badge variant="secondary" className="mt-2">
-                  {billingCycle === "monthly" ? "Monthly" : "Annual"} Billing
+                  {billingCycle === "monthly" ? t('pages:paymentIntegration.monthly', 'Monthly') : t('pages:paymentIntegration.annual', 'Annual')} {t('pages:paymentIntegration.billing', 'Billing')}
                 </Badge>
               </div>
 
               <Separator />
 
               <div className="space-y-2">
-                <h4 className="font-medium mb-2">Features Included:</h4>
+                <h4 className="font-medium mb-2">{t('pages:paymentIntegration.featuresIncluded', 'Features Included')}:</h4>
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   {(plan.features || []).map((feature: string, index: number) => (
                     <li key={index} className="flex items-start gap-2">
@@ -139,16 +139,16 @@ export default function PaymentIntegration() {
 
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">{t('pages:paymentIntegration.subtotal', 'Subtotal')}</span>
                   <span>${price.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tax</span>
+                  <span className="text-muted-foreground">{t('pages:paymentIntegration.tax', 'Tax')}</span>
                   <span>$0.00</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between text-lg font-semibold">
-                  <span>Total</span>
+                  <span>{t('pages:paymentIntegration.total', 'Total')}</span>
                   <span data-testid="text-total">${price.toFixed(2)}</span>
                 </div>
               </div>
@@ -156,7 +156,7 @@ export default function PaymentIntegration() {
               <Alert>
                 <Lock className="h-4 w-4" />
                 <AlertDescription>
-                  Your payment information is secure and encrypted
+                  {t('pages:paymentIntegration.securePayment', 'Your payment information is secure and encrypted')}
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -165,28 +165,28 @@ export default function PaymentIntegration() {
           {/* Payment Form */}
           <Card>
             <CardHeader>
-              <CardTitle>Payment Method</CardTitle>
+              <CardTitle>{t('pages:paymentIntegration.paymentMethod', 'Payment Method')}</CardTitle>
               <CardDescription>
-                Complete your subscription with Stripe
+                {t('pages:paymentIntegration.completeWithStripe', 'Complete your subscription with Stripe')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Billing Cycle</Label>
+                <Label>{t('pages:paymentIntegration.billingCycle', 'Billing Cycle')}</Label>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant={billingCycle === "monthly" ? "default" : "outline"}
                     onClick={() => setBillingCycle("monthly")}
                     data-testid="button-monthly"
                   >
-                    Monthly
+                    {t('pages:paymentIntegration.monthlyOption', 'Monthly')}
                   </Button>
                   <Button
                     variant={billingCycle === "annual" ? "default" : "outline"}
                     onClick={() => setBillingCycle("annual")}
                     data-testid="button-annual"
                   >
-                    Annual (Save 20%)
+                    {t('pages:paymentIntegration.annualOption', 'Annual (Save 20%)')}
                   </Button>
                 </div>
               </div>
@@ -196,15 +196,15 @@ export default function PaymentIntegration() {
               <Alert>
                 <CreditCard className="h-4 w-4" />
                 <AlertDescription>
-                  You'll be redirected to Stripe to securely complete your payment
+                  {t('pages:paymentIntegration.redirectToStripe', "You'll be redirected to Stripe to securely complete your payment")}
                 </AlertDescription>
               </Alert>
 
               <div className="space-y-2 text-sm text-muted-foreground">
-                <p>• Secure payment processing by Stripe</p>
-                <p>• Cancel anytime from your account settings</p>
-                <p>• 30-day money-back guarantee</p>
-                <p>• Access starts immediately after payment</p>
+                <p>• {t('pages:paymentIntegration.secureProcessing', 'Secure payment processing by Stripe')}</p>
+                <p>• {t('pages:paymentIntegration.cancelAnytime', 'Cancel anytime from your account settings')}</p>
+                <p>• {t('pages:paymentIntegration.moneyBackGuarantee', '30-day money-back guarantee')}</p>
+                <p>• {t('pages:paymentIntegration.immediateAccess', 'Access starts immediately after payment')}</p>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
@@ -215,16 +215,16 @@ export default function PaymentIntegration() {
                 data-testid="button-checkout"
               >
                 {isProcessing ? (
-                  "Processing..."
+                  t('pages:paymentIntegration.processing', 'Processing...')
                 ) : (
                   <>
                     <Lock className="mr-2 h-4 w-4" />
-                    Proceed to Checkout
+                    {t('pages:paymentIntegration.proceedToCheckout', 'Proceed to Checkout')}
                   </>
                 )}
               </Button>
               <p className="text-xs text-center text-muted-foreground">
-                By proceeding, you agree to our Terms of Service and Privacy Policy
+                {t('pages:paymentIntegration.agreeToTerms', 'By proceeding, you agree to our Terms of Service and Privacy Policy')}
               </p>
             </CardFooter>
           </Card>

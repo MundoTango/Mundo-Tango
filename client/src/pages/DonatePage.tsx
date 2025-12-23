@@ -27,8 +27,8 @@ export default function DonatePage() {
   return (
     <PublicLayout>
       <SEO
-        title="Support Mundo Tango - GoFundMe"
-        description="Support the global tango community through our GoFundMe campaign. Your donation helps us connect dancers worldwide and preserve the art of Argentine tango."
+        title={t('pages:donate.seo.title', 'Support Mundo Tango - GoFundMe')}
+        description={t('pages:donate.seo.description', 'Support the global tango community through our GoFundMe campaign. Your donation helps us connect dancers worldwide and preserve the art of Argentine tango.')}
       />
 
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-12 px-4">
@@ -36,7 +36,7 @@ export default function DonatePage() {
           <Link href="/support">
             <Button variant="ghost" className="mb-6" data-testid="button-back">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Support
+              {t('pages:donate.backToSupport', 'Back to Support')}
             </Button>
           </Link>
 
@@ -49,13 +49,13 @@ export default function DonatePage() {
             <div className="text-center mb-8">
               <Badge variant="outline" className="mb-4">
                 <Heart className="w-3 h-3 mr-1" />
-                Support Mundo Tango
+                {t('pages:donate.badge', 'Support Mundo Tango')}
               </Badge>
               <h1 className="text-4xl font-serif font-bold mb-4" data-testid="heading-donate">
-                Support Our Mission
+                {t('pages:donate.hero.title', 'Support Our Mission')}
               </h1>
               <p className="text-muted-foreground max-w-md mx-auto">
-                Your support helps us connect dancers worldwide and preserve the beautiful art of Argentine tango.
+                {t('pages:donate.hero.subtitle', 'Your support helps us connect dancers worldwide and preserve the beautiful art of Argentine tango.')}
               </p>
             </div>
 
@@ -65,9 +65,9 @@ export default function DonatePage() {
 
             <Card>
               <CardHeader className="text-center">
-                <CardTitle>Why Support Mundo Tango?</CardTitle>
+                <CardTitle>{t('pages:donate.why.title', 'Why Support Mundo Tango?')}</CardTitle>
                 <CardDescription>
-                  Built by a dancer, for dancers
+                  {t('pages:donate.why.subtitle', 'Built by a dancer, for dancers')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -75,28 +75,26 @@ export default function DonatePage() {
                   <div className="bg-muted rounded-lg p-4 text-center">
                     <Clock className="h-6 w-6 mx-auto mb-2 text-primary" />
                     <div className="text-2xl font-bold">{(publicStats?.platformStats?.hoursInvested || 3000).toLocaleString()}+</div>
-                    <div className="text-sm text-muted-foreground">Hours Invested</div>
+                    <div className="text-sm text-muted-foreground">{t('pages:donate.stats.hours', 'Hours Invested')}</div>
                   </div>
                   <div className="bg-muted rounded-lg p-4 text-center">
                     <DollarSign className="h-6 w-6 mx-auto mb-2 text-primary" />
                     <div className="text-2xl font-bold">${((publicStats?.platformStats?.amountInvested || 30000) / 1000).toFixed(0)}K</div>
-                    <div className="text-sm text-muted-foreground">Self-Funded</div>
+                    <div className="text-sm text-muted-foreground">{t('pages:donate.stats.selfFunded', 'Self-Funded')}</div>
                   </div>
                   <div className="bg-muted rounded-lg p-4 text-center">
                     <Globe className="h-6 w-6 mx-auto mb-2 text-primary" />
                     <div className="text-2xl font-bold">{publicStats?.platformStats?.cities || 79}</div>
-                    <div className="text-sm text-muted-foreground">Cities Visited</div>
+                    <div className="text-sm text-muted-foreground">{t('pages:donate.stats.cities', 'Cities Visited')}</div>
                   </div>
                   <div className="bg-muted rounded-lg p-4 text-center">
                     <Users className="h-6 w-6 mx-auto mb-2 text-primary" />
                     <div className="text-2xl font-bold">{publicStats?.platformStats?.yearsOfDancing || 18}</div>
-                    <div className="text-sm text-muted-foreground">Years Dancing</div>
+                    <div className="text-sm text-muted-foreground">{t('pages:donate.stats.yearsDancing', 'Years Dancing')}</div>
                   </div>
                 </div>
                 <p className="text-muted-foreground text-center">
-                  Scott has invested thousands of hours and his own savings to build Mundo Tango. 
-                  Your contribution helps cover server costs, AI services, and continued development 
-                  to serve dancers worldwide.
+                  {t('pages:donate.why.description', 'Scott has invested thousands of hours and his own savings to build Mundo Tango. Your contribution helps cover server costs, AI services, and continued development to serve dancers worldwide.')}
                 </p>
               </CardContent>
             </Card>
@@ -109,11 +107,11 @@ export default function DonatePage() {
               >
                 <Button size="lg" className="ocean-gradient text-white" data-testid="button-gofundme-external">
                   <ExternalLink className="mr-2 h-5 w-5" />
-                  View Full Campaign on GoFundMe
+                  {t('pages:donate.cta.gofundme', 'View Full Campaign on GoFundMe')}
                 </Button>
               </a>
               <p className="text-sm text-muted-foreground">
-                All donations are processed securely through GoFundMe
+                {t('pages:donate.footer.security', 'All donations are processed securely through GoFundMe')}
               </p>
             </div>
           </motion.div>

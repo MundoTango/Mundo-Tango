@@ -42,28 +42,28 @@ export function MemoryStatsPage() {
 
   const statsCards = [
     {
-      title: "Total Memories",
+      title: t('pages:memoryStats.totalMemories', 'Total Memories'),
       value: memoryStats?.totalMemories ?? 0,
       icon: BarChart3,
       color: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-50 dark:bg-blue-950/30",
     },
     {
-      title: "Events Attended",
+      title: t('pages:memoryStats.eventsAttended', 'Events Attended'),
       value: memoryStats?.eventsAttended ?? 0,
       icon: Calendar,
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-50 dark:bg-purple-950/30",
     },
     {
-      title: "Milestones",
+      title: t('pages:memoryStats.milestones', 'Milestones'),
       value: memoryStats?.milestones ?? 0,
       icon: Award,
       color: "text-amber-600 dark:text-amber-400",
       bgColor: "bg-amber-50 dark:bg-amber-950/30",
     },
     {
-      title: "This Year",
+      title: t('pages:memoryStats.thisYear', 'This Year'),
       value: memoryStats?.thisYear ?? 0,
       icon: TrendingUp,
       color: "text-green-600 dark:text-green-400",
@@ -75,10 +75,10 @@ export function MemoryStatsPage() {
     <main data-testid="stats-page" className="stats-container p-6 space-y-6">
       <header className="mb-6">
         <h1 data-testid="stats-title" className="text-2xl font-bold text-foreground">
-          Memory Statistics
+          {t('pages:memoryStats.title', 'Memory Statistics')}
         </h1>
         <p className="text-muted-foreground">
-          Track your tango journey and memories
+          {t('pages:memoryStats.subtitle', 'Track your tango journey and memories')}
         </p>
       </header>
 
@@ -116,7 +116,7 @@ export function MemoryStatsPage() {
 
       {isLoading && (
         <p data-testid="stats-loading" className="text-muted-foreground">
-          Loading memory stats...
+          {t('pages:memoryStats.loading', 'Loading memory stats...')}
         </p>
       )}
     </main>

@@ -52,7 +52,7 @@ export default function CitySlugRedirectPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-muted-foreground">Finding {cityName} community...</p>
+        <p className="text-muted-foreground">{t('pages:citySlugRedirect.finding', 'Finding {{city}} community...', { city: cityName })}</p>
       </div>
     );
   }
@@ -98,28 +98,28 @@ export default function CitySlugRedirectPage() {
               <CardContent className="pt-4 text-center">
                 <Calendar className="w-8 h-8 mx-auto text-blue-500 mb-2" />
                 <div className="text-2xl font-bold">{cityData.activeEvents || 0}</div>
-                <div className="text-sm text-muted-foreground">Events</div>
+                <div className="text-sm text-muted-foreground">{t('pages:citySlugRedirect.events', 'Events')}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-4 text-center">
                 <Home className="w-8 h-8 mx-auto text-amber-500 mb-2" />
                 <div className="text-2xl font-bold">{cityData.housing || 0}</div>
-                <div className="text-sm text-muted-foreground">Housing</div>
+                <div className="text-sm text-muted-foreground">{t('pages:citySlugRedirect.housing', 'Housing')}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-4 text-center">
                 <Sparkles className="w-8 h-8 mx-auto text-purple-500 mb-2" />
                 <div className="text-2xl font-bold">{cityData.recommendations || 0}</div>
-                <div className="text-sm text-muted-foreground">Recommendations</div>
+                <div className="text-sm text-muted-foreground">{t('pages:citySlugRedirect.recommendations', 'Recommendations')}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-4 text-center">
                 <MapPin className="w-8 h-8 mx-auto text-cyan-500 mb-2" />
                 <div className="text-2xl font-bold">{cityData.venues || 0}</div>
-                <div className="text-sm text-muted-foreground">Venues</div>
+                <div className="text-sm text-muted-foreground">{t('pages:citySlugRedirect.venues', 'Venues')}</div>
               </CardContent>
             </Card>
           </div>
@@ -128,33 +128,33 @@ export default function CitySlugRedirectPage() {
         {/* Actions */}
         <Card className="mb-8">
           <CardHeader>
-            <h2 className="text-xl font-semibold">Explore {cityName}</h2>
+            <h2 className="text-xl font-semibold">{t('pages:citySlugRedirect.explore', 'Explore {{city}}', { city: cityName })}</h2>
           </CardHeader>
           <CardContent className="flex flex-col sm:flex-row gap-4">
             <Link href={`/events?city=${encodeURIComponent(citySlug)}`} className="flex-1">
               <Button className="w-full gap-2" data-testid="button-view-events">
                 <Calendar className="w-4 h-4" />
-                View Events
+                {t('pages:citySlugRedirect.viewEvents', 'View Events')}
               </Button>
             </Link>
             <Link href={`/housing?city=${encodeURIComponent(citySlug)}`} className="flex-1">
               <Button variant="outline" className="w-full gap-2" data-testid="button-view-housing">
                 <Home className="w-4 h-4" />
-                Find Housing
+                {t('pages:citySlugRedirect.findHousing', 'Find Housing')}
               </Button>
             </Link>
             <Link href="/community-world-map" className="flex-1">
               <Button variant="outline" className="w-full gap-2" data-testid="button-view-map">
                 <MapPin className="w-4 h-4" />
-                World Map
+                {t('pages:citySlugRedirect.worldMap', 'World Map')}
               </Button>
             </Link>
           </CardContent>
         </Card>
 
         <div className="text-center text-muted-foreground">
-          <p>This city doesn't have a dedicated community group yet.</p>
-          <p className="text-sm mt-2">Interested in starting one? Contact us!</p>
+          <p>{t('pages:citySlugRedirect.noGroupYet', "This city doesn't have a dedicated community group yet.")}</p>
+          <p className="text-sm mt-2">{t('pages:citySlugRedirect.contactUs', 'Interested in starting one? Contact us!')}</p>
         </div>
       </div>
     </div>

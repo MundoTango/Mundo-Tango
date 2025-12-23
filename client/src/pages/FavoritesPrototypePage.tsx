@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,6 +54,7 @@ const SAVED_MUSIC = [
 ];
 
 export default function FavoritesPrototypePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState("posts");
 
   return (
@@ -75,15 +77,15 @@ export default function FavoritesPrototypePage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-              Your Collection
+              {t('pages:favoritesPrototype.yourCollection', 'Your Collection')}
             </Badge>
 
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white leading-tight mb-6">
-              Favorites
+              {t('pages:favoritesPrototype.title', 'Favorites')}
             </h1>
 
             <p className="text-xl text-white/80 max-w-2xl mx-auto">
-              Your curated collection of tango moments, events, and inspirations
+              {t('pages:favoritesPrototype.subtitle', 'Your curated collection of tango moments, events, and inspirations')}
             </p>
           </motion.div>
         </div>
@@ -101,28 +103,28 @@ export default function FavoritesPrototypePage() {
             <CardContent className="p-8 text-center">
               <Users className="w-8 h-8 mx-auto mb-3 text-primary" />
               <div className="text-3xl font-serif font-bold mb-2">{SAVED_POSTS.length}</div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Posts</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('pages:favoritesPrototype.posts', 'Posts')}</div>
             </CardContent>
           </Card>
           <Card className="hover-elevate">
             <CardContent className="p-8 text-center">
               <Calendar className="w-8 h-8 mx-auto mb-3 text-purple-500" />
               <div className="text-3xl font-serif font-bold mb-2">{SAVED_EVENTS.length}</div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Events</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('pages:favoritesPrototype.events', 'Events')}</div>
             </CardContent>
           </Card>
           <Card className="hover-elevate">
             <CardContent className="p-8 text-center">
               <Building2 className="w-8 h-8 mx-auto mb-3 text-green-500" />
               <div className="text-3xl font-serif font-bold mb-2">{SAVED_VENUES.length}</div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Venues</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('pages:favoritesPrototype.venues', 'Venues')}</div>
             </CardContent>
           </Card>
           <Card className="hover-elevate">
             <CardContent className="p-8 text-center">
               <Music className="w-8 h-8 mx-auto mb-3 text-cyan-500" />
               <div className="text-3xl font-serif font-bold mb-2">{SAVED_MUSIC.length}</div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Music</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('pages:favoritesPrototype.music', 'Music')}</div>
             </CardContent>
           </Card>
         </motion.div>
@@ -130,10 +132,10 @@ export default function FavoritesPrototypePage() {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-12">
-            <TabsTrigger value="posts">Posts</TabsTrigger>
-            <TabsTrigger value="events">Events</TabsTrigger>
-            <TabsTrigger value="venues">Venues</TabsTrigger>
-            <TabsTrigger value="music">Music</TabsTrigger>
+            <TabsTrigger value="posts">{t('pages:favoritesPrototype.posts', 'Posts')}</TabsTrigger>
+            <TabsTrigger value="events">{t('pages:favoritesPrototype.events', 'Events')}</TabsTrigger>
+            <TabsTrigger value="venues">{t('pages:favoritesPrototype.venues', 'Venues')}</TabsTrigger>
+            <TabsTrigger value="music">{t('pages:favoritesPrototype.music', 'Music')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="posts" className="space-y-8">

@@ -62,14 +62,14 @@ export default function CrowdfundingCampaignDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/crowdfunding/campaigns'] });
       toast({
-        title: "Thank you!",
-        description: "Your donation has been processed successfully.",
+        title: t('pages:crowdfunding.detail.donation.successTitle', 'Thank you!'),
+        description: t('pages:crowdfunding.detail.donation.successDescription', 'Your donation has been processed successfully.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to process donation. Please try again.",
+        title: t('common:error', 'Error'),
+        description: t('pages:crowdfunding.detail.donation.errorDescription', 'Failed to process donation. Please try again.'),
         variant: "destructive",
       });
     },
@@ -96,9 +96,9 @@ export default function CrowdfundingCampaignDetailPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <Heart className="w-16 h-16 text-muted-foreground mx-auto" />
-          <h2 className="text-2xl font-semibold">Campaign not found</h2>
+          <h2 className="text-2xl font-semibold">{t('pages:crowdfunding.detail.notFound.title', 'Campaign not found')}</h2>
           <Link href="/crowdfunding">
-            <Button variant="outline">Browse Campaigns</Button>
+            <Button variant="outline">{t('pages:crowdfunding.detail.notFound.cta', 'Browse Campaigns')}</Button>
           </Link>
         </div>
       </div>
@@ -169,8 +169,8 @@ export default function CrowdfundingCampaignDetailPage() {
                     <AvatarFallback>{campaign.creator?.name?.charAt(0) || 'C'}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm text-muted-foreground">Created by</p>
-                    <p className="font-medium text-foreground">{campaign.creator?.name || 'Anonymous'}</p>
+                    <p className="text-sm text-muted-foreground">{t('pages:crowdfunding.detail.createdBy', 'Created by')}</p>
+                    <p className="font-medium text-foreground">{campaign.creator?.name || t('common:anonymous', 'Anonymous')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -179,9 +179,9 @@ export default function CrowdfundingCampaignDetailPage() {
             {/* Campaign Story & Updates */}
             <Tabs defaultValue="story" className="space-y-6">
               <TabsList className="bg-card/50 backdrop-blur-md">
-                <TabsTrigger value="story">Campaign Story</TabsTrigger>
-                <TabsTrigger value="updates">Updates ({updates?.length || 0})</TabsTrigger>
-                <TabsTrigger value="backers">Backers ({backers?.length || 0})</TabsTrigger>
+                <TabsTrigger value="story">{t('pages:crowdfunding.detail.tabs.story', 'Campaign Story')}</TabsTrigger>
+                <TabsTrigger value="updates">{t('pages:crowdfunding.detail.tabs.updates', 'Updates')} ({updates?.length || 0})</TabsTrigger>
+                <TabsTrigger value="backers">{t('pages:crowdfunding.detail.tabs.backers', 'Backers')} ({backers?.length || 0})</TabsTrigger>
               </TabsList>
 
               <TabsContent value="story">
@@ -224,7 +224,7 @@ export default function CrowdfundingCampaignDetailPage() {
                 ) : (
                   <Card className="border-white/10 bg-card/50">
                     <CardContent className="p-8 text-center">
-                      <p className="text-muted-foreground">No updates yet</p>
+                      <p className="text-muted-foreground">{t('pages:crowdfunding.detail.updates.empty', 'No updates yet')}</p>
                     </CardContent>
                   </Card>
                 )}
@@ -250,7 +250,7 @@ export default function CrowdfundingCampaignDetailPage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-center text-muted-foreground">No backers yet. Be the first!</p>
+                      <p className="text-center text-muted-foreground">{t('pages:crowdfunding.detail.backers.empty', 'No backers yet. Be the first!')}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -280,19 +280,19 @@ export default function CrowdfundingCampaignDetailPage() {
                   <div>
                     <div className="flex items-center gap-2 text-muted-foreground mb-1">
                       <Users className="w-4 h-4" />
-                      <span className="text-sm">Backers</span>
+                      <span className="text-sm">{t('pages:crowdfunding.detail.stats.backers', 'Backers')}</span>
                     </div>
                     <p className="text-2xl font-bold text-foreground">{campaign.backerCount || 0}</p>
                   </div>
                   <div>
                     <div className="flex items-center gap-2 text-muted-foreground mb-1">
                       <Calendar className="w-4 h-4" />
-                      <span className="text-sm">Days Left</span>
+                      <span className="text-sm">{t('pages:crowdfunding.detail.stats.daysLeft', 'Days Left')}</span>
                     </div>
                     <p className="text-2xl font-bold text-foreground">
                       {campaign.daysRemaining !== null && campaign.daysRemaining !== undefined
                         ? Math.round(campaign.daysRemaining)
-                        : 'N/A'}
+                        : t('common:notAvailableAbbr', 'N/A')}
                     </p>
                   </div>
                 </div>
@@ -304,12 +304,12 @@ export default function CrowdfundingCampaignDetailPage() {
                   data-testid="button-back-project"
                 >
                   <Heart className="w-5 h-5 mr-2" />
-                  Back This Campaign
+                  {t('pages:crowdfunding.detail.cta.backCampaign', 'Back This Campaign')}
                 </Button>
 
                 {/* Share Buttons */}
                 <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">Share this campaign</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:crowdfunding.detail.share.title', 'Share this campaign')}</p>
                   <div className="flex gap-2">
                     <Button variant="outline" size="icon" className="flex-1">
                       <Facebook className="w-4 h-4" />
@@ -331,7 +331,7 @@ export default function CrowdfundingCampaignDetailPage() {
             {/* Donation Tiers */}
             {campaign.rewards && campaign.rewards.length > 0 && (
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-foreground">Reward Tiers</h3>
+                <h3 className="text-xl font-semibold text-foreground">{t('pages:crowdfunding.detail.rewardTiers.title', 'Reward Tiers')}</h3>
                 {campaign.rewards.map((tier: any) => (
                   <DonationTierCard
                     key={tier.id}

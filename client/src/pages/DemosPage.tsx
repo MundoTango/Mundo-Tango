@@ -148,7 +148,7 @@ export default function DemosPage() {
           >
             <motion.div variants={fadeInUp}>
               <Badge className="mb-4 bg-white/20 text-white border-0">
-                Platform Demos
+                {t('pages:demos.badge', 'Platform Demos')}
               </Badge>
             </motion.div>
             
@@ -157,14 +157,14 @@ export default function DemosPage() {
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-white"
               data-testid="text-demos-heading"
             >
-              Experience Mundo Tango
+              {t('pages:demos.title', 'Experience Mundo Tango')}
             </motion.h1>
             
             <motion.p 
               variants={fadeInUp}
               className="text-xl text-white/90 max-w-2xl mx-auto"
             >
-              Explore interactive demos of our powerful features. See how Mundo Tango can transform your tango journey.
+              {t('pages:demos.subtitle', 'Explore interactive demos of our powerful features. See how Mundo Tango can transform your tango journey.')}
             </motion.p>
             
             <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
@@ -175,7 +175,7 @@ export default function DemosPage() {
                 data-testid="button-watch-demo"
               >
                 <Play className="mr-2 h-5 w-5" />
-                Watch Interactive Demo
+                {t('pages:demos.watchDemo', 'Watch Interactive Demo')}
               </Button>
               <Link href="/register">
                 <Button 
@@ -184,7 +184,7 @@ export default function DemosPage() {
                   className="border-white/30 text-white hover:bg-white/10"
                   data-testid="button-start-trial"
                 >
-                  Start 7-Day Free Trial
+                  {t('pages:demos.startTrial', 'Start 7-Day Free Trial')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -207,13 +207,13 @@ export default function DemosPage() {
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
               >
-                Feature Demos
+                {t('pages:demos.featureDemos', 'Feature Demos')}
               </motion.h2>
               <motion.p 
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
-                Click on any feature to explore it in detail or watch the interactive demo.
+                {t('pages:demos.featureDemosSubtitle', 'Click on any feature to explore it in detail or watch the interactive demo.')}
               </motion.p>
             </div>
 
@@ -259,7 +259,7 @@ export default function DemosPage() {
                         {demo.route && (
                           <Link href={demo.route}>
                             <Button variant="ghost" size="sm" className="w-full mt-4">
-                              Explore
+                              {t('pages:demos.explore', 'Explore')}
                               <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                           </Link>
@@ -287,24 +287,24 @@ export default function DemosPage() {
               variants={fadeInUp}
               className="text-3xl font-bold"
             >
-              Ready to Start Your Tango Journey?
+              {t('pages:demos.ctaTitle', 'Ready to Start Your Tango Journey?')}
             </motion.h2>
             <motion.p 
               variants={fadeInUp}
               className="text-lg text-muted-foreground"
             >
-              Join thousands of dancers worldwide. Start your 7-day free trial today.
+              {t('pages:demos.ctaSubtitle', 'Join thousands of dancers worldwide. Start your 7-day free trial today.')}
             </motion.p>
             <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
               <Link href="/register">
                 <Button size="lg" className="ocean-gradient text-white" data-testid="button-join-free">
-                  Join Free
+                  {t('pages:demos.joinFree', 'Join Free')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/pricing">
                 <Button size="lg" variant="outline" data-testid="button-view-pricing">
-                  View Pricing
+                  {t('pages:demos.viewPricing', 'View Pricing')}
                 </Button>
               </Link>
             </motion.div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import { AlertCircle, Bug, Zap, Shield, Activity } from "lucide-react";
  * 6. Batch sending (every 10 seconds)
  */
 export default function ErrorDetectionTest() {
+  const { t } = useTranslation(["pages", "common"]);
   const [stats, setStats] = useState<any>(null);
   const [testResults, setTestResults] = useState<string[]>([]);
 
@@ -78,9 +80,9 @@ export default function ErrorDetectionTest() {
       <div className="flex items-center gap-3 mb-6">
         <Bug className="h-8 w-8 text-primary" />
         <div>
-          <h1 className="text-3xl font-bold">Error Detection Test Page</h1>
+          <h1 className="text-3xl font-bold">{t('pages:errorDetectionTest.title', 'Error Detection Test Page')}</h1>
           <p className="text-muted-foreground">
-            Test the ProactiveErrorDetector system
+            {t('pages:errorDetectionTest.subtitle', 'Test the ProactiveErrorDetector system')}
           </p>
         </div>
       </div>
@@ -90,33 +92,33 @@ export default function ErrorDetectionTest() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Error Detector Stats
+            {t('pages:errorDetectionTest.statsTitle', 'Error Detector Stats')}
           </CardTitle>
           <CardDescription>
-            Real-time statistics from the error detector
+            {t('pages:errorDetectionTest.statsDescription', 'Real-time statistics from the error detector')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-4 bg-muted rounded-lg">
               <div className="text-2xl font-bold">{stats?.totalErrors || 0}</div>
-              <div className="text-sm text-muted-foreground">Total Errors</div>
+              <div className="text-sm text-muted-foreground">{t('pages:errorDetectionTest.totalErrors', 'Total Errors')}</div>
             </div>
             <div className="p-4 bg-muted rounded-lg">
               <div className="text-2xl font-bold">{stats?.queuedErrors || 0}</div>
-              <div className="text-sm text-muted-foreground">Queued</div>
+              <div className="text-sm text-muted-foreground">{t('pages:errorDetectionTest.queued', 'Queued')}</div>
             </div>
             <div className="p-4 bg-muted rounded-lg">
               <div className="text-2xl font-bold">{stats?.recentErrors || 0}</div>
-              <div className="text-sm text-muted-foreground">Recent (1 min)</div>
+              <div className="text-sm text-muted-foreground">{t('pages:errorDetectionTest.recent', 'Recent (1 min)')}</div>
             </div>
             <div className="p-4 bg-muted rounded-lg">
               <div className="text-2xl font-bold">{stats?.rateLimitRemaining || 10}</div>
-              <div className="text-sm text-muted-foreground">Limit Remaining</div>
+              <div className="text-sm text-muted-foreground">{t('pages:errorDetectionTest.limitRemaining', 'Limit Remaining')}</div>
             </div>
           </div>
           <Button onClick={updateStats} variant="outline" className="mt-4" size="sm">
-            Refresh Stats
+            {t('pages:errorDetectionTest.refreshStats', 'Refresh Stats')}
           </Button>
         </CardContent>
       </Card>
@@ -126,44 +128,44 @@ export default function ErrorDetectionTest() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Zap className="h-5 w-5" />
-            Error Triggers
+            {t('pages:errorDetectionTest.triggersTitle', 'Error Triggers')}
           </CardTitle>
           <CardDescription>
-            Manually trigger different types of errors
+            {t('pages:errorDetectionTest.triggersDescription', 'Manually trigger different types of errors')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button onClick={testConsoleError} variant="outline" className="justify-start">
               <Bug className="h-4 w-4 mr-2" />
-              Trigger console.error
+              {t('pages:errorDetectionTest.triggerConsoleError', 'Trigger console.error')}
             </Button>
             
             <Button onClick={testConsoleWarn} variant="outline" className="justify-start">
               <AlertCircle className="h-4 w-4 mr-2" />
-              Trigger console.warn
+              {t('pages:errorDetectionTest.triggerConsoleWarn', 'Trigger console.warn')}
             </Button>
             
             <Button onClick={testUnhandledError} variant="outline" className="justify-start">
               <Zap className="h-4 w-4 mr-2" />
-              Trigger Unhandled Error
+              {t('pages:errorDetectionTest.triggerUnhandledError', 'Trigger Unhandled Error')}
             </Button>
             
             <Button onClick={testUnhandledRejection} variant="outline" className="justify-start">
               <Shield className="h-4 w-4 mr-2" />
-              Trigger Promise Rejection
+              {t('pages:errorDetectionTest.triggerPromiseRejection', 'Trigger Promise Rejection')}
             </Button>
           </div>
 
           <div className="border-t pt-4 space-y-3">
-            <h3 className="font-semibold">Advanced Tests</h3>
+            <h3 className="font-semibold">{t('pages:errorDetectionTest.advancedTests', 'Advanced Tests')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button onClick={testRateLimiting} variant="secondary">
-                Test Rate Limiting (20 errors)
+                {t('pages:errorDetectionTest.testRateLimiting', 'Test Rate Limiting (20 errors)')}
               </Button>
               
               <Button onClick={testBatchSending} variant="secondary">
-                Force Batch Send Now
+                {t('pages:errorDetectionTest.forceBatchSend', 'Force Batch Send Now')}
               </Button>
             </div>
           </div>
@@ -176,21 +178,21 @@ export default function ErrorDetectionTest() {
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Activity className="h-5 w-5" />
-              Test Results
+              {t('pages:errorDetectionTest.testResults', 'Test Results')}
             </div>
             <Button onClick={clearResults} variant="ghost" size="sm">
-              Clear
+              {t('pages:errorDetectionTest.clear', 'Clear')}
             </Button>
           </CardTitle>
           <CardDescription>
-            Log of test actions and results
+            {t('pages:errorDetectionTest.testResultsDescription', 'Log of test actions and results')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {testResults.length === 0 ? (
               <p className="text-muted-foreground text-sm">
-                No tests run yet. Click a button above to start testing.
+                {t('pages:errorDetectionTest.noTestsYet', 'No tests run yet. Click a button above to start testing.')}
               </p>
             ) : (
               testResults.map((result, i) => (
@@ -206,7 +208,7 @@ export default function ErrorDetectionTest() {
       {/* Instructions */}
       <Card>
         <CardHeader>
-          <CardTitle>Instructions</CardTitle>
+          <CardTitle>{t('pages:errorDetectionTest.instructions', 'Instructions')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-2">

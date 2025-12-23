@@ -14,8 +14,8 @@ export default function PaymentSuccessPage() {
     <SelfHealingErrorBoundary pageName="Payment Success" fallbackRoute="/pricing">
       <>
         <SEO
-          title="Payment Successful"
-          description="Your payment has been processed successfully. Thank you for your purchase."
+          title={t('pages:paymentSuccess.seoTitle', 'Payment Successful')}
+          description={t('pages:paymentSuccess.seoDescription', 'Your payment has been processed successfully. Thank you for your purchase.')}
         />
 
         {/* Hero Section - 16:9 */}
@@ -48,15 +48,15 @@ export default function PaymentSuccessPage() {
               </motion.div>
 
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Payment Confirmed
+                {t('pages:paymentSuccess.badge', 'Payment Confirmed')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Payment Successful!
+                {t('pages:paymentSuccess.heroTitle', 'Payment Successful!')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                Thank you for your purchase. Your payment has been processed successfully.
+                {t('pages:paymentSuccess.heroSubtitle', 'Thank you for your purchase. Your payment has been processed successfully.')}
               </p>
             </motion.div>
           </div>
@@ -75,22 +75,22 @@ export default function PaymentSuccessPage() {
                 <CardContent className="p-8 space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b">
                     <Receipt className="h-5 w-5 text-primary" />
-                    <h2 className="text-lg font-serif font-semibold">Transaction Details</h2>
+                    <h2 className="text-lg font-serif font-semibold">{t('pages:paymentSuccess.transactionDetails', 'Transaction Details')}</h2>
                   </div>
                   
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Transaction ID</span>
+                      <span className="text-muted-foreground">{t('pages:paymentSuccess.transactionId', 'Transaction ID')}</span>
                       <span className="font-mono font-semibold">TXN-2025-ABC123</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Date</span>
+                      <span className="text-muted-foreground">{t('pages:paymentSuccess.date', 'Date')}</span>
                       <span className="font-semibold">{new Date().toLocaleDateString()}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Status</span>
+                      <span className="text-muted-foreground">{t('pages:paymentSuccess.status', 'Status')}</span>
                       <Badge className="bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400">
-                        Completed
+                        {t('pages:paymentSuccess.completed', 'Completed')}
                       </Badge>
                     </div>
                   </div>
@@ -99,7 +99,7 @@ export default function PaymentSuccessPage() {
                     <div className="flex items-start gap-3">
                       <Mail className="h-5 w-5 text-primary mt-0.5" />
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        A confirmation email has been sent to your email address with your receipt and transaction details.
+                        {t('pages:paymentSuccess.emailConfirmation', 'A confirmation email has been sent to your email address with your receipt and transaction details.')}
                       </p>
                     </div>
                   </div>
@@ -110,13 +110,13 @@ export default function PaymentSuccessPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Link href="/feed">
                   <Button size="lg" className="gap-2 min-w-[200px]" data-testid="button-home">
-                    Go to Feed
+                    {t('pages:paymentSuccess.goToFeed', 'Go to Feed')}
                     <ChevronRight className="h-5 w-5" />
                   </Button>
                 </Link>
                 <Link href="/billing">
                   <Button variant="outline" size="lg" className="gap-2 min-w-[200px]" data-testid="button-billing">
-                    View Billing
+                    {t('pages:paymentSuccess.viewBilling', 'View Billing')}
                   </Button>
                 </Link>
               </div>

@@ -36,8 +36,8 @@ export default function MarketplaceCheckoutPage() {
     },
     onSuccess: (data: any) => {
       toast({
-        title: "Order placed successfully!",
-        description: `Your order #${data.orderId || '12345'} has been confirmed`,
+        title: t('pages:marketplaceCheckout.orderPlaced', 'Order placed successfully!'),
+        description: t('pages:marketplaceCheckout.orderConfirmed', `Your order #${data.orderId || '12345'} has been confirmed`),
       });
       // In production, redirect to Stripe checkout or order confirmation
       setTimeout(() => {
@@ -46,8 +46,8 @@ export default function MarketplaceCheckoutPage() {
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to place order. Please try again.",
+        title: t('pages:marketplaceCheckout.error', 'Error'),
+        description: t('pages:marketplaceCheckout.failedToPlaceOrder', 'Failed to place order. Please try again.'),
         variant: "destructive",
       });
     },
@@ -60,7 +60,7 @@ export default function MarketplaceCheckoutPage() {
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold">Checkout</h1>
+        <h1 className="text-3xl font-bold">{t('pages:marketplaceCheckout.checkout', 'Checkout')}</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Checkout Wizard */}

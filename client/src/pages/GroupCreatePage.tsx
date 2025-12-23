@@ -89,15 +89,15 @@ export default function GroupCreatePage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
       toast({
-        title: "Group created!",
-        description: `${data.name} has been created successfully.`,
+        title: t('pages:groupCreate.groupCreated', 'Group created!'),
+        description: t('pages:groupCreate.groupCreatedDescription', '{{name}} has been created successfully.', { name: data.name }),
       });
       setLocation(`/groups/${data.id}`);
     },
     onError: (error: Error) => {
       toast({
         variant: "destructive",
-        title: "Failed to create group",
+        title: t('pages:groupCreate.failedToCreate', 'Failed to create group'),
         description: error.message,
       });
     },
@@ -131,7 +131,7 @@ export default function GroupCreatePage() {
           <Link href="/groups">
             <Button variant="ghost" size="sm" className="gap-2" data-testid="button-back-groups">
               <ArrowLeft className="h-4 w-4" />
-              Back to Groups
+              {t('pages:groupCreate.backToGroups', 'Back to Groups')}
             </Button>
           </Link>
         </div>
@@ -143,8 +143,8 @@ export default function GroupCreatePage() {
                 <Users className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <CardTitle data-testid="text-page-title">Create New Group</CardTitle>
-                <CardDescription>Build your tango community</CardDescription>
+                <CardTitle data-testid="text-page-title">{t('pages:groupCreate.title', 'Create New Group')}</CardTitle>
+                <CardDescription>{t('pages:groupCreate.subtitle', 'Build your tango community')}</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -156,7 +156,7 @@ export default function GroupCreatePage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Group Name</FormLabel>
+                      <FormLabel>{t('pages:groupCreate.groupName', 'Group Name')}</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="e.g., Buenos Aires Tango Community" 
@@ -180,7 +180,7 @@ export default function GroupCreatePage() {
                   name="slug"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>URL Slug</FormLabel>
+                      <FormLabel>{t('pages:groupCreate.urlSlug', 'URL Slug')}</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="buenos-aires-tango" 
@@ -201,7 +201,7 @@ export default function GroupCreatePage() {
                   name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Group Type</FormLabel>
+                      <FormLabel>{t('pages:groupCreate.groupType', 'Group Type')}</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger data-testid="select-group-type">
@@ -209,11 +209,11 @@ export default function GroupCreatePage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="city">City Community</SelectItem>
-                          <SelectItem value="professional">Professional Network</SelectItem>
-                          <SelectItem value="interest">Interest Group</SelectItem>
-                          <SelectItem value="event">Event Series</SelectItem>
-                          <SelectItem value="school">Dance School</SelectItem>
+                          <SelectItem value="city">{t('pages:groupCreate.cityCommunity', 'City Community')}</SelectItem>
+                          <SelectItem value="professional">{t('pages:groupCreate.professionalNetwork', 'Professional Network')}</SelectItem>
+                          <SelectItem value="interest">{t('pages:groupCreate.interestGroup', 'Interest Group')}</SelectItem>
+                          <SelectItem value="event">{t('pages:groupCreate.eventSeries', 'Event Series')}</SelectItem>
+                          <SelectItem value="school">{t('pages:groupCreate.danceSchool', 'Dance School')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -226,7 +226,7 @@ export default function GroupCreatePage() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Short Description</FormLabel>
+                      <FormLabel>{t('pages:groupCreate.shortDescription', 'Short Description')}</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="Briefly describe your group..."
@@ -246,7 +246,7 @@ export default function GroupCreatePage() {
                   name="longDescription"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Detailed Description (Optional)</FormLabel>
+                      <FormLabel>{t('pages:groupCreate.detailedDescription', 'Detailed Description (Optional)')}</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="Provide more details about your group, its goals, and what members can expect..."
@@ -266,7 +266,7 @@ export default function GroupCreatePage() {
                   name="visibility"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Visibility</FormLabel>
+                      <FormLabel>{t('pages:groupCreate.visibility', 'Visibility')}</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger data-testid="select-visibility">
@@ -274,9 +274,9 @@ export default function GroupCreatePage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="public">Public - Anyone can find and view</SelectItem>
-                          <SelectItem value="private">Private - Only members can view</SelectItem>
-                          <SelectItem value="secret">Secret - Hidden from search</SelectItem>
+                          <SelectItem value="public">{t('pages:groupCreate.publicVisibility', 'Public - Anyone can find and view')}</SelectItem>
+                          <SelectItem value="private">{t('pages:groupCreate.privateVisibility', 'Private - Only members can view')}</SelectItem>
+                          <SelectItem value="secret">{t('pages:groupCreate.secretVisibility', 'Secret - Hidden from search')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -290,9 +290,9 @@ export default function GroupCreatePage() {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Require Join Approval</FormLabel>
+                        <FormLabel className="text-base">{t('pages:groupCreate.requireJoinApproval', 'Require Join Approval')}</FormLabel>
                         <FormDescription>
-                          New members must be approved by admins
+                          {t('pages:groupCreate.joinApprovalDescription', 'New members must be approved by admins')}
                         </FormDescription>
                       </div>
                       <FormControl>
@@ -307,7 +307,7 @@ export default function GroupCreatePage() {
                 />
 
                 <div className="space-y-4">
-                  <h4 className="font-medium">Group Features</h4>
+                  <h4 className="font-medium">{t('pages:groupCreate.groupFeatures', 'Group Features')}</h4>
                   
                   <FormField
                     control={form.control}
@@ -315,7 +315,7 @@ export default function GroupCreatePage() {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                         <div>
-                          <FormLabel>Allow Events</FormLabel>
+                          <FormLabel>{t('pages:groupCreate.allowEvents', 'Allow Events')}</FormLabel>
                         </div>
                         <FormControl>
                           <Switch
@@ -334,7 +334,7 @@ export default function GroupCreatePage() {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                         <div>
-                          <FormLabel>Allow Posts</FormLabel>
+                          <FormLabel>{t('pages:groupCreate.allowPosts', 'Allow Posts')}</FormLabel>
                         </div>
                         <FormControl>
                           <Switch
@@ -353,7 +353,7 @@ export default function GroupCreatePage() {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                         <div>
-                          <FormLabel>Allow Discussions</FormLabel>
+                          <FormLabel>{t('pages:groupCreate.allowDiscussions', 'Allow Discussions')}</FormLabel>
                         </div>
                         <FormControl>
                           <Switch
@@ -370,7 +370,7 @@ export default function GroupCreatePage() {
                 <div className="flex gap-3 pt-4">
                   <Link href="/groups" className="flex-1">
                     <Button type="button" variant="outline" className="w-full" data-testid="button-cancel">
-                      Cancel
+                      {t('common:cancel', 'Cancel')}
                     </Button>
                   </Link>
                   <Button 
@@ -379,7 +379,7 @@ export default function GroupCreatePage() {
                     disabled={createGroup.isPending}
                     data-testid="button-create-group"
                   >
-                    {createGroup.isPending ? "Creating..." : "Create Group"}
+                    {createGroup.isPending ? t('pages:groupCreate.creating', 'Creating...') : t('pages:groupCreate.createGroup', 'Create Group')}
                   </Button>
                 </div>
               </form>

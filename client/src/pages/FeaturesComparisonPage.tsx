@@ -87,15 +87,15 @@ export default function FeaturesComparisonPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Zap className="w-3 h-3 mr-1.5" />
-                  Plans & Features
+                  {t('pages:featuresComparison.badge', 'Plans & Features')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Choose Your Plan
+                  {t('pages:featuresComparison.title', 'Choose Your Plan')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Free forever for dancers. Premium tools for professionals.
+                  {t('pages:featuresComparison.subtitle', 'Free forever for dancers. Premium tools for professionals.')}
                 </p>
               </motion.div>
             </div>
@@ -120,7 +120,7 @@ export default function FeaturesComparisonPage() {
                       <CardHeader>
                         <div className="space-y-2">
                           {plan.featured && (
-                            <Badge className="w-fit">Most Popular</Badge>
+                            <Badge className="w-fit">{t('pages:featuresComparison.mostPopular', 'Most Popular')}</Badge>
                           )}
                           <CardTitle className="text-3xl font-serif">{plan.name}</CardTitle>
                           <div>
@@ -154,7 +154,7 @@ export default function FeaturesComparisonPage() {
                           data-testid={`button-select-${idx}`}
                         >
                           <a href={plan.price === "Custom" ? "/contact" : "/register"}>
-                            {plan.price === "Custom" ? "Contact Sales" : "Get Started"}
+                            {plan.price === "Custom" ? t('pages:featuresComparison.contactSales', 'Contact Sales') : t('pages:featuresComparison.getStarted', 'Get Started')}
                           </a>
                         </Button>
                       </CardContent>
@@ -171,9 +171,9 @@ export default function FeaturesComparisonPage() {
               >
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-note">
                   <CardContent className="py-12 text-center">
-                    <h3 className="text-2xl font-serif font-bold mb-3">Questions About Plans?</h3>
+                    <h3 className="text-2xl font-serif font-bold mb-3">{t('pages:featuresComparison.questionsTitle', 'Questions About Plans?')}</h3>
                     <p className="text-muted-foreground mb-6">
-                      We're here to help you find the perfect plan for your needs
+                      {t('pages:featuresComparison.questionsDescription', "We're here to help you find the perfect plan for your needs")}
                     </p>
                     <div className="flex gap-4 justify-center flex-wrap">
                       <a 
@@ -181,7 +181,7 @@ export default function FeaturesComparisonPage() {
                         className="text-primary hover:underline font-semibold"
                         data-testid="link-pricing"
                       >
-                        View Full Pricing
+                        {t('pages:featuresComparison.viewFullPricing', 'View Full Pricing')}
                       </a>
                       <span className="text-muted-foreground">·</span>
                       <a 
@@ -189,7 +189,7 @@ export default function FeaturesComparisonPage() {
                         className="text-primary hover:underline font-semibold"
                         data-testid="link-contact"
                       >
-                        Contact Sales
+                        {t('pages:featuresComparison.contactSales', 'Contact Sales')}
                       </a>
                     </div>
                   </CardContent>

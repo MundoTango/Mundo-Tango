@@ -44,10 +44,10 @@ export default function H2ACDashboardPage() {
   const skillScore = volunteerProfile?.skillScore || 0;
 
   const metrics = [
-    { label: "Active Agents", value: "134", change: "All online", icon: Bot, color: "text-blue-500" },
-    { label: "Your Matches", value: matchCount.toString(), change: matchCount > 0 ? "Ready to review" : "Start matching", icon: UserCheck, color: "text-green-500" },
-    { label: "Tasks Completed", value: tasksCompleted.toString(), change: tasksCompleted > 0 ? "Active contributor" : "-", icon: CheckCircle, color: "text-purple-500" },
-    { label: "Skill Score", value: skillScore > 0 ? `${skillScore}%` : "-", change: skillScore > 0 ? "Analyzed" : "Upload resume", icon: Target, color: "text-orange-500" }
+    { label: t('pages:h2acDashboard.activeAgents', 'Active Agents'), value: "134", change: t('pages:h2acDashboard.allOnline', 'All online'), icon: Bot, color: "text-blue-500" },
+    { label: t('pages:h2acDashboard.yourMatches', 'Your Matches'), value: matchCount.toString(), change: matchCount > 0 ? t('pages:h2acDashboard.readyToReview', 'Ready to review') : t('pages:h2acDashboard.startMatching', 'Start matching'), icon: UserCheck, color: "text-green-500" },
+    { label: t('pages:h2acDashboard.tasksCompleted', 'Tasks Completed'), value: tasksCompleted.toString(), change: tasksCompleted > 0 ? t('pages:h2acDashboard.activeContributor', 'Active contributor') : "-", icon: CheckCircle, color: "text-purple-500" },
+    { label: t('pages:h2acDashboard.skillScore', 'Skill Score'), value: skillScore > 0 ? `${skillScore}%` : "-", change: skillScore > 0 ? t('pages:h2acDashboard.analyzed', 'Analyzed') : t('pages:h2acDashboard.uploadResume', 'Upload resume'), icon: Target, color: "text-orange-500" }
   ];
 
   const talentMatchAgents = [
@@ -118,11 +118,11 @@ export default function H2ACDashboardPage() {
   const matchedOpportunities = volunteerMatches || [];
 
   return (
-    <SelfHealingErrorBoundary pageName="Volunteer Dashboard" fallbackRoute="/feed">
-      <PageLayout title="Volunteer Dashboard" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:h2acDashboard.pageName', 'Volunteer Dashboard')} fallbackRoute="/feed">
+      <PageLayout title={t('pages:h2acDashboard.title', 'Volunteer Dashboard')} showBreadcrumbs>
         <SEO
-          title="Volunteer Dashboard - Mundo Tango"
-          description="Your volunteer dashboard for talent matching, task assignments, and AI agent collaboration."
+          title={t('pages:h2acDashboard.seoTitle', 'Volunteer Dashboard - Mundo Tango')}
+          description={t('pages:h2acDashboard.seoDescription', 'Your volunteer dashboard for talent matching, task assignments, and AI agent collaboration.')}
         />
 
         <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
@@ -139,8 +139,8 @@ export default function H2ACDashboardPage() {
                     <MessageSquare className="h-6 w-6 text-blue-500" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold">Volunteer Dashboard</h2>
-                    <p className="text-muted-foreground">Track your volunteer opportunities and AI-matched assignments</p>
+                    <h2 className="text-xl font-bold">{t('pages:h2acDashboard.heading', 'Volunteer Dashboard')}</h2>
+                    <p className="text-muted-foreground">{t('pages:h2acDashboard.subheading', 'Track your volunteer opportunities and AI-matched assignments')}</p>
                   </div>
                 </div>
                 
@@ -148,7 +148,7 @@ export default function H2ACDashboardPage() {
                   <Link href="/talent-match">
                     <Button className="gap-2" data-testid="button-start-talent-match">
                       <Brain className="h-4 w-4" />
-                      Start Talent Match
+                      {t('pages:h2acDashboard.startTalentMatch', 'Start Talent Match')}
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </Link>
@@ -172,16 +172,16 @@ export default function H2ACDashboardPage() {
                           <Sparkles className="h-8 w-8 text-primary" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold">Activate Your AI Agent Team</h3>
+                          <h3 className="text-xl font-bold">{t('pages:h2acDashboard.activateTeam', 'Activate Your AI Agent Team')}</h3>
                           <p className="text-muted-foreground">
-                            Complete Talent Match to unlock personalized agent assignments and opportunities
+                            {t('pages:h2acDashboard.activateDescription', 'Complete Talent Match to unlock personalized agent assignments and opportunities')}
                           </p>
                         </div>
                       </div>
                       <Link href="/talent-match">
                         <Button size="lg" className="gap-2" data-testid="button-activate-agents">
                           <Brain className="h-5 w-5" />
-                          Begin Talent Match
+                          {t('pages:h2acDashboard.beginTalentMatch', 'Begin Talent Match')}
                         </Button>
                       </Link>
                     </div>
@@ -216,10 +216,10 @@ export default function H2ACDashboardPage() {
             {/* Main Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
-                <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
-                <TabsTrigger value="talent-agents" data-testid="tab-talent-agents">Talent Agents</TabsTrigger>
-                <TabsTrigger value="opportunities" data-testid="tab-opportunities">Opportunities</TabsTrigger>
-                <TabsTrigger value="communications" data-testid="tab-communications">Communications</TabsTrigger>
+                <TabsTrigger value="overview" data-testid="tab-overview">{t('pages:h2acDashboard.tabOverview', 'Overview')}</TabsTrigger>
+                <TabsTrigger value="talent-agents" data-testid="tab-talent-agents">{t('pages:h2acDashboard.tabTalentAgents', 'Talent Agents')}</TabsTrigger>
+                <TabsTrigger value="opportunities" data-testid="tab-opportunities">{t('pages:h2acDashboard.tabOpportunities', 'Opportunities')}</TabsTrigger>
+                <TabsTrigger value="communications" data-testid="tab-communications">{t('pages:h2acDashboard.tabCommunications', 'Communications')}</TabsTrigger>
               </TabsList>
 
               {/* Overview Tab */}
@@ -230,7 +230,7 @@ export default function H2ACDashboardPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <MessageSquare className="h-5 w-5 text-primary" />
-                        Recent Agent Communications
+                        {t('pages:h2acDashboard.recentCommunications', 'Recent Agent Communications')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
@@ -268,7 +268,7 @@ export default function H2ACDashboardPage() {
                         </div>
                       ))}
                       <Button className="w-full" variant="outline" data-testid="button-view-all-communications">
-                        View All Communications
+                        {t('pages:h2acDashboard.viewAllCommunications', 'View All Communications')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -278,7 +278,7 @@ export default function H2ACDashboardPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Bot className="h-5 w-5 text-blue-500" />
-                        Agent Categories
+                        {t('pages:h2acDashboard.agentCategories', 'Agent Categories')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
@@ -289,9 +289,9 @@ export default function H2ACDashboardPage() {
                             <span className="text-sm font-bold text-green-500">{category.healthScore}%</span>
                           </div>
                           <div className="flex gap-6 text-sm text-muted-foreground">
-                            <span>Total: {category.count}</span>
+                            <span>{t('pages:h2acDashboard.total', 'Total')}: {category.count}</span>
                             <span>•</span>
-                            <span>Active: {category.active}</span>
+                            <span>{t('pages:h2acDashboard.active', 'Active')}: {category.active}</span>
                           </div>
                           <div className="mt-2 h-2 bg-muted rounded-full overflow-hidden">
                             <div 
@@ -312,10 +312,10 @@ export default function H2ACDashboardPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Brain className="h-5 w-5 text-primary" />
-                      Your Talent Match Agents
+                      {t('pages:h2acDashboard.talentMatchAgents', 'Your Talent Match Agents')}
                     </CardTitle>
                     <CardDescription>
-                      AI agents assigned to help you find the perfect volunteer role
+                      {t('pages:h2acDashboard.talentMatchDescription', 'AI agents assigned to help you find the perfect volunteer role')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -367,7 +367,7 @@ export default function H2ACDashboardPage() {
                               {agent.status === "active" && (
                                 <div className="mt-3 flex items-center gap-2 text-xs text-green-600">
                                   <Activity className="h-3 w-3" />
-                                  <span>Currently processing your profile</span>
+                                  <span>{t('pages:h2acDashboard.processingProfile', 'Currently processing your profile')}</span>
                                 </div>
                               )}
                             </CardContent>
@@ -381,7 +381,7 @@ export default function H2ACDashboardPage() {
                         <Link href="/talent-match">
                           <Button className="gap-2" data-testid="button-activate-talent-agents">
                             <Zap className="h-4 w-4" />
-                            Activate Talent Agents
+                            {t('pages:h2acDashboard.activateTalentAgents', 'Activate Talent Agents')}
                           </Button>
                         </Link>
                       </div>
@@ -396,10 +396,10 @@ export default function H2ACDashboardPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Briefcase className="h-5 w-5 text-primary" />
-                      Matched Opportunities
+                      {t('pages:h2acDashboard.matchedOpportunities', 'Matched Opportunities')}
                     </CardTitle>
                     <CardDescription>
-                      Volunteer roles that match your skills and preferences
+                      {t('pages:h2acDashboard.matchedOpportunitiesDescription', 'Volunteer roles that match your skills and preferences')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -419,10 +419,10 @@ export default function H2ACDashboardPage() {
                                     <div className="flex items-center gap-3 mb-2">
                                       <h4 className="font-semibold">{opp.title}</h4>
                                       <Badge variant="outline" className="border-green-500 text-green-600">
-                                        {opp.matchScore}% Match
+                                        {t('pages:h2acDashboard.matchPercent', '{{score}}% Match', { score: opp.matchScore })}
                                       </Badge>
                                     </div>
-                                    <p className="text-sm text-muted-foreground mb-3">Team: {opp.team}</p>
+                                    <p className="text-sm text-muted-foreground mb-3">{t('pages:h2acDashboard.team', 'Team')}: {opp.team}</p>
                                     <div className="flex flex-wrap gap-2">
                                       {opp.skills.map((skill, i) => (
                                         <Badge key={i} variant="secondary" className="text-xs">
@@ -432,7 +432,7 @@ export default function H2ACDashboardPage() {
                                     </div>
                                   </div>
                                   <Button size="sm" className="gap-2" data-testid={`button-apply-${opp.id}`}>
-                                    Apply
+                                    {t('pages:h2acDashboard.apply', 'Apply')}
                                     <ArrowRight className="h-4 w-4" />
                                   </Button>
                                 </div>
@@ -446,14 +446,14 @@ export default function H2ACDashboardPage() {
                         <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
                           <Target className="h-8 w-8 text-muted-foreground" />
                         </div>
-                        <h3 className="text-lg font-semibold mb-2">No Matches Yet</h3>
+                        <h3 className="text-lg font-semibold mb-2">{t('pages:h2acDashboard.noMatchesYet', 'No Matches Yet')}</h3>
                         <p className="text-muted-foreground mb-4">
-                          Complete Talent Match to discover opportunities that fit your skills
+                          {t('pages:h2acDashboard.noMatchesDescription', 'Complete Talent Match to discover opportunities that fit your skills')}
                         </p>
                         <Link href="/talent-match">
                           <Button className="gap-2" data-testid="button-start-matching">
                             <Brain className="h-4 w-4" />
-                            Start Talent Match
+                            {t('pages:h2acDashboard.startTalentMatch', 'Start Talent Match')}
                           </Button>
                         </Link>
                       </div>
@@ -468,10 +468,10 @@ export default function H2ACDashboardPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <MessageSquare className="h-5 w-5 text-primary" />
-                      All Agent Communications
+                      {t('pages:h2acDashboard.allCommunications', 'All Agent Communications')}
                     </CardTitle>
                     <CardDescription>
-                      Full history of communications from your assigned agents
+                      {t('pages:h2acDashboard.allCommunicationsDescription', 'Full history of communications from your assigned agents')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">

@@ -27,53 +27,54 @@ interface StateConfig {
   color: string;
 }
 
-const AVATAR_STATES: StateConfig[] = [
+const getAvatarStates = (t: any): StateConfig[] => [
   {
     state: 'idle',
     icon: Smile,
-    label: 'Idle',
-    description: 'Relaxed breathing, gentle floating',
+    label: t('pages:mrBlueAvatarDemo.stateIdle', 'Idle'),
+    description: t('pages:mrBlueAvatarDemo.stateIdleDesc', 'Relaxed breathing, gentle floating'),
     color: 'bg-blue-500',
   },
   {
     state: 'listening',
     icon: Mic,
-    label: 'Listening',
-    description: 'Attentive, focused, brighter glow',
+    label: t('pages:mrBlueAvatarDemo.stateListening', 'Listening'),
+    description: t('pages:mrBlueAvatarDemo.stateListeningDesc', 'Attentive, focused, brighter glow'),
     color: 'bg-cyan-500',
   },
   {
     state: 'speaking',
     icon: MessageSquare,
-    label: 'Speaking',
-    description: 'Animated, pulsing, expressive',
+    label: t('pages:mrBlueAvatarDemo.stateSpeaking', 'Speaking'),
+    description: t('pages:mrBlueAvatarDemo.stateSpeakingDesc', 'Animated, pulsing, expressive'),
     color: 'bg-blue-600',
   },
   {
     state: 'thinking',
     icon: Brain,
-    label: 'Thinking',
-    description: 'Contemplative, slower movement',
+    label: t('pages:mrBlueAvatarDemo.stateThinking', 'Thinking'),
+    description: t('pages:mrBlueAvatarDemo.stateThinkingDesc', 'Contemplative, slower movement'),
     color: 'bg-purple-500',
   },
   {
     state: 'happy',
     icon: PartyPopper,
-    label: 'Happy',
-    description: 'Joyful, energetic, golden glow',
+    label: t('pages:mrBlueAvatarDemo.stateHappy', 'Happy'),
+    description: t('pages:mrBlueAvatarDemo.stateHappyDesc', 'Joyful, energetic, golden glow'),
     color: 'bg-yellow-500',
   },
   {
     state: 'excited',
     icon: Sparkles,
-    label: 'Excited',
-    description: 'Vibrant, rapid movement, intense',
+    label: t('pages:mrBlueAvatarDemo.stateExcited', 'Excited'),
+    description: t('pages:mrBlueAvatarDemo.stateExcitedDesc', 'Vibrant, rapid movement, intense'),
     color: 'bg-pink-500',
   },
 ];
 
 export default function MrBlueAvatarDemo() {
   const { t } = useTranslation(["pages", "common"]);
+  const AVATAR_STATES = getAvatarStates(t);
   const [selectedState, setSelectedState] = useState<AvatarState>('idle');
   const [audioLevel, setAudioLevel] = useState(0);
   const [enableControls, setEnableControls] = useState(false);
@@ -93,7 +94,7 @@ export default function MrBlueAvatarDemo() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [isAutoDemo]);
+  }, [isAutoDemo, AVATAR_STATES]);
 
   // Simulate audio level fluctuation
   useEffect(() => {
@@ -120,11 +121,11 @@ export default function MrBlueAvatarDemo() {
             <div className="flex items-center justify-center gap-3">
               <Sparkles className="h-10 w-10 text-primary" />
               <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-500 to-purple-600 bg-clip-text text-transparent">
-                Mr. Blue Pixar Avatar
+                {t('pages:mrBlueAvatarDemo.title', 'Mr. Blue Pixar Avatar')}
               </h1>
             </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Beautiful 3D animated sphere avatar with emotional states and voice reactivity
+              {t('pages:mrBlueAvatarDemo.subtitle', 'Beautiful 3D animated sphere avatar with emotional states and voice reactivity')}
             </p>
           </div>
 
@@ -136,10 +137,10 @@ export default function MrBlueAvatarDemo() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
                       <currentConfig.icon className="h-5 w-5" />
-                      {currentConfig.label} State
+                      {currentConfig.label} {t('pages:mrBlueAvatarDemo.state', 'State')}
                     </CardTitle>
                     <Badge className={`${currentConfig.color} text-white`}>
-                      Live Preview
+                      {t('pages:mrBlueAvatarDemo.livePreview', 'Live Preview')}
                     </Badge>
                   </div>
                   <CardDescription>{currentConfig.description}</CardDescription>
@@ -160,7 +161,7 @@ export default function MrBlueAvatarDemo() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
                     <Settings className="h-5 w-5" />
-                    Controls
+                    {t('pages:mrBlueAvatarDemo.controls', 'Controls')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -169,7 +170,7 @@ export default function MrBlueAvatarDemo() {
                     <div className="flex items-center justify-between">
                       <label className="text-sm font-medium flex items-center gap-2">
                         <Volume2 className="h-4 w-4" />
-                        Audio Level (Speaking State)
+                        {t('pages:mrBlueAvatarDemo.audioLevel', 'Audio Level (Speaking State)')}
                       </label>
                       <span className="text-sm text-muted-foreground">
                         {Math.round(audioLevel * 100)}%
@@ -190,7 +191,7 @@ export default function MrBlueAvatarDemo() {
                     <div className="flex items-center justify-between">
                       <label className="text-sm font-medium flex items-center gap-2">
                         <Zap className="h-4 w-4" />
-                        Avatar Size
+                        {t('pages:mrBlueAvatarDemo.avatarSize', 'Avatar Size')}
                       </label>
                       <span className="text-sm text-muted-foreground">{avatarSize}px</span>
                     </div>
@@ -212,7 +213,7 @@ export default function MrBlueAvatarDemo() {
                       className="flex-1"
                       data-testid="button-toggle-controls"
                     >
-                      {enableControls ? 'Disable' : 'Enable'} Orbit Controls
+                      {enableControls ? t('pages:mrBlueAvatarDemo.disable', 'Disable') : t('pages:mrBlueAvatarDemo.enable', 'Enable')} {t('pages:mrBlueAvatarDemo.orbitControls', 'Orbit Controls')}
                     </Button>
                     <Button
                       variant={isAutoDemo ? 'default' : 'outline'}
@@ -220,7 +221,7 @@ export default function MrBlueAvatarDemo() {
                       className="flex-1"
                       data-testid="button-auto-demo"
                     >
-                      {isAutoDemo ? 'Stop' : 'Start'} Auto Demo
+                      {isAutoDemo ? t('pages:mrBlueAvatarDemo.stop', 'Stop') : t('pages:mrBlueAvatarDemo.start', 'Start')} {t('pages:mrBlueAvatarDemo.autoDemo', 'Auto Demo')}
                     </Button>
                   </div>
                 </CardContent>
@@ -231,8 +232,8 @@ export default function MrBlueAvatarDemo() {
             <div className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Emotional States</CardTitle>
-                  <CardDescription>Click to switch between states</CardDescription>
+                  <CardTitle className="text-lg">{t('pages:mrBlueAvatarDemo.emotionalStates', 'Emotional States')}</CardTitle>
+                  <CardDescription>{t('pages:mrBlueAvatarDemo.clickToSwitch', 'Click to switch between states')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
@@ -269,53 +270,53 @@ export default function MrBlueAvatarDemo() {
           {/* Technical Details */}
           <Card>
             <CardHeader>
-              <CardTitle>Technical Details</CardTitle>
+              <CardTitle>{t('pages:mrBlueAvatarDemo.technicalDetails', 'Technical Details')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-4 gap-6">
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-muted-foreground">Framework</div>
-                  <div className="text-lg font-semibold">React Three Fiber</div>
+                  <div className="text-sm font-medium text-muted-foreground">{t('pages:mrBlueAvatarDemo.framework', 'Framework')}</div>
+                  <div className="text-lg font-semibold">{t('pages:mrBlueAvatarDemo.reactThreeFiber', 'React Three Fiber')}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-muted-foreground">Performance</div>
-                  <div className="text-lg font-semibold">60 FPS Target</div>
+                  <div className="text-sm font-medium text-muted-foreground">{t('pages:mrBlueAvatarDemo.performance', 'Performance')}</div>
+                  <div className="text-lg font-semibold">{t('pages:mrBlueAvatarDemo.fpsTarget', '60 FPS Target')}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-muted-foreground">States</div>
-                  <div className="text-lg font-semibold">6 Emotional States</div>
+                  <div className="text-sm font-medium text-muted-foreground">{t('pages:mrBlueAvatarDemo.states', 'States')}</div>
+                  <div className="text-lg font-semibold">{t('pages:mrBlueAvatarDemo.sixStates', '6 Emotional States')}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-muted-foreground">Features</div>
-                  <div className="text-lg font-semibold">Voice Reactive</div>
+                  <div className="text-sm font-medium text-muted-foreground">{t('pages:mrBlueAvatarDemo.features', 'Features')}</div>
+                  <div className="text-lg font-semibold">{t('pages:mrBlueAvatarDemo.voiceReactive', 'Voice Reactive')}</div>
                 </div>
               </div>
               <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                <h4 className="font-semibold mb-2">Features:</h4>
+                <h4 className="font-semibold mb-2">{t('pages:mrBlueAvatarDemo.featuresLabel', 'Features:')}</h4>
                 <ul className="grid md:grid-cols-2 gap-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Smooth state transitions
+                    {t('pages:mrBlueAvatarDemo.featureSmooth', 'Smooth state transitions')}
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Voice-reactive pulsing
+                    {t('pages:mrBlueAvatarDemo.featureVoice', 'Voice-reactive pulsing')}
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Floating/bobbing animation
+                    {t('pages:mrBlueAvatarDemo.featureFloating', 'Floating/bobbing animation')}
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Dynamic lighting effects
+                    {t('pages:mrBlueAvatarDemo.featureLighting', 'Dynamic lighting effects')}
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Glassmorphic materials
+                    {t('pages:mrBlueAvatarDemo.featureGlass', 'Glassmorphic materials')}
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Performance optimized
+                    {t('pages:mrBlueAvatarDemo.featureOptimized', 'Performance optimized')}
                   </li>
                 </ul>
               </div>

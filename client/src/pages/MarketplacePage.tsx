@@ -43,12 +43,12 @@ export default function MarketplacePage() {
   // Determine status badge based on item data
   const getStatusBadge = (item: any) => {
     if (item.status === 'sold') {
-      return <Badge variant="destructive">Sold</Badge>;
+      return <Badge variant="destructive">{t('pages:marketplace.sold', 'Sold')}</Badge>;
     }
     if (item.status === 'reserved') {
-      return <Badge className="bg-yellow-600">Reserved</Badge>;
+      return <Badge className="bg-yellow-600">{t('pages:marketplace.reserved', 'Reserved')}</Badge>;
     }
-    return <Badge className="bg-green-600">Available</Badge>;
+    return <Badge className="bg-green-600">{t('pages:marketplace.available', 'Available')}</Badge>;
   };
 
   return (
@@ -69,15 +69,15 @@ export default function MarketplacePage() {
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-marketplace">
               <ShoppingBag className="w-3 h-3 mr-1" />
-              Tango Marketplace
+              {t('pages:marketplace.badge', 'Tango Marketplace')}
             </Badge>
             
             <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight leading-tight max-w-4xl" data-testid="heading-hero">
-              Discover Authentic Tango Treasures
+              {t('pages:marketplace.heroTitle', 'Discover Authentic Tango Treasures')}
             </h1>
             
             <p className="text-xl text-white/90 max-w-2xl mb-8">
-              Buy and sell premium tango shoes, clothing, music, and accessories from passionate dancers worldwide
+              {t('pages:marketplace.heroSubtitle', 'Buy and sell premium tango shoes, clothing, music, and accessories from passionate dancers worldwide')}
             </p>
           </motion.div>
         </div>
@@ -90,7 +90,7 @@ export default function MarketplacePage() {
               <div className="relative max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search items..."
+                  placeholder={t('pages:marketplace.searchPlaceholder', 'Search items...')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -102,16 +102,16 @@ export default function MarketplacePage() {
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="mb-6">
-                <TabsTrigger value="all" data-testid="tab-all">All Items</TabsTrigger>
-                <TabsTrigger value="shoes" data-testid="tab-shoes">Shoes</TabsTrigger>
-                <TabsTrigger value="clothing" data-testid="tab-clothing">Clothing</TabsTrigger>
-                <TabsTrigger value="music" data-testid="tab-music">Music</TabsTrigger>
-                <TabsTrigger value="accessories" data-testid="tab-accessories">Accessories</TabsTrigger>
+                <TabsTrigger value="all" data-testid="tab-all">{t('pages:marketplace.tabAll', 'All Items')}</TabsTrigger>
+                <TabsTrigger value="shoes" data-testid="tab-shoes">{t('pages:marketplace.tabShoes', 'Shoes')}</TabsTrigger>
+                <TabsTrigger value="clothing" data-testid="tab-clothing">{t('pages:marketplace.tabClothing', 'Clothing')}</TabsTrigger>
+                <TabsTrigger value="music" data-testid="tab-music">{t('pages:marketplace.tabMusic', 'Music')}</TabsTrigger>
+                <TabsTrigger value="accessories" data-testid="tab-accessories">{t('pages:marketplace.tabAccessories', 'Accessories')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value={activeTab}>
                 {isLoading ? (
-                  <div className="text-center py-12">Loading items...</div>
+                  <div className="text-center py-12">{t('pages:marketplace.loading', 'Loading items...')}</div>
                 ) : filteredItems.length > 0 ? (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {filteredItems.map((item: any, idx: number) => (
@@ -167,7 +167,7 @@ export default function MarketplacePage() {
                             </Avatar>
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-sm truncate">
-                                {item.seller?.name || "Anonymous Seller"}
+                                {item.seller?.name || t('pages:marketplace.anonymousSeller', 'Anonymous Seller')}
                               </p>
                               {item.seller?.rating && (
                                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -190,7 +190,7 @@ export default function MarketplacePage() {
                           <div className="flex items-center justify-between text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Clock className="h-4 w-4" />
-                              {item.postedDate || "Recently posted"}
+                              {item.postedDate || t('pages:marketplace.recentlyPosted', 'Recently posted')}
                             </div>
                             {item.location && (
                               <span>{item.location}</span>
@@ -203,7 +203,7 @@ export default function MarketplacePage() {
                               data-testid={`button-view-${item.id}`}
                               disabled={item.status === 'sold'}
                             >
-                              {item.status === 'sold' ? 'Sold Out' : 'View Details'}
+                              {item.status === 'sold' ? t('pages:marketplace.soldOut', 'Sold Out') : t('pages:marketplace.viewDetails', 'View Details')}
                             </Button>
                           </Link>
                         </CardContent>
@@ -215,7 +215,7 @@ export default function MarketplacePage() {
                   <Card>
                     <CardContent className="py-12 text-center text-muted-foreground">
                       <ShoppingBag className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                      <p>{searchQuery ? 'No items match your search' : 'No items available in this category'}</p>
+                      <p>{searchQuery ? t('pages:marketplace.noSearchResults', 'No items match your search') : t('pages:marketplace.noItems', 'No items available in this category')}</p>
                     </CardContent>
                   </Card>
                 )}

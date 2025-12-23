@@ -24,8 +24,8 @@ export default function PartnerFinderPage() {
     <SelfHealingErrorBoundary pageName="Partner Finder" fallbackRoute="/feed">
       <>
         <SEO
-          title="Practice Partner Finder"
-          description="Find the perfect tango practice partner. Connect with dancers at your skill level for social dancing, practice sessions, and events."
+          title={t('pages:partnerFinder.seoTitle', 'Practice Partner Finder')}
+          description={t('pages:partnerFinder.seoDescription', 'Find the perfect tango practice partner. Connect with dancers at your skill level for social dancing, practice sessions, and events.')}
         />
 
         {/* Hero Section */}
@@ -49,20 +49,20 @@ export default function PartnerFinderPage() {
               transition={{ duration: 1, ease: "easeOut" }}
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Partner Matching
+                {t('pages:partnerFinder.badge', 'Partner Matching')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Find Your Perfect Partner
+                {t('pages:partnerFinder.heroTitle', 'Find Your Perfect Partner')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
-                Connect with dancers at your level for practice sessions, social dancing, and events
+                {t('pages:partnerFinder.heroSubtitle', 'Connect with dancers at your level for practice sessions, social dancing, and events')}
               </p>
 
               <Button size="lg" className="gap-2" data-testid="button-browse">
                 <Users className="h-5 w-5" />
-                Browse Partners
+                {t('pages:partnerFinder.browsePartners', 'Browse Partners')}
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </motion.div>
@@ -74,16 +74,16 @@ export default function PartnerFinderPage() {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6">
             <TabsTrigger value="all" data-testid="tab-all">
-              All Dancers
+              {t('pages:partnerFinder.allDancers', 'All Dancers')}
             </TabsTrigger>
             <TabsTrigger value="leaders" data-testid="tab-leaders">
-              Leaders
+              {t('pages:partnerFinder.leaders', 'Leaders')}
             </TabsTrigger>
             <TabsTrigger value="followers" data-testid="tab-followers">
-              Followers
+              {t('pages:partnerFinder.followers', 'Followers')}
             </TabsTrigger>
             <TabsTrigger value="both" data-testid="tab-both">
-              Both Roles
+              {t('pages:partnerFinder.bothRoles', 'Both Roles')}
             </TabsTrigger>
           </TabsList>
 
@@ -91,7 +91,7 @@ export default function PartnerFinderPage() {
             {isLoading ? (
               <div className="text-center py-16">
                 <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-                <p className="text-muted-foreground">Finding partners...</p>
+                <p className="text-muted-foreground">{t('pages:partnerFinder.findingPartners', 'Finding partners...')}</p>
               </div>
             ) : partners && Array.isArray(partners) && partners.length > 0 ? (
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -129,7 +129,7 @@ export default function PartnerFinderPage() {
                           </div>
                           {partner.verified && (
                             <Badge className="bg-white/10 text-white border-white/30 backdrop-blur-sm text-xs">
-                              Verified
+                              {t('pages:partnerFinder.verified', 'Verified')}
                             </Badge>
                           )}
                         </div>
@@ -163,7 +163,7 @@ export default function PartnerFinderPage() {
                           {partner.availability && (
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4 text-primary" />
-                              Available: {partner.availability}
+                              {t('pages:partnerFinder.available', 'Available')}: {partner.availability}
                             </div>
                           )}
                         </div>
@@ -172,7 +172,7 @@ export default function PartnerFinderPage() {
                         {partner.interests && partner.interests.length > 0 && (
                           <div>
                             <p className="text-xs font-medium text-muted-foreground mb-2">
-                              Interested in:
+                              {t('pages:partnerFinder.interestedIn', 'Interested in')}:
                             </p>
                             <div className="flex flex-wrap gap-2">
                               {partner.interests.slice(0, 3).map((interest: string, idx: number) => (
@@ -188,7 +188,7 @@ export default function PartnerFinderPage() {
                         <div className="flex gap-2 pt-2">
                           <Link href={`/profile/${partner.username}`}>
                             <Button className="flex-1 gap-2" data-testid={`button-view-${partner.id}`}>
-                              View Profile
+                              {t('pages:partnerFinder.viewProfile', 'View Profile')}
                               <ChevronRight className="h-4 w-4" />
                             </Button>
                           </Link>
@@ -205,8 +205,8 @@ export default function PartnerFinderPage() {
               <Card>
                 <CardContent className="py-16 text-center text-muted-foreground">
                   <Users className="mx-auto h-16 w-16 mb-4 opacity-50" />
-                  <p className="text-lg mb-2">No partners found matching your criteria</p>
-                  <p className="text-sm">Try adjusting your filters or check back later</p>
+                  <p className="text-lg mb-2">{t('pages:partnerFinder.noPartnersFound', 'No partners found matching your criteria')}</p>
+                  <p className="text-sm">{t('pages:partnerFinder.tryAdjusting', 'Try adjusting your filters or check back later')}</p>
                 </CardContent>
               </Card>
             )}
@@ -223,24 +223,24 @@ export default function PartnerFinderPage() {
         >
           <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
             <CardHeader>
-              <CardTitle className="text-2xl font-serif">Tips for Finding Practice Partners</CardTitle>
+              <CardTitle className="text-2xl font-serif">{t('pages:partnerFinder.tipsTitle', 'Tips for Finding Practice Partners')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-base leading-relaxed">
               <p className="flex items-start gap-3">
                 <span className="text-primary mt-1">•</span>
-                <span><strong>Be clear about your goals:</strong> Are you looking to practice technique, prepare for an event, or social dancing?</span>
+                <span><strong>{t('pages:partnerFinder.tip1Title', 'Be clear about your goals')}:</strong> {t('pages:partnerFinder.tip1Text', 'Are you looking to practice technique, prepare for an event, or social dancing?')}</span>
               </p>
               <p className="flex items-start gap-3">
                 <span className="text-primary mt-1">•</span>
-                <span><strong>Match skill levels:</strong> Partners with similar experience often progress together more effectively.</span>
+                <span><strong>{t('pages:partnerFinder.tip2Title', 'Match skill levels')}:</strong> {t('pages:partnerFinder.tip2Text', 'Partners with similar experience often progress together more effectively.')}</span>
               </p>
               <p className="flex items-start gap-3">
                 <span className="text-primary mt-1">•</span>
-                <span><strong>Be respectful:</strong> Communicate your availability and expectations clearly.</span>
+                <span><strong>{t('pages:partnerFinder.tip3Title', 'Be respectful')}:</strong> {t('pages:partnerFinder.tip3Text', 'Communicate your availability and expectations clearly.')}</span>
               </p>
               <p className="flex items-start gap-3">
                 <span className="text-primary mt-1">•</span>
-                <span><strong>Stay safe:</strong> Meet in public spaces, especially for first practice sessions.</span>
+                <span><strong>{t('pages:partnerFinder.tip4Title', 'Stay safe')}:</strong> {t('pages:partnerFinder.tip4Text', 'Meet in public spaces, especially for first practice sessions.')}</span>
               </p>
             </CardContent>
           </Card>

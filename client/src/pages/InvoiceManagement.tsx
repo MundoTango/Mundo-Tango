@@ -38,15 +38,15 @@ export default function InvoiceManagement() {
         window.open(data.pdfUrl, "_blank");
       } else {
         toast({
-          title: "Error",
-          description: "PDF not available",
+          title: t('pages:invoiceManagement.error', 'Error'),
+          description: t('pages:invoiceManagement.pdfNotAvailable', 'PDF not available'),
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to download invoice",
+        title: t('pages:invoiceManagement.error', 'Error'),
+        description: t('pages:invoiceManagement.failedToDownload', 'Failed to download invoice'),
         variant: "destructive",
       });
     }
@@ -54,8 +54,8 @@ export default function InvoiceManagement() {
 
   const handleEmail = () => {
     toast({
-      title: "Email Sent",
-      description: "Invoice has been sent to your email",
+      title: t('pages:invoiceManagement.emailSent', 'Email Sent'),
+      description: t('pages:invoiceManagement.invoiceSentToEmail', 'Invoice has been sent to your email'),
     });
   };
 
@@ -66,7 +66,7 @@ export default function InvoiceManagement() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-muted-foreground">Loading invoice...</p>
+        <p className="text-muted-foreground">{t('pages:invoiceManagement.loadingInvoice', 'Loading invoice...')}</p>
       </div>
     );
   }
@@ -75,9 +75,9 @@ export default function InvoiceManagement() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
         <XCircle className="h-12 w-12 text-destructive" />
-        <h1 className="text-2xl font-bold">Invoice Not Found</h1>
+        <h1 className="text-2xl font-bold">{t('pages:invoiceManagement.invoiceNotFound', 'Invoice Not Found')}</h1>
         <Button onClick={() => setLocation("/billing/history")}>
-          Back to Billing History
+          {t('pages:invoiceManagement.backToBillingHistory', 'Back to Billing History')}
         </Button>
       </div>
     );
@@ -110,7 +110,7 @@ export default function InvoiceManagement() {
             data-testid="button-back"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Billing
+            {t('pages:invoiceManagement.backToBilling', 'Back to Billing')}
           </Button>
 
           <div className="flex items-center gap-2">
@@ -121,7 +121,7 @@ export default function InvoiceManagement() {
               data-testid="button-email"
             >
               <Mail className="mr-2 h-4 w-4" />
-              Email
+              {t('pages:invoiceManagement.email', 'Email')}
             </Button>
             <Button
               variant="outline"
@@ -130,7 +130,7 @@ export default function InvoiceManagement() {
               data-testid="button-print"
             >
               <Printer className="mr-2 h-4 w-4" />
-              Print
+              {t('pages:invoiceManagement.print', 'Print')}
             </Button>
             <Button
               onClick={handleDownload}
@@ -138,7 +138,7 @@ export default function InvoiceManagement() {
               data-testid="button-download"
             >
               <Download className="mr-2 h-4 w-4" />
-              Download PDF
+              {t('pages:invoiceManagement.downloadPdf', 'Download PDF')}
             </Button>
           </div>
         </div>
@@ -147,7 +147,7 @@ export default function InvoiceManagement() {
           <CardHeader>
             <div className="flex items-start justify-between">
               <div>
-                <CardTitle className="text-3xl mb-2">Invoice</CardTitle>
+                <CardTitle className="text-3xl mb-2">{t('pages:invoiceManagement.invoice', 'Invoice')}</CardTitle>
                 <CardDescription>
                   Invoice #{invoice.id} • Issued {format(new Date(invoice.createdAt), "MMMM d, yyyy")}
                 </CardDescription>
@@ -174,7 +174,7 @@ export default function InvoiceManagement() {
             {/* Company Info */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <h3 className="font-semibold mb-2">From</h3>
+                <h3 className="font-semibold mb-2">{t('pages:invoiceManagement.from', 'From')}</h3>
                 <div className="text-sm text-muted-foreground space-y-1">
                   <p className="font-medium text-foreground">Mundo Tango</p>
                   <p>123 Tango Street</p>
@@ -184,10 +184,10 @@ export default function InvoiceManagement() {
               </div>
 
               <div>
-                <h3 className="font-semibold mb-2">Bill To</h3>
+                <h3 className="font-semibold mb-2">{t('pages:invoiceManagement.billTo', 'Bill To')}</h3>
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="font-medium text-foreground">Account #{invoice.userId}</p>
-                  <p>Payment processed via Stripe</p>
+                  <p className="font-medium text-foreground">{t('pages:invoiceManagement.account', 'Account')} #{invoice.userId}</p>
+                  <p>{t('pages:invoiceManagement.paymentViaStripe', 'Payment processed via Stripe')}</p>
                 </div>
               </div>
             </div>
@@ -196,14 +196,14 @@ export default function InvoiceManagement() {
 
             {/* Invoice Items */}
             <div>
-              <h3 className="font-semibold mb-4">Invoice Details</h3>
+              <h3 className="font-semibold mb-4">{t('pages:invoiceManagement.invoiceDetails', 'Invoice Details')}</h3>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="text-center">Qty</TableHead>
-                    <TableHead className="text-right">Unit Price</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead>{t('pages:invoiceManagement.description', 'Description')}</TableHead>
+                    <TableHead className="text-center">{t('pages:invoiceManagement.qty', 'Qty')}</TableHead>
+                    <TableHead className="text-right">{t('pages:invoiceManagement.unitPrice', 'Unit Price')}</TableHead>
+                    <TableHead className="text-right">{t('pages:invoiceManagement.total', 'Total')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -233,16 +233,16 @@ export default function InvoiceManagement() {
             <div className="flex justify-end">
               <div className="w-64 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">{t('pages:invoiceManagement.subtotal', 'Subtotal')}</span>
                   <span>${(invoice.amount / 100).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Tax (0%)</span>
+                  <span className="text-muted-foreground">{t('pages:invoiceManagement.tax', 'Tax (0%)')}</span>
                   <span>$0.00</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
+                  <span>{t('pages:invoiceManagement.total', 'Total')}</span>
                   <span data-testid="text-total">${(invoice.amount / 100).toFixed(2)}</span>
                 </div>
               </div>
@@ -253,7 +253,7 @@ export default function InvoiceManagement() {
               <Alert>
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Payment received on {format(new Date(invoice.createdAt), "MMMM d, yyyy")}
+                  {t('pages:invoiceManagement.paymentReceivedOn', 'Payment received on')} {format(new Date(invoice.createdAt), "MMMM d, yyyy")}
                 </AlertDescription>
               </Alert>
             )}
@@ -262,7 +262,7 @@ export default function InvoiceManagement() {
               <Alert>
                 <Clock className="h-4 w-4" />
                 <AlertDescription>
-                  Payment is being processed. This may take a few minutes.
+                  {t('pages:invoiceManagement.paymentProcessing', 'Payment is being processed. This may take a few minutes.')}
                 </AlertDescription>
               </Alert>
             )}
@@ -271,7 +271,7 @@ export default function InvoiceManagement() {
               <Alert variant="destructive">
                 <XCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Payment failed. Please update your payment method and try again.
+                  {t('pages:invoiceManagement.paymentFailed', 'Payment failed. Please update your payment method and try again.')}
                 </AlertDescription>
               </Alert>
             )}
@@ -280,13 +280,13 @@ export default function InvoiceManagement() {
 
             {/* Footer */}
             <div className="text-center text-sm text-muted-foreground space-y-1">
-              <p>Thank you for your business!</p>
+              <p>{t('pages:invoiceManagement.thankYou', 'Thank you for your business!')}</p>
               <p>
-                Questions? Contact us at support@mundotango.com
+                {t('pages:invoiceManagement.questions', 'Questions? Contact us at support@mundotango.com')}
               </p>
               {invoice.stripeInvoiceId && (
                 <p className="text-xs">
-                  Stripe Invoice ID: {invoice.stripeInvoiceId}
+                  {t('pages:invoiceManagement.stripeInvoiceId', 'Stripe Invoice ID')}: {invoice.stripeInvoiceId}
                 </p>
               )}
             </div>

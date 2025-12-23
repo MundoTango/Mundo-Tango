@@ -14,8 +14,8 @@ export default function PaymentFailedPage() {
     <SelfHealingErrorBoundary pageName="Payment Failed" fallbackRoute="/pricing">
       <>
         <SEO
-          title="Payment Failed"
-          description="We couldn't process your payment. Please try again or use a different payment method."
+          title={t('pages:paymentFailed.seoTitle', 'Payment Failed')}
+          description={t('pages:paymentFailed.seoDescription', "We couldn't process your payment. Please try again or use a different payment method.")}
         />
 
         {/* Hero Section - 16:9 */}
@@ -48,15 +48,15 @@ export default function PaymentFailedPage() {
               </motion.div>
 
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Payment Declined
+                {t('pages:paymentFailed.badge', 'Payment Declined')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Payment Failed
+                {t('pages:paymentFailed.heroTitle', 'Payment Failed')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                We couldn't process your payment. Please try again or use a different payment method.
+                {t('pages:paymentFailed.heroSubtitle', "We couldn't process your payment. Please try again or use a different payment method.")}
               </p>
             </motion.div>
           </div>
@@ -75,29 +75,29 @@ export default function PaymentFailedPage() {
                 <CardContent className="p-8 space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b">
                     <AlertTriangle className="h-5 w-5 text-amber-500" />
-                    <h2 className="text-lg font-serif font-semibold">Common Reasons</h2>
+                    <h2 className="text-lg font-serif font-semibold">{t('pages:paymentFailed.commonReasons', 'Common Reasons')}</h2>
                   </div>
                   
                   <ul className="space-y-3 text-left">
                     <li className="flex items-start gap-3">
                       <span className="text-primary mt-1">•</span>
-                      <span className="leading-relaxed">Insufficient funds in your account</span>
+                      <span className="leading-relaxed">{t('pages:paymentFailed.reason1', 'Insufficient funds in your account')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-primary mt-1">•</span>
-                      <span className="leading-relaxed">Incorrect card details or security code</span>
+                      <span className="leading-relaxed">{t('pages:paymentFailed.reason2', 'Incorrect card details or security code')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-primary mt-1">•</span>
-                      <span className="leading-relaxed">Card expired or has been blocked</span>
+                      <span className="leading-relaxed">{t('pages:paymentFailed.reason3', 'Card expired or has been blocked')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-primary mt-1">•</span>
-                      <span className="leading-relaxed">Bank or card issuer declined the transaction</span>
+                      <span className="leading-relaxed">{t('pages:paymentFailed.reason4', 'Bank or card issuer declined the transaction')}</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-primary mt-1">•</span>
-                      <span className="leading-relaxed">Payment limit exceeded</span>
+                      <span className="leading-relaxed">{t('pages:paymentFailed.reason5', 'Payment limit exceeded')}</span>
                     </li>
                   </ul>
 
@@ -105,7 +105,7 @@ export default function PaymentFailedPage() {
                     <div className="flex items-start gap-3">
                       <HelpCircle className="h-5 w-5 text-primary mt-0.5" />
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        If the problem persists, please contact your bank or card issuer for more information.
+                        {t('pages:paymentFailed.helpText', 'If the problem persists, please contact your bank or card issuer for more information.')}
                       </p>
                     </div>
                   </div>
@@ -116,13 +116,13 @@ export default function PaymentFailedPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Link href="/checkout">
                   <Button size="lg" className="gap-2 min-w-[200px]" data-testid="button-retry">
-                    Try Again
+                    {t('pages:paymentFailed.tryAgain', 'Try Again')}
                     <ChevronRight className="h-5 w-5" />
                   </Button>
                 </Link>
                 <Link href="/billing">
                   <Button variant="outline" size="lg" className="gap-2 min-w-[200px]" data-testid="button-payment-methods">
-                    Update Payment Method
+                    {t('pages:paymentFailed.updatePaymentMethod', 'Update Payment Method')}
                   </Button>
                 </Link>
               </div>
@@ -130,7 +130,7 @@ export default function PaymentFailedPage() {
               <div className="text-center">
                 <Link href="/contact">
                   <Button variant="ghost" size="lg" className="gap-2" data-testid="button-support">
-                    Contact Support
+                    {t('pages:paymentFailed.contactSupport', 'Contact Support')}
                   </Button>
                 </Link>
               </div>

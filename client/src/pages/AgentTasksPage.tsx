@@ -74,9 +74,9 @@ export default function AgentTasksPage() {
 
   if (isLoading) {
     return (
-      <SelfHealingErrorBoundary pageName="Agent Tasks" fallbackRoute="/platform">
+      <SelfHealingErrorBoundary pageName={t('pages:agents.agentTasks', 'Agent Tasks')} fallbackRoute="/platform">
         <div className="min-h-screen bg-background flex items-center justify-center">
-          <div className="text-center py-8">Loading agent tasks...</div>
+          <div className="text-center py-8">{t('common:loadingAgentTasks', 'Loading agent tasks...')}</div>
         </div>
       </SelfHealingErrorBoundary>
     );
@@ -87,10 +87,10 @@ export default function AgentTasksPage() {
   const completedTasks = tasks.filter(t => t.status === "completed");
 
   return (
-    <SelfHealingErrorBoundary pageName="Agent Tasks" fallbackRoute="/platform">
+    <SelfHealingErrorBoundary pageName={t('pages:agents.agentTasks', 'Agent Tasks')} fallbackRoute="/platform">
       <SEO
-        title="Agent Tasks | Mundo Tango"
-        description="Monitor and manage AI agent tasks. Track pending, in-progress, and completed tasks across all platform agents for optimal performance."
+        title={t('pages:agents.agentTasksTitle', 'Agent Tasks | Mundo Tango')}
+        description={t('pages:agents.agentTasksDescription', 'Monitor and manage AI agent tasks. Track pending, in-progress, and completed tasks across all platform agents for optimal performance.')}
       />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
@@ -109,15 +109,15 @@ export default function AgentTasksPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <ListTodo className="w-3 h-3 mr-1.5" />
-                Task Management
+                {t('pages:agents.taskManagement', 'Task Management')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                Agent Tasks
+                {t('pages:agents.agentTasks', 'Agent Tasks')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                Task coordination and execution tracking
+                {t('pages:agents.taskCoordination', 'Task coordination and execution tracking')}
               </p>
             </motion.div>
           </div>
@@ -136,8 +136,8 @@ export default function AgentTasksPage() {
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Tasks</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('pages:agents.totalTasks', 'Total Tasks')}</CardTitle>
             <ListTodo className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -148,8 +148,8 @@ export default function AgentTasksPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('pages:agents.pending', 'Pending')}</CardTitle>
             <Clock className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -160,8 +160,8 @@ export default function AgentTasksPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('pages:agents.inProgress', 'In Progress')}</CardTitle>
             <Play className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -172,8 +172,8 @@ export default function AgentTasksPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('pages:agents.completed', 'Completed')}</CardTitle>
             <CheckCircle className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -187,27 +187,27 @@ export default function AgentTasksPage() {
       {/* Tasks Table */}
       <Tabs defaultValue="all" className="w-full">
         <TabsList>
-          <TabsTrigger value="all" data-testid="tab-all-tasks">All Tasks ({tasks.length})</TabsTrigger>
-          <TabsTrigger value="pending" data-testid="tab-pending-tasks">Pending ({pendingTasks.length})</TabsTrigger>
-          <TabsTrigger value="active" data-testid="tab-active-tasks">In Progress ({activeTasks.length})</TabsTrigger>
-          <TabsTrigger value="completed" data-testid="tab-completed-tasks">Completed ({completedTasks.length})</TabsTrigger>
+          <TabsTrigger value="all" data-testid="tab-all-tasks">{t('pages:agents.allTasks', 'All Tasks')} ({tasks.length})</TabsTrigger>
+          <TabsTrigger value="pending" data-testid="tab-pending-tasks">{t('pages:agents.pending', 'Pending')} ({pendingTasks.length})</TabsTrigger>
+          <TabsTrigger value="active" data-testid="tab-active-tasks">{t('pages:agents.inProgress', 'In Progress')} ({activeTasks.length})</TabsTrigger>
+          <TabsTrigger value="completed" data-testid="tab-completed-tasks">{t('pages:agents.completed', 'Completed')} ({completedTasks.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Tasks</CardTitle>
-              <CardDescription>Complete task execution history</CardDescription>
+              <CardTitle>{t('pages:agents.allTasks', 'All Tasks')}</CardTitle>
+              <CardDescription>{t('pages:agents.allTasksDesc', 'Complete task execution history')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Task</TableHead>
-                    <TableHead>Agent</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
+                    <TableHead>{t('pages:agents.task', 'Task')}</TableHead>
+                    <TableHead>{t('pages:agents.agent', 'Agent')}</TableHead>
+                    <TableHead>{t('pages:agents.priority', 'Priority')}</TableHead>
+                    <TableHead>{t('pages:agents.status', 'Status')}</TableHead>
+                    <TableHead>{t('pages:agents.created', 'Created')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -215,21 +215,21 @@ export default function AgentTasksPage() {
                     <TableRow key={task.id} data-testid={`task-row-${task.id}`}>
                       <TableCell>
                         <div className="font-medium">{task.title}</div>
-                        <div className="text-sm text-muted-foreground">{task.taskType}</div>
+                        <div className="text-sm text-muted-foreground">{t(`pages:agents.taskType.${task.taskType}`, task.taskType)}</div>
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm">{task.agentName || `Agent #${task.agentId}`}</div>
+                        <div className="text-sm">{task.agentName || `${t('pages:agents.agent', 'Agent')} #${task.agentId}`}</div>
                         <div className="text-xs text-muted-foreground">{task.agentCode}</div>
                       </TableCell>
                       <TableCell>
                         <Badge variant={getPriorityColor(task.priority) as any}>
-                          {task.priority}
+                          {t(`pages:agents.priority.${task.priority}`, task.priority)}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <div className={`flex items-center gap-2 ${getStatusColor(task.status)}`}>
                           {getStatusIcon(task.status)}
-                          <span className="capitalize">{task.status.replace('_', ' ')}</span>
+                          <span className="capitalize">{t(`pages:agents.status.${task.status}`, task.status.replace('_', ' '))}</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
@@ -241,7 +241,7 @@ export default function AgentTasksPage() {
               </Table>
               {tasks.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                  No tasks found
+                  {t('pages:agents.noTasks', 'No tasks found')}
                 </div>
               )}
             </CardContent>
@@ -251,8 +251,8 @@ export default function AgentTasksPage() {
         <TabsContent value="pending">
           <Card>
             <CardHeader>
-              <CardTitle>Pending Tasks</CardTitle>
-              <CardDescription>Tasks awaiting execution</CardDescription>
+              <CardTitle>{t('pages:agents.pendingTasks', 'Pending Tasks')}</CardTitle>
+              <CardDescription>{t('pages:agents.pendingTasksDesc', 'Tasks awaiting execution')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -260,16 +260,16 @@ export default function AgentTasksPage() {
                   <div key={task.id} className="flex items-center justify-between p-4 border rounded-lg" data-testid={`task-pending-${task.id}`}>
                     <div>
                       <div className="font-medium">{task.title}</div>
-                      <div className="text-sm text-muted-foreground">{task.agentName || `Agent #${task.agentId}`}</div>
+                      <div className="text-sm text-muted-foreground">{task.agentName || `${t('pages:agents.agent', 'Agent')} #${task.agentId}`}</div>
                     </div>
                     <Badge variant={getPriorityColor(task.priority) as any}>
-                      {task.priority}
+                      {t(`pages:agents.priority.${task.priority}`, task.priority)}
                     </Badge>
                   </div>
                 ))}
                 {pendingTasks.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    No pending tasks
+                    {t('pages:agents.noPendingTasks', 'No pending tasks')}
                   </div>
                 )}
               </div>
@@ -280,8 +280,8 @@ export default function AgentTasksPage() {
         <TabsContent value="active">
           <Card>
             <CardHeader>
-              <CardTitle>Active Tasks</CardTitle>
-              <CardDescription>Currently executing tasks</CardDescription>
+              <CardTitle>{t('pages:agents.activeTasks', 'Active Tasks')}</CardTitle>
+              <CardDescription>{t('pages:agents.activeTasksDesc', 'Currently executing tasks')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -289,17 +289,17 @@ export default function AgentTasksPage() {
                   <div key={task.id} className="flex items-center justify-between p-4 border rounded-lg border-blue-500" data-testid={`task-active-${task.id}`}>
                     <div>
                       <div className="font-medium">{task.title}</div>
-                      <div className="text-sm text-muted-foreground">{task.agentName || `Agent #${task.agentId}`}</div>
+                      <div className="text-sm text-muted-foreground">{task.agentName || `${t('pages:agents.agent', 'Agent')} #${task.agentId}`}</div>
                     </div>
                     <div className="flex items-center gap-2 text-blue-600">
                       <Play className="w-4 h-4" />
-                      <span>In Progress</span>
+                      <span>{t('pages:agents.inProgress', 'In Progress')}</span>
                     </div>
                   </div>
                 ))}
                 {activeTasks.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    No active tasks
+                    {t('pages:agents.noActiveTasks', 'No active tasks')}
                   </div>
                 )}
               </div>
@@ -310,8 +310,8 @@ export default function AgentTasksPage() {
         <TabsContent value="completed">
           <Card>
             <CardHeader>
-              <CardTitle>Completed Tasks</CardTitle>
-              <CardDescription>Successfully executed tasks</CardDescription>
+              <CardTitle>{t('pages:agents.completedTasks', 'Completed Tasks')}</CardTitle>
+              <CardDescription>{t('pages:agents.completedTasksDesc', 'Successfully executed tasks')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -319,17 +319,17 @@ export default function AgentTasksPage() {
                   <div key={task.id} className="flex items-center justify-between p-4 border rounded-lg border-green-500" data-testid={`task-completed-${task.id}`}>
                     <div>
                       <div className="font-medium">{task.title}</div>
-                      <div className="text-sm text-muted-foreground">{task.agentName || `Agent #${task.agentId}`}</div>
+                      <div className="text-sm text-muted-foreground">{task.agentName || `${t('pages:agents.agent', 'Agent')} #${task.agentId}`}</div>
                     </div>
                     <div className="flex items-center gap-2 text-green-600">
                       <CheckCircle className="w-4 h-4" />
-                      <span>Completed</span>
+                      <span>{t('pages:agents.completed', 'Completed')}</span>
                     </div>
                   </div>
                 ))}
                 {completedTasks.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    No completed tasks
+                    {t('pages:agents.noCompletedTasks', 'No completed tasks')}
                   </div>
                 )}
               </div>

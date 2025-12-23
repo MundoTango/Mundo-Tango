@@ -95,21 +95,21 @@ export default function FacebookDataImport() {
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Facebook Data Import</h1>
+          <h1 className="text-4xl font-bold mb-2">{t('pages:facebookDataImport.title', 'Facebook Data Import')}</h1>
           <p className="text-lg text-muted-foreground">
-            Import your Facebook Download Your Information (DYI) data to analyze your social connections
+            {t('pages:facebookDataImport.subtitle', 'Import your Facebook Download Your Information (DYI) data to analyze your social connections')}
           </p>
         </div>
 
         <Alert data-testid="alert-instructions">
           <Info className="h-4 w-4" />
           <AlertDescription>
-            <strong>How to get your Facebook DYI data:</strong>
+            <strong>{t('pages:facebookDataImport.howToGet', 'How to get your Facebook DYI data')}:</strong>
             <ol className="list-decimal ml-5 mt-2 space-y-1">
-              <li>Go to Facebook Settings → Privacy → Download Your Information</li>
-              <li>Select "Messages", "Likes and Reactions", and "Comments"</li>
-              <li>Choose JSON format and download</li>
-              <li>Upload the downloaded JSON file here</li>
+              <li>{t('pages:facebookDataImport.step1', 'Go to Facebook Settings → Privacy → Download Your Information')}</li>
+              <li>{t('pages:facebookDataImport.step2', 'Select "Messages", "Likes and Reactions", and "Comments"')}</li>
+              <li>{t('pages:facebookDataImport.step3', 'Choose JSON format and download')}</li>
+              <li>{t('pages:facebookDataImport.step4', 'Upload the downloaded JSON file here')}</li>
             </ol>
           </AlertDescription>
         </Alert>
@@ -118,10 +118,10 @@ export default function FacebookDataImport() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Upload className="h-5 w-5" />
-              Upload Facebook Data
+              {t('pages:facebookDataImport.uploadTitle', 'Upload Facebook Data')}
             </CardTitle>
             <CardDescription>
-              Upload your Facebook DYI JSON file to analyze your friendships and calculate closeness scores
+              {t('pages:facebookDataImport.uploadDescription', 'Upload your Facebook DYI JSON file to analyze your friendships and calculate closeness scores')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -151,9 +151,9 @@ export default function FacebookDataImport() {
                   </>
                 ) : (
                   <>
-                    <p className="text-lg font-medium">Click to upload or drag and drop</p>
+                    <p className="text-lg font-medium">{t('pages:facebookDataImport.clickToUpload', 'Click to upload or drag and drop')}</p>
                     <p className="text-sm text-muted-foreground">
-                      Facebook DYI JSON file (max 100MB)
+                      {t('pages:facebookDataImport.fileType', 'Facebook DYI JSON file (max 100MB)')}
                     </p>
                   </>
                 )}
@@ -172,7 +172,7 @@ export default function FacebookDataImport() {
                 htmlFor="clear-existing"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Clear existing data before import
+                {t('pages:facebookDataImport.clearExisting', 'Clear existing data before import')}
               </Label>
             </div>
 
@@ -186,12 +186,12 @@ export default function FacebookDataImport() {
               {importMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Importing...
+                  {t('pages:facebookDataImport.importing', 'Importing...')}
                 </>
               ) : (
                 <>
                   <Upload className="mr-2 h-4 w-4" />
-                  Import Facebook Data
+                  {t('pages:facebookDataImport.importButton', 'Import Facebook Data')}
                 </>
               )}
             </Button>
@@ -208,15 +208,15 @@ export default function FacebookDataImport() {
         {importMutation.isPending && (
           <Card data-testid="card-progress">
             <CardHeader>
-              <CardTitle>Importing Data...</CardTitle>
+              <CardTitle>{t('pages:facebookDataImport.importingData', 'Importing Data...')}</CardTitle>
               <CardDescription>
-                Please wait while we process your Facebook data
+                {t('pages:facebookDataImport.pleaseWait', 'Please wait while we process your Facebook data')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Progress value={33} className="h-2" />
               <p className="text-sm text-muted-foreground mt-2 text-center">
-                Processing your messages, likes, and comments...
+                {t('pages:facebookDataImport.processing', 'Processing your messages, likes, and comments...')}
               </p>
             </CardContent>
           </Card>
@@ -227,16 +227,16 @@ export default function FacebookDataImport() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-600">
                 <CheckCircle2 className="h-5 w-5" />
-                Import Successful!
+                {t('pages:facebookDataImport.importSuccessful', 'Import Successful!')}
               </CardTitle>
               <CardDescription>
-                Your Facebook data has been imported and analyzed
+                {t('pages:facebookDataImport.dataImportedAndAnalyzed', 'Your Facebook data has been imported and analyzed')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Import Progress</span>
+                  <span>{t('pages:facebookDataImport.importProgress', 'Import Progress')}</span>
                   <span className="font-medium">{progressPercentage}%</span>
                 </div>
                 <Progress value={progressPercentage} className="h-2" />
@@ -244,13 +244,13 @@ export default function FacebookDataImport() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Friends Found</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:facebookDataImport.friendsFound', 'Friends Found')}</p>
                   <p className="text-2xl font-bold" data-testid="text-friends-found">
                     {importResult.progress.friendsFound}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Messages Processed</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:facebookDataImport.messagesProcessed', 'Messages Processed')}</p>
                   <p className="text-2xl font-bold" data-testid="text-messages-processed">
                     {importResult.progress.processedMessages.toLocaleString()}
                   </p>
@@ -258,28 +258,28 @@ export default function FacebookDataImport() {
               </div>
 
               <div className="border-t pt-4">
-                <h3 className="font-semibold mb-3">Closeness Tiers</h3>
+                <h3 className="font-semibold mb-3">{t('pages:facebookDataImport.closenessTiers', 'Closeness Tiers')}</h3>
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
                     <p className="text-3xl font-bold text-green-600" data-testid="text-tier1-count">
                       {importResult.metrics.tier1Count}
                     </p>
-                    <p className="text-sm text-muted-foreground">Tier 1</p>
-                    <p className="text-xs text-muted-foreground">Closest Friends</p>
+                    <p className="text-sm text-muted-foreground">{t('pages:facebookDataImport.tier1', 'Tier 1')}</p>
+                    <p className="text-xs text-muted-foreground">{t('pages:facebookDataImport.closestFriends', 'Closest Friends')}</p>
                   </div>
                   <div>
                     <p className="text-3xl font-bold text-blue-600" data-testid="text-tier2-count">
                       {importResult.metrics.tier2Count}
                     </p>
-                    <p className="text-sm text-muted-foreground">Tier 2</p>
-                    <p className="text-xs text-muted-foreground">Close Friends</p>
+                    <p className="text-sm text-muted-foreground">{t('pages:facebookDataImport.tier2', 'Tier 2')}</p>
+                    <p className="text-xs text-muted-foreground">{t('pages:facebookDataImport.closeFriends', 'Close Friends')}</p>
                   </div>
                   <div>
                     <p className="text-3xl font-bold text-gray-600" data-testid="text-tier3-count">
                       {importResult.metrics.tier3Count}
                     </p>
-                    <p className="text-sm text-muted-foreground">Tier 3</p>
-                    <p className="text-xs text-muted-foreground">Acquaintances</p>
+                    <p className="text-sm text-muted-foreground">{t('pages:facebookDataImport.tier3', 'Tier 3')}</p>
+                    <p className="text-xs text-muted-foreground">{t('pages:facebookDataImport.acquaintances', 'Acquaintances')}</p>
                   </div>
                 </div>
               </div>
@@ -306,7 +306,7 @@ export default function FacebookDataImport() {
                 data-testid="button-view-dashboard"
               >
                 <CheckCircle2 className="mr-2 h-4 w-4" />
-                View Closeness Dashboard
+                {t('pages:facebookDataImport.viewDashboard', 'View Closeness Dashboard')}
               </Button>
             </CardContent>
           </Card>

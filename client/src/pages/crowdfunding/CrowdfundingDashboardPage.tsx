@@ -81,9 +81,9 @@ export default function CrowdfundingDashboardPage() {
           {stats && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
               {[
-                { label: "Total Raised", value: `$${stats.totalRaised?.toLocaleString() || '0'}`, icon: DollarSign },
-                { label: "Campaigns Funded", value: stats.campaignsFunded || '0', icon: Heart },
-                { label: "Community Backers", value: stats.totalBackers || '0', icon: Users },
+                { label: t('pages:crowdfunding.stats.totalRaised', 'Total Raised'), value: `$${stats.totalRaised?.toLocaleString() || '0'}`, icon: DollarSign },
+                { label: t('pages:crowdfunding.stats.campaignsFunded', 'Campaigns Funded'), value: stats.campaignsFunded || '0', icon: Heart },
+                { label: t('pages:crowdfunding.stats.communityBackers', 'Community Backers'), value: stats.totalBackers || '0', icon: Users },
               ].map((stat) => (
                 <Card 
                   key={stat.label}
@@ -115,7 +115,7 @@ export default function CrowdfundingDashboardPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search campaigns..."
+              placeholder={t('pages:crowdfunding.search.placeholder', 'Search campaigns...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-card/50 backdrop-blur-md border-white/10"
@@ -126,13 +126,13 @@ export default function CrowdfundingDashboardPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <Tabs value={category} onValueChange={(v) => setCategory(v as CategoryFilter)}>
               <TabsList className="bg-card/50 backdrop-blur-md">
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="event">Events</TabsTrigger>
-                <TabsTrigger value="medical">Emergency</TabsTrigger>
-                <TabsTrigger value="equipment">Equipment</TabsTrigger>
-                <TabsTrigger value="travel">Travel</TabsTrigger>
-                <TabsTrigger value="education">Education</TabsTrigger>
-                <TabsTrigger value="community">Community</TabsTrigger>
+                <TabsTrigger value="all">{t('pages:crowdfunding.categories.all', 'All')}</TabsTrigger>
+                <TabsTrigger value="event">{t('pages:crowdfunding.categories.events', 'Events')}</TabsTrigger>
+                <TabsTrigger value="medical">{t('pages:crowdfunding.categories.emergency', 'Emergency')}</TabsTrigger>
+                <TabsTrigger value="equipment">{t('pages:crowdfunding.categories.equipment', 'Equipment')}</TabsTrigger>
+                <TabsTrigger value="travel">{t('pages:crowdfunding.categories.travel', 'Travel')}</TabsTrigger>
+                <TabsTrigger value="education">{t('pages:crowdfunding.categories.education', 'Education')}</TabsTrigger>
+                <TabsTrigger value="community">{t('pages:crowdfunding.categories.community', 'Community')}</TabsTrigger>
               </TabsList>
             </Tabs>
 
@@ -144,12 +144,12 @@ export default function CrowdfundingDashboardPage() {
                 <SelectItem value="trending">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="w-4 h-4" />
-                    Trending
+                    {t('pages:crowdfunding.sort.trending', 'Trending')}
                   </div>
                 </SelectItem>
-                <SelectItem value="new">Newest</SelectItem>
-                <SelectItem value="ending">Ending Soon</SelectItem>
-                <SelectItem value="funded">Most Funded</SelectItem>
+                <SelectItem value="new">{t('pages:crowdfunding.sort.newest', 'Newest')}</SelectItem>
+                <SelectItem value="ending">{t('pages:crowdfunding.sort.endingSoon', 'Ending Soon')}</SelectItem>
+                <SelectItem value="funded">{t('pages:crowdfunding.sort.mostFunded', 'Most Funded')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -177,14 +177,14 @@ export default function CrowdfundingDashboardPage() {
         ) : displayCampaigns.length === 0 ? (
           <div className="text-center py-16">
             <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-2xl font-semibold text-foreground mb-2">No campaigns found</h3>
+            <h3 className="text-2xl font-semibold text-foreground mb-2">{t('pages:crowdfunding.empty.title', 'No campaigns found')}</h3>
             <p className="text-muted-foreground mb-6">
-              {searchQuery ? "Try adjusting your search" : "Be the first to start a campaign!"}
+              {searchQuery ? t('pages:crowdfunding.empty.adjustSearch', 'Try adjusting your search') : t('pages:crowdfunding.empty.startCampaign', 'Be the first to start a campaign!')}
             </p>
             <Link href="/crowdfunding/create">
               <Button>
                 <PlusCircle className="w-4 h-4 mr-2" />
-                Create Campaign
+                {t('pages:crowdfunding.empty.createCta', 'Create Campaign')}
               </Button>
             </Link>
           </div>

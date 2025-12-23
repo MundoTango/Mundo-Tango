@@ -32,14 +32,14 @@ export default function HousingMarketplacePage() {
       <div className="container mx-auto p-4 space-y-6 mt-[61px] mb-[61px]">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold" data-testid="heading-housing-marketplace">Housing Marketplace</h1>
-            <p className="text-muted-foreground">Find accommodation for your tango travels</p>
+            <h1 className="text-3xl font-bold" data-testid="heading-housing-marketplace">{t('pages:housingMarketplace.title', 'Housing Marketplace')}</h1>
+            <p className="text-muted-foreground">{t('pages:housingMarketplace.subtitle', 'Find accommodation for your tango travels')}</p>
           </div>
           
           <Button asChild data-testid="button-post-listing">
             <Link href="/housing/create">
               <Plus className="h-4 w-4 mr-2" />
-              Post a Listing
+              {t('pages:housingMarketplace.postListing', 'Post a Listing')}
             </Link>
           </Button>
         </div>
@@ -127,7 +127,7 @@ export default function HousingMarketplacePage() {
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="secondary">{listing.propertyType}</Badge>
                       {listing.bedrooms && (
-                        <Badge variant="outline">{listing.bedrooms} bed</Badge>
+                        <Badge variant="outline">{t('pages:housingMarketplace.bed', '{{count}} bed', { count: listing.bedrooms })}</Badge>
                       )}
                       {listing.maxGuests && (
                         <Badge variant="outline">
@@ -142,10 +142,10 @@ export default function HousingMarketplacePage() {
                     <div className="flex items-center gap-1">
                       <DollarSign className="h-4 w-4" />
                       <span className="font-semibold">${listing.pricePerNight}</span>
-                      <span className="text-sm text-muted-foreground">/night</span>
+                      <span className="text-sm text-muted-foreground">{t('pages:housingMarketplace.perNight', '/night')}</span>
                     </div>
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/housing/listing/${listing.id}`}>View Details</Link>
+                      <Link href={`/housing/listing/${listing.id}`}>{t('pages:housingMarketplace.viewDetails', 'View Details')}</Link>
                     </Button>
                   </CardFooter>
                 </Card>
@@ -156,14 +156,14 @@ export default function HousingMarketplacePage() {
           <Card>
             <CardContent className="py-12 text-center">
               <Home className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No listings found</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('pages:housingMarketplace.noListings', 'No listings found')}</h3>
               <p className="text-muted-foreground mb-4">
-                {city ? "Try adjusting your search filters" : "Be the first to post a listing"}
+                {city ? t('pages:housingMarketplace.adjustFilters', 'Try adjusting your search filters') : t('pages:housingMarketplace.beFirst', 'Be the first to post a listing')}
               </p>
               <Button asChild>
                 <Link href="/housing/create">
                   <Plus className="h-4 w-4 mr-2" />
-                  Post a Listing
+                  {t('pages:housingMarketplace.postListing', 'Post a Listing')}
                 </Link>
               </Button>
             </CardContent>

@@ -21,15 +21,15 @@ export default function CrowdfundingCreatePage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/crowdfunding/campaigns'] });
       toast({
-        title: "Success!",
-        description: "Your campaign has been created successfully.",
+        title: t('common:success', 'Success!'),
+        description: t('pages:crowdfunding.create.successMessage', 'Your campaign has been created successfully.'),
       });
       setLocation(`/crowdfunding/campaign/${data.id}`);
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to create campaign. Please try again.",
+        title: t('common:error', 'Error'),
+        description: t('pages:crowdfunding.create.errorMessage', 'Failed to create campaign. Please try again.'),
         variant: "destructive",
       });
     },
@@ -45,8 +45,8 @@ export default function CrowdfundingCreatePage() {
   const handleSaveDraft = (data: any) => {
     localStorage.setItem('campaignDraft', JSON.stringify(data));
     toast({
-      title: "Draft saved",
-      description: "Your progress has been saved locally.",
+      title: t('pages:crowdfunding.create.draftSavedTitle', 'Draft saved'),
+      description: t('pages:crowdfunding.create.draftSavedDescription', 'Your progress has been saved locally.'),
     });
   };
 
@@ -71,12 +71,12 @@ export default function CrowdfundingCreatePage() {
                   backgroundClip: 'text',
                 }}
               >
-                Create Your Campaign
+                {t('pages:crowdfunding.create.hero.title', 'Create Your Campaign')}
               </span>
             </h1>
           </div>
           <p className="text-xl text-white/80 max-w-2xl mx-auto">
-            Start fundraising for your tango event, emergency need, or creative project
+            {t('pages:crowdfunding.create.hero.subtitle', 'Start fundraising for your tango event, emergency need, or creative project')}
           </p>
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function CrowdfundingCreatePage() {
           }}
         >
           <CardHeader>
-            <CardTitle>Campaign Details</CardTitle>
+            <CardTitle>{t('pages:crowdfunding.create.form.title', 'Campaign Details')}</CardTitle>
           </CardHeader>
           <CardContent>
             <CampaignWizard

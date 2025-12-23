@@ -56,12 +56,12 @@ export default function GroupsDetailPage() {
       return await apiRequest("POST", `/api/groups/${groupId}/join`);
     },
     onSuccess: () => {
-      toast({ title: "Joined group successfully!" });
+      toast({ title: t('pages:groupsDetail.joinedSuccess', 'Joined group successfully!') });
       queryClient.invalidateQueries({ queryKey: [`/api/groups/${groupId}`] });
       queryClient.invalidateQueries({ queryKey: [`/api/groups/${groupId}/members`] });
     },
     onError: () => {
-      toast({ title: "Failed to join group", variant: "destructive" });
+      toast({ title: t('pages:groupsDetail.joinFailed', 'Failed to join group'), variant: "destructive" });
     },
   });
 
@@ -70,12 +70,12 @@ export default function GroupsDetailPage() {
       return await apiRequest("DELETE", `/api/groups/${groupId}/leave`);
     },
     onSuccess: () => {
-      toast({ title: "Left group successfully" });
+      toast({ title: t('pages:groupsDetail.leftSuccess', 'Left group successfully') });
       queryClient.invalidateQueries({ queryKey: [`/api/groups/${groupId}`] });
       queryClient.invalidateQueries({ queryKey: [`/api/groups/${groupId}/members`] });
     },
     onError: () => {
-      toast({ title: "Failed to leave group", variant: "destructive" });
+      toast({ title: t('pages:groupsDetail.leaveFailed', 'Failed to leave group'), variant: "destructive" });
     },
   });
 
@@ -85,7 +85,7 @@ export default function GroupsDetailPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading group...</p>
+            <p className="text-muted-foreground">{t('pages:groupsDetail.loading', 'Loading group...')}</p>
           </div>
         </div>
       </AppLayout>
@@ -96,7 +96,7 @@ export default function GroupsDetailPage() {
     return (
       <AppLayout>
         <div className="container mx-auto max-w-4xl py-8 px-4">
-          <p className="text-center text-muted-foreground">Group not found</p>
+          <p className="text-center text-muted-foreground">{t('pages:groupsDetail.notFound', 'Group not found')}</p>
         </div>
       </AppLayout>
     );
@@ -140,7 +140,7 @@ export default function GroupsDetailPage() {
                 variant="outline" 
                 className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm capitalize"
               >
-                {group.type} Group
+                {group.type} {t('pages:groupsDetail.group', 'Group')}
               </Badge>
 
               <h1 
@@ -165,11 +165,11 @@ export default function GroupsDetailPage() {
                 )}
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
-                  <span>{group.memberCount} members</span>
+                  <span>{group.memberCount} {t('pages:groupsDetail.members', 'members')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5" />
-                  <span>Since {safeDateFormat(group.createdAt, 'MMM yyyy')}</span>
+                  <span>{t('pages:groupsDetail.since', 'Since')} {safeDateFormat(group.createdAt, 'MMM yyyy')}</span>
                 </div>
               </div>
 
@@ -182,7 +182,7 @@ export default function GroupsDetailPage() {
                     data-testid="button-join-group"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
-                    Join Group
+                    {t('pages:groupsDetail.joinGroup', 'Join Group')}
                   </Button>
                 ) : (
                   <Button
@@ -193,7 +193,7 @@ export default function GroupsDetailPage() {
                     className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
                     data-testid="button-leave-group"
                   >
-                    Leave Group
+                    {t('pages:groupsDetail.leaveGroup', 'Leave Group')}
                   </Button>
                 )}
                 
@@ -207,7 +207,7 @@ export default function GroupsDetailPage() {
                   >
                     <Link href={`/groups/${groupId}/settings`}>
                       <Settings className="h-4 w-4 mr-2" />
-                      Manage
+                      {t('pages:groupsDetail.manage', 'Manage')}
                     </Link>
                   </Button>
                 )}
@@ -221,7 +221,7 @@ export default function GroupsDetailPage() {
                 >
                   <Link href="/groups">
                     <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back
+                    {t('common:back', 'Back')}
                   </Link>
                 </Button>
               </div>
@@ -233,11 +233,11 @@ export default function GroupsDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Members ({members.length})</CardTitle>
+              <CardTitle>{t('pages:groupsDetail.membersCount', 'Members')} ({members.length})</CardTitle>
             </CardHeader>
             <CardContent>
               {members.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">No members yet</p>
+                <p className="text-center text-muted-foreground py-8">{t('pages:groupsDetail.noMembersYet', 'No members yet')}</p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {members.map((member) => (
@@ -250,10 +250,10 @@ export default function GroupsDetailPage() {
                         <div className="flex-1">
                           <div className="font-semibold text-foreground">{member.userName}</div>
                           <div className="text-sm text-muted-foreground">
-                            {member.role === 'admin' && <Badge variant="outline" className="text-xs">Admin</Badge>}
-                            {member.role === 'moderator' && <Badge variant="outline" className="text-xs">Moderator</Badge>}
+                            {member.role === 'admin' && <Badge variant="outline" className="text-xs">{t('pages:groupsDetail.admin', 'Admin')}</Badge>}
+                            {member.role === 'moderator' && <Badge variant="outline" className="text-xs">{t('pages:groupsDetail.moderator', 'Moderator')}</Badge>}
                             {member.role === 'member' && (
-                              <span>Joined {safeDateFormat(member.joinedAt, 'MMM yyyy')}</span>
+                              <span>{t('pages:groupsDetail.joined', 'Joined')} {safeDateFormat(member.joinedAt, 'MMM yyyy')}</span>
                             )}
                           </div>
                         </div>

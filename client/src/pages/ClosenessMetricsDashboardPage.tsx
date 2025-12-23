@@ -83,31 +83,31 @@ export default function ClosenessMetricsDashboardPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Closeness Metrics" fallbackRoute="/analytics">
+    <SelfHealingErrorBoundary pageName={t('pages:closenessMetrics.title', 'Closeness Metrics')} fallbackRoute="/analytics">
       <SEO 
-        title="Closeness Metrics Dashboard"
-        description="Friendship closeness scores, connection degrees, interaction analysis, and relationship strength metrics"
+        title={t('pages:closenessMetrics.seoTitle', 'Closeness Metrics Dashboard')}
+        description={t('pages:closenessMetrics.seoDescription', 'Friendship closeness scores, connection degrees, interaction analysis, and relationship strength metrics')}
         ogImage="/og-image.png"
       />
-      <PageLayout title="Closeness Metrics Dashboard" showBreadcrumbs>
+      <PageLayout title={t('pages:closenessMetrics.title', 'Closeness Metrics Dashboard')} showBreadcrumbs>
         <div className="container mx-auto p-6 space-y-6" data-testid="page-closeness-metrics">
           
           {/* Stats Overview */}
           <div className="grid gap-4 md:grid-cols-4">
             <Card data-testid="stat-avg-closeness">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg Closeness</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('pages:closenessMetrics.avgCloseness', 'Avg Closeness')}</CardTitle>
                 <Heart className="h-4 w-4 text-red-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-red-500">{stats.avgCloseness}</div>
-                <p className="text-xs text-muted-foreground mt-1">Out of 100</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('pages:closenessMetrics.outOf100', 'Out of 100')}</p>
               </CardContent>
             </Card>
 
             <Card data-testid="stat-total-friends">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Friends</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('pages:closenessMetrics.totalFriends', 'Total Friends')}</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -117,23 +117,23 @@ export default function ClosenessMetricsDashboardPage() {
 
             <Card data-testid="stat-strong-connections">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Strong Connections</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('pages:closenessMetrics.strongConnections', 'Strong Connections')}</CardTitle>
                 <Star className="h-4 w-4 text-yellow-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-yellow-500">{stats.strongConnections}</div>
-                <p className="text-xs text-muted-foreground mt-1">Score ≥ 80</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('pages:closenessMetrics.score80Plus', 'Score ≥ 80')}</p>
               </CardContent>
             </Card>
 
             <Card data-testid="stat-total-interactions">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Interactions</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('pages:closenessMetrics.totalInteractions', 'Total Interactions')}</CardTitle>
                 <MessageCircle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalInteractions}</div>
-                <p className="text-xs text-muted-foreground mt-1">Last {timeframe}</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('pages:closenessMetrics.lastTimeframe', 'Last {{timeframe}}', { timeframe })}</p>
               </CardContent>
             </Card>
           </div>
@@ -144,31 +144,29 @@ export default function ClosenessMetricsDashboardPage() {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Heart className="h-5 w-5 text-red-500" />
-                  Friendship Closeness Algorithm
+                  {t('pages:closenessMetrics.friendshipAlgorithm', 'Friendship Closeness Algorithm')}
                 </CardTitle>
                 <Select value={timeframe} onValueChange={setTimeframe}>
                   <SelectTrigger className="w-32" data-testid="select-timeframe">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="7d">Last 7 days</SelectItem>
-                    <SelectItem value="30d">Last 30 days</SelectItem>
-                    <SelectItem value="90d">Last 90 days</SelectItem>
-                    <SelectItem value="1y">Last year</SelectItem>
+                    <SelectItem value="7d">{t('pages:closenessMetrics.last7Days', 'Last 7 days')}</SelectItem>
+                    <SelectItem value="30d">{t('pages:closenessMetrics.last30Days', 'Last 30 days')}</SelectItem>
+                    <SelectItem value="90d">{t('pages:closenessMetrics.last90Days', 'Last 90 days')}</SelectItem>
+                    <SelectItem value="1y">{t('pages:closenessMetrics.lastYear', 'Last year')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                Closeness scores are calculated based on interaction frequency, shared events, 
-                message exchanges, post engagement, and connection duration. Scores range from 
-                0-100, with higher scores indicating stronger friendships.
+                {t('pages:closenessMetrics.algorithmDescription', 'Closeness scores are calculated based on interaction frequency, shared events, message exchanges, post engagement, and connection duration. Scores range from 0-100, with higher scores indicating stronger friendships.')}
               </p>
               <div className="flex gap-2">
-                <Badge variant="default">Real-time Calculation</Badge>
-                <Badge variant="secondary">ML-Powered</Badge>
-                <Badge variant="outline">Privacy-First</Badge>
+                <Badge variant="default">{t('pages:closenessMetrics.realTimeCalculation', 'Real-time Calculation')}</Badge>
+                <Badge variant="secondary">{t('pages:closenessMetrics.mlPowered', 'ML-Powered')}</Badge>
+                <Badge variant="outline">{t('pages:closenessMetrics.privacyFirst', 'Privacy-First')}</Badge>
               </div>
             </CardContent>
           </Card>
@@ -176,12 +174,12 @@ export default function ClosenessMetricsDashboardPage() {
           {/* Closeness Rankings */}
           <Card data-testid="card-closeness-rankings">
             <CardHeader>
-              <CardTitle>Friendship Rankings</CardTitle>
+              <CardTitle>{t('pages:closenessMetrics.friendshipRankings', 'Friendship Rankings')}</CardTitle>
             </CardHeader>
             <CardContent>
               {metrics.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
-                  No friendship data available
+                  {t('pages:closenessMetrics.noFriendshipData', 'No friendship data available')}
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -203,9 +201,9 @@ export default function ClosenessMetricsDashboardPage() {
                               {metric.friendName}
                             </h4>
                             <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
-                              <span>{metric.interactions} interactions</span>
+                              <span>{t('pages:closenessMetrics.interactions', '{{count}} interactions', { count: metric.interactions })}</span>
                               <span>•</span>
-                              <span>Degree {metric.connectionDegree}</span>
+                              <span>{t('pages:closenessMetrics.degree', 'Degree {{degree}}', { degree: metric.connectionDegree })}</span>
                             </div>
                           </div>
 
@@ -215,7 +213,7 @@ export default function ClosenessMetricsDashboardPage() {
                                    data-testid={`score-${metric.friendId}`}>
                                 {metric.closenessScore}
                               </div>
-                              <p className="text-xs text-muted-foreground">closeness</p>
+                              <p className="text-xs text-muted-foreground">{t('pages:closenessMetrics.closeness', 'closeness')}</p>
                             </div>
                             {getTrendIcon(metric.trend)}
                           </div>
@@ -230,7 +228,7 @@ export default function ClosenessMetricsDashboardPage() {
           {/* Score Distribution */}
           <Card data-testid="card-score-distribution">
             <CardHeader>
-              <CardTitle>Score Distribution</CardTitle>
+              <CardTitle>{t('pages:closenessMetrics.scoreDistribution', 'Score Distribution')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-4">
@@ -238,25 +236,25 @@ export default function ClosenessMetricsDashboardPage() {
                   <div className="text-3xl font-bold text-green-500">
                     {metrics.filter(m => m.closenessScore >= 80).length}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">Strong (80-100)</p>
+                  <p className="text-sm text-muted-foreground mt-2">{t('pages:closenessMetrics.strong', 'Strong (80-100)')}</p>
                 </div>
                 <div className="text-center p-4 border rounded-lg">
                   <div className="text-3xl font-bold text-blue-500">
                     {metrics.filter(m => m.closenessScore >= 60 && m.closenessScore < 80).length}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">Good (60-79)</p>
+                  <p className="text-sm text-muted-foreground mt-2">{t('pages:closenessMetrics.good', 'Good (60-79)')}</p>
                 </div>
                 <div className="text-center p-4 border rounded-lg">
                   <div className="text-3xl font-bold text-yellow-500">
                     {metrics.filter(m => m.closenessScore >= 40 && m.closenessScore < 60).length}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">Moderate (40-59)</p>
+                  <p className="text-sm text-muted-foreground mt-2">{t('pages:closenessMetrics.moderate', 'Moderate (40-59)')}</p>
                 </div>
                 <div className="text-center p-4 border rounded-lg">
                   <div className="text-3xl font-bold text-muted-foreground">
                     {metrics.filter(m => m.closenessScore < 40).length}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">Weak (0-39)</p>
+                  <p className="text-sm text-muted-foreground mt-2">{t('pages:closenessMetrics.weak', 'Weak (0-39)')}</p>
                 </div>
               </div>
             </CardContent>

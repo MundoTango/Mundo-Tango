@@ -68,9 +68,9 @@ export default function CommunityMapPage() {
   });
 
   const layers = [
-    { id: "events", label: "Events", enabled: layerState.events, icon: Calendar },
-    { id: "housing", label: "Housing", enabled: layerState.housing, icon: Building2 },
-    { id: "recommendations", label: "Recommendations", enabled: layerState.recommendations, icon: MapPin },
+    { id: "events", label: t('pages:communityMap.layerEvents', 'Events'), enabled: layerState.events, icon: Calendar },
+    { id: "housing", label: t('pages:communityMap.layerHousing', 'Housing'), enabled: layerState.housing, icon: Building2 },
+    { id: "recommendations", label: t('pages:communityMap.layerRecommendations', 'Recommendations'), enabled: layerState.recommendations, icon: MapPin },
   ];
 
   return (
@@ -78,15 +78,15 @@ export default function CommunityMapPage() {
       <div className="container mx-auto p-4 space-y-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold" data-testid="heading-community-map">Tango Community Map</h1>
-            <p className="text-muted-foreground">Explore tango communities around the world</p>
+            <h1 className="text-3xl font-bold" data-testid="heading-community-map">{t('pages:communityMap.title', 'Tango Community Map')}</h1>
+            <p className="text-muted-foreground">{t('pages:communityMap.subtitle', 'Explore tango communities around the world')}</p>
           </div>
           
           <div className="flex gap-2">
             <div className="w-full md:w-72">
               <UnifiedLocationPicker
                 mode="city"
-                placeholder="Search for a city..."
+                placeholder={t('pages:communityMap.searchPlaceholder', 'Search for a city...')}
                 value={searchLocation}
                 coordinates={mapCenter ? { lat: mapCenter[0], lng: mapCenter[1] } : undefined}
                 onChange={(location, coordinates) => {
@@ -102,7 +102,7 @@ export default function CommunityMapPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Layers className="h-5 w-5" />
-              Filter by Layer
+              {t('pages:communityMap.filterByLayer', 'Filter by Layer')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -127,7 +127,7 @@ export default function CommunityMapPage() {
           <CardContent className="p-0">
             {isLoading ? (
               <div className="h-[600px] flex items-center justify-center">
-                <p className="text-muted-foreground">Loading map...</p>
+                <p className="text-muted-foreground">{t('pages:communityMap.loadingMap', 'Loading map...')}</p>
               </div>
             ) : (
               <div className="h-[600px] rounded-b-lg overflow-hidden" data-testid="map-container">

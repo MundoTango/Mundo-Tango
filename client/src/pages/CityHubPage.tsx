@@ -176,14 +176,14 @@ export default function CityHubPage() {
               <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg" data-testid="heading-city-hub">
                 {selectedCity.city 
                   ? `${selectedCity.city}${selectedCity.country ? `, ${selectedCity.country}` : ''}`
-                  : "Explore Cities"}
+                  : t('pages:cityHub.exploreCities', 'Explore Cities')}
               </h1>
             </div>
             <div className="w-full md:w-80">
               <UnifiedLocationPicker
                 mode="city"
                 value={selectedCity.city}
-                placeholder="Search for a city..."
+                placeholder={t('pages:cityHub.searchForCity', 'Search for a city...')}
                 onChange={handleLocationChange}
                 className="bg-white/95 backdrop-blur"
               />
@@ -198,27 +198,27 @@ export default function CityHubPage() {
             <TabsList className="w-full md:w-auto" data-testid="tabs-city-hub">
               <TabsTrigger value="overview" data-testid="tab-overview">
                 <Grid3X3 className="h-4 w-4 mr-2" />
-                Overview
+                {t('pages:cityHub.overview', 'Overview')}
               </TabsTrigger>
               <TabsTrigger value="events" data-testid="tab-events">
                 <Calendar className="h-4 w-4 mr-2" />
-                Events
+                {t('pages:cityHub.events', 'Events')}
               </TabsTrigger>
               <TabsTrigger value="groups" data-testid="tab-groups">
                 <Users className="h-4 w-4 mr-2" />
-                Members
+                {t('pages:cityHub.members', 'Members')}
               </TabsTrigger>
               <TabsTrigger value="housing" data-testid="tab-housing">
                 <Home className="h-4 w-4 mr-2" />
-                Housing
+                {t('pages:cityHub.housing', 'Housing')}
               </TabsTrigger>
               <TabsTrigger value="visitors" data-testid="tab-visitors">
                 <Plane className="h-4 w-4 mr-2" />
-                Visitors
+                {t('pages:cityHub.visitors', 'Visitors')}
               </TabsTrigger>
               <TabsTrigger value="recommendations" data-testid="tab-recommendations">
                 <Star className="h-4 w-4 mr-2" />
-                Tips
+                {t('pages:cityHub.tips', 'Tips')}
               </TabsTrigger>
             </TabsList>
 
@@ -255,9 +255,9 @@ export default function CityHubPage() {
               <Card className="text-center py-12">
                 <CardContent>
                   <Globe className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">Select a City</h3>
+                  <h3 className="text-xl font-semibold mb-2">{t('pages:cityHub.selectACity', 'Select a City')}</h3>
                   <p className="text-muted-foreground">
-                    Use the search above to explore events, members, and housing in any city
+                    {t('pages:cityHub.useSearchAbove', 'Use the search above to explore events, members, and housing in any city')}
                   </p>
                 </CardContent>
               </Card>
@@ -304,11 +304,11 @@ export default function CityHubPage() {
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-primary" />
-                        Upcoming Events
+                        {t('pages:cityHub.upcomingEvents', 'Upcoming Events')}
                       </h2>
                       <Button variant="ghost" size="sm" asChild data-testid="link-view-all-events">
                         <Link href={`/events?city=${encodeURIComponent(selectedCity.city)}`}>
-                          View All <ArrowRight className="h-4 w-4 ml-1" />
+                          {t('pages:cityHub.viewAll', 'View All')} <ArrowRight className="h-4 w-4 ml-1" />
                         </Link>
                       </Button>
                     </div>
@@ -346,7 +346,7 @@ export default function CityHubPage() {
                       <Card className="text-center py-6">
                         <CardContent>
                           <Calendar className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                          <p className="text-sm text-muted-foreground">No upcoming events</p>
+                          <p className="text-sm text-muted-foreground">{t('pages:cityHub.noUpcomingEvents', 'No upcoming events')}</p>
                         </CardContent>
                       </Card>
                     )}
@@ -356,11 +356,11 @@ export default function CityHubPage() {
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Home className="h-5 w-5 text-primary" />
-                        Available Housing
+                        {t('pages:cityHub.availableHousing', 'Available Housing')}
                       </h2>
                       <Button variant="ghost" size="sm" asChild data-testid="link-view-all-housing">
                         <Link href={`/housing?city=${encodeURIComponent(selectedCity.city)}`}>
-                          View All <ArrowRight className="h-4 w-4 ml-1" />
+                          {t('pages:cityHub.viewAll', 'View All')} <ArrowRight className="h-4 w-4 ml-1" />
                         </Link>
                       </Button>
                     </div>
@@ -397,9 +397,9 @@ export default function CityHubPage() {
                       <Card className="text-center py-6">
                         <CardContent>
                           <Home className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                          <p className="text-sm text-muted-foreground">No housing available</p>
+                          <p className="text-sm text-muted-foreground">{t('pages:cityHub.noHousingAvailable', 'No housing available')}</p>
                           <Button variant="outline" size="sm" className="mt-3" asChild>
-                            <Link href="/housing/create">List Your Space</Link>
+                            <Link href="/housing/create">{t('pages:cityHub.listYourSpace', 'List Your Space')}</Link>
                           </Button>
                         </CardContent>
                       </Card>
@@ -413,11 +413,11 @@ export default function CityHubPage() {
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
                         <Star className="h-5 w-5 text-primary" />
-                        Local Tips
+                        {t('pages:cityHub.localTips', 'Local Tips')}
                       </h2>
                       <Button variant="ghost" size="sm" asChild data-testid="link-view-all-tips">
                         <Link href={`/recommendations?city=${encodeURIComponent(selectedCity.city)}`}>
-                          View All <ArrowRight className="h-4 w-4 ml-1" />
+                          {t('pages:cityHub.viewAll', 'View All')} <ArrowRight className="h-4 w-4 ml-1" />
                         </Link>
                       </Button>
                     </div>
@@ -436,14 +436,14 @@ export default function CityHubPage() {
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-sm flex items-center gap-2">
                           <Map className="h-4 w-4 text-primary" />
-                          Map
+                          {t('pages:cityHub.map', 'Map')}
                         </CardTitle>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full bg-[#FF5A5F]" /> Events
+                            <div className="w-2 h-2 rounded-full bg-[#FF5A5F]" /> {t('pages:cityHub.events', 'Events')}
                           </span>
                           <span className="flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full bg-[#00A699]" /> Housing
+                            <div className="w-2 h-2 rounded-full bg-[#00A699]" /> {t('pages:cityHub.housing', 'Housing')}
                           </span>
                         </div>
                       </div>
@@ -482,11 +482,11 @@ export default function CityHubPage() {
             <Card>
               <CardContent className="py-8 text-center">
                 <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">{selectedCity.city || "City"} Events</h3>
-                <p className="text-muted-foreground mb-4">View all events with calendar and map views</p>
+                <h3 className="text-lg font-semibold mb-2">{t('pages:cityHub.cityEvents', '{{city}} Events', { city: selectedCity.city || "City" })}</h3>
+                <p className="text-muted-foreground mb-4">{t('pages:cityHub.viewAllEventsDesc', 'View all events with calendar and map views')}</p>
                 <Button asChild>
                   <Link href={`/events?city=${encodeURIComponent(selectedCity.city || "")}`}>
-                    Browse Events
+                    {t('pages:cityHub.browseEvents', 'Browse Events')}
                   </Link>
                 </Button>
               </CardContent>
@@ -497,11 +497,11 @@ export default function CityHubPage() {
             <Card>
               <CardContent className="py-8 text-center">
                 <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">{selectedCity.city || "City"} Members</h3>
-                <p className="text-muted-foreground mb-4">Connect with local tango dancers</p>
+                <h3 className="text-lg font-semibold mb-2">{t('pages:cityHub.cityMembers', '{{city}} Members', { city: selectedCity.city || "City" })}</h3>
+                <p className="text-muted-foreground mb-4">{t('pages:cityHub.connectWithLocal', 'Connect with local tango dancers')}</p>
                 <Button asChild>
                   <Link href={`/city-groups?city=${encodeURIComponent(selectedCity.city || "")}`}>
-                    Browse Members
+                    {t('pages:cityHub.browseMembers', 'Browse Members')}
                   </Link>
                 </Button>
               </CardContent>
@@ -519,11 +519,11 @@ export default function CityHubPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <Plane className="h-5 w-5 text-primary" />
-                All Upcoming Visitors to {selectedCity.city || "City"}
+                {t('pages:cityHub.upcomingVisitors', 'All Upcoming Visitors to {{city}}', { city: selectedCity.city || "City" })}
               </h2>
               <Button variant="outline" asChild data-testid="button-plan-visit">
                 <Link href="/travel/plan">
-                  Plan Your Visit
+                  {t('pages:cityHub.planYourVisit', 'Plan Your Visit')}
                 </Link>
               </Button>
             </div>

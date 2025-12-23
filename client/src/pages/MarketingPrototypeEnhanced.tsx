@@ -12,6 +12,7 @@
  * - Dark mode optimized
  */
 
+import { useTranslation } from "react-i18next";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ import communityImage2 from "@assets/stock_images/business_team_meetin_061b6626.
 import dataVizImage from "@assets/stock_images/data_visualization_t_03b1d852.jpg";
 
 export default function MarketingPrototypeEnhanced() {
+  const { t } = useTranslation(["pages", "common"]);
   const heroRef = useRef(null);
   
   const { scrollYProgress } = useScroll({
@@ -62,13 +64,13 @@ export default function MarketingPrototypeEnhanced() {
               className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm"
               data-testid="badge-network"
             >
-              THE GLOBAL TANGO NETWORK
+              {t('pages:marketingEnhanced.badge', 'THE GLOBAL TANGO NETWORK')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight leading-tight">
-              Where Tango{" "}
+              {t('pages:marketingEnhanced.heroTitle', 'Where Tango')}{" "}
               <br />
-              Meets Community
+              {t('pages:marketingEnhanced.heroTitleLine2', 'Meets Community')}
             </h1>
           </motion.div>
 
@@ -78,7 +80,7 @@ export default function MarketingPrototypeEnhanced() {
             transition={{ duration: 1, delay: 0.3 }}
             className="text-xl text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed"
           >
-            Connect with dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
+            {t('pages:marketingEnhanced.heroSubtitle', 'Connect with dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.')}
           </motion.p>
 
           <motion.div
@@ -92,7 +94,7 @@ export default function MarketingPrototypeEnhanced() {
               className="text-lg px-8"
               data-testid="button-join-community"
             >
-              Join the Community
+              {t('pages:marketingEnhanced.joinCommunity', 'Join the Community')}
             </Button>
             <Button
               size="lg"
@@ -100,7 +102,7 @@ export default function MarketingPrototypeEnhanced() {
               className="text-lg px-8 backdrop-blur-sm bg-white/10 text-white border-white/30 hover:bg-white/20"
               data-testid="button-explore-events"
             >
-              Explore Events
+              {t('pages:marketingEnhanced.exploreEvents', 'Explore Events')}
             </Button>
           </motion.div>
         </div>
@@ -123,7 +125,7 @@ export default function MarketingPrototypeEnhanced() {
       <section className="py-16 bg-background" data-testid="section-community">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <p className="text-xl text-muted-foreground">
-            Building connections across continents, one dance at a time
+            {t('pages:marketingEnhanced.communityTagline', 'Building connections across continents, one dance at a time')}
           </p>
         </div>
       </section>
@@ -139,10 +141,10 @@ export default function MarketingPrototypeEnhanced() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-              7 Ways to Connect
+              {t('pages:marketingEnhanced.featuresTitle', '7 Ways to Connect')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Mundo Tango brings the global tango community together through powerful features
+              {t('pages:marketingEnhanced.featuresSubtitle', 'Mundo Tango brings the global tango community together through powerful features')}
             </p>
           </motion.div>
           
@@ -150,15 +152,15 @@ export default function MarketingPrototypeEnhanced() {
             <EditorialFeatureCard
               image={communityImage1}
               icon={<Heart className="text-primary" size={32} />}
-              title="Social Feed"
-              description="Share your tango journey with a vibrant community. Connect with dancers, share experiences, and celebrate the passion of tango."
+              title={t('pages:marketingEnhanced.socialFeedTitle', 'Social Feed')}
+              description={t('pages:marketingEnhanced.socialFeedDesc', 'Share your tango journey with a vibrant community. Connect with dancers, share experiences, and celebrate the passion of tango.')}
               delay={0.1}
             />
             <EditorialFeatureCard
               image={communityImage2}
               icon={<Users className="text-primary" size={32} />}
-              title="Find Partners"
-              description="Connect with dancers worldwide for events and practice. Build meaningful connections with people who share your love for tango."
+              title={t('pages:marketingEnhanced.findPartnersTitle', 'Find Partners')}
+              description={t('pages:marketingEnhanced.findPartnersDesc', 'Connect with dancers worldwide for events and practice. Build meaningful connections with people who share your love for tango.')}
               delay={0.2}
             />
           </div>
@@ -166,38 +168,38 @@ export default function MarketingPrototypeEnhanced() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <SimpleFeatureCard
               icon={<Music size={40} className="text-primary" />}
-              title="Events & Milongas"
-              description="Discover and attend tango events in your city"
+              title={t('pages:marketingEnhanced.eventsMilongasTitle', 'Events & Milongas')}
+              description={t('pages:marketingEnhanced.eventsMilongasDesc', 'Discover and attend tango events in your city')}
               delay={0.1}
             />
             <SimpleFeatureCard
               icon={<Globe size={40} className="text-primary" />}
-              title="Global Community"
-              description="Join dancers from over 50 countries"
+              title={t('pages:marketingEnhanced.globalCommunityTitle', 'Global Community')}
+              description={t('pages:marketingEnhanced.globalCommunityDesc', 'Join dancers from over 50 countries')}
               delay={0.2}
             />
             <SimpleFeatureCard
               icon={<Calendar size={40} className="text-primary" />}
-              title="Event Calendar"
-              description="Never miss a milonga with our comprehensive calendar"
+              title={t('pages:marketingEnhanced.eventCalendarTitle', 'Event Calendar')}
+              description={t('pages:marketingEnhanced.eventCalendarDesc', 'Never miss a milonga with our comprehensive calendar')}
               delay={0.3}
             />
             <SimpleFeatureCard
               icon={<MapPin size={40} className="text-primary" />}
-              title="Interactive Map"
-              description="Explore tango venues and events on our interactive map"
+              title={t('pages:marketingEnhanced.interactiveMapTitle', 'Interactive Map')}
+              description={t('pages:marketingEnhanced.interactiveMapDesc', 'Explore tango venues and events on our interactive map')}
               delay={0.4}
             />
             <SimpleFeatureCard
               icon={<Heart size={40} className="text-primary" />}
-              title="Community Groups"
-              description="Join or create groups based on your interests"
+              title={t('pages:marketingEnhanced.communityGroupsTitle', 'Community Groups')}
+              description={t('pages:marketingEnhanced.communityGroupsDesc', 'Join or create groups based on your interests')}
               delay={0.5}
             />
             <SimpleFeatureCard
               icon={<Sparkles size={40} className="text-primary" />}
-              title="Premium Features"
-              description="Unlock advanced tools for organizers and professionals"
+              title={t('pages:marketingEnhanced.premiumFeaturesTitle', 'Premium Features')}
+              description={t('pages:marketingEnhanced.premiumFeaturesDesc', 'Unlock advanced tools for organizers and professionals')}
               delay={0.6}
             />
           </div>
@@ -215,47 +217,47 @@ export default function MarketingPrototypeEnhanced() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-              Join the Movement
+              {t('pages:marketingEnhanced.joinMovementTitle', 'Join the Movement')}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Start connecting with the global tango community today
+              {t('pages:marketingEnhanced.joinMovementSubtitle', 'Start connecting with the global tango community today')}
             </p>
           </motion.div>
           
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             <PricingCard
-              title="Dancer"
-              price="Free"
+              title={t('pages:marketingEnhanced.dancerTier', 'Dancer')}
+              price={t('pages:marketingEnhanced.free', 'Free')}
               features={[
-                "Social feed access",
-                "Event discovery",
-                "Basic messaging",
-                "Community groups"
+                t('pages:marketingEnhanced.featureSocialFeed', 'Social feed access'),
+                t('pages:marketingEnhanced.featureEventDiscovery', 'Event discovery'),
+                t('pages:marketingEnhanced.featureBasicMessaging', 'Basic messaging'),
+                t('pages:marketingEnhanced.featureCommunityGroups', 'Community groups')
               ]}
               delay={0.1}
             />
             <PricingCard
-              title="Pro"
-              price="$9/mo"
+              title={t('pages:marketingEnhanced.proTier', 'Pro')}
+              price={t('pages:marketingEnhanced.proPrice', '$9/mo')}
               features={[
-                "Everything in Dancer",
-                "Advanced search",
-                "Event creation",
-                "Priority support",
-                "Analytics dashboard"
+                t('pages:marketingEnhanced.featureEverythingDancer', 'Everything in Dancer'),
+                t('pages:marketingEnhanced.featureAdvancedSearch', 'Advanced search'),
+                t('pages:marketingEnhanced.featureEventCreation', 'Event creation'),
+                t('pages:marketingEnhanced.featurePrioritySupport', 'Priority support'),
+                t('pages:marketingEnhanced.featureAnalytics', 'Analytics dashboard')
               ]}
               highlighted
               delay={0.2}
             />
             <PricingCard
-              title="Organizer"
-              price="$29/mo"
+              title={t('pages:marketingEnhanced.organizerTier', 'Organizer')}
+              price={t('pages:marketingEnhanced.organizerPrice', '$29/mo')}
               features={[
-                "Everything in Pro",
-                "Unlimited events",
-                "Ticketing system",
-                "Marketing tools",
-                "Custom branding"
+                t('pages:marketingEnhanced.featureEverythingPro', 'Everything in Pro'),
+                t('pages:marketingEnhanced.featureUnlimitedEvents', 'Unlimited events'),
+                t('pages:marketingEnhanced.featureTicketing', 'Ticketing system'),
+                t('pages:marketingEnhanced.featureMarketing', 'Marketing tools'),
+                t('pages:marketingEnhanced.featureCustomBranding', 'Custom branding')
               ]}
               delay={0.3}
             />
@@ -263,7 +265,7 @@ export default function MarketingPrototypeEnhanced() {
 
           <div className="text-center">
             <Button size="lg" className="text-lg px-8" data-testid="button-view-pricing">
-              View Full Pricing
+              {t('pages:marketingEnhanced.viewPricing', 'View Full Pricing')}
             </Button>
           </div>
         </div>
@@ -284,10 +286,10 @@ export default function MarketingPrototypeEnhanced() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6">
-                Ready to Dance?
+                {t('pages:marketingEnhanced.ctaTitle', 'Ready to Dance?')}
               </h2>
               <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-                Join dancers from around the world
+                {t('pages:marketingEnhanced.ctaSubtitle', 'Join dancers from around the world')}
               </p>
               
               <div className="flex flex-wrap gap-4 justify-center">
@@ -296,7 +298,7 @@ export default function MarketingPrototypeEnhanced() {
                   className="bg-white text-black hover:bg-white/90 text-lg px-8"
                   data-testid="button-create-account"
                 >
-                  Create Free Account
+                  {t('pages:marketingEnhanced.createAccount', 'Create Free Account')}
                 </Button>
                 <Button 
                   size="lg" 
@@ -304,7 +306,7 @@ export default function MarketingPrototypeEnhanced() {
                   className="border-white/30 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 text-lg px-8"
                   data-testid="button-learn-more"
                 >
-                  Learn More
+                  {t('pages:marketingEnhanced.learnMore', 'Learn More')}
                 </Button>
               </div>
             </motion.div>
@@ -453,7 +455,7 @@ function PricingCard({
         {highlighted && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <Badge className="bg-primary text-primary-foreground">
-              MOST POPULAR
+              {t('pages:marketingEnhanced.mostPopular', 'MOST POPULAR')}
             </Badge>
           </div>
         )}
@@ -482,7 +484,7 @@ function PricingCard({
             className="w-full"
             data-testid={`button-${title.toLowerCase()}`}
           >
-            Get Started
+            {t('pages:marketingEnhanced.getStarted', 'Get Started')}
           </Button>
         </CardContent>
       </Card>

@@ -43,16 +43,16 @@ export default function TwoFactorVerify() {
         sessionStorage.removeItem('2fa_user_id');
         
         toast({
-          title: "Verification Successful",
-          description: "You have been successfully logged in.",
+          title: t('pages:settings.verificationSuccessful', 'Verification Successful'),
+          description: t('pages:settings.loginSuccessDesc', 'You have been successfully logged in.'),
         });
         
         // Redirect to home or dashboard
         navigate('/');
       } else {
         toast({
-          title: "Verification Failed",
-          description: "Invalid code. Please try again.",
+          title: t('pages:settings.verificationFailed', 'Verification Failed'),
+          description: t('pages:settings.invalidCodeTryAgain', 'Invalid code. Please try again.'),
           variant: "destructive",
         });
         
@@ -65,8 +65,8 @@ export default function TwoFactorVerify() {
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Verification failed. Please try again.",
+        title: t('pages:settings.error', 'Error'),
+        description: t('pages:settings.verificationFailedDesc', 'Verification failed. Please try again.'),
         variant: "destructive",
       });
       
@@ -82,8 +82,8 @@ export default function TwoFactorVerify() {
     if (useBackupCode) {
       if (!backupCode.trim()) {
         toast({
-          title: "Invalid Input",
-          description: "Please enter a backup code.",
+          title: t('pages:settings.invalidInput', 'Invalid Input'),
+          description: t('pages:settings.enterBackupCode', 'Please enter a backup code.'),
           variant: "destructive",
         });
         return;
@@ -91,8 +91,8 @@ export default function TwoFactorVerify() {
     } else {
       if (token.length !== 6) {
         toast({
-          title: "Invalid Code",
-          description: "Please enter a 6-digit code.",
+          title: t('pages:settings.invalidCode', 'Invalid Code'),
+          description: t('pages:settings.enterSixDigitCode', 'Please enter a 6-digit code.'),
           variant: "destructive",
         });
         return;
@@ -110,31 +110,31 @@ export default function TwoFactorVerify() {
 
   if (!userId) {
     return (
-      <SelfHealingErrorBoundary pageName="Two-Factor Verification" fallbackRoute="/login">
+      <SelfHealingErrorBoundary pageName={t('pages:settings.twoFactorVerification', 'Two-Factor Verification')} fallbackRoute="/login">
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[hsl(var(--gradient-hero-start))] to-[hsl(var(--gradient-hero-end))]">
           <Card className="w-full max-w-md backdrop-blur-md bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10">
             <CardContent className="p-8 text-center">
               <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-              <h2 className="text-xl font-semibold mb-2">Session Expired</h2>
+              <h2 className="text-xl font-semibold mb-2">{t('pages:settings.sessionExpired', 'Session Expired')}</h2>
               <p className="text-muted-foreground mb-4">
-                Please log in again to continue.
+                {t('pages:settings.loginAgainToContinue', 'Please log in again to continue.')}
               </p>
               <Button onClick={() => navigate('/login')} data-testid="button-return-login">
-                Return to Login
+                {t('pages:settings.returnToLogin', 'Return to Login')}
               </Button>
             </CardContent>
           </Card>
         </div>
-      </SelfHealingErrorBoundary>
+      </PageLayout>
     );
   }
 
   return (
-    <SelfHealingErrorBoundary pageName="Two-Factor Verification" fallbackRoute="/login">
+    <SelfHealingErrorBoundary pageName={t('pages:settings.twoFactorVerification', 'Two-Factor Verification')} fallbackRoute="/login">
       <>
         <SEO 
-          title="Two-Factor Verification"
-          description="Verify your identity with two-factor authentication."
+          title={t('pages:settings.twoFactorVerification', 'Two-Factor Verification')}
+          description={t('pages:settings.twoFactorVerificationDesc', 'Verify your identity with two-factor authentication.')}
         />
         
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[hsl(var(--gradient-hero-start))] to-[hsl(var(--gradient-hero-end))]">
@@ -145,10 +145,10 @@ export default function TwoFactorVerify() {
                 <Shield className="h-8 w-8 text-[#40E0D0]" />
               </div>
               <h1 className="text-3xl font-serif font-bold bg-gradient-to-r from-[#40E0D0] via-[#1E90FF] to-[#9370DB] bg-clip-text text-transparent" data-testid="heading-2fa-verify">
-                Two-Factor Authentication
+                {t('pages:settings.twoFactorAuthTitle', 'Two-Factor Authentication')}
               </h1>
               <p className="text-muted-foreground">
-                Enter the verification code to continue
+                {t('pages:settings.enterCodeToContinue', 'Enter the verification code to continue')}
               </p>
             </div>
 
@@ -159,29 +159,29 @@ export default function TwoFactorVerify() {
                   {useBackupCode ? (
                     <>
                       <Key className="h-5 w-5 text-[#40E0D0]" />
-                      Use Backup Code
+                      {t('pages:settings.useBackupCode', 'Use Backup Code')}
                     </>
                   ) : (
                     <>
                       <Shield className="h-5 w-5 text-[#40E0D0]" />
-                      Enter Verification Code
+                      {t('pages:settings.enterVerificationCode', 'Enter Verification Code')}
                     </>
                   )}
                 </CardTitle>
                 <CardDescription>
                   {useBackupCode
-                    ? "Enter one of your backup codes"
-                    : "Enter the 6-digit code from your authenticator app"}
+                    ? t('pages:settings.enterOneBackupCode', 'Enter one of your backup codes')
+                    : t('pages:settings.enterSixDigitCodeDesc', 'Enter the 6-digit code from your authenticator app')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {useBackupCode ? (
                   <div className="space-y-2">
-                    <Label htmlFor="backup-code">Backup Code</Label>
+                    <Label htmlFor="backup-code">{t('pages:settings.backupCode', 'Backup Code')}</Label>
                     <Input
                       id="backup-code"
                       type="text"
-                      placeholder="Enter backup code"
+                      placeholder={t('pages:settings.enterBackupCodePlaceholder', 'Enter backup code')}
                       value={backupCode}
                       onChange={(e) => setBackupCode(e.target.value.toUpperCase())}
                       disabled={verifyMutation.isPending}
@@ -219,7 +219,7 @@ export default function TwoFactorVerify() {
                   className="w-full"
                   data-testid="button-verify"
                 >
-                  {verifyMutation.isPending ? "Verifying..." : "Verify"}
+                  {verifyMutation.isPending ? t('pages:settings.verifying', 'Verifying...') : t('pages:settings.verify', 'Verify')}
                 </Button>
 
                 <div className="text-center">
@@ -230,15 +230,15 @@ export default function TwoFactorVerify() {
                     data-testid="button-toggle-backup"
                   >
                     {useBackupCode
-                      ? "Use authenticator code instead"
-                      : "Use backup code instead"}
+                      ? t('pages:settings.useAuthenticatorCode', 'Use authenticator code instead')
+                      : t('pages:settings.useBackupCodeInstead', 'Use backup code instead')}
                   </Button>
                 </div>
 
                 {!useBackupCode && (
                   <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
                     <p className="text-sm text-blue-600 dark:text-blue-400">
-                      <strong>Tip:</strong> Open your authenticator app and enter the 6-digit code displayed for Mundo Tango.
+                      <strong>{t('pages:settings.tip', 'Tip')}:</strong> {t('pages:settings.tipDesc', 'Open your authenticator app and enter the 6-digit code displayed for Mundo Tango.')}
                     </p>
                   </div>
                 )}
@@ -248,9 +248,9 @@ export default function TwoFactorVerify() {
             {/* Help Text */}
             <div className="text-center text-sm text-muted-foreground">
               <p>
-                Lost your device?{" "}
+                {t('pages:settings.lostDevice', 'Lost your device?')}{" "}
                 <a href="/help" className="text-primary hover:underline">
-                  Contact support
+                  {t('pages:settings.contactSupport', 'Contact support')}
                 </a>
               </p>
             </div>

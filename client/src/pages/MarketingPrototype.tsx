@@ -5,8 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowDown, Sparkles, Music, Users, Heart, Globe } from "lucide-react";
 import { Link } from "wouter";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { useTranslation } from 'react-i18next';
 
 export default function MarketingPrototype() {
+  const { t } = useTranslation();
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,

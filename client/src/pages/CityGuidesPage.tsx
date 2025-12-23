@@ -14,29 +14,32 @@ const cities = [
   {
     name: "Buenos Aires",
     country: "Argentina",
-    description: "The birthplace of tango. Experience authentic milongas every night, world-class teachers, and the passion that started it all.",
+    descriptionKey: "buenosAiresDesc",
+    descriptionFallback: "The birthplace of tango. Experience authentic milongas every night, world-class teachers, and the passion that started it all.",
   },
   {
     name: "Berlin",
     country: "Germany",
-    description: "Europe's tango capital with a vibrant alternative scene. 20+ weekly milongas, marathons, and a unique fusion of tradition and innovation.",
+    descriptionKey: "berlinDesc",
+    descriptionFallback: "Europe's tango capital with a vibrant alternative scene. 20+ weekly milongas, marathons, and a unique fusion of tradition and innovation.",
   },
   {
     name: "Istanbul",
     country: "Turkey",
-    description: "Where East meets West in tango. A warm, welcoming community with stunning venues overlooking the Bosphorus.",
+    descriptionKey: "istanbulDesc",
+    descriptionFallback: "Where East meets West in tango. A warm, welcoming community with stunning venues overlooking the Bosphorus.",
   }
 ];
 
 export default function CityGuidesPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
-    <SelfHealingErrorBoundary pageName="City Guides" fallbackRoute="/">
-      <PageLayout title="City Guides" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:cityGuides.title', 'City Guides')} fallbackRoute="/">
+      <PageLayout title={t('pages:cityGuides.title', 'City Guides')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="Tango City Guides - Dance Worldwide - Mundo Tango"
-            description="Explore tango scenes in cities worldwide. Find milongas, teachers, venues, and local tips for dancing tango in major cities across the globe."
+            title={t('pages:cityGuides.seoTitle', 'Tango City Guides - Dance Worldwide - Mundo Tango')}
+            description={t('pages:cityGuides.seoDescription', 'Explore tango scenes in cities worldwide. Find milongas, teachers, venues, and local tips for dancing tango in major cities across the globe.')}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -54,15 +57,15 @@ export default function CityGuidesPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Compass className="w-3 h-3 mr-1.5" />
-                  City Guides
+                  {t('pages:cityGuides.title', 'City Guides')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Tango Around the World
+                  {t('pages:cityGuides.heroTitle', 'Tango Around the World')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Your guide to dancing tango around the world
+                  {t('pages:cityGuides.heroSubtitle', 'Your guide to dancing tango around the world')}
                 </p>
               </motion.div>
             </div>
@@ -79,11 +82,10 @@ export default function CityGuidesPage() {
                 className="text-center max-w-3xl mx-auto"
               >
                 <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-                  Dance Anywhere, Anytime
+                  {t('pages:cityGuides.danceAnywhere', 'Dance Anywhere, Anytime')}
                 </h2>
                 <p className="text-lg text-muted-foreground">
-                  Whether you're traveling for work or planning a tango vacation, find everything you 
-                  need to connect with local communities and dance in any city.
+                  {t('pages:cityGuides.danceAnywhereDesc', "Whether you're traveling for work or planning a tango vacation, find everything you need to connect with local communities and dance in any city.")}
                 </p>
               </motion.div>
 
@@ -112,12 +114,12 @@ export default function CityGuidesPage() {
                               <Badge variant="outline">{city.country}</Badge>
                             </div>
                             <p className="text-muted-foreground leading-relaxed">
-                              {city.description}
+                              {t(`pages:cityGuides.${city.descriptionKey}`, city.descriptionFallback)}
                             </p>
                             <Button variant="outline" asChild data-testid={`button-explore-${idx}`}>
                               <a href={`/city-guides/${city.name.toLowerCase().replace(' ', '-')}`}>
                                 <Info className="h-4 w-4 mr-2" />
-                                Explore {city.name}
+                                {t('pages:cityGuides.explore', 'Explore {{city}}', { city: city.name })}
                               </a>
                             </Button>
                           </div>
@@ -136,7 +138,7 @@ export default function CityGuidesPage() {
               >
                 <Card className="hover-elevate" data-testid="card-what-find">
                   <CardHeader>
-                    <CardTitle className="text-3xl font-serif">What You'll Find in Each Guide</CardTitle>
+                    <CardTitle className="text-3xl font-serif">{t('pages:cityGuides.whatYouFind', "What You'll Find in Each Guide")}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-6 md:grid-cols-2">
@@ -144,9 +146,9 @@ export default function CityGuidesPage() {
                         <div className="flex items-start gap-3">
                           <MapPin className="h-5 w-5 text-primary mt-0.5" />
                           <div>
-                            <h4 className="font-semibold mb-1">Milonga Calendar</h4>
+                            <h4 className="font-semibold mb-1">{t('pages:cityGuides.milongaCalendar', 'Milonga Calendar')}</h4>
                             <p className="text-sm text-muted-foreground">
-                              Complete schedule of weekly milongas and special events
+                              {t('pages:cityGuides.milongaCalendarDesc', 'Complete schedule of weekly milongas and special events')}
                             </p>
                           </div>
                         </div>
@@ -155,9 +157,9 @@ export default function CityGuidesPage() {
                         <div className="flex items-start gap-3">
                           <Building2 className="h-5 w-5 text-primary mt-0.5" />
                           <div>
-                            <h4 className="font-semibold mb-1">Venue Information</h4>
+                            <h4 className="font-semibold mb-1">{t('pages:cityGuides.venueInformation', 'Venue Information')}</h4>
                             <p className="text-sm text-muted-foreground">
-                              Addresses, photos, capacity, and atmosphere descriptions
+                              {t('pages:cityGuides.venueInformationDesc', 'Addresses, photos, capacity, and atmosphere descriptions')}
                             </p>
                           </div>
                         </div>
@@ -166,9 +168,9 @@ export default function CityGuidesPage() {
                         <div className="flex items-start gap-3">
                           <Info className="h-5 w-5 text-primary mt-0.5" />
                           <div>
-                            <h4 className="font-semibold mb-1">Local Tips</h4>
+                            <h4 className="font-semibold mb-1">{t('pages:cityGuides.localTips', 'Local Tips')}</h4>
                             <p className="text-sm text-muted-foreground">
-                              Dress codes, customs, transportation, and insider knowledge
+                              {t('pages:cityGuides.localTipsDesc', 'Dress codes, customs, transportation, and insider knowledge')}
                             </p>
                           </div>
                         </div>
@@ -177,9 +179,9 @@ export default function CityGuidesPage() {
                         <div className="flex items-start gap-3">
                           <Compass className="h-5 w-5 text-primary mt-0.5" />
                           <div>
-                            <h4 className="font-semibold mb-1">Teacher Directory</h4>
+                            <h4 className="font-semibold mb-1">{t('pages:cityGuides.teacherDirectory', 'Teacher Directory')}</h4>
                             <p className="text-sm text-muted-foreground">
-                              Local maestros, private lessons, and workshop opportunities
+                              {t('pages:cityGuides.teacherDirectoryDesc', 'Local maestros, private lessons, and workshop opportunities')}
                             </p>
                           </div>
                         </div>
@@ -198,17 +200,16 @@ export default function CityGuidesPage() {
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-cta">
                   <CardContent className="py-12 text-center">
                     <MapPin className="h-16 w-16 text-primary mx-auto mb-6" />
-                    <h3 className="text-4xl font-serif font-bold mb-4">Explore All Cities</h3>
+                    <h3 className="text-4xl font-serif font-bold mb-4">{t('pages:cityGuides.exploreAllCities', 'Explore All Cities')}</h3>
                     <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                      Browse our complete directory of tango cities or use our interactive map to 
-                      find milongas anywhere in the world
+                      {t('pages:cityGuides.exploreAllCitiesDesc', 'Browse our complete directory of tango cities or use our interactive map to find milongas anywhere in the world')}
                     </p>
                     <div className="flex gap-4 justify-center flex-wrap">
                       <Button size="lg" asChild data-testid="button-browse-cities">
-                        <a href="/community-map">View World Map</a>
+                        <a href="/community-map">{t('pages:cityGuides.viewWorldMap', 'View World Map')}</a>
                       </Button>
                       <Button size="lg" variant="outline" asChild data-testid="button-all-guides">
-                        <a href="/city-guides/all">All City Guides</a>
+                        <a href="/city-guides/all">{t('pages:cityGuides.allCityGuides', 'All City Guides')}</a>
                       </Button>
                     </div>
                   </CardContent>

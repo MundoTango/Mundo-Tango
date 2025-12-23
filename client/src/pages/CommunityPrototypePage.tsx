@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from 'react-i18next';
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,14 +30,15 @@ const TOP_CITIES = [
   { id: 5, name: "Berlin", country: "Germany", people: 1687, events: 51, housing: 24, recommendations: 29, badge: null },
 ].sort((a, b) => b.events - a.events);
 
-// MAP LAYERS
+// MAP LAYERS - labels use translation keys, translated at render time
 const MAP_LAYERS = [
-  { id: "events", label: "Events", icon: Calendar, color: "bg-purple-500", enabled: true },
-  { id: "housing", label: "Housing", icon: Home, color: "bg-green-500", enabled: true },
-  { id: "venues", label: "Venues", icon: Building2, color: "bg-amber-500", enabled: true },
+  { id: "events", labelKey: "layerEvents", labelFallback: "Events", icon: Calendar, color: "bg-purple-500", enabled: true },
+  { id: "housing", labelKey: "layerHousing", labelFallback: "Housing", icon: Home, color: "bg-green-500", enabled: true },
+  { id: "venues", labelKey: "layerVenues", labelFallback: "Venues", icon: Building2, color: "bg-amber-500", enabled: true },
 ];
 
 export default function CommunityPrototypePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { darkMode, toggleDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeLayers, setActiveLayers] = useState(["events", "housing", "venues"]);
@@ -95,13 +97,13 @@ export default function CommunityPrototypePage() {
           <div className="w-96 space-y-6">
             {/* Search */}
             <Card className="p-6">
-              <h3 className="font-semibold mb-4">Search cities or countries...</h3>
+              <h3 className="font-semibold mb-4">{t('pages:communityPrototype.searchTitle', 'Search cities or countries...')}</h3>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Buenos Aires, Argentina..."
+                  placeholder={t('pages:communityPrototype.searchPlaceholder', 'Buenos Aires, Argentina...')}
                   className="pl-10"
                 />
               </div>
@@ -110,11 +112,11 @@ export default function CommunityPrototypePage() {
             {/* Map Layers */}
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold">Map Layers</h3>
+                <h3 className="font-semibold">{t('pages:communityPrototype.mapLayers', 'Map Layers')}</h3>
                 <Filter className="w-5 h-5 text-muted-foreground" />
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Toggle different data layers on the map
+                {t('pages:communityPrototype.toggleLayers', 'Toggle different data layers on the map')}
               </p>
               <div className="space-y-3">
                 {MAP_LAYERS.map((layer) => (
@@ -129,7 +131,7 @@ export default function CommunityPrototypePage() {
                   >
                     <div className={`w-3 h-3 rounded-full ${layer.color}`} />
                     <layer.icon className="w-5 h-5" />
-                    <span className="font-medium">{layer.label}</span>
+                    <span className="font-medium">{t(`pages:communityPrototype.${layer.labelKey}`, layer.labelFallback)}</span>
                     <div className="ml-auto">
                       {activeLayers.includes(layer.id) && (
                         <div className="w-2 h-2 rounded-full bg-green-500" />
@@ -142,7 +144,7 @@ export default function CommunityPrototypePage() {
 
             {/* Top Cities by Events */}
             <Card className="p-6">
-              <h3 className="font-semibold mb-4">Top Cities by Events</h3>
+              <h3 className="font-semibold mb-4">{t('pages:communityPrototype.topCities', 'Top Cities by Events')}</h3>
               <div className="space-y-4">
                 {TOP_CITIES.map((city, index) => (
                   <motion.div
@@ -161,7 +163,7 @@ export default function CommunityPrototypePage() {
                         </div>
                       </div>
                       {city.badge === "active" && (
-                        <Badge variant="secondary" className="text-xs">Active</Badge>
+                        <Badge variant="secondary" className="text-xs">{t('pages:communityPrototype.active', 'Active')}</Badge>
                       )}
                     </div>
                     
@@ -169,19 +171,19 @@ export default function CommunityPrototypePage() {
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="flex items-center gap-1">
                         <Users className="w-3 h-3 text-cyan-500" />
-                        <span className="text-muted-foreground">{city.people} people</span>
+                        <span className="text-muted-foreground">{t('pages:communityPrototype.people', '{{count}} people', { count: city.people })}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3 text-purple-500" />
-                        <span className="text-muted-foreground">{city.events} events</span>
+                        <span className="text-muted-foreground">{t('pages:communityPrototype.events', '{{count}} events', { count: city.events })}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Home className="w-3 h-3 text-green-500" />
-                        <span className="text-muted-foreground">{city.housing} housing</span>
+                        <span className="text-muted-foreground">{t('pages:communityPrototype.housing', '{{count}} housing', { count: city.housing })}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Building2 className="w-3 h-3 text-amber-500" />
-                        <span className="text-muted-foreground">{city.recommendations} recs</span>
+                        <span className="text-muted-foreground">{t('pages:communityPrototype.recs', '{{count}} recs', { count: city.recommendations })}</span>
                       </div>
                     </div>
                   </motion.div>
@@ -189,7 +191,7 @@ export default function CommunityPrototypePage() {
               </div>
               <Button variant="outline" className="w-full mt-4">
                 <Globe className="w-4 h-4 mr-2" />
-                Ask Mr. Blue
+                {t('pages:communityPrototype.askMrBlue', 'Ask Mr. Blue')}
               </Button>
             </Card>
           </div>
@@ -233,15 +235,15 @@ function CommunityHero({ stats }: { stats: typeof GLOBAL_STATS }) {
         >
           <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
             <Globe className="w-4 h-4 mr-2" />
-            Global Tango Community
+            {t('pages:communityPrototype.globalTangoCommunity', 'Global Tango Community')}
           </Badge>
           
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-            Global Tango Community
+            {t('pages:communityPrototype.globalTangoCommunity', 'Global Tango Community')}
           </h1>
           
           <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
-            Discover tango communities around the world
+            {t('pages:communityPrototype.discoverCommunities', 'Discover tango communities around the world')}
           </p>
 
           {/* Stats Grid */}

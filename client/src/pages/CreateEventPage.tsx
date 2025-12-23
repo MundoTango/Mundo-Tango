@@ -27,29 +27,29 @@ import { CurrencyPicker } from "@/components/input/CurrencyPicker";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
 import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/client-types";
 
-const DAYS_OF_WEEK = [
-  { value: "0", label: "Sunday" },
-  { value: "1", label: "Monday" },
-  { value: "2", label: "Tuesday" },
-  { value: "3", label: "Wednesday" },
-  { value: "4", label: "Thursday" },
-  { value: "5", label: "Friday" },
-  { value: "6", label: "Saturday" },
+const DAYS_OF_WEEK_KEYS = [
+  { value: "0", key: "sunday" },
+  { value: "1", key: "monday" },
+  { value: "2", key: "tuesday" },
+  { value: "3", key: "wednesday" },
+  { value: "4", key: "thursday" },
+  { value: "5", key: "friday" },
+  { value: "6", key: "saturday" },
 ];
 
-const MONTHS = [
-  { value: "1", label: "January" },
-  { value: "2", label: "February" },
-  { value: "3", label: "March" },
-  { value: "4", label: "April" },
-  { value: "5", label: "May" },
-  { value: "6", label: "June" },
-  { value: "7", label: "July" },
-  { value: "8", label: "August" },
-  { value: "9", label: "September" },
-  { value: "10", label: "October" },
-  { value: "11", label: "November" },
-  { value: "12", label: "December" },
+const MONTHS_KEYS = [
+  { value: "1", key: "january" },
+  { value: "2", key: "february" },
+  { value: "3", key: "march" },
+  { value: "4", key: "april" },
+  { value: "5", key: "may" },
+  { value: "6", key: "june" },
+  { value: "7", key: "july" },
+  { value: "8", key: "august" },
+  { value: "9", key: "september" },
+  { value: "10", key: "october" },
+  { value: "11", key: "november" },
+  { value: "12", key: "december" },
 ];
 
 const eventFormSchema = z.object({
@@ -173,15 +173,15 @@ export default function CreateEventPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
       queryClient.invalidateQueries({ queryKey: ["/api/events/smart"] });
       toast({
-        title: "Event created!",
-        description: "Your event has been published successfully.",
+        title: t('pages:createEvent.eventCreated', 'Event created!'),
+        description: t('pages:createEvent.eventPublished', 'Your event has been published successfully.'),
       });
       setLocation(`/events/${data.id}`);
     },
     onError: (error: any) => {
       toast({
-        title: "Failed to create event",
-        description: error.message || "Please try again",
+        title: t('pages:createEvent.failedToCreate', 'Failed to create event'),
+        description: error.message || t('pages:createEvent.pleaseTryAgain', 'Please try again'),
         variant: "destructive",
       });
     },
@@ -206,8 +206,8 @@ export default function CreateEventPage() {
       createEventMutation.mutate({ ...data, seriesId });
     } catch (error: any) {
       toast({
-        title: "Failed to create series",
-        description: error.message || "Please try again",
+        title: t('pages:createEvent.failedToCreateSeries', 'Failed to create series'),
+        description: error.message || t('pages:createEvent.pleaseTryAgain', 'Please try again'),
         variant: "destructive",
       });
     }
@@ -281,13 +281,13 @@ export default function CreateEventPage() {
 
   if (!user) {
     return (
-      <SelfHealingErrorBoundary pageName="Create Event" fallbackRoute="/events">
+      <SelfHealingErrorBoundary pageName={t('pages:createEvent.title', 'Create Event')} fallbackRoute="/events">
         <>
-          <SEO title="Create Event" description="Create a new tango event" />
+          <SEO title={t('pages:createEvent.seoTitle', 'Create Event')} description={t('pages:createEvent.seoDescription', 'Create a new tango event')} />
           <div className="max-w-3xl mx-auto px-6 py-12">
             <Card>
               <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground">Please log in to create an event</p>
+                <p className="text-muted-foreground">{t('pages:createEvent.pleaseLogIn', 'Please log in to create an event')}</p>
               </CardContent>
             </Card>
           </div>
@@ -299,28 +299,28 @@ export default function CreateEventPage() {
   const isSubmitting = createEventMutation.isPending || createSeriesMutation.isPending;
 
   return (
-    <SelfHealingErrorBoundary pageName="Create Event" fallbackRoute="/events">
+    <SelfHealingErrorBoundary pageName={t('pages:createEvent.title', 'Create Event')} fallbackRoute="/events">
       <>
         <SEO 
-          title="Create Event - Mundo Tango" 
-          description="Create and publish your tango event to the community"
+          title={t('pages:createEvent.seoTitleFull', 'Create Event - Mundo Tango')}
+          description={t('pages:createEvent.seoDescriptionFull', 'Create and publish your tango event to the community')}
         />
         <PageLayout>
           <div className="max-w-3xl mx-auto px-6 py-12">
             <div className="mb-8">
               <h1 className="text-4xl font-serif font-bold mb-3" data-testid="text-page-title">
-                Create Event
+                {t('pages:createEvent.title', 'Create Event')}
               </h1>
               <p className="text-muted-foreground" data-testid="text-page-description">
-                Share your tango event with the community
+                {t('pages:createEvent.subtitle', 'Share your tango event with the community')}
               </p>
             </div>
 
             <Card>
               <CardHeader>
-                <CardTitle>Event Details</CardTitle>
+                <CardTitle>{t('pages:createEvent.eventDetails', 'Event Details')}</CardTitle>
                 <CardDescription>
-                  Fill in the information about your event. All fields marked with * are required.
+                  {t('pages:createEvent.eventDetailsDesc', 'Fill in the information about your event. All fields marked with * are required.')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -332,10 +332,10 @@ export default function CreateEventPage() {
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Title *</FormLabel>
+                          <FormLabel>{t('pages:createEvent.titleLabel', 'Title')} *</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="e.g., Friday Night Milonga" 
+                              placeholder={t('pages:createEvent.titlePlaceholder', 'e.g., Friday Night Milonga')} 
                               {...field} 
                               data-testid="input-title"
                             />
@@ -351,10 +351,10 @@ export default function CreateEventPage() {
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Description *</FormLabel>
+                          <FormLabel>{t('pages:createEvent.descriptionLabel', 'Description')} *</FormLabel>
                           <FormControl>
                             <Textarea 
-                              placeholder="Describe your event..."
+                              placeholder={t('pages:createEvent.descriptionPlaceholder', 'Describe your event...')}
                               className="min-h-[120px]"
                               {...field} 
                               data-testid="input-description"
@@ -371,11 +371,11 @@ export default function CreateEventPage() {
                       name="eventType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Event Type *</FormLabel>
+                          <FormLabel>{t('pages:createEvent.eventTypeLabel', 'Event Type')} *</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger data-testid="select-event-type">
-                                <SelectValue placeholder="Select event type" />
+                                <SelectValue placeholder={t('pages:createEvent.eventTypePlaceholder', 'Select event type')} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -401,7 +401,7 @@ export default function CreateEventPage() {
                             <div className="flex items-center justify-between gap-2">
                               <FormLabel className="flex items-center gap-2">
                                 <Clock className="h-4 w-4" />
-                                Start Date & Time *
+                                {t('pages:createEvent.startDateTime', 'Start Date & Time')} *
                               </FormLabel>
                               {userTimezone && (
                                 <span className="text-sm font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md">
@@ -428,7 +428,7 @@ export default function CreateEventPage() {
                             <div className="flex items-center justify-between gap-2">
                               <FormLabel className="flex items-center gap-2">
                                 <Clock className="h-4 w-4" />
-                                End Date & Time
+                                {t('pages:createEvent.endDateTime', 'End Date & Time')}
                               </FormLabel>
                               {userTimezone && (
                                 <span className="text-sm font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md">
@@ -458,10 +458,10 @@ export default function CreateEventPage() {
                           <div className="space-y-0.5">
                             <FormLabel className="text-base flex items-center gap-2">
                               <Repeat className="h-4 w-4" />
-                              Make this a recurring series
+                              {t('pages:createEvent.makeRecurringSeries', 'Make this a recurring series')}
                             </FormLabel>
                             <FormDescription>
-                              Create a series for recurring events (e.g., weekly milongas)
+                              {t('pages:createEvent.recurringSeriesDesc', 'Create a series for recurring events (e.g., weekly milongas)')}
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -483,25 +483,25 @@ export default function CreateEventPage() {
                           name="recurrenceType"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Recurrence Pattern</FormLabel>
+                              <FormLabel>{t('pages:createEvent.recurrencePattern', 'Recurrence Pattern')}</FormLabel>
                               <Select 
                                 onValueChange={(value) => handleRecurrenceTypeChange(value as "weekly" | "monthly" | "yearly")} 
                                 value={field.value}
                               >
                                 <FormControl>
                                   <SelectTrigger data-testid="select-recurrence-type">
-                                    <SelectValue placeholder="Select recurrence pattern" />
+                                    <SelectValue placeholder={t('pages:createEvent.selectRecurrencePattern', 'Select recurrence pattern')} />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
                                   <SelectItem value="weekly" data-testid="option-recurrence-weekly">
-                                    Weekly
+                                    {t('pages:createEvent.weekly', 'Weekly')}
                                   </SelectItem>
                                   <SelectItem value="monthly" data-testid="option-recurrence-monthly">
-                                    Monthly
+                                    {t('pages:createEvent.monthly', 'Monthly')}
                                   </SelectItem>
                                   <SelectItem value="yearly" data-testid="option-recurrence-yearly">
-                                    Yearly
+                                    {t('pages:createEvent.yearly', 'Yearly')}
                                   </SelectItem>
                                 </SelectContent>
                               </Select>
@@ -516,20 +516,20 @@ export default function CreateEventPage() {
                             name="recurrenceDay"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Day of Week</FormLabel>
+                                <FormLabel>{t('pages:createEvent.dayOfWeek', 'Day of Week')}</FormLabel>
                                 <Select 
                                   onValueChange={(value) => field.onChange(parseInt(value))} 
                                   value={String(field.value ?? "")}
                                 >
                                   <FormControl>
                                     <SelectTrigger data-testid="select-recurrence-day-weekly">
-                                      <SelectValue placeholder="Select day of week" />
+                                      <SelectValue placeholder={t('pages:createEvent.selectDayOfWeek', 'Select day of week')} />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {DAYS_OF_WEEK.map((day) => (
+                                    {DAYS_OF_WEEK_KEYS.map((day) => (
                                       <SelectItem key={day.value} value={day.value}>
-                                        {day.label}
+                                        {t(`common:days.${day.key}`, day.key.charAt(0).toUpperCase() + day.key.slice(1))}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
@@ -549,14 +549,14 @@ export default function CreateEventPage() {
                             name="recurrenceDay"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Day of Month</FormLabel>
+                                <FormLabel>{t('pages:createEvent.dayOfMonth', 'Day of Month')}</FormLabel>
                                 <Select 
                                   onValueChange={(value) => field.onChange(parseInt(value))} 
                                   value={String(field.value ?? "")}
                                 >
                                   <FormControl>
                                     <SelectTrigger data-testid="select-recurrence-day-monthly">
-                                      <SelectValue placeholder="Select day of month" />
+                                      <SelectValue placeholder={t('pages:createEvent.selectDayOfMonth', 'Select day of month')} />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
@@ -582,20 +582,20 @@ export default function CreateEventPage() {
                             name="recurrenceDay"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Month</FormLabel>
+                                <FormLabel>{t('pages:createEvent.month', 'Month')}</FormLabel>
                                 <Select 
                                   onValueChange={(value) => field.onChange(parseInt(value))} 
                                   value={String(field.value ?? "")}
                                 >
                                   <FormControl>
                                     <SelectTrigger data-testid="select-recurrence-day-yearly">
-                                      <SelectValue placeholder="Select month" />
+                                      <SelectValue placeholder={t('pages:createEvent.selectMonth', 'Select month')} />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {MONTHS.map((month) => (
+                                    {MONTHS_KEYS.map((month) => (
                                       <SelectItem key={month.value} value={month.value}>
-                                        {month.label}
+                                        {t(`common:months.${month.key}`, month.key.charAt(0).toUpperCase() + month.key.slice(1))}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
@@ -617,18 +617,18 @@ export default function CreateEventPage() {
                       name="location"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Venue Location *</FormLabel>
+                          <FormLabel>{t('pages:createEvent.venueLocation', 'Venue Location')} *</FormLabel>
                           <FormControl>
                             <UnifiedLocationPicker
                               mode="address"
                               value={field.value}
                               onChange={handleLocationChange}
-                              placeholder="Search for venue, address, or city..."
+                              placeholder={t('pages:createEvent.venueLocationPlaceholder', 'Search for venue, address, or city...')}
                               data-testid="location-picker"
                             />
                           </FormControl>
                           <FormDescription>
-                            Search for a venue name, street address, or city to auto-fill location details
+                            {t('pages:createEvent.venueLocationDesc', 'Search for a venue name, street address, or city to auto-fill location details')}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -642,9 +642,9 @@ export default function CreateEventPage() {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Paid Event</FormLabel>
+                            <FormLabel className="text-base">{t('pages:createEvent.paidEvent', 'Paid Event')}</FormLabel>
                             <FormDescription>
-                              Is this a paid event?
+                              {t('pages:createEvent.isPaidEvent', 'Is this a paid event?')}
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -669,14 +669,14 @@ export default function CreateEventPage() {
                             <FormItem>
                               <FormLabel className="flex items-center gap-2">
                                 <DollarSign className="h-4 w-4" />
-                                Price
+                                {t('pages:createEvent.price', 'Price')}
                               </FormLabel>
                               <FormControl>
                                 <Input 
                                   type="number" 
                                   min="0"
                                   step="0.01"
-                                  placeholder="25.00"
+                                  placeholder={t('pages:createEvent.pricePlaceholder', '25.00')}
                                   {...field}
                                   onChange={(e) => {
                                     const value = e.target.value;
@@ -686,7 +686,7 @@ export default function CreateEventPage() {
                                 />
                               </FormControl>
                               <FormDescription>
-                                Leave blank for free event
+                                {t('pages:createEvent.priceDesc', 'Leave blank for free event')}
                               </FormDescription>
                               <FormMessage />
                             </FormItem>
@@ -697,7 +697,7 @@ export default function CreateEventPage() {
                           name="currency"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Currency</FormLabel>
+                              <FormLabel>{t('pages:createEvent.currency', 'Currency')}</FormLabel>
                               <FormControl>
                                 <CurrencyPicker 
                                   value={field.value}
@@ -718,19 +718,19 @@ export default function CreateEventPage() {
                       name="maxAttendees"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Max Attendees (optional)</FormLabel>
+                          <FormLabel>{t('pages:createEvent.maxAttendees', 'Max Attendees (optional)')}</FormLabel>
                           <FormControl>
                             <Input 
                               type="number" 
                               min="0"
-                              placeholder="Leave blank for unlimited"
+                              placeholder={t('pages:createEvent.maxAttendeesPlaceholder', 'Leave blank for unlimited')}
                               {...field}
                               onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                               data-testid="input-max-attendees"
                             />
                           </FormControl>
                           <FormDescription>
-                            Set a maximum capacity for your event
+                            {t('pages:createEvent.maxAttendeesDesc', 'Set a maximum capacity for your event')}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -746,8 +746,8 @@ export default function CreateEventPage() {
                           <FriendshipClosenessFilter
                             value={field.value}
                             onChange={field.onChange}
-                            label="Who Can Attend"
-                            description="Control who can see and register for this event based on your network"
+                            label={t('pages:createEvent.whoCanAttend', 'Who Can Attend')}
+                            description={t('pages:createEvent.whoCanAttendDesc', 'Control who can see and register for this event based on your network')}
                             testIdPrefix="event-attendee-closeness"
                           />
                           <FormMessage />
@@ -761,11 +761,11 @@ export default function CreateEventPage() {
                       name="imageUrl"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Event Image URL (optional)</FormLabel>
+                          <FormLabel>{t('pages:createEvent.eventImageUrl', 'Event Image URL (optional)')}</FormLabel>
                           <FormControl>
                             <Input 
                               type="url"
-                              placeholder="https://example.com/event-image.jpg"
+                              placeholder={t('pages:createEvent.eventImageUrlPlaceholder', 'https://example.com/event-image.jpg')}
                               {...field} 
                               data-testid="input-image-url"
                             />
@@ -783,7 +783,7 @@ export default function CreateEventPage() {
                         onClick={() => setLocation("/events")}
                         data-testid="button-cancel"
                       >
-                        Cancel
+                        {t('common:cancel', 'Cancel')}
                       </Button>
                       <Button
                         type="submit"
@@ -791,7 +791,7 @@ export default function CreateEventPage() {
                         data-testid="button-submit"
                       >
                         <Plus className="mr-2 h-4 w-4" />
-                        {isSubmitting ? "Creating..." : "Create Event"}
+                        {isSubmitting ? t('pages:createEvent.creating', 'Creating...') : t('pages:createEvent.createEvent', 'Create Event')}
                       </Button>
                     </div>
                   </form>

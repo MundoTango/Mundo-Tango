@@ -84,14 +84,14 @@ export default function ManageSubscriptionPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/me"] });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/history"] });
       toast({
-        title: "Subscription cancelled",
-        description: "Your subscription will remain active until the end of the current billing period.",
+        title: t('pages:manageSubscription.subscriptionCancelled', 'Subscription cancelled'),
+        description: t('pages:manageSubscription.subscriptionRemainActive', 'Your subscription will remain active until the end of the current billing period.'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Cancellation failed",
-        description: error.message || "Failed to cancel subscription. Please try again.",
+        title: t('pages:manageSubscription.cancellationFailed', 'Cancellation failed'),
+        description: error.message || t('pages:manageSubscription.failedToCancelSubscription', 'Failed to cancel subscription. Please try again.'),
         variant: "destructive",
       });
     },
@@ -106,14 +106,14 @@ export default function ManageSubscriptionPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/me"] });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/history"] });
       toast({
-        title: "Subscription reactivated!",
-        description: "Your subscription has been successfully reactivated.",
+        title: t('pages:manageSubscription.subscriptionReactivated', 'Subscription reactivated!'),
+        description: t('pages:manageSubscription.subscriptionReactivatedSuccess', 'Your subscription has been successfully reactivated.'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Reactivation failed",
-        description: error.message || "Failed to reactivate subscription. Please try again.",
+        title: t('pages:manageSubscription.reactivationFailed', 'Reactivation failed'),
+        description: error.message || t('pages:manageSubscription.failedToReactivate', 'Failed to reactivate subscription. Please try again.'),
         variant: "destructive",
       });
     },
@@ -125,21 +125,21 @@ export default function ManageSubscriptionPage() {
         return (
           <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20" data-testid="badge-status-active">
             <CheckCircle2 className="h-3 w-3 mr-1" />
-            Active
+            {t('pages:manageSubscription.active', 'Active')}
           </Badge>
         );
       case "cancelled":
         return (
           <Badge variant="destructive" data-testid="badge-status-cancelled">
             <XCircle className="h-3 w-3 mr-1" />
-            Cancelled
+            {t('pages:manageSubscription.cancelled', 'Cancelled')}
           </Badge>
         );
       case "past_due":
         return (
           <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20" data-testid="badge-status-past-due">
             <AlertCircle className="h-3 w-3 mr-1" />
-            Past Due
+            {t('pages:manageSubscription.pastDue', 'Past Due')}
           </Badge>
         );
       default:
@@ -174,7 +174,7 @@ export default function ManageSubscriptionPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="ManageSubscription" fallbackRoute="/subscriptions">
-      <PageLayout title="Manage Subscription" showBreadcrumbs>
+      <PageLayout title={t('pages:manageSubscription.title', 'Manage Subscription')} showBreadcrumbs>
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-12 px-4">
           <div className="container mx-auto max-w-5xl">
             {/* Header */}
@@ -182,14 +182,14 @@ export default function ManageSubscriptionPage() {
               <Link href="/subscriptions">
                 <Button variant="ghost" className="mb-4" data-testid="button-back">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Plans
+                  {t('pages:manageSubscription.backToPlans', 'Back to Plans')}
                 </Button>
               </Link>
               <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                Manage Your Subscription
+                {t('pages:manageSubscription.manageYourSubscription', 'Manage Your Subscription')}
               </h1>
               <p className="text-muted-foreground mt-2">
-                View and manage your subscription details
+                {t('pages:manageSubscription.viewAndManage', 'View and manage your subscription details')}
               </p>
             </div>
 
@@ -219,9 +219,9 @@ export default function ManageSubscriptionPage() {
                         </div>
                         <div>
                           <CardTitle className="text-2xl" data-testid="text-current-plan">
-                            {currentSubscription.tier.displayName} Plan
+                            {currentSubscription.tier.displayName} {t('pages:manageSubscription.plan', 'Plan')}
                           </CardTitle>
-                          <CardDescription>Your active subscription</CardDescription>
+                          <CardDescription>{t('pages:manageSubscription.yourActiveSubscription', 'Your active subscription')}</CardDescription>
                         </div>
                       </div>
                       {getStatusBadge(currentSubscription.subscription.status)}
@@ -234,7 +234,7 @@ export default function ManageSubscriptionPage() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <CreditCard className="h-4 w-4" />
-                          <span>Billing Interval</span>
+                          <span>{t('pages:manageSubscription.billingInterval', 'Billing Interval')}</span>
                         </div>
                         <p className="text-lg font-medium capitalize" data-testid="text-billing-interval">
                           {getBillingInterval(currentSubscription.subscription.metadata)}
@@ -244,7 +244,7 @@ export default function ManageSubscriptionPage() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Calendar className="h-4 w-4" />
-                          <span>Next Payment Date</span>
+                          <span>{t('pages:manageSubscription.nextPaymentDate', 'Next Payment Date')}</span>
                         </div>
                         <p className="text-lg font-medium" data-testid="text-next-payment">
                           {formatDate(currentSubscription.subscription.currentPeriodEnd)}
@@ -254,7 +254,7 @@ export default function ManageSubscriptionPage() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Calendar className="h-4 w-4" />
-                          <span>Started On</span>
+                          <span>{t('pages:manageSubscription.startedOn', 'Started On')}</span>
                         </div>
                         <p className="text-lg font-medium" data-testid="text-started-on">
                           {formatDate(currentSubscription.subscription.currentPeriodStart)}
@@ -264,7 +264,7 @@ export default function ManageSubscriptionPage() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <CreditCard className="h-4 w-4" />
-                          <span>Payment Method</span>
+                          <span>{t('pages:manageSubscription.paymentMethod', 'Payment Method')}</span>
                         </div>
                         <p className="text-lg font-medium capitalize" data-testid="text-payment-provider">
                           {currentSubscription.subscription.paymentProvider}
@@ -276,7 +276,7 @@ export default function ManageSubscriptionPage() {
 
                     {/* Features */}
                     <div>
-                      <h3 className="font-semibold mb-3">Plan Features</h3>
+                      <h3 className="font-semibold mb-3">{t('pages:manageSubscription.planFeatures', 'Plan Features')}</h3>
                       <div className="grid gap-2">
                         {currentSubscription.tier.features?.map((feature, index) => (
                           <div key={index} className="flex items-center gap-2 text-sm" data-testid={`feature-${index}`}>
@@ -294,11 +294,11 @@ export default function ManageSubscriptionPage() {
                           <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
                           <div>
                             <p className="font-medium text-yellow-900 dark:text-yellow-100">
-                              Subscription Ending Soon
+                              {t('pages:manageSubscription.subscriptionEndingSoon', 'Subscription Ending Soon')}
                             </p>
                             <p className="text-sm text-yellow-800 dark:text-yellow-200 mt-1">
-                              Your subscription will end on {formatDate(currentSubscription.subscription.currentPeriodEnd)}.
-                              You can reactivate it before then to continue your access.
+                              {t('pages:manageSubscription.subscriptionWillEnd', 'Your subscription will end on')} {formatDate(currentSubscription.subscription.currentPeriodEnd)}.
+                              {t('pages:manageSubscription.reactivateBefore', 'You can reactivate it before then to continue your access.')}
                             </p>
                           </div>
                         </div>
@@ -315,39 +315,39 @@ export default function ManageSubscriptionPage() {
                         data-testid="button-reactivate"
                       >
                         <RefreshCw className="h-4 w-4 mr-2" />
-                        {reactivateMutation.isPending ? "Reactivating..." : "Reactivate Subscription"}
+                        {reactivateMutation.isPending ? t('pages:manageSubscription.reactivating', 'Reactivating...') : t('pages:manageSubscription.reactivateSubscription', 'Reactivate Subscription')}
                       </Button>
                     ) : (
                       <>
                         <Link href="/subscriptions">
                           <Button variant="outline" data-testid="button-change-plan">
-                            Change Plan
+                            {t('pages:manageSubscription.changePlan', 'Change Plan')}
                           </Button>
                         </Link>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="destructive" data-testid="button-cancel">
                               <XCircle className="h-4 w-4 mr-2" />
-                              Cancel Subscription
+                              {t('pages:manageSubscription.cancelSubscription', 'Cancel Subscription')}
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent data-testid="dialog-cancel-confirm">
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogTitle>{t('pages:manageSubscription.areYouSure', 'Are you sure?')}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Your subscription will be cancelled at the end of the current billing period on{" "}
-                                {formatDate(currentSubscription.subscription.currentPeriodEnd)}. You'll still have access until then.
+                                {t('pages:manageSubscription.cancelDescription', 'Your subscription will be cancelled at the end of the current billing period on')}{" "}
+                                {formatDate(currentSubscription.subscription.currentPeriodEnd)}. {t('pages:manageSubscription.stillHaveAccess', "You'll still have access until then.")}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel data-testid="button-cancel-dialog-cancel">Keep Subscription</AlertDialogCancel>
+                              <AlertDialogCancel data-testid="button-cancel-dialog-cancel">{t('pages:manageSubscription.keepSubscription', 'Keep Subscription')}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={handleCancel}
                                 disabled={cancelMutation.isPending}
                                 className="bg-destructive text-destructive-foreground"
                                 data-testid="button-cancel-dialog-confirm"
                               >
-                                {cancelMutation.isPending ? "Cancelling..." : "Yes, Cancel"}
+                                {cancelMutation.isPending ? t('pages:manageSubscription.cancelling', 'Cancelling...') : t('pages:manageSubscription.yesCancel', 'Yes, Cancel')}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -362,12 +362,12 @@ export default function ManageSubscriptionPage() {
                 <CardContent className="py-12 text-center space-y-4">
                   <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground opacity-50" />
                   <div>
-                    <p className="text-lg font-medium">No Active Subscription</p>
-                    <p className="text-muted-foreground mt-1">You don't have an active subscription yet.</p>
+                    <p className="text-lg font-medium">{t('pages:manageSubscription.noActiveSubscription', 'No Active Subscription')}</p>
+                    <p className="text-muted-foreground mt-1">{t('pages:manageSubscription.noSubscriptionYet', "You don't have an active subscription yet.")}</p>
                   </div>
                   <Link href="/subscriptions">
                     <Button className="mt-4" data-testid="button-browse-plans">
-                      Browse Plans
+                      {t('pages:manageSubscription.browsePlans', 'Browse Plans')}
                     </Button>
                   </Link>
                 </CardContent>
@@ -377,8 +377,8 @@ export default function ManageSubscriptionPage() {
             {/* Subscription History */}
             <Card className="backdrop-blur-md bg-card/50 border-border">
               <CardHeader>
-                <CardTitle>Subscription History</CardTitle>
-                <CardDescription>View your past and current subscriptions</CardDescription>
+                <CardTitle>{t('pages:manageSubscription.subscriptionHistory', 'Subscription History')}</CardTitle>
+                <CardDescription>{t('pages:manageSubscription.viewPastSubscriptions', 'View your past and current subscriptions')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {historyLoading ? (
@@ -422,7 +422,7 @@ export default function ManageSubscriptionPage() {
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-muted-foreground">No subscription history found.</p>
+                    <p className="text-muted-foreground">{t('pages:manageSubscription.noHistoryFound', 'No subscription history found.')}</p>
                   </div>
                 )}
               </CardContent>

@@ -107,9 +107,9 @@ export default function DanceStylesDetailPage() {
   if (!style) {
     return (
       <SelfHealingErrorBoundary pageName="Dance Style Detail" fallbackRoute="/dance-styles">
-        <PageLayout title="Style Not Found" showBreadcrumbs>
+        <PageLayout title={t('pages:danceStylesDetail.notFoundTitle', 'Style Not Found')} showBreadcrumbs>
           <div className="container mx-auto max-w-4xl py-8 px-4">
-            <p className="text-center text-muted-foreground">Style not found</p>
+            <p className="text-center text-muted-foreground">{t('pages:danceStylesDetail.notFound', 'Style not found')}</p>
           </div>
         </PageLayout>
       </SelfHealingErrorBoundary>
@@ -136,7 +136,7 @@ export default function DanceStylesDetailPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-dance-style">
                   <Music className="w-3 h-3 mr-1.5" />
-                  Dance Style
+                  {t('pages:danceStylesDetail.badge', 'Dance Style')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-style-name">
@@ -156,7 +156,7 @@ export default function DanceStylesDetailPage() {
               <Button variant="outline" asChild data-testid="button-back">
                 <Link href="/dance-styles">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dance Styles
+                  {t('pages:danceStylesDetail.backButton', 'Back to Dance Styles')}
                 </Link>
               </Button>
             </motion.div>
@@ -166,7 +166,7 @@ export default function DanceStylesDetailPage() {
               <Card className="overflow-hidden hover-elevate">
                 <CardContent className="p-8 text-center">
                   <BookOpen className="h-10 w-10 text-primary mx-auto mb-4" />
-                  <div className="text-sm font-medium text-muted-foreground mb-2">Difficulty</div>
+                  <div className="text-sm font-medium text-muted-foreground mb-2">{t('pages:danceStylesDetail.difficulty', 'Difficulty')}</div>
                   <Badge variant="outline" className="text-base" data-testid="badge-difficulty">{style.difficulty}</Badge>
                 </CardContent>
               </Card>
@@ -174,7 +174,7 @@ export default function DanceStylesDetailPage() {
               <Card className="overflow-hidden hover-elevate">
                 <CardContent className="p-8 text-center">
                   <Users className="h-10 w-10 text-primary mx-auto mb-4" />
-                  <div className="text-sm font-medium text-muted-foreground mb-2">Ideal For</div>
+                  <div className="text-sm font-medium text-muted-foreground mb-2">{t('pages:danceStylesDetail.idealFor', 'Ideal For')}</div>
                   <div className="text-base" data-testid="text-ideal-for">{style.idealFor}</div>
                 </CardContent>
               </Card>
@@ -182,7 +182,7 @@ export default function DanceStylesDetailPage() {
               <Card className="overflow-hidden hover-elevate">
                 <CardContent className="p-8 text-center">
                   <Video className="h-10 w-10 text-primary mx-auto mb-4" />
-                  <div className="text-sm font-medium text-muted-foreground mb-2">Origin</div>
+                  <div className="text-sm font-medium text-muted-foreground mb-2">{t('pages:danceStylesDetail.origin', 'Origin')}</div>
                   <div className="text-base" data-testid="text-origin">{style.origin}</div>
                 </CardContent>
               </Card>
@@ -192,7 +192,7 @@ export default function DanceStylesDetailPage() {
             <motion.div {...fadeInUp} transition={{ delay: 0.1 }}>
               <Card className="mb-8 overflow-hidden">
                 <CardHeader className="border-b">
-                  <CardTitle className="text-2xl font-serif">Characteristics</CardTitle>
+                  <CardTitle className="text-2xl font-serif">{t('pages:danceStylesDetail.characteristics', 'Characteristics')}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-8">
                   <ul className="space-y-4">
@@ -220,7 +220,7 @@ export default function DanceStylesDetailPage() {
                 <CardHeader className="border-b">
                   <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                     <Music className="h-6 w-6 text-primary" />
-                    Musical Accompaniment
+                    {t('pages:danceStylesDetail.musicalAccompaniment', 'Musical Accompaniment')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8">
@@ -234,14 +234,14 @@ export default function DanceStylesDetailPage() {
               <Link href="/teachers">
                 <Button size="lg" className="gap-2" data-testid="button-find-teachers">
                   <Users className="h-5 w-5" />
-                  Find Teachers
+                  {t('pages:danceStylesDetail.findTeachers', 'Find Teachers')}
                   <ChevronRight className="h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/tutorials">
                 <Button variant="outline" size="lg" className="gap-2" data-testid="button-watch-videos">
                   <Video className="h-5 w-5" />
-                  Watch Tutorials
+                  {t('pages:danceStylesDetail.watchTutorials', 'Watch Tutorials')}
                 </Button>
               </Link>
             </motion.div>

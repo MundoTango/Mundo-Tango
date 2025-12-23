@@ -91,7 +91,7 @@ export default function UserSettingsPage() {
   }
 
   return (
-    <SelfHealingErrorBoundary pageName="User Settings" fallbackRoute="/settings">
+    <SelfHealingErrorBoundary pageName={t('pages:settings.userSettings', 'User Settings')} fallbackRoute="/settings">
       <>
         <SEO
           title={t('pages:settings.title', 'User Settings')}
@@ -150,42 +150,42 @@ export default function UserSettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="name">{t('common:name', 'Name')}</Label>
+                <Label htmlFor="name">{t('pages:settings.name', 'Name')}</Label>
                 <Input 
                   id="name" 
                   type="text" 
                   defaultValue={user?.name || ""} 
-                  placeholder={t('common:yourFullName', 'Your full name')}
+                  placeholder={t('pages:settings.yourFullName', 'Your full name')}
                   data-testid="input-name" 
                 />
               </div>
               <div>
-                <Label htmlFor="email">{t('common:email', 'Email')}</Label>
+                <Label htmlFor="email">{t('pages:settings.email', 'Email')}</Label>
                 <Input 
                   id="email" 
                   type="email" 
                   defaultValue={user?.email || ""} 
-                  placeholder="your@email.com" 
+                  placeholder={t('pages:settings.emailPlaceholder', 'your@email.com')} 
                   data-testid="input-email" 
                   disabled 
                 />
                 <p className="text-sm text-muted-foreground mt-1">{t('pages:settings.emailCannotBeChanged', 'Email cannot be changed')}</p>
               </div>
               <div>
-                <Label htmlFor="username">{t('common:username', 'Username')}</Label>
+                <Label htmlFor="username">{t('pages:settings.username', 'Username')}</Label>
                 <Input 
                   id="username" 
                   defaultValue={user?.username || ""} 
-                  placeholder="@username" 
+                  placeholder={t('pages:settings.usernamePlaceholder', '@username')} 
                   data-testid="input-username" 
                 />
               </div>
               <div>
-                <Label htmlFor="city">{t('common:location', 'Location')}</Label>
+                <Label htmlFor="city">{t('pages:settings.location', 'Location')}</Label>
                 <Input 
                   id="city" 
                   defaultValue={user?.city && user?.country ? `${user.city}, ${user.country}` : ""} 
-                  placeholder="City, Country" 
+                  placeholder={t('pages:settings.cityCountryPlaceholder', 'City, Country')} 
                   data-testid="input-location" 
                 />
               </div>
@@ -235,7 +235,7 @@ export default function UserSettingsPage() {
                   </div>
                 </div>
               </div>
-              <Button data-testid="button-save-account">{t('common:saveChanges', 'Save Changes')}</Button>
+              <Button data-testid="button-save-account">{t('pages:settings.saveChanges', 'Save Changes')}</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -261,9 +261,9 @@ export default function UserSettingsPage() {
                   })}
                   data-testid="select-profile-visibility"
                 >
-                  <option value="public">{t('common:public', 'Public')}</option>
-                  <option value="friends">{t('common:friendsOnly', 'Friends Only')}</option>
-                  <option value="private">{t('common:private', 'Private')}</option>
+                  <option value="public">{t('pages:settings.public', 'Public')}</option>
+                  <option value="friends">{t('pages:settings.friendsOnly', 'Friends Only')}</option>
+                  <option value="private">{t('pages:settings.private', 'Private')}</option>
                 </select>
               </div>
               <Separator />
@@ -356,7 +356,7 @@ export default function UserSettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="language">{t('common:language', 'Language')}</Label>
+                <Label htmlFor="language">{t('pages:settings.language', 'Language')}</Label>
                 <select 
                   id="language"
                   className="w-full border rounded-md px-3 py-2 mt-2"
@@ -364,15 +364,15 @@ export default function UserSettingsPage() {
                   onChange={(e) => updateSettingsMutation.mutate({ language: e.target.value })}
                   data-testid="select-language"
                 >
-                  <option value="en">English</option>
-                  <option value="es">Español</option>
-                  <option value="fr">Français</option>
-                  <option value="de">Deutsch</option>
-                  <option value="it">Italiano</option>
+                  <option value="en">{t('pages:settings.english', 'English')}</option>
+                  <option value="es">{t('pages:settings.spanish', 'Español')}</option>
+                  <option value="fr">{t('pages:settings.french', 'Français')}</option>
+                  <option value="de">{t('pages:settings.german', 'Deutsch')}</option>
+                  <option value="it">{t('pages:settings.italian', 'Italiano')}</option>
                 </select>
               </div>
               <div>
-                <Label htmlFor="timezone">{t('common:timezone', 'Timezone')}</Label>
+                <Label htmlFor="timezone">{t('pages:settings.timezone', 'Timezone')}</Label>
                 <select 
                   id="timezone"
                   className="w-full border rounded-md px-3 py-2 mt-2"
@@ -380,7 +380,7 @@ export default function UserSettingsPage() {
                   onChange={(e) => updateSettingsMutation.mutate({ timezone: e.target.value })}
                   data-testid="select-timezone"
                 >
-                  <option value="UTC">UTC</option>
+                  <option value="UTC">{t('pages:settings.utc', 'UTC')}</option>
                   <option value="America/New_York">{t('pages:settings.easternTime', 'Eastern Time')}</option>
                   <option value="America/Chicago">{t('pages:settings.centralTime', 'Central Time')}</option>
                   <option value="America/Los_Angeles">{t('pages:settings.pacificTime', 'Pacific Time')}</option>
@@ -448,11 +448,11 @@ export default function UserSettingsPage() {
                 <div className="space-y-0.5">
                   <Label>{t('pages:settings.twoFaStatus', '2FA Status')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    {settings?.twoFactorEnabled ? t('common:enabled', 'Enabled') : t('common:disabled', 'Disabled')}
+                    {settings?.twoFactorEnabled ? t('pages:settings.enabled', 'Enabled') : t('pages:settings.disabled', 'Disabled')}
                   </p>
                 </div>
                 {settings?.twoFactorEnabled ? (
-                  <Badge variant="default">{t('common:enabled', 'Enabled')}</Badge>
+                  <Badge variant="default">{t('pages:settings.enabled', 'Enabled')}</Badge>
                 ) : (
                   <Button variant="outline" data-testid="button-enable-2fa">
                     {t('pages:settings.enable2fa', 'Enable 2FA')}

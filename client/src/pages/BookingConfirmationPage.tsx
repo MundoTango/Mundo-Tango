@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 export default function BookingConfirmationPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
-    <SelfHealingErrorBoundary pageName="Booking Confirmation" fallbackRoute="/events">
+    <SelfHealingErrorBoundary pageName={t('pages:bookingConfirmation.title', 'Booking Confirmation')} fallbackRoute="/events">
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
@@ -28,15 +28,15 @@ export default function BookingConfirmationPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <CheckCircle className="w-3 h-3 mr-1.5" />
-                Confirmation
+                {t('pages:bookingConfirmation.confirmation', 'Confirmation')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
-                Booking Confirmed!
+                {t('pages:bookingConfirmation.bookingConfirmed', 'Booking Confirmed!')}
               </h1>
               
               <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-                Your reservation is confirmed
+                {t('pages:bookingConfirmation.reservationConfirmed', 'Your reservation is confirmed')}
               </p>
             </motion.div>
           </div>
@@ -51,11 +51,11 @@ export default function BookingConfirmationPage() {
           >
             <Card className="mb-6 hover-elevate">
               <CardHeader>
-                <CardTitle className="text-2xl font-serif">Booking Details</CardTitle>
+                <CardTitle className="text-2xl font-serif">{t('pages:bookingConfirmation.bookingDetails', 'Booking Details')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Confirmation Number</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('pages:bookingConfirmation.confirmationNumber', 'Confirmation Number')}</p>
                   <p className="font-mono text-lg font-bold" data-testid="text-confirmation-number">BKG-2025-001234</p>
                 </div>
 
@@ -72,22 +72,22 @@ export default function BookingConfirmationPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4" />
-                      2 guests
+                      {t('pages:bookingConfirmation.guests', '2 guests')}
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-4 border-t">
                   <div className="flex justify-between mb-2">
-                    <span className="text-muted-foreground">Tickets (2x $25)</span>
+                    <span className="text-muted-foreground">{t('pages:bookingConfirmation.tickets', 'Tickets (2x $25)')}</span>
                     <span>$50.00</span>
                   </div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-muted-foreground">Service Fee</span>
+                    <span className="text-muted-foreground">{t('pages:bookingConfirmation.serviceFee', 'Service Fee')}</span>
                     <span>$2.50</span>
                   </div>
                   <div className="flex justify-between font-bold text-lg pt-2 border-t">
-                    <span>Total Paid</span>
+                    <span>{t('pages:bookingConfirmation.totalPaid', 'Total Paid')}</span>
                     <span className="text-primary">$52.50</span>
                   </div>
                 </div>
@@ -97,19 +97,19 @@ export default function BookingConfirmationPage() {
             <div className="flex flex-col gap-3">
               <Button className="w-full" data-testid="button-download">
                 <Download className="h-4 w-4 mr-2" />
-                Download Ticket
+                {t('pages:bookingConfirmation.downloadTicket', 'Download Ticket')}
               </Button>
               <Link href="/events">
                 <Button variant="outline" className="w-full" data-testid="button-events">
-                  View All Events
+                  {t('pages:bookingConfirmation.viewAllEvents', 'View All Events')}
                 </Button>
               </Link>
             </div>
 
             <Card className="bg-muted">
               <CardContent className="pt-6 text-center text-sm text-muted-foreground">
-                <p>A confirmation email has been sent to your email address.</p>
-                <p className="mt-2">Please show this confirmation at the door.</p>
+                <p>{t('pages:bookingConfirmation.emailSent', 'A confirmation email has been sent to your email address.')}</p>
+                <p className="mt-2">{t('pages:bookingConfirmation.showConfirmation', 'Please show this confirmation at the door.')}</p>
               </CardContent>
             </Card>
           </motion.div>

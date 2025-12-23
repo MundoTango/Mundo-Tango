@@ -64,9 +64,9 @@ export default function FacebookInvites() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Facebook Messenger Invites</h1>
+          <h1 className="text-3xl font-bold mb-2">{t('pages:facebookInvites.title', 'Facebook Messenger Invites')}</h1>
           <p className="text-muted-foreground">
-            Send AI-powered personalized invitations to grow your tango community
+            {t('pages:facebookInvites.subtitle', 'Send AI-powered personalized invitations to grow your tango community')}
           </p>
         </div>
         <Button
@@ -75,7 +75,7 @@ export default function FacebookInvites() {
           data-testid="button-test-workflow"
         >
           <TrendingUp className="w-4 h-4 mr-2" />
-          Test Workflow
+          {t('pages:facebookInvites.testWorkflow', 'Test Workflow')}
         </Button>
       </div>
 
@@ -84,52 +84,52 @@ export default function FacebookInvites() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card data-testid="card-stat-sent">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Sent</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('pages:facebookInvites.totalSent', 'Total Sent')}</CardTitle>
               <Mail className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalSent}</div>
               <p className="text-xs text-muted-foreground">
-                {stats.sentToday} sent today
+                {stats.sentToday} {t('pages:facebookInvites.sentToday', 'sent today')}
               </p>
             </CardContent>
           </Card>
 
           <Card data-testid="card-stat-opened">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Opened</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('pages:facebookInvites.opened', 'Opened')}</CardTitle>
               <CheckCircle2 className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.opened}</div>
               <p className="text-xs text-muted-foreground">
-                {stats.openRate}% open rate
+                {stats.openRate}% {t('pages:facebookInvites.openRate', 'open rate')}
               </p>
             </CardContent>
           </Card>
 
           <Card data-testid="card-stat-registered">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Registered</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('pages:facebookInvites.registered', 'Registered')}</CardTitle>
               <Users className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.registered}</div>
               <p className="text-xs text-muted-foreground">
-                {stats.conversionRate}% conversion
+                {stats.conversionRate}% {t('pages:facebookInvites.conversion', 'conversion')}
               </p>
             </CardContent>
           </Card>
 
           <Card data-testid="card-stat-performance">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Performance</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('pages:facebookInvites.performance', 'Performance')}</CardTitle>
               <TrendingUp className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.conversionRate}%</div>
               <p className="text-xs text-muted-foreground">
-                Overall success rate
+                {t('pages:facebookInvites.successRate', 'Overall success rate')}
               </p>
             </CardContent>
           </Card>
@@ -146,10 +146,10 @@ export default function FacebookInvites() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="w-5 h-5" />
-              Recent Invitations
+              {t('pages:facebookInvites.recentInvitations', 'Recent Invitations')}
             </CardTitle>
             <CardDescription>
-              Track your sent invitations and their status
+              {t('pages:facebookInvites.trackInvitations', 'Track your sent invitations and their status')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -160,8 +160,8 @@ export default function FacebookInvites() {
             ) : invites.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Mail className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>No invitations sent yet</p>
-                <p className="text-sm">Send your first invite to get started</p>
+                <p>{t('pages:facebookInvites.noInvites', 'No invitations sent yet')}</p>
+                <p className="text-sm">{t('pages:facebookInvites.sendFirst', 'Send your first invite to get started')}</p>
               </div>
             ) : (
               <div className="space-y-4">

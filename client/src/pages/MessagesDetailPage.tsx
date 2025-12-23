@@ -56,7 +56,7 @@ export default function MessagesDetailPage() {
       setNewMessage("");
     },
     onError: () => {
-      toast({ title: "Failed to send message", variant: "destructive" });
+      toast({ title: t('pages:messagesDetail.failedToSend', 'Failed to send message'), variant: "destructive" });
     },
   });
 
@@ -78,7 +78,7 @@ export default function MessagesDetailPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading conversation...</p>
+            <p className="text-muted-foreground">{t('pages:messagesDetail.loading', 'Loading conversation...')}</p>
           </div>
         </div>
       </AppLayout>
@@ -111,7 +111,7 @@ export default function MessagesDetailPage() {
                     <h2 className="text-xl font-serif font-bold text-foreground" data-testid="text-conversation-name">
                       {conversation.userName}
                     </h2>
-                    <p className="text-sm text-muted-foreground">Active now</p>
+                    <p className="text-sm text-muted-foreground">{t('pages:messagesDetail.activeNow', 'Active now')}</p>
                   </div>
                 </div>
 
@@ -143,7 +143,7 @@ export default function MessagesDetailPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center py-16"
               >
-                <p className="text-muted-foreground text-lg">No messages yet. Start the conversation!</p>
+                <p className="text-muted-foreground text-lg">{t('pages:messagesDetail.noMessages', 'No messages yet. Start the conversation!')}</p>
               </motion.div>
             ) : (
               messages.map((message, index) => {
@@ -196,7 +196,7 @@ export default function MessagesDetailPage() {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type a message..."
+                placeholder={t('pages:messagesDetail.placeholder', 'Type a message...')}
                 className="flex-1 h-12 text-base"
                 data-testid="input-message"
               />

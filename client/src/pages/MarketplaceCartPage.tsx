@@ -52,8 +52,8 @@ export default function MarketplaceCartPage() {
   const handleRemoveItem = (id: number) => {
     setCartItems((items) => items.filter((item) => item.id !== id));
     toast({
-      title: "Item removed",
-      description: "The item has been removed from your cart",
+      title: t('pages:marketplaceCart.itemRemoved', 'Item removed'),
+      description: t('pages:marketplaceCart.itemRemovedDescription', 'The item has been removed from your cart'),
     });
   };
 
@@ -73,7 +73,7 @@ export default function MarketplaceCartPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen p-6 flex items-center justify-center">
-        <div className="text-muted-foreground">Loading cart...</div>
+        <div className="text-muted-foreground">{t('pages:marketplaceCart.loadingCart', 'Loading cart...')}</div>
       </div>
     );
   }
@@ -82,7 +82,7 @@ export default function MarketplaceCartPage() {
     return (
       <div className="min-h-screen p-6">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6">Shopping Cart</h1>
+          <h1 className="text-3xl font-bold mb-6">{t('pages:marketplaceCart.shoppingCart', 'Shopping Cart')}</h1>
           <div
             className="p-12 rounded-lg border border-white/10 text-center space-y-4"
             style={{
@@ -91,13 +91,13 @@ export default function MarketplaceCartPage() {
             }}
           >
             <ShoppingBag className="w-16 h-16 mx-auto text-muted-foreground" />
-            <h2 className="text-xl font-semibold">Your cart is empty</h2>
+            <h2 className="text-xl font-semibold">{t('pages:marketplaceCart.cartEmpty', 'Your cart is empty')}</h2>
             <p className="text-muted-foreground">
-              Browse our marketplace to find amazing products from creators
+              {t('pages:marketplaceCart.browseMarketplaceDescription', 'Browse our marketplace to find amazing products from creators')}
             </p>
             <Link href="/marketplace">
               <Button className="bg-gradient-to-r from-[#40E0D0] to-[#1E90FF] hover-elevate">
-                Browse Marketplace
+                {t('pages:marketplaceCart.browseMarketplace', 'Browse Marketplace')}
               </Button>
             </Link>
           </div>
@@ -110,9 +110,9 @@ export default function MarketplaceCartPage() {
     <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Shopping Cart</h1>
+          <h1 className="text-3xl font-bold">{t('pages:marketplaceCart.shoppingCart', 'Shopping Cart')}</h1>
           <Link href="/marketplace">
-            <Button variant="outline">Continue Shopping</Button>
+            <Button variant="outline">{t('pages:marketplaceCart.continueShopping', 'Continue Shopping')}</Button>
           </Link>
         </div>
 
@@ -127,7 +127,7 @@ export default function MarketplaceCartPage() {
               }}
             >
               <h2 className="text-lg font-semibold mb-4">
-                Items ({cartItems.length})
+                {t('pages:marketplaceCart.items', 'Items')} ({cartItems.length})
               </h2>
               <div className="space-y-4">
                 {cartItems.map((item) => (

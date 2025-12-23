@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,7 @@ const UPCOMING_EVENTS = [
 ];
 
 export default function EventsGalleryPrototypePage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <div className="min-h-screen bg-background">
       <SEO
@@ -100,19 +102,19 @@ export default function EventsGalleryPrototypePage() {
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
               <TrendingUp className="w-3 h-3 mr-1" />
-              Featured Events
+              {t('pages:eventsGallery.featuredEvents', 'Featured Events')}
             </Badge>
             
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif text-white font-bold leading-tight mb-6">
-              Dance the World
+              {t('pages:eventsGallery.title', 'Dance the World')}
             </h1>
             
             <p className="text-2xl text-white/80 max-w-2xl mx-auto mb-8">
-              Discover extraordinary tango events across the globe
+              {t('pages:eventsGallery.subtitle', 'Discover extraordinary tango events across the globe')}
             </p>
 
             <Button size="lg" className="gap-2">
-              Explore Events
+              {t('pages:eventsGallery.exploreEvents', 'Explore Events')}
               <Calendar className="w-5 h-5" />
             </Button>
           </motion.div>
@@ -122,9 +124,9 @@ export default function EventsGalleryPrototypePage() {
       {/* Featured Events */}
       <div className="container mx-auto px-6 py-16">
         <div className="mb-12">
-          <h2 className="text-4xl font-serif font-bold mb-4">Featured Festivals</h2>
+          <h2 className="text-4xl font-serif font-bold mb-4">{t('pages:eventsGallery.featuredFestivals', 'Featured Festivals')}</h2>
           <p className="text-lg text-muted-foreground">
-            The world's most anticipated tango events
+            {t('pages:eventsGallery.featuredFestivalsSubtitle', "The world's most anticipated tango events")}
           </p>
         </div>
 
@@ -174,12 +176,12 @@ export default function EventsGalleryPrototypePage() {
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Users className="w-4 h-4 text-primary" />
-                      <span>{event.attendees.toLocaleString()} attending</span>
+                      <span>{t('pages:eventsGallery.attending', '{{count}} attending', { count: event.attendees.toLocaleString() })}</span>
                     </div>
                   </div>
 
                   <div className="flex gap-2">
-                    <Button className="flex-1">Learn More</Button>
+                    <Button className="flex-1">{t('pages:eventsGallery.learnMore', 'Learn More')}</Button>
                     <Button variant="outline" size="icon">
                       <Heart className="w-4 h-4" />
                     </Button>
@@ -192,9 +194,9 @@ export default function EventsGalleryPrototypePage() {
 
         {/* Upcoming Events Grid */}
         <div className="mb-12">
-          <h2 className="text-4xl font-serif font-bold mb-4">Happening Soon</h2>
+          <h2 className="text-4xl font-serif font-bold mb-4">{t('pages:eventsGallery.happeningSoon', 'Happening Soon')}</h2>
           <p className="text-lg text-muted-foreground">
-            Don't miss these upcoming events
+            {t('pages:eventsGallery.happeningSoonSubtitle', "Don't miss these upcoming events")}
           </p>
         </div>
 
@@ -234,7 +236,7 @@ export default function EventsGalleryPrototypePage() {
                     </div>
                     <div className="flex items-center gap-1 text-muted-foreground">
                       <Users className="w-3 h-3" />
-                      {event.attendees} attending
+                      {t('pages:eventsGallery.attendingShort', '{{count}} attending', { count: event.attendees })}
                     </div>
                   </div>
                 </CardContent>

@@ -34,14 +34,14 @@ export default function TwoFactorSetup() {
       setQrCode(data.qrCode);
       setBackupCodes(data.backupCodes);
       toast({
-        title: t('pages:twoFactorSetup.qrCodeGenerated', 'QR Code Generated'),
-        description: t('pages:twoFactorSetup.scanQRCodeDescription', 'Scan the QR code with your authenticator app.'),
+        title: t('pages:settings.qrCodeGenerated', 'QR Code Generated'),
+        description: t('pages:settings.scanQRCodeDescription', 'Scan the QR code with your authenticator app.'),
       });
     },
     onError: () => {
       toast({
-        title: t('common:error', 'Error'),
-        description: t('pages:twoFactorSetup.qrCodeError', 'Failed to generate QR code. Please try again.'),
+        title: t('pages:settings.error', 'Error'),
+        description: t('pages:settings.qrCodeError', 'Failed to generate QR code. Please try again.'),
         variant: "destructive",
       });
     },
@@ -54,8 +54,8 @@ export default function TwoFactorSetup() {
       setSetupComplete(true);
       queryClient.invalidateQueries({ queryKey: ['/api/auth/2fa/status'] });
       toast({
-        title: t('pages:twoFactorSetup.twoFAEnabled', '2FA Enabled'),
-        description: t('pages:twoFactorSetup.twoFAEnabledDescription', 'Two-factor authentication has been successfully enabled!'),
+        title: t('pages:settings.twoFAEnabled', '2FA Enabled'),
+        description: t('pages:settings.twoFAEnabledDescription', 'Two-factor authentication has been successfully enabled!'),
       });
       setTimeout(() => {
         navigate('/settings/security');
@@ -63,8 +63,8 @@ export default function TwoFactorSetup() {
     },
     onError: () => {
       toast({
-        title: t('pages:twoFactorSetup.verificationFailed', 'Verification Failed'),
-        description: t('pages:twoFactorSetup.invalidToken', 'Invalid token. Please try again.'),
+        title: t('pages:settings.verificationFailed', 'Verification Failed'),
+        description: t('pages:settings.invalidToken', 'Invalid token. Please try again.'),
         variant: "destructive",
       });
       setToken("");
@@ -80,15 +80,15 @@ export default function TwoFactorSetup() {
       verifyMutation.mutate(token);
     } else {
       toast({
-        title: t('pages:twoFactorSetup.invalidTokenTitle', 'Invalid Token'),
-        description: t('pages:twoFactorSetup.enter6DigitCode', 'Please enter a 6-digit code.'),
+        title: t('pages:settings.invalidTokenTitle', 'Invalid Token'),
+        description: t('pages:settings.enter6DigitCode', 'Please enter a 6-digit code.'),
         variant: "destructive",
       });
     }
   };
 
   const handleDownloadBackupCodes = () => {
-    const content = `${t('pages:twoFactorSetup.backupCodesFileHeader', 'Mundo Tango - Two-Factor Authentication Backup Codes')}\n\n${t('pages:twoFactorSetup.generated', 'Generated')}: ${new Date().toLocaleString()}\n\n${backupCodes.join('\n')}\n\n${t('pages:twoFactorSetup.keepCodesSafe', 'Keep these codes in a safe place. Each code can only be used once.')}`;
+    const content = `${t('pages:settings.backupCodesFileHeader', 'Mundo Tango - Two-Factor Authentication Backup Codes')}\n\n${t('pages:settings.generated', 'Generated')}: ${new Date().toLocaleString()}\n\n${backupCodes.join('\n')}\n\n${t('pages:settings.keepCodesSafe', 'Keep these codes in a safe place. Each code can only be used once.')}`;
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -100,34 +100,34 @@ export default function TwoFactorSetup() {
     URL.revokeObjectURL(url);
     
     toast({
-      title: t('pages:twoFactorSetup.backupCodesDownloaded', 'Backup Codes Downloaded'),
-      description: t('pages:twoFactorSetup.keepFileSafe', 'Keep this file in a safe place.'),
+      title: t('pages:settings.backupCodesDownloaded', 'Backup Codes Downloaded'),
+      description: t('pages:settings.keepFileSafe', 'Keep this file in a safe place.'),
     });
   };
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
     toast({
-      title: t('common:copied', 'Copied'),
-      description: t('pages:twoFactorSetup.backupCodeCopied', 'Backup code copied to clipboard.'),
+      title: t('pages:settings.copied', 'Copied'),
+      description: t('pages:settings.backupCodeCopied', 'Backup code copied to clipboard.'),
     });
   };
 
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:twoFactorSetup.pageName', 'Two-Factor Setup')} fallbackRoute="/settings/security">
-      <PageLayout title={t('pages:twoFactorSetup.title', 'Two-Factor Authentication Setup')} showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:settings.twoFactorSetup', 'Two-Factor Setup')} fallbackRoute="/settings/security">
+      <PageLayout title={t('pages:settings.twoFactorAuthSetupTitle', 'Two-Factor Authentication Setup')} showBreadcrumbs>
         <>
           <SEO 
-            title={t('pages:twoFactorSetup.seoTitle', 'Two-Factor Authentication Setup')}
-            description={t('pages:twoFactorSetup.seoDescription', 'Set up two-factor authentication to secure your Mundo Tango account.')}
+            title={t('pages:settings.twoFactorAuthSetupSeoTitle', 'Two-Factor Authentication Setup')}
+            description={t('pages:settings.twoFactorAuthSetupSeoDescription', 'Set up two-factor authentication to secure your Mundo Tango account.')}
           />
           <div className="max-w-3xl mx-auto p-6 space-y-8">
             <div>
               <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-[#40E0D0] via-[#1E90FF] to-[#9370DB] bg-clip-text text-transparent mb-2" data-testid="heading-2fa-setup">
-                {t('pages:twoFactorSetup.enableTwoFA', 'Enable Two-Factor Authentication')}
+                {t('pages:settings.enableTwoFA', 'Enable Two-Factor Authentication')}
               </h1>
               <p className="text-muted-foreground">
-                {t('pages:twoFactorSetup.subtitle', 'Protect your account with an additional layer of security')}
+                {t('pages:settings.twoFactorAuthSubtitle', 'Protect your account with an additional layer of security')}
               </p>
             </div>
 
@@ -136,19 +136,19 @@ export default function TwoFactorSetup() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 font-serif">
                     <Shield className="h-5 w-5 text-[#40E0D0]" />
-                    {t('pages:twoFactorSetup.getStarted', 'Get Started')}
+                    {t('pages:settings.getStarted', 'Get Started')}
                   </CardTitle>
                   <CardDescription>
-                    {t('pages:twoFactorSetup.getStartedDescription', 'Set up 2FA to add an extra security layer to your account')}
+                    {t('pages:settings.getStartedDescription', 'Set up 2FA to add an extra security layer to your account')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <h3 className="font-medium">{t('pages:twoFactorSetup.whatYouNeed', "What you'll need:")}</h3>
+                    <h3 className="font-medium">{t('pages:settings.whatYouNeed', "What you'll need:")}</h3>
                     <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                      <li>{t('pages:twoFactorSetup.requirement1', 'An authenticator app (Google Authenticator, Authy, 1Password, etc.)')}</li>
-                      <li>{t('pages:twoFactorSetup.requirement2', 'Your smartphone or device')}</li>
-                      <li>{t('pages:twoFactorSetup.requirement3', 'A few minutes to complete the setup')}</li>
+                      <li>{t('pages:settings.requirement1', 'An authenticator app (Google Authenticator, Authy, 1Password, etc.)')}</li>
+                      <li>{t('pages:settings.requirement2', 'Your smartphone or device')}</li>
+                      <li>{t('pages:settings.requirement3', 'A few minutes to complete the setup')}</li>
                     </ul>
                   </div>
                   <Button 
@@ -157,7 +157,7 @@ export default function TwoFactorSetup() {
                     className="w-full"
                     data-testid="button-start-setup"
                   >
-                    {setupMutation.isPending ? t('pages:twoFactorSetup.settingUp', 'Setting up...') : t('pages:twoFactorSetup.startSetup', 'Start Setup')}
+                    {setupMutation.isPending ? t('pages:settings.settingUp', 'Setting up...') : t('pages:settings.startSetup', 'Start Setup')}
                   </Button>
                 </CardContent>
               </Card>
@@ -170,23 +170,23 @@ export default function TwoFactorSetup() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 font-serif">
                       <Smartphone className="h-5 w-5 text-[#40E0D0]" />
-                      {t('pages:twoFactorSetup.step1Title', 'Step 1: Scan QR Code')}
+                      {t('pages:settings.step1Title', 'Step 1: Scan QR Code')}
                     </CardTitle>
                     <CardDescription>
-                      {t('pages:twoFactorSetup.step1Description', 'Open your authenticator app and scan this QR code')}
+                      {t('pages:settings.step1Description', 'Open your authenticator app and scan this QR code')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex flex-col items-center space-y-4">
                     <div className="p-4 bg-white rounded-lg" data-testid="qr-code-container">
                       <img 
                         src={qrCode} 
-                        alt={t('pages:twoFactorSetup.qrCodeAlt', '2FA QR Code')}
+                        alt={t('pages:settings.qrCodeAlt', '2FA QR Code')}
                         className="w-64 h-64"
                         data-testid="img-qr-code"
                       />
                     </div>
                     <p className="text-sm text-muted-foreground text-center max-w-md">
-                      {t('pages:twoFactorSetup.scanCodeHelp', 'Scan this code with your authenticator app to link your account')}
+                      {t('pages:settings.scanCodeHelp', 'Scan this code with your authenticator app to link your account')}
                     </p>
                   </CardContent>
                 </Card>
@@ -196,10 +196,10 @@ export default function TwoFactorSetup() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 font-serif">
                       <Download className="h-5 w-5 text-[#40E0D0]" />
-                      {t('pages:twoFactorSetup.step2Title', 'Step 2: Save Backup Codes')}
+                      {t('pages:settings.step2Title', 'Step 2: Save Backup Codes')}
                     </CardTitle>
                     <CardDescription>
-                      {t('pages:twoFactorSetup.step2Description', "Store these codes in a safe place - you'll need them if you lose your device")}
+                      {t('pages:settings.step2Description', "Store these codes in a safe place - you'll need them if you lose your device")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -207,7 +207,7 @@ export default function TwoFactorSetup() {
                       <div className="flex gap-2">
                         <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
                         <p className="text-sm text-yellow-600 dark:text-yellow-400">
-                          <strong>{t('common:important', 'Important')}:</strong> {t('pages:twoFactorSetup.backupCodesWarning', "Each backup code can only be used once. Save them now - they won't be shown again.")}
+                          <strong>{t('pages:settings.important', 'Important')}:</strong> {t('pages:settings.backupCodesWarning', "Each backup code can only be used once. Save them now - they won't be shown again.")}
                         </p>
                       </div>
                     </div>
@@ -238,7 +238,7 @@ export default function TwoFactorSetup() {
                       data-testid="button-download-backup-codes"
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      {t('pages:twoFactorSetup.downloadBackupCodes', 'Download Backup Codes')}
+                      {t('pages:settings.downloadBackupCodes', 'Download Backup Codes')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -248,10 +248,10 @@ export default function TwoFactorSetup() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 font-serif">
                       <CheckCircle2 className="h-5 w-5 text-[#40E0D0]" />
-                      {t('pages:twoFactorSetup.step3Title', 'Step 3: Verify Setup')}
+                      {t('pages:settings.step3Title', 'Step 3: Verify Setup')}
                     </CardTitle>
                     <CardDescription>
-                      {t('pages:twoFactorSetup.step3Description', 'Enter the 6-digit code from your authenticator app')}
+                      {t('pages:settings.step3Description', 'Enter the 6-digit code from your authenticator app')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -278,7 +278,7 @@ export default function TwoFactorSetup() {
                         className="w-full max-w-xs"
                         data-testid="button-verify-enable"
                       >
-                        {verifyMutation.isPending ? t('pages:twoFactorSetup.verifying', 'Verifying...') : t('pages:twoFactorSetup.verifyAndEnable', 'Verify & Enable 2FA')}
+                        {verifyMutation.isPending ? t('pages:settings.verifying', 'Verifying...') : t('pages:settings.verifyAndEnable', 'Verify & Enable 2FA')}
                       </Button>
                     </div>
                   </CardContent>
@@ -294,10 +294,10 @@ export default function TwoFactorSetup() {
                   </div>
                   <div className="text-center space-y-2">
                     <h2 className="text-2xl font-serif font-bold" data-testid="text-setup-complete">
-                      {t('pages:twoFactorSetup.successTitle', '2FA Enabled Successfully!')}
+                      {t('pages:settings.successTitle', '2FA Enabled Successfully!')}
                     </h2>
                     <p className="text-muted-foreground max-w-md">
-                      {t('pages:twoFactorSetup.successDescription', "Your account is now protected with two-factor authentication. You'll be redirected to security settings...")}
+                      {t('pages:settings.successDescription', "Your account is now protected with two-factor authentication. You'll be redirected to security settings...")}
                     </p>
                   </div>
                   <Button 
@@ -305,7 +305,7 @@ export default function TwoFactorSetup() {
                     variant="outline"
                     data-testid="button-return-to-security"
                   >
-                    {t('pages:twoFactorSetup.returnToSecurity', 'Return to Security Settings')}
+                    {t('pages:settings.returnToSecurity', 'Return to Security Settings')}
                   </Button>
                 </CardContent>
               </Card>

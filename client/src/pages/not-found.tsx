@@ -13,11 +13,11 @@ export default function NotFound() {
   const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="NotFound" fallbackRoute="/">
-      <PageLayout title="404 Page Not Found" showBreadcrumbs>
+      <PageLayout title={t('pages:notFound.pageTitle', '404 Page Not Found')} showBreadcrumbs>
         <>
           <SEO 
-            title="Page Not Found - Mundo Tango"
-            description="The page you're looking for doesn't exist"
+            title={t('pages:notFound.seoTitle', 'Page Not Found - Mundo Tango')}
+            description={t('pages:notFound.seoDescription', "The page you're looking for doesn't exist")}
           />
 
           {/* Hero Section - 16:9 */}
@@ -36,7 +36,7 @@ export default function NotFound() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                   <AlertCircle className="w-3 h-3 mr-1.5" />
-                  Page Not Found
+                  {t('pages:notFound.badge', 'Page Not Found')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
@@ -44,7 +44,7 @@ export default function NotFound() {
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  This page has wandered off the dance floor
+                  {t('pages:notFound.heroSubtitle', 'This page has wandered off the dance floor')}
                 </p>
               </motion.div>
             </div>
@@ -63,10 +63,10 @@ export default function NotFound() {
                     <div className="mb-8">
                       <AlertCircle className="h-20 w-20 mx-auto text-muted-foreground mb-6" />
                       <h2 className="text-3xl font-serif font-bold mb-4">
-                        Oops! Page Not Found
+                        {t('pages:notFound.title', 'Oops! Page Not Found')}
                       </h2>
                       <p className="text-lg text-muted-foreground leading-relaxed max-w-md mx-auto">
-                        The page you're looking for doesn't exist or has been moved. Let's get you back on track.
+                        {t('pages:notFound.description', "The page you're looking for doesn't exist or has been moved. Let's get you back on track.")}
                       </p>
                     </div>
 
@@ -74,13 +74,13 @@ export default function NotFound() {
                       <Link href="/">
                         <Button size="lg" className="gap-2" data-testid="button-home">
                           <Home className="h-4 w-4" />
-                          Go Home
+                          {t('pages:notFound.goHome', 'Go Home')}
                         </Button>
                       </Link>
                       <Link href="/search">
                         <Button variant="outline" size="lg" className="gap-2" data-testid="button-search">
                           <Search className="h-4 w-4" />
-                          Search
+                          {t('pages:notFound.search', 'Search')}
                         </Button>
                       </Link>
                       <Button 
@@ -91,7 +91,7 @@ export default function NotFound() {
                         data-testid="button-back"
                       >
                         <ArrowLeft className="h-4 w-4" />
-                        Go Back
+                        {t('pages:notFound.goBack', 'Go Back')}
                       </Button>
                     </div>
                   </CardContent>
@@ -107,27 +107,27 @@ export default function NotFound() {
                   <Card>
                     <CardContent className="p-8">
                       <h3 className="text-xl font-serif font-bold mb-6 text-center">
-                        Popular Pages
+                        {t('pages:notFound.popularPages', 'Popular Pages')}
                       </h3>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <Link href="/feed">
                           <Button variant="outline" className="w-full" data-testid="link-feed">
-                            Feed
+                            {t('pages:notFound.feed', 'Feed')}
                           </Button>
                         </Link>
                         <Link href="/events">
                           <Button variant="outline" className="w-full" data-testid="link-events">
-                            Events
+                            {t('pages:notFound.events', 'Events')}
                           </Button>
                         </Link>
                         <Link href="/groups">
                           <Button variant="outline" className="w-full" data-testid="link-groups">
-                            Groups
+                            {t('pages:notFound.groups', 'Groups')}
                           </Button>
                         </Link>
                         <Link href="/profile">
                           <Button variant="outline" className="w-full" data-testid="link-profile">
-                            Profile
+                            {t('pages:notFound.profile', 'Profile')}
                           </Button>
                         </Link>
                       </div>

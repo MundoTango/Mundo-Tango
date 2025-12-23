@@ -40,14 +40,14 @@ export default function PrivacySettings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gdpr/privacy-settings'] });
       toast({
-        title: t('pages:privacy.settingsUpdated', 'Privacy settings updated'),
-        description: t('pages:privacy.preferencesSaved', 'Your preferences have been saved successfully.'),
+        title: t('pages:settings.settingsUpdated', 'Privacy settings updated'),
+        description: t('pages:settings.preferencesSaved', 'Your preferences have been saved successfully.'),
       });
     },
     onError: () => {
       toast({
-        title: t('common:error', 'Error'),
-        description: t('pages:privacy.updateFailed', 'Failed to update privacy settings. Please try again.'),
+        title: t('pages:settings.error', 'Error'),
+        description: t('pages:settings.updateFailed', 'Failed to update privacy settings. Please try again.'),
         variant: "destructive",
       });
     },
@@ -58,27 +58,27 @@ export default function PrivacySettings() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Privacy Settings" fallbackRoute="/settings">
-      <PageLayout title={t('pages:privacy.title', 'Privacy Settings')} showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:settings.privacySettings', 'Privacy Settings')} fallbackRoute="/settings">
+      <PageLayout title={t('pages:settings.privacyTitle', 'Privacy Settings')} showBreadcrumbs>
         <>
           <SEO 
-            title={t('pages:privacy.seoTitle', 'Privacy Settings - GDPR Compliance')}
-            description={t('pages:privacy.seoDescription', 'Control your privacy settings and data sharing preferences in compliance with GDPR.')}
+            title={t('pages:settings.privacySeoTitle', 'Privacy Settings - GDPR Compliance')}
+            description={t('pages:settings.privacySeoDescription', 'Control your privacy settings and data sharing preferences in compliance with GDPR.')}
           />
           <div className="max-w-5xl mx-auto p-6 space-y-8">
             <div>
               <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-[#40E0D0] via-[#1E90FF] to-[#9370DB] bg-clip-text text-transparent mb-2" data-testid="heading-privacy-settings">
-                {t('pages:privacy.title', 'Privacy Settings')}
+                {t('pages:settings.privacyTitle', 'Privacy Settings')}
               </h1>
               <p className="text-muted-foreground">
-                {t('pages:privacy.subtitle', 'Control your privacy preferences and manage how your data is used')}
+                {t('pages:settings.privacySubtitle', 'Control your privacy preferences and manage how your data is used')}
               </p>
             </div>
 
             {isLoading ? (
               <Card className="backdrop-blur-md bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10">
                 <CardContent className="p-8">
-                  <p className="text-center text-muted-foreground" data-testid="text-loading">{t('pages:privacy.loading', 'Loading privacy settings...')}</p>
+                  <p className="text-center text-muted-foreground" data-testid="text-loading">{t('pages:settings.loading', 'Loading privacy settings...')}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -87,20 +87,20 @@ export default function PrivacySettings() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 font-serif">
                       <Mail className="h-5 w-5 text-[#40E0D0]" />
-                      {t('pages:privacy.communicationPreferences', 'Communication Preferences')}
+                      {t('pages:settings.communicationPreferences', 'Communication Preferences')}
                     </CardTitle>
                     <CardDescription>
-                      {t('pages:privacy.communicationDesc', 'Control how we communicate with you')}
+                      {t('pages:settings.communicationDesc', 'Control how we communicate with you')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
                         <Label htmlFor="marketing-emails" className="font-medium">
-                          {t('pages:privacy.marketingEmails', 'Marketing Emails')}
+                          {t('pages:settings.marketingEmails', 'Marketing Emails')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          {t('pages:privacy.marketingEmailsDesc', 'Receive promotional emails, newsletters, and event announcements')}
+                          {t('pages:settings.marketingEmailsDesc', 'Receive promotional emails, newsletters, and event announcements')}
                         </p>
                       </div>
                       <Switch
@@ -118,20 +118,20 @@ export default function PrivacySettings() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 font-serif">
                       <BarChart3 className="h-5 w-5 text-[#40E0D0]" />
-                      {t('pages:privacy.dataUsageConsent', 'Data Usage Consent')}
+                      {t('pages:settings.dataUsageConsent', 'Data Usage Consent')}
                     </CardTitle>
                     <CardDescription>
-                      {t('pages:privacy.dataUsageDesc', 'Control how your data is used to improve our services')}
+                      {t('pages:settings.dataUsageDesc', 'Control how your data is used to improve our services')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
                         <Label htmlFor="analytics" className="font-medium">
-                          {t('pages:privacy.analyticsTracking', 'Analytics Tracking')}
+                          {t('pages:settings.analyticsTracking', 'Analytics Tracking')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          {t('pages:privacy.analyticsDesc', 'Help us improve by sharing anonymous usage data and analytics')}
+                          {t('pages:settings.analyticsDesc', 'Help us improve by sharing anonymous usage data and analytics')}
                         </p>
                       </div>
                       <Switch
@@ -146,10 +146,10 @@ export default function PrivacySettings() {
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
                         <Label htmlFor="third-party" className="font-medium">
-                          {t('pages:privacy.thirdPartySharing', 'Third-Party Data Sharing')}
+                          {t('pages:settings.thirdPartySharing', 'Third-Party Data Sharing')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          {t('pages:privacy.thirdPartySharingDesc', 'Allow sharing anonymized data with trusted analytics partners')}
+                          {t('pages:settings.thirdPartySharingDesc', 'Allow sharing anonymized data with trusted analytics partners')}
                         </p>
                       </div>
                       <Switch
@@ -167,20 +167,20 @@ export default function PrivacySettings() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 font-serif">
                       <Eye className="h-5 w-5 text-[#40E0D0]" />
-                      {t('pages:privacy.profileVisibility', 'Profile Visibility')}
+                      {t('pages:settings.profileVisibility', 'Profile Visibility')}
                     </CardTitle>
                     <CardDescription>
-                      {t('pages:privacy.profileVisibilityDesc', 'Control who can see your profile and activity')}
+                      {t('pages:settings.profileVisibilityDesc', 'Control who can see your profile and activity')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5 flex-1 pr-4">
                         <Label htmlFor="profile-visibility" className="font-medium">
-                          {t('pages:privacy.profileVisibility', 'Profile Visibility')}
+                          {t('pages:settings.profileVisibility', 'Profile Visibility')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          {t('pages:privacy.chooseWhoCanView', 'Choose who can view your profile information')}
+                          {t('pages:settings.chooseWhoCanView', 'Choose who can view your profile information')}
                         </p>
                       </div>
                       <Select
@@ -189,12 +189,12 @@ export default function PrivacySettings() {
                         disabled={updatePrivacyMutation.isPending}
                       >
                         <SelectTrigger className="w-[180px]" id="profile-visibility" data-testid="select-profile-visibility">
-                          <SelectValue placeholder={t('pages:privacy.selectVisibility', 'Select visibility')} />
+                          <SelectValue placeholder={t('pages:settings.selectVisibility', 'Select visibility')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="public">{t('common:public', 'Public')}</SelectItem>
-                          <SelectItem value="friends">{t('common:friendsOnly', 'Friends Only')}</SelectItem>
-                          <SelectItem value="private">{t('common:private', 'Private')}</SelectItem>
+                          <SelectItem value="public">{t('pages:settings.public', 'Public')}</SelectItem>
+                          <SelectItem value="friends">{t('pages:settings.friendsOnly', 'Friends Only')}</SelectItem>
+                          <SelectItem value="private">{t('pages:settings.private', 'Private')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -203,10 +203,10 @@ export default function PrivacySettings() {
                       <div className="space-y-0.5">
                         <Label htmlFor="searchable" className="flex items-center gap-2 font-medium">
                           <Search className="h-4 w-4" />
-                          {t('pages:privacy.searchableProfile', 'Searchable Profile')}
+                          {t('pages:settings.searchableProfile', 'Searchable Profile')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          {t('pages:privacy.searchableDesc', 'Allow others to find your profile through search')}
+                          {t('pages:settings.searchableDesc', 'Allow others to find your profile through search')}
                         </p>
                       </div>
                       <Switch
@@ -222,10 +222,10 @@ export default function PrivacySettings() {
                       <div className="space-y-0.5">
                         <Label htmlFor="show-activity" className="flex items-center gap-2 font-medium">
                           <Activity className="h-4 w-4" />
-                          {t('pages:privacy.showActivityStatus', 'Show Activity Status')}
+                          {t('pages:settings.showActivityStatus', 'Show Activity Status')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          {t('pages:privacy.showActivityDesc', 'Display when you\'re online and your recent activity')}
+                          {t('pages:settings.showActivityDesc', 'Display when you\'re online and your recent activity')}
                         </p>
                       </div>
                       <Switch
@@ -243,30 +243,30 @@ export default function PrivacySettings() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 font-serif">
                       <Shield className="h-5 w-5 text-[#40E0D0]" />
-                      {t('pages:privacy.yourDataRights', 'Your Data Rights')}
+                      {t('pages:settings.yourDataRights', 'Your Data Rights')}
                     </CardTitle>
                     <CardDescription>
-                      {t('pages:privacy.gdprRightsDesc', 'Learn about your rights under GDPR')}
+                      {t('pages:settings.gdprRightsDesc', 'Learn about your rights under GDPR')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <p className="text-sm text-muted-foreground">
-                      {t('pages:privacy.gdprIntro', 'Under the General Data Protection Regulation (GDPR), you have the right to:')}
+                      {t('pages:settings.gdprIntro', 'Under the General Data Protection Regulation (GDPR), you have the right to:')}
                     </p>
                     <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
-                      <li>{t('pages:privacy.accessData', 'Access your personal data')}</li>
-                      <li>{t('pages:privacy.correctData', 'Correct inaccurate data')}</li>
-                      <li>{t('pages:privacy.deleteData', 'Delete your data (right to be forgotten)')}</li>
-                      <li>{t('pages:privacy.exportData', 'Export your data in a portable format')}</li>
-                      <li>{t('pages:privacy.restrictProcessing', 'Restrict processing of your data')}</li>
-                      <li>{t('pages:privacy.objectProcessing', 'Object to data processing')}</li>
+                      <li>{t('pages:settings.accessData', 'Access your personal data')}</li>
+                      <li>{t('pages:settings.correctData', 'Correct inaccurate data')}</li>
+                      <li>{t('pages:settings.deleteData', 'Delete your data (right to be forgotten)')}</li>
+                      <li>{t('pages:settings.exportData', 'Export your data in a portable format')}</li>
+                      <li>{t('pages:settings.restrictProcessing', 'Restrict processing of your data')}</li>
+                      <li>{t('pages:settings.objectProcessing', 'Object to data processing')}</li>
                     </ul>
                     <div className="flex gap-2 pt-2">
                       <Button variant="outline" size="sm" asChild data-testid="button-view-data-export">
-                        <a href="/settings/data-export">{t('pages:privacy.downloadMyData', 'Download My Data')}</a>
+                        <a href="/settings/data-export">{t('pages:settings.downloadMyData', 'Download My Data')}</a>
                       </Button>
                       <Button variant="outline" size="sm" asChild data-testid="button-view-delete-account">
-                        <a href="/settings/delete-account">{t('pages:privacy.deleteAccount', 'Delete Account')}</a>
+                        <a href="/settings/delete-account">{t('pages:settings.deleteAccount', 'Delete Account')}</a>
                       </Button>
                     </div>
                   </CardContent>

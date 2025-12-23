@@ -62,23 +62,23 @@ export default function HousingSearchPage() {
   return (
     <div className="bg-background">
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-6" data-testid="heading-housing-search">Advanced Housing Search</h1>
+        <h1 className="text-3xl font-bold mb-6" data-testid="heading-housing-search">{t('pages:housingSearch.title', 'Advanced Housing Search')}</h1>
 
         <div className="grid md:grid-cols-4 gap-6">
           <div className="md:col-span-1">
             <Card className="sticky top-4">
               <CardHeader>
-                <CardTitle>Search Filters</CardTitle>
-                <CardDescription>Refine your search</CardDescription>
+                <CardTitle>{t('pages:housingSearch.searchFilters', 'Search Filters')}</CardTitle>
+                <CardDescription>{t('pages:housingSearch.refineSearch', 'Refine your search')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label>Check-in</Label>
+                  <Label>{t('pages:housingSearch.checkIn', 'Check-in')}</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button variant="outline" className="w-full justify-start" data-testid="button-checkin">
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {checkInDate ? format(checkInDate, "PPP") : "Select date"}
+                        {checkInDate ? format(checkInDate, "PPP") : t('pages:housingSearch.selectDate', 'Select date')}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
@@ -88,12 +88,12 @@ export default function HousingSearchPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Check-out</Label>
+                  <Label>{t('pages:housingSearch.checkOut', 'Check-out')}</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button variant="outline" className="w-full justify-start" data-testid="button-checkout">
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {checkOutDate ? format(checkOutDate, "PPP") : "Select date"}
+                        {checkOutDate ? format(checkOutDate, "PPP") : t('pages:housingSearch.selectDate', 'Select date')}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
@@ -103,7 +103,7 @@ export default function HousingSearchPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Location</Label>
+                  <Label>{t('pages:housingSearch.location', 'Location')}</Label>
                   <UnifiedLocationPicker
                     mode="city"
                     value={searchCriteria.city}
@@ -123,26 +123,26 @@ export default function HousingSearchPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Property Type</Label>
+                  <Label>{t('pages:housingSearch.propertyType', 'Property Type')}</Label>
                   <Select
                     value={searchCriteria.propertyType}
                     onValueChange={(value) => setSearchCriteria({ ...searchCriteria, propertyType: value })}
                   >
                     <SelectTrigger data-testid="select-property-type">
-                      <SelectValue placeholder="All types" />
+                      <SelectValue placeholder={t('pages:housingSearch.allTypes', 'All types')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Types</SelectItem>
-                      <SelectItem value="apartment">Apartment</SelectItem>
-                      <SelectItem value="room">Private Room</SelectItem>
-                      <SelectItem value="house">House</SelectItem>
-                      <SelectItem value="studio">Studio</SelectItem>
+                      <SelectItem value="">{t('pages:housingSearch.allTypesOption', 'All Types')}</SelectItem>
+                      <SelectItem value="apartment">{t('pages:housingSearch.apartment', 'Apartment')}</SelectItem>
+                      <SelectItem value="room">{t('pages:housingSearch.privateRoom', 'Private Room')}</SelectItem>
+                      <SelectItem value="house">{t('pages:housingSearch.house', 'House')}</SelectItem>
+                      <SelectItem value="studio">{t('pages:housingSearch.studio', 'Studio')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Price Range (${searchCriteria.minPrice} - ${searchCriteria.maxPrice})</Label>
+                  <Label>{t('pages:housingSearch.priceRange', 'Price Range')} (${searchCriteria.minPrice} - ${searchCriteria.maxPrice})</Label>
                   <Slider
                     min={0}
                     max={1000}
@@ -156,7 +156,7 @@ export default function HousingSearchPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="guests">Number of Guests</Label>
+                  <Label htmlFor="guests">{t('pages:housingSearch.numberOfGuests', 'Number of Guests')}</Label>
                   <Input
                     id="guests"
                     type="number"
@@ -169,7 +169,7 @@ export default function HousingSearchPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Amenities</Label>
+                  <Label>{t('pages:housingSearch.amenities', 'Amenities')}</Label>
                   <div className="space-y-2">
                     {["WiFi", "Kitchen", "Parking", "Air Conditioning", "Washing Machine"].map((amenity) => (
                       <div key={amenity} className="flex items-center space-x-2">
@@ -194,7 +194,7 @@ export default function HousingSearchPage() {
                   data-testid="button-search"
                 >
                   <Search className="h-4 w-4 mr-2" />
-                  Search
+                  {t('pages:housingSearch.search', 'Search')}
                 </Button>
               </CardContent>
             </Card>
@@ -216,7 +216,7 @@ export default function HousingSearchPage() {
             ) : searchResults.length > 0 ? (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold">{searchResults.length} results found</h2>
+                  <h2 className="text-xl font-semibold">{t('pages:housingSearch.resultsFound', '{{count}} results found', { count: searchResults.length })}</h2>
                 </div>
                 <div className="grid gap-6 md:grid-cols-2">
                   {searchResults.map((item: any) => {
@@ -251,7 +251,7 @@ export default function HousingSearchPage() {
                         <CardContent>
                           <div className="flex flex-wrap gap-2">
                             <Badge variant="secondary">{listing.propertyType}</Badge>
-                            {listing.bedrooms && <Badge variant="outline">{listing.bedrooms} bed</Badge>}
+                            {listing.bedrooms && <Badge variant="outline">{t('pages:housingSearch.bed', '{{count}} bed', { count: listing.bedrooms })}</Badge>}
                             {listing.maxGuests && (
                               <Badge variant="outline">
                                 <Users className="h-3 w-3 mr-1" />
@@ -264,7 +264,7 @@ export default function HousingSearchPage() {
                           <div className="flex items-center gap-1">
                             <DollarSign className="h-4 w-4" />
                             <span className="font-semibold">${listing.pricePerNight}</span>
-                            <span className="text-sm text-muted-foreground">/night</span>
+                            <span className="text-sm text-muted-foreground">{t('pages:housingSearch.perNight', '/night')}</span>
                           </div>
                         </CardFooter>
                       </Card>
@@ -276,9 +276,9 @@ export default function HousingSearchPage() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <Search className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No results yet</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('pages:housingSearch.noResults', 'No results yet')}</h3>
                   <p className="text-muted-foreground">
-                    Adjust your search criteria and click Search
+                    {t('pages:housingSearch.adjustCriteria', 'Adjust your search criteria and click Search')}
                   </p>
                 </CardContent>
               </Card>

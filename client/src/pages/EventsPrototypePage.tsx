@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -68,6 +69,7 @@ const EVENTS = [
 ];
 
 export default function EventsPrototypePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
   const [searchQuery, setSearchQuery] = useState("");
@@ -97,15 +99,15 @@ export default function EventsPrototypePage() {
             className="max-w-4xl"
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-              Discover Events
+              {t('pages:eventsPrototype.discoverEvents', 'Discover Events')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-              Where Tango Happens
+              {t('pages:eventsPrototype.title', 'Where Tango Happens')}
             </h1>
             
             <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
-              From intimate milongas to grand festivals, find your next tango experience
+              {t('pages:eventsPrototype.subtitle', 'From intimate milongas to grand festivals, find your next tango experience')}
             </p>
 
             {/* Search */}
@@ -136,7 +138,7 @@ export default function EventsPrototypePage() {
                   className="gap-2"
                 >
                   <List className="w-4 h-4" />
-                  List
+                  {t('pages:eventsPrototype.list', 'List')}
                 </Button>
                 <Button
                   variant={viewMode === "map" ? "default" : "outline"}
@@ -144,22 +146,22 @@ export default function EventsPrototypePage() {
                   className="gap-2"
                 >
                   <Map className="w-4 h-4" />
-                  Map
+                  {t('pages:eventsPrototype.map', 'Map')}
                 </Button>
               </div>
               <Button variant="outline" className="gap-2">
                 <Filter className="w-4 h-4" />
-                Filters
+                {t('pages:eventsPrototype.filters', 'Filters')}
               </Button>
             </div>
 
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-8">
-                <TabsTrigger value="all">All Events</TabsTrigger>
-                <TabsTrigger value="milongas">Milongas</TabsTrigger>
-                <TabsTrigger value="workshops">Workshops</TabsTrigger>
-                <TabsTrigger value="festivals">Festivals</TabsTrigger>
+                <TabsTrigger value="all">{t('pages:eventsPrototype.allEvents', 'All Events')}</TabsTrigger>
+                <TabsTrigger value="milongas">{t('pages:eventsPrototype.milongas', 'Milongas')}</TabsTrigger>
+                <TabsTrigger value="workshops">{t('pages:eventsPrototype.workshops', 'Workshops')}</TabsTrigger>
+                <TabsTrigger value="festivals">{t('pages:eventsPrototype.festivals', 'Festivals')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="all" className="space-y-8">
@@ -191,7 +193,7 @@ export default function EventsPrototypePage() {
           {/* Sidebar */}
           <div className="w-96 space-y-6 sticky top-8 self-start hidden lg:block">
             <Card className="p-6">
-              <h3 className="font-semibold mb-4">Upcoming Timeline</h3>
+              <h3 className="font-semibold mb-4">{t('pages:eventsPrototype.upcomingTimeline', 'Upcoming Timeline')}</h3>
               <div className="space-y-4">
                 {EVENTS.slice(0, 3).map((event) => (
                   <div key={event.id} className="flex gap-3">
@@ -212,11 +214,11 @@ export default function EventsPrototypePage() {
 
             <Card className="p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
               <Calendar className="w-8 h-8 mb-3 text-primary" />
-              <h3 className="font-semibold mb-2">My Calendar</h3>
+              <h3 className="font-semibold mb-2">{t('pages:eventsPrototype.myCalendar', 'My Calendar')}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                You have {EVENTS.filter(e => e.rsvp === "going").length} upcoming events
+                {t('pages:eventsPrototype.upcomingEventsCount', 'You have {{count}} upcoming events', { count: EVENTS.filter(e => e.rsvp === "going").length })}
               </p>
-              <Button className="w-full">View Calendar</Button>
+              <Button className="w-full">{t('pages:eventsPrototype.viewCalendar', 'View Calendar')}</Button>
             </Card>
           </div>
         </div>

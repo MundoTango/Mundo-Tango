@@ -106,14 +106,14 @@ export default function AlbumDetail() {
       setIsAddMediaDialogOpen(false);
       setSelectedMediaId(null);
       toast({
-        title: "Media added",
-        description: "Media has been added to the album.",
+        title: t('pages:albumDetail.mediaAdded', 'Media added'),
+        description: t('pages:albumDetail.mediaAddedDesc', 'Media has been added to the album.'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to add media to album.",
+        title: t('common:error', 'Error'),
+        description: error.message || t('pages:albumDetail.addMediaError', 'Failed to add media to album.'),
         variant: "destructive",
       });
     },
@@ -129,14 +129,14 @@ export default function AlbumDetail() {
       queryClient.invalidateQueries({ queryKey: ["/api/media/albums", albumId] });
       setDeleteMediaConfirm(null);
       toast({
-        title: "Media removed",
-        description: "Media has been removed from the album.",
+        title: t('pages:albumDetail.mediaRemoved', 'Media removed'),
+        description: t('pages:albumDetail.mediaRemovedDesc', 'Media has been removed from the album.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to remove media from album.",
+        title: t('common:error', 'Error'),
+        description: t('pages:albumDetail.removeMediaError', 'Failed to remove media from album.'),
         variant: "destructive",
       });
     },
@@ -191,10 +191,10 @@ export default function AlbumDetail() {
       <div className="container mx-auto p-6">
         <Card className="p-12">
           <div className="text-center">
-            <h3 className="text-lg font-semibold mb-2">Invalid album</h3>
-            <p className="text-muted-foreground mb-6">The album ID is invalid</p>
+            <h3 className="text-lg font-semibold mb-2">{t('pages:albumDetail.invalidAlbum', 'Invalid album')}</h3>
+            <p className="text-muted-foreground mb-6">{t('pages:albumDetail.invalidAlbumId', 'The album ID is invalid')}</p>
             <Button asChild>
-              <Link href="/albums">Back to Albums</Link>
+              <Link href="/albums">{t('pages:albumDetail.backToAlbums', 'Back to Albums')}</Link>
             </Button>
           </div>
         </Card>
@@ -220,10 +220,10 @@ export default function AlbumDetail() {
       <div className="container mx-auto p-6">
         <Card className="p-12">
           <div className="text-center">
-            <h3 className="text-lg font-semibold mb-2">Album not found</h3>
-            <p className="text-muted-foreground mb-6">This album doesn't exist or you don't have access to it</p>
+            <h3 className="text-lg font-semibold mb-2">{t('pages:albumDetail.notFound', 'Album not found')}</h3>
+            <p className="text-muted-foreground mb-6">{t('pages:albumDetail.notFoundDesc', "This album doesn't exist or you don't have access to it")}</p>
             <Button asChild>
-              <Link href="/albums">Back to Albums</Link>
+              <Link href="/albums">{t('pages:albumDetail.backToAlbums', 'Back to Albums')}</Link>
             </Button>
           </div>
         </Card>
@@ -252,12 +252,12 @@ export default function AlbumDetail() {
             <p className="text-muted-foreground">{album.description}</p>
           )}
           <p className="text-sm text-muted-foreground mt-1">
-            {albumMedia.length} {albumMedia.length === 1 ? "item" : "items"}
+            {albumMedia.length} {albumMedia.length === 1 ? t('pages:albumDetail.item', 'item') : t('pages:albumDetail.items', 'items')}
           </p>
         </div>
         <Button onClick={() => setIsAddMediaDialogOpen(true)} data-testid="button-add-media">
           <Plus className="w-4 h-4 mr-2" />
-          Add Media
+          {t('pages:albumDetail.addMedia', 'Add Media')}
         </Button>
       </div>
 
@@ -270,13 +270,13 @@ export default function AlbumDetail() {
       ) : albumMedia.length === 0 ? (
         <Card className="p-12">
           <div className="text-center">
-            <h3 className="text-lg font-semibold mb-2">No media in this album</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('pages:albumDetail.noMedia', 'No media in this album')}</h3>
             <p className="text-muted-foreground mb-6">
-              Add photos or videos to your album
+              {t('pages:albumDetail.noMediaDesc', 'Add photos or videos to your album')}
             </p>
             <Button onClick={() => setIsAddMediaDialogOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              Add Media
+              {t('pages:albumDetail.addMedia', 'Add Media')}
             </Button>
           </div>
         </Card>
@@ -399,16 +399,16 @@ export default function AlbumDetail() {
       <Dialog open={isAddMediaDialogOpen} onOpenChange={setIsAddMediaDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Media to Album</DialogTitle>
+            <DialogTitle>{t('pages:albumDetail.addMediaToAlbum', 'Add Media to Album')}</DialogTitle>
             <DialogDescription>
-              Select media from your gallery to add to this album
+              {t('pages:albumDetail.selectMediaDesc', 'Select media from your gallery to add to this album')}
             </DialogDescription>
           </DialogHeader>
           
           {availableMedia.length === 0 ? (
             <div className="p-12 text-center">
               <p className="text-muted-foreground">
-                All your media is already in this album or you have no media yet.
+                {t('pages:albumDetail.noAvailableMedia', 'All your media is already in this album or you have no media yet.')}
               </p>
             </div>
           ) : (
@@ -452,14 +452,14 @@ export default function AlbumDetail() {
               }}
               disabled={addMediaMutation.isPending}
             >
-              Cancel
+              {t('common:cancel', 'Cancel')}
             </Button>
             <Button
               onClick={handleAddMedia}
               disabled={!selectedMediaId || addMediaMutation.isPending}
               data-testid="button-add-media-submit"
             >
-              {addMediaMutation.isPending ? "Adding..." : "Add to Album"}
+              {addMediaMutation.isPending ? t('pages:albumDetail.adding', 'Adding...') : t('pages:albumDetail.addToAlbum', 'Add to Album')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -472,10 +472,9 @@ export default function AlbumDetail() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Remove Media</DialogTitle>
+            <DialogTitle>{t('pages:albumDetail.removeMedia', 'Remove Media')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to remove this media from the album? The media file itself
-              will not be deleted.
+              {t('pages:albumDetail.removeMediaConfirm', 'Are you sure you want to remove this media from the album? The media file itself will not be deleted.')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -484,7 +483,7 @@ export default function AlbumDetail() {
               onClick={() => setDeleteMediaConfirm(null)}
               disabled={removeMediaMutation.isPending}
             >
-              Cancel
+              {t('common:cancel', 'Cancel')}
             </Button>
             <Button
               variant="destructive"
@@ -492,7 +491,7 @@ export default function AlbumDetail() {
               disabled={removeMediaMutation.isPending}
               data-testid="button-confirm-remove"
             >
-              {removeMediaMutation.isPending ? "Removing..." : "Remove"}
+              {removeMediaMutation.isPending ? t('pages:albumDetail.removing', 'Removing...') : t('common:remove', 'Remove')}
             </Button>
           </DialogFooter>
         </DialogContent>

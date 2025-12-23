@@ -24,7 +24,7 @@ export default function AnalyticsDashboardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen" data-testid="loading-analytics">
-        <div className="text-muted-foreground">Loading analytics...</div>
+        <div className="text-muted-foreground">{t('pages:analyticsDashboard.loading', 'Loading analytics...')}</div>
       </div>
     );
   }
@@ -40,8 +40,8 @@ export default function AnalyticsDashboardPage() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold" data-testid="page-title">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">Monitor platform performance and user engagement</p>
+          <h1 className="text-3xl font-bold" data-testid="page-title">{t('pages:analyticsDashboard.title', 'Analytics Dashboard')}</h1>
+          <p className="text-muted-foreground">{t('pages:analyticsDashboard.subtitle', 'Monitor platform performance and user engagement')}</p>
         </div>
       </div>
 
@@ -49,45 +49,45 @@ export default function AnalyticsDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card data-testid="metric-dau">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Daily Active Users</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analyticsDashboard.dailyActiveUsers', 'Daily Active Users')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.dau || 0}</div>
-            <p className="text-xs text-muted-foreground">Last 24 hours</p>
+            <p className="text-xs text-muted-foreground">{t('pages:analyticsDashboard.last24Hours', 'Last 24 hours')}</p>
           </CardContent>
         </Card>
 
         <Card data-testid="metric-mau">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Active Users</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analyticsDashboard.monthlyActiveUsers', 'Monthly Active Users')}</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.mau || 0}</div>
-            <p className="text-xs text-muted-foreground">Last 30 days</p>
+            <p className="text-xs text-muted-foreground">{t('pages:analyticsDashboard.last30Days', 'Last 30 days')}</p>
           </CardContent>
         </Card>
 
         <Card data-testid="metric-posts">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Posts Per Day</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analyticsDashboard.postsPerDay', 'Posts Per Day')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.postsPerDay || 0}</div>
-            <p className="text-xs text-muted-foreground">7-day average</p>
+            <p className="text-xs text-muted-foreground">{t('pages:analyticsDashboard.7dayAverage', '7-day average')}</p>
           </CardContent>
         </Card>
 
         <Card data-testid="metric-events">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Events Per Week</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:analyticsDashboard.eventsPerWeek', 'Events Per Week')}</CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.eventsPerWeek || 0}</div>
-            <p className="text-xs text-muted-foreground">4-week average</p>
+            <p className="text-xs text-muted-foreground">{t('pages:analyticsDashboard.4weekAverage', '4-week average')}</p>
           </CardContent>
         </Card>
       </div>
@@ -95,18 +95,18 @@ export default function AnalyticsDashboardPage() {
       {/* Charts */}
       <Tabs defaultValue="growth" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="growth" data-testid="tab-growth">User Growth</TabsTrigger>
-          <TabsTrigger value="engagement" data-testid="tab-engagement">Engagement</TabsTrigger>
-          <TabsTrigger value="locations" data-testid="tab-locations">Locations</TabsTrigger>
-          <TabsTrigger value="cohorts" data-testid="tab-cohorts">Cohorts</TabsTrigger>
-          <TabsTrigger value="health" data-testid="tab-health">Platform Health</TabsTrigger>
+          <TabsTrigger value="growth" data-testid="tab-growth">{t('pages:analyticsDashboard.userGrowth', 'User Growth')}</TabsTrigger>
+          <TabsTrigger value="engagement" data-testid="tab-engagement">{t('pages:analyticsDashboard.engagement', 'Engagement')}</TabsTrigger>
+          <TabsTrigger value="locations" data-testid="tab-locations">{t('pages:analyticsDashboard.locations', 'Locations')}</TabsTrigger>
+          <TabsTrigger value="cohorts" data-testid="tab-cohorts">{t('pages:analyticsDashboard.cohorts', 'Cohorts')}</TabsTrigger>
+          <TabsTrigger value="health" data-testid="tab-health">{t('pages:analyticsDashboard.platformHealth', 'Platform Health')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="growth" className="space-y-4" data-testid="content-growth">
           <Card>
             <CardHeader>
-              <CardTitle>User Growth (Last 30 Days)</CardTitle>
-              <CardDescription>Daily new user signups</CardDescription>
+              <CardTitle>{t('pages:analyticsDashboard.userGrowthLast30Days', 'User Growth (Last 30 Days)')}</CardTitle>
+              <CardDescription>{t('pages:analyticsDashboard.dailyNewUserSignups', 'Daily new user signups')}</CardDescription>
             </CardHeader>
             <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -126,8 +126,8 @@ export default function AnalyticsDashboardPage() {
         <TabsContent value="engagement" className="space-y-4" data-testid="content-engagement">
           <Card>
             <CardHeader>
-              <CardTitle>Event Types Distribution</CardTitle>
-              <CardDescription>Top user activities (Last 30 days)</CardDescription>
+              <CardTitle>{t('pages:analyticsDashboard.eventTypesDistribution', 'Event Types Distribution')}</CardTitle>
+              <CardDescription>{t('pages:analyticsDashboard.topUserActivities', 'Top user activities (Last 30 days)')}</CardDescription>
             </CardHeader>
             <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -147,8 +147,8 @@ export default function AnalyticsDashboardPage() {
         <TabsContent value="locations" className="space-y-4" data-testid="content-locations">
           <Card>
             <CardHeader>
-              <CardTitle>Top Cities</CardTitle>
-              <CardDescription>User distribution by location</CardDescription>
+              <CardTitle>{t('pages:analyticsDashboard.topCities', 'Top Cities')}</CardTitle>
+              <CardDescription>{t('pages:analyticsDashboard.userDistributionByLocation', 'User distribution by location')}</CardDescription>
             </CardHeader>
             <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -177,8 +177,8 @@ export default function AnalyticsDashboardPage() {
         <TabsContent value="cohorts" className="space-y-4" data-testid="content-cohorts">
           <Card>
             <CardHeader>
-              <CardTitle>User Cohorts</CardTitle>
-              <CardDescription>Users grouped by signup month</CardDescription>
+              <CardTitle>{t('pages:analyticsDashboard.userCohorts', 'User Cohorts')}</CardTitle>
+              <CardDescription>{t('pages:analyticsDashboard.usersGroupedBySignupMonth', 'Users grouped by signup month')}</CardDescription>
             </CardHeader>
             <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -199,31 +199,31 @@ export default function AnalyticsDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardHeader>
-                <CardTitle>API Latency</CardTitle>
+                <CardTitle>{t('pages:analyticsDashboard.apiLatency', 'API Latency')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{platformHealth.api_latency?.toFixed(0) || 0}ms</div>
-                <p className="text-xs text-muted-foreground">Average response time</p>
+                <p className="text-xs text-muted-foreground">{t('pages:analyticsDashboard.averageResponseTime', 'Average response time')}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Error Rate</CardTitle>
+                <CardTitle>{t('pages:analyticsDashboard.errorRate', 'Error Rate')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{platformHealth.error_rate?.toFixed(2) || 0}%</div>
-                <p className="text-xs text-muted-foreground">Failed requests</p>
+                <p className="text-xs text-muted-foreground">{t('pages:analyticsDashboard.failedRequests', 'Failed requests')}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Throughput</CardTitle>
+                <CardTitle>{t('pages:analyticsDashboard.throughput', 'Throughput')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{platformHealth.throughput?.toFixed(0) || 0}</div>
-                <p className="text-xs text-muted-foreground">Requests per minute</p>
+                <p className="text-xs text-muted-foreground">{t('pages:analyticsDashboard.requestsPerMinute', 'Requests per minute')}</p>
               </CardContent>
             </Card>
           </div>

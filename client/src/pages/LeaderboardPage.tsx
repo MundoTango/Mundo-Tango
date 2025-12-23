@@ -27,11 +27,11 @@ export default function LeaderboardPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Leaderboard" fallbackRoute="/feed">
-      <PageLayout title="Community Leaderboard" showBreadcrumbs>
+      <PageLayout title={t('pages:leaderboard.title', 'Community Leaderboard')} showBreadcrumbs>
         <>
           <SEO
-            title="Community Leaderboard - Mundo Tango"
-            description="Top contributors in the tango community - points, events, and contributions"
+            title={t('pages:leaderboard.seoTitle', 'Community Leaderboard - Mundo Tango')}
+            description={t('pages:leaderboard.seoDescription', 'Top contributors in the tango community - points, events, and contributions')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -47,15 +47,15 @@ export default function LeaderboardPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Community Rankings
+                  {t('pages:leaderboard.communityRankings', 'Community Rankings')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Community Leaderboard
+                  {t('pages:leaderboard.heroTitle', 'Community Leaderboard')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Celebrating the most active and engaged members of our tango community
+                  {t('pages:leaderboard.heroSubtitle', 'Celebrating the most active and engaged members of our tango community')}
                 </p>
               </motion.div>
             </div>
@@ -69,23 +69,23 @@ export default function LeaderboardPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Top Contributors</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:leaderboard.topContributors', 'Top Contributors')}</h2>
               <p className="text-lg text-muted-foreground">
-                Recognizing those who make our community vibrant and welcoming
+                {t('pages:leaderboard.recognizingContributors', 'Recognizing those who make our community vibrant and welcoming')}
               </p>
             </motion.div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="mb-8 w-full grid grid-cols-3">
-                <TabsTrigger value="points" data-testid="tab-points">Top Points</TabsTrigger>
-                <TabsTrigger value="events" data-testid="tab-events">Events Attended</TabsTrigger>
-                <TabsTrigger value="contributions" data-testid="tab-contributions">Contributions</TabsTrigger>
+                <TabsTrigger value="points" data-testid="tab-points">{t('pages:leaderboard.topPoints', 'Top Points')}</TabsTrigger>
+                <TabsTrigger value="events" data-testid="tab-events">{t('pages:leaderboard.eventsAttended', 'Events Attended')}</TabsTrigger>
+                <TabsTrigger value="contributions" data-testid="tab-contributions">{t('pages:leaderboard.contributions', 'Contributions')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value={activeTab}>
                 {isLoading ? (
                   <div className="text-center py-12">
-                    <p className="text-muted-foreground">Loading leaderboard...</p>
+                    <p className="text-muted-foreground">{t('pages:leaderboard.loading', 'Loading leaderboard...')}</p>
                   </div>
                 ) : leaderboard && Array.isArray(leaderboard) && leaderboard.length > 0 ? (
                   <div className="space-y-4">
@@ -118,7 +118,7 @@ export default function LeaderboardPage() {
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
                                       <p className="font-semibold truncate">{user.name}</p>
-                                      {user.verified && <Badge variant="secondary">Verified</Badge>}
+                                      {user.verified && <Badge variant="secondary">{t('pages:leaderboard.verified', 'Verified')}</Badge>}
                                     </div>
                                     <p className="text-sm text-muted-foreground truncate">
                                       {user.location}
@@ -131,9 +131,9 @@ export default function LeaderboardPage() {
                                     {user.score?.toLocaleString()}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    {activeTab === "points" && "points"}
-                                    {activeTab === "events" && "events"}
-                                    {activeTab === "contributions" && "posts"}
+                                    {activeTab === "points" && t('pages:leaderboard.points', 'points')}
+                                    {activeTab === "events" && t('pages:leaderboard.events', 'events')}
+                                    {activeTab === "contributions" && t('pages:leaderboard.posts', 'posts')}
                                   </p>
                                 </div>
                               </div>
@@ -147,8 +147,8 @@ export default function LeaderboardPage() {
                   <Card>
                     <CardContent className="py-16 text-center">
                       <Trophy className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                      <h3 className="text-xl font-serif font-semibold mb-2">No leaderboard data available</h3>
-                      <p className="text-muted-foreground">Check back soon to see top contributors</p>
+                      <h3 className="text-xl font-serif font-semibold mb-2">{t('pages:leaderboard.noData', 'No leaderboard data available')}</h3>
+                      <p className="text-muted-foreground">{t('pages:leaderboard.checkBackSoon', 'Check back soon to see top contributors')}</p>
                     </CardContent>
                   </Card>
                 )}

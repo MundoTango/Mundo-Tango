@@ -80,7 +80,7 @@ export default function MonitoringPage() {
         <PageLayout title="Monitoring Dashboard" showBreadcrumbs>
 <div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-monitoring">
-          Loading monitoring data...
+          {t('pages:monitoring.loading', 'Loading monitoring data...')}
         </div>
       </div>
         </PageLayout>
@@ -91,13 +91,13 @@ export default function MonitoringPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "operational":
-        return <Badge className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" />Operational</Badge>;
+        return <Badge className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" />{t('pages:monitoring.operational', 'Operational')}</Badge>;
       case "degraded":
-        return <Badge variant="secondary"><AlertCircle className="w-3 h-3 mr-1" />Degraded</Badge>;
+        return <Badge variant="secondary"><AlertCircle className="w-3 h-3 mr-1" />{t('pages:monitoring.degraded', 'Degraded')}</Badge>;
       case "down":
-        return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" />Down</Badge>;
+        return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" />{t('pages:monitoring.down', 'Down')}</Badge>;
       default:
-        return <Badge variant="outline">Unknown</Badge>;
+        return <Badge variant="outline">{t('pages:monitoring.unknown', 'Unknown')}</Badge>;
     }
   };
 
@@ -105,9 +105,9 @@ export default function MonitoringPage() {
     <SelfHealingErrorBoundary pageName="Monitoring" fallbackRoute="/platform">
       <div className="container mx-auto p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold" data-testid="text-page-title">Monitoring Dashboard</h1>
+        <h1 className="text-3xl font-bold" data-testid="text-page-title">{t('pages:monitoring.title', 'Monitoring Dashboard')}</h1>
         <p className="text-muted-foreground mt-1">
-          Real-time platform health and performance metrics
+          {t('pages:monitoring.subtitle', 'Real-time platform health and performance metrics')}
         </p>
       </div>
 
@@ -115,25 +115,25 @@ export default function MonitoringPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-base font-medium">Vercel (Frontend)</CardTitle>
+            <CardTitle className="text-base font-medium">{t('pages:monitoring.vercelFrontend', 'Vercel (Frontend)')}</CardTitle>
             {getStatusBadge(monitoring.vercel.status)}
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <div className="text-sm text-muted-foreground">Uptime</div>
+                <div className="text-sm text-muted-foreground">{t('pages:monitoring.uptime', 'Uptime')}</div>
                 <div className="text-2xl font-bold" data-testid="text-vercel-uptime">
                   {monitoring.vercel.uptime}%
                 </div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Avg Response</div>
+                <div className="text-sm text-muted-foreground">{t('pages:monitoring.avgResponse', 'Avg Response')}</div>
                 <div className="text-2xl font-bold" data-testid="text-vercel-response">
                   {monitoring.vercel.avgResponseTime}ms
                 </div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Requests (24h)</div>
+                <div className="text-sm text-muted-foreground">{t('pages:monitoring.requests24h', 'Requests (24h)')}</div>
                 <div className="text-2xl font-bold" data-testid="text-vercel-requests">
                   {monitoring.vercel.requests24h.toLocaleString()}
                 </div>
@@ -144,25 +144,25 @@ export default function MonitoringPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-base font-medium">Railway (Backend)</CardTitle>
+            <CardTitle className="text-base font-medium">{t('pages:monitoring.railwayBackend', 'Railway (Backend)')}</CardTitle>
             {getStatusBadge(monitoring.railway.status)}
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <div className="text-sm text-muted-foreground">Uptime</div>
+                <div className="text-sm text-muted-foreground">{t('pages:monitoring.uptime', 'Uptime')}</div>
                 <div className="text-2xl font-bold" data-testid="text-railway-uptime">
                   {monitoring.railway.uptime}%
                 </div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Avg Response</div>
+                <div className="text-sm text-muted-foreground">{t('pages:monitoring.avgResponse', 'Avg Response')}</div>
                 <div className="text-2xl font-bold" data-testid="text-railway-response">
                   {monitoring.railway.avgResponseTime}ms
                 </div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Requests (24h)</div>
+                <div className="text-sm text-muted-foreground">{t('pages:monitoring.requests24h', 'Requests (24h)')}</div>
                 <div className="text-2xl font-bold" data-testid="text-railway-requests">
                   {monitoring.railway.requests24h.toLocaleString()}
                 </div>
@@ -175,8 +175,8 @@ export default function MonitoringPage() {
       {/* Response Time Chart */}
       <Card>
         <CardHeader>
-          <CardTitle>Response Time (Last 24 Hours)</CardTitle>
-          <CardDescription>Average response times for frontend and backend</CardDescription>
+          <CardTitle>{t('pages:monitoring.responseTimeTitle', 'Response Time (Last 24 Hours)')}</CardTitle>
+          <CardDescription>{t('pages:monitoring.responseTimeDesc', 'Average response times for frontend and backend')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -213,13 +213,13 @@ export default function MonitoringPage() {
       {/* Recent Incidents */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Events</CardTitle>
-          <CardDescription>Latest platform events and incidents</CardDescription>
+          <CardTitle>{t('pages:monitoring.recentEvents', 'Recent Events')}</CardTitle>
+          <CardDescription>{t('pages:monitoring.recentEventsDesc', 'Latest platform events and incidents')}</CardDescription>
         </CardHeader>
         <CardContent>
           {monitoring.recentIncidents.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No recent incidents
+              {t('pages:monitoring.noIncidents', 'No recent incidents')}
             </div>
           ) : (
             <div className="space-y-3">

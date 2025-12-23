@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 const theme = getThemeByName('ocean');
 
 export default function MarketingPrototypeOcean() {
+  const { t } = useTranslation(["pages", "common"]);
   const heroRef = useRef(null);
   
   const { scrollYProgress } = useScroll({
@@ -59,13 +61,13 @@ export default function MarketingPrototypeOcean() {
             transition={{ duration: 1, delay: 0.2 }}
           >
             <Badge className={cn("mb-6 text-white font-semibold text-sm px-4 py-2", theme.badge)} data-testid="badge-network-ocean">
-              THE GLOBAL TANGO NETWORK
+              {t('pages:marketingOcean.badge', 'THE GLOBAL TANGO NETWORK')}
             </Badge>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 text-white tracking-tight leading-tight">
-              Where Tango{" "}
+              {t('pages:marketingOcean.heroTitle', 'Where Tango')}{" "}
               <br />
               <span className={cn("bg-gradient-to-r bg-clip-text text-transparent", theme.accentGradient)}>
-                Meets Community
+                {t('pages:marketingOcean.heroTitleLine2', 'Meets Community')}
               </span>
             </h1>
           </motion.div>
@@ -76,7 +78,7 @@ export default function MarketingPrototypeOcean() {
             transition={{ duration: 1, delay: 0.5 }}
             className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto"
           >
-            Connect with dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
+            {t('pages:marketingOcean.heroSubtitle', 'Connect with dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.')}
           </motion.p>
 
           <motion.div
@@ -90,7 +92,7 @@ export default function MarketingPrototypeOcean() {
               className={cn("text-lg px-8 py-6 shadow-2xl transition-all hover:scale-105", theme.ctaPrimary)}
               data-testid="button-join-ocean"
             >
-              Join the Community
+              {t('pages:marketingOcean.joinCommunity', 'Join the Community')}
             </Button>
             <Button
               size="lg"
@@ -98,7 +100,7 @@ export default function MarketingPrototypeOcean() {
               className={cn("text-lg px-8 py-6 backdrop-blur-sm transition-all hover:scale-105", theme.ctaSecondary)}
               data-testid="button-explore-ocean"
             >
-              Explore Events
+              {t('pages:marketingOcean.exploreEvents', 'Explore Events')}
             </Button>
           </motion.div>
         </div>
@@ -122,7 +124,7 @@ export default function MarketingPrototypeOcean() {
         <section className="py-20 bg-gradient-to-br from-cyan-500/10 via-blue-600/10 to-purple-600/10" data-testid="section-community-ocean">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <p className="text-xl text-white/80">
-              Building connections across continents, one dance at a time
+              {t('pages:marketingOcean.communityTagline', 'Building connections across continents, one dance at a time')}
             </p>
           </div>
         </section>
@@ -133,43 +135,43 @@ export default function MarketingPrototypeOcean() {
         <section className="py-32 px-4" data-testid="section-features-ocean">
           <div className="max-w-7xl mx-auto">
             <motion.h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-center mb-16 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              7 Ways to Connect
+              {t('pages:marketingOcean.featuresTitle', '7 Ways to Connect')}
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <FeatureCard
                 icon={<Heart className="text-cyan-400" size={48} />}
-                title="Social Feed"
-                description="Share your tango journey with a vibrant community"
+                title={t('pages:marketingOcean.socialFeedTitle', 'Social Feed')}
+                description={t('pages:marketingOcean.socialFeedDesc', 'Share your tango journey with a vibrant community')}
                 delay={0.1}
               />
               <FeatureCard
                 icon={<Users className="text-blue-400" size={48} />}
-                title="Find Partners"
-                description="Connect with dancers worldwide for events and practice"
+                title={t('pages:marketingOcean.findPartnersTitle', 'Find Partners')}
+                description={t('pages:marketingOcean.findPartnersDesc', 'Connect with dancers worldwide for events and practice')}
                 delay={0.2}
               />
               <FeatureCard
                 icon={<Music className="text-purple-400" size={48} />}
-                title="Events & Milongas"
-                description="Discover and attend tango events in your city"
+                title={t('pages:marketingOcean.eventsMilongasTitle', 'Events & Milongas')}
+                description={t('pages:marketingOcean.eventsMilongasDesc', 'Discover and attend tango events in your city')}
                 delay={0.3}
               />
               <FeatureCard
                 icon={<Globe className="text-cyan-500" size={48} />}
-                title="Housing Network"
-                description="Find accommodation with fellow tango enthusiasts"
+                title={t('pages:marketingOcean.housingTitle', 'Housing Network')}
+                description={t('pages:marketingOcean.housingDesc', 'Find accommodation with fellow tango enthusiasts')}
                 delay={0.4}
               />
               <FeatureCard
                 icon={<Sparkles className="text-blue-500" size={48} />}
-                title="Workshops"
-                description="Learn from world-class teachers and maestros"
+                title={t('pages:marketingOcean.workshopsTitle', 'Workshops')}
+                description={t('pages:marketingOcean.workshopsDesc', 'Learn from world-class teachers and maestros')}
                 delay={0.5}
               />
               <FeatureCard
                 icon={<Heart className="text-purple-500" size={48} />}
-                title="Volunteer"
-                description="Contribute to the global tango community"
+                title={t('pages:marketingOcean.volunteerTitle', 'Volunteer')}
+                description={t('pages:marketingOcean.volunteerDesc', 'Contribute to the global tango community')}
                 delay={0.6}
               />
             </div>
@@ -183,17 +185,17 @@ export default function MarketingPrototypeOcean() {
           <div className="absolute inset-0 bg-black/40" />
           <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6">
-              Ready to Dance?
+              {t('pages:marketingOcean.ctaTitle', 'Ready to Dance?')}
             </h2>
             <p className="text-xl text-white/90 mb-12">
-              Join thousands of dancers already on Mundo Tango
+              {t('pages:marketingOcean.ctaSubtitle', 'Join thousands of dancers already on Mundo Tango')}
             </p>
             <Button
               size="lg"
               className="bg-white text-blue-600 hover:bg-white/90 text-xl px-12 py-8 shadow-2xl transition-all hover:scale-105"
               data-testid="button-get-started-ocean"
             >
-              Get Started Free
+              {t('pages:marketingOcean.getStartedFree', 'Get Started Free')}
             </Button>
           </div>
         </section>
@@ -256,7 +258,7 @@ function FeatureCard({ icon, title, description, delay }: { icon: React.ReactNod
           <h3 className="text-xl md:text-2xl font-serif font-bold mb-3">{title}</h3>
           <p className="text-muted-foreground">{description}</p>
           <div className="mt-6 flex items-center gap-2 text-sm font-medium text-cyan-500">
-            <span>Learn More</span>
+            <span>{t('pages:marketingOcean.learnMore', 'Learn More')}</span>
             <ArrowDown className="rotate-[-90deg] h-4 w-4" />
           </div>
         </CardContent>

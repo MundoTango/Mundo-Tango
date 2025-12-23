@@ -67,7 +67,7 @@ export default function ESADashboardPage() {
         <PageLayout title="ESA Framework Dashboard" showBreadcrumbs>
           <div className="container mx-auto p-6">
             <div className="text-center py-8" data-testid="loading-esa-stats">
-              Loading ESA Framework...
+              {t('pages:esaDashboard.loading', 'Loading ESA Framework...')}
             </div>
           </div>
         </PageLayout>
@@ -100,11 +100,11 @@ export default function ESADashboardPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Brain className="w-3 h-3 mr-1.5" />
-                  Platform Management
+                  {t('pages:esaDashboard.platformManagement', 'Platform Management')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  ESA Framework Dashboard
+                  {t('pages:esaDashboard.title', 'ESA Framework Dashboard')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
@@ -120,7 +120,7 @@ export default function ESADashboardPage() {
               <motion.div {...fadeInUp} className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="hover-elevate overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Agents</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('pages:esaDashboard.totalAgents', 'Total Agents')}</CardTitle>
                     <Bot className="w-4 h-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
@@ -128,14 +128,14 @@ export default function ESADashboardPage() {
                       {stats?.totalAgents || 0}
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">
-                      Across 12 agent types
+                      {t('pages:esaDashboard.acrossAgentTypes', 'Across 12 agent types')}
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="hover-elevate overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Agents</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('pages:esaDashboard.activeAgents', 'Active Agents')}</CardTitle>
                     <Activity className="w-4 h-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
@@ -143,14 +143,14 @@ export default function ESADashboardPage() {
                       {stats?.activeAgents || 0}
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">
-                      Currently operational
+                      {t('pages:esaDashboard.currentlyOperational', 'Currently operational')}
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="hover-elevate overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Certified Agents</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('pages:esaDashboard.certifiedAgents', 'Certified Agents')}</CardTitle>
                     <Award className="w-4 h-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
@@ -166,7 +166,7 @@ export default function ESADashboardPage() {
 
                 <Card className="hover-elevate overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">In Training</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('pages:esaDashboard.inTraining', 'In Training')}</CardTitle>
                     <Clock className="w-4 h-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
@@ -174,7 +174,7 @@ export default function ESADashboardPage() {
                       {stats?.trainingAgents || 0}
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">
-                      Ultra-Micro Parallel methodology
+                      {t('pages:esaDashboard.ultraMicroParallel', 'Ultra-Micro Parallel methodology')}
                     </div>
                   </CardContent>
                 </Card>
@@ -184,8 +184,8 @@ export default function ESADashboardPage() {
               <motion.div {...fadeInUp} transition={{ delay: 0.1 }}>
                 <Card className="overflow-hidden">
                   <CardHeader className="border-b">
-                    <CardTitle className="text-2xl font-serif">Agents by Type</CardTitle>
-                    <CardDescription>Distribution across 12 specialized categories</CardDescription>
+                    <CardTitle className="text-2xl font-serif">{t('pages:esaDashboard.agentsByType', 'Agents by Type')}</CardTitle>
+                    <CardDescription>{t('pages:esaDashboard.agentsByTypeDesc', 'Distribution across 12 specialized categories')}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-8">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -215,8 +215,8 @@ export default function ESADashboardPage() {
                 <motion.div {...fadeInUp} transition={{ delay: 0.2 }}>
                   <Card className="overflow-hidden h-full">
                     <CardHeader className="border-b">
-                      <CardTitle className="text-2xl font-serif">Certification Levels</CardTitle>
-                      <CardDescription>Agent training and certification progress</CardDescription>
+                      <CardTitle className="text-2xl font-serif">{t('pages:esaDashboard.certificationLevels', 'Certification Levels')}</CardTitle>
+                      <CardDescription>{t('pages:esaDashboard.certificationLevelsDesc', 'Agent training and certification progress')}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-8 space-y-6">
                       {[
@@ -252,8 +252,8 @@ export default function ESADashboardPage() {
                 <motion.div {...fadeInUp} transition={{ delay: 0.3 }}>
                   <Card className="overflow-hidden h-full">
                     <CardHeader className="border-b">
-                      <CardTitle className="text-2xl font-serif">Performance Metrics</CardTitle>
-                      <CardDescription>Aggregate agent performance statistics</CardDescription>
+                      <CardTitle className="text-2xl font-serif">{t('pages:esaDashboard.performanceMetrics', 'Performance Metrics')}</CardTitle>
+                      <CardDescription>{t('pages:esaDashboard.performanceMetricsDesc', 'Aggregate agent performance statistics')}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-8 space-y-4">
                       {[
@@ -287,19 +287,19 @@ export default function ESADashboardPage() {
               <motion.div {...fadeInUp} transition={{ delay: 0.4 }}>
                 <Card className="overflow-hidden">
                   <CardHeader className="border-b">
-                    <CardTitle className="text-2xl font-serif">Agent Registry</CardTitle>
+                    <CardTitle className="text-2xl font-serif">{t('pages:esaDashboard.agentRegistry', 'Agent Registry')}</CardTitle>
                     <CardDescription>
                       {agents.length === 0 ? "No agents registered yet" : `${agents.length} agents registered`}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-8">
                     {agentsLoading ? (
-                      <div className="text-center py-8">Loading agents...</div>
+                      <div className="text-center py-8">{t('pages:esaDashboard.loadingAgents', 'Loading agents...')}</div>
                     ) : agents.length === 0 ? (
                       <div className="text-center py-12 text-muted-foreground">
                         <Bot className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                        <p className="font-medium text-lg">No agents registered</p>
-                        <p className="text-sm mt-2">Agents will appear here once they are initialized</p>
+                        <p className="font-medium text-lg">{t('pages:esaDashboard.noAgents', 'No agents registered')}</p>
+                        <p className="text-sm mt-2">{t('pages:esaDashboard.agentsWillAppear', 'Agents will appear here once they are initialized')}</p>
                       </div>
                     ) : (
                       <Table>

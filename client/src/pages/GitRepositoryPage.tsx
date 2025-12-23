@@ -42,7 +42,7 @@ export default function GitRepositoryPage() {
       <SelfHealingErrorBoundary pageName="Git Repository" fallbackRoute="/platform">
         <div className="container mx-auto p-6">
           <div className="text-center py-8" data-testid="loading-git-info">
-            Loading repository information...
+            {t('pages:gitRepository.loading', 'Loading repository information...')}
           </div>
         </div>
       </SelfHealingErrorBoundary>
@@ -77,11 +77,11 @@ export default function GitRepositoryPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                 <GitBranch className="w-3 h-3 mr-1" />
-                Source Control
+                {t('pages:gitRepository.sourceControl', 'Source Control')}
               </Badge>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="heading-page-title">
-                Git Repository
+                {t('pages:gitRepository.title', 'Git Repository')}
               </h1>
 
               <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8" data-testid="text-hero-subtitle">
@@ -97,7 +97,7 @@ export default function GitRepositoryPage() {
               >
                 <a href={repoUrl} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="w-5 h-5" />
-                  View on GitHub
+                  {t('pages:gitRepository.viewOnGithub', 'View on GitHub')}
                 </a>
               </Button>
             </motion.div>
@@ -119,7 +119,7 @@ export default function GitRepositoryPage() {
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                       <GitCommit className="w-6 h-6 text-primary" />
                     </div>
-                    <h3 className="text-lg font-serif font-bold">Total Commits</h3>
+                    <h3 className="text-lg font-serif font-bold">{t('pages:gitRepository.totalCommits', 'Total Commits')}</h3>
                   </div>
                   <div className="text-4xl font-bold text-primary" data-testid="text-total-commits">
                     {gitInfo.stats.totalCommits}
@@ -133,7 +133,7 @@ export default function GitRepositoryPage() {
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                       <GitBranch className="w-6 h-6 text-primary" />
                     </div>
-                    <h3 className="text-lg font-serif font-bold">Total Branches</h3>
+                    <h3 className="text-lg font-serif font-bold">{t('pages:gitRepository.totalBranches', 'Total Branches')}</h3>
                   </div>
                   <div className="text-4xl font-bold text-primary" data-testid="text-total-branches">
                     {gitInfo.stats.totalBranches}
@@ -147,7 +147,7 @@ export default function GitRepositoryPage() {
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                       <RefreshCw className="w-6 h-6 text-primary" />
                     </div>
-                    <h3 className="text-lg font-serif font-bold">Contributors</h3>
+                    <h3 className="text-lg font-serif font-bold">{t('pages:gitRepository.contributors', 'Contributors')}</h3>
                   </div>
                   <div className="text-4xl font-bold text-primary" data-testid="text-contributors">
                     {gitInfo.stats.contributors}
@@ -159,8 +159,8 @@ export default function GitRepositoryPage() {
             {/* Branches */}
             <Card className="overflow-hidden">
               <CardHeader className="border-b">
-                <CardTitle className="text-2xl font-serif">Branches</CardTitle>
-                <CardDescription>Active branches in the repository</CardDescription>
+                <CardTitle className="text-2xl font-serif">{t('pages:gitRepository.branches', 'Branches')}</CardTitle>
+                <CardDescription>{t('pages:gitRepository.activeBranches', 'Active branches in the repository')}</CardDescription>
               </CardHeader>
               <CardContent className="p-8 space-y-4">
                 {gitInfo.branches.map((branch, index) => (
@@ -183,10 +183,10 @@ export default function GitRepositoryPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       {branch.name === gitInfo.defaultBranch && (
-                        <Badge>Default</Badge>
+                        <Badge>{t('pages:gitRepository.default', 'Default')}</Badge>
                       )}
                       {branch.protected && (
-                        <Badge variant="secondary">Protected</Badge>
+                        <Badge variant="secondary">{t('pages:gitRepository.protected', 'Protected')}</Badge>
                       )}
                     </div>
                   </motion.div>
@@ -197,8 +197,8 @@ export default function GitRepositoryPage() {
             {/* Recent Commits */}
             <Card className="overflow-hidden">
               <CardHeader className="border-b">
-                <CardTitle className="text-2xl font-serif">Recent Commits</CardTitle>
-                <CardDescription>Latest commits across all branches</CardDescription>
+                <CardTitle className="text-2xl font-serif">{t('pages:gitRepository.recentCommits', 'Recent Commits')}</CardTitle>
+                <CardDescription>{t('pages:gitRepository.latestCommits', 'Latest commits across all branches')}</CardDescription>
               </CardHeader>
               <CardContent className="p-8 space-y-4">
                 {gitInfo.recentCommits.map((commit, index) => (

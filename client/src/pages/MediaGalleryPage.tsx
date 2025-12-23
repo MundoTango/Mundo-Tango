@@ -40,15 +40,15 @@ export default function MediaGalleryPage() {
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
               <Camera className="w-3 h-3 mr-1.5" />
-              Community Gallery
+              {t('pages:mediaGallery.badge', 'Community Gallery')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-              Media Gallery
+              {t('pages:mediaGallery.title', 'Media Gallery')}
             </h1>
             
             <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8" data-testid="text-page-description">
-              Explore breathtaking moments from our global tango community
+              {t('pages:mediaGallery.subtitle', 'Explore breathtaking moments from our global tango community')}
             </p>
 
             <Button 
@@ -57,7 +57,7 @@ export default function MediaGalleryPage() {
               data-testid="button-upload-media"
             >
               <Upload className="h-4 w-4 mr-2" />
-              Upload Media
+              {t('pages:mediaGallery.uploadMedia', 'Upload Media')}
             </Button>
           </motion.div>
         </div>
@@ -67,15 +67,15 @@ export default function MediaGalleryPage() {
         <div className="container mx-auto max-w-7xl">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-8">
-              <TabsTrigger value="all" data-testid="tab-all">All</TabsTrigger>
-              <TabsTrigger value="photos" data-testid="tab-photos">Photos</TabsTrigger>
-              <TabsTrigger value="videos" data-testid="tab-videos">Videos</TabsTrigger>
+              <TabsTrigger value="all" data-testid="tab-all">{t('pages:mediaGallery.tabAll', 'All')}</TabsTrigger>
+              <TabsTrigger value="photos" data-testid="tab-photos">{t('pages:mediaGallery.tabPhotos', 'Photos')}</TabsTrigger>
+              <TabsTrigger value="videos" data-testid="tab-videos">{t('pages:mediaGallery.tabVideos', 'Videos')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value={activeTab}>
               {isLoading ? (
                 <div className="text-center py-16">
-                  <p className="text-muted-foreground">Loading media...</p>
+                  <p className="text-muted-foreground">{t('pages:mediaGallery.loading', 'Loading media...')}</p>
                 </div>
               ) : media && Array.isArray(media) && media.length > 0 ? (
                 <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -134,8 +134,8 @@ export default function MediaGalleryPage() {
                 <Card>
                   <CardContent className="py-16 text-center">
                     <Image className="mx-auto h-16 w-16 mb-6 opacity-30" />
-                    <h3 className="text-xl font-serif font-bold mb-2">No Media Found</h3>
-                    <p className="text-muted-foreground">Try selecting a different category</p>
+                    <h3 className="text-xl font-serif font-bold mb-2">{t('pages:mediaGallery.noMediaFound', 'No Media Found')}</h3>
+                    <p className="text-muted-foreground">{t('pages:mediaGallery.tryDifferentCategory', 'Try selecting a different category')}</p>
                   </CardContent>
                 </Card>
               )}

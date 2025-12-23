@@ -68,8 +68,8 @@ export default function FinancialInsightsPage() {
             <Brain className="h-6 w-6" style={{ color: '#40E0D0' }} />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">AI Insights & Analytics</h1>
-            <p className="text-muted-foreground">Advanced analytics powered by 33 AI agents</p>
+            <h1 className="text-3xl font-bold">{t('pages:financialInsights.title', 'AI Insights & Analytics')}</h1>
+            <p className="text-muted-foreground">{t('pages:financialInsights.subtitle', 'Advanced analytics powered by 33 AI agents')}</p>
           </div>
         </div>
       </div>
@@ -109,9 +109,9 @@ export default function FinancialInsightsPage() {
           }}
         >
           <Brain className="h-16 w-16 mb-4 opacity-50" />
-          <p className="text-lg font-medium mb-2">Select a Portfolio for Insights</p>
+          <p className="text-lg font-medium mb-2">{t('pages:financialInsights.selectPortfolio', 'Select a Portfolio for Insights')}</p>
           <p className="text-muted-foreground text-center max-w-md">
-            Choose a portfolio from the dropdown above to view AI insights and risk analytics
+            {t('pages:financialInsights.selectPortfolioDescription', 'Choose a portfolio from the dropdown above to view AI insights and risk analytics')}
           </p>
         </div>
       ) : (
@@ -122,7 +122,7 @@ export default function FinancialInsightsPage() {
           {/* AI Decisions */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">AI Recommendations</h2>
+              <h2 className="text-xl font-semibold">{t('pages:financialInsights.aiRecommendations', 'AI Recommendations')}</h2>
               <Badge variant="outline">{aiDecisions?.length || 0} decisions</Badge>
             </div>
 
@@ -153,7 +153,7 @@ export default function FinancialInsightsPage() {
                 }}
               >
                 <Brain className="h-12 w-12 mb-3 opacity-50" />
-                <p className="text-muted-foreground">No AI decisions yet</p>
+                <p className="text-muted-foreground">{t('pages:financialInsights.noAiDecisions', 'No AI decisions yet')}</p>
               </div>
             )}
           </div>
@@ -167,7 +167,7 @@ export default function FinancialInsightsPage() {
             }}
           >
             <CardHeader>
-              <CardTitle>Active Strategies</CardTitle>
+              <CardTitle>{t('pages:financialInsights.activeStrategies', 'Active Strategies')}</CardTitle>
             </CardHeader>
             <CardContent>
               {strategiesLoading ? (
@@ -214,7 +214,7 @@ export default function FinancialInsightsPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground text-center py-8">No active strategies</p>
+                <p className="text-muted-foreground text-center py-8">{t('pages:financialInsights.noActiveStrategies', 'No active strategies')}</p>
               )}
             </CardContent>
           </Card>
@@ -232,7 +232,7 @@ export default function FinancialInsightsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="h-5 w-5" />
-                  Active Agents
+                  {t('pages:financialInsights.activeAgents', 'Active Agents')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -269,7 +269,7 @@ export default function FinancialInsightsPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">No active agents</p>
+                  <p className="text-muted-foreground text-center py-8">{t('pages:financialInsights.noActiveAgents', 'No active agents')}</p>
                 )}
               </CardContent>
             </Card>
@@ -285,7 +285,7 @@ export default function FinancialInsightsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="h-5 w-5" />
-                  Recent Activity
+                  {t('pages:financialInsights.recentActivity', 'Recent Activity')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -326,7 +326,7 @@ export default function FinancialInsightsPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">No recent activity</p>
+                  <p className="text-muted-foreground text-center py-8">{t('pages:financialInsights.noRecentActivity', 'No recent activity')}</p>
                 )}
               </CardContent>
             </Card>
@@ -343,12 +343,12 @@ export default function FinancialInsightsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-yellow-400" />
-                Market Alerts & Opportunities
+                {t('pages:financialInsights.marketAlerts', 'Market Alerts & Opportunities')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                AI agents monitor markets 24/7 for opportunities and risks. Alerts will appear here when detected.
+                {t('pages:financialInsights.marketAlertsDescription', 'AI agents monitor markets 24/7 for opportunities and risks. Alerts will appear here when detected.')}
               </p>
             </CardContent>
           </Card>

@@ -9,62 +9,63 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 
-const steps = [
+const getSteps = (t: any) => [
   {
     icon: UserPlus,
-    title: "Create Your Profile",
-    description: "Sign up in seconds and tell us about your tango journey. Share your experience level, favorite styles, and what you're looking for in the community.",
+    title: t('pages:howItWorks.step1Title', 'Create Your Profile'),
+    description: t('pages:howItWorks.step1Description', "Sign up in seconds and tell us about your tango journey. Share your experience level, favorite styles, and what you're looking for in the community."),
     details: [
-      "Free account creation",
-      "Complete your dancer profile",
-      "Upload photos and videos",
-      "Set your dance preferences"
+      t('pages:howItWorks.step1Detail1', 'Free account creation'),
+      t('pages:howItWorks.step1Detail2', 'Complete your dancer profile'),
+      t('pages:howItWorks.step1Detail3', 'Upload photos and videos'),
+      t('pages:howItWorks.step1Detail4', 'Set your dance preferences')
     ]
   },
   {
     icon: Search,
-    title: "Discover Your Community",
-    description: "Explore events, teachers, and dancers in your area. Use our smart filters to find exactly what you're looking for.",
+    title: t('pages:howItWorks.step2Title', 'Discover Your Community'),
+    description: t('pages:howItWorks.step2Description', "Explore events, teachers, and dancers in your area. Use our smart filters to find exactly what you're looking for."),
     details: [
-      "Browse milongas and classes",
-      "Find teachers by style and level",
-      "Connect with local dancers",
-      "Join groups and communities"
+      t('pages:howItWorks.step2Detail1', 'Browse milongas and classes'),
+      t('pages:howItWorks.step2Detail2', 'Find teachers by style and level'),
+      t('pages:howItWorks.step2Detail3', 'Connect with local dancers'),
+      t('pages:howItWorks.step2Detail4', 'Join groups and communities')
     ]
   },
   {
     icon: Calendar,
-    title: "Attend Events",
-    description: "RSVP to events, get reminders, and never miss a milonga. Check in at venues and share your experiences.",
+    title: t('pages:howItWorks.step3Title', 'Attend Events'),
+    description: t('pages:howItWorks.step3Description', 'RSVP to events, get reminders, and never miss a milonga. Check in at venues and share your experiences.'),
     details: [
-      "One-click RSVP",
-      "Calendar integration",
-      "Event reminders",
-      "Check-in and reviews"
+      t('pages:howItWorks.step3Detail1', 'One-click RSVP'),
+      t('pages:howItWorks.step3Detail2', 'Calendar integration'),
+      t('pages:howItWorks.step3Detail3', 'Event reminders'),
+      t('pages:howItWorks.step3Detail4', 'Check-in and reviews')
     ]
   },
   {
     icon: Users,
-    title: "Connect & Grow",
-    description: "Build your tango network, practice with partners, and learn from the community. Share your journey and celebrate milestones.",
+    title: t('pages:howItWorks.step4Title', 'Connect & Grow'),
+    description: t('pages:howItWorks.step4Description', 'Build your tango network, practice with partners, and learn from the community. Share your journey and celebrate milestones.'),
     details: [
-      "Message other dancers",
-      "Find practice partners",
-      "Share photos and videos",
-      "Track your progress"
+      t('pages:howItWorks.step4Detail1', 'Message other dancers'),
+      t('pages:howItWorks.step4Detail2', 'Find practice partners'),
+      t('pages:howItWorks.step4Detail3', 'Share photos and videos'),
+      t('pages:howItWorks.step4Detail4', 'Track your progress')
     ]
   }
 ];
 
 export default function HowItWorksPage() {
   const { t } = useTranslation(["pages", "common"]);
+  const steps = getSteps(t);
   return (
-    <SelfHealingErrorBoundary pageName="How It Works" fallbackRoute="/">
-      <PageLayout title="How It Works" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:howItWorks.pageName', 'How It Works')} fallbackRoute="/">
+      <PageLayout title={t('pages:howItWorks.title', 'How It Works')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="How It Works - Mundo Tango"
-            description="Learn how Mundo Tango works. Discover how easy it is to find events, connect with dancers, book lessons, and immerse yourself in the global tango community."
+            title={t('pages:howItWorks.seoTitle', 'How It Works - Mundo Tango')}
+            description={t('pages:howItWorks.seoDescription', 'Learn how Mundo Tango works. Discover how easy it is to find events, connect with dancers, book lessons, and immerse yourself in the global tango community.')}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -81,15 +82,15 @@ export default function HowItWorksPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  How It Works
+                  {t('pages:howItWorks.badge', 'How It Works')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Your Tango Journey Starts Here
+                  {t('pages:howItWorks.heroTitle', 'Your Tango Journey Starts Here')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Four simple steps to connect with the global tango community
+                  {t('pages:howItWorks.heroSubtitle', 'Four simple steps to connect with the global tango community')}
                 </p>
               </motion.div>
             </div>
@@ -164,17 +165,16 @@ export default function HowItWorksPage() {
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-cta">
                   <CardContent className="py-16 text-center">
                     <MapPin className="h-16 w-16 text-primary mx-auto mb-6" />
-                    <h3 className="text-4xl font-serif font-bold mb-4">Ready to Get Started?</h3>
+                    <h3 className="text-4xl font-serif font-bold mb-4">{t('pages:howItWorks.readyToStart', 'Ready to Get Started?')}</h3>
                     <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                      Join thousands of dancers worldwide and discover your next favorite milonga, 
-                      teacher, or dance partner today.
+                      {t('pages:howItWorks.ctaDescription', 'Join thousands of dancers worldwide and discover your next favorite milonga, teacher, or dance partner today.')}
                     </p>
                     <div className="flex flex-wrap gap-4 justify-center">
                       <Button size="lg" asChild data-testid="button-get-started">
-                        <a href="/register">Create Free Account</a>
+                        <a href="/register">{t('pages:howItWorks.createAccount', 'Create Free Account')}</a>
                       </Button>
                       <Button size="lg" variant="outline" asChild data-testid="button-explore">
-                        <a href="/discover">Explore Without Signing Up</a>
+                        <a href="/discover">{t('pages:howItWorks.exploreWithoutSignup', 'Explore Without Signing Up')}</a>
                       </Button>
                     </div>
                   </CardContent>

@@ -278,15 +278,15 @@ function HostHomesPageContent() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-              Tango Housing
+              {t('pages:hostHomes.tangoHousing', 'Tango Housing')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="heading-hero">
-              Tango Host Homes
+              {t('pages:hostHomes.heroTitle', 'Tango Host Homes')}
             </h1>
             
             <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-              Stay with passionate tango dancers and experience authentic local communities around the world
+              {t('pages:hostHomes.heroSubtitle', 'Stay with passionate tango dancers and experience authentic local communities around the world')}
             </p>
           </motion.div>
         </div>
@@ -304,8 +304,8 @@ function HostHomesPageContent() {
           >
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div>
-                <h2 className="text-3xl md:text-4xl font-serif font-bold mb-2">Explore Homes</h2>
-                <p className="text-lg text-muted-foreground">Browse authentic accommodations from our tango community</p>
+                <h2 className="text-3xl md:text-4xl font-serif font-bold mb-2">{t('pages:hostHomes.exploreHomes', 'Explore Homes')}</h2>
+                <p className="text-lg text-muted-foreground">{t('pages:hostHomes.browseAccommodations', 'Browse authentic accommodations from our tango community')}</p>
               </div>
               <div className="flex items-center gap-3 flex-wrap">
                 <Button
@@ -314,7 +314,7 @@ function HostHomesPageContent() {
                   data-testid="button-filter"
                 >
                   <Filter className="h-4 w-4 mr-2" />
-                  Filters
+                  {t('pages:hostHomes.filters', 'Filters')}
                   {(filters.propertyTypes.length > 0 || filters.amenities.length > 0) && (
                     <Badge variant="secondary" className="ml-2">
                       {filters.propertyTypes.length + filters.amenities.length}

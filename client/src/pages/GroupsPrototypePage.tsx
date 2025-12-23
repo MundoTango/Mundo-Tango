@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -112,6 +113,7 @@ const PRO_GROUPS = [
 ];
 
 export default function GroupsPrototypePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { darkMode, toggleDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("my-groups");
@@ -153,7 +155,7 @@ export default function GroupsPrototypePage() {
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search groups, cities, interests..."
+                placeholder={t('pages:groupsPrototype.searchPlaceholder', 'Search groups, cities, interests...')}
                 className="pl-12 h-12 text-base"
               />
             </div>
@@ -163,15 +165,15 @@ export default function GroupsPrototypePage() {
               <TabsList className="grid w-full grid-cols-3 mb-8">
                 <TabsTrigger value="my-groups" className="text-base">
                   <Star className="w-4 h-4 mr-2" />
-                  My Groups
+                  {t('pages:groupsPrototype.myGroups', 'My Groups')}
                 </TabsTrigger>
                 <TabsTrigger value="cities" className="text-base">
                   <Building2 className="w-4 h-4 mr-2" />
-                  Cities
+                  {t('pages:groupsPrototype.cities', 'Cities')}
                 </TabsTrigger>
                 <TabsTrigger value="professional" className="text-base">
                   <Globe className="w-4 h-4 mr-2" />
-                  Professional
+                  {t('pages:groupsPrototype.professional', 'Professional')}
                 </TabsTrigger>
               </TabsList>
 
@@ -179,9 +181,9 @@ export default function GroupsPrototypePage() {
               <TabsContent value="my-groups" className="space-y-8">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-3xl font-serif font-bold">My Groups</h2>
+                    <h2 className="text-3xl font-serif font-bold">{t('pages:groupsPrototype.myGroupsTitle', 'My Groups')}</h2>
                     <p className="text-muted-foreground mt-2">
-                      Automatically added based on your city and professional roles
+                      {t('pages:groupsPrototype.myGroupsDescription', 'Automatically added based on your city and professional roles')}
                     </p>
                   </div>
                 </div>
@@ -194,16 +196,16 @@ export default function GroupsPrototypePage() {
 
                 <Card className="p-8 text-center border-dashed">
                   <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-semibold mb-2">Join More Communities</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('pages:groupsPrototype.joinMoreCommunities', 'Join More Communities')}</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Explore Cities and Professional groups to expand your network
+                    {t('pages:groupsPrototype.exploreGroupsDescription', 'Explore Cities and Professional groups to expand your network')}
                   </p>
                   <div className="flex gap-3 justify-center">
                     <Button variant="outline" onClick={() => setActiveTab("cities")}>
-                      Browse Cities
+                      {t('pages:groupsPrototype.browseCities', 'Browse Cities')}
                     </Button>
                     <Button onClick={() => setActiveTab("professional")}>
-                      Professional Groups
+                      {t('pages:groupsPrototype.professionalGroups', 'Professional Groups')}
                     </Button>
                   </div>
                 </Card>
@@ -212,9 +214,9 @@ export default function GroupsPrototypePage() {
               {/* CITIES - City name + cityscape */}
               <TabsContent value="cities" className="space-y-8">
                 <div className="mb-6">
-                  <h2 className="text-3xl font-serif font-bold">Tango Cities Worldwide</h2>
+                  <h2 className="text-3xl font-serif font-bold">{t('pages:groupsPrototype.tangoCitiesTitle', 'Tango Cities Worldwide')}</h2>
                   <p className="text-muted-foreground mt-2">
-                    Connect with dancers in cities around the globe
+                    {t('pages:groupsPrototype.tangoCitiesDescription', 'Connect with dancers in cities around the globe')}
                   </p>
                 </div>
 
@@ -229,14 +231,14 @@ export default function GroupsPrototypePage() {
               <TabsContent value="professional" className="space-y-8">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-3xl font-serif font-bold">Professional Communities</h2>
+                    <h2 className="text-3xl font-serif font-bold">{t('pages:groupsPrototype.professionalCommunitiesTitle', 'Professional Communities')}</h2>
                     <p className="text-muted-foreground mt-2">
-                      Networks for teachers, DJs, organizers, and performers
+                      {t('pages:groupsPrototype.professionalCommunitiesDescription', 'Networks for teachers, DJs, organizers, and performers')}
                     </p>
                   </div>
                   <Button className="gap-2">
                     <Plus className="w-4 h-4" />
-                    Request New Group
+                    {t('pages:groupsPrototype.requestNewGroup', 'Request New Group')}
                   </Button>
                 </div>
 
@@ -280,15 +282,15 @@ function GroupsHero() {
           className="max-w-4xl"
         >
           <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-            Global Tango Communities
+            {t('pages:groupsPrototype.globalCommunities', 'Global Tango Communities')}
           </Badge>
           
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-            Find Your Community
+            {t('pages:groupsPrototype.heroTitle', 'Find Your Community')}
           </h1>
           
           <p className="text-xl text-white/80 max-w-2xl mx-auto">
-            Connect with local dancers, join professional networks, and build lasting friendships worldwide
+            {t('pages:groupsPrototype.heroSubtitle', 'Connect with local dancers, join professional networks, and build lasting friendships worldwide')}
           </p>
         </motion.div>
       </div>
@@ -326,17 +328,17 @@ function MyGroupCard({ group, index }: { group: typeof MY_GROUPS[0]; index: numb
                 {group.type === "city" ? (
                   <Badge className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 gap-1">
                     <MapPin className="w-3 h-3" />
-                    City
+                    {t('pages:groupsPrototype.city', 'City')}
                   </Badge>
                 ) : group.type === "professional" ? (
                   <Badge className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 gap-1">
                     <Briefcase className="w-3 h-3" />
-                    PRO
+                    {t('pages:groupsPrototype.pro', 'PRO')}
                   </Badge>
                 ) : (
                   <Badge className="text-xs bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 gap-1">
                     <Users className="w-3 h-3" />
-                    Group
+                    {t('pages:groupsPrototype.group', 'Group')}
                   </Badge>
                 )}
               </div>
@@ -351,12 +353,12 @@ function MyGroupCard({ group, index }: { group: typeof MY_GROUPS[0]; index: numb
         <div className="p-6 space-y-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Users className="w-4 h-4" />
-            <span>Active community</span>
+            <span>{t('pages:groupsPrototype.activeCommunity', 'Active community')}</span>
           </div>
 
           <Button className="w-full gap-2">
             <MessageCircle className="w-4 h-4" />
-            View Posts
+            {t('pages:groupsPrototype.viewPosts', 'View Posts')}
           </Button>
         </div>
       </Card>
@@ -407,21 +409,21 @@ function CityGroupCard({ city, index }: { city: typeof CITY_GROUPS[0]; index: nu
           <div className="flex flex-wrap gap-2 text-sm">
             <Badge variant="outline" className="gap-1">
               <Calendar className="w-3 h-3" />
-              Events
+              {t('pages:groupsPrototype.events', 'Events')}
             </Badge>
             <Badge variant="outline" className="gap-1">
               <Home className="w-3 h-3" />
-              Housing
+              {t('pages:groupsPrototype.housing', 'Housing')}
             </Badge>
             <Badge variant="outline" className="gap-1">
               <Star className="w-3 h-3" />
-              Recommendations
+              {t('pages:groupsPrototype.recommendations', 'Recommendations')}
             </Badge>
           </div>
 
           <Button className="w-full gap-2">
             <UserPlus className="w-4 h-4" />
-            Join {city.name}
+            {t('pages:groupsPrototype.joinCity', 'Join {{city}}', { city: city.name })}
           </Button>
         </div>
       </Card>
@@ -458,7 +460,7 @@ function ProGroupCard({ group, index }: { group: typeof PRO_GROUPS[0]; index: nu
             {group.verified && (
               <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
                 <Star className="w-3 h-3 fill-white" />
-                <span>Verified</span>
+                <span>{t('pages:groupsPrototype.verified', 'Verified')}</span>
               </div>
             )}
           </div>
@@ -475,12 +477,12 @@ function ProGroupCard({ group, index }: { group: typeof PRO_GROUPS[0]; index: nu
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
             <Users className="w-5 h-5" />
-            <span className="text-foreground">Professional network</span>
+            <span className="text-foreground">{t('pages:groupsPrototype.professionalNetwork', 'Professional network')}</span>
           </span>
 
           <Button size="lg" className="gap-2">
             <UserPlus className="w-5 h-5" />
-            Join Community
+            {t('pages:groupsPrototype.joinCommunity', 'Join Community')}
           </Button>
         </div>
       </div>
@@ -491,31 +493,33 @@ function ProGroupCard({ group, index }: { group: typeof PRO_GROUPS[0]; index: nu
 }
 
 function GroupStats() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <Card className="p-6 border-0 shadow-sm">
-      <h3 className="font-semibold mb-6">Community Overview</h3>
+      <h3 className="font-semibold mb-6">{t('pages:groupsPrototype.communityOverview', 'Community Overview')}</h3>
       <div className="space-y-4">
-        <StatRow label="Total Groups" value="Growing" />
-        <StatRow label="Active Cities" value="Worldwide" />
-        <StatRow label="Pro Networks" value="Active" />
-        <StatRow label="Community" value="Thriving" />
+        <StatRow label={t('pages:groupsPrototype.totalGroups', 'Total Groups')} value={t('pages:groupsPrototype.growing', 'Growing')} />
+        <StatRow label={t('pages:groupsPrototype.activeCities', 'Active Cities')} value={t('pages:groupsPrototype.worldwide', 'Worldwide')} />
+        <StatRow label={t('pages:groupsPrototype.proNetworks', 'Pro Networks')} value={t('pages:groupsPrototype.active', 'Active')} />
+        <StatRow label={t('pages:groupsPrototype.community', 'Community')} value={t('pages:groupsPrototype.thriving', 'Thriving')} />
       </div>
     </Card>
   );
 }
 
 function TrendingTopics() {
+  const { t } = useTranslation(["pages", "common"]);
   const topics = [
-    { name: "#TangoFestival", posts: "Trending" },
-    { name: "#BeginnerTips", posts: "Popular" },
-    { name: "#MilongaNight", posts: "Active" },
+    { name: "#TangoFestival", posts: t('pages:groupsPrototype.trending', 'Trending') },
+    { name: "#BeginnerTips", posts: t('pages:groupsPrototype.popular', 'Popular') },
+    { name: "#MilongaNight", posts: t('pages:groupsPrototype.active', 'Active') },
   ];
 
   return (
     <Card className="p-6 border-0 shadow-sm">
       <h3 className="font-semibold mb-6 flex items-center gap-2">
         <TrendingUp className="w-5 h-5 text-primary" />
-        Trending Topics
+        {t('pages:groupsPrototype.trendingTopics', 'Trending Topics')}
       </h3>
       <div className="space-y-4">
         {topics.map((topic, i) => (

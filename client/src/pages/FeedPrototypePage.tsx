@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ const TANGO_QUOTES = [
 ];
 
 export default function FeedPrototypePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
   const [quoteIndex, setQuoteIndex] = useState(0);

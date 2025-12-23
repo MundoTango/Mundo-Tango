@@ -30,15 +30,15 @@ export default function EmailVerificationPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Mail className="w-3 h-3 mr-1.5" />
-                  Verification
+                  {t('pages:emailVerification.badge', 'Verification')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Verify Your Email
+                  {t('pages:emailVerification.title', 'Verify Your Email')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  We've sent you a verification link to complete your registration
+                  {t('pages:emailVerification.subtitle', "We've sent you a verification link to complete your registration")}
                 </p>
               </motion.div>
             </div>
@@ -59,28 +59,27 @@ export default function EmailVerificationPage() {
 
                   <div className="space-y-4">
                     <h2 className="text-2xl font-serif font-bold" data-testid="text-verification-title">
-                      Check Your Inbox
+                      {t('pages:emailVerification.checkInbox', 'Check Your Inbox')}
                     </h2>
                     <p className="text-lg text-muted-foreground leading-relaxed max-w-md mx-auto">
-                      We've sent a verification link to your email address.
-                      Please check your inbox and click the link to verify your account.
+                      {t('pages:emailVerification.verificationSent', "We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.")}
                     </p>
                   </div>
 
                   <div className="bg-muted p-6 rounded-lg">
                     <div className="flex items-center gap-3 justify-center">
                       <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span className="text-sm font-medium">Email sent to: john@example.com</span>
+                      <span className="text-sm font-medium">{t('pages:emailVerification.emailSentTo', 'Email sent to: john@example.com')}</span>
                     </div>
                   </div>
 
                   <div className="space-y-4 pt-4">
                     <p className="text-sm text-muted-foreground">
-                      Didn't receive the email? Check your spam folder or request a new one.
+                      {t('pages:emailVerification.didntReceive', "Didn't receive the email? Check your spam folder or request a new one.")}
                     </p>
                     <Button variant="outline" className="gap-2" data-testid="button-resend">
                       <RefreshCw className="h-4 w-4" />
-                      Resend Verification Email
+                      {t('pages:emailVerification.resendButton', 'Resend Verification Email')}
                     </Button>
                   </div>
                 </CardContent>

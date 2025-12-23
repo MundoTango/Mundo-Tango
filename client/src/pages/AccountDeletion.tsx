@@ -36,8 +36,8 @@ export default function AccountDeletion() {
       apiRequest('POST', '/api/gdpr/delete-account', { password }),
     onSuccess: () => {
       toast({
-        title: t('pages:accountDeletion.deletionScheduled', 'Account deletion scheduled'),
-        description: t('pages:accountDeletion.deletionScheduledDesc', 'Your account will be deleted in 30 days. You can cancel this at any time during the grace period.'),
+        title: t('pages:settings.deletionScheduled', 'Account deletion scheduled'),
+        description: t('pages:settings.deletionScheduledDesc', 'Your account will be deleted in 30 days. You can cancel this at any time during the grace period.'),
       });
       setTimeout(() => {
         setLocation('/login');
@@ -45,8 +45,8 @@ export default function AccountDeletion() {
     },
     onError: (error: any) => {
       toast({
-        title: t('common:error', 'Error'),
-        description: error.message || t('pages:accountDeletion.deletionFailed', 'Failed to delete account. Please verify your password and try again.'),
+        title: t('pages:settings.error', 'Error'),
+        description: error.message || t('pages:settings.deletionFailed', 'Failed to delete account. Please verify your password and try again.'),
         variant: "destructive",
       });
     },
@@ -55,8 +55,8 @@ export default function AccountDeletion() {
   const handleDeleteAccount = () => {
     if (!password.trim()) {
       toast({
-        title: t('pages:accountDeletion.passwordRequired', 'Password required'),
-        description: t('pages:accountDeletion.enterPasswordToConfirm', 'Please enter your password to confirm account deletion.'),
+        title: t('pages:settings.passwordRequired', 'Password required'),
+        description: t('pages:settings.enterPasswordToConfirm', 'Please enter your password to confirm account deletion.'),
         variant: "destructive",
       });
       return;
@@ -66,20 +66,20 @@ export default function AccountDeletion() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Account Deletion" fallbackRoute="/settings">
-      <PageLayout title={t('pages:accountDeletion.title', 'Delete Account')} showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:settings.accountDeletion', 'Account Deletion')} fallbackRoute="/settings">
+      <PageLayout title={t('pages:settings.deleteAccount', 'Delete Account')} showBreadcrumbs>
         <>
           <SEO 
-            title={t('pages:accountDeletion.seoTitle', 'Delete Account - GDPR Compliance')}
-            description={t('pages:accountDeletion.seoDescription', 'Request permanent deletion of your account and all associated data.')}
+            title={t('pages:settings.deleteAccountSeoTitle', 'Delete Account - GDPR Compliance')}
+            description={t('pages:settings.deleteAccountSeoDescription', 'Request permanent deletion of your account and all associated data.')}
           />
           <div className="max-w-4xl mx-auto p-6 space-y-8">
             <div>
               <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-[#40E0D0] via-[#1E90FF] to-[#9370DB] bg-clip-text text-transparent mb-2" data-testid="heading-delete-account">
-                {t('pages:accountDeletion.title', 'Delete Account')}
+                {t('pages:settings.deleteAccount', 'Delete Account')}
               </h1>
               <p className="text-muted-foreground">
-                {t('pages:accountDeletion.subtitle', 'Permanently delete your account and all associated data')}
+                {t('pages:settings.deleteAccountSubtitle', 'Permanently delete your account and all associated data')}
               </p>
             </div>
 
@@ -87,26 +87,26 @@ export default function AccountDeletion() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif text-destructive">
                   <AlertTriangle className="h-5 w-5" />
-                  {t('pages:accountDeletion.warningTitle', 'Warning: This Action Cannot Be Undone')}
+                  {t('pages:settings.warningTitle', 'Warning: This Action Cannot Be Undone')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  {t('pages:accountDeletion.warningDesc', 'Deleting your account is a permanent action. Once completed, you will lose access to:')}
+                  {t('pages:settings.warningDesc', 'Deleting your account is a permanent action. Once completed, you will lose access to:')}
                 </p>
                 <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside ml-2">
-                  <li>{t('pages:accountDeletion.loseProfile', 'Your profile and all personal information')}</li>
-                  <li>{t('pages:accountDeletion.losePosts', 'All posts, comments, and social interactions')}</li>
-                  <li>{t('pages:accountDeletion.loseEvents', 'Event registrations and group memberships')}</li>
-                  <li>{t('pages:accountDeletion.loseMessages', 'Messages and conversations')}</li>
-                  <li>{t('pages:accountDeletion.loseHousing', 'Housing listings and booking history')}</li>
-                  <li>{t('pages:accountDeletion.loseMedia', 'Photos, media, and uploaded content')}</li>
-                  <li>{t('pages:accountDeletion.loseConnections', 'Connections and friendships')}</li>
-                  <li>{t('pages:accountDeletion.loseSubscriptions', 'Any active subscriptions')}</li>
+                  <li>{t('pages:settings.loseProfile', 'Your profile and all personal information')}</li>
+                  <li>{t('pages:settings.losePosts', 'All posts, comments, and social interactions')}</li>
+                  <li>{t('pages:settings.loseEvents', 'Event registrations and group memberships')}</li>
+                  <li>{t('pages:settings.loseMessages', 'Messages and conversations')}</li>
+                  <li>{t('pages:settings.loseHousing', 'Housing listings and booking history')}</li>
+                  <li>{t('pages:settings.loseMedia', 'Photos, media, and uploaded content')}</li>
+                  <li>{t('pages:settings.loseConnections', 'Connections and friendships')}</li>
+                  <li>{t('pages:settings.loseSubscriptions', 'Any active subscriptions')}</li>
                 </ul>
                 <div className="bg-destructive/10 rounded-lg p-4 mt-4">
                   <p className="text-sm font-medium text-destructive">
-                    {t('pages:accountDeletion.noRecovery', 'This data cannot be recovered after the 30-day grace period.')}
+                    {t('pages:settings.noRecovery', 'This data cannot be recovered after the 30-day grace period.')}
                   </p>
                 </div>
               </CardContent>
@@ -116,15 +116,15 @@ export default function AccountDeletion() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Calendar className="h-5 w-5 text-[#40E0D0]" />
-                  {t('pages:accountDeletion.gracePeriodTitle', '30-Day Grace Period')}
+                  {t('pages:settings.gracePeriodTitle', '30-Day Grace Period')}
                 </CardTitle>
                 <CardDescription>
-                  {t('pages:accountDeletion.gracePeriodDesc', 'You have time to change your mind')}
+                  {t('pages:settings.gracePeriodDesc', 'You have time to change your mind')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  {t('pages:accountDeletion.whenYouRequest', 'When you request account deletion:')}
+                  {t('pages:settings.whenYouRequest', 'When you request account deletion:')}
                 </p>
                 <div className="space-y-3">
                   <div className="flex gap-3">
@@ -132,9 +132,9 @@ export default function AccountDeletion() {
                       <span className="text-sm font-semibold text-[#40E0D0]">1</span>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{t('pages:accountDeletion.step1Title', 'Immediate Account Suspension')}</p>
+                      <p className="text-sm font-medium">{t('pages:settings.step1Title', 'Immediate Account Suspension')}</p>
                       <p className="text-xs text-muted-foreground">
-                        {t('pages:accountDeletion.step1Desc', 'Your account will be immediately suspended and hidden from other users')}
+                        {t('pages:settings.step1Desc', 'Your account will be immediately suspended and hidden from other users')}
                       </p>
                     </div>
                   </div>
@@ -143,9 +143,9 @@ export default function AccountDeletion() {
                       <span className="text-sm font-semibold text-[#40E0D0]">2</span>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{t('pages:accountDeletion.step2Title', '30-Day Waiting Period')}</p>
+                      <p className="text-sm font-medium">{t('pages:settings.step2Title', '30-Day Waiting Period')}</p>
                       <p className="text-xs text-muted-foreground">
-                        {t('pages:accountDeletion.step2Desc', 'Your data will be retained for 30 days in case you change your mind')}
+                        {t('pages:settings.step2Desc', 'Your data will be retained for 30 days in case you change your mind')}
                       </p>
                     </div>
                   </div>
@@ -154,9 +154,9 @@ export default function AccountDeletion() {
                       <span className="text-sm font-semibold text-[#40E0D0]">3</span>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{t('pages:accountDeletion.step3Title', 'Permanent Deletion')}</p>
+                      <p className="text-sm font-medium">{t('pages:settings.step3Title', 'Permanent Deletion')}</p>
                       <p className="text-xs text-muted-foreground">
-                        {t('pages:accountDeletion.step3Desc', 'After 30 days, all your data will be permanently deleted')}
+                        {t('pages:settings.step3Desc', 'After 30 days, all your data will be permanently deleted')}
                       </p>
                     </div>
                   </div>
@@ -164,9 +164,9 @@ export default function AccountDeletion() {
                 <div className="bg-muted/50 rounded-lg p-4 mt-4 flex gap-3">
                   <Info className="h-5 w-5 text-[#40E0D0] flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium">{t('pages:accountDeletion.cancelAnytime', 'Cancel Anytime')}</p>
+                    <p className="text-sm font-medium">{t('pages:settings.cancelAnytime', 'Cancel Anytime')}</p>
                     <p className="text-xs text-muted-foreground">
-                      {t('pages:accountDeletion.cancelAnytimeDesc', 'You can cancel the deletion request at any time during the 30-day grace period by logging back in.')}
+                      {t('pages:settings.cancelAnytimeDesc', 'You can cancel the deletion request at any time during the 30-day grace period by logging back in.')}
                     </p>
                   </div>
                 </div>
@@ -177,15 +177,15 @@ export default function AccountDeletion() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Info className="h-5 w-5 text-[#40E0D0]" />
-                  {t('pages:accountDeletion.alternativesTitle', 'Consider These Alternatives')}
+                  {t('pages:settings.alternativesTitle', 'Consider These Alternatives')}
                 </CardTitle>
                 <CardDescription>
-                  {t('pages:accountDeletion.alternativesDesc', 'You might not need to delete your account')}
+                  {t('pages:settings.alternativesDesc', 'You might not need to delete your account')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  {t('pages:accountDeletion.beforeDeleting', 'Before deleting your account permanently, consider these options:')}
+                  {t('pages:settings.beforeDeleting', 'Before deleting your account permanently, consider these options:')}
                 </p>
                 <div className="space-y-2">
                   <Button 
@@ -196,7 +196,7 @@ export default function AccountDeletion() {
                   >
                     <a href="/settings/privacy">
                       <ShieldAlert className="h-4 w-4 mr-2" />
-                      {t('pages:accountDeletion.adjustPrivacy', 'Adjust Privacy Settings - Control who sees your data')}
+                      {t('pages:settings.adjustPrivacy', 'Adjust Privacy Settings - Control who sees your data')}
                     </a>
                   </Button>
                   <Button 
@@ -207,7 +207,7 @@ export default function AccountDeletion() {
                   >
                     <a href="/settings/data-export">
                       <Calendar className="h-4 w-4 mr-2" />
-                      {t('pages:accountDeletion.downloadData', 'Download Your Data - Keep a copy before leaving')}
+                      {t('pages:settings.downloadData', 'Download Your Data - Keep a copy before leaving')}
                     </a>
                   </Button>
                 </div>
@@ -218,26 +218,26 @@ export default function AccountDeletion() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Trash2 className="h-5 w-5 text-destructive" />
-                  {t('pages:accountDeletion.confirmTitle', 'Confirm Account Deletion')}
+                  {t('pages:settings.confirmTitle', 'Confirm Account Deletion')}
                 </CardTitle>
                 <CardDescription>
-                  {t('pages:accountDeletion.confirmDesc', 'Enter your password to confirm')}
+                  {t('pages:settings.confirmDesc', 'Enter your password to confirm')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password">{t('common:password', 'Password')}</Label>
+                  <Label htmlFor="password">{t('pages:settings.password', 'Password')}</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder={t('pages:accountDeletion.enterPassword', 'Enter your password')}
+                    placeholder={t('pages:settings.enterPassword', 'Enter your password')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={deleteAccountMutation.isPending}
                     data-testid="input-password"
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t('pages:accountDeletion.securityNote', 'For security, please confirm your password to proceed')}
+                    {t('pages:settings.securityNote', 'For security, please confirm your password to proceed')}
                   </p>
                 </div>
 
@@ -250,34 +250,34 @@ export default function AccountDeletion() {
                       data-testid="button-delete-account"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      {deleteAccountMutation.isPending ? t('pages:accountDeletion.deleting', 'Deleting Account...') : t('pages:accountDeletion.deleteMyAccount', 'Delete My Account')}
+                      {deleteAccountMutation.isPending ? t('pages:settings.deleting', 'Deleting Account...') : t('pages:settings.deleteMyAccount', 'Delete My Account')}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="backdrop-blur-md bg-white/95 dark:bg-black/95">
                     <AlertDialogHeader>
                       <AlertDialogTitle className="flex items-center gap-2 text-destructive">
                         <AlertTriangle className="h-5 w-5" />
-                        {t('pages:accountDeletion.areYouSure', 'Are you absolutely sure?')}
+                        {t('pages:settings.areYouSure', 'Are you absolutely sure?')}
                       </AlertDialogTitle>
                       <AlertDialogDescription className="space-y-2">
                         <p>
-                          {t('pages:accountDeletion.dialogDesc1', 'This action will schedule your account for permanent deletion after a 30-day grace period.')}
+                          {t('pages:settings.dialogDesc1', 'This action will schedule your account for permanent deletion after a 30-day grace period.')}
                         </p>
                         <p className="font-medium">
-                          {t('pages:accountDeletion.dialogDesc2', 'Your account will be immediately suspended, and all data will be permanently deleted after 30 days unless you cancel the request.')}
+                          {t('pages:settings.dialogDesc2', 'Your account will be immediately suspended, and all data will be permanently deleted after 30 days unless you cancel the request.')}
                         </p>
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel data-testid="button-cancel-deletion">
-                        {t('common:cancel', 'Cancel')}
+                        {t('pages:settings.cancel', 'Cancel')}
                       </AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDeleteAccount}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         data-testid="button-confirm-deletion"
                       >
-                        {t('pages:accountDeletion.yesDelete', 'Yes, Delete My Account')}
+                        {t('pages:settings.yesDelete', 'Yes, Delete My Account')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

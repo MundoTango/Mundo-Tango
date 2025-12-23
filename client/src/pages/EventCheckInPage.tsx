@@ -68,7 +68,7 @@ export default function EventCheckInPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading check-in page...</p>
+            <p className="text-muted-foreground">{t('pages:eventCheckIn.loading', 'Loading check-in page...')}</p>
           </div>
         </div>
       </AppLayout>
@@ -79,7 +79,7 @@ export default function EventCheckInPage() {
     return (
       <AppLayout>
         <div className="container mx-auto max-w-4xl py-8 px-4">
-          <p className="text-center text-muted-foreground">Event not found</p>
+          <p className="text-center text-muted-foreground">{t('pages:eventCheckIn.eventNotFound', 'Event not found')}</p>
         </div>
       </AppLayout>
     );
@@ -123,7 +123,7 @@ export default function EventCheckInPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                 <UserCheck className="w-3 h-3 mr-1.5" />
-                Event Check-In
+                {t('pages:eventCheckIn.badge', 'Event Check-In')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
@@ -152,7 +152,7 @@ export default function EventCheckInPage() {
           <Button variant="outline" asChild className="mb-8" data-testid="button-back">
             <Link href={`/events/${eventId}`}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Event
+              {t('pages:eventCheckIn.backToEvent', 'Back to Event')}
             </Link>
           </Button>
 
@@ -167,21 +167,21 @@ export default function EventCheckInPage() {
               <CardContent className="p-6 text-center">
                 <Users className="h-8 w-8 text-primary mx-auto mb-2" />
                 <div className="text-4xl font-bold font-serif mb-1">{rsvps.length}</div>
-                <div className="text-sm text-muted-foreground">Total RSVPs</div>
+                <div className="text-sm text-muted-foreground">{t('pages:eventCheckIn.totalRsvps', 'Total RSVPs')}</div>
               </CardContent>
             </Card>
             <Card className="border-primary/20">
               <CardContent className="p-6 text-center">
                 <UserCheck className="h-8 w-8 text-primary mx-auto mb-2" />
                 <div className="text-4xl font-bold font-serif text-primary mb-1">{checkedInCount}</div>
-                <div className="text-sm text-muted-foreground">Checked In</div>
+                <div className="text-sm text-muted-foreground">{t('pages:eventCheckIn.checkedIn', 'Checked In')}</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-6 text-center">
                 <CheckCircle2 className="h-8 w-8 text-primary mx-auto mb-2" />
                 <div className="text-4xl font-bold font-serif mb-1">{checkInRate}%</div>
-                <div className="text-sm text-muted-foreground">Attendance Rate</div>
+                <div className="text-sm text-muted-foreground">{t('pages:eventCheckIn.attendanceRate', 'Attendance Rate')}</div>
               </CardContent>
             </Card>
           </motion.div>
@@ -198,7 +198,7 @@ export default function EventCheckInPage() {
                   <div className="flex-1 w-full relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      placeholder="Search by name or email..."
+                      placeholder={t('pages:eventCheckIn.searchPlaceholder', 'Search by name or email...')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10"
@@ -207,7 +207,7 @@ export default function EventCheckInPage() {
                   </div>
                   <Button variant="outline" className="gap-2 w-full md:w-auto" data-testid="button-scan-qr">
                     <QrCode className="h-4 w-4" />
-                    Scan QR Code
+                    {t('pages:eventCheckIn.scanQrCode', 'Scan QR Code')}
                   </Button>
                 </div>
               </CardContent>
@@ -222,13 +222,13 @@ export default function EventCheckInPage() {
           >
             <Card>
               <CardHeader className="border-b">
-                <CardTitle className="text-2xl font-serif">Attendee List</CardTitle>
+                <CardTitle className="text-2xl font-serif">{t('pages:eventCheckIn.attendeeList', 'Attendee List')}</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 {filteredRsvps.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
                     <UserCheck className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>{searchQuery ? "No attendees found matching your search" : "No RSVPs yet"}</p>
+                    <p>{searchQuery ? t('pages:eventCheckIn.noAttendeesFound', 'No attendees found matching your search') : t('pages:eventCheckIn.noRsvps', 'No RSVPs yet')}</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -255,7 +255,7 @@ export default function EventCheckInPage() {
                           {rsvp.checkedIn ? (
                             <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
                               <CheckCircle2 className="h-4 w-4 mr-1" />
-                              Checked In
+                              {t('pages:eventCheckIn.checkedInBadge', 'Checked In')}
                             </Badge>
                           ) : (
                             <Button
@@ -265,7 +265,7 @@ export default function EventCheckInPage() {
                               data-testid={`button-checkin-${rsvp.id}`}
                             >
                               <UserCheck className="h-4 w-4" />
-                              Check In
+                              {t('pages:eventCheckIn.checkInButton', 'Check In')}
                             </Button>
                           )}
                         </div>

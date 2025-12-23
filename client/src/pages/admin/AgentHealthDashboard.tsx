@@ -21,6 +21,7 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { SEO } from '@/components/SEO';
+import { useTranslation } from 'react-i18next';
 
 /**
  * BLOCKER 8: Agent Health Dashboard
@@ -53,6 +54,7 @@ interface ValidationCheckResult {
 }
 
 export default function AgentHealthDashboard() {
+  const { t } = useTranslation(['pages', 'common']);
   const { toast } = useToast();
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [selectedCheckType, setSelectedCheckType] = useState<string>('availability');
@@ -72,7 +74,7 @@ export default function AgentHealthDashboard() {
         ? `/api/agents/validation/history?agentCode=${historyFilter}&limit=20`
         : '/api/agents/validation/history?limit=20';
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch validation history');
+      if (!response.ok) throw new Error(t('pages:agents.failedToFetchHistory', 'Failed to fetch validation history'));
       return response.json();
     },
   });
@@ -85,15 +87,15 @@ export default function AgentHealthDashboard() {
     },
     onSuccess: (data, agentCode) => {
       toast({
-        title: 'Health check completed',
-        description: `Agent ${agentCode}: ${data.status}`,
+        title: t('pages:agents.healthCheckCompleted', 'Health check completed'),
+        description: t('pages:agents.agentStatusResult', 'Agent {{agentCode}}: {{status}}', { agentCode, status: data.status }),
       });
       queryClient.invalidateQueries({ queryKey: ['/api/agents/health'] });
     },
     onError: (error: any, agentCode) => {
       toast({
-        title: 'Health check failed',
-        description: `Agent ${agentCode}: ${error.message}`,
+        title: t('pages:agents.healthCheckFailed', 'Health check failed'),
+        description: t('pages:agents.agentStatusResult', 'Agent {{agentCode}}: {{status}}', { agentCode, status: error.message }),
         variant: 'destructive',
       });
     },
@@ -107,16 +109,16 @@ export default function AgentHealthDashboard() {
     },
     onSuccess: (data, variables) => {
       toast({
-        title: 'Validation check completed',
-        description: `Agent ${variables.agentCode}: ${data.result}`,
+        title: t('pages:agents.validationCheckCompleted', 'Validation check completed'),
+        description: t('pages:agents.agentStatusResult', 'Agent {{agentCode}}: {{status}}', { agentCode: variables.agentCode, status: data.result }),
       });
       queryClient.invalidateQueries({ queryKey: ['/api/agents/health'] });
       queryClient.invalidateQueries({ queryKey: ['/api/agents/validation/history'] });
     },
     onError: (error: any, variables) => {
       toast({
-        title: 'Validation check failed',
-        description: `Agent ${variables.agentCode}: ${error.message}`,
+        title: t('pages:agents.validationCheckFailed', 'Validation check failed'),
+        description: t('pages:agents.agentStatusResult', 'Agent {{agentCode}}: {{status}}', { agentCode: variables.agentCode, status: error.message }),
         variant: 'destructive',
       });
     },
@@ -130,14 +132,20 @@ export default function AgentHealthDashboard() {
     },
     onSuccess: (data: any) => {
       toast({
-        title: 'Batch health checks completed',
-        description: `Total: ${data.total}, Healthy: ${data.healthy}, Degraded: ${data.degraded}, Failing: ${data.failing}, Offline: ${data.offline}`,
+        title: t('pages:agents.batchHealthCheckCompleted', 'Batch health checks completed'),
+        description: t('pages:agents.batchResult', 'Total: {{total}}, Healthy: {{healthy}}, Degraded: {{degraded}}, Failing: {{failing}}, Offline: {{offline}}', {
+          total: data.total,
+          healthy: data.healthy,
+          degraded: data.degraded,
+          failing: data.failing,
+          offline: data.offline
+        }),
       });
       queryClient.invalidateQueries({ queryKey: ['/api/agents/health'] });
     },
     onError: (error: any) => {
       toast({
-        title: 'Batch health checks failed',
+        title: t('pages:agents.batchHealthCheckFailed', 'Batch health checks failed'),
         description: error.message,
         variant: 'destructive',
       });
@@ -197,18 +205,18 @@ export default function AgentHealthDashboard() {
   }
 
   return (
-    <SelfHealingErrorBoundary pageName="Agent Health Dashboard" fallbackRoute="/admin">
+    <SelfHealingErrorBoundary pageName={t('pages:agents.agentHealthDashboard', 'Agent Health Dashboard')} fallbackRoute="/admin">
       <SEO 
-        title="Agent Health Dashboard"
-        description="Monitor and validate 134 ESA agents with real-time health checks, performance metrics, and automated fallback systems"
+        title={t('pages:agents.agentHealthDashboard', 'Agent Health Dashboard')}
+        description={t('pages:agents.agentHealthDashboardDesc', 'Monitor and validate 134 ESA agents with real-time health checks, performance metrics, and automated fallback systems')}
         ogImage="/og-image.png"
       />
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Agent Health Dashboard</h1>
+          <h1 className="text-3xl font-bold">{t('pages:agents.agentHealthDashboard', 'Agent Health Dashboard')}</h1>
           <p className="text-muted-foreground mt-2">
-            Monitor and validate all 134 ESA agents
+            {t('pages:agents.monitorAgentsCount', 'Monitor and validate all 134 ESA agents')}
           </p>
         </div>
         <div className="flex gap-2">
@@ -218,7 +226,7 @@ export default function AgentHealthDashboard() {
             data-testid="button-refresh"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+            {t('common:refresh', 'Refresh')}
           </Button>
           <Button 
             onClick={() => runBatchHealthChecksMutation.mutate()}
@@ -226,7 +234,7 @@ export default function AgentHealthDashboard() {
             data-testid="button-run-batch"
           >
             <Activity className={`h-4 w-4 mr-2 ${runBatchHealthChecksMutation.isPending ? 'animate-spin' : ''}`} />
-            {runBatchHealthChecksMutation.isPending ? 'Running...' : 'Run Batch Health Checks'}
+            {runBatchHealthChecksMutation.isPending ? t('common:running', 'Running...') : t('pages:agents.runBatchHealthChecks', 'Run Batch Health Checks')}
           </Button>
         </div>
       </div>
@@ -235,11 +243,11 @@ export default function AgentHealthDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Agents</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:agents.totalAgents', 'Total Agents')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold" data-testid="metric-total-agents">{totalAgents}</div>
-            <p className="text-xs text-muted-foreground mt-1">ESA Framework</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('pages:agents.esaFramework', 'ESA Framework')}</p>
           </CardContent>
         </Card>
 
@@ -247,12 +255,12 @@ export default function AgentHealthDashboard() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
-              Healthy
+              {t('pages:agents.healthy', 'Healthy')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-600" data-testid="metric-healthy">{healthyCount}</div>
-            <Badge variant="default" className="mt-1">Operational</Badge>
+            <Badge variant="default" className="mt-1">{t('pages:agents.operational', 'Operational')}</Badge>
           </CardContent>
         </Card>
 
@@ -260,12 +268,12 @@ export default function AgentHealthDashboard() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-yellow-600" />
-              Degraded
+              {t('pages:agents.degraded', 'Degraded')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-yellow-600">{degradedCount}</div>
-            <Badge variant="secondary" className="mt-1">Slow Response</Badge>
+            <Badge variant="secondary" className="mt-1">{t('pages:agents.slowResponse', 'Slow Response')}</Badge>
           </CardContent>
         </Card>
 
@@ -273,12 +281,12 @@ export default function AgentHealthDashboard() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <XCircle className="h-4 w-4 text-orange-600" />
-              Failing
+              {t('pages:agents.failing', 'Failing')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-orange-600">{failingCount}</div>
-            <Badge variant="destructive" className="mt-1">Errors</Badge>
+            <Badge variant="destructive" className="mt-1">{t('pages:agents.errors', 'Errors')}</Badge>
           </CardContent>
         </Card>
 
@@ -286,12 +294,12 @@ export default function AgentHealthDashboard() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <HelpCircle className="h-4 w-4 text-red-600" />
-              Offline
+              {t('pages:agents.offline', 'Offline')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-red-600">{offlineCount}</div>
-            <Badge variant="destructive" className="mt-1">Unreachable</Badge>
+            <Badge variant="destructive" className="mt-1">{t('pages:agents.unreachable', 'Unreachable')}</Badge>
           </CardContent>
         </Card>
       </div>
@@ -299,27 +307,27 @@ export default function AgentHealthDashboard() {
       {/* Agent Health List */}
       <Card>
         <CardHeader>
-          <CardTitle>Agent Health Status</CardTitle>
-          <CardDescription>Click on an agent to see details and run checks</CardDescription>
+          <CardTitle>{t('pages:agents.agentHealthStatus', 'Agent Health Status')}</CardTitle>
+          <CardDescription>{t('pages:agents.clickAgentDetails', 'Click on an agent to see details and run checks')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="border rounded-lg overflow-hidden">
             <Table data-testid="table-agent-health">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Agent Code</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Last Check</TableHead>
-                  <TableHead>Response Time</TableHead>
-                  <TableHead>Error Count</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t('pages:agents.agentCode', 'Agent Code')}</TableHead>
+                  <TableHead>{t('pages:agents.status', 'Status')}</TableHead>
+                  <TableHead>{t('pages:agents.lastCheck', 'Last Check')}</TableHead>
+                  <TableHead>{t('pages:agents.responseTime', 'Response Time')}</TableHead>
+                  <TableHead>{t('pages:agents.errorCount', 'Error Count')}</TableHead>
+                  <TableHead>{t('pages:agents.actions', 'Actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {healthData.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      No health data available. Click "Run Batch Health Checks" to scan all agents.
+                      {t('pages:agents.noHealthData', 'No health data available. Click "Run Batch Health Checks" to scan all agents.')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -340,14 +348,14 @@ export default function AgentHealthDashboard() {
                           </TableCell>
                           <TableCell>
                             <Badge variant={getStatusBadgeVariant(agent.status)}>
-                              {agent.status}
+                              {t(`pages:agents.status.${agent.status}`, agent.status)}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm text-muted-foreground">
                             {new Date(agent.lastCheckAt).toLocaleString()}
                           </TableCell>
                           <TableCell className={agent.responseTime ? getStatusColor(agent.status) : ''}>
-                            {agent.responseTime ? `${agent.responseTime}ms` : 'N/A'}
+                            {agent.responseTime ? `${agent.responseTime}ms` : t('common:na', 'N/A')}
                           </TableCell>
                           <TableCell className={agent.errorCount > 0 ? 'text-red-600 font-semibold' : ''}>
                             {agent.errorCount}
@@ -365,7 +373,7 @@ export default function AgentHealthDashboard() {
                                 data-testid={`button-health-check-${agent.agentCode}`}
                               >
                                 <Activity className="h-3 w-3 mr-1" />
-                                Check
+                                {t('pages:agents.check', 'Check')}
                               </Button>
                             </div>
                           </TableCell>
@@ -376,26 +384,26 @@ export default function AgentHealthDashboard() {
                               <div className="p-4 space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <div>
-                                    <h4 className="font-semibold mb-2">Agent Details</h4>
+                                    <h4 className="font-semibold mb-2">{t('pages:agents.agentDetails', 'Agent Details')}</h4>
                                     <div className="space-y-1 text-sm">
-                                      <p><span className="text-muted-foreground">Status:</span> <span className={getStatusColor(agent.status)}>{agent.status}</span></p>
-                                      <p><span className="text-muted-foreground">Response Time:</span> {agent.responseTime ? `${agent.responseTime}ms` : 'N/A'}</p>
-                                      <p><span className="text-muted-foreground">Error Count:</span> {agent.errorCount}</p>
-                                      <p><span className="text-muted-foreground">Last Check:</span> {new Date(agent.lastCheckAt).toLocaleString()}</p>
+                                      <p><span className="text-muted-foreground">{t('pages:agents.status', 'Status')}:</span> <span className={getStatusColor(agent.status)}>{t(`pages:agents.status.${agent.status}`, agent.status)}</span></p>
+                                      <p><span className="text-muted-foreground">{t('pages:agents.responseTime', 'Response Time')}:</span> {agent.responseTime ? `${agent.responseTime}ms` : t('common:na', 'N/A')}</p>
+                                      <p><span className="text-muted-foreground">{t('pages:agents.errorCount', 'Error Count')}:</span> {agent.errorCount}</p>
+                                      <p><span className="text-muted-foreground">{t('pages:agents.lastCheck', 'Last Check')}:</span> {new Date(agent.lastCheckAt).toLocaleString()}</p>
                                     </div>
                                   </div>
                                   <div>
-                                    <h4 className="font-semibold mb-2">Run Validation</h4>
+                                    <h4 className="font-semibold mb-2">{t('pages:agents.runValidation', 'Run Validation')}</h4>
                                     <div className="flex gap-2">
                                       <Select value={selectedCheckType} onValueChange={setSelectedCheckType}>
                                         <SelectTrigger className="w-full" data-testid={`select-check-type-${agent.agentCode}`}>
-                                          <SelectValue placeholder="Check type" />
+                                          <SelectValue placeholder={t('pages:agents.checkType', 'Check type')} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                          <SelectItem value="availability">Availability</SelectItem>
-                                          <SelectItem value="performance">Performance</SelectItem>
-                                          <SelectItem value="integration">Integration</SelectItem>
-                                          <SelectItem value="fallback">Fallback</SelectItem>
+                                          <SelectItem value="availability">{t('pages:agents.checkType.availability', 'Availability')}</SelectItem>
+                                          <SelectItem value="performance">{t('pages:agents.checkType.performance', 'Performance')}</SelectItem>
+                                          <SelectItem value="integration">{t('pages:agents.checkType.integration', 'Integration')}</SelectItem>
+                                          <SelectItem value="fallback">{t('pages:agents.checkType.fallback', 'Fallback')}</SelectItem>
                                         </SelectContent>
                                       </Select>
                                       <Button
@@ -404,14 +412,14 @@ export default function AgentHealthDashboard() {
                                         data-testid={`button-run-validation-${agent.agentCode}`}
                                       >
                                         <Play className="h-4 w-4 mr-1" />
-                                        Run
+                                        {t('common:run', 'Run')}
                                       </Button>
                                     </div>
                                   </div>
                                 </div>
                                 {agent.errorDetails && (
                                   <div>
-                                    <h4 className="font-semibold mb-2">Error Details</h4>
+                                    <h4 className="font-semibold mb-2">{t('pages:agents.errorDetails', 'Error Details')}</h4>
                                     <pre className="bg-background p-2 rounded text-xs overflow-auto max-h-32">
                                       {JSON.stringify(agent.errorDetails, null, 2)}
                                     </pre>
@@ -434,17 +442,17 @@ export default function AgentHealthDashboard() {
       {/* Validation History */}
       <Card>
         <CardHeader>
-          <CardTitle>Validation History</CardTitle>
-          <CardDescription>Recent validation checks across all agents</CardDescription>
+          <CardTitle>{t('pages:agents.validationHistory', 'Validation History')}</CardTitle>
+          <CardDescription>{t('pages:agents.validationHistoryDesc', 'Recent validation checks across all agents')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-4">
             <Select value={historyFilter} onValueChange={setHistoryFilter}>
               <SelectTrigger className="w-full md:w-64" data-testid="select-filter-history">
-                <SelectValue placeholder="Filter by agent (all)" />
+                <SelectValue placeholder={t('pages:agents.filterByAgentAll', 'Filter by agent (all)')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Agents</SelectItem>
+                <SelectItem value="all">{t('pages:agents.allAgents', 'All Agents')}</SelectItem>
                 {healthData.map((agent) => (
                   <SelectItem key={agent.agentCode} value={agent.agentCode}>
                     {agent.agentCode}
@@ -457,12 +465,12 @@ export default function AgentHealthDashboard() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Agent Code</TableHead>
-                  <TableHead>Check Type</TableHead>
-                  <TableHead>Result</TableHead>
-                  <TableHead>Execution Time</TableHead>
-                  <TableHead>Fallback Activated</TableHead>
-                  <TableHead>Details</TableHead>
+                  <TableHead>{t('pages:agents.agentCode', 'Agent Code')}</TableHead>
+                  <TableHead>{t('pages:agents.checkType', 'Check Type')}</TableHead>
+                  <TableHead>{t('pages:agents.result', 'Result')}</TableHead>
+                  <TableHead>{t('pages:agents.executionTime', 'Execution Time')}</TableHead>
+                  <TableHead>{t('pages:agents.fallbackActivated', 'Fallback Activated')}</TableHead>
+                  <TableHead>{t('pages:agents.details', 'Details')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -475,7 +483,7 @@ export default function AgentHealthDashboard() {
                 ) : historyData.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      No validation history available
+                      {t('pages:agents.noValidationHistory', 'No validation history available')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -483,30 +491,30 @@ export default function AgentHealthDashboard() {
                     <TableRow key={idx} data-testid={`row-history-${idx}`}>
                       <TableCell className="font-medium">{check.agentCode}</TableCell>
                       <TableCell>
-                        <Badge variant="outline">{check.checkType}</Badge>
+                        <Badge variant="outline">{t(`pages:agents.checkType.${check.checkType}`, check.checkType)}</Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant={getResultBadgeVariant(check.result)}>
-                          {check.result}
+                          {t(`pages:agents.result.${check.result}`, check.result)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {check.executionTime ? `${check.executionTime}ms` : 'N/A'}
+                        {check.executionTime ? `${check.executionTime}ms` : t('common:na', 'N/A')}
                       </TableCell>
                       <TableCell>
                         {check.fallbackActivated ? (
                           <div className="flex items-center gap-1">
-                            <Badge variant="secondary">Yes</Badge>
+                            <Badge variant="secondary">{t('common:yes', 'Yes')}</Badge>
                             {check.fallbackAgentCode && (
                               <span className="text-xs text-muted-foreground">→ {check.fallbackAgentCode}</span>
                             )}
                           </div>
                         ) : (
-                          <Badge variant="outline">No</Badge>
+                          <Badge variant="outline">{t('common:no', 'No')}</Badge>
                         )}
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
-                        {check.details || 'N/A'}
+                        {check.details || t('common:na', 'N/A')}
                       </TableCell>
                     </TableRow>
                   ))

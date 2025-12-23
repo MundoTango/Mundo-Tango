@@ -33,14 +33,14 @@ export default function HousingListingDetailPage() {
   const favoriteMutation = useMutation({
     mutationFn: () => apiRequest(`/api/housing/favorites/${id}`, "POST"),
     onSuccess: () => {
-      toast({ title: "Added to favorites!" });
+      toast({ title: t('pages:housingListingDetail.addedToFavorites', 'Added to favorites!') });
     },
   });
 
   if (isLoading) {
     return (
       <div className="bg-background flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Loading listing...</p>
+        <p className="text-muted-foreground">{t('pages:housingListingDetail.loading', 'Loading listing...')}</p>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export default function HousingListingDetailPage() {
   if (!listingData) {
     return (
       <div className="bg-background flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Listing not found</p>
+        <p className="text-muted-foreground">{t('pages:housingListingDetail.notFound', 'Listing not found')}</p>
       </div>
     );
   }
@@ -94,12 +94,12 @@ export default function HousingListingDetailPage() {
                 </CardDescription>
                 <div className="flex flex-wrap gap-2 mt-3">
                   <Badge>{listing.propertyType}</Badge>
-                  {listing.bedrooms && <Badge variant="outline">{listing.bedrooms} bedrooms</Badge>}
-                  {listing.bathrooms && <Badge variant="outline">{listing.bathrooms} bathrooms</Badge>}
+                  {listing.bedrooms && <Badge variant="outline">{t('pages:housingListingDetail.bedrooms', '{{count}} bedrooms', { count: listing.bedrooms })}</Badge>}
+                  {listing.bathrooms && <Badge variant="outline">{t('pages:housingListingDetail.bathrooms', '{{count}} bathrooms', { count: listing.bathrooms })}</Badge>}
                   {listing.maxGuests && (
                     <Badge variant="outline">
                       <Users className="h-3 w-3 mr-1" />
-                      Up to {listing.maxGuests} guests
+                      {t('pages:housingListingDetail.upToGuests', 'Up to {{count}} guests', { count: listing.maxGuests })}
                     </Badge>
                   )}
                 </div>
@@ -118,7 +118,7 @@ export default function HousingListingDetailPage() {
                   variant="outline"
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
-                    toast({ title: "Link copied!" });
+                    toast({ title: t('pages:housingListingDetail.linkCopied', 'Link copied!') });
                   }}
                   data-testid="button-share"
                 >
@@ -129,7 +129,7 @@ export default function HousingListingDetailPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">About this place</h3>
+              <h3 className="font-semibold text-lg">{t('pages:housingListingDetail.aboutThisPlace', 'About this place')}</h3>
               <p className="text-muted-foreground whitespace-pre-wrap">
                 {listing.description}
               </p>
@@ -138,7 +138,7 @@ export default function HousingListingDetailPage() {
             <Separator />
 
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Amenities</h3>
+              <h3 className="font-semibold text-lg">{t('pages:housingListingDetail.amenities', 'Amenities')}</h3>
               <div className="grid md:grid-cols-3 gap-3">
                 {listing.amenities?.map((amenity: string) => {
                   const Icon = amenityIcons[amenity.toLowerCase()] || Home;
@@ -156,7 +156,7 @@ export default function HousingListingDetailPage() {
               <>
                 <Separator />
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">House Rules</h3>
+                  <h3 className="font-semibold text-lg">{t('pages:housingListingDetail.houseRules', 'House Rules')}</h3>
                   <p className="text-muted-foreground whitespace-pre-wrap">
                     {listing.houseRules}
                   </p>
@@ -167,7 +167,7 @@ export default function HousingListingDetailPage() {
             <Separator />
 
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Hosted by</h3>
+              <h3 className="font-semibold text-lg">{t('pages:housingListingDetail.hostedBy', 'Hosted by')}</h3>
               {host && (
                 <div className="flex items-center gap-4">
                   <Avatar className="h-16 w-16">
@@ -179,7 +179,7 @@ export default function HousingListingDetailPage() {
                     <p className="text-sm text-muted-foreground">{host.email}</p>
                   </div>
                   <Button asChild>
-                    <Link href={`/messages?to=${host.id}`}>Contact Host</Link>
+                    <Link href={`/messages?to=${host.id}`}>{t('pages:housingListingDetail.contactHost', 'Contact Host')}</Link>
                   </Button>
                 </div>
               )}
@@ -189,7 +189,7 @@ export default function HousingListingDetailPage() {
               <>
                 <Separator />
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Reviews</h3>
+                  <h3 className="font-semibold text-lg">{t('pages:housingListingDetail.reviews', 'Reviews')}</h3>
                   <div className="space-y-4">
                     {reviews.map((review: any) => (
                       <div key={review.id} className="space-y-2">
@@ -198,7 +198,7 @@ export default function HousingListingDetailPage() {
                             <AvatarFallback>R</AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <p className="font-medium text-sm">Guest</p>
+                            <p className="font-medium text-sm">{t('pages:housingListingDetail.guest', 'Guest')}</p>
                             <div className="flex items-center gap-1">
                               {Array.from({ length: review.rating }).map((_, i) => (
                                 <Star key={i} className="h-3 w-3 fill-primary text-primary" />
@@ -223,14 +223,14 @@ export default function HousingListingDetailPage() {
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-5 w-5" />
                   <span className="text-2xl font-bold">${listing.pricePerNight}</span>
-                  <span className="text-muted-foreground">/night</span>
+                  <span className="text-muted-foreground">{t('pages:housingListingDetail.perNight', '/night')}</span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   {listing.currency || "USD"}
                 </p>
               </div>
               <Button size="lg" data-testid="button-book">
-                Request to Book
+                {t('pages:housingListingDetail.requestToBook', 'Request to Book')}
               </Button>
             </div>
           </CardContent>

@@ -46,7 +46,7 @@ export default function MarketplaceItemDetailPage() {
       return await apiRequest("POST", `/api/marketplace/${itemId}/save`);
     },
     onSuccess: () => {
-      toast({ title: "Item saved to favorites" });
+      toast({ title: t('pages:marketplaceItemDetail.itemSaved', 'Item saved to favorites') });
       queryClient.invalidateQueries({ queryKey: [`/api/marketplace/${itemId}`] });
     },
   });
@@ -57,7 +57,7 @@ export default function MarketplaceItemDetailPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading item...</p>
+            <p className="text-muted-foreground">{t('pages:marketplaceItemDetail.loading', 'Loading item...')}</p>
           </div>
         </div>
       </AppLayout>
@@ -68,7 +68,7 @@ export default function MarketplaceItemDetailPage() {
     return (
       <AppLayout>
         <div className="container mx-auto max-w-4xl py-8 px-4">
-          <p className="text-center text-muted-foreground">Item not found</p>
+          <p className="text-center text-muted-foreground">{t('pages:marketplaceItemDetail.notFound', 'Item not found')}</p>
         </div>
       </AppLayout>
     );
@@ -103,7 +103,7 @@ export default function MarketplaceItemDetailPage() {
             <Button variant="outline" asChild className="mb-auto w-fit backdrop-blur-sm bg-white/10 border-white/30 text-white hover:bg-white/20" data-testid="button-back">
               <Link href="/marketplace">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Marketplace
+                {t('pages:marketplaceItemDetail.backToMarketplace', 'Back to Marketplace')}
               </Link>
             </Button>
             
@@ -113,7 +113,7 @@ export default function MarketplaceItemDetailPage() {
                 <Badge variant="outline" className="bg-white/10 backdrop-blur-sm border-white/30 text-white">{item.condition}</Badge>
                 {item.isAvailable && (
                   <Badge variant="outline" className="bg-green-500/20 text-white border-green-500/30 backdrop-blur-sm">
-                    Available
+                    {t('pages:marketplaceItemDetail.available', 'Available')}
                   </Badge>
                 )}
               </div>
@@ -138,21 +138,21 @@ export default function MarketplaceItemDetailPage() {
               <Card className="mb-6">
                 <CardContent className="p-8">
                   <div className="mb-8">
-                    <h2 className="text-3xl font-serif font-bold text-foreground mb-4">Description</h2>
+                    <h2 className="text-3xl font-serif font-bold text-foreground mb-4">{t('pages:marketplaceItemDetail.description', 'Description')}</h2>
                     <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-line">
                       {item.description}
                     </p>
                   </div>
 
                   <div className="border-t border-border pt-8">
-                    <h3 className="text-2xl font-serif font-bold text-foreground mb-6">Details</h3>
+                    <h3 className="text-2xl font-serif font-bold text-foreground mb-6">{t('pages:marketplaceItemDetail.details', 'Details')}</h3>
                     <div className="grid grid-cols-2 gap-6 text-base">
                         <div>
-                          <span className="text-muted-foreground">Condition:</span>
+                          <span className="text-muted-foreground">{t('pages:marketplaceItemDetail.condition', 'Condition:')}</span>
                           <span className="ml-2 font-semibold text-foreground">{item.condition}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Category:</span>
+                          <span className="text-muted-foreground">{t('pages:marketplaceItemDetail.category', 'Category:')}</span>
                           <span className="ml-2 font-semibold text-foreground">{item.category}</span>
                         </div>
                         <div className="flex items-center gap-1">
@@ -160,7 +160,7 @@ export default function MarketplaceItemDetailPage() {
                           <span className="text-muted-foreground">{item.city}, {item.location}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">Posted:</span>
+                          <span className="text-muted-foreground">{t('pages:marketplaceItemDetail.posted', 'Posted:')}</span>
                           <span className="ml-2 font-semibold text-foreground">
                             {safeDateFormat(item.postedAt, 'MMM dd, yyyy', 'recently')}
                           </span>
@@ -180,7 +180,7 @@ export default function MarketplaceItemDetailPage() {
               >
               <Card className="mb-6 sticky top-4">
                 <CardHeader>
-                  <CardTitle className="font-serif font-bold">Seller Information</CardTitle>
+                  <CardTitle className="font-serif font-bold">{t('pages:marketplaceItemDetail.sellerInfo', 'Seller Information')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-3">
@@ -198,7 +198,7 @@ export default function MarketplaceItemDetailPage() {
 
                   <div className="flex gap-2">
                     <Button className="flex-1" data-testid="button-contact-seller">
-                      Contact Seller
+                      {t('pages:marketplaceItemDetail.contactSeller', 'Contact Seller')}
                     </Button>
                   </div>
 
@@ -211,7 +211,7 @@ export default function MarketplaceItemDetailPage() {
                       data-testid="button-save-item"
                     >
                       <Heart className="h-4 w-4 mr-2" />
-                      {item.isSaved ? 'Saved' : 'Save'}
+                      {item.isSaved ? t('pages:marketplaceItemDetail.saved', 'Saved') : t('pages:marketplaceItemDetail.save', 'Save')}
                     </Button>
                     <Button variant="outline" data-testid="button-share-item">
                       <Share2 className="h-4 w-4" />
@@ -221,11 +221,11 @@ export default function MarketplaceItemDetailPage() {
                   <div className="pt-4 border-t border-border space-y-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Shield className="h-4 w-4" />
-                      <span>Buyer protection included</span>
+                      <span>{t('pages:marketplaceItemDetail.buyerProtection', 'Buyer protection included')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Package className="h-4 w-4" />
-                      <span>Meet in public places</span>
+                      <span>{t('pages:marketplaceItemDetail.meetInPublic', 'Meet in public places')}</span>
                     </div>
                   </div>
                 </CardContent>

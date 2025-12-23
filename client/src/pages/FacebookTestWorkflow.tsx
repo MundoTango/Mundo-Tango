@@ -27,6 +27,7 @@ import {
   MousePointerClick
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from 'react-i18next';
 
 interface Step {
   id: number;
@@ -138,6 +139,7 @@ const WORKFLOW_STEPS: Step[] = [
 ];
 
 export default function FacebookTestWorkflow() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);

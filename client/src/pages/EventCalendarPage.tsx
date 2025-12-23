@@ -76,14 +76,14 @@ export default function EventCalendarPage() {
       <div className="container mx-auto p-4 space-y-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold" data-testid="heading-event-calendar">Event Calendar</h1>
-            <p className="text-muted-foreground">Discover tango events happening near you</p>
+            <h1 className="text-3xl font-bold" data-testid="heading-event-calendar">{t('pages:eventCalendar.title', 'Event Calendar')}</h1>
+            <p className="text-muted-foreground">{t('pages:eventCalendar.subtitle', 'Discover tango events happening near you')}</p>
           </div>
           
           <div className="flex gap-2">
             <Button variant="outline" asChild>
               <Link href="/events/create">
-                Create Event
+                {t('pages:eventCalendar.createEvent', 'Create Event')}
               </Link>
             </Button>
             <Tabs value={view} onValueChange={(v) => setView(v as any)}>
@@ -111,7 +111,7 @@ export default function EventCalendarPage() {
             <CardContent className="p-4">
               {isLoading ? (
                 <div className="h-[600px] flex items-center justify-center">
-                  <p className="text-muted-foreground">Loading events...</p>
+                  <p className="text-muted-foreground">{t('pages:eventCalendar.loadingEvents', 'Loading events...')}</p>
                 </div>
               ) : (
                 <div className="h-[600px]" data-testid="calendar-view">
@@ -185,8 +185,8 @@ export default function EventCalendarPage() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <CalendarIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No events this month</h3>
-                  <p className="text-muted-foreground">Check back later or create your own event</p>
+                  <h3 className="text-lg font-semibold mb-2">{t('pages:eventCalendar.noEventsTitle', 'No events this month')}</h3>
+                  <p className="text-muted-foreground">{t('pages:eventCalendar.noEventsSubtitle', 'Check back later or create your own event')}</p>
                 </CardContent>
               </Card>
             )}

@@ -20,11 +20,11 @@ export default function EmailPreferencesPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:emailPreferences.pageName', 'Email Preferences')} fallbackRoute="/settings">
-      <PageLayout title={t('pages:emailPreferences.title', 'Email Preferences')} showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:settings.emailPreferences', 'Email Preferences')} fallbackRoute="/settings">
+      <PageLayout title={t('pages:settings.emailPreferences', 'Email Preferences')} showBreadcrumbs>
         <SEO
-          title={t('pages:emailPreferences.seoTitle', 'Email Preferences | Mundo Tango')}
-          description={t('pages:emailPreferences.seoDescription', 'Manage your email notification preferences. Control which updates you receive from Mundo Tango and stay informed about events, messages, and community activity.')}
+          title={t('pages:settings.emailPreferencesSeoTitle', 'Email Preferences | Mundo Tango')}
+          description={t('pages:settings.emailPreferencesSeoDescription', 'Manage your email notification preferences. Control which updates you receive from Mundo Tango and stay informed about events, messages, and community activity.')}
         />
         <div className="min-h-screen">
           {/* Hero Section - 16:9 */}
@@ -43,15 +43,15 @@ export default function EmailPreferencesPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Settings className="w-3 h-3 mr-1.5" />
-                  {t('common:settings', 'Settings')}
+                  {t('pages:settings.settings', 'Settings')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  {t('pages:emailPreferences.title', 'Email Preferences')}
+                  {t('pages:settings.emailPreferences', 'Email Preferences')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  {t('pages:emailPreferences.subtitle', 'Manage your email notifications and stay updated')}
+                  {t('pages:settings.emailPreferencesSubtitle', 'Manage your email notifications and stay updated')}
                 </p>
               </motion.div>
             </div>
@@ -66,7 +66,7 @@ export default function EmailPreferencesPage() {
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                         <Mail className="h-6 w-6 text-primary" />
                       </div>
-                      <CardTitle className="text-2xl font-serif">{t('pages:emailPreferences.emailNotifications', 'Email Notifications')}</CardTitle>
+                      <CardTitle className="text-2xl font-serif">{t('pages:settings.emailNotifications', 'Email Notifications')}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="p-8 space-y-8">
@@ -78,9 +78,9 @@ export default function EmailPreferencesPage() {
                       transition={{ delay: 0.1 }}
                     >
                       <div className="space-y-0.5 flex-1">
-                        <Label htmlFor="events" className="text-base font-semibold">{t('pages:emailPreferences.eventUpdates', 'Event Updates')}</Label>
+                        <Label htmlFor="events" className="text-base font-semibold">{t('pages:settings.eventUpdates', 'Event Updates')}</Label>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          {t('pages:emailPreferences.eventUpdatesDescription', 'Get notified about upcoming events in your area')}
+                          {t('pages:settings.eventUpdatesDesc', 'Get notified about upcoming events in your area')}
                         </p>
                       </div>
                       <Switch id="events" defaultChecked data-testid="switch-events" />
@@ -94,9 +94,9 @@ export default function EmailPreferencesPage() {
                       transition={{ delay: 0.2 }}
                     >
                       <div className="space-y-0.5 flex-1">
-                        <Label htmlFor="messages" className="text-base font-semibold">{t('pages:emailPreferences.messages', 'Messages')}</Label>
+                        <Label htmlFor="messages" className="text-base font-semibold">{t('pages:settings.messages', 'Messages')}</Label>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          {t('pages:emailPreferences.messagesDescription', 'Receive email notifications for new messages')}
+                          {t('pages:settings.messagesDesc', 'Receive email notifications for new messages')}
                         </p>
                       </div>
                       <Switch id="messages" defaultChecked data-testid="switch-messages" />
@@ -110,9 +110,9 @@ export default function EmailPreferencesPage() {
                       transition={{ delay: 0.3 }}
                     >
                       <div className="space-y-0.5 flex-1">
-                        <Label htmlFor="posts" className="text-base font-semibold">{t('pages:emailPreferences.postsMentions', 'Posts & Mentions')}</Label>
+                        <Label htmlFor="posts" className="text-base font-semibold">{t('pages:settings.postsMentions', 'Posts & Mentions')}</Label>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          {t('pages:emailPreferences.postsMentionsDescription', 'When someone mentions you or comments on your posts')}
+                          {t('pages:settings.postsMentionsDesc', 'When someone mentions you or comments on your posts')}
                         </p>
                       </div>
                       <Switch id="posts" defaultChecked data-testid="switch-posts" />
@@ -126,9 +126,9 @@ export default function EmailPreferencesPage() {
                       transition={{ delay: 0.4 }}
                     >
                       <div className="space-y-0.5 flex-1">
-                        <Label htmlFor="newsletter" className="text-base font-semibold">{t('pages:emailPreferences.weeklyNewsletter', 'Weekly Newsletter')}</Label>
+                        <Label htmlFor="newsletter" className="text-base font-semibold">{t('pages:settings.weeklyNewsletter', 'Weekly Newsletter')}</Label>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          {t('pages:emailPreferences.weeklyNewsletterDescription', 'Get our weekly digest of tango news and tips')}
+                          {t('pages:settings.weeklyNewsletterDesc', 'Get our weekly digest of tango news and tips')}
                         </p>
                       </div>
                       <Switch id="newsletter" defaultChecked data-testid="switch-newsletter" />
@@ -142,9 +142,9 @@ export default function EmailPreferencesPage() {
                       transition={{ delay: 0.5 }}
                     >
                       <div className="space-y-0.5 flex-1">
-                        <Label htmlFor="promotions" className="text-base font-semibold">{t('pages:emailPreferences.promotionsOffers', 'Promotions & Offers')}</Label>
+                        <Label htmlFor="promotions" className="text-base font-semibold">{t('pages:settings.promotionsOffers', 'Promotions & Offers')}</Label>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          {t('pages:emailPreferences.promotionsOffersDescription', 'Receive exclusive deals and special offers')}
+                          {t('pages:settings.promotionsOffersDesc', 'Receive exclusive deals and special offers')}
                         </p>
                       </div>
                       <Switch id="promotions" data-testid="switch-promotions" />
@@ -155,7 +155,7 @@ export default function EmailPreferencesPage() {
 
               <motion.div {...fadeInUp} transition={{ delay: 0.2 }}>
                 <Button className="w-full gap-2" size="lg" data-testid="button-save">
-                  {t('common:savePreferences', 'Save Preferences')}
+                  {t('pages:settings.savePreferences', 'Save Preferences')}
                   <ChevronRight className="h-5 w-5" />
                 </Button>
               </motion.div>

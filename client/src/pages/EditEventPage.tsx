@@ -176,15 +176,15 @@ export default function EditEventPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/events"] });
       queryClient.invalidateQueries({ queryKey: ["/api/events", eventId] });
       toast({
-        title: "Event updated!",
-        description: "Your event has been updated successfully.",
+        title: t('pages:editEvent.updateSuccess', 'Event updated!'),
+        description: t('pages:editEvent.updateSuccessDesc', 'Your event has been updated successfully.'),
       });
       setLocation(`/events/${eventId}`);
     },
     onError: (error: any) => {
       toast({
-        title: "Failed to update event",
-        description: error.message || "Please try again",
+        title: t('pages:editEvent.updateFailed', 'Failed to update event'),
+        description: error.message || t('pages:editEvent.tryAgain', 'Please try again'),
         variant: "destructive",
       });
     },
@@ -204,7 +204,7 @@ export default function EditEventPage() {
           <div className="max-w-3xl mx-auto px-6 py-12">
             <Card>
               <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground">Please log in to edit events</p>
+                <p className="text-muted-foreground">{t('pages:editEvent.pleaseLogin', 'Please log in to edit events')}</p>
               </CardContent>
             </Card>
           </div>
@@ -251,10 +251,10 @@ export default function EditEventPage() {
           <div className="max-w-3xl mx-auto px-6 py-12">
             <Card>
               <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground">Event not found or you don't have permission to edit it.</p>
+                <p className="text-muted-foreground">{t('pages:editEvent.notFoundOrNoPermission', "Event not found or you don't have permission to edit it.")}</p>
                 <Button className="mt-4" onClick={() => setLocation("/events")} data-testid="button-back-to-events">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Events
+                  {t('pages:editEvent.backToEvents', 'Back to Events')}
                 </Button>
               </CardContent>
             </Card>
@@ -273,10 +273,10 @@ export default function EditEventPage() {
           <div className="max-w-3xl mx-auto px-6 py-12">
             <Card>
               <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground">You don't have permission to edit this event.</p>
+                <p className="text-muted-foreground">{t('pages:editEvent.noPermission', "You don't have permission to edit this event.")}</p>
                 <Button className="mt-4" onClick={() => setLocation(`/events/${eventId}`)} data-testid="button-back-to-event">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Event
+                  {t('pages:editEvent.backToEvent', 'Back to Event')}
                 </Button>
               </CardContent>
             </Card>
@@ -303,21 +303,21 @@ export default function EditEventPage() {
                 data-testid="button-back"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Event
+                {t('pages:editEvent.backToEvent', 'Back to Event')}
               </Button>
               <h1 className="text-4xl font-serif font-bold mb-3" data-testid="text-page-title">
-                Edit Event
+                {t('pages:editEvent.title', 'Edit Event')}
               </h1>
               <p className="text-muted-foreground" data-testid="text-page-description">
-                Update the details of your event
+                {t('pages:editEvent.subtitle', 'Update the details of your event')}
               </p>
             </div>
 
             <Card>
               <CardHeader>
-                <CardTitle>Event Details</CardTitle>
+                <CardTitle>{t('pages:editEvent.eventDetails', 'Event Details')}</CardTitle>
                 <CardDescription>
-                  Edit the information about your event. All fields marked with * are required.
+                  {t('pages:editEvent.eventDetailsDesc', 'Edit the information about your event. All fields marked with * are required.')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -328,7 +328,7 @@ export default function EditEventPage() {
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Title *</FormLabel>
+                          <FormLabel>{t('pages:editEvent.titleLabel', 'Title')} *</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="e.g., Friday Night Milonga" 
@@ -346,7 +346,7 @@ export default function EditEventPage() {
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Description *</FormLabel>
+                          <FormLabel>{t('pages:editEvent.descriptionLabel', 'Description')} *</FormLabel>
                           <FormControl>
                             <Textarea 
                               placeholder="Describe your event..."
@@ -365,7 +365,7 @@ export default function EditEventPage() {
                       name="eventType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Event Type *</FormLabel>
+                          <FormLabel>{t('pages:editEvent.eventTypeLabel', 'Event Type')} *</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger data-testid="select-event-type">
@@ -394,7 +394,7 @@ export default function EditEventPage() {
                             <div className="flex items-center justify-between gap-2">
                               <FormLabel className="flex items-center gap-2">
                                 <Clock className="h-4 w-4" />
-                                Start Date & Time *
+                                {t('pages:editEvent.startDateTime', 'Start Date & Time')} *
                               </FormLabel>
                               {userTimezone && (
                                 <span className="text-sm font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md">
@@ -421,7 +421,7 @@ export default function EditEventPage() {
                             <div className="flex items-center justify-between gap-2">
                               <FormLabel className="flex items-center gap-2">
                                 <Clock className="h-4 w-4" />
-                                End Date & Time
+                                {t('pages:editEvent.endDateTime', 'End Date & Time')}
                               </FormLabel>
                               {userTimezone && (
                                 <span className="text-sm font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md">
@@ -447,7 +447,7 @@ export default function EditEventPage() {
                       name="location"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Venue Location *</FormLabel>
+                          <FormLabel>{t('pages:editEvent.venueLocation', 'Venue Location')} *</FormLabel>
                           <FormControl>
                             <UnifiedLocationPicker
                               mode="address"
@@ -471,9 +471,9 @@ export default function EditEventPage() {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Paid Event</FormLabel>
+                            <FormLabel className="text-base">{t('pages:editEvent.paidEvent', 'Paid Event')}</FormLabel>
                             <FormDescription>
-                              Is this a paid event?
+                              {t('pages:editEvent.isPaidEvent', 'Is this a paid event?')}
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -498,7 +498,7 @@ export default function EditEventPage() {
                             <FormItem>
                               <FormLabel className="flex items-center gap-2">
                                 <DollarSign className="h-4 w-4" />
-                                Price
+                                {t('pages:editEvent.priceLabel', 'Price')}
                               </FormLabel>
                               <FormControl>
                                 <Input 
@@ -516,7 +516,7 @@ export default function EditEventPage() {
                                 />
                               </FormControl>
                               <FormDescription>
-                                Leave blank for free event
+                                {t('pages:editEvent.leaveBlankFree', 'Leave blank for free event')}
                               </FormDescription>
                               <FormMessage />
                             </FormItem>
@@ -527,7 +527,7 @@ export default function EditEventPage() {
                           name="currency"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Currency</FormLabel>
+                              <FormLabel>{t('pages:editEvent.currencyLabel', 'Currency')}</FormLabel>
                               <FormControl>
                                 <CurrencyPicker 
                                   value={field.value}
@@ -547,7 +547,7 @@ export default function EditEventPage() {
                       name="maxAttendees"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Max Attendees (optional)</FormLabel>
+                          <FormLabel>{t('pages:editEvent.maxAttendeesLabel', 'Max Attendees (optional)')}</FormLabel>
                           <FormControl>
                             <Input 
                               type="number" 
@@ -560,7 +560,7 @@ export default function EditEventPage() {
                             />
                           </FormControl>
                           <FormDescription>
-                            Set a maximum capacity for your event
+                            {t('pages:editEvent.maxAttendeesDescription', 'Set a maximum capacity for your event')}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -572,7 +572,7 @@ export default function EditEventPage() {
                       name="imageUrl"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Event Image URL (optional)</FormLabel>
+                          <FormLabel>{t('pages:editEvent.imageUrlLabel', 'Event Image URL (optional)')}</FormLabel>
                           <FormControl>
                             <Input 
                               type="url"
@@ -593,7 +593,7 @@ export default function EditEventPage() {
                         onClick={() => setLocation(`/events/${eventId}`)}
                         data-testid="button-cancel"
                       >
-                        Cancel
+                        {t('common:cancel', 'Cancel')}
                       </Button>
                       <Button
                         type="submit"
@@ -603,12 +603,12 @@ export default function EditEventPage() {
                         {updateEventMutation.isPending ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Saving...
+                            {t('pages:editEvent.saving', 'Saving...')}
                           </>
                         ) : (
                           <>
                             <Save className="mr-2 h-4 w-4" />
-                            Save Changes
+                            {t('pages:editEvent.saveChanges', 'Save Changes')}
                           </>
                         )}
                       </Button>

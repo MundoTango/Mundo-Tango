@@ -44,15 +44,15 @@ export default function CrowdfundingMyPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/crowdfunding/campaigns/mine'] });
       toast({
-        title: "Withdrawal requested",
-        description: "Your withdrawal will be processed within 2-3 business days.",
+        title: t('pages:crowdfunding.my.withdrawal.successTitle', 'Withdrawal requested'),
+        description: t('pages:crowdfunding.my.withdrawal.successDescription', 'Your withdrawal will be processed within 2-3 business days.'),
       });
       setShowWithdrawal(false);
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to process withdrawal. Please try again.",
+        title: t('common:error', 'Error'),
+        description: t('pages:crowdfunding.my.withdrawal.errorDescription', 'Failed to process withdrawal. Please try again.'),
         variant: "destructive",
       });
     },
@@ -91,10 +91,10 @@ export default function CrowdfundingMyPage() {
                 backgroundClip: 'text',
               }}
             >
-              My Crowdfunding
+              {t('pages:crowdfunding.my.hero.title', 'My Crowdfunding')}
             </span>
           </h1>
-          <p className="text-white/80 mt-2">Manage your campaigns and track your donations</p>
+          <p className="text-white/80 mt-2">{t('pages:crowdfunding.my.hero.subtitle', 'Manage your campaigns and track your donations')}</p>
         </div>
       </div>
 
@@ -102,8 +102,8 @@ export default function CrowdfundingMyPage() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         <Tabs defaultValue="campaigns" className="space-y-6">
           <TabsList className="bg-card/50 backdrop-blur-md">
-            <TabsTrigger value="campaigns">My Campaigns</TabsTrigger>
-            <TabsTrigger value="backed">Backed Projects</TabsTrigger>
+            <TabsTrigger value="campaigns">{t('pages:crowdfunding.my.tabs.campaigns', 'My Campaigns')}</TabsTrigger>
+            <TabsTrigger value="backed">{t('pages:crowdfunding.my.tabs.backed', 'Backed Projects')}</TabsTrigger>
           </TabsList>
 
           {/* My Campaigns */}
@@ -113,7 +113,7 @@ export default function CrowdfundingMyPage() {
               <Link href="/crowdfunding/create">
                 <Button>
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Campaign
+                  {t('pages:crowdfunding.my.cta.createCampaign', 'Create Campaign')}
                 </Button>
               </Link>
             </div>
@@ -180,20 +180,20 @@ export default function CrowdfundingMyPage() {
 
                         <div className="grid grid-cols-4 gap-4 pt-4 border-t border-white/10">
                           <div>
-                            <p className="text-sm text-muted-foreground">Backers</p>
+                            <p className="text-sm text-muted-foreground">{t('pages:crowdfunding.my.stats.backers', 'Backers')}</p>
                             <p className="text-xl font-bold text-foreground">{campaign.backerCount || 0}</p>
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground">Days Left</p>
+                            <p className="text-sm text-muted-foreground">{t('pages:crowdfunding.my.stats.daysLeft', 'Days Left')}</p>
                             <p className="text-xl font-bold text-foreground">
                               {campaign.daysRemaining !== null && campaign.daysRemaining !== undefined
                                 ? Math.round(campaign.daysRemaining)
-                                : 'N/A'}
+                                : t('common:notAvailableAbbr', 'N/A')}
                             </p>
                           </div>
                           <div>
-                            <p className="text-sm text-muted-foreground">Status</p>
-                            <p className="text-xl font-bold text-foreground capitalize">{campaign.status}</p>
+                            <p className="text-sm text-muted-foreground">{t('pages:crowdfunding.my.stats.status', 'Status')}</p>
+                            <p className="text-xl font-bold text-foreground capitalize">{t(`pages:crowdfunding.status.${campaign.status}`, campaign.status)}</p>
                           </div>
                           <div>
                             <Button 
@@ -206,7 +206,7 @@ export default function CrowdfundingMyPage() {
                               disabled={raised === 0}
                             >
                               <DollarSign className="w-4 h-4 mr-2" />
-                              Withdraw
+                              {t('pages:crowdfunding.my.cta.withdraw', 'Withdraw')}
                             </Button>
                           </div>
                         </div>
@@ -230,12 +230,12 @@ export default function CrowdfundingMyPage() {
               <Card className="border-white/10 bg-card/50">
                 <CardContent className="p-12 text-center space-y-4">
                   <Heart className="w-16 h-16 text-muted-foreground mx-auto" />
-                  <h3 className="text-2xl font-semibold">No campaigns yet</h3>
-                  <p className="text-muted-foreground">Create your first campaign to start fundraising</p>
+                  <h3 className="text-2xl font-semibold">{t('pages:crowdfunding.my.empty.campaignsTitle', 'No campaigns yet')}</h3>
+                  <p className="text-muted-foreground">{t('pages:crowdfunding.my.empty.campaignsSubtitle', 'Create your first campaign to start fundraising')}</p>
                   <Link href="/crowdfunding/create">
                     <Button>
                       <Plus className="w-4 h-4 mr-2" />
-                      Create Campaign
+                      {t('pages:crowdfunding.my.cta.createCampaign', 'Create Campaign')}
                     </Button>
                   </Link>
                 </CardContent>
@@ -265,7 +265,7 @@ export default function CrowdfundingMyPage() {
                             </h4>
                           </Link>
                           <p className="text-sm text-muted-foreground">
-                            Donated {safeDateDistance(donation.createdAt, { addSuffix: true })}
+                            {t('pages:crowdfunding.my.donatedAt', { date: safeDateDistance(donation.createdAt, { addSuffix: true }), defaultValue: 'Donated {{date}}' })}
                           </p>
                           {donation.message && (
                             <p className="text-sm text-muted-foreground italic mt-2">
@@ -301,12 +301,12 @@ export default function CrowdfundingMyPage() {
               <Card className="border-white/10 bg-card/50">
                 <CardContent className="p-12 text-center space-y-4">
                   <Heart className="w-16 h-16 text-muted-foreground mx-auto" />
-                  <h3 className="text-2xl font-semibold">No backed projects yet</h3>
-                  <p className="text-muted-foreground">Support a campaign to make a difference</p>
+                  <h3 className="text-2xl font-semibold">{t('pages:crowdfunding.my.empty.backedTitle', 'No backed projects yet')}</h3>
+                  <p className="text-muted-foreground">{t('pages:crowdfunding.my.empty.backedSubtitle', 'Support a campaign to make a difference')}</p>
                   <Link href="/crowdfunding">
                     <Button>
                       <Heart className="w-4 h-4 mr-2" />
-                      Browse Campaigns
+                      {t('pages:crowdfunding.my.cta.browseCampaigns', 'Browse Campaigns')}
                     </Button>
                   </Link>
                 </CardContent>

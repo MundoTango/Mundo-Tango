@@ -21,9 +21,9 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 const expenseSchema = z.object({
-  description: z.string().min(1, "Description is required"),
-  amount: z.number().min(0.01, "Amount must be greater than 0"),
-  category: z.string().min(1, "Category is required"),
+  description: z.string().min(1, "pages:travel.expenses.validation.description_required"),
+  amount: z.number().min(0.01, "pages:travel.expenses.validation.amount_positive"),
+  category: z.string().min(1, "pages:travel.expenses.validation.category_required"),
   date: z.string().optional(),
 });
 
@@ -45,34 +45,34 @@ export default function TravelExpensesPage() {
   const expenses = [
     {
       id: 1,
-      description: "Hotel Booking - 5 nights",
+      description: t('pages:travel.expenses.mock.hotel', 'Hotel Booking - 5 nights'),
       amount: 500,
       currency: "USD",
       category: "accommodation",
       date: "2024-03-15",
-      payer: { id: 1, name: "You", profileImage: undefined },
+      payer: { id: 1, name: t('pages:travel.expenses.you', 'You'), profileImage: undefined },
       splitType: "equal" as const,
       participants: 2,
     },
     {
       id: 2,
-      description: "Flight Tickets",
+      description: t('pages:travel.expenses.mock.flight', 'Flight Tickets'),
       amount: 350,
       currency: "USD",
       category: "transport",
       date: "2024-03-14",
-      payer: { id: 1, name: "You", profileImage: undefined },
+      payer: { id: 1, name: t('pages:travel.expenses.you', 'You'), profileImage: undefined },
       splitType: "equal" as const,
       participants: 2,
     },
     {
       id: 3,
-      description: "Dinner at La Cabrera",
+      description: t('pages:travel.expenses.mock.dinner', 'Dinner at La Cabrera'),
       amount: 80,
       currency: "USD",
       category: "food",
       date: "2024-03-16",
-      payer: { id: 1, name: "You", profileImage: undefined },
+      payer: { id: 1, name: t('pages:travel.expenses.you', 'You'), profileImage: undefined },
       splitType: "equal" as const,
       participants: 2,
     },
@@ -95,8 +95,8 @@ export default function TravelExpensesPage() {
     },
     onSuccess: () => {
       toast({
-        title: "Expense added",
-        description: "Your expense has been added successfully.",
+        title: t('pages:travel.expenses.toast.added_title', 'Expense added'),
+        description: t('pages:travel.expenses.toast.added_desc', 'Your expense has been added successfully.'),
       });
       setShowAddExpense(false);
       form.reset();
@@ -115,8 +115,8 @@ export default function TravelExpensesPage() {
 
   // Calculate balances (who owes whom)
   const balances = [
-    { userId: 1, userName: "You", amount: 0 },
-    { userId: 2, userName: "Travel Partner", amount: totalExpenses / 2 },
+    { userId: 1, userName: t('pages:travel.expenses.you', 'You'), amount: 0 },
+    { userId: 2, userName: t('pages:travel.expenses.travel_partner', 'Travel Partner'), amount: totalExpenses / 2 },
   ];
 
   if (tripLoading) {
@@ -134,8 +134,8 @@ export default function TravelExpensesPage() {
   return (
     <>
       <SEO
-        title={`${trip?.city || 'Trip'} - Expenses`}
-        description="Track and split travel expenses with your group"
+        title={`${trip?.city || t('pages:travel.expenses.seo_title_fallback', 'Trip')} - ${t('pages:travel.expenses.seo_title_suffix', 'Expenses')}`}
+        description={t('pages:travel.expenses.seo_description', 'Track and split travel expenses with your group')}
       />
 
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5">
@@ -145,14 +145,14 @@ export default function TravelExpensesPage() {
             <Button variant="ghost" asChild className="mb-4">
               <Link href={`/travel/trip/${id}`}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Trip
+                {t('pages:travel.expenses.back_to_trip', 'Back to Trip')}
               </Link>
             </Button>
 
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h1 className="text-4xl font-serif font-bold mb-2">Trip Expenses</h1>
-                <p className="text-muted-foreground">{trip?.city || 'Manage your trip expenses'}</p>
+                <h1 className="text-4xl font-serif font-bold mb-2">{t('pages:travel.expenses.title', 'Trip Expenses')}</h1>
+                <p className="text-muted-foreground">{trip?.city || t('pages:travel.expenses.subtitle', 'Manage your trip expenses')}</p>
               </div>
 
               <div className="flex gap-2">
@@ -160,12 +160,12 @@ export default function TravelExpensesPage() {
                   <DialogTrigger asChild>
                     <Button data-testid="button-add-expense">
                       <Plus className="h-4 w-4 mr-2" />
-                      Add Expense
+                      {t('pages:travel.expenses.add_expense', 'Add Expense')}
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Add New Expense</DialogTitle>
+                      <DialogTitle>{t('pages:travel.expenses.add_new_title', 'Add New Expense')}</DialogTitle>
                     </DialogHeader>
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -174,9 +174,9 @@ export default function TravelExpensesPage() {
                           name="description"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Description</FormLabel>
+                              <FormLabel>{t('pages:travel.expenses.form.description', 'Description')}</FormLabel>
                               <FormControl>
-                                <Input placeholder="Hotel booking" {...field} />
+                                <Input placeholder={t('pages:travel.expenses.form.description_placeholder', 'Hotel booking')} {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -188,7 +188,7 @@ export default function TravelExpensesPage() {
                           name="amount"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Amount (USD)</FormLabel>
+                              <FormLabel>{t('pages:travel.expenses.form.amount', 'Amount (USD)')}</FormLabel>
                               <FormControl>
                                 <Input
                                   type="number"
@@ -208,20 +208,20 @@ export default function TravelExpensesPage() {
                           name="category"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Category</FormLabel>
+                              <FormLabel>{t('pages:travel.expenses.form.category', 'Category')}</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select category" />
+                                    <SelectValue placeholder={t('pages:travel.expenses.form.category_placeholder', 'Select category')} />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="accommodation">Accommodation</SelectItem>
-                                  <SelectItem value="transport">Transport</SelectItem>
-                                  <SelectItem value="food">Food & Dining</SelectItem>
-                                  <SelectItem value="activities">Activities</SelectItem>
-                                  <SelectItem value="events">Events</SelectItem>
-                                  <SelectItem value="other">Other</SelectItem>
+                                  <SelectItem value="accommodation">{t('pages:travel.expenses.categories.accommodation', 'Accommodation')}</SelectItem>
+                                  <SelectItem value="transport">{t('pages:travel.expenses.categories.transport', 'Transport')}</SelectItem>
+                                  <SelectItem value="food">{t('pages:travel.expenses.categories.food', 'Food & Dining')}</SelectItem>
+                                  <SelectItem value="activities">{t('pages:travel.expenses.categories.activities', 'Activities')}</SelectItem>
+                                  <SelectItem value="events">{t('pages:travel.expenses.categories.events', 'Events')}</SelectItem>
+                                  <SelectItem value="other">{t('pages:travel.expenses.categories.other', 'Other')}</SelectItem>
                                 </SelectContent>
                               </Select>
                               <FormMessage />
@@ -234,7 +234,7 @@ export default function TravelExpensesPage() {
                           name="date"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Date</FormLabel>
+                              <FormLabel>{t('pages:travel.expenses.form.date', 'Date')}</FormLabel>
                               <FormControl>
                                 <Input type="date" {...field} />
                               </FormControl>
@@ -250,14 +250,16 @@ export default function TravelExpensesPage() {
                             onClick={() => setShowAddExpense(false)}
                             className="flex-1"
                           >
-                            Cancel
+                            {t('pages:travel.expenses.form.cancel', 'Cancel')}
                           </Button>
                           <Button
                             type="submit"
                             className="flex-1"
                             disabled={addExpenseMutation.isPending}
                           >
-                            {addExpenseMutation.isPending ? "Adding..." : "Add Expense"}
+                            {addExpenseMutation.isPending 
+                              ? t('pages:travel.expenses.form.adding', 'Adding...') 
+                              : t('pages:travel.expenses.add_expense', 'Add Expense')}
                           </Button>
                         </div>
                       </form>
@@ -267,7 +269,7 @@ export default function TravelExpensesPage() {
 
                 <Button variant="outline">
                   <Download className="h-4 w-4 mr-2" />
-                  Export CSV
+                  {t('pages:travel.expenses.export_csv', 'Export CSV')}
                 </Button>
               </div>
             </div>
@@ -282,7 +284,7 @@ export default function TravelExpensesPage() {
                     <DollarSign className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Expenses</p>
+                    <p className="text-sm text-muted-foreground">{t('pages:travel.expenses.summary.total', 'Total Expenses')}</p>
                     <p className="text-2xl font-bold">${totalExpenses.toFixed(2)}</p>
                   </div>
                 </div>
@@ -296,7 +298,7 @@ export default function TravelExpensesPage() {
                     <Users className="h-6 w-6 text-secondary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Per Person</p>
+                    <p className="text-sm text-muted-foreground">{t('pages:travel.expenses.summary.per_person', 'Per Person')}</p>
                     <p className="text-2xl font-bold">${(totalExpenses / 2).toFixed(2)}</p>
                   </div>
                 </div>
@@ -310,7 +312,7 @@ export default function TravelExpensesPage() {
                     <TrendingUp className="h-6 w-6 text-accent" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Transactions</p>
+                    <p className="text-sm text-muted-foreground">{t('pages:travel.expenses.summary.transactions', 'Transactions')}</p>
                     <p className="text-2xl font-bold">{expenses.length}</p>
                   </div>
                 </div>
@@ -323,7 +325,7 @@ export default function TravelExpensesPage() {
             <div className="lg:col-span-2 space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>All Expenses</CardTitle>
+                  <CardTitle>{t('pages:travel.expenses.list_title', 'All Expenses')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {expenses.map((expense) => (
@@ -344,7 +346,7 @@ export default function TravelExpensesPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Balance Summary</CardTitle>
+                  <CardTitle className="text-lg">{t('pages:travel.expenses.balance.title', 'Balance Summary')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3" data-testid="text-balance-summary">
                   {balances.map((balance) => (
@@ -358,8 +360,8 @@ export default function TravelExpensesPage() {
                         className={balance.amount > 0 ? "bg-green-500" : ""}
                       >
                         {balance.amount === 0
-                          ? "Settled"
-                          : `Owes $${Math.abs(balance.amount).toFixed(2)}`}
+                          ? t('pages:travel.expenses.balance.settled', 'Settled')
+                          : `${t('pages:travel.expenses.balance.owes', 'Owes')} $${Math.abs(balance.amount).toFixed(2)}`}
                       </Badge>
                     </div>
                   ))}

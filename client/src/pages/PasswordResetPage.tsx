@@ -16,8 +16,8 @@ export default function PasswordResetPage() {
     <SelfHealingErrorBoundary pageName="Password Reset" fallbackRoute="/login">
       <>
         <SEO
-          title="Reset Your Password"
-          description="Reset your Mundo Tango password securely. Enter your email and we'll send you a reset link."
+          title={t('pages:passwordReset.seoTitle', 'Reset Your Password')}
+          description={t('pages:passwordReset.seoDescription', "Reset your Mundo Tango password securely. Enter your email and we'll send you a reset link.")}
         />
 
         {/* Hero Section - 16:9 */}
@@ -42,15 +42,15 @@ export default function PasswordResetPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                 <Key className="w-3 h-3 mr-1.5" />
-                Account Security
+                {t('pages:passwordReset.accountSecurity', 'Account Security')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Reset Your Password
+                {t('pages:passwordReset.heroTitle', 'Reset Your Password')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                Enter your email and we'll send you a secure reset link
+                {t('pages:passwordReset.heroSubtitle', "Enter your email and we'll send you a secure reset link")}
               </p>
             </motion.div>
           </div>
@@ -69,34 +69,34 @@ export default function PasswordResetPage() {
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <Mail className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl font-serif">Enter Your Email</CardTitle>
+                  <CardTitle className="text-2xl font-serif">{t('pages:passwordReset.formTitle', 'Enter Your Email')}</CardTitle>
                   <p className="text-base text-muted-foreground leading-relaxed mt-2">
-                    We'll send you instructions to reset your password
+                    {t('pages:passwordReset.formDescription', "We'll send you instructions to reset your password")}
                   </p>
                 </CardHeader>
                 <CardContent className="p-8 space-y-6">
                   <div>
-                    <Label htmlFor="email" className="text-base">Email Address</Label>
+                    <Label htmlFor="email" className="text-base">{t('pages:passwordReset.emailLabel', 'Email Address')}</Label>
                     <Input 
                       id="email" 
                       type="email" 
-                      placeholder="you@example.com" 
+                      placeholder={t('pages:passwordReset.emailPlaceholder', 'you@example.com')}
                       className="mt-2 h-12"
                       data-testid="input-email" 
                     />
                   </div>
 
                   <Button className="w-full h-12 gap-2" data-testid="button-send">
-                    Send Reset Link
+                    {t('pages:passwordReset.sendResetLink', 'Send Reset Link')}
                     <ChevronRight className="h-5 w-5" />
                   </Button>
 
                   <div className="pt-6 border-t">
                     <p className="text-center text-base text-muted-foreground">
-                      Remember your password?{" "}
+                      {t('pages:passwordReset.rememberPassword', 'Remember your password?')}{" "}
                       <Link href="/login">
                         <a className="text-primary hover:underline font-semibold">
-                          Back to login
+                          {t('pages:passwordReset.backToLogin', 'Back to login')}
                         </a>
                       </Link>
                     </p>
@@ -106,9 +106,9 @@ export default function PasswordResetPage() {
                     <div className="flex items-start gap-3">
                       <Key className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                       <div className="space-y-2">
-                        <p className="font-semibold text-base">Security Note</p>
+                        <p className="font-semibold text-base">{t('pages:passwordReset.securityNote', 'Security Note')}</p>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          For your security, the reset link will expire in 1 hour. If you don't receive the email, check your spam folder.
+                          {t('pages:passwordReset.securityNoteText', "For your security, the reset link will expire in 1 hour. If you don't receive the email, check your spam folder.")}
                         </p>
                       </div>
                     </div>

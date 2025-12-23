@@ -19,8 +19,8 @@ export default function CreatePostPage() {
     queryClient.invalidateQueries({ queryKey: ['/api/feed/home'] });
     
     toast({
-      title: "Post created successfully!",
-      description: "Your post has been shared with your community.",
+      title: t('pages:createPost.postCreatedSuccess', 'Post created successfully!'),
+      description: t('pages:createPost.postSharedWithCommunity', 'Your post has been shared with your community.'),
     });
 
     // Redirect to feed after posting
@@ -30,12 +30,12 @@ export default function CreatePostPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Create Post" fallbackRoute="/feed">
+    <SelfHealingErrorBoundary pageName={t('pages:createPost.title', 'Create Post')} fallbackRoute="/feed">
       <SEO
-        title="Create Post - Mundo Tango"
-        description="Share your tango moments, memories, and thoughts with the community."
+        title={t('pages:createPost.seoTitle', 'Create Post - Mundo Tango')}
+        description={t('pages:createPost.seoDescription', 'Share your tango moments, memories, and thoughts with the community.')}
       />
-      <PageLayout title="Create Post" showBreadcrumbs>
+      <PageLayout title={t('pages:createPost.title', 'Create Post')} showBreadcrumbs>
         <div className="min-h-screen bg-background">
           {/* Hero Header */}
           <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-b">
@@ -48,11 +48,11 @@ export default function CreatePostPage() {
                 <div className="flex items-center gap-3 mb-4">
                   <Sparkles className="h-8 w-8 text-primary" />
                   <h1 className="text-4xl font-bold" data-testid="text-page-title">
-                    Create a Post
+                    {t('pages:createPost.createAPost', 'Create a Post')}
                   </h1>
                 </div>
                 <p className="text-muted-foreground">
-                  Share your tango journey with the community
+                  {t('pages:createPost.shareYourJourney', 'Share your tango journey with the community')}
                 </p>
               </motion.div>
             </div>
@@ -80,13 +80,13 @@ export default function CreatePostPage() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mt-8 p-6 bg-muted/50 rounded-lg"
             >
-              <h3 className="font-semibold mb-3">💡 Tips for great posts:</h3>
+              <h3 className="font-semibold mb-3">{t('pages:createPost.tipsTitle', 'Tips for great posts:')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Share authentic moments from your tango journey</li>
-                <li>• Tag friends to share memories together</li>
-                <li>• Use location tags to help others discover places</li>
-                <li>• Add relevant tags to make your post discoverable</li>
-                <li>• Choose your audience wisely - public, friends, or private</li>
+                <li>{t('pages:createPost.tip1', 'Share authentic moments from your tango journey')}</li>
+                <li>{t('pages:createPost.tip2', 'Tag friends to share memories together')}</li>
+                <li>{t('pages:createPost.tip3', 'Use location tags to help others discover places')}</li>
+                <li>{t('pages:createPost.tip4', 'Add relevant tags to make your post discoverable')}</li>
+                <li>{t('pages:createPost.tip5', 'Choose your audience wisely - public, friends, or private')}</li>
               </ul>
             </motion.div>
           </div>

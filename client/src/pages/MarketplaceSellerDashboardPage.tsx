@@ -49,28 +49,28 @@ export default function MarketplaceSellerDashboardPage() {
 
   const stats = [
     {
-      title: "Total Revenue",
+      title: t('pages:marketplaceSellerDashboard.totalRevenue', 'Total Revenue'),
       value: "$12,450",
       change: "+12.5%",
       icon: DollarSign,
       color: "from-[#40E0D0] to-[#1E90FF]",
     },
     {
-      title: "Total Sales",
+      title: t('pages:marketplaceSellerDashboard.totalSales', 'Total Sales'),
       value: "156",
       change: "+8.2%",
       icon: ShoppingCart,
       color: "from-[#1E90FF] to-[#0047AB]",
     },
     {
-      title: "Active Products",
+      title: t('pages:marketplaceSellerDashboard.activeProducts', 'Active Products'),
       value: products.length.toString(),
       change: "+3",
       icon: Package,
       color: "from-[#40E0D0] to-[#20B2AA]",
     },
     {
-      title: "Commission Earned",
+      title: t('pages:marketplaceSellerDashboard.commissionEarned', 'Commission Earned'),
       value: "$1,245",
       change: "+15.3%",
       icon: TrendingUp,
@@ -91,8 +91,8 @@ export default function MarketplaceSellerDashboardPage() {
     },
     onSuccess: () => {
       toast({
-        title: "Product created",
-        description: "Your product has been successfully listed",
+        title: t('pages:marketplaceSellerDashboard.productCreated', 'Product created'),
+        description: t('pages:marketplaceSellerDashboard.productCreatedDesc', 'Your product has been successfully listed'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/marketplace/my-items"] });
       setIsCreateProductOpen(false);
@@ -107,8 +107,8 @@ export default function MarketplaceSellerDashboardPage() {
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to create product",
+        title: t('common:error', 'Error'),
+        description: t('pages:marketplaceSellerDashboard.failedToCreate', 'Failed to create product'),
         variant: "destructive",
       });
     },
@@ -117,8 +117,8 @@ export default function MarketplaceSellerDashboardPage() {
   const handleCreateProduct = () => {
     if (!newProduct.title || !newProduct.description || !newProduct.price || !newProduct.category) {
       toast({
-        title: "Validation error",
-        description: "Please fill in all required fields",
+        title: t('pages:marketplaceSellerDashboard.validationError', 'Validation error'),
+        description: t('pages:marketplaceSellerDashboard.fillAllFields', 'Please fill in all required fields'),
         variant: "destructive",
       });
       return;
@@ -133,26 +133,26 @@ export default function MarketplaceSellerDashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-[#40E0D0] to-[#1E90FF] bg-clip-text text-transparent">
-              Seller Dashboard
+              {t('pages:marketplaceSellerDashboard.title', 'Seller Dashboard')}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Manage your products and track your sales performance
+              {t('pages:marketplaceSellerDashboard.subtitle', 'Manage your products and track your sales performance')}
             </p>
           </div>
           <Dialog open={isCreateProductOpen} onOpenChange={setIsCreateProductOpen}>
             <DialogTrigger asChild>
               <Button className="bg-gradient-to-r from-[#40E0D0] to-[#1E90FF] hover-elevate" data-testid="button-create-product">
                 <Plus className="w-4 h-4 mr-2" />
-                Create Product
+                {t('pages:marketplaceSellerDashboard.createProduct', 'Create Product')}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Create New Product</DialogTitle>
+                <DialogTitle>{t('pages:marketplaceSellerDashboard.createNewProduct', 'Create New Product')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Title *</Label>
+                  <Label htmlFor="title">{t('pages:marketplaceSellerDashboard.titleField', 'Title *')}</Label>
                   <Input
                     id="title"
                     value={newProduct.title}
@@ -161,7 +161,7 @@ export default function MarketplaceSellerDashboardPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description *</Label>
+                  <Label htmlFor="description">{t('pages:marketplaceSellerDashboard.descriptionField', 'Description *')}</Label>
                   <Textarea
                     id="description"
                     value={newProduct.description}
@@ -172,35 +172,35 @@ export default function MarketplaceSellerDashboardPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category *</Label>
+                    <Label htmlFor="category">{t('pages:marketplaceSellerDashboard.categoryField', 'Category *')}</Label>
                     <Select value={newProduct.category} onValueChange={(value) => setNewProduct({ ...newProduct, category: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder={t('pages:marketplaceSellerDashboard.selectCategory', 'Select category')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="digital">Digital Products</SelectItem>
-                        <SelectItem value="physical">Physical Goods</SelectItem>
-                        <SelectItem value="services">Services</SelectItem>
+                        <SelectItem value="digital">{t('pages:marketplaceSellerDashboard.digitalProducts', 'Digital Products')}</SelectItem>
+                        <SelectItem value="physical">{t('pages:marketplaceSellerDashboard.physicalGoods', 'Physical Goods')}</SelectItem>
+                        <SelectItem value="services">{t('pages:marketplaceSellerDashboard.services', 'Services')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="condition">Condition *</Label>
+                    <Label htmlFor="condition">{t('pages:marketplaceSellerDashboard.conditionField', 'Condition *')}</Label>
                     <Select value={newProduct.condition} onValueChange={(value) => setNewProduct({ ...newProduct, condition: value })}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select condition" />
+                        <SelectValue placeholder={t('pages:marketplaceSellerDashboard.selectCondition', 'Select condition')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="new">New</SelectItem>
-                        <SelectItem value="like-new">Like New</SelectItem>
-                        <SelectItem value="good">Good</SelectItem>
-                        <SelectItem value="fair">Fair</SelectItem>
+                        <SelectItem value="new">{t('pages:marketplaceSellerDashboard.conditionNew', 'New')}</SelectItem>
+                        <SelectItem value="like-new">{t('pages:marketplaceSellerDashboard.conditionLikeNew', 'Like New')}</SelectItem>
+                        <SelectItem value="good">{t('pages:marketplaceSellerDashboard.conditionGood', 'Good')}</SelectItem>
+                        <SelectItem value="fair">{t('pages:marketplaceSellerDashboard.conditionFair', 'Fair')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price (USD) *</Label>
+                  <Label htmlFor="price">{t('pages:marketplaceSellerDashboard.priceField', 'Price (USD) *')}</Label>
                   <Input
                     id="price"
                     type="number"
@@ -213,7 +213,7 @@ export default function MarketplaceSellerDashboardPage() {
                 </div>
                 <div className="flex gap-2 pt-4">
                   <Button variant="outline" onClick={() => setIsCreateProductOpen(false)} className="flex-1">
-                    Cancel
+                    {t('pages:marketplaceSellerDashboard.cancel', 'Cancel')}
                   </Button>
                   <Button
                     onClick={handleCreateProduct}
@@ -221,7 +221,7 @@ export default function MarketplaceSellerDashboardPage() {
                     className="flex-1 bg-gradient-to-r from-[#40E0D0] to-[#1E90FF] hover-elevate"
                     data-testid="button-submit-product"
                   >
-                    {createProductMutation.isPending ? "Creating..." : "Create Product"}
+                    {createProductMutation.isPending ? t('pages:marketplaceSellerDashboard.creating', 'Creating...') : t('pages:marketplaceSellerDashboard.createProduct', 'Create Product')}
                   </Button>
                 </div>
               </div>
@@ -249,7 +249,7 @@ export default function MarketplaceSellerDashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stat.value}</div>
-                  <p className="text-xs text-[#40E0D0]">{stat.change} from last month</p>
+                  <p className="text-xs text-[#40E0D0]">{stat.change} {t('pages:marketplaceSellerDashboard.fromLastMonth', 'from last month')}</p>
                 </CardContent>
               </Card>
             );
@@ -267,27 +267,27 @@ export default function MarketplaceSellerDashboardPage() {
           }}
         >
           <CardHeader>
-            <CardTitle>Your Products</CardTitle>
+            <CardTitle>{t('pages:marketplaceSellerDashboard.yourProducts', 'Your Products')}</CardTitle>
           </CardHeader>
           <CardContent>
             {productsLoading ? (
-              <div className="text-center py-8 text-muted-foreground">Loading products...</div>
+              <div className="text-center py-8 text-muted-foreground">{t('pages:marketplaceSellerDashboard.loadingProducts', 'Loading products...')}</div>
             ) : products.length === 0 ? (
               <div className="text-center py-8">
                 <Package className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">No products yet. Create your first product to get started!</p>
+                <p className="text-muted-foreground">{t('pages:marketplaceSellerDashboard.noProducts', 'No products yet. Create your first product to get started!')}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table data-testid="table-seller-products">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Views</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('pages:marketplaceSellerDashboard.productHeader', 'Product')}</TableHead>
+                      <TableHead>{t('pages:marketplaceSellerDashboard.categoryHeader', 'Category')}</TableHead>
+                      <TableHead>{t('pages:marketplaceSellerDashboard.priceHeader', 'Price')}</TableHead>
+                      <TableHead>{t('pages:marketplaceSellerDashboard.statusHeader', 'Status')}</TableHead>
+                      <TableHead>{t('pages:marketplaceSellerDashboard.viewsHeader', 'Views')}</TableHead>
+                      <TableHead className="text-right">{t('pages:marketplaceSellerDashboard.actionsHeader', 'Actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

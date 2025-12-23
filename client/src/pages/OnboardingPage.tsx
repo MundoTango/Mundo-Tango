@@ -44,7 +44,7 @@ const tangoRoles = [
 
 export default function OnboardingPage() {
   const { t } = useTranslation(["pages", "common"]);
-  const [, setLocation] = useLocation();
+  const [, setLocationNav] = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
   const [location, setLocationValue] = useState("");
   const [city, setCity] = useState("");
@@ -60,7 +60,7 @@ export default function OnboardingPage() {
       setCurrentStep(currentStep + 1);
     } else {
       // After onboarding, redirect to volunteer/support page
-      setLocation("/volunteer");
+      setLocationNav("/volunteer");
     }
   };
 
@@ -95,10 +95,10 @@ export default function OnboardingPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Onboarding" fallbackRoute="/">
-      <PageLayout title="Welcome to Mundo Tango!" showBreadcrumbs>
+      <PageLayout title={t('pages:onboarding.pageTitle', 'Welcome to Mundo Tango!')} showBreadcrumbs>
       <SEO
-        title="Welcome to Mundo Tango"
-        description="Complete your profile to join the global tango community"
+        title={t('pages:onboarding.seoTitle', 'Welcome to Mundo Tango')}
+        description={t('pages:onboarding.seoDescription', 'Complete your profile to join the global tango community')}
       />
 
       {/* Hero Section - z-50 ensures it displays above Replit dev banner */}
@@ -117,15 +117,15 @@ export default function OnboardingPage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-onboarding">
-              Getting Started
+              {t('pages:onboarding.gettingStarted', 'Getting Started')}
             </Badge>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4">
-              Welcome to Mundo Tango
+              {t('pages:onboarding.heroTitle', 'Welcome to Mundo Tango')}
             </h1>
             
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
-              Join the global tango community in just a few steps
+              {t('pages:onboarding.heroSubtitle', 'Join the global tango community in just a few steps')}
             </p>
           </motion.div>
         </div>
@@ -144,10 +144,10 @@ export default function OnboardingPage() {
             <Progress value={progress} className="h-3 mb-4" data-testid="progress-bar" />
             <div className="flex justify-between items-center">
               <p className="text-sm font-medium">
-                Step {currentStep} of {totalSteps}
+                {t('pages:onboarding.stepOf', 'Step {{current}} of {{total}}', { current: currentStep, total: totalSteps })}
               </p>
               <p className="text-sm text-muted-foreground">
-                {Math.round(progress)}% Complete
+                {Math.round(progress)}% {t('pages:onboarding.complete', 'Complete')}
               </p>
             </div>
           </motion.div>
@@ -172,9 +172,9 @@ export default function OnboardingPage() {
                       transition={{ delay: 0.2 }}
                     >
                       <Sparkles className="h-16 w-16 text-primary mx-auto mb-6" />
-                      <h2 className="text-3xl md:text-4xl font-serif font-bold">Welcome to Your Journey</h2>
+                      <h2 className="text-3xl md:text-4xl font-serif font-bold">{t('pages:onboarding.welcomeTitle', 'Welcome to Your Journey')}</h2>
                       <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
-                        Let's set up your profile so you can start connecting with the global tango community and discover events near you.
+                        {t('pages:onboarding.welcomeDescription', "Let's set up your profile so you can start connecting with the global tango community and discover events near you.")}
                       </p>
                     </motion.div>
                   )}
@@ -184,15 +184,15 @@ export default function OnboardingPage() {
                     <div className="space-y-8">
                       <div className="text-center">
                         <MapPin className="h-16 w-16 text-primary mx-auto mb-6" />
-                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Where Are You Dancing?</h2>
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:onboarding.locationTitle', 'Where Are You Dancing?')}</h2>
                         <p className="text-muted-foreground text-lg leading-relaxed">
-                          Help us connect you with local events and dancers
+                          {t('pages:onboarding.locationDescription', 'Help us connect you with local events and dancers')}
                         </p>
                       </div>
                       
                       <div className="space-y-6 max-w-md mx-auto">
                         <div className="space-y-3">
-                          <Label htmlFor="location" className="text-base font-medium">Your Location</Label>
+                          <Label htmlFor="location" className="text-base font-medium">{t('pages:onboarding.yourLocation', 'Your Location')}</Label>
                           <UnifiedLocationPicker
                             mode="city"
                             value={location}
@@ -201,7 +201,7 @@ export default function OnboardingPage() {
                               setCity(parsed?.city || '');
                               setCountry(parsed?.country || '');
                             }}
-                            placeholder="Search for your city..."
+                            placeholder={t('pages:onboarding.searchCity', 'Search for your city...')}
                           />
                         </div>
                         {city && country && (
@@ -227,10 +227,10 @@ export default function OnboardingPage() {
                       <div className="text-center">
                         <Camera className="h-16 w-16 text-primary mx-auto mb-6" />
                         <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-                          Add a Profile Photo <span className="text-base font-normal text-muted-foreground">(optional)</span>
+                          {t('pages:onboarding.photoTitle', 'Add a Profile Photo')} <span className="text-base font-normal text-muted-foreground">({t('pages:onboarding.optional', 'optional')})</span>
                         </h2>
                         <p className="text-muted-foreground text-lg leading-relaxed">
-                          A photo helps the community recognize you
+                          {t('pages:onboarding.photoDescription', 'A photo helps the community recognize you')}
                         </p>
                       </div>
 
@@ -262,7 +262,7 @@ export default function OnboardingPage() {
                           data-testid="input-photo"
                         />
                         <Button variant="ghost" onClick={() => handleNext()} data-testid="button-skip-photo">
-                          Skip for now
+                          {t('pages:onboarding.skipForNow', 'Skip for now')}
                         </Button>
                       </div>
                     </div>
@@ -273,9 +273,9 @@ export default function OnboardingPage() {
                     <div className="space-y-8">
                       <div className="text-center">
                         <Heart className="h-16 w-16 text-primary mx-auto mb-6" />
-                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">How Do You Participate in Tango?</h2>
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:onboarding.rolesTitle', 'How Do You Participate in Tango?')}</h2>
                         <p className="text-muted-foreground text-lg leading-relaxed">
-                          Select all that apply (you can add more later)
+                          {t('pages:onboarding.rolesDescription', 'Select all that apply (you can add more later)')}
                         </p>
                       </div>
 
@@ -301,7 +301,7 @@ export default function OnboardingPage() {
                                   <IconComponent className="w-6 h-6" style={{ color: role.color }} />
                                 </div>
                               </div>
-                              <div className="text-xs font-medium leading-tight">{role.label}</div>
+                              <div className="text-xs font-medium leading-tight">{t(`pages:onboarding.role.${role.id}`, role.label)}</div>
                             </motion.button>
                           );
                         })}
@@ -314,7 +314,7 @@ export default function OnboardingPage() {
                           animate={{ opacity: 1 }}
                         >
                           <p className="text-sm text-muted-foreground">
-                            {selectedRoles.length} role{selectedRoles.length > 1 ? 's' : ''} selected
+                            {t('pages:onboarding.rolesSelected', '{{count}} role(s) selected', { count: selectedRoles.length })}
                           </p>
                         </motion.div>
                       )}
@@ -329,9 +329,9 @@ export default function OnboardingPage() {
                           <Sparkles className="h-16 w-16" style={{ color: '#40E0D0' }} />
                         </div>
                       </div>
-                      <h2 className="text-3xl md:text-4xl font-serif font-bold">Ready for a Quick Tour?</h2>
+                      <h2 className="text-3xl md:text-4xl font-serif font-bold">{t('pages:onboarding.tourTitle', 'Ready for a Quick Tour?')}</h2>
                       <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
-                        We'll show you around the platform so you can start connecting with the tango community right away.
+                        {t('pages:onboarding.tourDescription', "We'll show you around the platform so you can start connecting with the tango community right away.")}
                       </p>
                     </div>
                   )}
@@ -349,9 +349,9 @@ export default function OnboardingPage() {
                           <Sparkles className="h-16 w-16" style={{ color: '#EC4899' }} />
                         </motion.div>
                       </div>
-                      <h2 className="text-3xl md:text-4xl font-serif font-bold">You're All Set!</h2>
+                      <h2 className="text-3xl md:text-4xl font-serif font-bold">{t('pages:onboarding.completeTitle', "You're All Set!")}</h2>
                       <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
-                        Welcome to Mundo Tango. Let's start exploring and connecting with dancers worldwide!
+                        {t('pages:onboarding.completeDescription', "Welcome to Mundo Tango. Let's start exploring and connecting with dancers worldwide!")}
                       </p>
                     </div>
                   )}
@@ -368,7 +368,7 @@ export default function OnboardingPage() {
                   data-testid="button-prev"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Previous
+                  {t('pages:onboarding.previous', 'Previous')}
                 </Button>
 
                 <Button
@@ -376,7 +376,7 @@ export default function OnboardingPage() {
                   className="gap-2"
                   data-testid="button-next"
                 >
-                  {currentStep === totalSteps ? "Get Started" : "Next"}
+                  {currentStep === totalSteps ? t('pages:onboarding.getStarted', 'Get Started') : t('pages:onboarding.next', 'Next')}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>

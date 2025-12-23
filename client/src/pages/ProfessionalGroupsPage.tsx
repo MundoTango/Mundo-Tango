@@ -13,19 +13,19 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 
-const professionalCategories = [
-  { value: "all", label: "All Professionals", icon: Users },
-  { value: "teacher", label: "Teachers", icon: User },
-  { value: "dj", label: "DJs", icon: Music },
-  { value: "organizer", label: "Organizers", icon: Briefcase },
-  { value: "performer", label: "Performers", icon: Users },
-];
-
 export default function ProfessionalGroupsPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const { toast } = useToast();
+
+  const professionalCategories = [
+    { value: "all", label: t('pages:professionalGroups.allProfessionals', 'All Professionals'), icon: Users },
+    { value: "teacher", label: t('pages:professionalGroups.teachers', 'Teachers'), icon: User },
+    { value: "dj", label: t('pages:professionalGroups.djs', 'DJs'), icon: Music },
+    { value: "organizer", label: t('pages:professionalGroups.organizers', 'Organizers'), icon: Briefcase },
+    { value: "performer", label: t('pages:professionalGroups.performers', 'Performers'), icon: Users },
+  ];
 
   const { data: groups, isLoading } = useQuery<any[]>({
     queryKey: ["/api/groups", { 
@@ -39,10 +39,10 @@ export default function ProfessionalGroupsPage() {
     mutationFn: (groupId: number) => apiRequest(`/api/groups/${groupId}/join`, "POST"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
-      toast({ title: "Join request sent!" });
+      toast({ title: t('pages:professionalGroups.joinRequestSent', 'Join request sent!') });
     },
     onError: () => {
-      toast({ title: "Failed to send join request", variant: "destructive" });
+      toast({ title: t('pages:professionalGroups.joinRequestFailed', 'Failed to send join request'), variant: "destructive" });
     },
   });
 
@@ -51,8 +51,8 @@ export default function ProfessionalGroupsPage() {
       <div className="container mx-auto p-4 space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold" data-testid="heading-professional-groups">Professional Groups</h1>
-            <p className="text-muted-foreground">Connect with tango professionals worldwide</p>
+            <h1 className="text-3xl font-bold" data-testid="heading-professional-groups">{t('pages:professionalGroups.title', 'Professional Groups')}</h1>
+            <p className="text-muted-foreground">{t('pages:professionalGroups.subtitle', 'Connect with tango professionals worldwide')}</p>
           </div>
         </div>
 
@@ -74,7 +74,7 @@ export default function ProfessionalGroupsPage() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search professional groups..."
+            placeholder={t('pages:professionalGroups.searchPlaceholder', 'Search professional groups...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -138,15 +138,15 @@ export default function ProfessionalGroupsPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground line-clamp-3">
-                      {group.description || "Professional tango community"}
+                      {group.description || t('pages:professionalGroups.defaultDescription', 'Professional tango community')}
                     </p>
                     <div className="mt-4 flex items-center gap-2">
                       <Badge variant="secondary">
                         <Users className="h-3 w-3 mr-1" />
-                        {memberCount} members
+                        {memberCount} {t('pages:professionalGroups.members', 'members')}
                       </Badge>
                       {group.isPrivate && (
-                        <Badge variant="outline">Private</Badge>
+                        <Badge variant="outline">{t('pages:professionalGroups.private', 'Private')}</Badge>
                       )}
                     </div>
                   </CardContent>
@@ -158,7 +158,7 @@ export default function ProfessionalGroupsPage() {
                       disabled={joinMutation.isPending}
                       data-testid={`button-request-join-${group.id}`}
                     >
-                      {group.joinApproval === "approval" ? "Request to Join" : "Join Group"}
+                      {group.joinApproval === "approval" ? t('pages:professionalGroups.requestToJoin', 'Request to Join') : t('pages:professionalGroups.joinGroup', 'Join Group')}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -169,9 +169,9 @@ export default function ProfessionalGroupsPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <Briefcase className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No professional groups found</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('pages:professionalGroups.noGroupsFound', 'No professional groups found')}</h3>
               <p className="text-muted-foreground">
-                {searchQuery ? "Try adjusting your search filters" : "Check back later for new professional groups"}
+                {searchQuery ? t('pages:professionalGroups.tryAdjustingFilters', 'Try adjusting your search filters') : t('pages:professionalGroups.checkBackLater', 'Check back later for new professional groups')}
               </p>
             </CardContent>
           </Card>

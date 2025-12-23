@@ -16,10 +16,10 @@ export default function BillingPage() {
   ];
 
   return (
-    <SelfHealingErrorBoundary pageName="Billing & Invoices" fallbackRoute="/settings">
+    <SelfHealingErrorBoundary pageName={t('pages:billing.title', 'Billing & Invoices')} fallbackRoute="/settings">
       <SEO 
-        title="Billing & Invoices"
-        description="Manage your subscription, view payment history, and download invoices for your Mundo Tango account"
+        title={t('pages:billing.seoTitle', 'Billing & Invoices')}
+        description={t('pages:billing.seoDescription', 'Manage your subscription, view payment history, and download invoices for your Mundo Tango account')}
         ogImage="/og-image.png"
       />
       <div className="min-h-screen bg-background">
@@ -39,15 +39,15 @@ export default function BillingPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <CreditCard className="w-3 h-3 mr-1.5" />
-                Account Management
+                {t('pages:billing.accountManagement', 'Account Management')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
-                Billing & Invoices
+                {t('pages:billing.title', 'Billing & Invoices')}
               </h1>
               
               <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-                Manage your subscription and payment history
+                {t('pages:billing.subtitle', 'Manage your subscription and payment history')}
               </p>
             </motion.div>
           </div>
@@ -65,22 +65,22 @@ export default function BillingPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-xl font-serif">
                     <CreditCard className="h-5 w-5" />
-                    Current Plan
+                    {t('pages:billing.currentPlan', 'Current Plan')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-2xl font-bold font-serif">Pro Plan</span>
-                      <Badge data-testid="badge-status">Active</Badge>
+                      <span className="text-2xl font-bold font-serif">{t('pages:billing.proPlan', 'Pro Plan')}</span>
+                      <Badge data-testid="badge-status">{t('pages:billing.active', 'Active')}</Badge>
                     </div>
-                    <p className="text-muted-foreground">$9.99/month</p>
+                    <p className="text-muted-foreground">$9.99/{t('pages:billing.month', 'month')}</p>
                     <p className="text-sm text-muted-foreground">
-                      Next billing date: November 1, 2025
+                      {t('pages:billing.nextBillingDate', 'Next billing date: November 1, 2025')}
                     </p>
                     <div className="pt-4 space-x-2">
-                      <Button variant="outline" size="sm" data-testid="button-change-plan">Change Plan</Button>
-                      <Button variant="outline" size="sm" data-testid="button-cancel">Cancel</Button>
+                      <Button variant="outline" size="sm" data-testid="button-change-plan">{t('pages:billing.changePlan', 'Change Plan')}</Button>
+                      <Button variant="outline" size="sm" data-testid="button-cancel">{t('common:cancel', 'Cancel')}</Button>
                     </div>
                   </div>
                 </CardContent>
@@ -88,7 +88,7 @@ export default function BillingPage() {
 
               <Card className="hover-elevate">
                 <CardHeader>
-                  <CardTitle className="text-xl font-serif">Payment Method</CardTitle>
+                  <CardTitle className="text-xl font-serif">{t('pages:billing.paymentMethod', 'Payment Method')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between">
@@ -96,10 +96,10 @@ export default function BillingPage() {
                       <CreditCard className="h-8 w-8 text-muted-foreground" />
                       <div>
                         <p className="font-medium">•••• 4242</p>
-                        <p className="text-sm text-muted-foreground">Expires 12/26</p>
+                        <p className="text-sm text-muted-foreground">{t('pages:billing.expires', 'Expires 12/26')}</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" data-testid="button-update-payment">Update</Button>
+                    <Button variant="outline" size="sm" data-testid="button-update-payment">{t('pages:billing.update', 'Update')}</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -107,7 +107,7 @@ export default function BillingPage() {
 
             <Card className="overflow-hidden">
               <CardHeader>
-                <CardTitle className="text-2xl font-serif">Invoice History</CardTitle>
+                <CardTitle className="text-2xl font-serif">{t('pages:billing.invoiceHistory', 'Invoice History')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">

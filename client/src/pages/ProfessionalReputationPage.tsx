@@ -108,11 +108,11 @@ export default function ProfessionalReputationPage() {
   return (
     <SelfHealingErrorBoundary pageName="Professional Reputation" fallbackRoute="/profile">
       <SEO 
-        title="Professional Reputation"
-        description="View professional reputation score, reviews, ratings, badges, and verified credentials"
+        title={t('pages:professionalReputation.seoTitle', 'Professional Reputation')}
+        description={t('pages:professionalReputation.seoDescription', 'View professional reputation score, reviews, ratings, badges, and verified credentials')}
         ogImage="/og-image.png"
       />
-      <PageLayout title="Professional Reputation" showBreadcrumbs>
+      <PageLayout title={t('pages:professionalReputation.pageTitle', 'Professional Reputation')} showBreadcrumbs>
         <div className="container mx-auto p-6 space-y-6" data-testid="page-reputation">
           
           {/* Overall Score */}
@@ -120,11 +120,11 @@ export default function ProfessionalReputationPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Award className="h-6 w-6 text-yellow-500" />
-                Professional Reputation Score
+                {t('pages:professionalReputation.reputationScore', 'Professional Reputation Score')}
                 {reputation.verified && (
                   <Badge variant="default" className="ml-2">
                     <CheckCircle className="h-3 w-3 mr-1" />
-                    Verified
+                    {t('pages:professionalReputation.verified', 'Verified')}
                   </Badge>
                 )}
               </CardTitle>
@@ -139,35 +139,35 @@ export default function ProfessionalReputationPage() {
                     {renderStars(Math.round(reputation.overallScore))}
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Based on {reputation.totalReviews} reviews
+                    {t('pages:professionalReputation.basedOnReviews', 'Based on {{count}} reviews', { count: reputation.totalReviews })}
                   </p>
                 </div>
 
                 <div className="flex-1 space-y-4">
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">Teaching</span>
+                      <span className="text-sm font-medium">{t('pages:professionalReputation.teaching', 'Teaching')}</span>
                       <span className="text-sm font-bold">{reputation.categories.teaching}</span>
                     </div>
                     <Progress value={reputation.categories.teaching * 20} className="h-2" />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">Performance</span>
+                      <span className="text-sm font-medium">{t('pages:professionalReputation.performance', 'Performance')}</span>
                       <span className="text-sm font-bold">{reputation.categories.performance}</span>
                     </div>
                     <Progress value={reputation.categories.performance * 20} className="h-2" />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">Professionalism</span>
+                      <span className="text-sm font-medium">{t('pages:professionalReputation.professionalism', 'Professionalism')}</span>
                       <span className="text-sm font-bold">{reputation.categories.professionalism}</span>
                     </div>
                     <Progress value={reputation.categories.professionalism * 20} className="h-2" />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">Communication</span>
+                      <span className="text-sm font-medium">{t('pages:professionalReputation.communication', 'Communication')}</span>
                       <span className="text-sm font-bold">{reputation.categories.communication}</span>
                     </div>
                     <Progress value={reputation.categories.communication * 20} className="h-2" />
@@ -182,7 +182,7 @@ export default function ProfessionalReputationPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Award className="h-5 w-5" />
-                Badges & Achievements
+                {t('pages:professionalReputation.badgesAchievements', 'Badges & Achievements')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -200,12 +200,12 @@ export default function ProfessionalReputationPage() {
           {/* Reviews */}
           <Card data-testid="card-reviews">
             <CardHeader>
-              <CardTitle>Student & Peer Reviews</CardTitle>
+              <CardTitle>{t('pages:professionalReputation.studentPeerReviews', 'Student & Peer Reviews')}</CardTitle>
             </CardHeader>
             <CardContent>
               {reviews.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
-                  No reviews yet
+                  {t('pages:professionalReputation.noReviews', 'No reviews yet')}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -254,7 +254,7 @@ export default function ProfessionalReputationPage() {
           <div className="grid gap-4 md:grid-cols-3">
             <Card data-testid="stat-total-reviews">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('pages:professionalReputation.totalReviews', 'Total Reviews')}</CardTitle>
                 <Star className="h-4 w-4 text-yellow-500" />
               </CardHeader>
               <CardContent>
@@ -264,19 +264,19 @@ export default function ProfessionalReputationPage() {
 
             <Card data-testid="stat-verified">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Verification</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('pages:professionalReputation.verification', 'Verification')}</CardTitle>
                 <CheckCircle className="h-4 w-4 text-green-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-500">
-                  {reputation.verified ? 'Verified' : 'Pending'}
+                  {reputation.verified ? t('pages:professionalReputation.verifiedStatus', 'Verified') : t('pages:professionalReputation.pendingStatus', 'Pending')}
                 </div>
               </CardContent>
             </Card>
 
             <Card data-testid="stat-badges">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Badges Earned</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('pages:professionalReputation.badgesEarned', 'Badges Earned')}</CardTitle>
                 <Award className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>

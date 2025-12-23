@@ -51,15 +51,15 @@ export default function MusicLibraryPage() {
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
               <Music2 className="w-3 h-3 mr-1.5" />
-              Curated Collection
+              {t('pages:musicLibrary.badge', 'Curated Collection')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-              Music Library
+              {t('pages:musicLibrary.title', 'Music Library')}
             </h1>
             
             <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-              Explore the finest collection of tango classics and contemporary compositions
+              {t('pages:musicLibrary.subtitle', 'Explore the finest collection of tango classics and contemporary compositions')}
             </p>
           </motion.div>
         </div>
@@ -78,7 +78,7 @@ export default function MusicLibraryPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search by artist, song, or orchestra..."
+                placeholder={t('pages:musicLibrary.searchPlaceholder', 'Search by artist, song, or orchestra...')}
                 className="pl-12 h-12 text-base"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -89,16 +89,16 @@ export default function MusicLibraryPage() {
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-8">
-              <TabsTrigger value="tango" data-testid="tab-tango">Tango</TabsTrigger>
-              <TabsTrigger value="vals" data-testid="tab-vals">Vals</TabsTrigger>
-              <TabsTrigger value="milonga" data-testid="tab-milonga">Milonga</TabsTrigger>
-              <TabsTrigger value="playlists" data-testid="tab-playlists">Playlists</TabsTrigger>
+              <TabsTrigger value="tango" data-testid="tab-tango">{t('pages:musicLibrary.tabTango', 'Tango')}</TabsTrigger>
+              <TabsTrigger value="vals" data-testid="tab-vals">{t('pages:musicLibrary.tabVals', 'Vals')}</TabsTrigger>
+              <TabsTrigger value="milonga" data-testid="tab-milonga">{t('pages:musicLibrary.tabMilonga', 'Milonga')}</TabsTrigger>
+              <TabsTrigger value="playlists" data-testid="tab-playlists">{t('pages:musicLibrary.tabPlaylists', 'Playlists')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value={activeTab}>
               {isLoading ? (
                 <div className="text-center py-16">
-                  <p className="text-muted-foreground">Loading music...</p>
+                  <p className="text-muted-foreground">{t('pages:musicLibrary.loading', 'Loading music...')}</p>
                 </div>
               ) : tracks && Array.isArray(tracks) && tracks.length > 0 ? (
                 <div className="space-y-3">
@@ -158,8 +158,8 @@ export default function MusicLibraryPage() {
                 <Card>
                   <CardContent className="py-16 text-center">
                     <Music className="mx-auto h-16 w-16 mb-6 opacity-30" />
-                    <h3 className="text-xl font-serif font-bold mb-2">No Music Found</h3>
-                    <p className="text-muted-foreground">Try a different search or category</p>
+                    <h3 className="text-xl font-serif font-bold mb-2">{t('pages:musicLibrary.noMusicFound', 'No Music Found')}</h3>
+                    <p className="text-muted-foreground">{t('pages:musicLibrary.tryDifferent', 'Try a different search or category')}</p>
                   </CardContent>
                 </Card>
               )}

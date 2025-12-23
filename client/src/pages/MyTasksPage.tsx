@@ -26,19 +26,19 @@ import { format, formatDistanceToNow } from "date-fns";
 type TaskStatus = "pending" | "in_progress" | "completed" | "blocked";
 type TaskPriority = "low" | "medium" | "high" | "critical";
 
-const statusConfig: Record<TaskStatus, { label: string; color: string; icon: typeof CheckCircle }> = {
-  pending: { label: "Pending", color: "bg-muted text-muted-foreground", icon: Clock },
-  in_progress: { label: "In Progress", color: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300", icon: Play },
-  completed: { label: "Completed", color: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300", icon: CheckCircle },
-  blocked: { label: "Blocked", color: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300", icon: AlertCircle }
-};
+const getStatusConfig = (t: (key: string, fallback: string) => string): Record<TaskStatus, { label: string; color: string; icon: typeof CheckCircle }> => ({
+  pending: { label: t('pages:myTasks.statusPending', 'Pending'), color: "bg-muted text-muted-foreground", icon: Clock },
+  in_progress: { label: t('pages:myTasks.statusInProgress', 'In Progress'), color: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300", icon: Play },
+  completed: { label: t('pages:myTasks.statusCompleted', 'Completed'), color: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300", icon: CheckCircle },
+  blocked: { label: t('pages:myTasks.statusBlocked', 'Blocked'), color: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300", icon: AlertCircle }
+});
 
-const priorityConfig: Record<TaskPriority, { label: string; color: string }> = {
-  low: { label: "Low", color: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" },
-  medium: { label: "Medium", color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300" },
-  high: { label: "High", color: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300" },
-  critical: { label: "Critical", color: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300" }
-};
+const getPriorityConfig = (t: (key: string, fallback: string) => string): Record<TaskPriority, { label: string; color: string }> => ({
+  low: { label: t('pages:myTasks.priorityLow', 'Low'), color: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" },
+  medium: { label: t('pages:myTasks.priorityMedium', 'Medium'), color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300" },
+  high: { label: t('pages:myTasks.priorityHigh', 'High'), color: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300" },
+  critical: { label: t('pages:myTasks.priorityCritical', 'Critical'), color: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300" }
+});
 
 export default function MyTasksPage() {
   const { t } = useTranslation(["pages", "common"]);
@@ -70,10 +70,10 @@ export default function MyTasksPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/volunteer/my-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["/api/volunteer/stats"] });
-      toast({ title: "Task updated", description: "Status has been changed successfully." });
+      toast({ title: t('pages:myTasks.taskUpdated', 'Task updated'), description: t('pages:myTasks.statusChangedSuccess', 'Status has been changed successfully.') });
     },
     onError: () => {
-      toast({ title: "Error", description: "Failed to update task status.", variant: "destructive" });
+      toast({ title: t('common:error', 'Error'), description: t('pages:myTasks.failedToUpdateStatus', 'Failed to update task status.'), variant: "destructive" });
     }
   });
 
@@ -104,14 +104,14 @@ export default function MyTasksPage() {
             >
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h1 className="text-3xl font-bold" data-testid="page-title">My Tasks</h1>
+                  <h1 className="text-3xl font-bold" data-testid="page-title">{t('pages:myTasks.title', 'My Tasks')}</h1>
                   <p className="text-muted-foreground mt-1">
-                    Track your assignments and log your work hours
+                    {t('pages:myTasks.subtitle', 'Track your assignments and log your work hours')}
                   </p>
                 </div>
                 <Button data-testid="button-log-time">
                   <Timer className="h-4 w-4 mr-2" />
-                  Log Time
+                  {t('pages:myTasks.logTime', 'Log Time')}
                 </Button>
               </div>
             </motion.div>
@@ -131,7 +131,7 @@ export default function MyTasksPage() {
                     </div>
                     <div>
                       <p className="text-2xl font-bold">{stats?.totalTasks || 0}</p>
-                      <p className="text-sm text-muted-foreground">Total Tasks</p>
+                      <p className="text-sm text-muted-foreground">{t('pages:myTasks.totalTasks', 'Total Tasks')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -145,7 +145,7 @@ export default function MyTasksPage() {
                     </div>
                     <div>
                       <p className="text-2xl font-bold">{stats?.completedTasks || 0}</p>
-                      <p className="text-sm text-muted-foreground">Completed</p>
+                      <p className="text-sm text-muted-foreground">{t('pages:myTasks.completed', 'Completed')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -159,7 +159,7 @@ export default function MyTasksPage() {
                     </div>
                     <div>
                       <p className="text-2xl font-bold">{stats?.hoursLogged?.toFixed(1) || "0.0"}</p>
-                      <p className="text-sm text-muted-foreground">Hours Logged</p>
+                      <p className="text-sm text-muted-foreground">{t('pages:myTasks.hoursLogged', 'Hours Logged')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -173,7 +173,7 @@ export default function MyTasksPage() {
                     </div>
                     <div>
                       <p className="text-2xl font-bold">{stats?.activeStreak || 0}</p>
-                      <p className="text-sm text-muted-foreground">Day Streak</p>
+                      <p className="text-sm text-muted-foreground">{t('pages:myTasks.dayStreak', 'Day Streak')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -190,7 +190,7 @@ export default function MyTasksPage() {
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Completion Rate</span>
+                    <span className="text-sm font-medium">{t('pages:myTasks.completionRate', 'Completion Rate')}</span>
                     <span className="text-sm text-muted-foreground">{completionRate}%</span>
                   </div>
                   <Progress value={completionRate} className="h-2" data-testid="progress-completion" />
@@ -210,17 +210,17 @@ export default function MyTasksPage() {
                   <Card>
                     <CardHeader>
                       <div className="flex items-center justify-between">
-                        <CardTitle>Tasks</CardTitle>
+                        <CardTitle>{t('pages:myTasks.tasks', 'Tasks')}</CardTitle>
                         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
                           <TabsList>
                             <TabsTrigger value="active" data-testid="tab-active">
-                              Active
+                              {t('pages:myTasks.tabActive', 'Active')}
                             </TabsTrigger>
                             <TabsTrigger value="all" data-testid="tab-all">
-                              All
+                              {t('pages:myTasks.tabAll', 'All')}
                             </TabsTrigger>
                             <TabsTrigger value="completed" data-testid="tab-completed">
-                              Completed
+                              {t('pages:myTasks.tabCompleted', 'Completed')}
                             </TabsTrigger>
                           </TabsList>
                         </Tabs>
@@ -236,14 +236,14 @@ export default function MyTasksPage() {
                       ) : filteredTasks.length === 0 ? (
                         <div className="text-center py-12" data-testid="empty-state">
                           <ListTodo className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                          <h3 className="font-semibold text-lg mb-2">No tasks yet</h3>
+                          <h3 className="font-semibold text-lg mb-2">{t('pages:myTasks.noTasksYet', 'No tasks yet')}</h3>
                           <p className="text-muted-foreground mb-4">
                             {activeTab === "completed" 
-                              ? "You haven't completed any tasks yet. Keep going!"
-                              : "Tasks assigned to you will appear here."}
+                              ? t('pages:myTasks.noCompletedTasks', "You haven't completed any tasks yet. Keep going!")
+                              : t('pages:myTasks.tasksWillAppear', 'Tasks assigned to you will appear here.')}
                           </p>
                           <Button variant="outline" data-testid="button-browse-tasks">
-                            Browse Available Tasks
+                            {t('pages:myTasks.browseAvailable', 'Browse Available Tasks')}
                           </Button>
                         </div>
                       ) : (
@@ -282,13 +282,13 @@ export default function MyTasksPage() {
                                         {task.dueDate && (
                                           <span className="flex items-center gap-1">
                                             <Calendar className="h-3 w-3" />
-                                            Due {format(new Date(task.dueDate), "MMM d")}
+                                            {t('pages:myTasks.due', 'Due')} {format(new Date(task.dueDate), "MMM d")}
                                           </span>
                                         )}
                                         {task.estimatedHours && (
                                           <span className="flex items-center gap-1">
                                             <Timer className="h-3 w-3" />
-                                            {task.estimatedHours}h estimated
+                                            {t('pages:myTasks.hoursEstimated', '{{hours}}h estimated', { hours: task.estimatedHours })}
                                           </span>
                                         )}
                                         {task.category && (
@@ -319,7 +319,7 @@ export default function MyTasksPage() {
                                           data-testid={`button-start-${task.id}`}
                                         >
                                           <Play className="h-3 w-3 mr-1" />
-                                          Start
+                                          {t('pages:myTasks.start', 'Start')}
                                         </Button>
                                       )}
                                       {task.status === "in_progress" && (
@@ -331,7 +331,7 @@ export default function MyTasksPage() {
                                             data-testid={`button-complete-${task.id}`}
                                           >
                                             <CheckCircle className="h-3 w-3 mr-1" />
-                                            Complete
+                                            {t('pages:myTasks.complete', 'Complete')}
                                           </Button>
                                           <Button 
                                             size="sm" 
@@ -341,7 +341,7 @@ export default function MyTasksPage() {
                                             data-testid={`button-block-${task.id}`}
                                           >
                                             <AlertCircle className="h-3 w-3 mr-1" />
-                                            Blocked
+                                            {t('pages:myTasks.blocked', 'Blocked')}
                                           </Button>
                                         </>
                                       )}
@@ -351,7 +351,7 @@ export default function MyTasksPage() {
                                         data-testid={`button-log-time-${task.id}`}
                                       >
                                         <Timer className="h-3 w-3 mr-1" />
-                                        Log Time
+                                        {t('pages:myTasks.logTimeBtn', 'Log Time')}
                                       </Button>
                                     </div>
                                   )}
@@ -375,15 +375,15 @@ export default function MyTasksPage() {
                 >
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">Recent Activity</CardTitle>
-                      <CardDescription>Your work log history</CardDescription>
+                      <CardTitle className="text-lg">{t('pages:myTasks.recentActivity', 'Recent Activity')}</CardTitle>
+                      <CardDescription>{t('pages:myTasks.workLogHistory', 'Your work log history')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       {!workLogs || workLogs.length === 0 ? (
                         <div className="text-center py-8" data-testid="empty-activity">
                           <Timer className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                           <p className="text-sm text-muted-foreground">
-                            No activity logged yet
+                            {t('pages:myTasks.noActivityYet', 'No activity logged yet')}
                           </p>
                         </div>
                       ) : (
@@ -393,7 +393,7 @@ export default function MyTasksPage() {
                               <div key={log.id} className="flex gap-3" data-testid={`activity-${log.id}`}>
                                 <div className="w-2 h-2 mt-2 rounded-full bg-primary" />
                                 <div className="flex-1">
-                                  <p className="text-sm font-medium">{log.description || "Work logged"}</p>
+                                  <p className="text-sm font-medium">{log.description || t('pages:myTasks.workLogged', 'Work logged')}</p>
                                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <span>{log.hoursWorked}h</span>
                                     <span>•</span>
@@ -408,7 +408,7 @@ export default function MyTasksPage() {
                     </CardContent>
                     <CardFooter>
                       <Button variant="outline" className="w-full" data-testid="button-view-all-activity">
-                        View All Activity
+                        {t('pages:myTasks.viewAllActivity', 'View All Activity')}
                       </Button>
                     </CardFooter>
                   </Card>
@@ -425,22 +425,22 @@ export default function MyTasksPage() {
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Target className="h-5 w-5 text-primary" />
-                        Tips for Success
+                        {t('pages:myTasks.tipsTitle', 'Tips for Success')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <ul className="space-y-2 text-sm">
                         <li className="flex items-start gap-2">
                           <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
-                          <span>Log your time daily to maintain your streak</span>
+                          <span>{t('pages:myTasks.tip1', 'Log your time daily to maintain your streak')}</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
-                          <span>Focus on one task at a time for better quality</span>
+                          <span>{t('pages:myTasks.tip2', 'Focus on one task at a time for better quality')}</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
-                          <span>Ask questions early if you're blocked</span>
+                          <span>{t('pages:myTasks.tip3', "Ask questions early if you're blocked")}</span>
                         </li>
                       </ul>
                     </CardContent>

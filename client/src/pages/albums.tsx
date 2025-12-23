@@ -100,14 +100,14 @@ export default function Albums() {
       setIsCreateDialogOpen(false);
       createForm.reset();
       toast({
-        title: "Album created",
-        description: "Your album has been created successfully.",
+        title: t('pages:albums.albumCreated', 'Album created'),
+        description: t('pages:albums.albumCreatedDesc', 'Your album has been created successfully.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to create album. Please try again.",
+        title: t('common:error', 'Error'),
+        description: t('pages:albums.createError', 'Failed to create album. Please try again.'),
         variant: "destructive",
       });
     },
@@ -123,14 +123,14 @@ export default function Albums() {
       setEditingAlbum(null);
       editForm.reset();
       toast({
-        title: "Album updated",
-        description: "Your album has been updated successfully.",
+        title: t('pages:albums.albumUpdated', 'Album updated'),
+        description: t('pages:albums.albumUpdatedDesc', 'Your album has been updated successfully.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to update album. Please try again.",
+        title: t('common:error', 'Error'),
+        description: t('pages:albums.updateError', 'Failed to update album. Please try again.'),
         variant: "destructive",
       });
     },
@@ -145,14 +145,14 @@ export default function Albums() {
       queryClient.invalidateQueries({ queryKey: ["/api/media/albums"] });
       setDeleteConfirmAlbum(null);
       toast({
-        title: "Album deleted",
-        description: "Your album has been deleted successfully.",
+        title: t('pages:albums.albumDeleted', 'Album deleted'),
+        description: t('pages:albums.albumDeletedDesc', 'Your album has been deleted successfully.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to delete album. Please try again.",
+        title: t('common:error', 'Error'),
+        description: t('pages:albums.deleteError', 'Failed to delete album. Please try again.'),
         variant: "destructive",
       });
     },
@@ -182,9 +182,9 @@ export default function Albums() {
     <div className="container mx-auto p-6 max-w-7xl">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">My Albums</h1>
+          <h1 className="text-3xl font-bold">{t('pages:albums.title', 'My Albums')}</h1>
           <p className="text-muted-foreground mt-1">
-            Organize your photos and videos into albums
+            {t('pages:albums.subtitle', 'Organize your photos and videos into albums')}
           </p>
         </div>
         <Button
@@ -192,7 +192,7 @@ export default function Albums() {
           data-testid="button-create-album"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Create Album
+          {t('pages:albums.createAlbum', 'Create Album')}
         </Button>
       </div>
 
@@ -211,13 +211,13 @@ export default function Albums() {
       ) : albums.length === 0 ? (
         <Card className="p-12">
           <div className="text-center">
-            <h3 className="text-lg font-semibold mb-2">No albums yet</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('pages:albums.noAlbums', 'No albums yet')}</h3>
             <p className="text-muted-foreground mb-6">
-              Create your first album to organize your media
+              {t('pages:albums.noAlbumsDesc', 'Create your first album to organize your media')}
             </p>
             <Button onClick={() => setIsCreateDialogOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              Create Album
+              {t('pages:albums.createAlbum', 'Create Album')}
             </Button>
           </div>
         </Card>
@@ -285,9 +285,9 @@ export default function Albums() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create Album</DialogTitle>
+            <DialogTitle>{t('pages:albums.createAlbum', 'Create Album')}</DialogTitle>
             <DialogDescription>
-              Create a new album to organize your photos and videos
+              {t('pages:albums.createAlbumDesc', 'Create a new album to organize your photos and videos')}
             </DialogDescription>
           </DialogHeader>
           <Form {...createForm}>
@@ -300,11 +300,11 @@ export default function Albums() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Album Name</FormLabel>
+                    <FormLabel>{t('pages:albums.albumName', 'Album Name')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="e.g., Buenos Aires 2024"
+                        placeholder={t('pages:albums.albumNamePlaceholder', 'e.g., Buenos Aires 2024')}
                         data-testid="input-album-name"
                       />
                     </FormControl>
@@ -317,11 +317,11 @@ export default function Albums() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description (Optional)</FormLabel>
+                    <FormLabel>{t('pages:albums.descriptionOptional', 'Description (Optional)')}</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
-                        placeholder="Describe your album..."
+                        placeholder={t('pages:albums.descriptionPlaceholder', 'Describe your album...')}
                         rows={3}
                         data-testid="input-album-description"
                       />
@@ -335,7 +335,7 @@ export default function Albums() {
                 name="privacy"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Privacy</FormLabel>
+                    <FormLabel>{t('pages:albums.privacy', 'Privacy')}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger data-testid="select-album-privacy">
@@ -343,9 +343,9 @@ export default function Albums() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="public">Public</SelectItem>
-                        <SelectItem value="friends">Friends Only</SelectItem>
-                        <SelectItem value="private">Private</SelectItem>
+                        <SelectItem value="public">{t('pages:albums.public', 'Public')}</SelectItem>
+                        <SelectItem value="friends">{t('pages:albums.friendsOnly', 'Friends Only')}</SelectItem>
+                        <SelectItem value="private">{t('pages:albums.private', 'Private')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -359,10 +359,10 @@ export default function Albums() {
                   onClick={() => setIsCreateDialogOpen(false)}
                   disabled={createMutation.isPending}
                 >
-                  Cancel
+                  {t('common:cancel', 'Cancel')}
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending} data-testid="button-submit-create">
-                  {createMutation.isPending ? "Creating..." : "Create Album"}
+                  {createMutation.isPending ? t('pages:albums.creating', 'Creating...') : t('pages:albums.createAlbum', 'Create Album')}
                 </Button>
               </DialogFooter>
             </form>
@@ -374,9 +374,9 @@ export default function Albums() {
       <Dialog open={!!editingAlbum} onOpenChange={(open) => !open && setEditingAlbum(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Album</DialogTitle>
+            <DialogTitle>{t('pages:albums.editAlbum', 'Edit Album')}</DialogTitle>
             <DialogDescription>
-              Update your album details
+              {t('pages:albums.editAlbumDesc', 'Update your album details')}
             </DialogDescription>
           </DialogHeader>
           <Form {...editForm}>
@@ -391,7 +391,7 @@ export default function Albums() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Album Name</FormLabel>
+                    <FormLabel>{t('pages:albums.albumName', 'Album Name')}</FormLabel>
                     <FormControl>
                       <Input {...field} data-testid="input-edit-album-name" />
                     </FormControl>
@@ -404,7 +404,7 @@ export default function Albums() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t('pages:albums.description', 'Description')}</FormLabel>
                     <FormControl>
                       <Textarea {...field} rows={3} data-testid="input-edit-album-description" />
                     </FormControl>
@@ -417,7 +417,7 @@ export default function Albums() {
                 name="privacy"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Privacy</FormLabel>
+                    <FormLabel>{t('pages:albums.privacy', 'Privacy')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger data-testid="select-edit-album-privacy">
@@ -425,9 +425,9 @@ export default function Albums() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="public">Public</SelectItem>
-                        <SelectItem value="friends">Friends Only</SelectItem>
-                        <SelectItem value="private">Private</SelectItem>
+                        <SelectItem value="public">{t('pages:albums.public', 'Public')}</SelectItem>
+                        <SelectItem value="friends">{t('pages:albums.friendsOnly', 'Friends Only')}</SelectItem>
+                        <SelectItem value="private">{t('pages:albums.private', 'Private')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -441,10 +441,10 @@ export default function Albums() {
                   onClick={() => setEditingAlbum(null)}
                   disabled={updateMutation.isPending}
                 >
-                  Cancel
+                  {t('common:cancel', 'Cancel')}
                 </Button>
                 <Button type="submit" disabled={updateMutation.isPending} data-testid="button-submit-edit">
-                  {updateMutation.isPending ? "Updating..." : "Update Album"}
+                  {updateMutation.isPending ? t('pages:albums.updating', 'Updating...') : t('pages:albums.updateAlbum', 'Update Album')}
                 </Button>
               </DialogFooter>
             </form>
@@ -459,10 +459,9 @@ export default function Albums() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Album</DialogTitle>
+            <DialogTitle>{t('pages:albums.deleteAlbum', 'Delete Album')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{deleteConfirmAlbum?.name}"? This action cannot be
-              undone. The media files will not be deleted, only the album.
+              {t('pages:albums.deleteAlbumConfirm', 'Are you sure you want to delete "{{name}}"? This action cannot be undone. The media files will not be deleted, only the album.', { name: deleteConfirmAlbum?.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -471,7 +470,7 @@ export default function Albums() {
               onClick={() => setDeleteConfirmAlbum(null)}
               disabled={deleteMutation.isPending}
             >
-              Cancel
+              {t('common:cancel', 'Cancel')}
             </Button>
             <Button
               variant="destructive"
@@ -479,7 +478,7 @@ export default function Albums() {
               disabled={deleteMutation.isPending}
               data-testid="button-confirm-delete"
             >
-              {deleteMutation.isPending ? "Deleting..." : "Delete Album"}
+              {deleteMutation.isPending ? t('pages:albums.deleting', 'Deleting...') : t('pages:albums.deleteAlbum', 'Delete Album')}
             </Button>
           </DialogFooter>
         </DialogContent>

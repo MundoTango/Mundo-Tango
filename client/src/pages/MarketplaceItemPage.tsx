@@ -18,7 +18,7 @@ export default function MarketplaceItemPage() {
           <div>
             <div className="aspect-square bg-muted mb-4 overflow-hidden rounded-lg">
               <div className="flex items-center justify-center h-full bg-gradient-to-br from-primary/20 to-primary/5">
-                <p className="text-muted-foreground">Product Image</p>
+                <p className="text-muted-foreground">{t('pages:marketplaceItem.productImage', 'Product Image')}</p>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-2">
@@ -31,8 +31,8 @@ export default function MarketplaceItemPage() {
           <div className="space-y-6">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Badge>Like New</Badge>
-                <Badge variant="outline">Shoes</Badge>
+                <Badge>{t('pages:marketplaceItem.likeNew', 'Like New')}</Badge>
+                <Badge variant="outline">{t('pages:marketplaceItem.shoes', 'Shoes')}</Badge>
               </div>
               
               <p className="text-4xl font-bold text-primary mb-4">$150</p>
@@ -40,7 +40,7 @@ export default function MarketplaceItemPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Seller Information</CardTitle>
+                <CardTitle className="text-base">{t('pages:marketplaceItem.sellerInfo', 'Seller Information')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-3 mb-4">
@@ -49,18 +49,18 @@ export default function MarketplaceItemPage() {
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-semibold">Jane Doe</p>
-                    <p className="text-sm text-muted-foreground">Member since 2023</p>
+                    <p className="font-semibold">{t('pages:marketplaceItem.sellerName', 'Jane Doe')}</p>
+                    <p className="text-sm text-muted-foreground">{t('pages:marketplaceItem.memberSince', 'Member since 2023')}</p>
                   </div>
                 </div>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-                    New York, NY
+                    {t('pages:marketplaceItem.location', 'New York, NY')}
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
-                    Posted 2 days ago
+                    {t('pages:marketplaceItem.posted2Days', 'Posted 2 days ago')}
                   </div>
                 </div>
               </CardContent>
@@ -68,13 +68,11 @@ export default function MarketplaceItemPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Description</CardTitle>
+                <CardTitle className="text-base">{t('pages:marketplaceItem.description', 'Description')}</CardTitle>
               </CardHeader>
               <CardContent className="text-muted-foreground">
                 <p>
-                  Beautiful professional tango shoes in excellent condition. Barely worn, like new.
-                  Comfortable and elegant design perfect for social dancing or performances.
-                  Size 8 (US women's). Comes with original box.
+                  {t('pages:marketplaceItem.descriptionText', 'Beautiful professional tango shoes in excellent condition. Barely worn, like new. Comfortable and elegant design perfect for social dancing or performances. Size 8 (US women\'s). Comes with original box.')}
                 </p>
               </CardContent>
             </Card>
@@ -82,9 +80,9 @@ export default function MarketplaceItemPage() {
             <div className="flex gap-3">
               <Button className="flex-1" data-testid="button-buy">
                 <ShoppingCart className="h-4 w-4 mr-2" />
-                Buy Now
+                {t('pages:marketplaceItem.buyNow', 'Buy Now')}
               </Button>
-              <Button variant="outline" data-testid="button-message">Message Seller</Button>
+              <Button variant="outline" data-testid="button-message">{t('pages:marketplaceItem.messageSeller', 'Message Seller')}</Button>
               <Button variant="outline" size="icon" data-testid="button-favorite">
                 <Heart className="h-4 w-4" />
               </Button>

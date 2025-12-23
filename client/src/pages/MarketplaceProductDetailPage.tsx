@@ -49,15 +49,15 @@ export default function MarketplaceProductDetailPage() {
     },
     onSuccess: () => {
       toast({
-        title: "Added to cart",
-        description: `${product.title} has been added to your cart`,
+        title: t('pages:marketplaceProductDetail.addedToCart', 'Added to cart'),
+        description: t('pages:marketplaceProductDetail.itemAddedDesc', '{{title}} has been added to your cart', { title: product.title }),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/marketplace/cart"] });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to add item to cart",
+        title: t('common:error', 'Error'),
+        description: t('pages:marketplaceProductDetail.failedToAdd', 'Failed to add item to cart'),
         variant: "destructive",
       });
     },
@@ -70,8 +70,8 @@ export default function MarketplaceProductDetailPage() {
   const handleAddToCart = () => {
     if (variants.length > 0 && Object.keys(selectedVariants).length !== variants.length) {
       toast({
-        title: "Please select all options",
-        description: "Select size, color, and other variants before adding to cart",
+        title: t('pages:marketplaceProductDetail.selectAllOptions', 'Please select all options'),
+        description: t('pages:marketplaceProductDetail.selectVariants', 'Select size, color, and other variants before adding to cart'),
         variant: "destructive",
       });
       return;
@@ -82,7 +82,7 @@ export default function MarketplaceProductDetailPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen p-6 flex items-center justify-center">
-        <div className="text-muted-foreground">Loading product...</div>
+        <div className="text-muted-foreground">{t('pages:marketplaceProductDetail.loading', 'Loading product...')}</div>
       </div>
     );
   }
@@ -94,11 +94,11 @@ export default function MarketplaceProductDetailPage() {
           <Link href="/marketplace">
             <Button variant="ghost" className="mb-6">
               <ChevronLeft className="w-4 h-4 mr-2" />
-              Back to Marketplace
+              {t('pages:marketplaceProductDetail.backToMarketplace', 'Back to Marketplace')}
             </Button>
           </Link>
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Product not found</p>
+            <p className="text-muted-foreground">{t('pages:marketplaceProductDetail.productNotFound', 'Product not found')}</p>
           </div>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function MarketplaceProductDetailPage() {
         <Link href="/marketplace">
           <Button variant="ghost">
             <ChevronLeft className="w-4 h-4 mr-2" />
-            Back to Marketplace
+            {t('pages:marketplaceProductDetail.backToMarketplace', 'Back to Marketplace')}
           </Button>
         </Link>
 
@@ -178,7 +178,7 @@ export default function MarketplaceProductDetailPage() {
 
             {/* Quantity Selector */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Quantity</label>
+              <label className="text-sm font-medium">{t('pages:marketplaceProductDetail.quantity', 'Quantity')}</label>
               <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
@@ -215,16 +215,16 @@ export default function MarketplaceProductDetailPage() {
                 data-testid="button-add-to-cart"
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
-                {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
+                {addToCartMutation.isPending ? t('pages:marketplaceProductDetail.adding', 'Adding...') : t('pages:marketplaceProductDetail.addToCart', 'Add to Cart')}
               </Button>
               <div className="grid grid-cols-2 gap-3">
                 <Button variant="outline" size="lg" data-testid="button-wishlist">
                   <Heart className="w-4 h-4 mr-2" />
-                  Wishlist
+                  {t('pages:marketplaceProductDetail.wishlist', 'Wishlist')}
                 </Button>
                 <Button variant="outline" size="lg" data-testid="button-share">
                   <Share2 className="w-4 h-4 mr-2" />
-                  Share
+                  {t('pages:marketplaceProductDetail.share', 'Share')}
                 </Button>
               </div>
             </div>
@@ -247,9 +247,9 @@ export default function MarketplaceProductDetailPage() {
         {/* Reviews and Related Products */}
         <Tabs defaultValue="reviews" className="w-full">
           <TabsList>
-            <TabsTrigger value="reviews">Reviews ({reviews.length})</TabsTrigger>
-            <TabsTrigger value="description">Full Description</TabsTrigger>
-            <TabsTrigger value="shipping">Shipping Info</TabsTrigger>
+            <TabsTrigger value="reviews">{t('pages:marketplaceProductDetail.reviews', 'Reviews')} ({reviews.length})</TabsTrigger>
+            <TabsTrigger value="description">{t('pages:marketplaceProductDetail.fullDescription', 'Full Description')}</TabsTrigger>
+            <TabsTrigger value="shipping">{t('pages:marketplaceProductDetail.shippingInfo', 'Shipping Info')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="reviews" className="space-y-4 mt-6">
@@ -267,7 +267,7 @@ export default function MarketplaceProductDetailPage() {
             >
               <CardContent className="p-6">
                 <p className="text-foreground/80 leading-relaxed whitespace-pre-line">
-                  {product.description || "No detailed description available."}
+                  {product.description || t('pages:marketplaceProductDetail.noDescription', 'No detailed description available.')}
                 </p>
               </CardContent>
             </Card>
@@ -282,20 +282,20 @@ export default function MarketplaceProductDetailPage() {
             >
               <CardContent className="p-6 space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Standard Shipping</span>
-                  <span className="font-medium">5-7 business days</span>
+                  <span className="text-muted-foreground">{t('pages:marketplaceProductDetail.standardShipping', 'Standard Shipping')}</span>
+                  <span className="font-medium">{t('pages:marketplaceProductDetail.standardDays', '5-7 business days')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Express Shipping</span>
-                  <span className="font-medium">2-3 business days</span>
+                  <span className="text-muted-foreground">{t('pages:marketplaceProductDetail.expressShipping', 'Express Shipping')}</span>
+                  <span className="font-medium">{t('pages:marketplaceProductDetail.expressDays', '2-3 business days')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">International</span>
-                  <span className="font-medium">10-14 business days</span>
+                  <span className="text-muted-foreground">{t('pages:marketplaceProductDetail.international', 'International')}</span>
+                  <span className="font-medium">{t('pages:marketplaceProductDetail.internationalDays', '10-14 business days')}</span>
                 </div>
                 <Separator className="bg-white/10 my-3" />
                 <p className="text-muted-foreground">
-                  Free shipping on orders over $50. International shipping available to most countries.
+                  {t('pages:marketplaceProductDetail.freeShippingNote', 'Free shipping on orders over $50. International shipping available to most countries.')}
                 </p>
               </CardContent>
             </Card>

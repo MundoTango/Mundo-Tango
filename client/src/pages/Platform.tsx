@@ -19,7 +19,7 @@ export default function Platform() {
   const [activeTab, setActiveTab] = useState("deploy");
 
   return (
-    <PageLayout title="Platform Dashboard" showBreadcrumbs>
+    <PageLayout title={t('pages:platform.pageTitle', 'Platform Dashboard')} showBreadcrumbs>
 <SelfHealingErrorBoundary pageName="Platform Dashboard" fallbackRoute="/feed">
 <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4">
@@ -29,39 +29,39 @@ export default function Platform() {
           <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9 gap-2">
             <TabsTrigger value="deploy" className="gap-2" data-testid="tab-deploy">
               <Rocket className="w-4 h-4" />
-              <span className="hidden sm:inline">Deploy</span>
+              <span className="hidden sm:inline">{t('pages:platform.deploy', 'Deploy')}</span>
             </TabsTrigger>
             <TabsTrigger value="secrets" className="gap-2" data-testid="tab-secrets">
               <Key className="w-4 h-4" />
-              <span className="hidden sm:inline">Secrets</span>
+              <span className="hidden sm:inline">{t('pages:platform.secrets', 'Secrets')}</span>
             </TabsTrigger>
             <TabsTrigger value="previews" className="gap-2" data-testid="tab-previews">
               <Eye className="w-4 h-4" />
-              <span className="hidden sm:inline">Previews</span>
+              <span className="hidden sm:inline">{t('pages:platform.previews', 'Previews')}</span>
             </TabsTrigger>
             <TabsTrigger value="domains" className="gap-2" data-testid="tab-domains">
               <Globe className="w-4 h-4" />
-              <span className="hidden sm:inline">Domains</span>
+              <span className="hidden sm:inline">{t('pages:platform.domains', 'Domains')}</span>
             </TabsTrigger>
             <TabsTrigger value="analytics" className="gap-2" data-testid="tab-analytics">
               <BarChart3 className="w-4 h-4" />
-              <span className="hidden sm:inline">Analytics</span>
+              <span className="hidden sm:inline">{t('pages:platform.analytics', 'Analytics')}</span>
             </TabsTrigger>
             <TabsTrigger value="team" className="gap-2" data-testid="tab-team">
               <Users className="w-4 h-4" />
-              <span className="hidden sm:inline">Team</span>
+              <span className="hidden sm:inline">{t('pages:platform.team', 'Team')}</span>
             </TabsTrigger>
             <TabsTrigger value="costs" className="gap-2" data-testid="tab-costs">
               <DollarSign className="w-4 h-4" />
-              <span className="hidden sm:inline">Costs</span>
+              <span className="hidden sm:inline">{t('pages:platform.costs', 'Costs')}</span>
             </TabsTrigger>
             <TabsTrigger value="backups" className="gap-2" data-testid="tab-backups">
               <Database className="w-4 h-4" />
-              <span className="hidden sm:inline">Backups</span>
+              <span className="hidden sm:inline">{t('pages:platform.backups', 'Backups')}</span>
             </TabsTrigger>
             <TabsTrigger value="cicd" className="gap-2" data-testid="tab-cicd">
               <GitBranch className="w-4 h-4" />
-              <span className="hidden sm:inline">CI/CD</span>
+              <span className="hidden sm:inline">{t('pages:platform.cicd', 'CI/CD')}</span>
             </TabsTrigger>
           </TabsList>
 

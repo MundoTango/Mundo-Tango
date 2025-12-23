@@ -20,13 +20,13 @@ export default function SettingsPage() {
   return (
     <>
       <SEO 
-        title={t('pages:settings.title', 'Settings')}
-        description={t('pages:settings.seoDescription', 'Redirecting to your profile settings...')}
+        title={t('pages:settings.settings', 'Settings')}
+        description={t('pages:settings.settingsSeoDescription', 'Redirecting to your profile settings...')}
       />
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-        <p className="text-muted-foreground">{t('pages:settings.redirecting', 'Taking you to your profile settings...')}</p>
-        <p className="text-sm text-muted-foreground/70">{t('pages:settings.integrated', 'Your settings are integrated into your profile for easy access')}</p>
+        <p className="text-muted-foreground">{t('pages:settings.redirectingToSettings', 'Taking you to your profile settings...')}</p>
+        <p className="text-sm text-muted-foreground/70">{t('pages:settings.integratedSettingsDesc', 'Your settings are integrated into your profile for easy access')}</p>
       </div>
     </>
   );

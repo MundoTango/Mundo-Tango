@@ -65,14 +65,14 @@ export default function ContentModerationPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/moderation/queue"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/moderation/stats"] });
       toast({
-        title: "Action completed",
-        description: "Moderation action applied successfully.",
+        title: t('pages:contentModeration.actionCompleted', 'Action completed'),
+        description: t('pages:contentModeration.actionAppliedSuccessfully', 'Moderation action applied successfully.'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to perform action",
+        title: t('common:error', 'Error'),
+        description: error.message || t('pages:contentModeration.failedToPerformAction', 'Failed to perform action'),
         variant: "destructive",
       });
     },
@@ -88,7 +88,7 @@ export default function ContentModerationPage() {
   const removedCount = stats?.removed || 0;
 
   return (
-    <SelfHealingErrorBoundary pageName="Content Moderation" fallbackRoute="/admin">
+    <SelfHealingErrorBoundary pageName={t('pages:contentModeration.title', 'Content Moderation')} fallbackRoute="/admin">
       <div className="min-h-screen bg-background">
         <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center" style={{
@@ -105,15 +105,15 @@ export default function ContentModerationPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <Shield className="w-3 h-3 mr-1.5" />
-                Admin Tools
+                {t('pages:contentModeration.adminTools', 'Admin Tools')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
-                Content Moderation
+                {t('pages:contentModeration.title', 'Content Moderation')}
               </h1>
               
               <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-                Review and manage reported content
+                {t('pages:contentModeration.subtitle', 'Review and manage reported content')}
               </p>
             </motion.div>
           </div>
@@ -128,13 +128,13 @@ export default function ContentModerationPage() {
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="mb-6">
                 <TabsTrigger value="pending" data-testid="tab-pending">
-                  Pending ({statsLoading ? "..." : pendingCount})
+                  {t('pages:contentModeration.pending', 'Pending')} ({statsLoading ? "..." : pendingCount})
                 </TabsTrigger>
                 <TabsTrigger value="approved" data-testid="tab-approved">
-                  Approved ({statsLoading ? "..." : approvedCount})
+                  {t('pages:contentModeration.approved', 'Approved')} ({statsLoading ? "..." : approvedCount})
                 </TabsTrigger>
                 <TabsTrigger value="removed" data-testid="tab-rejected">
-                  Removed ({statsLoading ? "..." : removedCount})
+                  {t('pages:contentModeration.removed', 'Removed')} ({statsLoading ? "..." : removedCount})
                 </TabsTrigger>
               </TabsList>
 
@@ -147,11 +147,11 @@ export default function ContentModerationPage() {
                   <Card className="py-12">
                     <CardContent className="flex flex-col items-center justify-center text-center">
                       <Inbox className="h-12 w-12 text-muted-foreground mb-4" />
-                      <h3 className="text-lg font-medium mb-2">No items to review</h3>
+                      <h3 className="text-lg font-medium mb-2">{t('pages:contentModeration.noItemsToReview', 'No items to review')}</h3>
                       <p className="text-muted-foreground">
                         {activeTab === "pending" 
-                          ? "All caught up! No pending moderation items."
-                          : `No ${activeTab} items found.`}
+                          ? t('pages:contentModeration.allCaughtUp', 'All caught up! No pending moderation items.')
+                          : t('pages:contentModeration.noItemsFound', 'No {{status}} items found.', { status: activeTab })}
                       </p>
                     </CardContent>
                   </Card>
@@ -172,12 +172,12 @@ export default function ContentModerationPage() {
                               <div className="flex items-start justify-between gap-2">
                                 <div>
                                   <CardTitle className="text-lg font-serif">
-                                    {queueItem.contentType} Report
+                                    {t('pages:contentModeration.report', '{{type}} Report', { type: queueItem.contentType })}
                                   </CardTitle>
                                   <p className="text-sm text-muted-foreground">
                                     {queueItem.createdAt 
-                                      ? `Reported ${formatDistanceToNow(new Date(queueItem.createdAt), { addSuffix: true })}`
-                                      : "Recently reported"}
+                                      ? t('pages:contentModeration.reported', 'Reported {{time}}', { time: formatDistanceToNow(new Date(queueItem.createdAt), { addSuffix: true }) })
+                                      : t('pages:contentModeration.recentlyReported', 'Recently reported')}
                                   </p>
                                 </div>
                                 <Badge variant="destructive">
@@ -188,7 +188,7 @@ export default function ContentModerationPage() {
                             </CardHeader>
                             <CardContent className="space-y-4">
                               <p className="text-muted-foreground">
-                                {queueItem.description || `Content ID: ${queueItem.contentId}`}
+                                {queueItem.description || t('pages:contentModeration.contentId', 'Content ID: {{id}}', { id: queueItem.contentId })}
                               </p>
                               {activeTab === "pending" && (
                                 <div className="flex gap-2">
@@ -200,7 +200,7 @@ export default function ContentModerationPage() {
                                     disabled={moderationMutation.isPending}
                                   >
                                     <CheckCircle className="h-4 w-4 mr-2" />
-                                    Approve
+                                    {t('pages:contentModeration.approve', 'Approve')}
                                   </Button>
                                   <Button 
                                     variant="destructive" 
@@ -210,7 +210,7 @@ export default function ContentModerationPage() {
                                     disabled={moderationMutation.isPending}
                                   >
                                     <XCircle className="h-4 w-4 mr-2" />
-                                    Remove
+                                    {t('pages:contentModeration.remove', 'Remove')}
                                   </Button>
                                 </div>
                               )}

@@ -32,121 +32,131 @@ interface HelpTopic {
   category: string;
 }
 
-const helpTopics: HelpTopic[] = [
+const getHelpTopics = (t: any): HelpTopic[] => [
   {
     id: "1",
-    title: "Getting Started Guide",
-    description: "Learn the basics of Mundo Tango in 5 minutes",
+    title: t('pages:helpCenter.gettingStartedGuide', 'Getting Started Guide'),
+    description: t('pages:helpCenter.gettingStartedDesc', 'Learn the basics of Mundo Tango in 5 minutes'),
     icon: Book,
     link: "/help/getting-started",
-    category: "Beginner"
+    category: t('pages:helpCenter.beginner', 'Beginner')
   },
   {
     id: "2",
-    title: "Finding Events",
-    description: "How to discover and RSVP to tango events near you",
+    title: t('pages:helpCenter.findingEvents', 'Finding Events'),
+    description: t('pages:helpCenter.findingEventsDesc', 'How to discover and RSVP to tango events near you'),
     icon: Calendar,
     link: "/help/events",
-    category: "Features"
+    category: t('pages:helpCenter.features', 'Features')
   },
   {
     id: "3",
-    title: "Connecting with Dancers",
-    description: "Send friend requests, join groups, and build your network",
+    title: t('pages:helpCenter.connectingWithDancers', 'Connecting with Dancers'),
+    description: t('pages:helpCenter.connectingWithDancersDesc', 'Send friend requests, join groups, and build your network'),
     icon: Users,
     link: "/help/community",
-    category: "Features"
+    category: t('pages:helpCenter.features', 'Features')
   },
   {
     id: "4",
-    title: "Finding Teachers & Venues",
-    description: "Browse instructors and milongas in your area",
+    title: t('pages:helpCenter.findingTeachersVenues', 'Finding Teachers & Venues'),
+    description: t('pages:helpCenter.findingTeachersVenuesDesc', 'Browse instructors and milongas in your area'),
     icon: MapPin,
     link: "/help/teachers-venues",
-    category: "Features"
+    category: t('pages:helpCenter.features', 'Features')
   },
   {
     id: "5",
-    title: "Video Tutorials",
-    description: "Watch step-by-step guides for all platform features",
+    title: t('pages:helpCenter.videoTutorials', 'Video Tutorials'),
+    description: t('pages:helpCenter.videoTutorialsDesc', 'Watch step-by-step guides for all platform features'),
     icon: Video,
     link: "/tutorials",
-    category: "Video"
+    category: t('pages:helpCenter.video', 'Video')
   },
   {
     id: "6",
-    title: "Account Settings",
-    description: "Manage your profile, privacy, and notification preferences",
+    title: t('pages:helpCenter.accountSettings', 'Account Settings'),
+    description: t('pages:helpCenter.accountSettingsDesc', 'Manage your profile, privacy, and notification preferences'),
     icon: FileText,
     link: "/help/account",
-    category: "Account"
+    category: t('pages:helpCenter.account', 'Account')
   },
   {
     id: "7",
-    title: "Subscriptions & Billing",
-    description: "Learn about premium features and payment options",
+    title: t('pages:helpCenter.subscriptionsBilling', 'Subscriptions & Billing'),
+    description: t('pages:helpCenter.subscriptionsBillingDesc', 'Learn about premium features and payment options'),
     icon: FileText,
     link: "/help/subscriptions",
-    category: "Account"
+    category: t('pages:helpCenter.account', 'Account')
   },
   {
     id: "8",
-    title: "Hosting Your Home",
-    description: "List your home for traveling tango dancers",
+    title: t('pages:helpCenter.hostingYourHome', 'Hosting Your Home'),
+    description: t('pages:helpCenter.hostingYourHomeDesc', 'List your home for traveling tango dancers'),
     icon: MapPin,
     link: "/help/hosting",
-    category: "Advanced"
+    category: t('pages:helpCenter.advanced', 'Advanced')
   },
   {
     id: "9",
-    title: "Marketplace",
-    description: "Buy and sell tango shoes, clothing, and merchandise",
+    title: t('pages:helpCenter.marketplace', 'Marketplace'),
+    description: t('pages:helpCenter.marketplaceDesc', 'Buy and sell tango shoes, clothing, and merchandise'),
     icon: FileText,
     link: "/help/marketplace",
-    category: "Advanced"
+    category: t('pages:helpCenter.advanced', 'Advanced')
   },
   {
     id: "10",
-    title: "Safety & Reporting",
-    description: "How to report inappropriate content or users",
+    title: t('pages:helpCenter.safetyReporting', 'Safety & Reporting'),
+    description: t('pages:helpCenter.safetyReportingDesc', 'How to report inappropriate content or users'),
     icon: HelpCircle,
     link: "/help/safety",
-    category: "Safety"
+    category: t('pages:helpCenter.safety', 'Safety')
   }
 ];
 
-const videoTutorials = [
+const getVideoTutorials = (t: any) => [
   {
     id: "v1",
-    title: "Platform Overview (3:24)",
+    title: t('pages:helpCenter.platformOverview', 'Platform Overview (3:24)'),
     thumbnail: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=225",
     duration: "3:24"
   },
   {
     id: "v2",
-    title: "Creating Your Profile (2:15)",
+    title: t('pages:helpCenter.creatingYourProfile', 'Creating Your Profile (2:15)'),
     thumbnail: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400&h=225",
     duration: "2:15"
   },
   {
     id: "v3",
-    title: "Finding Events Near You (4:10)",
+    title: t('pages:helpCenter.findingEventsNearYou', 'Finding Events Near You (4:10)'),
     thumbnail: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=225",
     duration: "4:10"
   },
   {
     id: "v4",
-    title: "Joining Groups (1:45)",
+    title: t('pages:helpCenter.joiningGroups', 'Joining Groups (1:45)'),
     thumbnail: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=225",
     duration: "1:45"
   }
 ];
 
-const categories = ["All", "Beginner", "Features", "Account", "Advanced", "Safety", "Video"];
-
 export default function HelpCenterPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  
+  const helpTopics = getHelpTopics(t);
+  const videoTutorials = getVideoTutorials(t);
+  const categories = [
+    t('pages:helpCenter.categoryAll', 'All'),
+    t('pages:helpCenter.beginner', 'Beginner'),
+    t('pages:helpCenter.features', 'Features'),
+    t('pages:helpCenter.account', 'Account'),
+    t('pages:helpCenter.advanced', 'Advanced'),
+    t('pages:helpCenter.safety', 'Safety'),
+    t('pages:helpCenter.video', 'Video')
+  ];
 
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
@@ -155,7 +165,7 @@ export default function HelpCenterPage() {
     transition: { duration: 0.6 }
   };
 
-  const filteredTopics = selectedCategory === "All" 
+  const filteredTopics = selectedCategory === t('pages:helpCenter.categoryAll', 'All')
     ? helpTopics 
     : helpTopics.filter(topic => topic.category === selectedCategory);
 
@@ -175,15 +185,15 @@ export default function HelpCenterPage() {
               transition={{ duration: 1, ease: "easeOut" }}
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-help">
-                Support Center
+                {t('pages:helpCenter.supportCenter', 'Support Center')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="text-help-center-title">
-                How Can We Help?
+                {t('pages:helpCenter.heroTitle', 'How Can We Help?')}
               </h1>
               
               <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-8 leading-relaxed">
-                Everything you need to know about Mundo Tango - from getting started to advanced features
+                {t('pages:helpCenter.heroDescription', 'Everything you need to know about Mundo Tango - from getting started to advanced features')}
               </p>
               
               {/* Search Bar */}
@@ -191,7 +201,7 @@ export default function HelpCenterPage() {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Search help articles..."
+                  placeholder={t('pages:helpCenter.searchPlaceholder', 'Search help articles...')}
                   className="w-full pl-12 pr-4 py-4 rounded-lg bg-white/95 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   data-testid="input-search"
                 />
@@ -203,16 +213,16 @@ export default function HelpCenterPage() {
         <div className="container mx-auto max-w-7xl px-6 py-16">
           {/* Quick Links */}
           <motion.div {...fadeInUp} className="mb-20">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-12 text-center">Popular Topics</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-12 text-center">{t('pages:helpCenter.popularTopics', 'Popular Topics')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="hover-elevate cursor-pointer group" data-testid="card-browse-articles">
                 <CardContent className="p-8 text-center">
                   <div className="mb-4 flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mx-auto group-hover:bg-primary/20 transition-colors">
                     <Book className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="font-serif font-bold text-xl mb-3">Browse Articles</h3>
+                  <h3 className="font-serif font-bold text-xl mb-3">{t('pages:helpCenter.browseArticles', 'Browse Articles')}</h3>
                   <p className="text-base text-muted-foreground leading-relaxed">
-                    Read detailed guides and tutorials
+                    {t('pages:helpCenter.browseArticlesDescription', 'Read detailed guides and tutorials')}
                   </p>
                 </CardContent>
               </Card>
@@ -222,9 +232,9 @@ export default function HelpCenterPage() {
                   <div className="mb-4 flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mx-auto group-hover:bg-primary/20 transition-colors">
                     <Video className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="font-serif font-bold text-xl mb-3">Video Tutorials</h3>
+                  <h3 className="font-serif font-bold text-xl mb-3">{t('pages:helpCenter.videoTutorials', 'Video Tutorials')}</h3>
                   <p className="text-base text-muted-foreground leading-relaxed">
-                    Watch step-by-step video guides
+                    {t('pages:helpCenter.videoTutorialsDescription', 'Watch step-by-step video guides')}
                   </p>
                 </CardContent>
               </Card>
@@ -234,9 +244,9 @@ export default function HelpCenterPage() {
                   <div className="mb-4 flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mx-auto group-hover:bg-primary/20 transition-colors">
                     <MessageCircle className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="font-serif font-bold text-xl mb-3">Contact Support</h3>
+                  <h3 className="font-serif font-bold text-xl mb-3">{t('pages:helpCenter.contactSupport', 'Contact Support')}</h3>
                   <p className="text-base text-muted-foreground leading-relaxed">
-                    Get help from our team
+                    {t('pages:helpCenter.contactSupportDescription', 'Get help from our team')}
                   </p>
                 </CardContent>
               </Card>
@@ -262,7 +272,7 @@ export default function HelpCenterPage() {
           {/* Help Topics Grid */}
           <motion.div className="mb-20">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-12 text-center">
-              {selectedCategory === "All" ? "All Help Topics" : `${selectedCategory} Topics`}
+              {selectedCategory === "All" ? t('pages:helpCenter.allHelpTopics', 'All Help Topics') : `${selectedCategory} ${t('pages:helpCenter.topics', 'Topics')}`}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredTopics.map((topic, index) => {
@@ -307,8 +317,8 @@ export default function HelpCenterPage() {
           {/* Video Tutorials */}
           <motion.div {...fadeInUp} className="mb-20">
             <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-4">Video Tutorials</h2>
-              <p className="text-lg text-muted-foreground">Watch step-by-step guides</p>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-4">{t('pages:helpCenter.videoTutorialsTitle', 'Video Tutorials')}</h2>
+              <p className="text-lg text-muted-foreground">{t('pages:helpCenter.watchGuides', 'Watch step-by-step guides')}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {videoTutorials.map((video, index) => (
@@ -343,7 +353,7 @@ export default function HelpCenterPage() {
             <div className="mt-12 text-center">
               <Button variant="outline" size="lg" asChild>
                 <a href="/tutorials" className="gap-2">
-                  View All Tutorials
+                  {t('pages:helpCenter.viewAllTutorials', 'View All Tutorials')}
                   <ChevronRight className="h-5 w-5" />
                 </a>
               </Button>
@@ -362,22 +372,22 @@ export default function HelpCenterPage() {
                 <div className="flex items-center justify-center h-20 w-20 rounded-full bg-primary/10 mx-auto mb-6">
                   <MessageCircle className="h-10 w-10 text-primary" />
                 </div>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-4">Still Need Help?</h2>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-4">{t('pages:helpCenter.stillNeedHelp', 'Still Need Help?')}</h2>
                 <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Our support team is here to help. Send us a message and we'll get back to you within 24 hours.
+                  {t('pages:helpCenter.supportMessage', "Our support team is here to help. Send us a message and we'll get back to you within 24 hours.")}
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Button size="lg" asChild data-testid="button-contact-support">
                     <a href="/contact" className="gap-2">
                       <Mail className="h-5 w-5" />
-                      Contact Support
+                      {t('pages:helpCenter.contactSupportButton', 'Contact Support')}
                       <ChevronRight className="h-5 w-5" />
                     </a>
                   </Button>
                   <Button size="lg" variant="outline" asChild>
                     <a href="/faq" className="gap-2">
                       <HelpCircle className="h-5 w-5" />
-                      View FAQ
+                      {t('pages:helpCenter.viewFaq', 'View FAQ')}
                     </a>
                   </Button>
                 </div>

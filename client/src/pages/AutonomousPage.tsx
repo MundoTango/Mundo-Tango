@@ -30,7 +30,7 @@ export default function AutonomousPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <Brain className="h-16 w-16 mx-auto mb-4 animate-pulse text-primary" />
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">{t('common:loading', 'Loading...')}</p>
         </div>
       </div>
     );
@@ -46,12 +46,10 @@ export default function AutonomousPage() {
         >
           <AlertCircle className="h-5 w-5 text-destructive" />
           <AlertTitle className="text-destructive font-semibold">
-            God Level Access Required
+            {t('pages:agents.godLevelAccessRequired', 'God Level Access Required')}
           </AlertTitle>
           <AlertDescription className="text-destructive-foreground mt-2">
-            This page is restricted to God Level (Tier 8) users only. The Autonomous Workflow
-            feature uses advanced AI capabilities and the MB.MD methodology to autonomously
-            build features and make code changes.
+            {t('pages:agents.restrictedAccessDescription', 'This page is restricted to God Level (Tier 8) users only. The Autonomous Workflow feature uses advanced AI capabilities and the MB.MD methodology to autonomously build features and make code changes.')}
           </AlertDescription>
           <div className="mt-4">
             <Button 
@@ -59,7 +57,7 @@ export default function AutonomousPage() {
               onClick={() => navigate("/feed")}
               data-testid="button-return-feed"
             >
-              Return to Feed
+              {t('pages:agents.returnToFeed', 'Return to Feed')}
             </Button>
           </div>
         </Alert>
@@ -68,22 +66,22 @@ export default function AutonomousPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
-              What is God Level?
+              {t('pages:agents.whatIsGodLevel', 'What is God Level?')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              God Level access grants you the highest tier of platform capabilities, including:
+              {t('pages:agents.godLevelCapabilities', 'God Level access grants you the highest tier of platform capabilities, including:')}
             </p>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li>Autonomous AI development with Mr. Blue</li>
-              <li>Full ESA Framework access for agent management</li>
-              <li>Platform administration and monitoring tools</li>
-              <li>Advanced deployment and CI/CD features</li>
-              <li>Priority AI processing and unlimited quotas</li>
+              <li>{t('pages:agents.autonomousAiDev', 'Autonomous AI development with Mr. Blue')}</li>
+              <li>{t('pages:agents.fullEsaFrameworkAccess', 'Full ESA Framework access for agent management')}</li>
+              <li>{t('pages:agents.platformAdminTools', 'Platform administration and monitoring tools')}</li>
+              <li>{t('pages:agents.advancedDeploymentFeatures', 'Advanced deployment and CI/CD features')}</li>
+              <li>{t('pages:agents.priorityAiProcessing', 'Priority AI processing and unlimited quotas')}</li>
             </ul>
             <p className="text-sm text-muted-foreground mt-4">
-              Contact platform administrators to learn more about God Level access.
+              {t('pages:agents.contactAdminGodLevel', 'Contact platform administrators to learn more about God Level access.')}
             </p>
           </CardContent>
         </Card>
@@ -115,13 +113,11 @@ export default function AutonomousPage() {
                     backgroundClip: 'text',
                   }}
                 >
-                  Autonomous Development
+                  {t('pages:agents.autonomousDevelopment', 'Autonomous Development')}
                 </h1>
               </div>
               <p className="text-lg text-muted-foreground max-w-3xl">
-                Leverage Mr. Blue's autonomous capabilities to build features using the MB.MD methodology.
-                Describe your requirements and watch as the AI decomposes tasks, generates code, validates changes,
-                and awaits your approval before applying them.
+                {t('pages:agents.autonomousDescription', "Leverage Mr. Blue's autonomous capabilities to build features using the MB.MD methodology. Describe your requirements and watch as the AI decomposes tasks, generates code, validates changes, and awaits your approval before applying them.")}
               </p>
             </div>
             <Badge 
@@ -130,7 +126,7 @@ export default function AutonomousPage() {
               data-testid="badge-god-level"
             >
               <Sparkles className="h-4 w-4 mr-2" />
-              God Level Only
+              {t('pages:agents.godLevelOnly', 'God Level Only')}
             </Badge>
           </div>
         </div>
@@ -140,30 +136,30 @@ export default function AutonomousPage() {
           <CardHeader>
             <CardTitle className="text-xl flex items-center gap-2">
               <Brain className="h-5 w-5 text-primary" />
-              MB.MD Methodology
+              {t('pages:agents.mbmdMethodology', 'MB.MD Methodology')}
             </CardTitle>
             <CardDescription>
-              Maximum Parallel Execution with Simultaneous Task Decomposition
+              {t('pages:agents.methodologySubtitle', 'Maximum Parallel Execution with Simultaneous Task Decomposition')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="space-y-1">
-                <h3 className="font-semibold text-sm">1. Task Decomposition</h3>
+                <h3 className="font-semibold text-sm">1. {t('pages:agents.taskDecomposition', 'Task Decomposition')}</h3>
                 <p className="text-xs text-muted-foreground">
-                  AI breaks down your request into atomic, parallelizable subtasks with dependency tracking
+                  {t('pages:agents.decompositionDesc', 'AI breaks down your request into atomic, parallelizable subtasks with dependency tracking')}
                 </p>
               </div>
               <div className="space-y-1">
-                <h3 className="font-semibold text-sm">2. Code Generation</h3>
+                <h3 className="font-semibold text-sm">2. {t('pages:agents.codeGeneration', 'Code Generation')}</h3>
                 <p className="text-xs text-muted-foreground">
-                  Generates production-ready code with explanations, following MT Ocean design system
+                  {t('pages:agents.codeGenDesc', 'Generates production-ready code with explanations, following MT Ocean design system')}
                 </p>
               </div>
               <div className="space-y-1">
-                <h3 className="font-semibold text-sm">3. Validation & Approval</h3>
+                <h3 className="font-semibold text-sm">3. {t('pages:agents.validationApproval', 'Validation & Approval')}</h3>
                 <p className="text-xs text-muted-foreground">
-                  LSP validation checks for errors before requiring your approval to apply changes
+                  {t('pages:agents.validationDesc', 'LSP validation checks for errors before requiring your approval to apply changes')}
                 </p>
               </div>
             </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -67,6 +68,7 @@ const NOTIFICATIONS = [
 ];
 
 export default function NotificationsPrototypePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState("all");
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
 
@@ -79,8 +81,8 @@ export default function NotificationsPrototypePage() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Notifications | Mundo Tango"
-        description="Stay updated with your tango community activity. View likes, comments, friend requests, event invitations, and group updates. Never miss important connections."
+        title={t('pages:notificationsPrototype.seoTitle', 'Notifications | Mundo Tango')}
+        description={t('pages:notificationsPrototype.seoDescription', 'Stay updated with your tango community activity. View likes, comments, friend requests, event invitations, and group updates. Never miss important connections.')}
       />
       {/* Hero Header - Editorial Style */}
       <div className="relative h-[40vh] w-full overflow-hidden">
@@ -98,12 +100,12 @@ export default function NotificationsPrototypePage() {
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
               <Bell className="w-3 h-3 mr-1.5" />
-              Stay Updated
+              {t('pages:notificationsPrototype.stayUpdated', 'Stay Updated')}
             </Badge>
             
             <div className="flex items-center justify-center gap-3 mb-4">
               <h1 className="text-5xl md:text-6xl font-serif text-white font-bold leading-tight">
-                Notifications
+                {t('pages:notificationsPrototype.title', 'Notifications')}
               </h1>
               {unreadCount > 0 && (
                 <Badge className="text-lg px-3 py-1">{unreadCount}</Badge>
@@ -111,7 +113,7 @@ export default function NotificationsPrototypePage() {
             </div>
             
             <p className="text-lg text-white/80 max-w-xl mx-auto">
-              Stay connected with your community updates
+              {t('pages:notificationsPrototype.subtitle', 'Stay connected with your community updates')}
             </p>
           </motion.div>
         </div>
@@ -128,7 +130,7 @@ export default function NotificationsPrototypePage() {
             >
               <Button onClick={markAllRead} variant="outline">
                 <CheckCheck className="w-4 h-4 mr-2" />
-                Mark all as read
+                {t('pages:notificationsPrototype.markAllRead', 'Mark all as read')}
               </Button>
             </motion.div>
           )}
@@ -137,33 +139,33 @@ export default function NotificationsPrototypePage() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="mb-8">
               <TabsTrigger value="all">
-                All ({notifications.length})
+                {t('pages:notificationsPrototype.all', 'All')} ({notifications.length})
               </TabsTrigger>
               <TabsTrigger value="unread">
-                Unread ({unreadCount})
+                {t('pages:notificationsPrototype.unread', 'Unread')} ({unreadCount})
               </TabsTrigger>
-              <TabsTrigger value="likes">Likes</TabsTrigger>
-              <TabsTrigger value="comments">Comments</TabsTrigger>
-              <TabsTrigger value="social">Social</TabsTrigger>
+              <TabsTrigger value="likes">{t('pages:notificationsPrototype.likes', 'Likes')}</TabsTrigger>
+              <TabsTrigger value="comments">{t('pages:notificationsPrototype.comments', 'Comments')}</TabsTrigger>
+              <TabsTrigger value="social">{t('pages:notificationsPrototype.social', 'Social')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-4">
               {notifications.map((notification, index) => (
-                <NotificationCard key={notification.id} notification={notification} index={index} />
+                <NotificationCard key={notification.id} notification={notification} index={index} t={t} />
               ))}
             </TabsContent>
 
             <TabsContent value="unread" className="space-y-4">
               {notifications.filter(n => !n.read).length > 0 ? (
                 notifications.filter(n => !n.read).map((notification, index) => (
-                  <NotificationCard key={notification.id} notification={notification} index={index} />
+                  <NotificationCard key={notification.id} notification={notification} index={index} t={t} />
                 ))
               ) : (
                 <Card>
                   <CardContent className="py-16 text-center">
                     <CheckCheck className="mx-auto h-16 w-16 mb-6 opacity-30" />
-                    <h3 className="text-xl font-serif font-bold mb-2">All caught up!</h3>
-                    <p className="text-muted-foreground">You have no unread notifications</p>
+                    <h3 className="text-xl font-serif font-bold mb-2">{t('pages:notificationsPrototype.allCaughtUp', 'All caught up!')}</h3>
+                    <p className="text-muted-foreground">{t('pages:notificationsPrototype.noUnread', 'You have no unread notifications')}</p>
                   </CardContent>
                 </Card>
               )}
@@ -171,19 +173,19 @@ export default function NotificationsPrototypePage() {
 
             <TabsContent value="likes" className="space-y-4">
               {notifications.filter(n => n.type === "like").map((notification, index) => (
-                <NotificationCard key={notification.id} notification={notification} index={index} />
+                <NotificationCard key={notification.id} notification={notification} index={index} t={t} />
               ))}
             </TabsContent>
 
             <TabsContent value="comments" className="space-y-4">
               {notifications.filter(n => n.type === "comment").map((notification, index) => (
-                <NotificationCard key={notification.id} notification={notification} index={index} />
+                <NotificationCard key={notification.id} notification={notification} index={index} t={t} />
               ))}
             </TabsContent>
 
             <TabsContent value="social" className="space-y-4">
               {notifications.filter(n => ["friend", "event", "group"].includes(n.type)).map((notification, index) => (
-                <NotificationCard key={notification.id} notification={notification} index={index} />
+                <NotificationCard key={notification.id} notification={notification} index={index} t={t} />
               ))}
             </TabsContent>
           </Tabs>
@@ -193,7 +195,7 @@ export default function NotificationsPrototypePage() {
   );
 }
 
-function NotificationCard({ notification, index }: { notification: typeof NOTIFICATIONS[0]; index: number }) {
+function NotificationCard({ notification, index, t }: { notification: typeof NOTIFICATIONS[0]; index: number; t: any }) {
   const getIcon = (type: string) => {
     switch (type) {
       case "like": return <Heart className="w-5 h-5 text-red-500" />;
@@ -237,13 +239,13 @@ function NotificationCard({ notification, index }: { notification: typeof NOTIFI
               {/* Action Buttons for certain types */}
               {notification.type === "friend" && !notification.read && (
                 <div className="flex gap-2 mt-4">
-                  <Button size="sm">Accept</Button>
-                  <Button size="sm" variant="outline">Decline</Button>
+                  <Button size="sm">{t('pages:notificationsPrototype.accept', 'Accept')}</Button>
+                  <Button size="sm" variant="outline">{t('pages:notificationsPrototype.decline', 'Decline')}</Button>
                 </div>
               )}
               {notification.type === "event" && (
                 <div className="flex gap-2 mt-4">
-                  <Button size="sm">View Event</Button>
+                  <Button size="sm">{t('pages:notificationsPrototype.viewEvent', 'View Event')}</Button>
                 </div>
               )}
             </div>

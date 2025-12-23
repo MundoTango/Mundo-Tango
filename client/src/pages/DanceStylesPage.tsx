@@ -100,15 +100,15 @@ export default function DanceStylesPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Music className="w-3 h-3 mr-1.5" />
-                  Dance Styles
+                  {t('pages:danceStyles.badge', 'Dance Styles')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Tango Dance Styles
+                  {t('pages:danceStyles.title', 'Tango Dance Styles')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Explore the rich variety of Argentine tango, each style with its own character and beauty
+                  {t('pages:danceStyles.subtitle', 'Explore the rich variety of Argentine tango, each style with its own character and beauty')}
                 </p>
               </motion.div>
             </div>
@@ -121,10 +121,7 @@ export default function DanceStylesPage() {
                 <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                   <CardContent className="p-8">
                     <p className="text-lg leading-relaxed">
-                      Argentine tango is rich with variety. While all styles share the same roots in Buenos Aires,
-                      each has developed its own character, music, and technique. Whether you prefer the intimate
-                      connection of salon style or the dynamic energy of nuevo, there's a tango style that speaks
-                      to you.
+                      {t('pages:danceStyles.introText', "Argentine tango is rich with variety. While all styles share the same roots in Buenos Aires, each has developed its own character, music, and technique. Whether you prefer the intimate connection of salon style or the dynamic energy of nuevo, there's a tango style that speaks to you.")}
                     </p>
                   </CardContent>
                 </Card>
@@ -162,7 +159,7 @@ export default function DanceStylesPage() {
                           </p>
 
                           <div>
-                            <h4 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">Key Characteristics:</h4>
+                            <h4 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">{t('pages:danceStyles.keyCharacteristics', 'Key Characteristics:')}</h4>
                             <div className="flex flex-wrap gap-2">
                               {style.characteristics.map((char, charIdx) => (
                                 <Badge key={charIdx} variant="outline">
@@ -173,7 +170,7 @@ export default function DanceStylesPage() {
                           </div>
 
                           <div className="pt-4 flex items-center text-primary font-medium">
-                            Learn More
+                            {t('pages:danceStyles.learnMore', 'Learn More')}
                             <ChevronRight className="h-4 w-4 ml-1" />
                           </div>
                         </CardContent>
@@ -187,18 +184,14 @@ export default function DanceStylesPage() {
               <motion.div {...fadeInUp} className="mt-12">
                 <Card className="overflow-hidden bg-primary/5 border-primary/20">
                   <CardHeader>
-                    <CardTitle className="text-2xl font-serif">Getting Started</CardTitle>
+                    <CardTitle className="text-2xl font-serif">{t('pages:danceStyles.gettingStarted', 'Getting Started')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 p-8">
                     <p className="text-base leading-relaxed">
-                      <strong className="text-foreground">New to tango?</strong> Most dancers start with tango salon, which is the
-                      foundation for all other styles. As you progress, you can explore vals, milonga,
-                      and eventually nuevo or fantasía.
+                      <strong className="text-foreground">{t('pages:danceStyles.newToTango', 'New to tango?')}</strong> {t('pages:danceStyles.newToTangoText', 'Most dancers start with tango salon, which is the foundation for all other styles. As you progress, you can explore vals, milonga, and eventually nuevo or fantasía.')}
                     </p>
                     <p className="text-base leading-relaxed">
-                      <strong className="text-foreground">Curious about a style?</strong> The best way to learn is to try it! Attend
-                      workshops, take classes, or visit milongas that specialize in different styles. Each
-                      brings its own joy and challenges.
+                      <strong className="text-foreground">{t('pages:danceStyles.curiousAboutStyle', 'Curious about a style?')}</strong> {t('pages:danceStyles.curiousAboutStyleText', 'The best way to learn is to try it! Attend workshops, take classes, or visit milongas that specialize in different styles. Each brings its own joy and challenges.')}
                     </p>
                   </CardContent>
                 </Card>

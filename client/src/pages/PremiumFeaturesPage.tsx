@@ -13,8 +13,8 @@ export default function PremiumFeaturesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <SEO
-        title="Premium AI Features - Mundo Tango"
-        description="Unlock God Level AI capabilities: D-ID talking avatars, ElevenLabs voice generation, OpenAI realtime voice, and advanced cost tracking."
+        title={t('pages:premiumFeatures.seoTitle', 'Premium AI Features - Mundo Tango')}
+        description={t('pages:premiumFeatures.seoDescription', 'Unlock God Level AI capabilities: D-ID talking avatars, ElevenLabs voice generation, OpenAI realtime voice, and advanced cost tracking.')}
       />
 
       {/* Header */}
@@ -27,14 +27,14 @@ export default function PremiumFeaturesPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-3xl font-bold" data-testid="heading-premium-features">
-                  Premium AI Features
+                  {t('pages:premiumFeatures.title', 'Premium AI Features')}
                 </h1>
                 <Badge variant="default" className="bg-gradient-to-r from-primary to-secondary">
-                  God Level
+                  {t('pages:premiumFeatures.godLevel', 'God Level')}
                 </Badge>
               </div>
               <p className="text-muted-foreground mt-1">
-                Advanced AI-powered content generation and analytics
+                {t('pages:premiumFeatures.subtitle', 'Advanced AI-powered content generation and analytics')}
               </p>
             </div>
           </div>
@@ -57,11 +57,11 @@ export default function PremiumFeaturesPage() {
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="video" data-testid="tab-video">
                   <Sparkles className="w-4 h-4 mr-2" />
-                  D-ID Video
+                  {t('pages:premiumFeatures.didVideo', 'D-ID Video')}
                 </TabsTrigger>
                 <TabsTrigger value="voice" data-testid="tab-voice">
                   <Zap className="w-4 h-4 mr-2" />
-                  ElevenLabs Voice
+                  {t('pages:premiumFeatures.elevenLabsVoice', 'ElevenLabs Voice')}
                 </TabsTrigger>
               </TabsList>
 
@@ -71,25 +71,25 @@ export default function PremiumFeaturesPage() {
                 {/* Feature Highlights */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">What you can do with D-ID</CardTitle>
+                    <CardTitle className="text-base">{t('pages:premiumFeatures.whatYouCanDoWithDID', 'What you can do with D-ID')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">•</span>
-                        <span>Create talking avatar videos from any photo</span>
+                        <span>{t('pages:premiumFeatures.didFeature1', 'Create talking avatar videos from any photo')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">•</span>
-                        <span>Generate personalized video messages</span>
+                        <span>{t('pages:premiumFeatures.didFeature2', 'Generate personalized video messages')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">•</span>
-                        <span>Produce marketing content with AI presenters</span>
+                        <span>{t('pages:premiumFeatures.didFeature3', 'Produce marketing content with AI presenters')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">•</span>
-                        <span>Create educational video content at scale</span>
+                        <span>{t('pages:premiumFeatures.didFeature4', 'Create educational video content at scale')}</span>
                       </li>
                     </ul>
                   </CardContent>
@@ -102,25 +102,25 @@ export default function PremiumFeaturesPage() {
                 {/* Feature Highlights */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">What you can do with ElevenLabs</CardTitle>
+                    <CardTitle className="text-base">{t('pages:premiumFeatures.whatYouCanDoWithElevenLabs', 'What you can do with ElevenLabs')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">•</span>
-                        <span>Generate ultra-realistic text-to-speech in multiple voices</span>
+                        <span>{t('pages:premiumFeatures.elevenLabsFeature1', 'Generate ultra-realistic text-to-speech in multiple voices')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">•</span>
-                        <span>Create audiobooks and narrations</span>
+                        <span>{t('pages:premiumFeatures.elevenLabsFeature2', 'Create audiobooks and narrations')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">•</span>
-                        <span>Produce podcast content with AI voices</span>
+                        <span>{t('pages:premiumFeatures.elevenLabsFeature3', 'Produce podcast content with AI voices')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">•</span>
-                        <span>Support multiple languages and accents</span>
+                        <span>{t('pages:premiumFeatures.elevenLabsFeature4', 'Support multiple languages and accents')}</span>
                       </li>
                     </ul>
                   </CardContent>
@@ -136,15 +136,14 @@ export default function PremiumFeaturesPage() {
                     <Crown className="w-5 h-5 text-primary" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-semibold">God Level Subscription Required</h3>
+                    <h3 className="font-semibold">{t('pages:premiumFeatures.subscriptionRequired', 'God Level Subscription Required')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      These premium AI features require an active God Level subscription. 
-                      Monthly usage quotas apply to ensure fair use and cost control.
+                      {t('pages:premiumFeatures.subscriptionDescription', 'These premium AI features require an active God Level subscription. Monthly usage quotas apply to ensure fair use and cost control.')}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-3">
-                      <Badge variant="outline">D-ID: $0.10/video</Badge>
-                      <Badge variant="outline">ElevenLabs: $0.30/1000 chars</Badge>
-                      <Badge variant="outline">Quota: $100/month</Badge>
+                      <Badge variant="outline">{t('pages:premiumFeatures.didPricing', 'D-ID: $0.10/video')}</Badge>
+                      <Badge variant="outline">{t('pages:premiumFeatures.elevenLabsPricing', 'ElevenLabs: $0.30/1000 chars')}</Badge>
+                      <Badge variant="outline">{t('pages:premiumFeatures.quota', 'Quota: $100/month')}</Badge>
                     </div>
                   </div>
                 </div>

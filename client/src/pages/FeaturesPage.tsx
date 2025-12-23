@@ -148,27 +148,26 @@ export default function FeaturesPage() {
                   data-testid="badge-category"
                 >
                   <Sparkles className="w-3 h-3 mr-1.5" />
-                  Platform Features
+                  {t('pages:features.badge', 'Platform Features')}
                 </Badge>
 
                 <h1
                   className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6"
                   data-testid="text-page-title"
                 >
-                  Everything You Need
+                  {t('pages:features.title', 'Everything You Need')}
                   <br />
-                  for Your Tango Journey
+                  {t('pages:features.titleLine2', 'for Your Tango Journey')}
                 </h1>
 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8" data-testid="text-page-subtitle">
-                  From social connections to learning resources, discover all the tools
-                  that make Mundo Tango the world's premier tango community platform
+                  {t('pages:features.subtitle', "From social connections to learning resources, discover all the tools that make Mundo Tango the world's premier tango community platform")}
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/register">
                     <Button size="lg" className="text-lg" data-testid="button-get-started">
-                      Get Started Free
+                      {t('pages:features.getStartedFree', 'Get Started Free')}
                     </Button>
                   </Link>
                   <Link href="/pricing">
@@ -178,7 +177,7 @@ export default function FeaturesPage() {
                       className="text-lg bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
                       data-testid="button-view-pricing"
                     >
-                      View Pricing
+                      {t('pages:features.viewPricing', 'View Pricing')}
                     </Button>
                   </Link>
                 </div>
@@ -260,10 +259,10 @@ export default function FeaturesPage() {
                 className="text-center"
               >
                 <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-                  Join the Global Tango Community
+                  {t('pages:features.communityTitle', 'Join the Global Tango Community')}
                 </h2>
                 <p className="text-xl text-muted-foreground">
-                  Connect with dancers worldwide and discover the passion of Argentine tango
+                  {t('pages:features.communitySubtitle', 'Connect with dancers worldwide and discover the passion of Argentine tango')}
                 </p>
               </motion.div>
             </div>
@@ -281,16 +280,15 @@ export default function FeaturesPage() {
                 <Card className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20">
                   <CardContent className="p-12 text-center space-y-6">
                     <h2 className="text-4xl md:text-5xl font-serif font-bold">
-                      Ready to Start Your Journey?
+                      {t('pages:features.ctaTitle', 'Ready to Start Your Journey?')}
                     </h2>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                      Join the global tango community today. Connect with dancers,
-                      discover events, and immerse yourself in the world of tango.
+                      {t('pages:features.ctaSubtitle', 'Join the global tango community today. Connect with dancers, discover events, and immerse yourself in the world of tango.')}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                       <Link href="/register">
                         <Button size="lg" className="text-lg" data-testid="button-cta-register">
-                          Get Started Free
+                          {t('pages:features.ctaGetStarted', 'Get Started Free')}
                         </Button>
                       </Link>
                       <Link href="/about">
@@ -300,7 +298,7 @@ export default function FeaturesPage() {
                           className="text-lg"
                           data-testid="button-cta-learn-more"
                         >
-                          Learn More
+                          {t('pages:features.ctaLearnMore', 'Learn More')}
                         </Button>
                       </Link>
                     </div>

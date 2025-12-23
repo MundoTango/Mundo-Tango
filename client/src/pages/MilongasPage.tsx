@@ -35,15 +35,15 @@ export default function MilongasPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Music className="w-3 h-3 mr-1.5" />
-                  Milongas
+                  {t('pages:milongas.badge', 'Milongas')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Find Your Milonga
+                  {t('pages:milongas.heroTitle', 'Find Your Milonga')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Discover tango social dances happening near you
+                  {t('pages:milongas.heroSubtitle', 'Discover tango social dances happening near you')}
                 </p>
               </motion.div>
             </div>
@@ -60,17 +60,14 @@ export default function MilongasPage() {
               >
                 <Card className="hover-elevate" data-testid="card-what-is">
                   <CardHeader>
-                    <CardTitle className="text-3xl font-serif">What is a Milonga?</CardTitle>
+                    <CardTitle className="text-3xl font-serif">{t('pages:milongas.whatIsTitle', 'What is a Milonga?')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 text-muted-foreground">
                     <p>
-                      A milonga is the heart of tango social life—a gathering where dancers come together 
-                      to enjoy an evening of tango, vals, and milonga music. Whether weekly regulars or 
-                      special themed events, milongas create the spaces where tango culture thrives.
+                      {t('pages:milongas.whatIsP1', 'A milonga is the heart of tango social life—a gathering where dancers come together to enjoy an evening of tango, vals, and milonga music. Whether weekly regulars or special themed events, milongas create the spaces where tango culture thrives.')}
                     </p>
                     <p>
-                      From intimate neighborhood milongas with 20 dancers to grand salons hosting hundreds, 
-                      each milonga has its own character, music selection, and community feel.
+                      {t('pages:milongas.whatIsP2', 'From intimate neighborhood milongas with 20 dancers to grand salons hosting hundreds, each milonga has its own character, music selection, and community feel.')}
                     </p>
                   </CardContent>
                 </Card>
@@ -86,10 +83,9 @@ export default function MilongasPage() {
                   <Card className="hover-elevate h-full" data-testid="card-weekly">
                     <CardContent className="p-8 space-y-3">
                       <Calendar className="h-10 w-10 text-primary" />
-                      <h3 className="text-2xl font-serif font-bold">Weekly Milongas</h3>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:milongas.weeklyTitle', 'Weekly Milongas')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Regular milongas are the backbone of local tango communities. Find your weekly home 
-                        base where you'll see familiar faces and build lasting connections.
+                        {t('pages:milongas.weeklyDescription', 'Regular milongas are the backbone of local tango communities. Find your weekly home base where you\'ll see familiar faces and build lasting connections.')}
                       </p>
                     </CardContent>
                   </Card>
@@ -104,10 +100,9 @@ export default function MilongasPage() {
                   <Card className="hover-elevate h-full" data-testid="card-special">
                     <CardContent className="p-8 space-y-3">
                       <Heart className="h-10 w-10 text-primary" />
-                      <h3 className="text-2xl font-serif font-bold">Special Events</h3>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:milongas.specialTitle', 'Special Events')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        From marathon milongas to themed nights (Golden Age, nuevo, queer tango), special 
-                        events add excitement and variety to the dance scene.
+                        {t('pages:milongas.specialDescription', 'From marathon milongas to themed nights (Golden Age, nuevo, queer tango), special events add excitement and variety to the dance scene.')}
                       </p>
                     </CardContent>
                   </Card>
@@ -123,13 +118,12 @@ export default function MilongasPage() {
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-cta">
                   <CardContent className="py-12 text-center">
                     <MapPin className="h-16 w-16 text-primary mx-auto mb-6" />
-                    <h3 className="text-4xl font-serif font-bold mb-4">Find Milongas Near You</h3>
+                    <h3 className="text-4xl font-serif font-bold mb-4">{t('pages:milongas.ctaTitle', 'Find Milongas Near You')}</h3>
                     <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                      Browse our comprehensive directory of milongas worldwide. Filter by location, 
-                      day of week, music style, and more.
+                      {t('pages:milongas.ctaDescription', 'Browse our comprehensive directory of milongas worldwide. Filter by location, day of week, music style, and more.')}
                     </p>
                     <Button size="lg" asChild data-testid="button-browse">
-                      <a href="/events?type=milonga">Browse Milongas</a>
+                      <a href="/events?type=milonga">{t('pages:milongas.ctaButton', 'Browse Milongas')}</a>
                     </Button>
                   </CardContent>
                 </Card>

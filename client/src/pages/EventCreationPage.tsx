@@ -289,19 +289,19 @@ export default function EventCreationPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl" data-testid="heading-create-event">
-              Create Event
+              {t('pages:eventCreation.title', 'Create Event')}
             </CardTitle>
             <CardDescription>
-              Fill in the details below to create your event
+              {t('pages:eventCreation.subtitle', 'Fill in the details below to create your event')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-8">
             {/* Event Basics */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Event Basics</h3>
+              <h3 className="text-lg font-semibold">{t('pages:eventCreation.eventBasics', 'Event Basics')}</h3>
               
               <div className="space-y-2">
-                <Label htmlFor="title">Event Title *</Label>
+                <Label htmlFor="title">{t('pages:eventCreation.eventTitle', 'Event Title')} *</Label>
                 <Input
                   id="title"
                   placeholder="e.g., Friday Milonga at La Confiteria"
@@ -313,7 +313,7 @@ export default function EventCreationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Event Type *</Label>
+                <Label>{t('pages:eventCreation.eventType', 'Event Type')} *</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {EVENT_TYPES.map((type) => (
                     <button
@@ -335,7 +335,7 @@ export default function EventCreationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t('pages:eventCreation.description', 'Description')}</Label>
                 <Textarea
                   id="description"
                   placeholder="Describe your event, what attendees can expect..."
@@ -351,10 +351,10 @@ export default function EventCreationPage() {
 
             {/* Date & Time */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Date & Time</h3>
+              <h3 className="text-lg font-semibold">{t('pages:eventCreation.dateTime', 'Date & Time')}</h3>
               
               <div className="space-y-2">
-                <Label>Event Date Range *</Label>
+                <Label>{t('pages:eventCreation.eventDateRange', 'Event Date Range')} *</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -387,7 +387,7 @@ export default function EventCreationPage() {
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label>Start Time</Label>
+                  <Label>{t('pages:eventCreation.startTime', 'Start Time')}</Label>
                   <div className="relative">
                     <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input
@@ -401,7 +401,7 @@ export default function EventCreationPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>End Time</Label>
+                  <Label>{t('pages:eventCreation.endTime', 'End Time')}</Label>
                   <div className="relative">
                     <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input
@@ -416,9 +416,9 @@ export default function EventCreationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Timezone</Label>
+                <Label>{t('pages:eventCreation.timezone', 'Timezone')}</Label>
                 {userPrimaryLocation && (
-                  <p className="text-xs text-muted-foreground">Your primary location: {userPrimaryLocation}</p>
+                  <p className="text-xs text-muted-foreground">{t('pages:eventCreation.primaryLocation', 'Your primary location')}: {userPrimaryLocation}</p>
                 )}
                 <Select
                   value={timezone}
@@ -456,10 +456,10 @@ export default function EventCreationPage() {
 
             {/* Location */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Location</h3>
+              <h3 className="text-lg font-semibold">{t('pages:eventCreation.location', 'Location')}</h3>
               
               <div className="space-y-2">
-                <Label>City / Region *</Label>
+                <Label>{t('pages:eventCreation.cityRegion', 'City / Region')} *</Label>
                 <UnifiedLocationPicker
                   value={formData.location}
                   coordinates={formData.coordinates}
@@ -470,7 +470,7 @@ export default function EventCreationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Venue Name</Label>
+                <Label>{t('pages:eventCreation.venueName', 'Venue Name')}</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
@@ -484,7 +484,7 @@ export default function EventCreationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Street Address</Label>
+                <Label>{t('pages:eventCreation.streetAddress', 'Street Address')}</Label>
                 <UnifiedLocationPicker
                   value={formData.address}
                   onChange={(address) => {
@@ -501,7 +501,7 @@ export default function EventCreationPage() {
 
             {/* Pricing & Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Pricing & Details</h3>
+              <h3 className="text-lg font-semibold">{t('pages:eventCreation.pricingDetails', 'Pricing & Details')}</h3>
               
               <div className="flex items-center justify-between p-4 rounded-xl border">
                 <div className="flex items-center gap-3">
@@ -509,8 +509,8 @@ export default function EventCreationPage() {
                     <DollarSign className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <Label htmlFor="isFree" className="text-base font-medium">Free Event</Label>
-                    <p className="text-sm text-muted-foreground">Toggle off to set a ticket price</p>
+                    <Label htmlFor="isFree" className="text-base font-medium">{t('pages:eventCreation.freeEvent', 'Free Event')}</Label>
+                    <p className="text-sm text-muted-foreground">{t('pages:eventCreation.freeEventDescription', 'Toggle off to set a ticket price')}</p>
                   </div>
                 </div>
                 <Switch
@@ -524,7 +524,7 @@ export default function EventCreationPage() {
               {!formData.isFree && (
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="price">Ticket Price *</Label>
+                    <Label htmlFor="price">{t('pages:eventCreation.ticketPrice', 'Ticket Price')} *</Label>
                     <Input
                       id="price"
                       type="number"
@@ -538,7 +538,7 @@ export default function EventCreationPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Currency</Label>
+                    <Label>{t('pages:eventCreation.currency', 'Currency')}</Label>
                     <CurrencyPicker 
                       value={formData.currency}
                       onChange={(value) => setFormData({ ...formData, currency: value })}
@@ -548,7 +548,7 @@ export default function EventCreationPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="maxCapacity">Maximum Attendees</Label>
+                <Label htmlFor="maxCapacity">{t('pages:eventCreation.maximumAttendees', 'Maximum Attendees')}</Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
@@ -566,7 +566,7 @@ export default function EventCreationPage() {
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Music Style</Label>
+                  <Label>{t('pages:eventCreation.musicStyle', 'Music Style')}</Label>
                   <Select
                     value={formData.musicStyle}
                     onValueChange={(value) => setFormData({ ...formData, musicStyle: value })}
@@ -584,7 +584,7 @@ export default function EventCreationPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Experience Level</Label>
+                  <Label>{t('pages:eventCreation.experienceLevel', 'Experience Level')}</Label>
                   <Select
                     value={formData.level}
                     onValueChange={(value) => setFormData({ ...formData, level: value })}

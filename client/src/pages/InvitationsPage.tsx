@@ -55,16 +55,17 @@ const roleColors = {
   moderator: 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800',
 };
 
-const roleLabels = {
-  teacher: 'Tango Teacher',
-  organizer: 'Event Organizer',
-  venue_owner: 'Venue Owner',
-  moderator: 'Community Moderator',
-};
+const getRoleLabels = (t: any) => ({
+  teacher: t('pages:invitations.tangoTeacher', 'Tango Teacher'),
+  organizer: t('pages:invitations.eventOrganizer', 'Event Organizer'),
+  venue_owner: t('pages:invitations.venueOwner', 'Venue Owner'),
+  moderator: t('pages:invitations.communityModerator', 'Community Moderator'),
+});
 
 export default function InvitationsPage() {
   const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
+  const roleLabels = getRoleLabels(t);
 
   const { data: invitations = [], isLoading } = useQuery<Invitation[]>({
     queryKey: ["/api/invitations"],
@@ -86,8 +87,8 @@ export default function InvitationsPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/invitations"] });
       queryClient.invalidateQueries({ queryKey: ["/api/invitations/stats"] });
       toast({
-        title: "Invitation accepted",
-        description: "Your new role has been activated",
+        title: t('pages:invitations.invitationAccepted', 'Invitation accepted'),
+        description: t('pages:invitations.roleActivated', 'Your new role has been activated'),
       });
     },
   });
@@ -99,8 +100,8 @@ export default function InvitationsPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/invitations"] });
       queryClient.invalidateQueries({ queryKey: ["/api/invitations/stats"] });
       toast({
-        title: "Invitation declined",
-        description: "The invitation has been removed",
+        title: t('pages:invitations.invitationDeclined', 'Invitation declined'),
+        description: t('pages:invitations.invitationRemoved', 'The invitation has been removed'),
       });
     },
   });
@@ -109,12 +110,12 @@ export default function InvitationsPage() {
   const pastInvitations = invitations.filter(inv => inv.status !== 'pending');
 
   return (
-    <SelfHealingErrorBoundary pageName="Invitations" fallbackRoute="/dashboard">
-      <PageLayout title="Role Invitations" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:invitations.pageName', 'Invitations')} fallbackRoute="/dashboard">
+      <PageLayout title={t('pages:invitations.title', 'Role Invitations')} showBreadcrumbs>
         <>
           <SEO
-            title="Role Invitations - Mundo Tango"
-            description="Manage your tango community role invitations - teacher, organizer, venue owner, and moderator invitations"
+            title={t('pages:invitations.seoTitle', 'Role Invitations - Mundo Tango')}
+            description={t('pages:invitations.seoDescription', 'Manage your tango community role invitations - teacher, organizer, venue owner, and moderator invitations')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -130,15 +131,15 @@ export default function InvitationsPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Community Roles
+                  {t('pages:invitations.communityRoles', 'Community Roles')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Role Invitations
+                  {t('pages:invitations.heroTitle', 'Role Invitations')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Join the tango community as a teacher, organizer, venue owner, or moderator
+                  {t('pages:invitations.heroSubtitle', 'Join the tango community as a teacher, organizer, venue owner, or moderator')}
                 </p>
               </motion.div>
             </div>
@@ -155,7 +156,7 @@ export default function InvitationsPage() {
             >
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Pending</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('pages:invitations.pending', 'Pending')}</CardTitle>
                   <Clock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -167,7 +168,7 @@ export default function InvitationsPage() {
 
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Accepted</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('pages:invitations.accepted', 'Accepted')}</CardTitle>
                   <Check className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -179,7 +180,7 @@ export default function InvitationsPage() {
 
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Declined</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('pages:invitations.declined', 'Declined')}</CardTitle>
                   <X className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -191,7 +192,7 @@ export default function InvitationsPage() {
 
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Roles</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('pages:invitations.activeRoles', 'Active Roles')}</CardTitle>
                   <Crown className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -210,9 +211,9 @@ export default function InvitationsPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Manage Invitations</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:invitations.manageInvitations', 'Manage Invitations')}</h2>
               <p className="text-lg text-muted-foreground">
-                Review and respond to role invitations from community members
+                {t('pages:invitations.manageDescription', 'Review and respond to role invitations from community members')}
               </p>
             </motion.div>
 
@@ -220,10 +221,10 @@ export default function InvitationsPage() {
             <Tabs defaultValue="pending" className="w-full">
               <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
                 <TabsTrigger value="pending" data-testid="tab-pending">
-                  Pending ({pendingInvitations.length})
+                  {t('pages:invitations.pendingTab', 'Pending')} ({pendingInvitations.length})
                 </TabsTrigger>
                 <TabsTrigger value="history" data-testid="tab-history">
-                  History
+                  {t('pages:invitations.historyTab', 'History')}
                 </TabsTrigger>
               </TabsList>
 
@@ -272,7 +273,7 @@ export default function InvitationsPage() {
                                       </Badge>
                                     </div>
                                     <CardTitle className="text-xl mb-1 font-serif">
-                                      Invitation from {invitation.fromUser.name}
+                                      {t('pages:invitations.invitationFrom', 'Invitation from {{name}}', { name: invitation.fromUser.name })}
                                     </CardTitle>
                                     <CardDescription>
                                       @{invitation.fromUser.username} • {safeDateDistance(invitation.createdAt, { addSuffix: true })}
@@ -293,7 +294,7 @@ export default function InvitationsPage() {
                               {invitation.expiresAt && (
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                   <Clock className="h-4 w-4" />
-                                  Expires {safeDateDistance(invitation.expiresAt, { addSuffix: true })}
+                                  {t('pages:invitations.expires', 'Expires')} {safeDateDistance(invitation.expiresAt, { addSuffix: true })}
                                 </div>
                               )}
 
@@ -305,7 +306,7 @@ export default function InvitationsPage() {
                                   data-testid={`button-accept-${invitation.id}`}
                                 >
                                   <Check className="h-4 w-4" />
-                                  Accept Invitation
+                                  {t('pages:invitations.acceptInvitation', 'Accept Invitation')}
                                 </Button>
                                 <Button
                                   variant="outline"
@@ -315,7 +316,7 @@ export default function InvitationsPage() {
                                   data-testid={`button-decline-${invitation.id}`}
                                 >
                                   <X className="h-4 w-4" />
-                                  Decline
+                                  {t('pages:invitations.decline', 'Decline')}
                                 </Button>
                               </div>
                             </CardContent>
@@ -328,9 +329,9 @@ export default function InvitationsPage() {
                   <Card>
                     <CardContent className="py-16 text-center">
                       <Mail className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                      <h3 className="text-xl font-serif font-semibold mb-2">No pending invitations</h3>
+                      <h3 className="text-xl font-serif font-semibold mb-2">{t('pages:invitations.noPending', 'No pending invitations')}</h3>
                       <p className="text-muted-foreground">
-                        You'll see role invitations here when someone invites you
+                        {t('pages:invitations.noPendingDescription', "You'll see role invitations here when someone invites you")}
                       </p>
                     </CardContent>
                   </Card>
@@ -391,7 +392,7 @@ export default function InvitationsPage() {
                 ) : (
                   <Card>
                     <CardContent className="py-16 text-center text-muted-foreground">
-                      No invitation history
+                      {t('pages:invitations.noHistory', 'No invitation history')}
                     </CardContent>
                   </Card>
                 )}

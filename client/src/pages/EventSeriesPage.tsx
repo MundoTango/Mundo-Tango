@@ -172,13 +172,13 @@ export default function EventSeriesPage() {
       return res.json();
     },
     onSuccess: () => {
-      toast({ title: "Success", description: "You've claimed this event series!" });
+      toast({ title: t('common:success', 'Success'), description: t('pages:eventSeries.claimedSuccess', "You've claimed this event series!") });
       queryClient.invalidateQueries({ queryKey: ["/api/event-series", seriesId] });
     },
     onError: (error: any) => {
       toast({ 
-        title: "Error", 
-        description: error.message || "Failed to claim series",
+        title: t('common:error', 'Error'), 
+        description: error.message || t('pages:eventSeries.claimFailed', 'Failed to claim series'),
         variant: "destructive"
       });
     },
@@ -203,14 +203,14 @@ export default function EventSeriesPage() {
       <div className="container max-w-5xl mx-auto py-8 px-4" data-testid="event-series-error">
         <Card>
           <CardContent className="py-12 text-center">
-            <h2 className="text-xl font-semibold mb-2">Event Series Not Found</h2>
+            <h2 className="text-xl font-semibold mb-2">{t('pages:eventSeries.notFoundTitle', 'Event Series Not Found')}</h2>
             <p className="text-muted-foreground mb-4">
-              The event series you're looking for doesn't exist or has been removed.
+              {t('pages:eventSeries.notFoundDescription', "The event series you're looking for doesn't exist or has been removed.")}
             </p>
             <Link href="/events">
               <Button data-testid="button-back-to-events">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Events
+                {t('pages:eventSeries.backToEvents', 'Back to Events')}
               </Button>
             </Link>
           </CardContent>
@@ -254,7 +254,7 @@ export default function EventSeriesPage() {
                     </Badge>
                     {series.isActive && (
                       <Badge variant="secondary" data-testid="badge-active">
-                        Active
+                        {t('pages:eventSeries.active', 'Active')}
                       </Badge>
                     )}
                   </div>
@@ -289,16 +289,16 @@ export default function EventSeriesPage() {
                     <DropdownMenuContent align="end" data-testid="dropdown-series-menu">
                       <DropdownMenuItem data-testid="menu-item-edit-series">
                         <Edit className="h-4 w-4 mr-2" />
-                        Edit Series
+                        {t('pages:eventSeries.editSeries', 'Edit Series')}
                       </DropdownMenuItem>
                       <DropdownMenuItem data-testid="menu-item-settings">
                         <Settings className="h-4 w-4 mr-2" />
-                        Settings
+                        {t('pages:eventSeries.settings', 'Settings')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem data-testid="menu-item-share">
                         <Share2 className="h-4 w-4 mr-2" />
-                        Share
+                        {t('common:share', 'Share')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -311,9 +311,9 @@ export default function EventSeriesPage() {
         <div className="container max-w-5xl mx-auto py-6 px-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="w-full justify-start mb-6" data-testid="tabs-event-series">
-              <TabsTrigger value="about" data-testid="tab-about">About</TabsTrigger>
+              <TabsTrigger value="about" data-testid="tab-about">{t('pages:eventSeries.about', 'About')}</TabsTrigger>
               <TabsTrigger value="upcoming" data-testid="tab-upcoming">
-                Upcoming
+                {t('pages:eventSeries.upcoming', 'Upcoming')}
                 {series.upcomingEvents.length > 0 && (
                   <Badge variant="secondary" className="ml-2" data-testid="badge-upcoming-count">
                     {series.upcomingEvents.length}
@@ -321,7 +321,7 @@ export default function EventSeriesPage() {
                 )}
               </TabsTrigger>
               <TabsTrigger value="past" data-testid="tab-past">
-                Past
+                {t('pages:eventSeries.past', 'Past')}
                 {series.pastEvents.length > 0 && (
                   <Badge variant="secondary" className="ml-2" data-testid="badge-past-count">
                     {series.pastEvents.length}
@@ -333,7 +333,7 @@ export default function EventSeriesPage() {
             <TabsContent value="about" className="space-y-6" data-testid="tab-content-about">
               <Card>
                 <CardHeader>
-                  <CardTitle data-testid="heading-about">About This Series</CardTitle>
+                  <CardTitle data-testid="heading-about">{t('pages:eventSeries.aboutThisSeries', 'About This Series')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {series.description ? (
@@ -342,7 +342,7 @@ export default function EventSeriesPage() {
                     </p>
                   ) : (
                     <p className="text-muted-foreground italic" data-testid="text-no-description">
-                      No description provided for this event series.
+                      {t('pages:eventSeries.noDescription', 'No description provided for this event series.')}
                     </p>
                   )}
 
@@ -352,7 +352,7 @@ export default function EventSeriesPage() {
                         <RecurrenceIcon className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Recurrence</p>
+                        <p className="text-sm text-muted-foreground">{t('pages:eventSeries.recurrence', 'Recurrence')}</p>
                         <p className="font-medium">{recurrenceBadge.label}</p>
                       </div>
                     </div>
@@ -363,7 +363,7 @@ export default function EventSeriesPage() {
                           <MapPin className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">Location</p>
+                          <p className="text-sm text-muted-foreground">{t('pages:eventSeries.location', 'Location')}</p>
                           <p className="font-medium">
                             {[series.city, series.country].filter(Boolean).join(", ")}
                           </p>
@@ -376,8 +376,8 @@ export default function EventSeriesPage() {
                         <Calendar className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Upcoming Events</p>
-                        <p className="font-medium">{series.upcomingEvents.length} scheduled</p>
+                        <p className="text-sm text-muted-foreground">{t('pages:eventSeries.upcomingEvents', 'Upcoming Events')}</p>
+                        <p className="font-medium">{series.upcomingEvents.length} {t('pages:eventSeries.scheduled', 'scheduled')}</p>
                       </div>
                     </div>
 
@@ -386,9 +386,9 @@ export default function EventSeriesPage() {
                         <Clock className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Total Events</p>
+                        <p className="text-sm text-muted-foreground">{t('pages:eventSeries.totalEvents', 'Total Events')}</p>
                         <p className="font-medium">
-                          {series.upcomingEvents.length + series.pastEvents.length} events
+                          {series.upcomingEvents.length + series.pastEvents.length} {t('pages:eventSeries.events', 'events')}
                         </p>
                       </div>
                     </div>
@@ -399,7 +399,7 @@ export default function EventSeriesPage() {
               {series.organizer && (
                 <Card>
                   <CardHeader>
-                    <CardTitle data-testid="heading-organizer">Organizer</CardTitle>
+                    <CardTitle data-testid="heading-organizer">{t('pages:eventSeries.organizer', 'Organizer')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <Link href={`/profile/${series.organizer.username}`}>
@@ -437,17 +437,17 @@ export default function EventSeriesPage() {
                   <CardContent className="py-6 text-center">
                     <Flag className="h-8 w-8 mx-auto text-muted-foreground mb-3" />
                     <h3 className="font-semibold mb-2" data-testid="heading-claim-series">
-                      Claim This Series
+                      {t('pages:eventSeries.claimThisSeries', 'Claim This Series')}
                     </h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Are you the organizer of this event series? Claim it to manage events and update information.
+                      {t('pages:eventSeries.claimDescription', 'Are you the organizer of this event series? Claim it to manage events and update information.')}
                     </p>
                     <Button 
                       onClick={() => claimMutation.mutate()}
                       disabled={claimMutation.isPending}
                       data-testid="button-claim-series"
                     >
-                      {claimMutation.isPending ? "Claiming..." : "Claim Series"}
+                      {claimMutation.isPending ? t('pages:eventSeries.claiming', 'Claiming...') : t('pages:eventSeries.claimSeries', 'Claim Series')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -459,7 +459,7 @@ export default function EventSeriesPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="h-5 w-5 text-primary" />
-                    Upcoming Events
+                    {t('pages:eventSeries.upcomingEventsTitle', 'Upcoming Events')}
                   </CardTitle>
                   <CardDescription data-testid="text-upcoming-description">
                     {series.upcomingEvents.length > 0
@@ -483,7 +483,7 @@ export default function EventSeriesPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-primary" />
-                    Past Events
+                    {t('pages:eventSeries.pastEventsTitle', 'Past Events')}
                   </CardTitle>
                   <CardDescription data-testid="text-past-description">
                     {series.pastEvents.length > 0

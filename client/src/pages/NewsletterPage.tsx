@@ -22,11 +22,11 @@ export default function NewsletterPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Newsletter" fallbackRoute="/">
-      <PageLayout title="Stay Connected with Tango" showBreadcrumbs>
+      <PageLayout title={t('pages:newsletter.pageTitle', 'Stay Connected with Tango')} showBreadcrumbs>
         <>
           <SEO 
-            title="Newsletter - Mundo Tango"
-            description="Stay connected with the global tango community. Get weekly updates, exclusive content, and early access to events."
+            title={t('pages:newsletter.seoTitle', 'Newsletter - Mundo Tango')}
+            description={t('pages:newsletter.seoDescription', 'Stay connected with the global tango community. Get weekly updates, exclusive content, and early access to events.')}
           />
 
           {/* Hero Section - 16:9 */}
@@ -45,15 +45,15 @@ export default function NewsletterPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                   <Mail className="w-3 h-3 mr-1.5" />
-                  Stay Informed
+                  {t('pages:newsletter.stayInformed', 'Stay Informed')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                  Join Our Newsletter
+                  {t('pages:newsletter.heroTitle', 'Join Our Newsletter')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Get exclusive updates, event highlights, and tango stories delivered to your inbox
+                  {t('pages:newsletter.heroSubtitle', 'Get exclusive updates, event highlights, and tango stories delivered to your inbox')}
                 </p>
               </motion.div>
             </div>
@@ -75,7 +75,7 @@ export default function NewsletterPage() {
                       <Mail className="h-8 w-8 text-primary" />
                     </div>
                     <CardTitle className="text-center text-2xl font-serif">
-                      {subscribed ? "You're Subscribed!" : "Subscribe to Our Newsletter"}
+                      {subscribed ? t('pages:newsletter.subscribedTitle', "You're Subscribed!") : t('pages:newsletter.subscribeTitle', 'Subscribe to Our Newsletter')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -90,22 +90,22 @@ export default function NewsletterPage() {
                           <Check className="h-8 w-8 text-green-600 dark:text-green-400" />
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
-                          Thank you for subscribing! Check your email to confirm your subscription.
+                          {t('pages:newsletter.thankYouMessage', 'Thank you for subscribing! Check your email to confirm your subscription.')}
                         </p>
                       </motion.div>
                     ) : (
                       <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                          <Label htmlFor="name">Name</Label>
+                          <Label htmlFor="name">{t('pages:newsletter.nameLabel', 'Name')}</Label>
                           <Input id="name" required data-testid="input-name" className="h-12" />
                         </div>
                         <div>
-                          <Label htmlFor="email">Email Address</Label>
+                          <Label htmlFor="email">{t('pages:newsletter.emailLabel', 'Email Address')}</Label>
                           <Input id="email" type="email" required data-testid="input-email" className="h-12" />
                         </div>
                         <Button type="submit" className="w-full gap-2" data-testid="button-subscribe">
                           <Mail className="h-4 w-4" />
-                          Subscribe Now
+                          {t('pages:newsletter.subscribeButton', 'Subscribe Now')}
                         </Button>
                       </form>
                     )}
@@ -123,16 +123,16 @@ export default function NewsletterPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lg font-serif">
                           <Sparkles className="h-5 w-5 text-primary" />
-                          What You'll Receive
+                          {t('pages:newsletter.whatYouReceive', "What You'll Receive")}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-                        <p>✓ Weekly event roundups in your city</p>
-                        <p>✓ Exclusive interviews with tango maestros</p>
-                        <p>✓ Tips and techniques to improve your dance</p>
-                        <p>✓ Early access to workshop registrations</p>
-                        <p>✓ Special discounts and offers</p>
-                        <p>✓ Community highlights and success stories</p>
+                        <p>✓ {t('pages:newsletter.benefit1', 'Weekly event roundups in your city')}</p>
+                        <p>✓ {t('pages:newsletter.benefit2', 'Exclusive interviews with tango maestros')}</p>
+                        <p>✓ {t('pages:newsletter.benefit3', 'Tips and techniques to improve your dance')}</p>
+                        <p>✓ {t('pages:newsletter.benefit4', 'Early access to workshop registrations')}</p>
+                        <p>✓ {t('pages:newsletter.benefit5', 'Special discounts and offers')}</p>
+                        <p>✓ {t('pages:newsletter.benefit6', 'Community highlights and success stories')}</p>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -146,11 +146,11 @@ export default function NewsletterPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lg font-serif">
                           <Star className="h-5 w-5 text-primary" />
-                          Privacy Promise
+                          {t('pages:newsletter.privacyPromise', 'Privacy Promise')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="text-sm text-muted-foreground leading-relaxed">
-                        <p>We respect your privacy. Your email will never be shared with third parties, and you can unsubscribe at any time with one click.</p>
+                        <p>{t('pages:newsletter.privacyText', 'We respect your privacy. Your email will never be shared with third parties, and you can unsubscribe at any time with one click.')}</p>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -164,11 +164,11 @@ export default function NewsletterPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lg font-serif">
                           <Calendar className="h-5 w-5 text-primary" />
-                          Frequency
+                          {t('pages:newsletter.frequency', 'Frequency')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="text-sm text-muted-foreground leading-relaxed">
-                        <p>We send newsletters every Tuesday and Friday. You can adjust your preferences or unsubscribe at any time from your account settings.</p>
+                        <p>{t('pages:newsletter.frequencyText', 'We send newsletters every Tuesday and Friday. You can adjust your preferences or unsubscribe at any time from your account settings.')}</p>
                       </CardContent>
                     </Card>
                   </motion.div>

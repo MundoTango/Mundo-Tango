@@ -75,10 +75,10 @@ export default function NotificationPreferencesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/user/email-preferences'] });
-      toast({ title: "Preferences saved successfully" });
+      toast({ title: t('pages:notificationPreferences.savedSuccess', 'Preferences saved successfully') });
     },
     onError: () => {
-      toast({ title: "Failed to save preferences", variant: "destructive" });
+      toast({ title: t('pages:notificationPreferences.savedError', 'Failed to save preferences'), variant: "destructive" });
     },
   });
 
@@ -106,8 +106,8 @@ export default function NotificationPreferencesPage() {
       }));
       // Note: Push notifications not implemented in backend yet
       toast({ 
-        title: "Push notifications coming soon", 
-        description: "Push notification settings will be available in a future update.",
+        title: t('pages:notificationPreferences.pushComingSoon', 'Push notifications coming soon'), 
+        description: t('pages:notificationPreferences.pushComingSoonDesc', 'Push notification settings will be available in a future update.'),
         variant: "default"
       });
     }
@@ -116,8 +116,8 @@ export default function NotificationPreferencesPage() {
   return (
     <AppLayout>
       <SEO 
-        title="Notification Preferences"
-        description="Customize email and push notification settings for events, messages, friend requests, and community updates on Mundo Tango"
+        title={t('pages:notificationPreferences.seoTitle', 'Notification Preferences')}
+        description={t('pages:notificationPreferences.seoDescription', 'Customize email and push notification settings for events, messages, friend requests, and community updates on Mundo Tango')}
         ogImage="/og-image.png"
       />
       <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
@@ -125,10 +125,10 @@ export default function NotificationPreferencesPage() {
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-foreground flex items-center gap-3" data-testid="text-notification-prefs-title">
               <Bell className="h-10 w-10 text-primary" />
-              Notification Preferences
+              {t('pages:notificationPreferences.title', 'Notification Preferences')}
             </h1>
             <p className="text-muted-foreground mt-2">
-              Manage how and when you receive notifications
+              {t('pages:notificationPreferences.subtitle', 'Manage how and when you receive notifications')}
             </p>
           </div>
 
@@ -138,10 +138,10 @@ export default function NotificationPreferencesPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Mail className="h-5 w-5 text-primary" />
-                  Email Notifications
+                  {t('pages:notificationPreferences.emailNotifications', 'Email Notifications')}
                 </CardTitle>
                 <CardDescription>
-                  Receive updates and alerts via email
+                  {t('pages:notificationPreferences.emailDescription', 'Receive updates and alerts via email')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -155,10 +155,10 @@ export default function NotificationPreferencesPage() {
                       <div className="space-y-0.5">
                         <Label htmlFor="email-event-invite" className="text-base flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
-                          Event Invites
+                          {t('pages:notificationPreferences.eventInvites', 'Event Invites')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          Notifications about new event invitations
+                          {t('pages:notificationPreferences.eventInvitesDesc', 'Notifications about new event invitations')}
                         </p>
                       </div>
                       <Switch
@@ -175,10 +175,10 @@ export default function NotificationPreferencesPage() {
                       <div className="space-y-0.5">
                         <Label htmlFor="email-new-message" className="text-base flex items-center gap-2">
                           <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                          New Messages
+                          {t('pages:notificationPreferences.newMessages', 'New Messages')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          New direct messages from other users
+                          {t('pages:notificationPreferences.newMessagesDesc', 'New direct messages from other users')}
                         </p>
                       </div>
                       <Switch
@@ -195,10 +195,10 @@ export default function NotificationPreferencesPage() {
                       <div className="space-y-0.5">
                         <Label htmlFor="email-friend-request" className="text-base flex items-center gap-2">
                           <Users className="h-4 w-4 text-muted-foreground" />
-                          Friend Requests
+                          {t('pages:notificationPreferences.friendRequests', 'Friend Requests')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          When someone sends you a friend request
+                          {t('pages:notificationPreferences.friendRequestsDesc', 'When someone sends you a friend request')}
                         </p>
                       </div>
                       <Switch
@@ -215,10 +215,10 @@ export default function NotificationPreferencesPage() {
                       <div className="space-y-0.5">
                         <Label htmlFor="email-event-reminder" className="text-base flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
-                          Event Reminders
+                          {t('pages:notificationPreferences.eventReminders', 'Event Reminders')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          Reminders before events you're attending
+                          {t('pages:notificationPreferences.eventRemindersDesc', "Reminders before events you're attending")}
                         </p>
                       </div>
                       <Switch
@@ -235,10 +235,10 @@ export default function NotificationPreferencesPage() {
                       <div className="space-y-0.5">
                         <Label htmlFor="email-weekly-digest" className="text-base flex items-center gap-2">
                           <Mail className="h-4 w-4 text-muted-foreground" />
-                          Weekly Digest
+                          {t('pages:notificationPreferences.weeklyDigest', 'Weekly Digest')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          Weekly summary of tango news and tips
+                          {t('pages:notificationPreferences.weeklyDigestDesc', 'Weekly summary of tango news and tips')}
                         </p>
                       </div>
                       <Switch
@@ -255,10 +255,10 @@ export default function NotificationPreferencesPage() {
                       <div className="space-y-0.5">
                         <Label htmlFor="email-marketing" className="text-base flex items-center gap-2">
                           <Mail className="h-4 w-4 text-muted-foreground" />
-                          Marketing Emails
+                          {t('pages:notificationPreferences.marketingEmails', 'Marketing Emails')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          Promotional content and special offers
+                          {t('pages:notificationPreferences.marketingEmailsDesc', 'Promotional content and special offers')}
                         </p>
                       </div>
                       <Switch
@@ -278,10 +278,10 @@ export default function NotificationPreferencesPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Smartphone className="h-5 w-5 text-primary" />
-                  Push Notifications
+                  {t('pages:notificationPreferences.pushNotifications', 'Push Notifications')}
                 </CardTitle>
                 <CardDescription>
-                  Real-time alerts on your device
+                  {t('pages:notificationPreferences.pushDescription', 'Real-time alerts on your device')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -289,10 +289,10 @@ export default function NotificationPreferencesPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="push-events" className="text-base flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
-                      Event Updates
+                      {t('pages:notificationPreferences.eventUpdates', 'Event Updates')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Instant notifications for event changes
+                      {t('pages:notificationPreferences.eventUpdatesDesc', 'Instant notifications for event changes')}
                     </p>
                   </div>
                   <Switch
@@ -309,10 +309,10 @@ export default function NotificationPreferencesPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="push-messages" className="text-base flex items-center gap-2">
                       <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                      Messages
+                      {t('pages:notificationPreferences.messages', 'Messages')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      New message alerts
+                      {t('pages:notificationPreferences.messagesDesc', 'New message alerts')}
                     </p>
                   </div>
                   <Switch
@@ -329,10 +329,10 @@ export default function NotificationPreferencesPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="push-friend-requests" className="text-base flex items-center gap-2">
                       <Users className="h-4 w-4 text-muted-foreground" />
-                      Friend Requests
+                      {t('pages:notificationPreferences.friendRequestsPush', 'Friend Requests')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Instant friend request notifications
+                      {t('pages:notificationPreferences.friendRequestsPushDesc', 'Instant friend request notifications')}
                     </p>
                   </div>
                   <Switch
@@ -349,10 +349,10 @@ export default function NotificationPreferencesPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="push-group-invites" className="text-base flex items-center gap-2">
                       <Users className="h-4 w-4 text-muted-foreground" />
-                      Group Invites
+                      {t('pages:notificationPreferences.groupInvites', 'Group Invites')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Notifications for group invitations
+                      {t('pages:notificationPreferences.groupInvitesDesc', 'Notifications for group invitations')}
                     </p>
                   </div>
                   <Switch
@@ -369,10 +369,10 @@ export default function NotificationPreferencesPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="push-reactions" className="text-base flex items-center gap-2">
                       <Heart className="h-4 w-4 text-muted-foreground" />
-                      Reactions & Likes
+                      {t('pages:notificationPreferences.reactionsLikes', 'Reactions & Likes')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      When someone reacts to your posts
+                      {t('pages:notificationPreferences.reactionsLikesDesc', 'When someone reacts to your posts')}
                     </p>
                   </div>
                   <Switch
@@ -389,7 +389,7 @@ export default function NotificationPreferencesPage() {
               <CardContent className="pt-6">
                 <p className="text-sm text-muted-foreground flex items-center gap-2">
                   <Bell className="h-4 w-4" />
-                  Changes are saved automatically. Email preferences take effect immediately, while push notifications will be available in a future update.
+                  {t('pages:notificationPreferences.autoSaveNote', 'Changes are saved automatically. Email preferences take effect immediately, while push notifications will be available in a future update.')}
                 </p>
               </CardContent>
             </Card>

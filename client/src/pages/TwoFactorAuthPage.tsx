@@ -12,11 +12,11 @@ import { useTranslation } from "react-i18next";
 export default function TwoFactorAuthPage() {
   const { t } = useTranslation(['pages', 'common']);
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:twoFactorAuth.pageName', 'Two-Factor Authentication')} fallbackRoute="/settings">
+    <SelfHealingErrorBoundary pageName={t('pages:settings.twoFactorAuth', 'Two-Factor Authentication')} fallbackRoute="/settings">
       <>
         <SEO
-          title={t('pages:twoFactorAuth.seoTitle', 'Two-Factor Authentication')}
-          description={t('pages:twoFactorAuth.seoDescription', 'Secure your Mundo Tango account with two-factor authentication. Add an extra layer of protection to your profile.')}
+          title={t('pages:settings.twoFactorAuthSeoTitle', 'Two-Factor Authentication')}
+          description={t('pages:settings.twoFactorAuthSeoDescription', 'Secure your Mundo Tango account with two-factor authentication. Add an extra layer of protection to your profile.')}
         />
 
         {/* Hero Section - 16:9 */}
@@ -41,15 +41,15 @@ export default function TwoFactorAuthPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                 <Shield className="w-3 h-3 mr-1.5" />
-                {t('pages:twoFactorAuth.enhancedSecurity', 'Enhanced Security')}
+                {t('pages:settings.enhancedSecurity', 'Enhanced Security')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                {t('pages:twoFactorAuth.title', 'Two-Factor Authentication')}
+                {t('pages:settings.twoFactorAuthTitle', 'Two-Factor Authentication')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                {t('pages:twoFactorAuth.subtitle', 'Add an extra layer of security to protect your account')}
+                {t('pages:settings.twoFactorAuthSubtitle', 'Add an extra layer of security to protect your account')}
               </p>
             </motion.div>
           </div>
@@ -69,7 +69,7 @@ export default function TwoFactorAuthPage() {
                 <CardHeader className="border-b">
                   <CardTitle className="text-2xl font-serif flex items-center gap-3">
                     <Lock className="h-6 w-6 text-primary" />
-                    {t('pages:twoFactorAuth.setupInstructions', 'Setup Instructions')}
+                    {t('pages:settings.setupInstructions', 'Setup Instructions')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8">
@@ -79,7 +79,7 @@ export default function TwoFactorAuthPage() {
                         1
                       </span>
                       <p className="text-base leading-relaxed pt-1">
-                        {t('pages:twoFactorAuth.step1', 'Download an authenticator app like Google Authenticator or Authy')}
+                        {t('pages:settings.step1', 'Download an authenticator app like Google Authenticator or Authy')}
                       </p>
                     </li>
                     <li className="flex items-start gap-3">
@@ -87,7 +87,7 @@ export default function TwoFactorAuthPage() {
                         2
                       </span>
                       <p className="text-base leading-relaxed pt-1">
-                        {t('pages:twoFactorAuth.step2', 'Scan the QR code below with your authenticator app')}
+                        {t('pages:settings.step2', 'Scan the QR code below with your authenticator app')}
                       </p>
                     </li>
                     <li className="flex items-start gap-3">
@@ -95,7 +95,7 @@ export default function TwoFactorAuthPage() {
                         3
                       </span>
                       <p className="text-base leading-relaxed pt-1">
-                        {t('pages:twoFactorAuth.step3', 'Enter the 6-digit code from your app to verify')}
+                        {t('pages:settings.step3', 'Enter the 6-digit code from your app to verify')}
                       </p>
                     </li>
                   </ol>
@@ -105,7 +105,7 @@ export default function TwoFactorAuthPage() {
               {/* QR Code Card */}
               <Card>
                 <CardHeader className="text-center border-b">
-                  <CardTitle className="text-2xl font-serif">{t('pages:twoFactorAuth.scanQRCode', 'Scan QR Code')}</CardTitle>
+                  <CardTitle className="text-2xl font-serif">{t('pages:settings.scanQRCode', 'Scan QR Code')}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-12">
                   <div className="flex justify-center mb-8">
@@ -120,7 +120,7 @@ export default function TwoFactorAuthPage() {
 
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="code" className="text-base">{t('pages:twoFactorAuth.verificationCode', 'Verification Code')}</Label>
+                      <Label htmlFor="code" className="text-base">{t('pages:settings.verificationCode', 'Verification Code')}</Label>
                       <Input 
                         id="code" 
                         placeholder="000000" 
@@ -132,7 +132,7 @@ export default function TwoFactorAuthPage() {
 
                     <Button className="w-full h-12 gap-2" data-testid="button-enable">
                       <Shield className="h-5 w-5" />
-                      {t('pages:twoFactorAuth.enableButton', 'Enable Two-Factor Authentication')}
+                      {t('pages:settings.enableButton', 'Enable Two-Factor Authentication')}
                       <ChevronRight className="h-5 w-5" />
                     </Button>
                   </div>
@@ -145,19 +145,19 @@ export default function TwoFactorAuthPage() {
                   <div className="flex items-start gap-3">
                     <Shield className="h-6 w-6 text-primary mt-0.5 flex-shrink-0" />
                     <div className="space-y-2">
-                      <p className="font-semibold text-base">{t('pages:twoFactorAuth.whyEnable', 'Why Enable 2FA?')}</p>
+                      <p className="font-semibold text-base">{t('pages:settings.whyEnable2fa', 'Why Enable 2FA?')}</p>
                       <ul className="space-y-2 text-sm text-muted-foreground">
                         <li className="flex items-start gap-2">
                           <span className="text-primary mt-1">•</span>
-                          <span className="leading-relaxed">{t('pages:twoFactorAuth.reason1', 'Protect your account from unauthorized access')}</span>
+                          <span className="leading-relaxed">{t('pages:settings.reason1', 'Protect your account from unauthorized access')}</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="text-primary mt-1">•</span>
-                          <span className="leading-relaxed">{t('pages:twoFactorAuth.reason2', 'Add an extra layer of security beyond passwords')}</span>
+                          <span className="leading-relaxed">{t('pages:settings.reason2', 'Add an extra layer of security beyond passwords')}</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="text-primary mt-1">•</span>
-                          <span className="leading-relaxed">{t('pages:twoFactorAuth.reason3', 'Keep your personal information and connections safe')}</span>
+                          <span className="leading-relaxed">{t('pages:settings.reason3', 'Keep your personal information and connections safe')}</span>
                         </li>
                       </ul>
                     </div>

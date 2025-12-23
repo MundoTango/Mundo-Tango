@@ -53,8 +53,8 @@ export default function FinancialTradingPage() {
             <TrendingUp className="h-6 w-6" style={{ color: '#40E0D0' }} />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Trading</h1>
-            <p className="text-muted-foreground">Execute trades and monitor AI recommendations</p>
+            <h1 className="text-3xl font-bold">{t('pages:financialTrading.title', 'Trading')}</h1>
+            <p className="text-muted-foreground">{t('pages:financialTrading.subtitle', 'Execute trades and monitor AI recommendations')}</p>
           </div>
         </div>
       </div>
@@ -113,9 +113,9 @@ export default function FinancialTradingPage() {
           }}
         >
           <TrendingUp className="h-16 w-16 mb-4 opacity-50" />
-          <p className="text-lg font-medium mb-2">Select a Portfolio to Start Trading</p>
+          <p className="text-lg font-medium mb-2">{t('pages:financialTrading.selectPortfolio', 'Select a Portfolio to Start Trading')}</p>
           <p className="text-muted-foreground text-center max-w-md">
-            Choose a portfolio from the dropdown above to execute trades and view AI recommendations
+            {t('pages:financialTrading.selectPortfolioDescription', 'Choose a portfolio from the dropdown above to execute trades and view AI recommendations')}
           </p>
         </div>
       ) : (
@@ -141,7 +141,7 @@ export default function FinancialTradingPage() {
               data-testid="table-trade-history"
             >
               <CardHeader>
-                <CardTitle>Trade History</CardTitle>
+                <CardTitle>{t('pages:financialTrading.tradeHistory', 'Trade History')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {tradesLoading ? (
@@ -201,7 +201,7 @@ export default function FinancialTradingPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">No trades yet</p>
+                  <p className="text-muted-foreground text-center py-8">{t('pages:financialTrading.noTrades', 'No trades yet')}</p>
                 )}
               </CardContent>
             </Card>
@@ -211,7 +211,7 @@ export default function FinancialTradingPage() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Brain className="h-5 w-5" style={{ color: '#40E0D0' }} />
-              <h2 className="text-xl font-semibold">AI Recommendations</h2>
+              <h2 className="text-xl font-semibold">{t('pages:financialTrading.aiRecommendations', 'AI Recommendations')}</h2>
             </div>
 
             {decisionsLoading ? (
@@ -240,7 +240,7 @@ export default function FinancialTradingPage() {
                 }}
               >
                 <Brain className="h-12 w-12 mb-3 opacity-50" />
-                <p className="text-sm text-muted-foreground">No AI recommendations yet</p>
+                <p className="text-sm text-muted-foreground">{t('pages:financialTrading.noAiRecommendations', 'No AI recommendations yet')}</p>
               </div>
             )}
           </div>

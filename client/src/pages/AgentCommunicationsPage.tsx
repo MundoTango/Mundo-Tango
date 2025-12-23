@@ -68,9 +68,9 @@ export default function AgentCommunicationsPage() {
 
   if (isLoading) {
     return (
-      <SelfHealingErrorBoundary pageName="Agent Communications" fallbackRoute="/platform">
+      <SelfHealingErrorBoundary pageName={t('pages:agents.agentCommunications', 'Agent Communications')} fallbackRoute="/platform">
         <div className="min-h-screen bg-background flex items-center justify-center">
-          <div className="text-center py-8">Loading communications...</div>
+          <div className="text-center py-8">{t('common:loadingCommunications', 'Loading communications...')}</div>
         </div>
       </SelfHealingErrorBoundary>
     );
@@ -81,10 +81,10 @@ export default function AgentCommunicationsPage() {
   const userToAgent = communications.filter(c => c.communicationType === "user_to_agent");
 
   return (
-    <SelfHealingErrorBoundary pageName="Agent Communications" fallbackRoute="/platform">
+    <SelfHealingErrorBoundary pageName={t('pages:agents.agentCommunications', 'Agent Communications')} fallbackRoute="/platform">
       <SEO
-        title="Agent Communications | Mundo Tango"
-        description="View agent-to-agent and agent-to-user communications. Monitor messages, status updates, and system notifications across the platform."
+        title={t('pages:agents.agentCommunicationsTitle', 'Agent Communications | Mundo Tango')}
+        description={t('pages:agents.agentCommunicationsDescription', 'View agent-to-agent and agent-to-user communications. Monitor messages, status updates, and system notifications across the platform.')}
       />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
@@ -103,15 +103,15 @@ export default function AgentCommunicationsPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <Bot className="w-3 h-3 mr-1.5" />
-                H2AC Protocol
+                {t('pages:agents.h2acProtocol', 'H2AC Protocol')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                Agent Communications
+                {t('pages:agents.agentCommunications', 'Agent Communications')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                Inter-agent and human-agent communication hub
+                {t('pages:agents.communicationHub', 'Inter-agent and human-agent communication hub')}
               </p>
             </motion.div>
           </div>
@@ -130,8 +130,8 @@ export default function AgentCommunicationsPage() {
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Messages</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('pages:agents.totalMessages', 'Total Messages')}</CardTitle>
             <MessageSquare className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -142,8 +142,8 @@ export default function AgentCommunicationsPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Agent ↔ Agent</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('pages:agents.agentToAgent', 'Agent ↔ Agent')}</CardTitle>
             <Bot className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -154,8 +154,8 @@ export default function AgentCommunicationsPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Agent → User</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('pages:agents.agentToUser', 'Agent → User')}</CardTitle>
             <Send className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -166,8 +166,8 @@ export default function AgentCommunicationsPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">User → Agent</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('pages:agents.userToAgent', 'User → Agent')}</CardTitle>
             <Inbox className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -182,24 +182,24 @@ export default function AgentCommunicationsPage() {
       <Tabs defaultValue="all" className="w-full">
         <TabsList>
           <TabsTrigger value="all" data-testid="tab-all-communications">
-            All ({communications.length})
+            {t('pages:agents.all', 'All')} ({communications.length})
           </TabsTrigger>
           <TabsTrigger value="agent" data-testid="tab-agent-communications">
-            Agent ↔ Agent ({agentToAgent.length})
+            {t('pages:agents.agentToAgent', 'Agent ↔ Agent')} ({agentToAgent.length})
           </TabsTrigger>
           <TabsTrigger value="to-user" data-testid="tab-agent-to-user">
-            Agent → User ({agentToUser.length})
+            {t('pages:agents.agentToUser', 'Agent → User')} ({agentToUser.length})
           </TabsTrigger>
           <TabsTrigger value="from-user" data-testid="tab-user-to-agent">
-            User → Agent ({userToAgent.length})
+            {t('pages:agents.userToAgent', 'User → Agent')} ({userToAgent.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>All Communications</CardTitle>
-              <CardDescription>Complete communication history</CardDescription>
+              <CardTitle>{t('pages:agents.allCommunications', 'All Communications')}</CardTitle>
+              <CardDescription>{t('pages:agents.allCommunicationsDesc', 'Complete communication history')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -218,21 +218,21 @@ export default function AgentCommunicationsPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="font-medium">
-                            {comm.fromAgentName || comm.fromAgentCode || `User #${comm.fromUserId}`}
+                            {comm.fromAgentName || comm.fromAgentCode || `${t('pages:agents.user', 'User')} #${comm.fromUserId}`}
                           </span>
                           <span className="text-muted-foreground">→</span>
                           <span className="font-medium">
-                            {comm.toAgentName || comm.toAgentCode || `User #${comm.toUserId}`}
+                            {comm.toAgentName || comm.toAgentCode || `${t('pages:agents.user', 'User')} #${comm.toUserId}`}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
                           {comm.requiresResponse && (
                             <Badge variant="outline" className="text-xs">
-                              Requires Response
+                              {t('pages:agents.requiresResponse', 'Requires Response')}
                             </Badge>
                           )}
                           <Badge variant={getPriorityColor(comm.priority) as any}>
-                            {comm.priority}
+                            {t(`pages:agents.priority.${comm.priority}`, comm.priority)}
                           </Badge>
                         </div>
                       </div>
@@ -248,7 +248,7 @@ export default function AgentCommunicationsPage() {
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           {getMessageTypeIcon(comm.messageType)}
-                          <span className="capitalize">{comm.messageType.replace('_', ' ')}</span>
+                          <span className="capitalize">{t(`pages:agents.messageType.${comm.messageType}`, comm.messageType.replace('_', ' '))}</span>
                         </div>
                         <span>{new Date(comm.createdAt).toLocaleString()}</span>
                       </div>
@@ -257,7 +257,7 @@ export default function AgentCommunicationsPage() {
                 ))}
                 {communications.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    No communications found
+                    {t('pages:agents.noCommunications', 'No communications found')}
                   </div>
                 )}
               </div>
@@ -268,8 +268,8 @@ export default function AgentCommunicationsPage() {
         <TabsContent value="agent">
           <Card>
             <CardHeader>
-              <CardTitle>Agent-to-Agent Communications</CardTitle>
-              <CardDescription>Internal agent coordination messages</CardDescription>
+              <CardTitle>{t('pages:agents.agentToAgentCommunications', 'Agent-to-Agent Communications')}</CardTitle>
+              <CardDescription>{t('pages:agents.agentToAgentDesc', 'Internal agent coordination messages')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -282,7 +282,7 @@ export default function AgentCommunicationsPage() {
                         <span className="font-medium text-sm">{comm.toAgentCode}</span>
                       </div>
                       <Badge variant="outline" className="text-xs">
-                        {comm.messageType.replace('_', ' ')}
+                        {t(`pages:agents.messageType.${comm.messageType}`, comm.messageType.replace('_', ' '))}
                       </Badge>
                     </div>
                     {comm.subject && <div className="font-medium text-sm mb-1">{comm.subject}</div>}
@@ -291,7 +291,7 @@ export default function AgentCommunicationsPage() {
                 ))}
                 {agentToAgent.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    No agent-to-agent communications
+                    {t('pages:agents.noAgentCommunications', 'No agent-to-agent communications')}
                   </div>
                 )}
               </div>
@@ -302,12 +302,12 @@ export default function AgentCommunicationsPage() {
         <TabsContent value="to-user">
           <Card>
             <CardHeader>
-              <CardTitle>Agent to User</CardTitle>
-              <CardDescription>Messages from agents to users</CardDescription>
+              <CardTitle>{t('pages:agents.agentToUser', 'Agent to User')}</CardTitle>
+              <CardDescription>{t('pages:agents.agentToUserDesc', 'Messages from agents to users')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
-                No agent-to-user messages yet
+                {t('pages:agents.noAgentToUserMessages', 'No agent-to-user messages yet')}
               </div>
             </CardContent>
           </Card>
@@ -316,12 +316,12 @@ export default function AgentCommunicationsPage() {
         <TabsContent value="from-user">
           <Card>
             <CardHeader>
-              <CardTitle>User to Agent</CardTitle>
-              <CardDescription>User commands and requests to agents</CardDescription>
+              <CardTitle>{t('pages:agents.userToAgent', 'User to Agent')}</CardTitle>
+              <CardDescription>{t('pages:agents.userToAgentDesc', 'User commands and requests to agents')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-muted-foreground">
-                No user-to-agent messages yet
+                {t('pages:agents.noUserToAgentMessages', 'No user-to-agent messages yet')}
               </div>
             </CardContent>
           </Card>

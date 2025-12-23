@@ -64,12 +64,13 @@ export default function CommunityWorldMapPage() {
   const [mapCenter, setMapCenter] = useState<[number, number]>([20, 0]); // World view centered
   const [mapZoom, setMapZoom] = useState(2); // Zoom out to see all cities
   
-  // Layer toggles
-  const [layers, setLayers] = useState<MapLayer[]>([
-    { id: 'events', label: 'Events', enabled: true, icon: Calendar },
-    { id: 'housing', label: 'Housing', enabled: true, icon: Home },
-    { id: 'recommendations', label: 'Recommendations', enabled: true, icon: Building2 },
-  ]);
+  // Layer toggles - labels are translated via useMemo for i18n
+  const translatedLayers = useMemo(() => [
+    { id: 'events', label: t('pages:communityWorldMap.layerEvents', 'Events'), enabled: true, icon: Calendar },
+    { id: 'housing', label: t('pages:communityWorldMap.layerHousing', 'Housing'), enabled: true, icon: Home },
+    { id: 'recommendations', label: t('pages:communityWorldMap.layerRecommendations', 'Recommendations'), enabled: true, icon: Building2 },
+  ], [t]);
+  const [layers, setLayers] = useState<MapLayer[]>(translatedLayers);
 
   // Advanced filters
   const [showFilters, setShowFilters] = useState(false);
@@ -211,7 +212,7 @@ export default function CommunityWorldMapPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Community World Map" fallbackRoute="/discover">
+    <SelfHealingErrorBoundary pageName={t('pages:communityWorldMap.title', 'Community World Map')} fallbackRoute="/discover">
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
@@ -229,15 +230,15 @@ export default function CommunityWorldMapPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <Globe className="w-3 h-3 mr-1.5" />
-                Global Network
+                {t('pages:communityWorldMap.globalNetwork', 'Global Network')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
-                Global Tango Community
+                {t('pages:communityWorldMap.heroTitle', 'Global Tango Community')}
               </h1>
               
               <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-                Discover tango communities around the world
+                {t('pages:communityWorldMap.heroSubtitle', 'Discover tango communities around the world')}
               </p>
             </motion.div>
           </div>
@@ -248,66 +249,66 @@ export default function CommunityWorldMapPage() {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Cities</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('pages:communityWorldMap.cities', 'Cities')}</CardTitle>
                   <MapPin className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold" data-testid="text-total-cities">
                     {stats?.totalCities || allLocations.length}
                   </div>
-                  <p className="text-xs text-muted-foreground">Across {stats?.countries || 5} countries</p>
+                  <p className="text-xs text-muted-foreground">{t('pages:communityWorldMap.acrossCountries', 'Across {{count}} countries', { count: stats?.countries || 5 })}</p>
                 </CardContent>
               </Card>
 
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Members</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('pages:communityWorldMap.members', 'Members')}</CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold" data-testid="text-total-members">
                     {(stats?.totalMembers || allLocations.reduce((sum, loc) => sum + loc.memberCount, 0)).toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground">Worldwide People</p>
+                  <p className="text-xs text-muted-foreground">{t('pages:communityWorldMap.worldwidePeople', 'Worldwide People')}</p>
                 </CardContent>
               </Card>
 
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Events</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('pages:communityWorldMap.activeEvents', 'Active Events')}</CardTitle>
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold" data-testid="text-active-events">
                     {stats?.activeEvents || allLocations.reduce((sum, loc) => sum + loc.activeEvents, 0)}
                   </div>
-                  <p className="text-xs text-muted-foreground">This month</p>
+                  <p className="text-xs text-muted-foreground">{t('pages:communityWorldMap.thisMonth', 'This month')}</p>
                 </CardContent>
               </Card>
 
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Recommendations</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('pages:communityWorldMap.recommendations', 'Recommendations')}</CardTitle>
                   <Building2 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold" data-testid="text-total-recommendations">
                     {stats?.totalRecommendations || allLocations.reduce((sum, loc) => sum + loc.recommendations, 0)}
                   </div>
-                  <p className="text-xs text-muted-foreground">Milongas & studios</p>
+                  <p className="text-xs text-muted-foreground">{t('pages:communityWorldMap.milongasStudios', 'Milongas & studios')}</p>
                 </CardContent>
               </Card>
 
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Housing</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('pages:communityWorldMap.housing', 'Housing')}</CardTitle>
                   <Home className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold" data-testid="text-total-housing">
                     {stats?.totalHousing || allLocations.reduce((sum, loc) => sum + loc.housing, 0)}
                   </div>
-                  <p className="text-xs text-muted-foreground">Available listings</p>
+                  <p className="text-xs text-muted-foreground">{t('pages:communityWorldMap.availableListings', 'Available listings')}</p>
                 </CardContent>
               </Card>
             </div>
@@ -315,9 +316,9 @@ export default function CommunityWorldMapPage() {
             {/* Interactive Map - Full Width */}
             <Card className="overflow-hidden">
               <CardHeader>
-                <CardTitle>Interactive Map</CardTitle>
+                <CardTitle>{t('pages:communityWorldMap.interactiveMap', 'Interactive Map')}</CardTitle>
                 <CardDescription>
-                  Click on any marker to see city details. Toggle layers to filter by type.
+                  {t('pages:communityWorldMap.mapDescription', 'Click on any marker to see city details. Toggle layers to filter by type.')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
@@ -339,10 +340,10 @@ export default function CommunityWorldMapPage() {
                 <div>
                   <h2 className="text-2xl font-serif font-bold flex items-center gap-2">
                     <Globe className="h-6 w-6 text-primary" />
-                    Explore Cities
+                    {t('pages:communityWorldMap.exploreCities', 'Explore Cities')}
                   </h2>
                   <p className="text-muted-foreground">
-                    {sortedLocations.length} tango communities worldwide
+                    {t('pages:communityWorldMap.communitiesCount', '{{count}} tango communities worldwide', { count: sortedLocations.length })}
                   </p>
                 </div>
               </div>
@@ -351,7 +352,7 @@ export default function CommunityWorldMapPage() {
                 <Card>
                   <CardContent className="py-12 text-center text-muted-foreground">
                     <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No cities found. Be the first to start a community!</p>
+                    <p>{t('pages:communityWorldMap.noCitiesFound', 'No cities found. Be the first to start a community!')}</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -401,22 +402,22 @@ export default function CommunityWorldMapPage() {
                             <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                               <Users className="w-4 h-4 text-cyan-500" />
                               <div className="font-bold text-sm">{location.memberCount.toLocaleString()}</div>
-                              <div className="text-xs text-muted-foreground">Members</div>
+                              <div className="text-xs text-muted-foreground">{t('pages:communityWorldMap.members', 'Members')}</div>
                             </div>
                             <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                               <Calendar className="w-4 h-4 text-blue-500" />
                               <div className="font-bold text-sm">{location.activeEvents}</div>
-                              <div className="text-xs text-muted-foreground">Events</div>
+                              <div className="text-xs text-muted-foreground">{t('pages:communityWorldMap.events', 'Events')}</div>
                             </div>
                             <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                               <Building2 className="w-4 h-4 text-purple-500" />
                               <div className="font-bold text-sm">{location.recommendations}</div>
-                              <div className="text-xs text-muted-foreground">Venues</div>
+                              <div className="text-xs text-muted-foreground">{t('pages:communityWorldMap.venues', 'Venues')}</div>
                             </div>
                             <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                               <Home className="w-4 h-4 text-amber-500" />
                               <div className="font-bold text-sm">{location.housing}</div>
-                              <div className="text-xs text-muted-foreground">Housing</div>
+                              <div className="text-xs text-muted-foreground">{t('pages:communityWorldMap.housing', 'Housing')}</div>
                             </div>
                           </div>
 
@@ -428,7 +429,7 @@ export default function CommunityWorldMapPage() {
                             >
                               <Button className="w-full gap-2" data-testid={`button-view-city-${location.id}`}>
                                 <ChevronRight className="w-4 h-4" />
-                                View City
+                                {t('pages:communityWorldMap.viewCity', 'View City')}
                               </Button>
                             </Link>
                           </div>

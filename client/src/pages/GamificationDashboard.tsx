@@ -35,7 +35,7 @@ export default function GamificationDashboard() {
   if (!user) {
     return (
       <div className="container mx-auto py-8 text-center">
-        <p className="text-muted-foreground">Please log in to view your gamification progress.</p>
+        <p className="text-muted-foreground">{t('pages:gamificationDashboard.pleaseLogIn', 'Please log in to view your gamification progress.')}</p>
       </div>
     );
   }
@@ -43,27 +43,27 @@ export default function GamificationDashboard() {
   return (
     <div className="container mx-auto py-8 space-y-8" data-testid="gamification-dashboard">
       <div>
-        <h1 className="text-4xl font-bold mb-2">Gamification Dashboard</h1>
+        <h1 className="text-4xl font-bold mb-2">{t('pages:gamificationDashboard.title', 'Gamification Dashboard')}</h1>
         <p className="text-muted-foreground">
-          Track your progress, earn badges, and compete on the leaderboard
+          {t('pages:gamificationDashboard.subtitle', 'Track your progress, earn badges, and compete on the leaderboard')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card data-testid="card-total-points">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Points</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:gamificationDashboard.totalPoints', 'Total Points')}</CardTitle>
             <Trophy className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{pointsData?.points?.toLocaleString() || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">Keep earning to climb the ranks</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('pages:gamificationDashboard.keepEarning', 'Keep earning to climb the ranks')}</p>
           </CardContent>
         </Card>
 
         <Card data-testid="card-global-rank">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Global Rank</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:gamificationDashboard.globalRank', 'Global Rank')}</CardTitle>
             <TrendingUp className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -71,14 +71,14 @@ export default function GamificationDashboard() {
               #{rankData?.rank || "-"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              out of {rankData?.total || "-"} users
+              {t('pages:gamificationDashboard.outOfUsers', 'out of {{total}} users', { total: rankData?.total || "-" })}
             </p>
           </CardContent>
         </Card>
 
         <Card data-testid="card-badges-earned">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Badges Earned</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:gamificationDashboard.badgesEarned', 'Badges Earned')}</CardTitle>
             <Award className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -86,20 +86,20 @@ export default function GamificationDashboard() {
               {badgesData?.badges?.length || 0}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {15 - (badgesData?.badges?.length || 0)} more to unlock
+              {t('pages:gamificationDashboard.moreToUnlock', '{{count}} more to unlock', { count: 15 - (badgesData?.badges?.length || 0) })}
             </p>
           </CardContent>
         </Card>
 
         <Card data-testid="card-autonomy-level">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Mr. Blue Autonomy</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:gamificationDashboard.mrBlueAutonomy', 'Mr. Blue Autonomy')}</CardTitle>
             <Target className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{autonomyData?.level || 0}%</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {autonomyData?.capabilities?.length || 0} capabilities unlocked
+              {t('pages:gamificationDashboard.capabilitiesUnlocked', '{{count}} capabilities unlocked', { count: autonomyData?.capabilities?.length || 0 })}
             </p>
           </CardContent>
         </Card>
@@ -107,9 +107,9 @@ export default function GamificationDashboard() {
 
       <Tabs defaultValue="badges" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="badges" data-testid="tab-badges">Badges</TabsTrigger>
-          <TabsTrigger value="leaderboard" data-testid="tab-leaderboard">Leaderboard</TabsTrigger>
-          <TabsTrigger value="autonomy" data-testid="tab-autonomy">Autonomy Timeline</TabsTrigger>
+          <TabsTrigger value="badges" data-testid="tab-badges">{t('pages:gamificationDashboard.badges', 'Badges')}</TabsTrigger>
+          <TabsTrigger value="leaderboard" data-testid="tab-leaderboard">{t('pages:gamificationDashboard.leaderboard', 'Leaderboard')}</TabsTrigger>
+          <TabsTrigger value="autonomy" data-testid="tab-autonomy">{t('pages:gamificationDashboard.autonomyTimeline', 'Autonomy Timeline')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="badges">
