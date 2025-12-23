@@ -1,4 +1,5 @@
 {
+  "watchDemo": "Ver Demo",
   "buttons": {
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",

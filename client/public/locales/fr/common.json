@@ -1,4 +1,5 @@
 {
+  "watchDemo": "Voir la Démo",
   "buttons": {
     "login": "Se connecter",
     "logout": "Se déconnecter",
