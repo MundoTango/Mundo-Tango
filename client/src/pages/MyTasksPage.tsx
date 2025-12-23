@@ -87,11 +87,11 @@ export default function MyTasksPage() {
   const completionRate = stats ? Math.round((stats.completedTasks / Math.max(stats.totalTasks, 1)) * 100) : 0;
 
   return (
-    <PageLayout title="My Tasks" showBreadcrumbs>
-      <SelfHealingErrorBoundary pageName="My Tasks" fallbackRoute="/dashboard">
+    <PageLayout title={t('pages:myTasks.pageTitle', 'My Tasks')} showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName={t('pages:myTasks.pageName', 'My Tasks')} fallbackRoute="/dashboard">
         <SEO
-          title="My Tasks - Volunteer Dashboard"
-          description="Track your volunteer tasks, log work hours, and monitor your contribution progress."
+          title={t('pages:myTasks.seoTitle', 'My Tasks - Volunteer Dashboard')}
+          description={t('pages:myTasks.seoDescription', 'Track your volunteer tasks, log work hours, and monitor your contribution progress.')}
         />
 
         <div className="min-h-screen py-8 px-4">

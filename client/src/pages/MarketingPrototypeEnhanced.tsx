@@ -38,7 +38,7 @@ export default function MarketingPrototypeEnhanced() {
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
 
   return (
-    <SelfHealingErrorBoundary pageName="Marketing Enhanced" fallbackRoute="/">
+    <SelfHealingErrorBoundary pageName={t('pages:marketingEnhanced.pageName', 'Marketing Enhanced')} fallbackRoute="/">
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* EDITORIAL HERO SECTION - 16:9 Aspect Ratio */}
       <motion.section
@@ -247,6 +247,7 @@ export default function MarketingPrototypeEnhanced() {
                 t('pages:marketingEnhanced.featureAnalytics', 'Analytics dashboard')
               ]}
               highlighted
+              mostPopularLabel={t('pages:marketingEnhanced.mostPopular', 'MOST POPULAR')}
               delay={0.2}
             />
             <PricingCard
@@ -431,13 +432,15 @@ function PricingCard({
   price,
   features,
   highlighted = false,
-  delay
+  delay,
+  mostPopularLabel
 }: {
   title: string;
   price: string;
   features: string[];
   highlighted?: boolean;
   delay: number;
+  mostPopularLabel?: string;
 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -452,10 +455,10 @@ function PricingCard({
       <Card 
         className={`relative h-full ${highlighted ? 'border-primary border-2 shadow-lg' : ''}`}
       >
-        {highlighted && (
+        {highlighted && mostPopularLabel && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <Badge className="bg-primary text-primary-foreground">
-              {t('pages:marketingEnhanced.mostPopular', 'MOST POPULAR')}
+              {mostPopularLabel}
             </Badge>
           </div>
         )}

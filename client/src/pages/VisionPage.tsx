@@ -12,11 +12,11 @@ export default function VisionPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Vision" fallbackRoute="/">
-      <PageLayout title="Our Vision" showBreadcrumbs>
+      <PageLayout title={t('pages:vision.pageTitle', 'Our Vision')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="Our Vision - Mundo Tango"
-            description="Explore Mundo Tango's vision for the future of tango—a world where every dancer is connected, every community thrives, and the art of Argentine tango flourishes globally."
+            title={t('pages:vision.seoTitle', 'Our Vision - Mundo Tango')}
+            description={t('pages:vision.seoDescription', "Explore Mundo Tango's vision for the future of tango—a world where every dancer is connected, every community thrives, and the art of Argentine tango flourishes globally.")}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -34,15 +34,15 @@ export default function VisionPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Eye className="w-3 h-3 mr-1.5" />
-                  Our Vision
+                  {t('pages:vision.badge', 'Our Vision')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  The Future of Tango
+                  {t('pages:vision.heroTitle', 'The Future of Tango')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Building tomorrow's global dance community, today
+                  {t('pages:vision.heroSubtitle', "Building tomorrow's global dance community, today")}
                 </p>
               </motion.div>
             </div>
@@ -61,28 +61,22 @@ export default function VisionPage() {
                   <CardHeader>
                     <CardTitle className="text-3xl font-serif flex items-center gap-2">
                       <Telescope className="h-8 w-8 text-primary" />
-                      Our Vision for 2030
+                      {t('pages:vision.vision2030Title', 'Our Vision for 2030')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-lg text-muted-foreground leading-relaxed">
-                      We envision a world where tango is accessible to everyone, everywhere. A world where 
-                      distance no longer limits connection, where finding a dance partner in a new city is 
-                      as easy as a few taps, and where the rich cultural heritage of tango is preserved 
-                      and celebrated across generations.
+                      {t('pages:vision.vision2030P1', 'We envision a world where tango is accessible to everyone, everywhere. A world where distance no longer limits connection, where finding a dance partner in a new city is as easy as a few taps, and where the rich cultural heritage of tango is preserved and celebrated across generations.')}
                     </p>
                     <p className="text-lg text-muted-foreground leading-relaxed">
-                      By 2030, Mundo Tango will be the heartbeat of the global tango community—connecting 
-                      millions of dancers, supporting thousands of teachers and organizers, and hosting 
-                      virtual experiences that bring the magic of Buenos Aires milongas to every corner 
-                      of the world.
+                      {t('pages:vision.vision2030P2', 'By 2030, Mundo Tango will be the heartbeat of the global tango community—connecting millions of dancers, supporting thousands of teachers and organizers, and hosting virtual experiences that bring the magic of Buenos Aires milongas to every corner of the world.')}
                     </p>
                   </CardContent>
                 </Card>
               </motion.div>
 
               <div className="space-y-6">
-                <h2 className="text-4xl md:text-5xl font-serif font-bold" data-testid="text-goals-heading">Our Long-Term Goals</h2>
+                <h2 className="text-4xl md:text-5xl font-serif font-bold" data-testid="text-goals-heading">{t('pages:vision.goalsTitle', 'Our Long-Term Goals')}</h2>
                 <div className="space-y-6">
                   <motion.div
                     initial={{ opacity: 0, y: 40 }}
@@ -93,11 +87,9 @@ export default function VisionPage() {
                     <Card className="hover-elevate" data-testid="card-goal-1">
                       <CardContent className="p-8 space-y-3">
                         <Globe2 className="h-10 w-10 text-primary" />
-                        <h3 className="text-2xl font-serif font-bold">Global Community of 10 Million Dancers</h3>
+                        <h3 className="text-2xl font-serif font-bold">{t('pages:vision.goal1Title', 'Global Community of 10 Million Dancers')}</h3>
                         <p className="text-sm text-muted-foreground">
-                          Connect dancers in every major city worldwide. Create a truly global network where 
-                          any dancer can find their community, whether they're at home or traveling abroad. 
-                          We're not just building a platform—we're building the world's largest tango family.
+                          {t('pages:vision.goal1Desc', "Connect dancers in every major city worldwide. Create a truly global network where any dancer can find their community, whether they're at home or traveling abroad. We're not just building a platform—we're building the world's largest tango family.")}
                         </p>
                       </CardContent>
                     </Card>
@@ -112,11 +104,9 @@ export default function VisionPage() {
                     <Card className="hover-elevate" data-testid="card-goal-2">
                       <CardContent className="p-8 space-y-3">
                         <Rocket className="h-10 w-10 text-primary" />
-                        <h3 className="text-2xl font-serif font-bold">AI-Powered Learning Revolution</h3>
+                        <h3 className="text-2xl font-serif font-bold">{t('pages:vision.goal2Title', 'AI-Powered Learning Revolution')}</h3>
                         <p className="text-sm text-muted-foreground">
-                          Transform how people learn tango with AI-powered coaching, personalized learning 
-                          paths, and virtual reality practice sessions. Make world-class instruction 
-                          accessible to everyone, regardless of their location or budget.
+                          {t('pages:vision.goal2Desc', 'Transform how people learn tango with AI-powered coaching, personalized learning paths, and virtual reality practice sessions. Make world-class instruction accessible to everyone, regardless of their location or budget.')}
                         </p>
                       </CardContent>
                     </Card>
@@ -131,11 +121,9 @@ export default function VisionPage() {
                     <Card className="hover-elevate" data-testid="card-goal-3">
                       <CardContent className="p-8 space-y-3">
                         <Sparkles className="h-10 w-10 text-primary" />
-                        <h3 className="text-2xl font-serif font-bold">Hybrid Events Revolution</h3>
+                        <h3 className="text-2xl font-serif font-bold">{t('pages:vision.goal3Title', 'Hybrid Events Revolution')}</h3>
                         <p className="text-sm text-muted-foreground">
-                          Pioneer the future of tango events with hybrid experiences that seamlessly blend 
-                          in-person and virtual attendance. Host global festivals where dancers from Buenos 
-                          Aires to Berlin can participate together in real-time.
+                          {t('pages:vision.goal3Desc', 'Pioneer the future of tango events with hybrid experiences that seamlessly blend in-person and virtual attendance. Host global festivals where dancers from Buenos Aires to Berlin can participate together in real-time.')}
                         </p>
                       </CardContent>
                     </Card>
@@ -150,11 +138,9 @@ export default function VisionPage() {
                     <Card className="hover-elevate" data-testid="card-goal-4">
                       <CardContent className="p-8 space-y-3">
                         <TrendingUp className="h-10 w-10 text-primary" />
-                        <h3 className="text-2xl font-serif font-bold">Sustainable Career Paths for Professionals</h3>
+                        <h3 className="text-2xl font-serif font-bold">{t('pages:vision.goal4Title', 'Sustainable Career Paths for Professionals')}</h3>
                         <p className="text-sm text-muted-foreground">
-                          Create sustainable income opportunities for tango teachers, DJs, performers, and 
-                          organizers. Build tools that help professionals grow their businesses, reach new 
-                          students, and thrive doing what they love.
+                          {t('pages:vision.goal4Desc', 'Create sustainable income opportunities for tango teachers, DJs, performers, and organizers. Build tools that help professionals grow their businesses, reach new students, and thrive doing what they love.')}
                         </p>
                       </CardContent>
                     </Card>
@@ -170,22 +156,17 @@ export default function VisionPage() {
               >
                 <Card className="hover-elevate bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-future">
                   <CardHeader>
-                    <CardTitle className="text-3xl font-serif">Why This Matters</CardTitle>
+                    <CardTitle className="text-3xl font-serif">{t('pages:vision.whyMattersTitle', 'Why This Matters')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 text-muted-foreground">
                     <p>
-                      Tango is more than a dance—it's a cultural treasure that brings joy, connection, and 
-                      meaning to millions of lives. But it faces challenges: aging communities in traditional 
-                      centers, difficulty reaching new audiences, and the struggle of professionals to earn 
-                      sustainable livelihoods.
+                      {t('pages:vision.whyMattersP1', "Tango is more than a dance—it's a cultural treasure that brings joy, connection, and meaning to millions of lives. But it faces challenges: aging communities in traditional centers, difficulty reaching new audiences, and the struggle of professionals to earn sustainable livelihoods.")}
                     </p>
                     <p>
-                      Our vision addresses these challenges head-on. By leveraging technology to connect, 
-                      educate, and empower, we're ensuring that tango not only survives but thrives for 
-                      generations to come.
+                      {t('pages:vision.whyMattersP2', "Our vision addresses these challenges head-on. By leveraging technology to connect, educate, and empower, we're ensuring that tango not only survives but thrives for generations to come.")}
                     </p>
                     <p className="font-semibold text-foreground">
-                      Join us in building this future. Together, we're creating something extraordinary.
+                      {t('pages:vision.whyMattersP3', "Join us in building this future. Together, we're creating something extraordinary.")}
                     </p>
                   </CardContent>
                 </Card>

@@ -50,11 +50,11 @@ interface EventSeriesData extends EventSeries {
   pastEvents: SelectEvent[];
 }
 
-function getRecurrenceBadgeInfo(recurrenceType: string | null | undefined) {
+function getRecurrenceBadgeInfo(recurrenceType: string | null | undefined, t: (key: string, fallback: string) => string) {
   const badges: Record<string, { label: string; icon: typeof RefreshCw; variant: "default" | "secondary" | "outline" }> = {
-    weekly: { label: "Weekly", icon: RefreshCw, variant: "default" },
-    monthly: { label: "Monthly", icon: Calendar, variant: "secondary" },
-    yearly: { label: "Yearly", icon: Calendar, variant: "outline" },
+    weekly: { label: t('pages:eventSeries.weekly', 'Weekly'), icon: RefreshCw, variant: "default" },
+    monthly: { label: t('pages:eventSeries.monthly', 'Monthly'), icon: Calendar, variant: "secondary" },
+    yearly: { label: t('pages:eventSeries.yearly', 'Yearly'), icon: Calendar, variant: "outline" },
   };
   return badges[recurrenceType || 'weekly'] || badges.weekly;
 }
@@ -219,7 +219,7 @@ export default function EventSeriesPage() {
     );
   }
 
-  const recurrenceBadge = getRecurrenceBadgeInfo(series.recurrenceType);
+  const recurrenceBadge = getRecurrenceBadgeInfo(series.recurrenceType, t);
   const RecurrenceIcon = recurrenceBadge.icon;
 
   return (
@@ -463,15 +463,15 @@ export default function EventSeriesPage() {
                   </CardTitle>
                   <CardDescription data-testid="text-upcoming-description">
                     {series.upcomingEvents.length > 0
-                      ? `${series.upcomingEvents.length} upcoming event${series.upcomingEvents.length === 1 ? '' : 's'} in this series`
-                      : "No upcoming events scheduled"
+                      ? t('pages:eventSeries.upcomingEventsCount', '{{count}} upcoming event(s) in this series', { count: series.upcomingEvents.length })
+                      : t('pages:eventSeries.noUpcomingEvents', 'No upcoming events scheduled')
                     }
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <EventsList 
                     events={series.upcomingEvents} 
-                    emptyMessage="No upcoming events scheduled for this series yet."
+                    emptyMessage={t('pages:eventSeries.noUpcomingEventsYet', 'No upcoming events scheduled for this series yet.')}
                     myRsvps={myRsvps}
                   />
                 </CardContent>
@@ -487,15 +487,15 @@ export default function EventSeriesPage() {
                   </CardTitle>
                   <CardDescription data-testid="text-past-description">
                     {series.pastEvents.length > 0
-                      ? `${series.pastEvents.length} past event${series.pastEvents.length === 1 ? '' : 's'} in this series`
-                      : "No past events"
+                      ? t('pages:eventSeries.pastEventsCount', '{{count}} past event(s) in this series', { count: series.pastEvents.length })
+                      : t('pages:eventSeries.noPastEvents', 'No past events')
                     }
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <EventsList 
                     events={series.pastEvents} 
-                    emptyMessage="No past events in this series."
+                    emptyMessage={t('pages:eventSeries.noPastEventsInSeries', 'No past events in this series.')}
                     myRsvps={myRsvps}
                   />
                 </CardContent>

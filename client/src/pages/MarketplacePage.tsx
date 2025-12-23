@@ -52,8 +52,8 @@ export default function MarketplacePage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Marketplace" fallbackRoute="/feed">
-      <PageLayout title="Tango Marketplace" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:marketplace.pageName', 'Marketplace')} fallbackRoute="/feed">
+      <PageLayout title={t('pages:marketplace.pageTitle', 'Tango Marketplace')} showBreadcrumbs>
         
         {/* Editorial Hero Section - 16:9 */}
         <div className="relative aspect-video w-full overflow-hidden mb-16" data-testid="hero-marketplace">

@@ -51,7 +51,7 @@ export default function ContentModerationPage() {
     queryKey: ["/api/admin/moderation/queue", activeTab],
     queryFn: async () => {
       const response = await fetch(`/api/admin/moderation/queue?status=${activeTab}`);
-      if (!response.ok) throw new Error("Failed to fetch queue");
+      if (!response.ok) throw new Error(t('pages:contentModeration.failedToFetchQueue', 'Failed to fetch queue'));
       return response.json();
     },
   });

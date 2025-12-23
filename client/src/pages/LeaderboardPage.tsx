@@ -26,7 +26,7 @@ export default function LeaderboardPage() {
   });
 
   return (
-    <SelfHealingErrorBoundary pageName="Leaderboard" fallbackRoute="/feed">
+    <SelfHealingErrorBoundary pageName={t('pages:leaderboard.pageName', 'Leaderboard')} fallbackRoute="/feed">
       <PageLayout title={t('pages:leaderboard.title', 'Community Leaderboard')} showBreadcrumbs>
         <>
           <SEO

@@ -85,7 +85,7 @@ export default function CitySlugRedirectPage() {
             {cityName}
           </h1>
           <p className="text-lg text-white/80">
-            {cityData?.country || 'Tango Community'}
+            {cityData?.country || t('pages:citySlugRedirect.tangoCommunity', 'Tango Community')}
           </p>
         </div>
       </div>

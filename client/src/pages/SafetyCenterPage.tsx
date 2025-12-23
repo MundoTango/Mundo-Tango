@@ -13,11 +13,11 @@ export default function SafetyCenterPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Safety Center" fallbackRoute="/">
-      <PageLayout title="Safety Center" showBreadcrumbs>
+      <PageLayout title={t('pages:safetyCenter.pageTitle', 'Safety Center')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="Safety Center - Mundo Tango"
-            description="Your safety is our priority. Learn about our community safety features, reporting tools, privacy protections, and resources for a secure tango experience."
+            title={t('pages:safetyCenter.seoTitle', 'Safety Center - Mundo Tango')}
+            description={t('pages:safetyCenter.seoDescription', 'Your safety is our priority. Learn about our community safety features, reporting tools, privacy protections, and resources for a secure tango experience.')}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -35,15 +35,15 @@ export default function SafetyCenterPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Shield className="w-3 h-3 mr-1.5" />
-                  Safety Center
+                  {t('pages:safetyCenter.badge', 'Safety Center')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Your Safety Matters
+                  {t('pages:safetyCenter.heroTitle', 'Your Safety Matters')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Building a safe, respectful community for all dancers
+                  {t('pages:safetyCenter.heroSubtitle', 'Building a safe, respectful community for all dancers')}
                 </p>
               </motion.div>
             </div>
@@ -62,19 +62,15 @@ export default function SafetyCenterPage() {
                   <CardHeader>
                     <CardTitle className="text-3xl font-serif flex items-center gap-2">
                       <Shield className="h-8 w-8 text-primary" />
-                      Our Safety Commitment
+                      {t('pages:safetyCenter.commitmentTitle', 'Our Safety Commitment')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 text-muted-foreground">
                     <p>
-                      Mundo Tango is committed to creating a safe, welcoming environment for all members 
-                      of our community. We believe everyone deserves to enjoy tango free from harassment, 
-                      discrimination, or unsafe behavior.
+                      {t('pages:safetyCenter.commitmentP1', 'Mundo Tango is committed to creating a safe, welcoming environment for all members of our community. We believe everyone deserves to enjoy tango free from harassment, discrimination, or unsafe behavior.')}
                     </p>
                     <p>
-                      We've implemented comprehensive safety features, clear community guidelines, and 
-                      responsive support systems to protect our users and maintain the positive culture 
-                      that makes tango special.
+                      {t('pages:safetyCenter.commitmentP2', "We've implemented comprehensive safety features, clear community guidelines, and responsive support systems to protect our users and maintain the positive culture that makes tango special.")}
                     </p>
                   </CardContent>
                 </Card>
@@ -90,13 +86,12 @@ export default function SafetyCenterPage() {
                   <Card className="hover-elevate h-full" data-testid="card-reporting">
                     <CardContent className="p-8 space-y-3">
                       <AlertTriangle className="h-10 w-10 text-primary" />
-                      <h3 className="text-2xl font-serif font-bold">Report Concerns</h3>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:safetyCenter.reportConcernsTitle', 'Report Concerns')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Easily report inappropriate behavior, harassment, or safety concerns. Our team 
-                        reviews all reports within 24 hours and takes appropriate action.
+                        {t('pages:safetyCenter.reportConcernsDesc', 'Easily report inappropriate behavior, harassment, or safety concerns. Our team reviews all reports within 24 hours and takes appropriate action.')}
                       </p>
                       <Button variant="outline" size="sm" asChild className="mt-4">
-                        <a href="/report-content">Report an Issue</a>
+                        <a href="/report-content">{t('pages:safetyCenter.reportIssue', 'Report an Issue')}</a>
                       </Button>
                     </CardContent>
                   </Card>
@@ -111,13 +106,12 @@ export default function SafetyCenterPage() {
                   <Card className="hover-elevate h-full" data-testid="card-privacy">
                     <CardContent className="p-8 space-y-3">
                       <Lock className="h-10 w-10 text-primary" />
-                      <h3 className="text-2xl font-serif font-bold">Privacy Controls</h3>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:safetyCenter.privacyControlsTitle', 'Privacy Controls')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Control who sees your profile, activity, and location. Block users, hide your 
-                        online status, and manage your visibility with granular privacy settings.
+                        {t('pages:safetyCenter.privacyControlsDesc', 'Control who sees your profile, activity, and location. Block users, hide your online status, and manage your visibility with granular privacy settings.')}
                       </p>
                       <Button variant="outline" size="sm" asChild className="mt-4">
-                        <a href="/settings/privacy">Privacy Settings</a>
+                        <a href="/settings/privacy">{t('pages:safetyCenter.privacySettings', 'Privacy Settings')}</a>
                       </Button>
                     </CardContent>
                   </Card>
@@ -132,13 +126,12 @@ export default function SafetyCenterPage() {
                   <Card className="hover-elevate h-full" data-testid="card-guidelines">
                     <CardContent className="p-8 space-y-3">
                       <Heart className="h-10 w-10 text-primary" />
-                      <h3 className="text-2xl font-serif font-bold">Community Guidelines</h3>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:safetyCenter.communityGuidelinesTitle', 'Community Guidelines')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Our guidelines ensure respectful interactions. We expect all members to treat 
-                        each other with kindness, respect boundaries, and contribute positively.
+                        {t('pages:safetyCenter.communityGuidelinesDesc', 'Our guidelines ensure respectful interactions. We expect all members to treat each other with kindness, respect boundaries, and contribute positively.')}
                       </p>
                       <Button variant="outline" size="sm" asChild className="mt-4">
-                        <a href="/community-guidelines">Read Guidelines</a>
+                        <a href="/community-guidelines">{t('pages:safetyCenter.readGuidelines', 'Read Guidelines')}</a>
                       </Button>
                     </CardContent>
                   </Card>
@@ -153,13 +146,12 @@ export default function SafetyCenterPage() {
                   <Card className="hover-elevate h-full" data-testid="card-support">
                     <CardContent className="p-8 space-y-3">
                       <Shield className="h-10 w-10 text-primary" />
-                      <h3 className="text-2xl font-serif font-bold">24/7 Support</h3>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:safetyCenter.supportTitle', '24/7 Support')}</h3>
                       <p className="text-sm text-muted-foreground">
-                        Our safety team is available around the clock. Contact us immediately if you 
-                        experience or witness concerning behavior.
+                        {t('pages:safetyCenter.supportDesc', 'Our safety team is available around the clock. Contact us immediately if you experience or witness concerning behavior.')}
                       </p>
                       <Button variant="outline" size="sm" asChild className="mt-4">
-                        <a href="mailto:safety@mundotango.com">Contact Safety Team</a>
+                        <a href="mailto:safety@mundotango.com">{t('pages:safetyCenter.contactSafetyTeam', 'Contact Safety Team')}</a>
                       </Button>
                     </CardContent>
                   </Card>
@@ -174,20 +166,17 @@ export default function SafetyCenterPage() {
               >
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-emergency">
                   <CardHeader>
-                    <CardTitle className="text-3xl font-serif">In Case of Emergency</CardTitle>
+                    <CardTitle className="text-3xl font-serif">{t('pages:safetyCenter.emergencyTitle', 'In Case of Emergency')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 text-muted-foreground">
                     <p className="font-semibold text-foreground">
-                      If you are in immediate danger, contact local emergency services first.
+                      {t('pages:safetyCenter.emergencyP1', 'If you are in immediate danger, contact local emergency services first.')}
                     </p>
                     <p>
-                      For urgent safety concerns related to the platform, email safety@mundotango.com 
-                      or use our emergency reporting feature. Include as much detail as possible: 
-                      usernames, screenshots, dates, and descriptions of incidents.
+                      {t('pages:safetyCenter.emergencyP2', 'For urgent safety concerns related to the platform, email safety@mundotango.com or use our emergency reporting feature. Include as much detail as possible: usernames, screenshots, dates, and descriptions of incidents.')}
                     </p>
                     <p>
-                      We take all reports seriously and will investigate promptly. Your safety and 
-                      well-being are our top priority.
+                      {t('pages:safetyCenter.emergencyP3', 'We take all reports seriously and will investigate promptly. Your safety and well-being are our top priority.')}
                     </p>
                   </CardContent>
                 </Card>

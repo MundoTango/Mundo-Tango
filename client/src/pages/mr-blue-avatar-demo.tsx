@@ -113,7 +113,7 @@ export default function MrBlueAvatarDemo() {
   const currentConfig = AVATAR_STATES.find((s) => s.state === selectedState) || AVATAR_STATES[0];
 
   return (
-    <SelfHealingErrorBoundary pageName="Mr Blue Avatar Demo" fallbackRoute="/dashboard">
+    <SelfHealingErrorBoundary pageName={t('pages:mrBlueAvatarDemo.pageName', 'Mr Blue Avatar Demo')} fallbackRoute="/dashboard">
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 md:p-8">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header */}

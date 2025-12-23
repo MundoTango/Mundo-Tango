@@ -150,8 +150,8 @@ export default function ReviewsPage() {
   return (
     <AppLayout>
       <SEO
-        title="Community Reviews | Mundo Tango"
-        description="Read and write reviews for teachers, venues, events, and more. Share your experiences and help the tango community make informed decisions."
+        title={t('pages:reviews.seoTitle', 'Community Reviews | Mundo Tango')}
+        description={t('pages:reviews.seoDescription', 'Read and write reviews for teachers, venues, events, and more. Share your experiences and help the tango community make informed decisions.')}
       />
       <div className="min-h-screen bg-background">
         {/* Editorial Hero Section - 16:9 */}
@@ -172,15 +172,15 @@ export default function ReviewsPage() {
               transition={{ duration: 1, ease: "easeOut" }}
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Community
+                {t('pages:reviews.community', 'Community')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Reviews
+                {t('pages:reviews.heroTitle', 'Reviews')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
-                Explore community reviews and share your experiences
+                {t('pages:reviews.heroSubtitle', 'Explore community reviews and share your experiences')}
               </p>
 
               <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
@@ -192,14 +192,14 @@ export default function ReviewsPage() {
                     data-testid="button-create-review"
                   >
                     <Star className="h-5 w-5" />
-                    Write a Review
+                    {t('pages:reviews.writeReview', 'Write a Review')}
                   </Button>
                 </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Write a Review</DialogTitle>
+                <DialogTitle>{t('pages:reviews.writeReview', 'Write a Review')}</DialogTitle>
                 <DialogDescription>
-                  Share your experience with the community
+                  {t('pages:reviews.shareExperience', 'Share your experience with the community')}
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>
@@ -210,7 +210,7 @@ export default function ReviewsPage() {
                       name="targetType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Review Type</FormLabel>
+                          <FormLabel>{t('pages:reviews.reviewType', 'Review Type')}</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger data-testid="select-target-type">
@@ -218,10 +218,10 @@ export default function ReviewsPage() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="teacher">Teacher</SelectItem>
-                              <SelectItem value="venue">Venue</SelectItem>
-                              <SelectItem value="event">Event</SelectItem>
-                              <SelectItem value="housing">Housing</SelectItem>
+                              <SelectItem value="teacher">{t('pages:reviews.teacher', 'Teacher')}</SelectItem>
+                              <SelectItem value="venue">{t('pages:reviews.venue', 'Venue')}</SelectItem>
+                              <SelectItem value="event">{t('pages:reviews.event', 'Event')}</SelectItem>
+                              <SelectItem value="housing">{t('pages:reviews.housing', 'Housing')}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -234,7 +234,7 @@ export default function ReviewsPage() {
                       name="targetId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Target ID</FormLabel>
+                          <FormLabel>{t('pages:reviews.targetId', 'Target ID')}</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -255,7 +255,7 @@ export default function ReviewsPage() {
                     name="rating"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Rating</FormLabel>
+                        <FormLabel>{t('pages:reviews.rating', 'Rating')}</FormLabel>
                         <div className="flex gap-2">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button
@@ -285,10 +285,10 @@ export default function ReviewsPage() {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title</FormLabel>
+                        <FormLabel>{t('pages:reviews.title', 'Title')}</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Great experience!"
+                            placeholder={t('pages:reviews.titlePlaceholder', 'Great experience!')}
                             data-testid="input-review-title"
                             {...field}
                           />
@@ -303,10 +303,10 @@ export default function ReviewsPage() {
                     name="content"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Review</FormLabel>
+                        <FormLabel>{t('pages:reviews.review', 'Review')}</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Share your detailed experience..."
+                            placeholder={t('pages:reviews.contentPlaceholder', 'Share your detailed experience...')}
                             rows={5}
                             data-testid="input-review-content"
                             {...field}
@@ -324,14 +324,14 @@ export default function ReviewsPage() {
                       onClick={() => setIsCreateOpen(false)}
                       data-testid="button-cancel-review"
                     >
-                      Cancel
+                      {t('common:cancel', 'Cancel')}
                     </Button>
                     <Button
                       type="submit"
                       disabled={createMutation.isPending}
                       data-testid="button-submit-review"
                     >
-                      {createMutation.isPending ? "Submitting..." : "Submit Review"}
+                      {createMutation.isPending ? t('pages:reviews.submitting', 'Submitting...') : t('pages:reviews.submitReview', 'Submit Review')}
                     </Button>
                   </div>
                 </form>
@@ -353,7 +353,7 @@ export default function ReviewsPage() {
         >
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Reviews</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t('pages:reviews.totalReviews', 'Total Reviews')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.totalReviews}</div>
@@ -362,7 +362,7 @@ export default function ReviewsPage() {
           
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Average Rating</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t('pages:reviews.averageRating', 'Average Rating')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
@@ -374,7 +374,7 @@ export default function ReviewsPage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Rating Distribution</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">{t('pages:reviews.ratingDistribution', 'Rating Distribution')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {stats.ratingDistribution.map(({ rating, count, percentage }) => (
@@ -422,7 +422,7 @@ export default function ReviewsPage() {
             animate={{ opacity: 1 }}
             className="text-center py-12 text-muted-foreground"
           >
-            Loading reviews...
+            {t('pages:reviews.loadingReviews', 'Loading reviews...')}
           </motion.div>
         ) : filteredReviews.length === 0 ? (
           <motion.div
@@ -433,7 +433,7 @@ export default function ReviewsPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <Star className="mx-auto h-12 w-12 mb-4 opacity-50 text-muted-foreground" />
-              <p className="text-muted-foreground">No reviews found</p>
+              <p className="text-muted-foreground">{t('pages:reviews.noReviewsFound', 'No reviews found')}</p>
             </CardContent>
           </Card>
           </motion.div>
@@ -470,7 +470,7 @@ export default function ReviewsPage() {
                           </Badge>
                           {review.verified && (
                             <Badge variant="secondary" className="text-xs">
-                              Verified
+                              {t('pages:reviews.verified', 'Verified')}
                             </Badge>
                           )}
                         </div>

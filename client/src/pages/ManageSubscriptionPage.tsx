@@ -173,7 +173,7 @@ export default function ManageSubscriptionPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="ManageSubscription" fallbackRoute="/subscriptions">
+    <SelfHealingErrorBoundary pageName={t('pages:manageSubscription.pageName', 'Manage Subscription')} fallbackRoute="/subscriptions">
       <PageLayout title={t('pages:manageSubscription.title', 'Manage Subscription')} showBreadcrumbs>
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-12 px-4">
           <div className="container mx-auto max-w-5xl">

@@ -266,10 +266,10 @@ export default function CityHubPage() {
                 <CardHeader className="pb-2">
                   <CardTitle className="flex items-center gap-2">
                     <Map className="h-5 w-5 text-primary" />
-                    Map View - {selectedCity.city}
+                    {t('pages:cityHub.mapViewTitle', 'Map View - {{city}}', { city: selectedCity.city })}
                   </CardTitle>
                   <CardDescription>
-                    {mapLocations.length} locations with coordinates • Events and housing shown
+                    {t('pages:cityHub.mapViewDescription', '{{count}} locations with coordinates • Events and housing shown', { count: mapLocations.length })}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -337,7 +337,7 @@ export default function CityHubPage() {
                                   {event.venue || event.location || selectedCity.city}
                                 </p>
                               </div>
-                              <Badge variant="outline" className="text-xs">{event.eventType || event.type || "Event"}</Badge>
+                              <Badge variant="outline" className="text-xs">{event.eventType || event.type || t('pages:cityHub.event', 'Event')}</Badge>
                             </Link>
                           </Card>
                         ))}
@@ -557,7 +557,7 @@ export default function CityHubPage() {
                         </Link>
                         <p className="text-sm text-muted-foreground flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          {visitor.arrivalDate ? format(new Date(visitor.arrivalDate), "MMM d") : "Soon"}
+                          {visitor.arrivalDate ? format(new Date(visitor.arrivalDate), "MMM d") : t('pages:cityHub.soon', 'Soon')}
                           {visitor.departureDate && ` - ${format(new Date(visitor.departureDate), "MMM d")}`}
                         </p>
                       </div>
@@ -569,12 +569,12 @@ export default function CityHubPage() {
               <Card className="text-center py-12">
                 <CardContent>
                   <Plane className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Upcoming Visitors</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('pages:cityHub.noUpcomingVisitors', 'No Upcoming Visitors')}</h3>
                   <p className="text-muted-foreground mb-4">
-                    Be the first to plan a trip to {selectedCity.city}!
+                    {t('pages:cityHub.beFirstToVisit', 'Be the first to plan a trip to {{city}}!', { city: selectedCity.city })}
                   </p>
                   <Button asChild>
-                    <Link href="/travel/plan">Plan Your Visit</Link>
+                    <Link href="/travel/plan">{t('pages:cityHub.planYourVisit', 'Plan Your Visit')}</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -585,11 +585,11 @@ export default function CityHubPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <Star className="h-5 w-5 text-primary" />
-                Tips & Recommendations in {selectedCity.city || "City"}
+                {t('pages:cityHub.tipsAndRecommendations', 'Tips & Recommendations in {{city}}', { city: selectedCity.city || t('pages:cityHub.city', 'City') })}
               </h2>
               <Button variant="outline" asChild data-testid="button-add-recommendation">
                 <Link href="/recommendations/add">
-                  Add Recommendation
+                  {t('pages:cityHub.addRecommendation', 'Add Recommendation')}
                 </Link>
               </Button>
             </div>
@@ -610,9 +610,9 @@ export default function CityHubPage() {
               <Card className="text-center py-12">
                 <CardContent>
                   <Star className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Select a City</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('pages:cityHub.selectACity', 'Select a City')}</h3>
                   <p className="text-muted-foreground mb-4">
-                    Use the search above to see recommendations
+                    {t('pages:cityHub.useSearchForRecommendations', 'Use the search above to see recommendations')}
                   </p>
                 </CardContent>
               </Card>

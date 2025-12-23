@@ -46,12 +46,12 @@ export default function LifeCEODashboardPage() {
   ];
 
   return (
-    <SelfHealingErrorBoundary pageName="Life CEO Dashboard" fallbackRoute="/feed">
-      <PageLayout title="Life CEO Dashboard" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:lifeCEO.pageName', 'Life CEO Dashboard')} fallbackRoute="/feed">
+      <PageLayout title={t('pages:lifeCEO.pageTitle', 'Life CEO Dashboard')} showBreadcrumbs>
         <>
           <SEO
-            title="Life CEO Dashboard - AI-Powered Life Management"
-            description="Manage every aspect of your life with 16 specialized AI agents. From health to wealth, career to creativity."
+            title={t('pages:lifeCEO.seoTitle', 'Life CEO Dashboard - AI-Powered Life Management')}
+            description={t('pages:lifeCEO.seoDescription', 'Manage every aspect of your life with 16 specialized AI agents. From health to wealth, career to creativity.')}
           />
 
           {/* EDITORIAL HERO SECTION - 16:9 */}
@@ -99,25 +99,25 @@ export default function LifeCEODashboardPage() {
               <FadeInSection delay={0.1}>
                 <div className="grid gap-8 md:grid-cols-4 mb-24">
                   <StatsCard
-                    label="Active Agents"
+                    label={t('pages:lifeCEO.activeAgents', 'Active Agents')}
                     value="16"
                     icon={<Brain className="h-10 w-10 text-primary" />}
                     gradient="from-primary to-accent"
                   />
                   <StatsCard
-                    label="Pending Tasks"
+                    label={t('pages:lifeCEO.pendingTasks', 'Pending Tasks')}
                     value="31"
                     icon={<Clock className="h-10 w-10 text-orange-500" />}
                     gradient="from-orange-500 to-amber-500"
                   />
                   <StatsCard
-                    label="Completed Today"
+                    label={t('pages:lifeCEO.completedToday', 'Completed Today')}
                     value="18"
                     icon={<CheckCircle2 className="h-10 w-10 text-green-500" />}
                     gradient="from-green-500 to-emerald-500"
                   />
                   <StatsCard
-                    label="Efficiency Score"
+                    label={t('pages:lifeCEO.efficiencyScore', 'Efficiency Score')}
                     value="87%"
                     icon={<Zap className="h-10 w-10 text-purple-500" />}
                     gradient="from-purple-500 to-violet-500"

@@ -19,11 +19,10 @@ export default function WorkshopsPage() {
     <AppLayout>
       <>
         <SEO
-          title="Tango Workshops"
-          description="Learn from world-class instructors in intensive tango workshops. Improve your technique, musicality, and connection."
+          title={t('pages:workshops.seoTitle', 'Tango Workshops')}
+          description={t('pages:workshops.seoDescription', 'Learn from world-class instructors in intensive tango workshops. Improve your technique, musicality, and connection.')}
         />
 
-        {/* Hero Section */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
           <motion.div 
             className="absolute inset-0 bg-cover bg-center" 
@@ -44,20 +43,20 @@ export default function WorkshopsPage() {
               transition={{ duration: 1, ease: "easeOut" }}
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Intensive Learning
+                {t('pages:workshops.badge', 'Intensive Learning')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Tango Workshops
+                {t('pages:workshops.heroTitle', 'Tango Workshops')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
-                Learn from world-class instructors in intensive workshops
+                {t('pages:workshops.heroSubtitle', 'Learn from world-class instructors in intensive workshops')}
               </p>
 
               <Button size="lg" className="gap-2" data-testid="button-create-workshop">
                 <Plus className="h-5 w-5" />
-                Host a Workshop
+                {t('pages:workshops.hostWorkshop', 'Host a Workshop')}
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </motion.div>
@@ -68,7 +67,7 @@ export default function WorkshopsPage() {
           {isLoading ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-              <p className="mt-4 text-muted-foreground">Loading workshops...</p>
+              <p className="mt-4 text-muted-foreground">{t('pages:workshops.loading', 'Loading workshops...')}</p>
             </div>
           ) : workshops && Array.isArray(workshops) && workshops.length > 0 ? (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -92,7 +91,7 @@ export default function WorkshopsPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                       {workshop.spotsLeft && workshop.spotsLeft < 5 && (
                         <Badge className="absolute top-4 right-4 bg-red-500 text-white">
-                          Few spots left
+                          {t('pages:workshops.fewSpotsLeft', 'Few spots left')}
                         </Badge>
                       )}
                       <div className="absolute bottom-4 left-4 right-4 text-white">
@@ -100,7 +99,7 @@ export default function WorkshopsPage() {
                           {workshop.title}
                         </h3>
                         {workshop.instructor && (
-                          <p className="text-sm text-white/80">with {workshop.instructor}</p>
+                          <p className="text-sm text-white/80">{t('pages:workshops.withInstructor', 'with {{instructor}}', { instructor: workshop.instructor })}</p>
                         )}
                       </div>
                     </div>
@@ -127,7 +126,7 @@ export default function WorkshopsPage() {
                       {workshop.capacity && (
                         <div className="flex items-center gap-2 text-sm">
                           <Users className="h-4 w-4 text-primary flex-shrink-0" />
-                          <span>{workshop.registered || 0}/{workshop.capacity} registered</span>
+                          <span>{t('pages:workshops.registered', '{{registered}}/{{capacity}} registered', { registered: workshop.registered || 0, capacity: workshop.capacity })}</span>
                         </div>
                       )}
 
@@ -137,7 +136,7 @@ export default function WorkshopsPage() {
                         </div>
                         <Link href={`/workshops/${workshop.id}`}>
                           <Button className="gap-2" data-testid={`button-register-${workshop.id}`}>
-                            Register
+                            {t('pages:workshops.register', 'Register')}
                             <ChevronRight className="h-4 w-4" />
                           </Button>
                         </Link>
@@ -151,8 +150,8 @@ export default function WorkshopsPage() {
             <Card>
               <CardContent className="py-16 text-center text-muted-foreground">
                 <Calendar className="mx-auto h-16 w-16 mb-4 opacity-50" />
-                <p className="text-lg">No workshops available at the moment</p>
-                <p className="text-sm mt-2">Check back soon for upcoming workshops</p>
+                <p className="text-lg">{t('pages:workshops.noWorkshops', 'No workshops available at the moment')}</p>
+                <p className="text-sm mt-2">{t('pages:workshops.checkBack', 'Check back soon for upcoming workshops')}</p>
               </CardContent>
             </Card>
           )}

@@ -18,7 +18,7 @@ export default function LiveStreamPage() {
   });
 
   return (
-    <SelfHealingErrorBoundary pageName="Live Streams" fallbackRoute="/feed">
+    <SelfHealingErrorBoundary pageName={t('pages:liveStream.pageName', 'Live Streams')} fallbackRoute="/feed">
       <PageLayout title={t('pages:liveStream.title', 'Live Streams')} showBreadcrumbs>
         
         {/* Editorial Hero Section - 16:9 */}

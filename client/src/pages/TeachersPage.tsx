@@ -76,10 +76,9 @@ export default function TeachersPage() {
   return (
     <AppLayout>
       <SEO
-        title="Find Tango Teachers & Instructors | Mundo Tango"
-        description="Discover experienced tango teachers worldwide. Browse certified instructors, read reviews, compare rates, and book private or group lessons. Learn from the best."
+        title={t('pages:teachers.seoTitle', 'Find Tango Teachers & Instructors | Mundo Tango')}
+        description={t('pages:teachers.seoDescription', 'Discover experienced tango teachers worldwide. Browse certified instructors, read reviews, compare rates, and book private or group lessons. Learn from the best.')}
       />
-      {/* Hero Section */}
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{
           backgroundImage: `url('https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=1600&h=900&fit=crop')`
@@ -95,15 +94,15 @@ export default function TeachersPage() {
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
               <Music className="w-3 h-3 mr-1.5" />
-              Expert Instructors
+              {t('pages:teachers.badge', 'Expert Instructors')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-              Tango Teachers
+              {t('pages:teachers.heroTitle', 'Tango Teachers')}
             </h1>
             
             <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-              Learn from world-class instructors and master the art of Argentine tango
+              {t('pages:teachers.heroSubtitle', 'Learn from world-class instructors and master the art of Argentine tango')}
             </p>
           </motion.div>
         </div>
@@ -111,7 +110,6 @@ export default function TeachersPage() {
 
       <div className="bg-background py-12 px-6">
         <div className="container mx-auto max-w-7xl">
-          {/* Search & Filter Controls */}
           <motion.div 
             className="mb-12 space-y-6"
             initial={{ opacity: 0, y: 20 }}
@@ -123,7 +121,7 @@ export default function TeachersPage() {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
                   data-testid="input-search"
-                  placeholder="Search by name, style, or specialization..."
+                  placeholder={t('pages:teachers.searchPlaceholder', 'Search by name, style, or specialization...')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-12 h-12 text-base"
@@ -136,7 +134,7 @@ export default function TeachersPage() {
                 className="h-12 gap-2"
               >
                 <Filter className="h-4 w-4" />
-                Filters
+                {t('pages:teachers.filters', 'Filters')}
               </Button>
             </div>
 
@@ -149,7 +147,7 @@ export default function TeachersPage() {
                 <Card className="border-primary/20 bg-card/50 backdrop-blur-sm">
                   <CardContent className="p-6 space-y-6">
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-serif font-bold">Advanced Filters</h3>
+                      <h3 className="text-lg font-serif font-bold">{t('pages:teachers.advancedFilters', 'Advanced Filters')}</h3>
                       <Button variant="ghost" size="icon" onClick={() => setShowFilters(false)}>
                         <X className="h-4 w-4" />
                       </Button>
@@ -157,7 +155,7 @@ export default function TeachersPage() {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                       <div className="space-y-2">
-                        <Label>Experience Level</Label>
+                        <Label>{t('pages:teachers.experienceLevel', 'Experience Level')}</Label>
                         <Select 
                           value={filters.experienceLevel} 
                           onValueChange={(value) => setFilters({ ...filters, experienceLevel: value })}
@@ -166,17 +164,17 @@ export default function TeachersPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="all">All Levels</SelectItem>
-                            <SelectItem value="beginner">Beginner (&lt;3 years)</SelectItem>
-                            <SelectItem value="intermediate">Intermediate (3-7 years)</SelectItem>
-                            <SelectItem value="advanced">Advanced (7-15 years)</SelectItem>
-                            <SelectItem value="professional">Professional (15+ years)</SelectItem>
+                            <SelectItem value="all">{t('pages:teachers.allLevels', 'All Levels')}</SelectItem>
+                            <SelectItem value="beginner">{t('pages:teachers.beginner', 'Beginner (<3 years)')}</SelectItem>
+                            <SelectItem value="intermediate">{t('pages:teachers.intermediate', 'Intermediate (3-7 years)')}</SelectItem>
+                            <SelectItem value="advanced">{t('pages:teachers.advanced', 'Advanced (7-15 years)')}</SelectItem>
+                            <SelectItem value="professional">{t('pages:teachers.professional', 'Professional (15+ years)')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Availability</Label>
+                        <Label>{t('pages:teachers.availability', 'Availability')}</Label>
                         <Select 
                           value={filters.availability} 
                           onValueChange={(value) => setFilters({ ...filters, availability: value })}
@@ -185,15 +183,15 @@ export default function TeachersPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="all">All Teachers</SelectItem>
-                            <SelectItem value="available">Available Now</SelectItem>
-                            <SelectItem value="not_available">Fully Booked</SelectItem>
+                            <SelectItem value="all">{t('pages:teachers.allTeachers', 'All Teachers')}</SelectItem>
+                            <SelectItem value="available">{t('pages:teachers.availableNow', 'Available Now')}</SelectItem>
+                            <SelectItem value="not_available">{t('pages:teachers.fullyBooked', 'Fully Booked')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Sort By</Label>
+                        <Label>{t('pages:teachers.sortBy', 'Sort By')}</Label>
                         <Select 
                           value={filters.sortBy} 
                           onValueChange={(value) => setFilters({ ...filters, sortBy: value })}
@@ -202,10 +200,10 @@ export default function TeachersPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="rating">Highest Rating</SelectItem>
-                            <SelectItem value="experience">Most Experience</SelectItem>
-                            <SelectItem value="price_low">Price: Low to High</SelectItem>
-                            <SelectItem value="price_high">Price: High to Low</SelectItem>
+                            <SelectItem value="rating">{t('pages:teachers.highestRating', 'Highest Rating')}</SelectItem>
+                            <SelectItem value="experience">{t('pages:teachers.mostExperience', 'Most Experience')}</SelectItem>
+                            <SelectItem value="price_low">{t('pages:teachers.priceLowToHigh', 'Price: Low to High')}</SelectItem>
+                            <SelectItem value="price_high">{t('pages:teachers.priceHighToLow', 'Price: High to Low')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -213,7 +211,7 @@ export default function TeachersPage() {
 
                     <div className="space-y-3">
                       <Label className="text-base">
-                        Hourly Rate: <span className="font-bold">${filters.minPrice} - ${filters.maxPrice}</span>
+                        {t('pages:teachers.hourlyRate', 'Hourly Rate')}: <span className="font-bold">${filters.minPrice} - ${filters.maxPrice}</span>
                       </Label>
                       <div className="flex items-center gap-4">
                         <span className="text-sm text-muted-foreground">$0</span>
@@ -235,7 +233,6 @@ export default function TeachersPage() {
             )}
           </motion.div>
 
-          {/* Results Count */}
           {filteredTeachers && filteredTeachers.length > 0 && (
             <motion.p 
               className="mb-8 text-muted-foreground text-base"
@@ -243,14 +240,16 @@ export default function TeachersPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              Showing {filteredTeachers.length} {filteredTeachers.length === 1 ? 'teacher' : 'teachers'}
+              {t('pages:teachers.showingResults', 'Showing {{count}} {{label}}', { 
+                count: filteredTeachers.length, 
+                label: filteredTeachers.length === 1 ? t('pages:teachers.teacher', 'teacher') : t('pages:teachers.teachersPlural', 'teachers') 
+              })}
             </motion.p>
           )}
 
-          {/* Teachers Grid */}
           {isLoading ? (
             <div className="text-center py-16">
-              <p className="text-muted-foreground">Loading teachers...</p>
+              <p className="text-muted-foreground">{t('pages:teachers.loading', 'Loading teachers...')}</p>
             </div>
           ) : filteredTeachers && filteredTeachers.length > 0 ? (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -263,18 +262,16 @@ export default function TeachersPage() {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
                   <Card className="overflow-hidden hover-elevate" data-testid={`teacher-card-${teacher.id}`}>
-                    {/* 16:9 Hero Image */}
                     <div className="relative aspect-[16/9] overflow-hidden">
                       <motion.img
                         src={`https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&h=338&fit=crop&q=80`}
-                        alt={teacher.user?.name || "Teacher"}
+                        alt={teacher.user?.name || t('pages:teachers.teacherAlt', 'Teacher')}
                         className="w-full h-full object-cover"
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.6 }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                       
-                      {/* Avatar overlaid on image */}
                       <div className="absolute bottom-4 left-4">
                         <Avatar className="h-16 w-16 border-4 border-white/20">
                           <AvatarImage src={teacher.user?.profileImage} />
@@ -282,7 +279,6 @@ export default function TeachersPage() {
                         </Avatar>
                       </div>
 
-                      {/* Rating Badge */}
                       {teacher.rating > 0 && (
                         <div className="absolute top-4 right-4">
                           <Badge className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
@@ -298,7 +294,7 @@ export default function TeachersPage() {
                         <div className="flex items-center gap-2 mb-2">
                           <Link href={`/profile/${teacher.user?.username}`}>
                             <h3 className="text-2xl font-serif font-bold hover:text-primary transition-colors" data-testid={`text-name-${teacher.id}`}>
-                              {teacher.user?.name || "Unknown"}
+                              {teacher.user?.name || t('pages:teachers.unknown', 'Unknown')}
                             </h3>
                           </Link>
                           {teacher.verified && (
@@ -314,25 +310,22 @@ export default function TeachersPage() {
                         )}
                       </div>
 
-                      {/* Price */}
                       {teacher.hourlyRate && (
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">Hourly Rate</span>
+                          <span className="text-sm text-muted-foreground">{t('pages:teachers.hourlyRateLabel', 'Hourly Rate')}</span>
                           <span className="text-2xl font-serif font-bold">${teacher.hourlyRate}</span>
                         </div>
                       )}
 
-                      {/* Experience */}
                       {teacher.yearsOfExperience && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Award className="h-4 w-4" />
                           <span data-testid={`text-experience-${teacher.id}`}>
-                            {teacher.yearsOfExperience} years experience
+                            {t('pages:teachers.yearsExperience', '{{years}} years experience', { years: teacher.yearsOfExperience })}
                           </span>
                         </div>
                       )}
                       
-                      {/* Specialties */}
                       {teacher.specialties && teacher.specialties.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {teacher.specialties.slice(0, 3).map((specialty: string, idx: number) => (
@@ -351,7 +344,7 @@ export default function TeachersPage() {
                         <Link href={`/profile/${teacher.user?.username}`} className="flex-1">
                           <Button className="w-full gap-2" data-testid={`button-view-${teacher.id}`}>
                             <GraduationCap className="h-4 w-4" />
-                            View Profile
+                            {t('pages:teachers.viewProfile', 'View Profile')}
                           </Button>
                         </Link>
                         <Button variant="outline" size="icon" data-testid={`button-message-${teacher.id}`}>
@@ -369,9 +362,9 @@ export default function TeachersPage() {
                 <div className="p-4 rounded-full bg-muted inline-block mb-6">
                   <GraduationCap className="h-12 w-12 text-muted-foreground" aria-hidden="true" />
                 </div>
-                <h3 className="text-xl font-serif font-bold mb-2">No Teachers Found</h3>
+                <h3 className="text-xl font-serif font-bold mb-2">{t('pages:teachers.noTeachersFound', 'No Teachers Found')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  {searchTerm || showFilters ? 'Try adjusting your search or filters' : 'No teachers are available in your area yet.'}
+                  {searchTerm || showFilters ? t('pages:teachers.adjustFilters', 'Try adjusting your search or filters') : t('pages:teachers.noTeachersAvailable', 'No teachers are available in your area yet.')}
                 </p>
                 {(searchTerm || showFilters) && (
                   <Button 
@@ -390,7 +383,7 @@ export default function TeachersPage() {
                     data-testid="button-clear-filters"
                   >
                     <X className="h-4 w-4 mr-2" />
-                    Clear Filters
+                    {t('pages:teachers.clearFilters', 'Clear Filters')}
                   </Button>
                 )}
               </CardContent>

@@ -75,11 +75,11 @@ export default function RecommendationsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Recommendations" fallbackRoute="/discover">
-      <PageLayout title="Personalized Recommendations" showBreadcrumbs>
+      <PageLayout title={t('pages:recommendations.pageTitle', 'Personalized Recommendations')} showBreadcrumbs>
         <>
           <SEO 
-            title="Recommendations - Mundo Tango"
-            description="AI-powered personalized recommendations for events, people, and content in the tango community"
+            title={t('pages:recommendations.seoTitle', 'Recommendations - Mundo Tango')}
+            description={t('pages:recommendations.seoDescription', 'AI-powered personalized recommendations for events, people, and content in the tango community')}
           />
 
           {/* Hero Section - 16:9 */}
@@ -98,15 +98,15 @@ export default function RecommendationsPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                   <Sparkles className="w-3 h-3 mr-1.5" />
-                  Curated For You
+                  {t('pages:recommendations.curatedForYou', 'Curated For You')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                  Your Recommendations
+                  {t('pages:recommendations.heroTitle', 'Your Recommendations')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  AI-powered suggestions tailored to your tango journey
+                  {t('pages:recommendations.heroSubtitle', 'AI-powered suggestions tailored to your tango journey')}
                 </p>
               </motion.div>
             </div>
@@ -124,10 +124,10 @@ export default function RecommendationsPage() {
               >
                 <div>
                   <h2 className="text-3xl md:text-4xl font-serif font-bold mb-2">
-                    Discover What's Next
+                    {t('pages:recommendations.discoverTitle', "Discover What's Next")}
                   </h2>
                   <p className="text-muted-foreground">
-                    Based on your interests and activity
+                    {t('pages:recommendations.discoverSubtitle', 'Based on your interests and activity')}
                   </p>
                 </div>
                 <Button 
@@ -138,7 +138,7 @@ export default function RecommendationsPage() {
                   data-testid="button-refresh-recommendations"
                 >
                   <RefreshCw className="h-5 w-5" />
-                  Refresh
+                  {t('pages:recommendations.refresh', 'Refresh')}
                 </Button>
               </motion.div>
 
@@ -151,7 +151,7 @@ export default function RecommendationsPage() {
               >
                 <Card className="hover-elevate">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">New Today</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('pages:recommendations.newToday', 'New Today')}</CardTitle>
                     <TrendingUp className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
@@ -163,7 +163,7 @@ export default function RecommendationsPage() {
 
                 <Card className="hover-elevate">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Match Score</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('pages:recommendations.matchScore', 'Match Score')}</CardTitle>
                     <Star className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
@@ -175,7 +175,7 @@ export default function RecommendationsPage() {
 
                 <Card className="hover-elevate">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Acted On</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('pages:recommendations.actedOn', 'Acted On')}</CardTitle>
                     <Heart className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
@@ -187,7 +187,7 @@ export default function RecommendationsPage() {
 
                 <Card className="hover-elevate">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Saved</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('pages:recommendations.saved', 'Saved')}</CardTitle>
                     <Bookmark className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
@@ -201,11 +201,11 @@ export default function RecommendationsPage() {
               {/* Tabs */}
               <Tabs defaultValue="all" className="w-full">
                 <TabsList className="grid w-full max-w-2xl grid-cols-5">
-                  <TabsTrigger value="all" data-testid="tab-all">All</TabsTrigger>
-                  <TabsTrigger value="events" data-testid="tab-events">Events</TabsTrigger>
-                  <TabsTrigger value="people" data-testid="tab-people">People</TabsTrigger>
-                  <TabsTrigger value="content" data-testid="tab-content">Content</TabsTrigger>
-                  <TabsTrigger value="venues" data-testid="tab-venues">Venues</TabsTrigger>
+                  <TabsTrigger value="all" data-testid="tab-all">{t('pages:recommendations.tabAll', 'All')}</TabsTrigger>
+                  <TabsTrigger value="events" data-testid="tab-events">{t('pages:recommendations.tabEvents', 'Events')}</TabsTrigger>
+                  <TabsTrigger value="people" data-testid="tab-people">{t('pages:recommendations.tabPeople', 'People')}</TabsTrigger>
+                  <TabsTrigger value="content" data-testid="tab-content">{t('pages:recommendations.tabContent', 'Content')}</TabsTrigger>
+                  <TabsTrigger value="venues" data-testid="tab-venues">{t('pages:recommendations.tabVenues', 'Venues')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="all" className="space-y-4 mt-8">
@@ -264,7 +264,7 @@ export default function RecommendationsPage() {
                                     {rec.type}
                                   </Badge>
                                   <Badge variant="secondary" className="bg-background/90 backdrop-blur">
-                                    {rec.score}% match
+                                    {rec.score}% {t('pages:recommendations.match', 'match')}
                                   </Badge>
                                 </div>
                               </div>
@@ -317,7 +317,7 @@ export default function RecommendationsPage() {
                                     className="flex-1"
                                     data-testid={`button-view-${rec.id}`}
                                   >
-                                    View Details
+                                    {t('pages:recommendations.viewDetails', 'View Details')}
                                   </Button>
                                   <Button 
                                     variant="outline"
@@ -337,12 +337,12 @@ export default function RecommendationsPage() {
                     <Card>
                       <CardContent className="py-16 text-center">
                         <Sparkles className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                        <h3 className="text-xl font-semibold font-serif mb-2">No recommendations yet</h3>
+                        <h3 className="text-xl font-semibold font-serif mb-2">{t('pages:recommendations.noRecommendations', 'No recommendations yet')}</h3>
                         <p className="text-muted-foreground mb-6">
-                          Start engaging with content to get personalized suggestions
+                          {t('pages:recommendations.noRecommendationsDescription', 'Start engaging with content to get personalized suggestions')}
                         </p>
                         <Button data-testid="button-explore">
-                          Explore Mundo Tango
+                          {t('pages:recommendations.exploreMundoTango', 'Explore Mundo Tango')}
                         </Button>
                       </CardContent>
                     </Card>
@@ -354,9 +354,9 @@ export default function RecommendationsPage() {
                     <Card>
                       <CardContent className="py-16 text-center">
                         <Sparkles className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                        <h3 className="text-xl font-semibold font-serif mb-2 capitalize">{type} Recommendations</h3>
+                        <h3 className="text-xl font-semibold font-serif mb-2 capitalize">{t(`pages:recommendations.${type}Recommendations`, `${type} Recommendations`)}</h3>
                         <p className="text-muted-foreground">
-                          Showing filtered recommendations for {type}
+                          {t('pages:recommendations.showingFiltered', 'Showing filtered recommendations for {{type}}', { type })}
                         </p>
                       </CardContent>
                     </Card>

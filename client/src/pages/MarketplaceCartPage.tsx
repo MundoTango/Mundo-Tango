@@ -151,7 +151,7 @@ export default function MarketplaceCartPage() {
               discount={discount}
               currency="USD"
               onCheckout={handleCheckout}
-              checkoutLabel="Proceed to Checkout"
+              checkoutLabel={t('pages:marketplaceCart.proceedToCheckout', 'Proceed to Checkout')}
             />
           </div>
         </div>

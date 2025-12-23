@@ -24,7 +24,7 @@ export default function MarketingPrototypeOcean() {
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
   return (
-    <SelfHealingErrorBoundary pageName="Marketing Ocean" fallbackRoute="/">
+    <SelfHealingErrorBoundary pageName={t('pages:marketingOcean.pageName', 'Marketing Ocean')} fallbackRoute="/">
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Video Hero Section - MT Ocean Theme */}
       <motion.section
@@ -143,36 +143,42 @@ export default function MarketingPrototypeOcean() {
                 title={t('pages:marketingOcean.socialFeedTitle', 'Social Feed')}
                 description={t('pages:marketingOcean.socialFeedDesc', 'Share your tango journey with a vibrant community')}
                 delay={0.1}
+                learnMoreLabel={t('pages:marketingOcean.learnMore', 'Learn More')}
               />
               <FeatureCard
                 icon={<Users className="text-blue-400" size={48} />}
                 title={t('pages:marketingOcean.findPartnersTitle', 'Find Partners')}
                 description={t('pages:marketingOcean.findPartnersDesc', 'Connect with dancers worldwide for events and practice')}
                 delay={0.2}
+                learnMoreLabel={t('pages:marketingOcean.learnMore', 'Learn More')}
               />
               <FeatureCard
                 icon={<Music className="text-purple-400" size={48} />}
                 title={t('pages:marketingOcean.eventsMilongasTitle', 'Events & Milongas')}
                 description={t('pages:marketingOcean.eventsMilongasDesc', 'Discover and attend tango events in your city')}
                 delay={0.3}
+                learnMoreLabel={t('pages:marketingOcean.learnMore', 'Learn More')}
               />
               <FeatureCard
                 icon={<Globe className="text-cyan-500" size={48} />}
                 title={t('pages:marketingOcean.housingTitle', 'Housing Network')}
                 description={t('pages:marketingOcean.housingDesc', 'Find accommodation with fellow tango enthusiasts')}
                 delay={0.4}
+                learnMoreLabel={t('pages:marketingOcean.learnMore', 'Learn More')}
               />
               <FeatureCard
                 icon={<Sparkles className="text-blue-500" size={48} />}
                 title={t('pages:marketingOcean.workshopsTitle', 'Workshops')}
                 description={t('pages:marketingOcean.workshopsDesc', 'Learn from world-class teachers and maestros')}
                 delay={0.5}
+                learnMoreLabel={t('pages:marketingOcean.learnMore', 'Learn More')}
               />
               <FeatureCard
                 icon={<Heart className="text-purple-500" size={48} />}
                 title={t('pages:marketingOcean.volunteerTitle', 'Volunteer')}
                 description={t('pages:marketingOcean.volunteerDesc', 'Contribute to the global tango community')}
                 delay={0.6}
+                learnMoreLabel={t('pages:marketingOcean.learnMore', 'Learn More')}
               />
             </div>
           </div>
@@ -239,7 +245,7 @@ function StatCard({ number, label, delay, color }: { number: string; label: stri
   );
 }
 
-function FeatureCard({ icon, title, description, delay }: { icon: React.ReactNode; title: string; description: string; delay: number }) {
+function FeatureCard({ icon, title, description, delay, learnMoreLabel }: { icon: React.ReactNode; title: string; description: string; delay: number; learnMoreLabel: string }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
@@ -258,7 +264,7 @@ function FeatureCard({ icon, title, description, delay }: { icon: React.ReactNod
           <h3 className="text-xl md:text-2xl font-serif font-bold mb-3">{title}</h3>
           <p className="text-muted-foreground">{description}</p>
           <div className="mt-6 flex items-center gap-2 text-sm font-medium text-cyan-500">
-            <span>{t('pages:marketingOcean.learnMore', 'Learn More')}</span>
+            <span>{learnMoreLabel}</span>
             <ArrowDown className="rotate-[-90deg] h-4 w-4" />
           </div>
         </CardContent>

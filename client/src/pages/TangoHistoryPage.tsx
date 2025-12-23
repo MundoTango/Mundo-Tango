@@ -8,48 +8,49 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 
-const timeline = [
-  {
-    period: "1880s-1900s",
-    title: "Birth in Buenos Aires",
-    description: "Tango emerges in the working-class neighborhoods of Buenos Aires and Montevideo, blending African, European, and indigenous influences. Dance develops in conventillos and improves with Italian immigration.",
-    icon: MapPin
-  },
-  {
-    period: "1910s-1920s",
-    title: "Golden Age Begins",
-    description: "Tango gains acceptance in European high society, particularly Paris. The first tango orchestras form, and the dance becomes refined and codified. Carlos Gardel rises to fame.",
-    icon: Music
-  },
-  {
-    period: "1930s-1950s",
-    title: "The Golden Age",
-    description: "Peak period of tango's popularity. Great orchestras led by Juan D'Arienzo, Carlos Di Sarli, Aníbal Troilo, and Osvaldo Pugliese dominate. Milongas flourish across Buenos Aires.",
-    icon: Users
-  },
-  {
-    period: "1960s-1980s",
-    title: "Decline and Evolution",
-    description: "Rock and roll impacts tango's popularity. Many milongas close. However, Astor Piazzolla revolutionizes the music with nuevo tango, bringing it to concert halls worldwide.",
-    icon: Music
-  },
-  {
-    period: "1990s-Present",
-    title: "Global Renaissance",
-    description: "Tango experiences worldwide revival. Communities establish in major cities globally. Tango nouveau and alternative styles emerge. UNESCO declares tango Intangible Cultural Heritage.",
-    icon: MapPin
-  }
-];
-
 export default function TangoHistoryPage() {
   const { t } = useTranslation(["pages", "common"]);
+
+  const timeline = [
+    {
+      period: t('pages:tangoHistory.era1Period', '1880s-1900s'),
+      title: t('pages:tangoHistory.era1Title', 'Birth in Buenos Aires'),
+      description: t('pages:tangoHistory.era1Desc', 'Tango emerges in the working-class neighborhoods of Buenos Aires and Montevideo, blending African, European, and indigenous influences. Dance develops in conventillos and improves with Italian immigration.'),
+      icon: MapPin
+    },
+    {
+      period: t('pages:tangoHistory.era2Period', '1910s-1920s'),
+      title: t('pages:tangoHistory.era2Title', 'Golden Age Begins'),
+      description: t('pages:tangoHistory.era2Desc', 'Tango gains acceptance in European high society, particularly Paris. The first tango orchestras form, and the dance becomes refined and codified. Carlos Gardel rises to fame.'),
+      icon: Music
+    },
+    {
+      period: t('pages:tangoHistory.era3Period', '1930s-1950s'),
+      title: t('pages:tangoHistory.era3Title', 'The Golden Age'),
+      description: t('pages:tangoHistory.era3Desc', "Peak period of tango's popularity. Great orchestras led by Juan D'Arienzo, Carlos Di Sarli, Aníbal Troilo, and Osvaldo Pugliese dominate. Milongas flourish across Buenos Aires."),
+      icon: Users
+    },
+    {
+      period: t('pages:tangoHistory.era4Period', '1960s-1980s'),
+      title: t('pages:tangoHistory.era4Title', 'Decline and Evolution'),
+      description: t('pages:tangoHistory.era4Desc', "Rock and roll impacts tango's popularity. Many milongas close. However, Astor Piazzolla revolutionizes the music with nuevo tango, bringing it to concert halls worldwide."),
+      icon: Music
+    },
+    {
+      period: t('pages:tangoHistory.era5Period', '1990s-Present'),
+      title: t('pages:tangoHistory.era5Title', 'Global Renaissance'),
+      description: t('pages:tangoHistory.era5Desc', 'Tango experiences worldwide revival. Communities establish in major cities globally. Tango nouveau and alternative styles emerge. UNESCO declares tango Intangible Cultural Heritage.'),
+      icon: MapPin
+    }
+  ];
+
   return (
     <SelfHealingErrorBoundary pageName="Tango History" fallbackRoute="/">
-      <PageLayout title="Tango History" showBreadcrumbs>
+      <PageLayout title={t('pages:tangoHistory.pageTitle', 'Tango History')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="History of Tango - Mundo Tango"
-            description="Explore the rich history of Argentine tango from its origins in Buenos Aires to its global renaissance. Learn about the Golden Age, key figures, and cultural evolution of this passionate dance."
+            title={t('pages:tangoHistory.seoTitle', 'History of Tango - Mundo Tango')}
+            description={t('pages:tangoHistory.seoDescription', 'Explore the rich history of Argentine tango from its origins in Buenos Aires to its global renaissance. Learn about the Golden Age, key figures, and cultural evolution of this passionate dance.')}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -67,15 +68,15 @@ export default function TangoHistoryPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <History className="w-3 h-3 mr-1.5" />
-                  History
+                  {t('pages:tangoHistory.badge', 'History')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  The History of Tango
+                  {t('pages:tangoHistory.heroTitle', 'The History of Tango')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  From Buenos Aires streets to the world's stages
+                  {t('pages:tangoHistory.heroSubtitle', "From Buenos Aires streets to the world's stages")}
                 </p>
               </motion.div>
             </div>
@@ -92,26 +93,21 @@ export default function TangoHistoryPage() {
               >
                 <Card className="hover-elevate" data-testid="card-origins">
                   <CardHeader>
-                    <CardTitle className="text-3xl font-serif">The Origins</CardTitle>
+                    <CardTitle className="text-3xl font-serif">{t('pages:tangoHistory.originsTitle', 'The Origins')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 text-muted-foreground">
                     <p>
-                      Tango was born in the late 19th century in the melting pot of Buenos Aires and Montevideo. 
-                      The dance emerged from the fusion of African candombe, European music and dance forms, 
-                      indigenous rhythms, and the haunting sounds of the bandoneón—a German concertina brought 
-                      by immigrants.
+                      {t('pages:tangoHistory.originsP1', 'Tango was born in the late 19th century in the melting pot of Buenos Aires and Montevideo. The dance emerged from the fusion of African candombe, European music and dance forms, indigenous rhythms, and the haunting sounds of the bandoneón—a German concertina brought by immigrants.')}
                     </p>
                     <p>
-                      In the working-class neighborhoods and port areas, immigrants from Spain, Italy, Eastern 
-                      Europe, and Africa created a new cultural expression that reflected their longing, 
-                      struggles, and dreams. Tango was their voice.
+                      {t('pages:tangoHistory.originsP2', 'In the working-class neighborhoods and port areas, immigrants from Spain, Italy, Eastern Europe, and Africa created a new cultural expression that reflected their longing, struggles, and dreams. Tango was their voice.')}
                     </p>
                   </CardContent>
                 </Card>
               </motion.div>
 
               <div className="space-y-8">
-                <h2 className="text-4xl md:text-5xl font-serif font-bold text-center">Timeline</h2>
+                <h2 className="text-4xl md:text-5xl font-serif font-bold text-center">{t('pages:tangoHistory.timelineTitle', 'Timeline')}</h2>
                 <div className="space-y-6">
                   {timeline.map((era, idx) => (
                     <motion.div
@@ -154,18 +150,14 @@ export default function TangoHistoryPage() {
               >
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-legacy">
                   <CardHeader>
-                    <CardTitle className="text-3xl font-serif">Tango's Living Legacy</CardTitle>
+                    <CardTitle className="text-3xl font-serif">{t('pages:tangoHistory.legacyTitle', "Tango's Living Legacy")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 text-muted-foreground">
                     <p>
-                      Today, tango thrives in over 500 cities worldwide. From traditional milongas in Buenos 
-                      Aires to modern fusion styles in Berlin, Seoul, and San Francisco, the dance continues 
-                      to evolve while honoring its roots.
+                      {t('pages:tangoHistory.legacyP1', 'Today, tango thrives in over 500 cities worldwide. From traditional milongas in Buenos Aires to modern fusion styles in Berlin, Seoul, and San Francisco, the dance continues to evolve while honoring its roots.')}
                     </p>
                     <p>
-                      Recognized by UNESCO as Intangible Cultural Heritage of Humanity, tango represents more 
-                      than a dance—it's a living tradition that connects people across cultures, generations, 
-                      and continents. Every embrace carries echoes of its rich history.
+                      {t('pages:tangoHistory.legacyP2', "Recognized by UNESCO as Intangible Cultural Heritage of Humanity, tango represents more than a dance—it's a living tradition that connects people across cultures, generations, and continents. Every embrace carries echoes of its rich history.")}
                     </p>
                   </CardContent>
                 </Card>

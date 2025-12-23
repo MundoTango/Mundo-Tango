@@ -188,7 +188,7 @@ export default function AnalyticsDashboardPage() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="userCount" fill="hsl(var(--primary))" name="Users" />
+                  <Bar dataKey="userCount" fill="hsl(var(--primary))" name={t('pages:analyticsDashboard.users', 'Users')} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Quote, Star } from "lucide-react";
@@ -53,13 +54,14 @@ const testimonials = [
 ];
 
 export default function TestimonialsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Testimonials" fallbackRoute="/">
-      <PageLayout title="Success Stories" showBreadcrumbs>
+      <PageLayout title={t('pages:testimonials.pageTitle', 'Success Stories')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="Testimonials - Success Stories - Mundo Tango"
-            description="Read real stories from dancers, teachers, and organizers in the Mundo Tango community. Discover how our platform is transforming the global tango experience."
+            title={t('pages:testimonials.seoTitle', 'Testimonials - Success Stories - Mundo Tango')}
+            description={t('pages:testimonials.seoDescription', 'Read real stories from dancers, teachers, and organizers in the Mundo Tango community. Discover how our platform is transforming the global tango experience.')}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -77,15 +79,15 @@ export default function TestimonialsPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Star className="w-3 h-3 mr-1.5" />
-                  Success Stories
+                  {t('pages:testimonials.successStories', 'Success Stories')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Real Stories, Real Impact
+                  {t('pages:testimonials.heroTitle', 'Real Stories, Real Impact')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Hear from dancers who've transformed their tango journey with Mundo Tango
+                  {t('pages:testimonials.heroSubtitle', "Hear from dancers who've transformed their tango journey with Mundo Tango")}
                 </p>
               </motion.div>
             </div>
@@ -102,11 +104,10 @@ export default function TestimonialsPage() {
                 className="text-center max-w-3xl mx-auto mb-12"
               >
                 <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-                  Join Our Growing Community
+                  {t('pages:testimonials.joinCommunity', 'Join Our Growing Community')}
                 </h2>
                 <p className="text-lg text-muted-foreground">
-                  From complete beginners to world-renowned maestros, Mundo Tango serves the entire 
-                  tango community with tools that make connection, learning, and growth possible.
+                  {t('pages:testimonials.joinCommunityDescription', 'From complete beginners to world-renowned maestros, Mundo Tango serves the entire tango community with tools that make connection, learning, and growth possible.')}
                 </p>
               </motion.div>
 
@@ -157,9 +158,9 @@ export default function TestimonialsPage() {
               >
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-cta">
                   <CardContent className="py-16 text-center">
-                    <h3 className="text-4xl font-serif font-bold mb-4">Start Your Story</h3>
+                    <h3 className="text-4xl font-serif font-bold mb-4">{t('pages:testimonials.startYourStory', 'Start Your Story')}</h3>
                     <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                      Join thousands of dancers who've discovered a better way to experience tango
+                      {t('pages:testimonials.startYourStoryDescription', "Join thousands of dancers who've discovered a better way to experience tango")}
                     </p>
                     <div className="flex gap-4 justify-center flex-wrap">
                       <a 
@@ -167,14 +168,14 @@ export default function TestimonialsPage() {
                         className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors h-11 px-8 bg-primary text-primary-foreground hover-elevate active-elevate-2"
                         data-testid="button-join"
                       >
-                        Join Free Today
+                        {t('pages:testimonials.joinFreeToday', 'Join Free Today')}
                       </a>
                       <a 
                         href="/discover"
                         className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors h-11 px-8 border border-input bg-background hover-elevate active-elevate-2"
                         data-testid="button-explore"
                       >
-                        Explore Without Signing Up
+                        {t('pages:testimonials.exploreWithoutSignUp', 'Explore Without Signing Up')}
                       </a>
                     </div>
                   </CardContent>

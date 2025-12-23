@@ -263,6 +263,7 @@ export default function GroupsPrototypePage() {
 }
 
 function GroupsHero() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <div className="relative h-[50vh] w-full overflow-hidden">
       <div 
@@ -299,6 +300,7 @@ function GroupsHero() {
 }
 
 function MyGroupCard({ group, index }: { group: typeof MY_GROUPS[0]; index: number }) {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -343,7 +345,7 @@ function MyGroupCard({ group, index }: { group: typeof MY_GROUPS[0]; index: numb
                 )}
               </div>
               {group.unreadPosts > 0 && (
-                <Badge className="bg-red-500 text-white">{group.unreadPosts} new</Badge>
+                <Badge className="bg-red-500 text-white">{t('pages:groupsPrototype.newPosts', '{{count}} new', { count: group.unreadPosts })}</Badge>
               )}
             </div>
           </div>
@@ -367,6 +369,7 @@ function MyGroupCard({ group, index }: { group: typeof MY_GROUPS[0]; index: numb
 }
 
 function CityGroupCard({ city, index }: { city: typeof CITY_GROUPS[0]; index: number }) {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -395,7 +398,7 @@ function CityGroupCard({ city, index }: { city: typeof CITY_GROUPS[0]; index: nu
               <p className="text-sm text-white/80">{city.country}</p>
               <Badge className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 gap-1">
                 <MapPin className="w-3 h-3" />
-                City
+                {t('pages:groupsPrototype.city', 'City')}
               </Badge>
             </div>
           </div>
@@ -432,6 +435,7 @@ function CityGroupCard({ city, index }: { city: typeof CITY_GROUPS[0]; index: nu
 }
 
 function ProGroupCard({ group, index }: { group: typeof PRO_GROUPS[0]; index: number }) {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <motion.article
       initial={{ opacity: 0, y: 40 }}
@@ -455,7 +459,7 @@ function ProGroupCard({ group, index }: { group: typeof PRO_GROUPS[0]; index: nu
           <div className="flex items-center gap-3 mb-4">
             <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 gap-1">
               <Briefcase className="w-3 h-3" />
-              PRO
+              {t('pages:groupsPrototype.pro', 'PRO')}
             </Badge>
             {group.verified && (
               <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
@@ -534,7 +538,7 @@ function TrendingTopics() {
               <p className="font-medium text-sm group-hover:text-primary transition-colors">
                 {topic.name}
               </p>
-              <p className="text-xs text-muted-foreground">{topic.posts} posts</p>
+              <p className="text-xs text-muted-foreground">{topic.posts} {t('pages:groupsPrototype.posts', 'posts')}</p>
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
           </motion.div>

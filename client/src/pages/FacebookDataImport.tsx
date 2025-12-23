@@ -53,7 +53,7 @@ export default function FacebookDataImport() {
       setError(null);
     },
     onError: (error: any) => {
-      setError(error.message || 'Failed to import Facebook data');
+      setError(error.message || t('pages:facebookDataImport.importFailed', 'Failed to import Facebook data'));
       setImportResult(null);
     }
   });
@@ -62,7 +62,7 @@ export default function FacebookDataImport() {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       if (!selectedFile.name.endsWith('.json')) {
-        setError('Please select a JSON file');
+        setError(t('pages:facebookDataImport.selectJsonFile', 'Please select a JSON file'));
         return;
       }
       setFile(selectedFile);
@@ -72,7 +72,7 @@ export default function FacebookDataImport() {
 
   const handleImport = () => {
     if (!file) {
-      setError('Please select a file to import');
+      setError(t('pages:facebookDataImport.pleaseSelectFile', 'Please select a file to import'));
       return;
     }
 
@@ -288,7 +288,7 @@ export default function FacebookDataImport() {
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Errors during import:</strong>
+                    <strong>{t('pages:facebookDataImport.errorsDuringImport', 'Errors during import')}:</strong>
                     <ul className="list-disc ml-5 mt-2">
                       {importResult.progress.errors.map((err, idx) => (
                         <li key={idx}>{err}</li>

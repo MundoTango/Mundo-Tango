@@ -64,11 +64,11 @@ export default function TeamPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Team" fallbackRoute="/">
-      <PageLayout title="Our Team" showBreadcrumbs>
+      <PageLayout title={t('pages:team.pageTitle', 'Our Team')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="Meet Our Team - Mundo Tango"
-            description="Get to know the passionate team behind Mundo Tango—dancers, developers, and community builders dedicated to connecting the global tango community."
+            title={t('pages:team.seoTitle', 'Meet Our Team - Mundo Tango')}
+            description={t('pages:team.seoDescription', 'Get to know the passionate team behind Mundo Tango—dancers, developers, and community builders dedicated to connecting the global tango community.')}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -86,15 +86,15 @@ export default function TeamPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Users className="w-3 h-3 mr-1.5" />
-                  Our Team
+                  {t('pages:team.badge', 'Our Team')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Meet the Team
+                  {t('pages:team.heroTitle', 'Meet the Team')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Dancers, developers, and dreamers building the future of tango
+                  {t('pages:team.heroSubtitle', 'Dancers, developers, and dreamers building the future of tango')}
                 </p>
               </motion.div>
             </div>
@@ -111,12 +111,10 @@ export default function TeamPage() {
                 className="text-center max-w-3xl mx-auto"
               >
                 <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-                  We're Dancers First, Technologists Second
+                  {t('pages:team.missionTitle', "We're Dancers First, Technologists Second")}
                 </h2>
                 <p className="text-lg text-muted-foreground">
-                  Every member of our team shares a deep passion for tango. We're building tools we 
-                  wish existed when we started dancing, and we're committed to serving the global 
-                  tango community with authenticity and care.
+                  {t('pages:team.missionDescription', "Every member of our team shares a deep passion for tango. We're building tools we wish existed when we started dancing, and we're committed to serving the global tango community with authenticity and care.")}
                 </p>
               </motion.div>
 
@@ -171,12 +169,12 @@ export default function TeamPage() {
               >
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-join">
                   <CardContent className="py-12 text-center">
-                    <h3 className="text-3xl font-serif font-bold mb-3">Join Our Team</h3>
+                    <h3 className="text-3xl font-serif font-bold mb-3">{t('pages:team.joinTitle', 'Join Our Team')}</h3>
                     <p className="text-muted-foreground mb-6 text-lg max-w-lg mx-auto">
-                      We're always looking for passionate dancers and talented professionals to join our mission
+                      {t('pages:team.joinDescription', "We're always looking for passionate dancers and talented professionals to join our mission")}
                     </p>
                     <Button size="lg" asChild data-testid="button-view-careers">
-                      <a href="/careers">View Open Positions</a>
+                      <a href="/careers">{t('pages:team.viewOpenPositions', 'View Open Positions')}</a>
                     </Button>
                   </CardContent>
                 </Card>

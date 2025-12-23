@@ -110,7 +110,7 @@ export default function FinancialDashboardPage() {
                 <div className="flex items-center gap-1 mt-1">
                   <ArrowUpRight className={`h-3 w-3 ${isPositive ? 'text-green-400' : 'text-red-400'}`} />
                   <p className={`text-xs ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
-                    {isPositive ? '+' : ''}{changePercent}% from yesterday
+                    {isPositive ? '+' : ''}{changePercent}% {t('pages:financialDashboard.fromYesterday', 'from yesterday')}
                   </p>
                 </div>
               </>

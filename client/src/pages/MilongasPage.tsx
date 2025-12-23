@@ -12,12 +12,12 @@ import { motion } from "framer-motion";
 export default function MilongasPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
-    <SelfHealingErrorBoundary pageName="Milongas" fallbackRoute="/">
-      <PageLayout title="Milongas" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:milongas.pageName', 'Milongas')} fallbackRoute="/">
+      <PageLayout title={t('pages:milongas.pageTitle', 'Milongas')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="Milongas - Find Tango Social Dances - Mundo Tango"
-            description="Discover milongas near you. Find weekly tango social dances, special events, and themed milongas worldwide. Your guide to the tango social dance scene."
+            title={t('pages:milongas.seoTitle', 'Milongas - Find Tango Social Dances - Mundo Tango')}
+            description={t('pages:milongas.seoDescription', 'Discover milongas near you. Find weekly tango social dances, special events, and themed milongas worldwide. Your guide to the tango social dance scene.')}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

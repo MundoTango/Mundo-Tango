@@ -53,66 +53,66 @@ export default function H2ACDashboardPage() {
   const talentMatchAgents = [
     {
       id: "ESA_TALENT_1",
-      name: "Resume Analyzer",
-      role: "Skill Extraction",
+      name: t('pages:h2acDashboard.agentResumeAnalyzer', 'Resume Analyzer'),
+      role: t('pages:h2acDashboard.roleSkillExtraction', 'Skill Extraction'),
       status: "active",
-      description: "Analyzes your resume and extracts relevant skills for matching"
+      description: t('pages:h2acDashboard.descResumeAnalyzer', 'Analyzes your resume and extracts relevant skills for matching')
     },
     {
       id: "ESA_TALENT_2",
-      name: "Role Matcher",
-      role: "Opportunity Matching",
+      name: t('pages:h2acDashboard.agentRoleMatcher', 'Role Matcher'),
+      role: t('pages:h2acDashboard.roleOpportunityMatching', 'Opportunity Matching'),
       status: "active",
-      description: "Matches your profile with available volunteer opportunities"
+      description: t('pages:h2acDashboard.descRoleMatcher', 'Matches your profile with available volunteer opportunities')
     },
     {
       id: "ESA_TALENT_3",
-      name: "Interview Clarifier",
-      role: "Profile Enhancement",
+      name: t('pages:h2acDashboard.agentInterviewClarifier', 'Interview Clarifier'),
+      role: t('pages:h2acDashboard.roleProfileEnhancement', 'Profile Enhancement'),
       status: "ready",
-      description: "Conducts AI interviews to clarify skills and preferences"
+      description: t('pages:h2acDashboard.descInterviewClarifier', 'Conducts AI interviews to clarify skills and preferences')
     },
     {
       id: "ESA_TALENT_4",
-      name: "Assignment Coordinator",
-      role: "Task Assignment",
+      name: t('pages:h2acDashboard.agentAssignmentCoordinator', 'Assignment Coordinator'),
+      role: t('pages:h2acDashboard.roleTaskAssignment', 'Task Assignment'),
       status: "standby",
-      description: "Coordinates task assignments based on your matches"
+      description: t('pages:h2acDashboard.descAssignmentCoordinator', 'Coordinates task assignments based on your matches')
     }
   ];
 
   const recentCommunications = [
     {
-      agentType: "Resume Analyzer",
+      agentType: t('pages:h2acDashboard.agentResumeAnalyzer', 'Resume Analyzer'),
       message: volunteerProfile 
-        ? "Profile analysis complete - 12 key skills identified for matching"
-        : "Ready to analyze your resume. Start Talent Match to begin!",
+        ? t('pages:h2acDashboard.msgProfileComplete', 'Profile analysis complete - 12 key skills identified for matching')
+        : t('pages:h2acDashboard.msgReadyToAnalyze', 'Ready to analyze your resume. Start Talent Match to begin!'),
       priority: volunteerProfile ? "medium" : "low",
-      timestamp: "Just now",
-      status: volunteerProfile ? "resolved" : "new"
+      timestamp: t('pages:h2acDashboard.justNow', 'Just now'),
+      status: volunteerProfile ? t('pages:h2acDashboard.statusResolved', 'resolved') : t('pages:h2acDashboard.statusNew', 'new')
     },
     {
-      agentType: "Role Matcher",
-      message: "5 volunteer opportunities match your skill profile - review recommended",
+      agentType: t('pages:h2acDashboard.agentRoleMatcher', 'Role Matcher'),
+      message: t('pages:h2acDashboard.msgOpportunitiesMatch', '5 volunteer opportunities match your skill profile - review recommended'),
       priority: "high",
-      timestamp: "5 min ago",
-      status: "new"
+      timestamp: t('pages:h2acDashboard.fiveMinAgo', '5 min ago'),
+      status: t('pages:h2acDashboard.statusNew', 'new')
     },
     {
-      agentType: "Interview Clarifier",
-      message: "Ready to conduct follow-up interview for better skill understanding",
+      agentType: t('pages:h2acDashboard.agentInterviewClarifier', 'Interview Clarifier'),
+      message: t('pages:h2acDashboard.msgReadyForInterview', 'Ready to conduct follow-up interview for better skill understanding'),
       priority: "medium",
-      timestamp: "10 min ago",
-      status: "acknowledged"
+      timestamp: t('pages:h2acDashboard.tenMinAgo', '10 min ago'),
+      status: t('pages:h2acDashboard.statusAcknowledged', 'acknowledged')
     }
   ];
 
   const agentCategories = [
-    { category: "Talent Match Agents", count: 4, active: volunteerProfile ? 4 : 1, healthScore: 100 },
-    { category: "Algorithm Agents", count: 50, active: 50, healthScore: 98 },
-    { category: "Page Agents", count: 50, active: 48, healthScore: 96 },
-    { category: "Life CEO Agents", count: 16, active: 16, healthScore: 100 },
-    { category: "Mr Blue AI Agents", count: 8, active: 8, healthScore: 100 }
+    { category: t('pages:h2acDashboard.categoryTalentMatch', 'Talent Match Agents'), count: 4, active: volunteerProfile ? 4 : 1, healthScore: 100 },
+    { category: t('pages:h2acDashboard.categoryAlgorithm', 'Algorithm Agents'), count: 50, active: 50, healthScore: 98 },
+    { category: t('pages:h2acDashboard.categoryPage', 'Page Agents'), count: 50, active: 48, healthScore: 96 },
+    { category: t('pages:h2acDashboard.categoryLifeCEO', 'Life CEO Agents'), count: 16, active: 16, healthScore: 100 },
+    { category: t('pages:h2acDashboard.categoryMrBlue', 'Mr Blue AI Agents'), count: 8, active: 8, healthScore: 100 }
   ];
 
   const matchedOpportunities = volunteerMatches || [];

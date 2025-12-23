@@ -11,12 +11,12 @@ import { motion } from "framer-motion";
 export default function MissionPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
-    <SelfHealingErrorBoundary pageName="Mission" fallbackRoute="/">
-      <PageLayout title="Our Mission" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:mission.pageName', 'Mission')} fallbackRoute="/">
+      <PageLayout title={t('pages:mission.pageTitle', 'Our Mission')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="Our Mission - Mundo Tango"
-            description="Discover Mundo Tango's mission to unite the global tango community through authentic connections, cultural preservation, and innovative technology that brings dancers together worldwide."
+            title={t('pages:mission.seoTitle', 'Our Mission - Mundo Tango')}
+            description={t('pages:mission.seoDescription', "Discover Mundo Tango's mission to unite the global tango community through authentic connections, cultural preservation, and innovative technology that brings dancers together worldwide.")}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

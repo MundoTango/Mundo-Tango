@@ -153,7 +153,7 @@ export default function EventsGalleryPrototypePage() {
                   
                   <Badge className="absolute top-4 right-4 bg-white/20 text-white border-white/30 backdrop-blur-sm">
                     <Star className="w-3 h-3 mr-1 fill-white" />
-                    Featured
+                    {t('pages:eventsGallery.featured', 'Featured')}
                   </Badge>
 
                   <div className="absolute bottom-4 left-4 right-4 text-white">

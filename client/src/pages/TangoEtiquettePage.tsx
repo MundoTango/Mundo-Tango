@@ -8,60 +8,109 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 
-const rules = [
-  {
-    icon: Eye,
-    title: "The Cabeceo",
-    description: "Use eye contact to invite someone to dance. This respectful system allows both parties to decline gracefully without awkwardness.",
-    dos: ["Make eye contact from your table", "Wait for a clear nod of acceptance", "Walk to meet them on the floor"],
-    donts: ["Walk up and verbally ask", "Interrupt someone mid-conversation", "Take silence as a 'yes'"]
-  },
-  {
-    icon: Users,
-    title: "Respecting the Ronda",
-    description: "The ronda is the counterclockwise line of dance. Maintaining proper spacing and flow ensures everyone enjoys the milonga.",
-    dos: ["Move counterclockwise around the floor", "Maintain consistent spacing", "Yield to couples in front"],
-    donts: ["Pass other couples", "Stop abruptly in the line", "Dance in the center"]
-  },
-  {
-    icon: Music,
-    title: "Tandas and Cortinas",
-    description: "Dances are organized in tandas (sets of 3-4 songs) separated by cortinas (musical breaks). This structure helps manage invitations and energy.",
-    dos: ["Dance the full tanda with your partner", "Thank your partner after the tanda", "Return to your table during cortinas"],
-    donts: ["Leave mid-tanda without good reason", "Invite during a cortina", "Expect multiple tandas in a row"]
-  },
-  {
-    icon: Hand,
-    title: "Personal Hygiene",
-    description: "Close embrace requires attention to cleanliness and comfort for both partners.",
-    dos: ["Arrive freshly showered", "Bring a change of shirt", "Use deodorant (not cologne)"],
-    donts: ["Dance in sweaty clothes", "Wear strong perfumes", "Skip personal hygiene"]
-  },
-  {
-    icon: Heart,
-    title: "Floor Etiquette",
-    description: "Mutual respect creates a safe, enjoyable environment for all dancers.",
-    dos: ["Focus on your partner", "Apologize for collisions", "Welcome all skill levels"],
-    donts: ["Teach on the dance floor", "Criticize your partner", "Show off with large moves"]
-  },
-  {
-    icon: AlertCircle,
-    title: "Declining Invitations",
-    description: "It's always okay to say no—but do so politely and considerately.",
-    dos: ["Decline with a subtle head shake", "If declining, sit out that tanda", "Be honest if you need a break"],
-    donts: ["Accept one person, decline another same tanda", "Make excuses publicly", "Take it personally if declined"]
-  }
-];
-
 export default function TangoEtiquettePage() {
   const { t } = useTranslation(["pages", "common"]);
+
+  const rules = [
+    {
+      icon: Eye,
+      title: t('pages:tangoEtiquette.rule1Title', 'The Cabeceo'),
+      description: t('pages:tangoEtiquette.rule1Desc', 'Use eye contact to invite someone to dance. This respectful system allows both parties to decline gracefully without awkwardness.'),
+      dos: [
+        t('pages:tangoEtiquette.rule1Do1', 'Make eye contact from your table'),
+        t('pages:tangoEtiquette.rule1Do2', 'Wait for a clear nod of acceptance'),
+        t('pages:tangoEtiquette.rule1Do3', 'Walk to meet them on the floor')
+      ],
+      donts: [
+        t('pages:tangoEtiquette.rule1Dont1', 'Walk up and verbally ask'),
+        t('pages:tangoEtiquette.rule1Dont2', 'Interrupt someone mid-conversation'),
+        t('pages:tangoEtiquette.rule1Dont3', "Take silence as a 'yes'")
+      ]
+    },
+    {
+      icon: Users,
+      title: t('pages:tangoEtiquette.rule2Title', 'Respecting the Ronda'),
+      description: t('pages:tangoEtiquette.rule2Desc', 'The ronda is the counterclockwise line of dance. Maintaining proper spacing and flow ensures everyone enjoys the milonga.'),
+      dos: [
+        t('pages:tangoEtiquette.rule2Do1', 'Move counterclockwise around the floor'),
+        t('pages:tangoEtiquette.rule2Do2', 'Maintain consistent spacing'),
+        t('pages:tangoEtiquette.rule2Do3', 'Yield to couples in front')
+      ],
+      donts: [
+        t('pages:tangoEtiquette.rule2Dont1', 'Pass other couples'),
+        t('pages:tangoEtiquette.rule2Dont2', 'Stop abruptly in the line'),
+        t('pages:tangoEtiquette.rule2Dont3', 'Dance in the center')
+      ]
+    },
+    {
+      icon: Music,
+      title: t('pages:tangoEtiquette.rule3Title', 'Tandas and Cortinas'),
+      description: t('pages:tangoEtiquette.rule3Desc', 'Dances are organized in tandas (sets of 3-4 songs) separated by cortinas (musical breaks). This structure helps manage invitations and energy.'),
+      dos: [
+        t('pages:tangoEtiquette.rule3Do1', 'Dance the full tanda with your partner'),
+        t('pages:tangoEtiquette.rule3Do2', 'Thank your partner after the tanda'),
+        t('pages:tangoEtiquette.rule3Do3', 'Return to your table during cortinas')
+      ],
+      donts: [
+        t('pages:tangoEtiquette.rule3Dont1', 'Leave mid-tanda without good reason'),
+        t('pages:tangoEtiquette.rule3Dont2', 'Invite during a cortina'),
+        t('pages:tangoEtiquette.rule3Dont3', 'Expect multiple tandas in a row')
+      ]
+    },
+    {
+      icon: Hand,
+      title: t('pages:tangoEtiquette.rule4Title', 'Personal Hygiene'),
+      description: t('pages:tangoEtiquette.rule4Desc', 'Close embrace requires attention to cleanliness and comfort for both partners.'),
+      dos: [
+        t('pages:tangoEtiquette.rule4Do1', 'Arrive freshly showered'),
+        t('pages:tangoEtiquette.rule4Do2', 'Bring a change of shirt'),
+        t('pages:tangoEtiquette.rule4Do3', 'Use deodorant (not cologne)')
+      ],
+      donts: [
+        t('pages:tangoEtiquette.rule4Dont1', 'Dance in sweaty clothes'),
+        t('pages:tangoEtiquette.rule4Dont2', 'Wear strong perfumes'),
+        t('pages:tangoEtiquette.rule4Dont3', 'Skip personal hygiene')
+      ]
+    },
+    {
+      icon: Heart,
+      title: t('pages:tangoEtiquette.rule5Title', 'Floor Etiquette'),
+      description: t('pages:tangoEtiquette.rule5Desc', 'Mutual respect creates a safe, enjoyable environment for all dancers.'),
+      dos: [
+        t('pages:tangoEtiquette.rule5Do1', 'Focus on your partner'),
+        t('pages:tangoEtiquette.rule5Do2', 'Apologize for collisions'),
+        t('pages:tangoEtiquette.rule5Do3', 'Welcome all skill levels')
+      ],
+      donts: [
+        t('pages:tangoEtiquette.rule5Dont1', 'Teach on the dance floor'),
+        t('pages:tangoEtiquette.rule5Dont2', 'Criticize your partner'),
+        t('pages:tangoEtiquette.rule5Dont3', 'Show off with large moves')
+      ]
+    },
+    {
+      icon: AlertCircle,
+      title: t('pages:tangoEtiquette.rule6Title', 'Declining Invitations'),
+      description: t('pages:tangoEtiquette.rule6Desc', "It's always okay to say no—but do so politely and considerately."),
+      dos: [
+        t('pages:tangoEtiquette.rule6Do1', 'Decline with a subtle head shake'),
+        t('pages:tangoEtiquette.rule6Do2', 'If declining, sit out that tanda'),
+        t('pages:tangoEtiquette.rule6Do3', 'Be honest if you need a break')
+      ],
+      donts: [
+        t('pages:tangoEtiquette.rule6Dont1', 'Accept one person, decline another same tanda'),
+        t('pages:tangoEtiquette.rule6Dont2', 'Make excuses publicly'),
+        t('pages:tangoEtiquette.rule6Dont3', 'Take it personally if declined')
+      ]
+    }
+  ];
+
   return (
     <SelfHealingErrorBoundary pageName="Tango Etiquette" fallbackRoute="/">
-      <PageLayout title="Tango Etiquette" showBreadcrumbs>
+      <PageLayout title={t('pages:tangoEtiquette.pageTitle', 'Tango Etiquette')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="Tango Etiquette - Mundo Tango"
-            description="Learn essential tango etiquette and milonga codes. Master the cabeceo, understand tandas and cortinas, and navigate the social dance floor with confidence and respect."
+            title={t('pages:tangoEtiquette.seoTitle', 'Tango Etiquette - Mundo Tango')}
+            description={t('pages:tangoEtiquette.seoDescription', 'Learn essential tango etiquette and milonga codes. Master the cabeceo, understand tandas and cortinas, and navigate the social dance floor with confidence and respect.')}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -78,15 +127,15 @@ export default function TangoEtiquettePage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Etiquette
+                  {t('pages:tangoEtiquette.badge', 'Etiquette')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Tango Etiquette
+                  {t('pages:tangoEtiquette.heroTitle', 'Tango Etiquette')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Navigate the milonga with confidence and respect
+                  {t('pages:tangoEtiquette.heroSubtitle', 'Navigate the milonga with confidence and respect')}
                 </p>
               </motion.div>
             </div>
@@ -103,12 +152,10 @@ export default function TangoEtiquettePage() {
                 className="text-center max-w-3xl mx-auto"
               >
                 <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-                  Why Etiquette Matters
+                  {t('pages:tangoEtiquette.whyMattersTitle', 'Why Etiquette Matters')}
                 </h2>
                 <p className="text-lg text-muted-foreground">
-                  Tango etiquette isn't about rules for rules' sake—it's a system that creates safe, 
-                  respectful spaces where everyone can enjoy the dance. These codes have evolved over 
-                  decades to ensure harmonious milongas.
+                  {t('pages:tangoEtiquette.whyMattersDesc', "Tango etiquette isn't about rules for rules' sake—it's a system that creates safe, respectful spaces where everyone can enjoy the dance. These codes have evolved over decades to ensure harmonious milongas.")}
                 </p>
               </motion.div>
 
@@ -138,7 +185,7 @@ export default function TangoEtiquettePage() {
                           <div className="space-y-2">
                             <h4 className="font-semibold text-sm flex items-center gap-2">
                               <Heart className="h-4 w-4 text-green-500" />
-                              Do
+                              {t('pages:tangoEtiquette.do', 'Do')}
                             </h4>
                             <ul className="space-y-1">
                               {rule.dos.map((item, itemIdx) => (
@@ -152,7 +199,7 @@ export default function TangoEtiquettePage() {
                           <div className="space-y-2">
                             <h4 className="font-semibold text-sm flex items-center gap-2">
                               <AlertCircle className="h-4 w-4 text-red-500" />
-                              Don't
+                              {t('pages:tangoEtiquette.dont', "Don't")}
                             </h4>
                             <ul className="space-y-1">
                               {rule.donts.map((item, itemIdx) => (
@@ -178,16 +225,14 @@ export default function TangoEtiquettePage() {
               >
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-remember">
                   <CardHeader>
-                    <CardTitle className="text-3xl font-serif">Remember</CardTitle>
+                    <CardTitle className="text-3xl font-serif">{t('pages:tangoEtiquette.rememberTitle', 'Remember')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 text-muted-foreground">
                     <p>
-                      Every community may have slight variations in etiquette. When visiting a new milonga, 
-                      observe and ask questions. Most dancers are happy to help newcomers understand local customs.
+                      {t('pages:tangoEtiquette.rememberP1', 'Every community may have slight variations in etiquette. When visiting a new milonga, observe and ask questions. Most dancers are happy to help newcomers understand local customs.')}
                     </p>
                     <p>
-                      The golden rule: Be respectful, considerate, and present. Focus on connection rather 
-                      than perfection, and you'll always be welcome on the dance floor.
+                      {t('pages:tangoEtiquette.rememberP2', "The golden rule: Be respectful, considerate, and present. Focus on connection rather than perfection, and you'll always be welcome on the dance floor.")}
                     </p>
                   </CardContent>
                 </Card>

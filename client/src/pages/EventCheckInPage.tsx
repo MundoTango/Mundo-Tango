@@ -53,12 +53,12 @@ export default function EventCheckInPage() {
       return await apiRequest("POST", `/api/events/${eventId}/check-in/${rsvpId}`);
     },
     onSuccess: () => {
-      toast({ title: "Attendee checked in successfully!" });
+      toast({ title: t('pages:eventCheckIn.checkInSuccess', 'Attendee checked in successfully!') });
       queryClient.invalidateQueries({ queryKey: [`/api/events/${eventId}/rsvps`] });
       queryClient.invalidateQueries({ queryKey: ['/api/events', eventId] });
     },
     onError: () => {
-      toast({ title: "Failed to check in attendee", variant: "destructive" });
+      toast({ title: t('pages:eventCheckIn.checkInFailed', 'Failed to check in attendee'), variant: "destructive" });
     },
   });
 
@@ -142,7 +142,7 @@ export default function EventCheckInPage() {
               </div>
 
               <Badge className="text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                {checkedInCount} of {rsvps.length} checked in
+                {t('pages:eventCheckIn.checkedInCount', '{{checked}} of {{total}} checked in', { checked: checkedInCount, total: rsvps.length })}
               </Badge>
             </motion.div>
           </div>
@@ -246,7 +246,7 @@ export default function EventCheckInPage() {
                           <div className="text-sm text-muted-foreground">{rsvp.userEmail}</div>
                           {rsvp.checkedIn && rsvp.checkedInAt && (
                             <div className="text-xs text-muted-foreground mt-1">
-                              Checked in at {safeDateFormat(rsvp.checkedInAt, 'p', 'recently')}
+                              {t('pages:eventCheckIn.checkedInAt', 'Checked in at {{time}}', { time: safeDateFormat(rsvp.checkedInAt, 'p', 'recently') })}
                             </div>
                           )}
                         </div>

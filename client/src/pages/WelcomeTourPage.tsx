@@ -9,42 +9,41 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
-const tourSteps = [
-  {
-    icon: Users,
-    title: "Connect with Dancers",
-    description: "Find and follow dancers in your area. Build your tango network and discover new practice partners.",
-    color: "text-blue-500"
-  },
-  {
-    icon: Calendar,
-    title: "Discover Events",
-    description: "Browse milongas, workshops, and festivals near you. RSVP to events and never miss a dance opportunity.",
-    color: "text-purple-500"
-  },
-  {
-    icon: Music,
-    title: "Learn & Improve",
-    description: "Access video tutorials, music playlists, and technique guides from expert teachers worldwide.",
-    color: "text-green-500"
-  },
-  {
-    icon: MessageCircle,
-    title: "Stay Connected",
-    description: "Chat with friends, join groups, and participate in the vibrant tango community discussions.",
-    color: "text-orange-500"
-  }
-];
-
 export default function WelcomeTourPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [currentStep, setCurrentStep] = useState(0);
 
+  const tourSteps = [
+    {
+      icon: Users,
+      title: t('pages:welcomeTour.step1Title', 'Connect with Dancers'),
+      description: t('pages:welcomeTour.step1Desc', 'Find and follow dancers in your area. Build your tango network and discover new practice partners.'),
+      color: "text-blue-500"
+    },
+    {
+      icon: Calendar,
+      title: t('pages:welcomeTour.step2Title', 'Discover Events'),
+      description: t('pages:welcomeTour.step2Desc', 'Browse milongas, workshops, and festivals near you. RSVP to events and never miss a dance opportunity.'),
+      color: "text-purple-500"
+    },
+    {
+      icon: Music,
+      title: t('pages:welcomeTour.step3Title', 'Learn & Improve'),
+      description: t('pages:welcomeTour.step3Desc', 'Access video tutorials, music playlists, and technique guides from expert teachers worldwide.'),
+      color: "text-green-500"
+    },
+    {
+      icon: MessageCircle,
+      title: t('pages:welcomeTour.step4Title', 'Stay Connected'),
+      description: t('pages:welcomeTour.step4Desc', 'Chat with friends, join groups, and participate in the vibrant tango community discussions.'),
+      color: "text-orange-500"
+    }
+  ];
+
   return (
     <SelfHealingErrorBoundary pageName="Welcome to Mundo Tango!" fallbackRoute="/">
-      <PageLayout title="Welcome to Mundo Tango!" showBreadcrumbs>
+      <PageLayout title={t('pages:welcomeTour.pageTitle', 'Welcome to Mundo Tango!')} showBreadcrumbs>
         <>
-          {/* Hero Section */}
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
             <div 
               className="absolute inset-0 bg-cover bg-center"
@@ -61,21 +60,20 @@ export default function WelcomeTourPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                   <Sparkles className="w-3 h-3 mr-1.5" />
-                  Quick Tour
+                  {t('pages:welcomeTour.badge', 'Quick Tour')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                  Welcome to Mundo Tango
+                  {t('pages:welcomeTour.heroTitle', 'Welcome to Mundo Tango')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Your gateway to the global tango community
+                  {t('pages:welcomeTour.heroSubtitle', 'Your gateway to the global tango community')}
                 </p>
               </motion.div>
             </div>
           </div>
 
-          {/* Tour Content */}
           <div className="bg-background">
             <div className="container mx-auto max-w-5xl px-6 py-16">
               <motion.div
@@ -138,7 +136,7 @@ export default function WelcomeTourPage() {
                     data-testid="button-prev"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    Previous
+                    {t('pages:welcomeTour.previous', 'Previous')}
                   </Button>
 
                   {currentStep === tourSteps.length - 1 ? (
@@ -147,7 +145,7 @@ export default function WelcomeTourPage() {
                       className="gap-2"
                       data-testid="button-finish"
                     >
-                      Get Started
+                      {t('pages:welcomeTour.getStarted', 'Get Started')}
                       <Sparkles className="h-4 w-4" />
                     </Button>
                   ) : (
@@ -156,7 +154,7 @@ export default function WelcomeTourPage() {
                       className="gap-2"
                       data-testid="button-next"
                     >
-                      Next
+                      {t('pages:welcomeTour.next', 'Next')}
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   )}
@@ -168,12 +166,12 @@ export default function WelcomeTourPage() {
                     onClick={() => window.location.href = "/feed"} 
                     data-testid="button-skip"
                   >
-                    Skip Tour
+                    {t('pages:welcomeTour.skipTour', 'Skip Tour')}
                   </Button>
                 </div>
 
                 <div className="flex justify-center gap-2 mt-8">
-                  <Badge variant="outline">Step {currentStep + 1} of {tourSteps.length}</Badge>
+                  <Badge variant="outline">{t('pages:welcomeTour.stepCounter', 'Step {{current}} of {{total}}', { current: currentStep + 1, total: tourSteps.length })}</Badge>
                 </div>
               </motion.div>
             </div>

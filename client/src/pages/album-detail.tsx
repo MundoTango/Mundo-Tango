@@ -302,7 +302,7 @@ export default function AlbumDetail() {
                 ) : (
                   <img
                     src={item.media_thumbnail || item.media_url}
-                    alt={item.media_caption || "Media"}
+                    alt={item.media_caption || t('pages:albumDetail.mediaAlt', 'Media')}
                     className="w-full h-full object-cover"
                   />
                 )}
@@ -374,7 +374,7 @@ export default function AlbumDetail() {
               ) : (
                 <img
                   src={albumMedia[lightboxIndex].media_url}
-                  alt={albumMedia[lightboxIndex].media_caption || "Media"}
+                  alt={albumMedia[lightboxIndex].media_caption || t('pages:albumDetail.mediaAlt', 'Media')}
                   className="max-w-full max-h-full object-contain"
                   data-testid="lightbox-image"
                 />
@@ -433,7 +433,7 @@ export default function AlbumDetail() {
                     ) : (
                       <img
                         src={media.thumbnail || media.url}
-                        alt={media.caption || "Media"}
+                        alt={media.caption || t('pages:albumDetail.mediaAlt', 'Media')}
                         className="w-full h-full object-cover"
                       />
                     )}

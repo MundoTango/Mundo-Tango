@@ -54,9 +54,9 @@ export default function MyEventsPage() {
 
   if (!user) {
     return (
-      <SelfHealingErrorBoundary pageName="My Events" fallbackRoute="/events">
+      <SelfHealingErrorBoundary pageName={t('pages:myEvents.pageName', 'My Events')} fallbackRoute="/events">
         <>
-          <SEO title="My Events" description="Manage your tango events and RSVPs" />
+          <SEO title={t('pages:myEvents.seoTitle', 'My Events')} description={t('pages:myEvents.seoDescriptionLoggedOut', 'Manage your tango events and RSVPs')} />
           <div className="max-w-6xl mx-auto px-6 py-12">
             <Card>
               <CardContent className="pt-6 text-center">
@@ -70,11 +70,11 @@ export default function MyEventsPage() {
   }
 
   return (
-    <SelfHealingErrorBoundary pageName="My Events" fallbackRoute="/events">
+    <SelfHealingErrorBoundary pageName={t('pages:myEvents.pageName', 'My Events')} fallbackRoute="/events">
       <>
         <SEO 
-          title="My Events - Mundo Tango" 
-          description="Manage your tango event RSVPs and created events"
+          title={t('pages:myEvents.seoTitleFull', 'My Events - Mundo Tango')} 
+          description={t('pages:myEvents.seoDescription', 'Manage your tango event RSVPs and created events')}
         />
         <PageLayout>
           <div className="max-w-6xl mx-auto px-6 py-12">

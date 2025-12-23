@@ -331,7 +331,7 @@ export default function EditEventPage() {
                           <FormLabel>{t('pages:editEvent.titleLabel', 'Title')} *</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="e.g., Friday Night Milonga" 
+                              placeholder={t('pages:editEvent.titlePlaceholder', 'e.g., Friday Night Milonga')}
                               {...field} 
                               data-testid="input-title"
                             />
@@ -349,7 +349,7 @@ export default function EditEventPage() {
                           <FormLabel>{t('pages:editEvent.descriptionLabel', 'Description')} *</FormLabel>
                           <FormControl>
                             <Textarea 
-                              placeholder="Describe your event..."
+                              placeholder={t('pages:editEvent.descriptionPlaceholder', 'Describe your event...')}
                               className="min-h-[120px]"
                               {...field} 
                               data-testid="input-description"
@@ -369,7 +369,7 @@ export default function EditEventPage() {
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger data-testid="select-event-type">
-                                <SelectValue placeholder="Select event type" />
+                                <SelectValue placeholder={t('pages:editEvent.selectEventType', 'Select event type')} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -453,12 +453,12 @@ export default function EditEventPage() {
                               mode="address"
                               value={field.value}
                               onChange={handleLocationChange}
-                              placeholder="Search for venue, address, or city..."
+                              placeholder={t('pages:editEvent.locationPlaceholder', 'Search for venue, address, or city...')}
                               data-testid="location-picker"
                             />
                           </FormControl>
                           <FormDescription>
-                            Search for a venue name, street address, or city to auto-fill location details
+                            {t('pages:editEvent.locationDescription', 'Search for a venue name, street address, or city to auto-fill location details')}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>

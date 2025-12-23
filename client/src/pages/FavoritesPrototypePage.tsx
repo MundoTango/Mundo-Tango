@@ -172,6 +172,7 @@ export default function FavoritesPrototypePage() {
 }
 
 function SavedPostCard({ post, index }: { post: typeof SAVED_POSTS[0]; index: number }) {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -194,14 +195,14 @@ function SavedPostCard({ post, index }: { post: typeof SAVED_POSTS[0]; index: nu
           <CardContent className="p-8 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-6">
-                <Badge variant="outline">Post</Badge>
-                <span className="text-sm text-muted-foreground">Saved {post.savedDate}</span>
+                <Badge variant="outline">{t('pages:favoritesPrototype.post', 'Post')}</Badge>
+                <span className="text-sm text-muted-foreground">{t('pages:favoritesPrototype.saved', 'Saved')} {post.savedDate}</span>
               </div>
               <h3 className="text-xl font-serif font-bold mb-3">{post.author}</h3>
               <p className="text-base leading-relaxed text-muted-foreground">{post.content}</p>
             </div>
             <div className="flex gap-3 mt-6">
-              <Button variant="outline" className="flex-1">View Post</Button>
+              <Button variant="outline" className="flex-1">{t('pages:favoritesPrototype.viewPost', 'View Post')}</Button>
               <Button variant="outline" size="icon">
                 <Trash2 className="w-4 h-4 text-destructive" />
               </Button>
@@ -214,6 +215,7 @@ function SavedPostCard({ post, index }: { post: typeof SAVED_POSTS[0]; index: nu
 }
 
 function SavedEventCard({ event, index }: { event: typeof SAVED_EVENTS[0]; index: number }) {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -250,10 +252,10 @@ function SavedEventCard({ event, index }: { event: typeof SAVED_EVENTS[0]; index
                 {event.location}
               </div>
             </div>
-            <span className="text-sm text-muted-foreground">Saved {event.savedDate}</span>
+            <span className="text-sm text-muted-foreground">{t('pages:favoritesPrototype.saved', 'Saved')} {event.savedDate}</span>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="flex-1">View Event</Button>
+            <Button variant="outline" className="flex-1">{t('pages:favoritesPrototype.viewEvent', 'View Event')}</Button>
             <Button variant="outline" size="icon">
               <Trash2 className="w-4 h-4 text-destructive" />
             </Button>
@@ -265,6 +267,7 @@ function SavedEventCard({ event, index }: { event: typeof SAVED_EVENTS[0]; index
 }
 
 function SavedVenueCard({ venue, index }: { venue: typeof SAVED_VENUES[0]; index: number }) {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -296,10 +299,10 @@ function SavedVenueCard({ venue, index }: { venue: typeof SAVED_VENUES[0]; index
                 <span className="font-semibold text-lg">{venue.rating}</span>
               </div>
             </div>
-            <span className="text-sm text-muted-foreground">Saved {venue.savedDate}</span>
+            <span className="text-sm text-muted-foreground">{t('pages:favoritesPrototype.saved', 'Saved')} {venue.savedDate}</span>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="flex-1">View Venue</Button>
+            <Button variant="outline" className="flex-1">{t('pages:favoritesPrototype.viewVenue', 'View Venue')}</Button>
             <Button variant="outline" size="icon">
               <Trash2 className="w-4 h-4 text-destructive" />
             </Button>
@@ -311,6 +314,7 @@ function SavedVenueCard({ venue, index }: { venue: typeof SAVED_VENUES[0]; index
 }
 
 function SavedMusicCard({ track, index }: { track: typeof SAVED_MUSIC[0]; index: number }) {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -329,9 +333,9 @@ function SavedMusicCard({ track, index }: { track: typeof SAVED_MUSIC[0]; index:
               <p className="text-sm text-muted-foreground truncate">{track.artist}</p>
             </div>
             <span className="text-sm text-muted-foreground">{track.duration}</span>
-            <span className="text-sm text-muted-foreground hidden md:block">Saved {track.savedDate}</span>
+            <span className="text-sm text-muted-foreground hidden md:block">{t('pages:favoritesPrototype.saved', 'Saved')} {track.savedDate}</span>
             <div className="flex gap-2">
-              <Button variant="outline">Play</Button>
+              <Button variant="outline">{t('pages:favoritesPrototype.play', 'Play')}</Button>
               <Button variant="outline" size="icon">
                 <Trash2 className="w-4 h-4 text-destructive" />
               </Button>

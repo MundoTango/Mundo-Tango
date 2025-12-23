@@ -155,7 +155,7 @@ export default function FacebookInvites() {
           <CardContent>
             {historyLoading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-pulse text-muted-foreground">Loading...</div>
+                <div className="animate-pulse text-muted-foreground">{t('common:loading', 'Loading...')}</div>
               </div>
             ) : invites.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
@@ -176,7 +176,7 @@ export default function FacebookInvites() {
                         {invite.invitedFriendName}
                       </p>
                       <p className="text-sm text-muted-foreground truncate">
-                        {invite.invitedFriendEmail || 'No email'}
+                        {invite.invitedFriendEmail || t('pages:facebookInvites.noEmail', 'No email')}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {invite.sentAt && format(new Date(invite.sentAt), 'MMM d, yyyy h:mm a')}
@@ -187,15 +187,15 @@ export default function FacebookInvites() {
                         variant={invite.registered ? "default" : invite.opened ? "secondary" : "outline"}
                       >
                         {invite.registered ? (
-                          <><CheckCircle2 className="w-3 h-3 mr-1" /> Registered</>
+                          <><CheckCircle2 className="w-3 h-3 mr-1" /> {t('pages:facebookInvites.statusRegistered', 'Registered')}</>
                         ) : invite.opened ? (
-                          <><CheckCircle2 className="w-3 h-3 mr-1" /> Opened</>
+                          <><CheckCircle2 className="w-3 h-3 mr-1" /> {t('pages:facebookInvites.statusOpened', 'Opened')}</>
                         ) : (
-                          <><Clock className="w-3 h-3 mr-1" /> Sent</>
+                          <><Clock className="w-3 h-3 mr-1" /> {t('pages:facebookInvites.statusSent', 'Sent')}</>
                         )}
                       </Badge>
                       <Badge variant="outline" className="text-xs">
-                        {invite.sentVia === 'facebook_messenger' ? 'Messenger' : 'Email'}
+                        {invite.sentVia === 'facebook_messenger' ? t('pages:facebookInvites.messenger', 'Messenger') : t('pages:facebookInvites.email', 'Email')}
                       </Badge>
                     </div>
                   </div>
@@ -209,25 +209,25 @@ export default function FacebookInvites() {
       {/* Tips Section */}
       <Card data-testid="card-tips">
         <CardHeader>
-          <CardTitle>Tips for Better Results</CardTitle>
+          <CardTitle>{t('pages:facebookInvites.tipsTitle', 'Tips for Better Results')}</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex items-start gap-2">
               <CheckCircle2 className="w-4 h-4 mt-0.5 text-primary" />
-              <span>Review and personalize AI-generated messages before sending</span>
+              <span>{t('pages:facebookInvites.tip1', 'Review and personalize AI-generated messages before sending')}</span>
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2 className="w-4 h-4 mt-0.5 text-primary" />
-              <span>Keep messages between 100-150 words for best engagement</span>
+              <span>{t('pages:facebookInvites.tip2', 'Keep messages between 100-150 words for best engagement')}</span>
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2 className="w-4 h-4 mt-0.5 text-primary" />
-              <span>Phase 1: Limited to 5 invites per day to prevent spam</span>
+              <span>{t('pages:facebookInvites.tip3', 'Phase 1: Limited to 5 invites per day to prevent spam')}</span>
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2 className="w-4 h-4 mt-0.5 text-primary" />
-              <span>Invitations reset daily at midnight</span>
+              <span>{t('pages:facebookInvites.tip4', 'Invitations reset daily at midnight')}</span>
             </li>
           </ul>
         </CardContent>

@@ -70,11 +70,11 @@ export default function FinancialTradingPage() {
           onValueChange={(value) => setSelectedPortfolio(parseInt(value))}
         >
           <SelectTrigger className="w-64" data-testid="select-portfolio">
-            <SelectValue placeholder="Select a portfolio" />
+            <SelectValue placeholder={t('pages:financialTrading.selectPortfolioPlaceholder', 'Select a portfolio')} />
           </SelectTrigger>
           <SelectContent>
             {portfoliosLoading ? (
-              <SelectItem value="loading" disabled>Loading...</SelectItem>
+              <SelectItem value="loading" disabled>{t('common:loading', 'Loading...')}</SelectItem>
             ) : portfolios && portfolios.length > 0 ? (
               portfolios.map((portfolio) => (
                 <SelectItem key={portfolio.id} value={portfolio.id.toString()}>
@@ -82,20 +82,20 @@ export default function FinancialTradingPage() {
                 </SelectItem>
               ))
             ) : (
-              <SelectItem value="none" disabled>No portfolios available</SelectItem>
+              <SelectItem value="none" disabled>{t('pages:financialTrading.noPortfoliosAvailable', 'No portfolios available')}</SelectItem>
             )}
           </SelectContent>
         </Select>
         {activePortfolio && (
           <div className="flex items-center gap-4 ml-4">
             <div>
-              <p className="text-xs text-muted-foreground">Cash Available</p>
+              <p className="text-xs text-muted-foreground">{t('pages:financialTrading.cashAvailable', 'Cash Available')}</p>
               <p className="text-lg font-bold" style={{ color: '#40E0D0' }}>
                 ${parseFloat(activePortfolio.cashBalance || "0").toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Total Value</p>
+              <p className="text-xs text-muted-foreground">{t('pages:financialTrading.totalValue', 'Total Value')}</p>
               <p className="text-lg font-bold">
                 ${parseFloat(activePortfolio.totalValue || "0").toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </p>

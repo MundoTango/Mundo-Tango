@@ -25,23 +25,25 @@ type EmotionType =
   | "thinking"
   | "speaking";
 
-const emotionButtons: Array<{
+const getEmotionButtons = (t: (key: string, fallback: string) => string): Array<{
   emotion: EmotionType;
   label: string;
   icon: typeof Smile;
-}> = [
-  { emotion: "idle", label: "Idle", icon: Circle },
-  { emotion: "happy", label: "Happy", icon: Smile },
-  { emotion: "surprised", label: "Surprised", icon: Sparkles },
-  { emotion: "nodding", label: "Nodding", icon: ThumbsUp },
-  { emotion: "thinking", label: "Thinking", icon: Brain },
-  { emotion: "speaking", label: "Speaking", icon: MessageCircle },
+}> => [
+  { emotion: "idle", label: t('pages:mrBlueAvatar3d.emotionIdle', 'Idle'), icon: Circle },
+  { emotion: "happy", label: t('pages:mrBlueAvatar3d.emotionHappy', 'Happy'), icon: Smile },
+  { emotion: "surprised", label: t('pages:mrBlueAvatar3d.emotionSurprised', 'Surprised'), icon: Sparkles },
+  { emotion: "nodding", label: t('pages:mrBlueAvatar3d.emotionNodding', 'Nodding'), icon: ThumbsUp },
+  { emotion: "thinking", label: t('pages:mrBlueAvatar3d.emotionThinking', 'Thinking'), icon: Brain },
+  { emotion: "speaking", label: t('pages:mrBlueAvatar3d.emotionSpeaking', 'Speaking'), icon: MessageCircle },
 ];
 
 export default function MrBlueAvatar3DPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [emotion, setEmotion] = useState<EmotionType>("idle");
   const [autoDetect, setAutoDetect] = useState(false);
+  
+  const emotionButtons = getEmotionButtons(t);
 
   const handleEmotionChange = useCallback(
     (detected: EmotionType) => {

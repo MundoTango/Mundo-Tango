@@ -67,7 +67,7 @@ export default function SubscriptionPlans() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-muted-foreground">Loading plans...</p>
+        <p className="text-muted-foreground">{t('pages:subscriptionPlans.loadingPlans', 'Loading plans...')}</p>
       </div>
     );
   }
@@ -77,9 +77,9 @@ export default function SubscriptionPlans() {
       <div className="max-w-7xl mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Choose Your Plan</h1>
+          <h1 className="text-4xl font-bold mb-4">{t('pages:subscriptionPlans.chooseYourPlan', 'Choose Your Plan')}</h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Unlock premium features and take your tango journey to the next level
+            {t('pages:subscriptionPlans.unlockPremium', 'Unlock premium features and take your tango journey to the next level')}
           </p>
 
           {/* Billing Toggle */}
@@ -88,7 +88,7 @@ export default function SubscriptionPlans() {
               "px-4 py-2 font-medium transition-colors",
               billingCycle === "monthly" && "text-foreground"
             )}>
-              Monthly
+              {t('pages:subscriptionPlans.monthly', 'Monthly')}
             </span>
             <Switch
               checked={billingCycle === "annual"}
@@ -99,8 +99,8 @@ export default function SubscriptionPlans() {
               "px-4 py-2 font-medium transition-colors",
               billingCycle === "annual" && "text-foreground"
             )}>
-              Annual
-              <Badge variant="secondary" className="ml-2">Save 20%</Badge>
+              {t('pages:subscriptionPlans.annual', 'Annual')}
+              <Badge variant="secondary" className="ml-2">{t('pages:subscriptionPlans.save20', 'Save 20%')}</Badge>
             </span>
           </div>
         </div>
@@ -123,7 +123,7 @@ export default function SubscriptionPlans() {
               >
                 {plan.name.toLowerCase() === "pro" && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-primary">Most Popular</Badge>
+                    <Badge className="bg-primary">{t('pages:subscriptionPlans.mostPopular', 'Most Popular')}</Badge>
                   </div>
                 )}
 
@@ -131,7 +131,7 @@ export default function SubscriptionPlans() {
                   <div className="flex items-center justify-between mb-4">
                     <Icon className="h-8 w-8 text-primary" />
                     {isCurrentPlan && (
-                      <Badge variant="secondary">Current Plan</Badge>
+                      <Badge variant="secondary">{t('pages:subscriptionPlans.currentPlan', 'Current Plan')}</Badge>
                     )}
                   </div>
                   <CardTitle className="text-2xl">{plan.name}</CardTitle>
@@ -159,12 +159,12 @@ export default function SubscriptionPlans() {
                 <CardFooter>
                   {isCurrentPlan ? (
                     <Button variant="outline" className="w-full" disabled>
-                      Current Plan
+                      {t('pages:subscriptionPlans.currentPlan', 'Current Plan')}
                     </Button>
                   ) : (
                     <Link href={`/payment/${plan.id}`} className="w-full">
                       <Button className="w-full" data-testid={`button-select-${plan.name.toLowerCase()}`}>
-                        {plan.name === "Free" ? "Get Started" : "Upgrade Now"}
+                        {plan.name === "Free" ? t('pages:subscriptionPlans.getStarted', 'Get Started') : t('pages:subscriptionPlans.upgradeNow', 'Upgrade Now')}
                       </Button>
                     </Link>
                   )}
@@ -176,40 +176,40 @@ export default function SubscriptionPlans() {
 
         {/* Feature Comparison Table */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold mb-8 text-center">Feature Comparison</h2>
+          <h2 className="text-2xl font-bold mb-8 text-center">{t('pages:subscriptionPlans.featureComparison', 'Feature Comparison')}</h2>
           <Card>
             <CardContent className="p-6">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-4 px-4">Feature</th>
-                      <th className="text-center py-4 px-4">Free</th>
-                      <th className="text-center py-4 px-4">Pro</th>
-                      <th className="text-center py-4 px-4">Premium</th>
+                      <th className="text-left py-4 px-4">{t('pages:subscriptionPlans.feature', 'Feature')}</th>
+                      <th className="text-center py-4 px-4">{t('pages:subscriptionPlans.free', 'Free')}</th>
+                      <th className="text-center py-4 px-4">{t('pages:subscriptionPlans.pro', 'Pro')}</th>
+                      <th className="text-center py-4 px-4">{t('pages:subscriptionPlans.premium', 'Premium')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y">
                     <tr>
-                      <td className="py-4 px-4">Event Access</td>
-                      <td className="text-center py-4 px-4">Basic</td>
-                      <td className="text-center py-4 px-4">Priority</td>
-                      <td className="text-center py-4 px-4">VIP</td>
+                      <td className="py-4 px-4">{t('pages:subscriptionPlans.eventAccess', 'Event Access')}</td>
+                      <td className="text-center py-4 px-4">{t('pages:subscriptionPlans.basic', 'Basic')}</td>
+                      <td className="text-center py-4 px-4">{t('pages:subscriptionPlans.priority', 'Priority')}</td>
+                      <td className="text-center py-4 px-4">{t('pages:subscriptionPlans.vip', 'VIP')}</td>
                     </tr>
                     <tr>
-                      <td className="py-4 px-4">Messages per month</td>
+                      <td className="py-4 px-4">{t('pages:subscriptionPlans.messagesPerMonth', 'Messages per month')}</td>
                       <td className="text-center py-4 px-4">100</td>
-                      <td className="text-center py-4 px-4">Unlimited</td>
-                      <td className="text-center py-4 px-4">Unlimited</td>
+                      <td className="text-center py-4 px-4">{t('pages:subscriptionPlans.unlimited', 'Unlimited')}</td>
+                      <td className="text-center py-4 px-4">{t('pages:subscriptionPlans.unlimited', 'Unlimited')}</td>
                     </tr>
                     <tr>
-                      <td className="py-4 px-4">Video calls</td>
+                      <td className="py-4 px-4">{t('pages:subscriptionPlans.videoCalls', 'Video calls')}</td>
                       <td className="text-center py-4 px-4">-</td>
                       <td className="text-center py-4 px-4"><Check className="h-5 w-5 mx-auto text-primary" /></td>
                       <td className="text-center py-4 px-4"><Check className="h-5 w-5 mx-auto text-primary" /></td>
                     </tr>
                     <tr>
-                      <td className="py-4 px-4">AI Partner Matching</td>
+                      <td className="py-4 px-4">{t('pages:subscriptionPlans.aiPartnerMatching', 'AI Partner Matching')}</td>
                       <td className="text-center py-4 px-4">-</td>
                       <td className="text-center py-4 px-4">-</td>
                       <td className="text-center py-4 px-4"><Check className="h-5 w-5 mx-auto text-primary" /></td>
@@ -223,7 +223,7 @@ export default function SubscriptionPlans() {
 
         {/* FAQ Section */}
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold mb-8 text-center">{t('pages:subscriptionPlans.faq', 'Frequently Asked Questions')}</h2>
           <Accordion type="single" collapsible>
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`}>

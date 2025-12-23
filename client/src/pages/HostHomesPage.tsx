@@ -163,16 +163,16 @@ function HostHomesPageContent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/housing/listings"] });
       toast({
-        title: "Success!",
-        description: "Your listing has been created.",
+        title: t('pages:hostHomes.successTitle', 'Success!'),
+        description: t('pages:hostHomes.listingCreated', 'Your listing has been created.'),
       });
       setShowWizard(false);
       resetWizard();
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create listing",
+        title: t('pages:hostHomes.errorTitle', 'Error'),
+        description: error.message || t('pages:hostHomes.failedToCreate', 'Failed to create listing'),
         variant: "destructive",
       });
     },
@@ -261,8 +261,8 @@ function HostHomesPageContent() {
   return (
     <>
       <SEO
-        title="Tango Host Homes - Mundo Tango"
-        description="Find authentic tango accommodations hosted by passionate dancers around the world"
+        title={t('pages:hostHomes.seoTitle', 'Tango Host Homes - Mundo Tango')}
+        description={t('pages:hostHomes.seoDescription', 'Find authentic tango accommodations hosted by passionate dancers around the world')}
       />
 
       {/* Editorial Hero Section - 16:9 */}
@@ -341,7 +341,7 @@ function HostHomesPageContent() {
                 </div>
                 <Button onClick={() => setShowWizard(true)} data-testid="button-create-listing">
                   <Plus className="h-4 w-4 mr-2" />
-                  Become a Host
+                  {t('pages:hostHomes.becomeHost', 'Become a Host')}
                 </Button>
               </div>
             </div>
@@ -358,7 +358,7 @@ function HostHomesPageContent() {
                 <Card className="w-80 flex-shrink-0 h-fit" data-testid="filter-sidebar">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>Filters</CardTitle>
+                  <CardTitle>{t('pages:hostHomes.filtersTitle', 'Filters')}</CardTitle>
                   <Button variant="ghost" size="sm" onClick={() => setShowFilters(false)}>
                     <X className="h-4 w-4" />
                   </Button>
@@ -507,7 +507,7 @@ function HostHomesPageContent() {
                     data-testid="checkbox-friends-only"
                   />
                   <Label htmlFor="friends-only" className="text-sm font-normal cursor-pointer">
-                    Show listings from friends only
+                    {t('pages:hostHomes.showFriendsOnly', 'Show listings from friends only')}
                   </Label>
                 </div>
 
@@ -518,7 +518,7 @@ function HostHomesPageContent() {
                   onClick={clearFilters}
                   data-testid="button-clear-filters"
                 >
-                  Clear All Filters
+                  {t('pages:hostHomes.clearAllFilters', 'Clear All Filters')}
                 </Button>
               </CardContent>
             </Card>
@@ -531,7 +531,7 @@ function HostHomesPageContent() {
                 // Grid View
                 isLoading ? (
                   <div className="text-center py-16">
-                    <p className="text-lg text-muted-foreground">Loading homes...</p>
+                    <p className="text-lg text-muted-foreground">{t('pages:hostHomes.loadingHomes', 'Loading homes...')}</p>
                   </div>
                 ) : homes && homes.length > 0 ? (
                   <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -1016,8 +1016,8 @@ function HostHomesPageContent() {
 export default function HostHomesPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
-    <SelfHealingErrorBoundary pageName="Housing" fallbackRoute="/">
-      <PageLayout title="Tango Host Homes" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:hostHomes.pageName', 'Housing')} fallbackRoute="/">
+      <PageLayout title={t('pages:hostHomes.pageTitle', 'Tango Host Homes')} showBreadcrumbs>
         <HostHomesPageContent />
       </PageLayout>
     </SelfHealingErrorBoundary>

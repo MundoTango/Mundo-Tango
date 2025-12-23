@@ -16,8 +16,8 @@ export default function ReportUserPage() {
     <SelfHealingErrorBoundary pageName="Report User" fallbackRoute="/feed">
       <>
         <SEO
-          title="Report User"
-          description="Report a user for inappropriate behavior. Help us maintain a safe and respectful community for all members."
+          title={t('pages:reportUser.seoTitle', 'Report User')}
+          description={t('pages:reportUser.seoDescription', 'Report a user for inappropriate behavior. Help us maintain a safe and respectful community for all members.')}
         />
 
         {/* Hero Section - 16:9 */}
@@ -42,15 +42,15 @@ export default function ReportUserPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                 <AlertTriangle className="w-3 h-3 mr-1.5" />
-                User Safety
+                {t('pages:reportUser.userSafety', 'User Safety')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Report User
+                {t('pages:reportUser.heroTitle', 'Report User')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                Help us keep the community safe by reporting inappropriate behavior
+                {t('pages:reportUser.heroSubtitle', 'Help us keep the community safe by reporting inappropriate behavior')}
               </p>
             </motion.div>
           </div>
@@ -68,45 +68,45 @@ export default function ReportUserPage() {
                 <CardHeader className="border-b">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="h-6 w-6 text-primary" />
-                    <CardTitle className="text-2xl font-serif">Report Details</CardTitle>
+                    <CardTitle className="text-2xl font-serif">{t('pages:reportUser.reportDetails', 'Report Details')}</CardTitle>
                   </div>
                   <p className="text-base text-muted-foreground leading-relaxed mt-2">
-                    Please select a reason and provide additional information
+                    {t('pages:reportUser.reportDetailsDescription', 'Please select a reason and provide additional information')}
                   </p>
                 </CardHeader>
                 <CardContent className="p-8 space-y-6">
                   <div className="space-y-4">
-                    <Label className="text-base font-semibold">Reason for reporting</Label>
+                    <Label className="text-base font-semibold">{t('pages:reportUser.reasonForReporting', 'Reason for reporting')}</Label>
                     <RadioGroup defaultValue="harassment" className="space-y-3">
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="harassment" id="harassment" data-testid="radio-harassment" />
-                        <Label htmlFor="harassment" className="text-base cursor-pointer flex-1">Harassment or bullying</Label>
+                        <Label htmlFor="harassment" className="text-base cursor-pointer flex-1">{t('pages:reportUser.harassment', 'Harassment or bullying')}</Label>
                       </div>
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="spam" id="spam" data-testid="radio-spam" />
-                        <Label htmlFor="spam" className="text-base cursor-pointer flex-1">Spam or misleading</Label>
+                        <Label htmlFor="spam" className="text-base cursor-pointer flex-1">{t('pages:reportUser.spam', 'Spam or misleading')}</Label>
                       </div>
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="inappropriate" id="inappropriate" data-testid="radio-inappropriate" />
-                        <Label htmlFor="inappropriate" className="text-base cursor-pointer flex-1">Inappropriate content</Label>
+                        <Label htmlFor="inappropriate" className="text-base cursor-pointer flex-1">{t('pages:reportUser.inappropriate', 'Inappropriate content')}</Label>
                       </div>
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="impersonation" id="impersonation" data-testid="radio-impersonation" />
-                        <Label htmlFor="impersonation" className="text-base cursor-pointer flex-1">Impersonation</Label>
+                        <Label htmlFor="impersonation" className="text-base cursor-pointer flex-1">{t('pages:reportUser.impersonation', 'Impersonation')}</Label>
                       </div>
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="other" id="other" data-testid="radio-other" />
-                        <Label htmlFor="other" className="text-base cursor-pointer flex-1">Other</Label>
+                        <Label htmlFor="other" className="text-base cursor-pointer flex-1">{t('pages:reportUser.other', 'Other')}</Label>
                       </div>
                     </RadioGroup>
                   </div>
 
                   <div>
-                    <Label htmlFor="details" className="text-base font-semibold">Additional Details</Label>
+                    <Label htmlFor="details" className="text-base font-semibold">{t('pages:reportUser.additionalDetails', 'Additional Details')}</Label>
                     <Textarea
                       id="details"
                       rows={5}
-                      placeholder="Please provide any additional information that will help us investigate..."
+                      placeholder={t('pages:reportUser.detailsPlaceholder', 'Please provide any additional information that will help us investigate...')}
                       className="mt-2 resize-none"
                       data-testid="input-details"
                     />
@@ -116,16 +116,16 @@ export default function ReportUserPage() {
                     <div className="flex items-start gap-3">
                       <AlertTriangle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                       <div className="space-y-2">
-                        <p className="font-semibold text-base">Confidential Review Process</p>
+                        <p className="font-semibold text-base">{t('pages:reportUser.confidentialTitle', 'Confidential Review Process')}</p>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          Your report will be reviewed by our moderation team. All reports are confidential and we take appropriate action based on our community guidelines.
+                          {t('pages:reportUser.confidentialDescription', 'Your report will be reviewed by our moderation team. All reports are confidential and we take appropriate action based on our community guidelines.')}
                         </p>
                       </div>
                     </div>
                   </div>
 
                   <Button className="w-full h-12 gap-2" data-testid="button-submit">
-                    Submit Report
+                    {t('pages:reportUser.submitReport', 'Submit Report')}
                     <ChevronRight className="h-5 w-5" />
                   </Button>
                 </CardContent>

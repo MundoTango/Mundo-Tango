@@ -143,6 +143,7 @@ export default function FeedPrototypePage() {
 }
 
 function DailyInspirationHero({ quote }: { quote: { text: string; author: string } }) {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <div className="relative h-[60vh] w-full overflow-hidden">
       {/* Background Image with Parallax Effect */}
@@ -165,7 +166,7 @@ function DailyInspirationHero({ quote }: { quote: { text: string; author: string
           className="max-w-4xl"
         >
           <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-            Daily Tango Inspiration
+            {t('pages:feedPrototype.dailyInspiration', 'Daily Tango Inspiration')}
           </Badge>
           
           <AnimatePresence mode="wait">
@@ -226,6 +227,7 @@ interface PostCardProps {
 }
 
 function PostCard({ post }: PostCardProps) {
+  const { t } = useTranslation(["pages", "common"]);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -296,8 +298,8 @@ function PostCard({ post }: PostCardProps) {
 
         {/* Stats Bar - Minimal */}
         <div className="flex items-center gap-6 text-sm text-muted-foreground py-4">
-          <span>{post.likes} likes</span>
-          <span>{post.comments} comments</span>
+          <span>{t('pages:feedPrototype.likesCount', '{{count}} likes', { count: post.likes })}</span>
+          <span>{t('pages:feedPrototype.commentsCount', '{{count}} comments', { count: post.comments })}</span>
         </div>
 
         <Separator />
@@ -311,7 +313,7 @@ function PostCard({ post }: PostCardProps) {
             className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
           >
             <Heart className={`w-6 h-6 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
-            <span className="text-sm font-medium">Like</span>
+            <span className="text-sm font-medium">{t('pages:feedPrototype.like', 'Like')}</span>
           </motion.button>
 
           <motion.button
@@ -320,7 +322,7 @@ function PostCard({ post }: PostCardProps) {
             className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
           >
             <MessageCircle className="w-6 h-6" />
-            <span className="text-sm font-medium">Comment</span>
+            <span className="text-sm font-medium">{t('pages:feedPrototype.comment', 'Comment')}</span>
           </motion.button>
 
           <motion.button
@@ -329,7 +331,7 @@ function PostCard({ post }: PostCardProps) {
             className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
           >
             <Share2 className="w-6 h-6" />
-            <span className="text-sm font-medium">Share</span>
+            <span className="text-sm font-medium">{t('pages:feedPrototype.share', 'Share')}</span>
           </motion.button>
 
           <motion.button
@@ -347,16 +349,17 @@ function PostCard({ post }: PostCardProps) {
 }
 
 function CommunityPulse() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <Card className="p-6 border-0 shadow-sm">
       <div className="flex items-center gap-2 mb-6">
         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-        <h3 className="font-semibold">Community Pulse</h3>
+        <h3 className="font-semibold">{t('pages:feedPrototype.communityPulse', 'Community Pulse')}</h3>
       </div>
       <div className="space-y-4">
-        <PulseStat label="Active Now" value="2,847" trend="+12%" />
-        <PulseStat label="Events Today" value="34" trend="+8%" />
-        <PulseStat label="New Members" value="156" trend="+24%" />
+        <PulseStat label={t('pages:feedPrototype.activeNow', 'Active Now')} value="2,847" trend="+12%" />
+        <PulseStat label={t('pages:feedPrototype.eventsToday', 'Events Today')} value="34" trend="+8%" />
+        <PulseStat label={t('pages:feedPrototype.newMembers', 'New Members')} value="156" trend="+24%" />
       </div>
     </Card>
   );

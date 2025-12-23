@@ -37,7 +37,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 const albumFormSchema = z.object({
-  name: z.string().min(1, "Album name is required").max(100),
+  name: z.string().min(1).max(100),
   description: z.string().max(500).optional(),
   privacy: z.enum(["public", "private", "friends"]),
 });

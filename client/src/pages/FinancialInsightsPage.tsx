@@ -82,11 +82,11 @@ export default function FinancialInsightsPage() {
           onValueChange={(value) => setSelectedPortfolio(parseInt(value))}
         >
           <SelectTrigger className="w-64">
-            <SelectValue placeholder="Select a portfolio" />
+            <SelectValue placeholder={t('pages:financialInsights.selectPortfolioPlaceholder', 'Select a portfolio')} />
           </SelectTrigger>
           <SelectContent>
             {portfoliosLoading ? (
-              <SelectItem value="loading" disabled>Loading...</SelectItem>
+              <SelectItem value="loading" disabled>{t('common:loading', 'Loading...')}</SelectItem>
             ) : portfolios && portfolios.length > 0 ? (
               portfolios.map((portfolio) => (
                 <SelectItem key={portfolio.id} value={portfolio.id.toString()}>
@@ -94,7 +94,7 @@ export default function FinancialInsightsPage() {
                 </SelectItem>
               ))
             ) : (
-              <SelectItem value="none" disabled>No portfolios available</SelectItem>
+              <SelectItem value="none" disabled>{t('pages:financialInsights.noPortfoliosAvailable', 'No portfolios available')}</SelectItem>
             )}
           </SelectContent>
         </Select>
@@ -123,7 +123,7 @@ export default function FinancialInsightsPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">{t('pages:financialInsights.aiRecommendations', 'AI Recommendations')}</h2>
-              <Badge variant="outline">{aiDecisions?.length || 0} decisions</Badge>
+              <Badge variant="outline">{t('pages:financialInsights.decisionsCount', '{{count}} decisions', { count: aiDecisions?.length || 0 })}</Badge>
             </div>
 
             {decisionsLoading ? (
@@ -200,12 +200,12 @@ export default function FinancialInsightsPage() {
                               'text-red-400 border-red-400/30'
                             }`}
                           >
-                            {strategy.riskLevel} risk
+                            {strategy.riskLevel} {t('pages:financialInsights.risk', 'risk')}
                           </Badge>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-muted-foreground">Capital Allocated</p>
+                        <p className="text-sm text-muted-foreground">{t('pages:financialInsights.capitalAllocated', 'Capital Allocated')}</p>
                         <p className="font-bold" style={{ color: '#40E0D0' }}>
                           ${parseFloat(strategy.capitalAllocation || "0").toLocaleString()}
                         </p>
@@ -257,11 +257,11 @@ export default function FinancialInsightsPage() {
                         </div>
                         <div className="text-right">
                           <p className="text-xs text-muted-foreground">
-                            {agent.totalDecisions} decisions
+                            {t('pages:financialInsights.agentDecisions', '{{count}} decisions', { count: agent.totalDecisions })}
                           </p>
                           {agent.successRate && (
                             <p className="text-xs text-green-400">
-                              {parseFloat(agent.successRate).toFixed(1)}% success
+                              {parseFloat(agent.successRate).toFixed(1)}% {t('pages:financialInsights.success', 'success')}
                             </p>
                           )}
                         </div>
@@ -319,7 +319,7 @@ export default function FinancialInsightsPage() {
                             {new Date(log.timestamp).toLocaleString()}
                           </p>
                           {log.actionTaken && (
-                            <p className="text-xs text-green-400 mt-1">Action taken</p>
+                            <p className="text-xs text-green-400 mt-1">{t('pages:financialInsights.actionTaken', 'Action taken')}</p>
                           )}
                         </div>
                       </div>

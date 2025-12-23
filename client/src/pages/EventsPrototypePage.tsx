@@ -116,7 +116,7 @@ export default function EventsPrototypePage() {
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search events, cities, venues..."
+                placeholder={t('pages:eventsPrototype.searchPlaceholder', 'Search events, cities, venues...')}
                 className="pl-12 h-14 text-base bg-white/10 backdrop-blur-md border-white/20 text-white placeholder:text-white/60"
               />
             </div>
@@ -228,9 +228,10 @@ export default function EventsPrototypePage() {
 }
 
 function EventCard({ event, index }: { event: typeof EVENTS[0]; index: number }) {
+  const { t } = useTranslation(["pages", "common"]);
   const getRSVPBadge = () => {
-    if (event.rsvp === "going") return <Badge className="bg-green-500">Going</Badge>;
-    if (event.rsvp === "interested") return <Badge variant="outline">Interested</Badge>;
+    if (event.rsvp === "going") return <Badge className="bg-green-500">{t('pages:eventsPrototype.going', 'Going')}</Badge>;
+    if (event.rsvp === "interested") return <Badge variant="outline">{t('pages:eventsPrototype.interested', 'Interested')}</Badge>;
     return null;
   };
 
@@ -257,7 +258,7 @@ function EventCard({ event, index }: { event: typeof EVENTS[0]; index: number })
           {event.featured && (
             <Badge className="absolute top-4 left-4 bg-white/20 text-white border-white/30 backdrop-blur-sm">
               <Star className="w-3 h-3 mr-1 fill-white" />
-              Featured
+              {t('pages:eventsPrototype.featured', 'Featured')}
             </Badge>
           )}
 
@@ -289,7 +290,7 @@ function EventCard({ event, index }: { event: typeof EVENTS[0]; index: number })
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary" />
-                <span>{event.attendees} attending</span>
+                <span>{t('pages:eventsPrototype.attendingCount', '{{count}} attending', { count: event.attendees })}</span>
               </div>
             </div>
 
@@ -298,7 +299,7 @@ function EventCard({ event, index }: { event: typeof EVENTS[0]; index: number })
 
           <div className="flex gap-2">
             <Button className="flex-1 gap-2">
-              RSVP
+              {t('pages:eventsPrototype.rsvp', 'RSVP')}
               <ChevronRight className="w-4 h-4" />
             </Button>
             <Button variant="outline" size="icon">

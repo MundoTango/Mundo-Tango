@@ -10,8 +10,8 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 export default function MarketplaceItemPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
-    <SelfHealingErrorBoundary pageName="Marketplace Item" fallbackRoute="/marketplace">
-      <PageLayout title="Professional Tango Shoes - Size 8" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:marketplaceItem.pageName', 'Marketplace Item')} fallbackRoute="/marketplace">
+      <PageLayout title={t('pages:marketplaceItem.pageTitle', 'Professional Tango Shoes - Size 8')} showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="grid gap-8 lg:grid-cols-2">

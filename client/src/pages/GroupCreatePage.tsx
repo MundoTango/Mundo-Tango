@@ -159,7 +159,7 @@ export default function GroupCreatePage() {
                       <FormLabel>{t('pages:groupCreate.groupName', 'Group Name')}</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="e.g., Buenos Aires Tango Community" 
+                          placeholder={t('pages:groupCreate.namePlaceholder', 'e.g., Buenos Aires Tango Community')}
                           {...field}
                           onChange={(e) => {
                             field.onChange(e);
@@ -183,13 +183,13 @@ export default function GroupCreatePage() {
                       <FormLabel>{t('pages:groupCreate.urlSlug', 'URL Slug')}</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="buenos-aires-tango" 
+                          placeholder={t('pages:groupCreate.slugPlaceholder', 'buenos-aires-tango')}
                           {...field}
                           data-testid="input-group-slug"
                         />
                       </FormControl>
                       <FormDescription>
-                        Used in the group URL: /groups/{field.value || 'your-slug'}
+                        {t('pages:groupCreate.slugDescription', 'Used in the group URL: /groups/{{slug}}', { slug: field.value || 'your-slug' })}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -205,7 +205,7 @@ export default function GroupCreatePage() {
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger data-testid="select-group-type">
-                            <SelectValue placeholder="Select type" />
+                            <SelectValue placeholder={t('pages:groupCreate.selectTypePlaceholder', 'Select type')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -229,7 +229,7 @@ export default function GroupCreatePage() {
                       <FormLabel>{t('pages:groupCreate.shortDescription', 'Short Description')}</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Briefly describe your group..."
+                          placeholder={t('pages:groupCreate.descriptionPlaceholder', 'Briefly describe your group...')}
                           className="resize-none"
                           rows={3}
                           {...field}
@@ -249,7 +249,7 @@ export default function GroupCreatePage() {
                       <FormLabel>{t('pages:groupCreate.detailedDescription', 'Detailed Description (Optional)')}</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Provide more details about your group, its goals, and what members can expect..."
+                          placeholder={t('pages:groupCreate.longDescriptionPlaceholder', 'Provide more details about your group, its goals, and what members can expect...')}
                           className="resize-none"
                           rows={5}
                           {...field}
@@ -270,7 +270,7 @@ export default function GroupCreatePage() {
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger data-testid="select-visibility">
-                            <SelectValue placeholder="Select visibility" />
+                            <SelectValue placeholder={t('pages:groupCreate.selectVisibilityPlaceholder', 'Select visibility')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

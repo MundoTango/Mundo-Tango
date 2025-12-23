@@ -108,7 +108,7 @@ export default function ESADashboardPage() {
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Expert Specialized Agents • {stats?.totalAgents || 0} Agents • 61 Layers • MB.MD Protocol
+                  {t('pages:esaDashboard.subtitle', 'Expert Specialized Agents • {{count}} Agents • 61 Layers • MB.MD Protocol', { count: stats?.totalAgents || 0 })}
                 </p>
               </motion.div>
             </div>
@@ -220,10 +220,10 @@ export default function ESADashboardPage() {
                     </CardHeader>
                     <CardContent className="p-8 space-y-6">
                       {[
-                        { level: 0, label: "None", count: stats?.certificationLevels.level0 || 0, variant: "outline" as const },
-                        { level: 1, label: "Basic", count: stats?.certificationLevels.level1 || 0, variant: "secondary" as const },
-                        { level: 2, label: "Production", count: stats?.certificationLevels.level2 || 0, variant: "default" as const },
-                        { level: 3, label: "Master", count: stats?.certificationLevels.level3 || 0, variant: "default" as const }
+                        { level: 0, label: t('pages:esaDashboard.levelNone', 'None'), count: stats?.certificationLevels.level0 || 0, variant: "outline" as const },
+                        { level: 1, label: t('pages:esaDashboard.levelBasic', 'Basic'), count: stats?.certificationLevels.level1 || 0, variant: "secondary" as const },
+                        { level: 2, label: t('pages:esaDashboard.levelProduction', 'Production'), count: stats?.certificationLevels.level2 || 0, variant: "default" as const },
+                        { level: 3, label: t('pages:esaDashboard.levelMaster', 'Master'), count: stats?.certificationLevels.level3 || 0, variant: "default" as const }
                       ].map((cert, idx) => (
                         <motion.div 
                           key={cert.level} 
@@ -236,7 +236,7 @@ export default function ESADashboardPage() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <Badge variant={cert.variant} className={cert.level === 3 ? "bg-purple-600 text-white" : ""}>
-                                Level {cert.level}
+                                {t('pages:esaDashboard.level', 'Level')} {cert.level}
                               </Badge>
                               <span className="text-sm">{cert.label}</span>
                             </div>
@@ -257,9 +257,9 @@ export default function ESADashboardPage() {
                     </CardHeader>
                     <CardContent className="p-8 space-y-4">
                       {[
-                        { label: "Total Tasks Completed", sublabel: "All agents combined", value: stats?.performanceMetrics.totalTasksCompleted || 0, color: "" },
-                        { label: "Average Success Rate", sublabel: "Task completion rate", value: `${stats?.performanceMetrics.avgSuccessRate || 0}%`, color: "text-green-600" },
-                        { label: "Avg Completion Time", sublabel: "Per task", value: `${stats?.performanceMetrics.avgCompletionTime || 0}s`, color: "" }
+                        { label: t('pages:esaDashboard.totalTasksCompleted', 'Total Tasks Completed'), sublabel: t('pages:esaDashboard.allAgentsCombined', 'All agents combined'), value: stats?.performanceMetrics.totalTasksCompleted || 0, color: "" },
+                        { label: t('pages:esaDashboard.averageSuccessRate', 'Average Success Rate'), sublabel: t('pages:esaDashboard.taskCompletionRate', 'Task completion rate'), value: `${stats?.performanceMetrics.avgSuccessRate || 0}%`, color: "text-green-600" },
+                        { label: t('pages:esaDashboard.avgCompletionTime', 'Avg Completion Time'), sublabel: t('pages:esaDashboard.perTask', 'Per task'), value: `${stats?.performanceMetrics.avgCompletionTime || 0}s`, color: "" }
                       ].map((metric, idx) => (
                         <motion.div 
                           key={idx} 
@@ -289,7 +289,7 @@ export default function ESADashboardPage() {
                   <CardHeader className="border-b">
                     <CardTitle className="text-2xl font-serif">{t('pages:esaDashboard.agentRegistry', 'Agent Registry')}</CardTitle>
                     <CardDescription>
-                      {agents.length === 0 ? "No agents registered yet" : `${agents.length} agents registered`}
+                      {agents.length === 0 ? t('pages:esaDashboard.noAgentsRegisteredYet', 'No agents registered yet') : t('pages:esaDashboard.agentsRegistered', '{{count}} agents registered', { count: agents.length })}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-8">
@@ -305,13 +305,13 @@ export default function ESADashboardPage() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Code</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Certification</TableHead>
-                            <TableHead>Tasks</TableHead>
-                            <TableHead>Last Active</TableHead>
+                            <TableHead>{t('pages:esaDashboard.tableCode', 'Code')}</TableHead>
+                            <TableHead>{t('pages:esaDashboard.tableName', 'Name')}</TableHead>
+                            <TableHead>{t('pages:esaDashboard.tableType', 'Type')}</TableHead>
+                            <TableHead>{t('pages:esaDashboard.tableStatus', 'Status')}</TableHead>
+                            <TableHead>{t('pages:esaDashboard.tableCertification', 'Certification')}</TableHead>
+                            <TableHead>{t('pages:esaDashboard.tableTasks', 'Tasks')}</TableHead>
+                            <TableHead>{t('pages:esaDashboard.tableLastActive', 'Last Active')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -344,7 +344,7 @@ export default function ESADashboardPage() {
                               </TableCell>
                               <TableCell>{agent.tasksCompleted}</TableCell>
                               <TableCell className="text-sm text-muted-foreground">
-                                {agent.lastActiveAt ? new Date(agent.lastActiveAt).toLocaleDateString() : "Never"}
+                                {agent.lastActiveAt ? new Date(agent.lastActiveAt).toLocaleDateString() : t('pages:esaDashboard.never', 'Never')}
                               </TableCell>
                             </TableRow>
                           ))}

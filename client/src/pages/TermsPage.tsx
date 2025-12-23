@@ -11,10 +11,10 @@ export default function TermsPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Terms of Service" fallbackRoute="/">
-    <PageLayout title="Terms of Service" showBreadcrumbs>
+    <PageLayout title={t('pages:terms.pageTitle', 'Terms of Service')} showBreadcrumbs>
       <SEO
-        title="Terms of Service | Mundo Tango"
-        description="Read our terms of service. Understand your rights and responsibilities on Mundo Tango. User accounts, content guidelines, and community standards."
+        title={t('pages:terms.seoTitle', 'Terms of Service | Mundo Tango')}
+        description={t('pages:terms.seoDescription', 'Read our terms of service. Understand your rights and responsibilities on Mundo Tango. User accounts, content guidelines, and community standards.')}
       />
       <div className="min-h-screen bg-background">
         {/* Editorial Hero Section - 16:9 */}
@@ -35,15 +35,15 @@ export default function TermsPage() {
               transition={{ duration: 1, ease: "easeOut" }}
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Legal
+                {t('pages:terms.legal', 'Legal')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Terms of Service
+                {t('pages:terms.heroTitle', 'Terms of Service')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                Understanding your rights and responsibilities on Mundo Tango
+                {t('pages:terms.heroSubtitle', 'Understanding your rights and responsibilities on Mundo Tango')}
               </p>
             </motion.div>
           </div>

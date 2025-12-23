@@ -76,8 +76,8 @@ export default function MonitoringPage() {
 
   if (isLoading || !monitoring) {
     return (
-      <SelfHealingErrorBoundary pageName="Monitoring" fallbackRoute="/platform">
-        <PageLayout title="Monitoring Dashboard" showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName={t('pages:monitoring.pageName', 'Monitoring')} fallbackRoute="/platform">
+        <PageLayout title={t('pages:monitoring.pageTitle', 'Monitoring Dashboard')} showBreadcrumbs>
 <div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-monitoring">
           {t('pages:monitoring.loading', 'Loading monitoring data...')}
@@ -102,7 +102,7 @@ export default function MonitoringPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Monitoring" fallbackRoute="/platform">
+    <SelfHealingErrorBoundary pageName={t('pages:monitoring.pageName', 'Monitoring')} fallbackRoute="/platform">
       <div className="container mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold" data-testid="text-page-title">{t('pages:monitoring.title', 'Monitoring Dashboard')}</h1>

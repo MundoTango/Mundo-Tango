@@ -75,7 +75,7 @@ export default function MarketplaceCheckoutPage() {
           <div className="lg:col-span-1">
             <OrderSummary
               {...orderSummary}
-              checkoutLabel="Complete Purchase"
+              checkoutLabel={t('pages:marketplaceCheckout.completePurchase', 'Complete Purchase')}
             />
           </div>
         </div>

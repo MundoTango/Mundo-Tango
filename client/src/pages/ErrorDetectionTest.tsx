@@ -212,30 +212,30 @@ export default function ErrorDetectionTest() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-2">
-            <h4 className="font-semibold">Expected Behavior:</h4>
+            <h4 className="font-semibold">{t('pages:errorDetectionTest.expectedBehavior', 'Expected Behavior:')}</h4>
             <ul className="list-disc pl-6 space-y-1 text-sm">
-              <li>All errors should be captured and queued</li>
-              <li>Max 10 errors per minute (rate limiting)</li>
-              <li>Errors batched and sent every 10 seconds</li>
-              <li>404 responses from API are OK (Phase 2 - endpoint not ready yet)</li>
-              <li>No infinite loops - check browser console for [ProactiveErrorDetector] logs</li>
+              <li>{t('pages:errorDetectionTest.expectItem1', 'All errors should be captured and queued')}</li>
+              <li>{t('pages:errorDetectionTest.expectItem2', 'Max 10 errors per minute (rate limiting)')}</li>
+              <li>{t('pages:errorDetectionTest.expectItem3', 'Errors batched and sent every 10 seconds')}</li>
+              <li>{t('pages:errorDetectionTest.expectItem4', '404 responses from API are OK (Phase 2 - endpoint not ready yet)')}</li>
+              <li>{t('pages:errorDetectionTest.expectItem5', 'No infinite loops - check browser console for [ProactiveErrorDetector] logs')}</li>
             </ul>
           </div>
           
           <div className="space-y-2">
-            <h4 className="font-semibold">To Verify:</h4>
+            <h4 className="font-semibold">{t('pages:errorDetectionTest.toVerify', 'To Verify:')}</h4>
             <ol className="list-decimal pl-6 space-y-1 text-sm">
-              <li>Open browser console (F12)</li>
-              <li>Look for "[ProactiveErrorDetector]" initialization message</li>
-              <li>Trigger a test error above</li>
-              <li>Verify error is logged with "[ProactiveErrorDetector] Captured..." message</li>
-              <li>Wait 10 seconds - verify batch is sent to /api/mrblue/analyze-error</li>
-              <li>Check for graceful 404 handling (expected during Phase 2)</li>
+              <li>{t('pages:errorDetectionTest.verifyItem1', 'Open browser console (F12)')}</li>
+              <li>{t('pages:errorDetectionTest.verifyItem2', 'Look for "[ProactiveErrorDetector]" initialization message')}</li>
+              <li>{t('pages:errorDetectionTest.verifyItem3', 'Trigger a test error above')}</li>
+              <li>{t('pages:errorDetectionTest.verifyItem4', 'Verify error is logged with "[ProactiveErrorDetector] Captured..." message')}</li>
+              <li>{t('pages:errorDetectionTest.verifyItem5', 'Wait 10 seconds - verify batch is sent to /api/mrblue/analyze-error')}</li>
+              <li>{t('pages:errorDetectionTest.verifyItem6', 'Check for graceful 404 handling (expected during Phase 2)')}</li>
             </ol>
           </div>
 
           <Badge variant="outline" className="mt-4">
-            ℹ️ Check browser console for detailed logs
+            {t('pages:errorDetectionTest.consoleHint', 'Check browser console for detailed logs')}
           </Badge>
         </CardContent>
       </Card>

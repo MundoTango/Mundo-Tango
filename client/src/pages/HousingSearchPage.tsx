@@ -171,16 +171,22 @@ export default function HousingSearchPage() {
                 <div className="space-y-2">
                   <Label>{t('pages:housingSearch.amenities', 'Amenities')}</Label>
                   <div className="space-y-2">
-                    {["WiFi", "Kitchen", "Parking", "Air Conditioning", "Washing Machine"].map((amenity) => (
-                      <div key={amenity} className="flex items-center space-x-2">
+                    {[
+                      { id: 'WiFi', label: t('pages:housingSearch.amenityWifi', 'WiFi') },
+                      { id: 'Kitchen', label: t('pages:housingSearch.amenityKitchen', 'Kitchen') },
+                      { id: 'Parking', label: t('pages:housingSearch.amenityParking', 'Parking') },
+                      { id: 'Air Conditioning', label: t('pages:housingSearch.amenityAC', 'Air Conditioning') },
+                      { id: 'Washing Machine', label: t('pages:housingSearch.amenityWasher', 'Washing Machine') }
+                    ].map((amenity) => (
+                      <div key={amenity.id} className="flex items-center space-x-2">
                         <Checkbox
-                          id={amenity}
-                          checked={searchCriteria.amenities.includes(amenity)}
-                          onCheckedChange={() => toggleAmenity(amenity)}
-                          data-testid={`checkbox-${amenity.toLowerCase()}`}
+                          id={amenity.id}
+                          checked={searchCriteria.amenities.includes(amenity.id)}
+                          onCheckedChange={() => toggleAmenity(amenity.id)}
+                          data-testid={`checkbox-${amenity.id.toLowerCase().replace(' ', '-')}`}
                         />
-                        <label htmlFor={amenity} className="text-sm cursor-pointer">
-                          {amenity}
+                        <label htmlFor={amenity.id} className="text-sm cursor-pointer">
+                          {amenity.label}
                         </label>
                       </div>
                     ))}

@@ -5,7 +5,7 @@ import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary'
 export default function MrBlueStudioPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
-    <SelfHealingErrorBoundary pageName="Mr Blue Studio" fallbackRoute="/dashboard">
+    <SelfHealingErrorBoundary pageName={t('pages:mrBlueStudio.pageName', 'Mr Blue Studio')} fallbackRoute="/dashboard">
       <MrBlueStudio />
     </SelfHealingErrorBoundary>
   );

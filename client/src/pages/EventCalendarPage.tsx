@@ -100,10 +100,10 @@ export default function EventCalendarPage() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Badge style={{ backgroundColor: eventTypeColors.milonga }}>Milonga</Badge>
-          <Badge style={{ backgroundColor: eventTypeColors.workshop }}>Workshop</Badge>
-          <Badge style={{ backgroundColor: eventTypeColors.festival }}>Festival</Badge>
-          <Badge style={{ backgroundColor: eventTypeColors.practica }}>Practica</Badge>
+          <Badge style={{ backgroundColor: eventTypeColors.milonga }}>{t('pages:eventCalendar.milonga', 'Milonga')}</Badge>
+          <Badge style={{ backgroundColor: eventTypeColors.workshop }}>{t('pages:eventCalendar.workshop', 'Workshop')}</Badge>
+          <Badge style={{ backgroundColor: eventTypeColors.festival }}>{t('pages:eventCalendar.festival', 'Festival')}</Badge>
+          <Badge style={{ backgroundColor: eventTypeColors.practica }}>{t('pages:eventCalendar.practica', 'Practica')}</Badge>
         </div>
 
         {view === "calendar" ? (
@@ -138,7 +138,7 @@ export default function EventCalendarPage() {
             {isLoading ? (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <p className="text-muted-foreground">Loading events...</p>
+                  <p className="text-muted-foreground">{t('pages:eventCalendar.loadingEvents', 'Loading events...')}</p>
                 </CardContent>
               </Card>
             ) : calendarEvents.length > 0 ? (
@@ -156,7 +156,7 @@ export default function EventCalendarPage() {
                           <Badge style={{ backgroundColor: eventTypeColors[event.resource.eventType] }}>
                             {event.resource.eventType}
                           </Badge>
-                          {event.resource.isFree && <Badge variant="secondary">Free</Badge>}
+                          {event.resource.isFree && <Badge variant="secondary">{t('pages:eventCalendar.free', 'Free')}</Badge>}
                         </div>
                       </div>
                     </div>
@@ -175,7 +175,7 @@ export default function EventCalendarPage() {
                       )}
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Users className="h-4 w-4" />
-                        {event.resource.attendeeCount} attending
+                        {t('pages:eventCalendar.attendingCount', '{{count}} attending', { count: event.resource.attendeeCount })}
                       </div>
                     </div>
                   </CardContent>

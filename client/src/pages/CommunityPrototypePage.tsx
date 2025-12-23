@@ -88,7 +88,7 @@ export default function CommunityPrototypePage() {
       </div>
 
       {/* Hero Section */}
-      <CommunityHero stats={GLOBAL_STATS} />
+      <CommunityHero stats={GLOBAL_STATS} t={t} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -214,7 +214,7 @@ export default function CommunityPrototypePage() {
   );
 }
 
-function CommunityHero({ stats }: { stats: typeof GLOBAL_STATS }) {
+function CommunityHero({ stats, t }: { stats: typeof GLOBAL_STATS; t: (key: string, fallback: string, options?: any) => string }) {
   return (
     <div className="relative h-[40vh] w-full overflow-hidden">
       <div 
@@ -248,10 +248,10 @@ function CommunityHero({ stats }: { stats: typeof GLOBAL_STATS }) {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-            <StatCard icon={Globe} label="Cities" value={stats.cities} suffix="cities 4 countries" />
-            <StatCard icon={Users} label="Members" value={stats.members} suffix="worldwide members" />
-            <StatCard icon={Calendar} label="Active Events" value={stats.events} suffix="this month" />
-            <StatCard icon={Building2} label="Venues" value={stats.venues} suffix="milongas & studios" />
+            <StatCard icon={Globe} label={t('pages:communityPrototype.cities', 'Cities')} value={stats.cities} suffix={t('pages:communityPrototype.citiesCountries', 'cities 4 countries')} />
+            <StatCard icon={Users} label={t('pages:communityPrototype.members', 'Members')} value={stats.members} suffix={t('pages:communityPrototype.worldwideMembers', 'worldwide members')} />
+            <StatCard icon={Calendar} label={t('pages:communityPrototype.activeEvents', 'Active Events')} value={stats.events} suffix={t('pages:communityPrototype.thisMonth', 'this month')} />
+            <StatCard icon={Building2} label={t('pages:communityPrototype.venues', 'Venues')} value={stats.venues} suffix={t('pages:communityPrototype.milongasStudios', 'milongas & studios')} />
           </div>
         </motion.div>
       </div>

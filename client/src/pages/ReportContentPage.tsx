@@ -16,8 +16,8 @@ export default function ReportContentPage() {
     <SelfHealingErrorBoundary pageName="Report Content" fallbackRoute="/feed">
       <>
         <SEO
-          title="Report Content"
-          description="Report content that violates our community guidelines. Help us keep Mundo Tango safe and welcoming for everyone."
+          title={t('pages:reportContent.seoTitle', 'Report Content')}
+          description={t('pages:reportContent.seoDescription', 'Report content that violates our community guidelines. Help us keep Mundo Tango safe and welcoming for everyone.')}
         />
 
         {/* Hero Section - 16:9 */}
@@ -42,15 +42,15 @@ export default function ReportContentPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                 <Flag className="w-3 h-3 mr-1.5" />
-                Community Safety
+                {t('pages:reportContent.communitySafety', 'Community Safety')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Report Content
+                {t('pages:reportContent.heroTitle', 'Report Content')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                Help us maintain a safe and respectful community
+                {t('pages:reportContent.heroSubtitle', 'Help us maintain a safe and respectful community')}
               </p>
             </motion.div>
           </div>
@@ -68,45 +68,45 @@ export default function ReportContentPage() {
                 <CardHeader className="border-b">
                   <div className="flex items-center gap-3">
                     <ShieldAlert className="h-6 w-6 text-primary" />
-                    <CardTitle className="text-2xl font-serif">Report Details</CardTitle>
+                    <CardTitle className="text-2xl font-serif">{t('pages:reportContent.reportDetails', 'Report Details')}</CardTitle>
                   </div>
                   <p className="text-base text-muted-foreground leading-relaxed mt-2">
-                    Please provide specific details about why you're reporting this content
+                    {t('pages:reportContent.reportDetailsDescription', "Please provide specific details about why you're reporting this content")}
                   </p>
                 </CardHeader>
                 <CardContent className="p-8 space-y-6">
                   <div className="space-y-4">
-                    <Label className="text-base font-semibold">What's wrong with this content?</Label>
+                    <Label className="text-base font-semibold">{t('pages:reportContent.whatsWrong', "What's wrong with this content?")}</Label>
                     <RadioGroup defaultValue="inappropriate" className="space-y-3">
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="inappropriate" id="inappropriate" data-testid="radio-inappropriate" />
-                        <Label htmlFor="inappropriate" className="text-base cursor-pointer flex-1">Inappropriate or offensive</Label>
+                        <Label htmlFor="inappropriate" className="text-base cursor-pointer flex-1">{t('pages:reportContent.inappropriate', 'Inappropriate or offensive')}</Label>
                       </div>
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="spam" id="spam" data-testid="radio-spam" />
-                        <Label htmlFor="spam" className="text-base cursor-pointer flex-1">Spam or scam</Label>
+                        <Label htmlFor="spam" className="text-base cursor-pointer flex-1">{t('pages:reportContent.spam', 'Spam or scam')}</Label>
                       </div>
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="false" id="false" data-testid="radio-false" />
-                        <Label htmlFor="false" className="text-base cursor-pointer flex-1">False information</Label>
+                        <Label htmlFor="false" className="text-base cursor-pointer flex-1">{t('pages:reportContent.falseInfo', 'False information')}</Label>
                       </div>
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="copyright" id="copyright" data-testid="radio-copyright" />
-                        <Label htmlFor="copyright" className="text-base cursor-pointer flex-1">Copyright violation</Label>
+                        <Label htmlFor="copyright" className="text-base cursor-pointer flex-1">{t('pages:reportContent.copyright', 'Copyright violation')}</Label>
                       </div>
                       <div className="flex items-center space-x-3 p-4 rounded-lg hover:bg-muted/50 transition-colors">
                         <RadioGroupItem value="other" id="other" data-testid="radio-other" />
-                        <Label htmlFor="other" className="text-base cursor-pointer flex-1">Other</Label>
+                        <Label htmlFor="other" className="text-base cursor-pointer flex-1">{t('pages:reportContent.other', 'Other')}</Label>
                       </div>
                     </RadioGroup>
                   </div>
 
                   <div>
-                    <Label htmlFor="details" className="text-base font-semibold">Additional Details</Label>
+                    <Label htmlFor="details" className="text-base font-semibold">{t('pages:reportContent.additionalDetails', 'Additional Details')}</Label>
                     <Textarea
                       id="details"
                       rows={5}
-                      placeholder="Please provide specific details about why you're reporting this content..."
+                      placeholder={t('pages:reportContent.detailsPlaceholder', "Please provide specific details about why you're reporting this content...")}
                       className="mt-2 resize-none"
                       data-testid="input-details"
                     />
@@ -116,16 +116,16 @@ export default function ReportContentPage() {
                     <div className="flex items-start gap-3">
                       <Flag className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                       <div className="space-y-2">
-                        <p className="font-semibold text-base">Your Report is Confidential</p>
+                        <p className="font-semibold text-base">{t('pages:reportContent.confidentialTitle', 'Your Report is Confidential')}</p>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          Thank you for helping keep our community safe. We'll review this report and take appropriate action. Your identity will remain confidential.
+                          {t('pages:reportContent.confidentialDescription', "Thank you for helping keep our community safe. We'll review this report and take appropriate action. Your identity will remain confidential.")}
                         </p>
                       </div>
                     </div>
                   </div>
 
                   <Button className="w-full h-12 gap-2" data-testid="button-submit">
-                    Submit Report
+                    {t('pages:reportContent.submitReport', 'Submit Report')}
                     <ChevronRight className="h-5 w-5" />
                   </Button>
                 </CardContent>
