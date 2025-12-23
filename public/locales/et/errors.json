@@ -1,0 +1,25 @@
+{
+  "generic": "Something went wrong. Please try again.",
+  "network": "Network error. Please check your connection.",
+  "notFound": "Page not found",
+  "unauthorized": "You must be logged in to access this page",
+  "forbidden": "You don't have permission to access this page",
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "password": "Password must be at least 8 characters",
+    "passwordMatch": "Passwords do not match",
+    "username": "Username can only contain letters, numbers, and underscores"
+  },
+  "auth": {
+    "invalidCredentials": "Invalid email or password",
+    "emailInUse": "This email is already registered",
+    "usernameInUse": "This username is already taken",
+    "accountDisabled": "Your account has been disabled"
+  },
+  "upload": {
+    "fileTooLarge": "File is too large. Maximum size is 10MB",
+    "invalidType": "Invalid file type",
+    "uploadFailed": "Upload failed. Please try again"
+  }
+}

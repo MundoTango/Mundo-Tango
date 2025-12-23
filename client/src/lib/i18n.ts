@@ -35,11 +35,11 @@ if (!(window as any)[i18nKey]) {
       
       debug: false, // Disable debug logging for performance
       
-      // Keep exact language code (es-ar) without normalizing to base (es)
-      load: 'currentOnly',
+      // Enable language fallback: es-ar -> es -> en
+      load: 'languageOnly',
       
-      // Allow regional variants like es-ar, pt-br to be treated as valid
-      nonExplicitSupportedLngs: false,
+      // Allow regional variants like es-ar, pt-br to fall back to base language
+      nonExplicitSupportedLngs: true,
       
       interpolation: {
         escapeValue: false,
