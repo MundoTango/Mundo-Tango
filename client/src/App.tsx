@@ -28,11 +28,9 @@ import {
 } from "./lib/componentHealthMonitor";
 import { setupNavigationInterceptor } from "./lib/navigationInterceptor";
 import { HEAVY_FEATURES_ENABLED } from "./config/featureFlags";
+import { detectAndApplyLanguage } from "./lib/i18n";
 
 import { RouteLoader } from "./routes";
-
-// Note: Language from URL (?lng=...) is handled in i18n.ts initialization
-// which sets lng: urlLng before any components render
 
 const FeatureDisabled = lazy(() => import("./components/FeatureDisabled"));
 const VisualEditorSplitPane = HEAVY_FEATURES_ENABLED
@@ -46,6 +44,10 @@ const VisualEditorSplitPane = HEAVY_FEATURES_ENABLED
 function AppContent() {
   const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
   const [location] = useLocation();
+
+  useEffect(() => {
+    detectAndApplyLanguage();
+  }, [location]);
 
   useEffect(() => {
     const enableSelfHealing = !import.meta.env.DEV || import.meta.env.VITE_ENABLE_SELF_HEALING === "true";

@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { changeLanguageWithRegionalSupport } from '@/lib/i18n';
 
 interface Language {
   code: string;
@@ -138,8 +139,8 @@ function LanguageSelectorComponent() {
     setSelectedLanguage(languageCode);
     // Update localStorage
     localStorage.setItem('i18nextLng', languageCode);
-    // Change i18n language
-    await i18n.changeLanguage(languageCode);
+    // Change i18n language with regional support
+    await changeLanguageWithRegionalSupport(languageCode);
     
     // Save to user profile if logged in
     if (user?.id) {
@@ -150,7 +151,7 @@ function LanguageSelectorComponent() {
         console.error('Failed to save language preference:', error);
       }
     }
-  }, [i18n, user?.id]);
+  }, [user?.id]);
 
   return (
     <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
@@ -233,8 +234,8 @@ function LanguageSelectorButtonComponent() {
     setSelectedLanguage(languageCode);
     // Update localStorage
     localStorage.setItem('i18nextLng', languageCode);
-    // Change i18n language
-    await i18n.changeLanguage(languageCode);
+    // Change i18n language with regional support
+    await changeLanguageWithRegionalSupport(languageCode);
     
     // Save to user profile if logged in
     if (user?.id) {
@@ -245,7 +246,7 @@ function LanguageSelectorButtonComponent() {
         console.error('Failed to save language preference:', error);
       }
     }
-  }, [i18n, user?.id]);
+  }, [user?.id]);
 
   return (
     <Select value={selectedLanguage} onValueChange={handleLanguageChange}>

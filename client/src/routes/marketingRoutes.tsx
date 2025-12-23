@@ -1,6 +1,19 @@
-import { lazy, Suspense } from "react";
-import { Route, Redirect } from "wouter";
+import { lazy, Suspense, useEffect } from "react";
+import { Route, Redirect, useLocation } from "wouter";
 import { LoadingFallback } from "@/components/LoadingFallback";
+
+// Redirect component that preserves query params
+function RedirectWithQuery({ to }: { to: string }) {
+  const [, setLocation] = useLocation();
+  
+  useEffect(() => {
+    const queryString = window.location.search;
+    const targetUrl = queryString ? `${to}${queryString}` : to;
+    setLocation(targetUrl, { replace: true });
+  }, [to, setLocation]);
+  
+  return null;
+}
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const DemosPage = lazy(() => import("@/pages/DemosPage"));
@@ -31,10 +44,10 @@ export function MarketingRoutes() {
   return (
     <>
       <Route path="/">
-        <Redirect to="/landing" />
+        <RedirectWithQuery to="/landing" />
       </Route>
       <Route path="/lander">
-        <Redirect to="/landing" />
+        <RedirectWithQuery to="/landing" />
       </Route>
       <Route path="/landing">
         <Suspense fallback={<LoadingFallback />}>
