@@ -1,84 +1,84 @@
 {
   "auth": {
-    "invalidCredentials": "Invalid email or password",
-    "emailRequired": "Email is required",
-    "passwordRequired": "Password is required",
-    "passwordTooShort": "Password must be at least 8 characters",
-    "emailInvalid": "Please enter a valid email address",
-    "userNotFound": "User not found",
-    "emailAlreadyExists": "This email is already registered",
-    "usernameAlreadyExists": "This username is already taken",
-    "sessionExpired": "Your session has expired. Please login again",
-    "unauthorized": "You are not authorized to perform this action",
-    "loginRequired": "Please login to continue",
-    "tokenExpired": "Your session token has expired",
-    "invalidToken": "Invalid authentication token"
+    "invalidCredentials": "Ungültige E-Mail oder Passwort",
+    "emailRequired": "E-Mail ist erforderlich",
+    "passwordRequired": "Passwort ist erforderlich",
+    "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen haben",
+    "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "userNotFound": "Benutzer nicht gefunden",
+    "emailAlreadyExists": "Diese E-Mail ist bereits registriert",
+    "usernameAlreadyExists": "Dieser Benutzername ist bereits vergeben",
+    "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an",
+    "unauthorized": "Sie sind nicht berechtigt, diese Aktion durchzuführen",
+    "loginRequired": "Bitte melden Sie sich an, um fortzufahren",
+    "tokenExpired": "Ihr Sitzungstoken ist abgelaufen",
+    "invalidToken": "Ungültiger Authentifizierungstoken"
   },
   "validation": {
-    "required": "This field is required",
-    "invalidEmail": "Invalid email format",
-    "invalidPhone": "Invalid phone number",
-    "invalidDate": "Invalid date format",
-    "invalidUrl": "Invalid URL format",
-    "tooShort": "Value is too short",
-    "tooLong": "Value is too long",
-    "invalidFormat": "Invalid format",
-    "numberRequired": "Must be a number",
-    "positiveNumber": "Must be a positive number"
+    "required": "Dieses Feld ist erforderlich",
+    "invalidEmail": "Ungültiges E-Mail-Format",
+    "invalidPhone": "Ungültige Telefonnummer",
+    "invalidDate": "Ungültiges Datumsformat",
+    "invalidUrl": "Ungültiges URL-Format",
+    "tooShort": "Der Wert ist zu kurz",
+    "tooLong": "Der Wert ist zu lang",
+    "invalidFormat": "Ungültiges Format",
+    "numberRequired": "Muss eine Zahl sein",
+    "positiveNumber": "Muss eine positive Zahl sein"
   },
   "network": {
-    "connectionError": "Connection error. Please check your internet connection",
-    "timeout": "Request timeout. Please try again",
-    "serverError": "Server error. Please try again later",
-    "notFound": "Resource not found",
-    "forbidden": "Access forbidden",
-    "badRequest": "Bad request. Please check your input",
-    "rateLimitExceeded": "Too many requests. Please try again later"
+    "connectionError": "Verbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung",
+    "timeout": "Zeitüberschreitung der Anfrage. Bitte versuchen Sie es erneut",
+    "serverError": "Serverfehler. Bitte versuchen Sie es später erneut",
+    "notFound": "Ressource nicht gefunden",
+    "forbidden": "Zugriff verboten",
+    "badRequest": "Ungültige Anfrage. Bitte überprüfen Sie Ihre Eingabe",
+    "rateLimitExceeded": "Zu viele Anfragen. Bitte versuchen Sie es später erneut"
   },
   "form": {
-    "saveFailed": "Failed to save. Please try again",
-    "uploadFailed": "File upload failed",
-    "deleteFailed": "Failed to delete. Please try again",
-    "updateFailed": "Failed to update. Please try again",
-    "invalidFile": "Invalid file format",
-    "fileTooLarge": "File size is too large",
-    "requiredFields": "Please fill in all required fields"
+    "saveFailed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut",
+    "uploadFailed": "Datei-Upload fehlgeschlagen",
+    "deleteFailed": "Löschen fehlgeschlagen. Bitte versuchen Sie es erneut",
+    "updateFailed": "Aktualisierung fehlgeschlagen. Bitte versuchen Sie es erneut",
+    "invalidFile": "Ungültiges Dateiformat",
+    "fileTooLarge": "Die Datei ist zu groß",
+    "requiredFields": "Bitte füllen Sie alle erforderlichen Felder aus"
   },
   "general": {
-    "somethingWrong": "Something went wrong. Please try again",
-    "pageNotFound": "Page not found",
-    "accessDenied": "Access denied",
-    "featureUnavailable": "This feature is currently unavailable",
-    "maintenanceMode": "The system is under maintenance. Please try again later",
-    "unknownError": "An unknown error occurred"
+    "somethingWrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut",
+    "pageNotFound": "Seite nicht gefunden",
+    "accessDenied": "Zugriff verweigert",
+    "featureUnavailable": "Diese Funktion ist derzeit nicht verfügbar",
+    "maintenanceMode": "Das System wird gewartet. Bitte versuchen Sie es später erneut",
+    "unknownError": "Ein unbekannter Fehler ist aufgetreten"
   },
   "posts": {
-    "createFailed": "Failed to create post",
-    "updateFailed": "Failed to update post",
-    "deleteFailed": "Failed to delete post",
-    "loadFailed": "Failed to load posts",
-    "commentFailed": "Failed to post comment",
-    "likeFailed": "Failed to like post"
+    "createFailed": "Beitrag konnte nicht erstellt werden",
+    "updateFailed": "Beitrag konnte nicht aktualisiert werden",
+    "deleteFailed": "Beitrag konnte nicht gelöscht werden",
+    "loadFailed": "Beiträge konnten nicht geladen werden",
+    "commentFailed": "Kommentar konnte nicht gepostet werden",
+    "likeFailed": "Beitrag konnte nicht geliked werden"
   },
   "events": {
-    "loadFailed": "Failed to load events",
-    "bookingFailed": "Failed to book event",
-    "cancelFailed": "Failed to cancel booking",
-    "eventFull": "This event is fully booked",
-    "eventPast": "This event has already passed",
-    "alreadyBooked": "You have already booked this event"
+    "loadFailed": "Veranstaltungen konnten nicht geladen werden",
+    "bookingFailed": "Veranstaltung konnte nicht gebucht werden",
+    "cancelFailed": "Buchung konnte nicht storniert werden",
+    "eventFull": "Diese Veranstaltung ist ausgebucht",
+    "eventPast": "Diese Veranstaltung hat bereits stattgefunden",
+    "alreadyBooked": "Sie haben diese Veranstaltung bereits gebucht"
   },
   "messages": {
-    "sendFailed": "Failed to send message",
-    "loadFailed": "Failed to load messages",
-    "deleteFailed": "Failed to delete message",
-    "connectionLost": "Connection lost. Trying to reconnect..."
+    "sendFailed": "Nachricht konnte nicht gesendet werden",
+    "loadFailed": "Nachrichten konnten nicht geladen werden",
+    "deleteFailed": "Nachricht konnte nicht gelöscht werden",
+    "connectionLost": "Verbindung verloren. Versuche, erneut zu verbinden..."
   },
   "friends": {
-    "requestFailed": "Failed to send friend request",
-    "acceptFailed": "Failed to accept friend request",
-    "removeFailed": "Failed to remove friend",
-    "blockFailed": "Failed to block user",
-    "alreadyFriends": "You are already friends with this user"
+    "requestFailed": "Freundschaftsanfrage konnte nicht gesendet werden",
+    "acceptFailed": "Freundschaftsanfrage konnte nicht angenommen werden",
+    "removeFailed": "Freund konnte nicht entfernt werden",
+    "blockFailed": "Benutzer konnte nicht blockiert werden",
+    "alreadyFriends": "Sie sind bereits mit diesem Benutzer befreundet"
   }
 }

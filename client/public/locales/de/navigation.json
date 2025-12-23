@@ -1,84 +1,84 @@
 {
   "social": {
-    "title": "Social",
-    "memories": "Memories",
+    "title": "Soziales",
+    "memories": "Erinnerungen",
     "feed": "Feed",
-    "profile": "Profile",
-    "discover": "Discover"
+    "profile": "Profil",
+    "discover": "Entdecken"
   },
   "community": {
     "title": "Community",
-    "friends": "Friends",
-    "recommendations": "Recommendations",
-    "invitations": "Invitations",
-    "notifications": "Notifications",
-    "groups": "Groups",
-    "messages": "Messages"
+    "friends": "Freunde",
+    "recommendations": "Empfehlungen",
+    "invitations": "Einladungen",
+    "notifications": "Benachrichtigungen",
+    "groups": "Gruppen",
+    "messages": "Nachrichten"
   },
   "events": {
-    "title": "Events",
-    "events": "Events",
-    "calendar": "Calendar",
-    "myEvents": "My Events",
+    "title": "Veranstaltungen",
+    "events": "Veranstaltungen",
+    "calendar": "Kalender",
+    "myEvents": "Meine Veranstaltungen",
     "workshops": "Workshops"
   },
   "tango": {
-    "title": "Tango Resources",
-    "teachers": "Teachers",
-    "venues": "Venues",
+    "title": "Tango-Ressourcen",
+    "teachers": "Lehrer",
+    "venues": "Locations",
     "tutorials": "Tutorials",
-    "musicLibrary": "Music Library",
-    "danceStyles": "Dance Styles"
+    "musicLibrary": "Musikbibliothek",
+    "danceStyles": "Tanzstile"
   },
   "resources": {
-    "title": "Resources",
-    "communityMap": "Community Map",
+    "title": "Ressourcen",
+    "communityMap": "Community-Karte",
     "blog": "Blog",
     "newsletter": "Newsletter",
     "faq": "FAQ",
-    "help": "Help"
+    "help": "Hilfe"
   },
   "tools": {
-    "title": "AI & Tools",
+    "title": "KI & Tools",
     "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue AI",
-    "marketplace": "Marketplace",
-    "travelPlanner": "Travel Planner"
+    "mrBlue": "Mr Blue KI",
+    "marketplace": "Marktplatz",
+    "travelPlanner": "Reiseplaner"
   },
   "personal": {
-    "title": "Personal",
-    "savedPosts": "Saved Posts",
-    "favorites": "Favorites",
-    "settings": "Settings",
-    "bookmarks": "Bookmarks",
-    "activity": "Activity Log"
+    "title": "Persönlich",
+    "savedPosts": "Gespeicherte Beiträge",
+    "favorites": "Favoriten",
+    "settings": "Einstellungen",
+    "bookmarks": "Lesezeichen",
+    "activity": "Aktivitätsprotokoll"
   },
   "admin": {
     "title": "Admin",
-    "dashboard": "Admin Dashboard",
-    "platform": "Platform",
-    "users": "User Management",
-    "content": "Content Moderation",
-    "reports": "User Reports",
-    "analytics": "Analytics"
+    "dashboard": "Admin-Dashboard",
+    "platform": "Plattform",
+    "users": "Benutzerverwaltung",
+    "content": "Inhaltsmoderation",
+    "reports": "Benutzerberichte",
+    "analytics": "Analysen"
   },
   "esa": {
-    "title": "ESA Framework",
-    "dashboard": "ESA Dashboard",
-    "tasks": "ESA Tasks",
-    "communications": "ESA Communications"
+    "title": "ESA-Framework",
+    "dashboard": "ESA-Dashboard",
+    "tasks": "ESA-Aufgaben",
+    "communications": "ESA-Kommunikation"
   },
   "footer": {
-    "company": "Company",
-    "about": "About Us",
-    "contact": "Contact",
-    "careers": "Careers",
-    "volunteer": "Volunteer",
-    "legal": "Legal",
-    "terms": "Terms of Service",
-    "privacy": "Privacy Policy",
-    "guidelines": "Community Guidelines",
+    "company": "Unternehmen",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "careers": "Karriere",
+    "volunteer": "Freiwillige",
+    "legal": "Rechtliches",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutzrichtlinie",
+    "guidelines": "Community-Richtlinien",
     "support": "Support",
-    "pricing": "Pricing"
+    "pricing": "Preise"
   }
 }

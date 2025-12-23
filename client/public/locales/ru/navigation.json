@@ -1,84 +1,84 @@
 {
   "social": {
-    "title": "Social",
-    "memories": "Memories",
-    "feed": "Feed",
-    "profile": "Profile",
-    "discover": "Discover"
+    "title": "Социальное",
+    "memories": "Воспоминания",
+    "feed": "Лента",
+    "profile": "Профиль",
+    "discover": "Открыть"
   },
   "community": {
-    "title": "Community",
-    "friends": "Friends",
-    "recommendations": "Recommendations",
-    "invitations": "Invitations",
-    "notifications": "Notifications",
-    "groups": "Groups",
-    "messages": "Messages"
+    "title": "Сообщество",
+    "friends": "Друзья",
+    "recommendations": "Рекомендации",
+    "invitations": "Приглашения",
+    "notifications": "Уведомления",
+    "groups": "Группы",
+    "messages": "Сообщения"
   },
   "events": {
-    "title": "Events",
-    "events": "Events",
-    "calendar": "Calendar",
-    "myEvents": "My Events",
-    "workshops": "Workshops"
+    "title": "Мероприятия",
+    "events": "Мероприятия",
+    "calendar": "Календарь",
+    "myEvents": "Мои мероприятия",
+    "workshops": "Мастер-классы"
   },
   "tango": {
-    "title": "Tango Resources",
-    "teachers": "Teachers",
-    "venues": "Venues",
-    "tutorials": "Tutorials",
-    "musicLibrary": "Music Library",
-    "danceStyles": "Dance Styles"
+    "title": "Ресурсы танго",
+    "teachers": "Преподаватели",
+    "venues": "Площадки",
+    "tutorials": "Уроки",
+    "musicLibrary": "Музыкальная библиотека",
+    "danceStyles": "Стили танца"
   },
   "resources": {
-    "title": "Resources",
-    "communityMap": "Community Map",
-    "blog": "Blog",
-    "newsletter": "Newsletter",
-    "faq": "FAQ",
-    "help": "Help"
+    "title": "Ресурсы",
+    "communityMap": "Карта сообщества",
+    "blog": "Блог",
+    "newsletter": "Рассылка",
+    "faq": "Вопросы и ответы",
+    "help": "Помощь"
   },
   "tools": {
-    "title": "AI & Tools",
+    "title": "ИИ и инструменты",
     "lifeCEO": "Life CEO",
     "mrBlue": "Mr Blue AI",
-    "marketplace": "Marketplace",
-    "travelPlanner": "Travel Planner"
+    "marketplace": "Маркетплейс",
+    "travelPlanner": "Планировщик поездок"
   },
   "personal": {
-    "title": "Personal",
-    "savedPosts": "Saved Posts",
-    "favorites": "Favorites",
-    "settings": "Settings",
-    "bookmarks": "Bookmarks",
-    "activity": "Activity Log"
+    "title": "Личное",
+    "savedPosts": "Сохранённые записи",
+    "favorites": "Избранное",
+    "settings": "Настройки",
+    "bookmarks": "Закладки",
+    "activity": "Журнал активности"
   },
   "admin": {
-    "title": "Admin",
-    "dashboard": "Admin Dashboard",
-    "platform": "Platform",
-    "users": "User Management",
-    "content": "Content Moderation",
-    "reports": "User Reports",
-    "analytics": "Analytics"
+    "title": "Админ",
+    "dashboard": "Панель администратора",
+    "platform": "Платформа",
+    "users": "Управление пользователями",
+    "content": "Модерация контента",
+    "reports": "Жалобы пользователей",
+    "analytics": "Аналитика"
   },
   "esa": {
-    "title": "ESA Framework",
-    "dashboard": "ESA Dashboard",
-    "tasks": "ESA Tasks",
-    "communications": "ESA Communications"
+    "title": "Фреймворк ESA",
+    "dashboard": "Панель ESA",
+    "tasks": "Задачи ESA",
+    "communications": "Коммуникации ESA"
   },
   "footer": {
-    "company": "Company",
-    "about": "About Us",
-    "contact": "Contact",
-    "careers": "Careers",
-    "volunteer": "Volunteer",
-    "legal": "Legal",
-    "terms": "Terms of Service",
-    "privacy": "Privacy Policy",
-    "guidelines": "Community Guidelines",
-    "support": "Support",
-    "pricing": "Pricing"
+    "company": "Компания",
+    "about": "О нас",
+    "contact": "Контакты",
+    "careers": "Карьера",
+    "volunteer": "Волонтёрство",
+    "legal": "Юридическая информация",
+    "terms": "Условия использования",
+    "privacy": "Политика конфиденциальности",
+    "guidelines": "Правила сообщества",
+    "support": "Поддержка",
+    "pricing": "Цены"
   }
 }

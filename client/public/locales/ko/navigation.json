@@ -1,84 +1,84 @@
 {
   "social": {
-    "title": "Social",
-    "memories": "Memories",
-    "feed": "Feed",
-    "profile": "Profile",
-    "discover": "Discover"
+    "title": "소셜",
+    "memories": "추억",
+    "feed": "피드",
+    "profile": "프로필",
+    "discover": "발견"
   },
   "community": {
-    "title": "Community",
-    "friends": "Friends",
-    "recommendations": "Recommendations",
-    "invitations": "Invitations",
-    "notifications": "Notifications",
-    "groups": "Groups",
-    "messages": "Messages"
+    "title": "커뮤니티",
+    "friends": "친구",
+    "recommendations": "추천",
+    "invitations": "초대",
+    "notifications": "알림",
+    "groups": "그룹",
+    "messages": "메시지"
   },
   "events": {
-    "title": "Events",
-    "events": "Events",
-    "calendar": "Calendar",
-    "myEvents": "My Events",
-    "workshops": "Workshops"
+    "title": "이벤트",
+    "events": "이벤트",
+    "calendar": "캘린더",
+    "myEvents": "내 이벤트",
+    "workshops": "워크샵"
   },
   "tango": {
-    "title": "Tango Resources",
-    "teachers": "Teachers",
-    "venues": "Venues",
-    "tutorials": "Tutorials",
-    "musicLibrary": "Music Library",
-    "danceStyles": "Dance Styles"
+    "title": "탱고 리소스",
+    "teachers": "선생님",
+    "venues": "장소",
+    "tutorials": "튜토리얼",
+    "musicLibrary": "음악 라이브러리",
+    "danceStyles": "춤 스타일"
   },
   "resources": {
-    "title": "Resources",
-    "communityMap": "Community Map",
-    "blog": "Blog",
-    "newsletter": "Newsletter",
+    "title": "리소스",
+    "communityMap": "커뮤니티 지도",
+    "blog": "블로그",
+    "newsletter": "뉴스레터",
     "faq": "FAQ",
-    "help": "Help"
+    "help": "도움말"
   },
   "tools": {
-    "title": "AI & Tools",
+    "title": "AI & 도구",
     "lifeCEO": "Life CEO",
     "mrBlue": "Mr Blue AI",
-    "marketplace": "Marketplace",
-    "travelPlanner": "Travel Planner"
+    "marketplace": "마켓플레이스",
+    "travelPlanner": "여행 플래너"
   },
   "personal": {
-    "title": "Personal",
-    "savedPosts": "Saved Posts",
-    "favorites": "Favorites",
-    "settings": "Settings",
-    "bookmarks": "Bookmarks",
-    "activity": "Activity Log"
+    "title": "개인",
+    "savedPosts": "저장된 게시물",
+    "favorites": "즐겨찾기",
+    "settings": "설정",
+    "bookmarks": "북마크",
+    "activity": "활동 로그"
   },
   "admin": {
-    "title": "Admin",
-    "dashboard": "Admin Dashboard",
-    "platform": "Platform",
-    "users": "User Management",
-    "content": "Content Moderation",
-    "reports": "User Reports",
-    "analytics": "Analytics"
+    "title": "관리자",
+    "dashboard": "관리자 대시보드",
+    "platform": "플랫폼",
+    "users": "사용자 관리",
+    "content": "콘텐츠 관리",
+    "reports": "사용자 신고",
+    "analytics": "분석"
   },
   "esa": {
-    "title": "ESA Framework",
-    "dashboard": "ESA Dashboard",
-    "tasks": "ESA Tasks",
-    "communications": "ESA Communications"
+    "title": "ESA 프레임워크",
+    "dashboard": "ESA 대시보드",
+    "tasks": "ESA 작업",
+    "communications": "ESA 커뮤니케이션"
   },
   "footer": {
-    "company": "Company",
-    "about": "About Us",
-    "contact": "Contact",
-    "careers": "Careers",
-    "volunteer": "Volunteer",
-    "legal": "Legal",
-    "terms": "Terms of Service",
-    "privacy": "Privacy Policy",
-    "guidelines": "Community Guidelines",
-    "support": "Support",
-    "pricing": "Pricing"
+    "company": "회사",
+    "about": "소개",
+    "contact": "연락처",
+    "careers": "채용",
+    "volunteer": "자원봉사",
+    "legal": "법적 고지",
+    "terms": "이용약관",
+    "privacy": "개인정보 보호정책",
+    "guidelines": "커뮤니티 가이드라인",
+    "support": "지원",
+    "pricing": "가격"
   }
 }

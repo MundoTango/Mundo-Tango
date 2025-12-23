@@ -85,7 +85,7 @@ The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Pr
 - **URL Detection**: `?lng=` query parameter works for language switching
 - **E2E Verified**: Tests confirm locale files load correctly and display translated text
 
-**Professional Translations Completed (Dec 23, 2024):**
+**Professional Translations Completed (Dec 23, 2024) - ALL 10 PRIORITY LANGUAGES:**
 - ✅ **Spanish (es)**: All 4 namespaces - common, pages, navigation, errors
   - Hero: "Donde el Tango se encuentra con la Comunidad"
   - Culturally appropriate tango terminology
@@ -95,9 +95,28 @@ The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Pr
 - ✅ **Japanese (ja)**: All 4 namespaces - common, pages, navigation, errors
   - Hero: "タンゴとコミュニティの出会う場所"
   - Culturally appropriate with proper honorifics
-
-**Remaining Priority Languages (Pending):**
-- es-ar (Argentine Rioplatense Spanish), pt (Portuguese), de (German), it (Italian), zh (Chinese), ko (Korean), ru (Russian)
+- ✅ **Portuguese (pt)**: All 4 namespaces - common, pages, navigation, errors
+  - Hero: "Onde o Tango Encontra a Comunidade"
+  - Natural Brazilian Portuguese
+- ✅ **German (de)**: All 4 namespaces - common, pages, navigation, errors
+  - Hero: "Wo Tango auf Gemeinschaft trifft"
+  - Formal German appropriate for platform
+- ✅ **Italian (it)**: All 4 namespaces - common, pages, navigation, errors
+  - Hero: "Dove il Tango Incontra la Comunità"
+  - Authentic Italian expressions
+- ✅ **Chinese (zh)**: All 4 namespaces - common, pages, navigation, errors
+  - Hero: "探戈与社区的交汇点"
+  - Simplified Chinese for global audience
+- ✅ **Korean (ko)**: All 4 namespaces - common, pages, navigation, errors
+  - Hero: "탱고와 커뮤니티가 만나는 곳"
+  - Natural Korean with appropriate formality
+- ✅ **Russian (ru)**: All 4 namespaces - common, pages, navigation, errors
+  - Hero: "Где танго встречает сообщество"
+  - Proper Russian localization
+- ✅ **Argentine Spanish (es-ar)**: All 4 namespaces - common, pages, navigation, errors
+  - Hero: "Donde el Tango se Encuentra con la Comunidad"
+  - Authentic Rioplatense Spanish: "vos" verb forms (empezá, conectate, sumate)
+  - Uses "milonguero" instead of "bailarín", tango-specific terminology
 
 **i18n Configuration (client/src/lib/i18n.ts):**
 - Detection order: `['querystring', 'localStorage', 'navigator', 'htmlTag']`

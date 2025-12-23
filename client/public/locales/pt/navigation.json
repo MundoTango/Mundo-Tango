@@ -1,84 +1,84 @@
 {
   "social": {
     "title": "Social",
-    "memories": "Memories",
+    "memories": "Memórias",
     "feed": "Feed",
-    "profile": "Profile",
-    "discover": "Discover"
+    "profile": "Perfil",
+    "discover": "Descobrir"
   },
   "community": {
-    "title": "Community",
-    "friends": "Friends",
-    "recommendations": "Recommendations",
-    "invitations": "Invitations",
-    "notifications": "Notifications",
-    "groups": "Groups",
-    "messages": "Messages"
+    "title": "Comunidade",
+    "friends": "Amigos",
+    "recommendations": "Recomendações",
+    "invitations": "Convites",
+    "notifications": "Notificações",
+    "groups": "Grupos",
+    "messages": "Mensagens"
   },
   "events": {
-    "title": "Events",
-    "events": "Events",
-    "calendar": "Calendar",
-    "myEvents": "My Events",
+    "title": "Eventos",
+    "events": "Eventos",
+    "calendar": "Calendário",
+    "myEvents": "Meus Eventos",
     "workshops": "Workshops"
   },
   "tango": {
-    "title": "Tango Resources",
-    "teachers": "Teachers",
-    "venues": "Venues",
-    "tutorials": "Tutorials",
-    "musicLibrary": "Music Library",
-    "danceStyles": "Dance Styles"
+    "title": "Recursos de Tango",
+    "teachers": "Professores",
+    "venues": "Locais",
+    "tutorials": "Tutoriais",
+    "musicLibrary": "Biblioteca Musical",
+    "danceStyles": "Estilos de Dança"
   },
   "resources": {
-    "title": "Resources",
-    "communityMap": "Community Map",
+    "title": "Recursos",
+    "communityMap": "Mapa da Comunidade",
     "blog": "Blog",
     "newsletter": "Newsletter",
     "faq": "FAQ",
-    "help": "Help"
+    "help": "Ajuda"
   },
   "tools": {
-    "title": "AI & Tools",
+    "title": "IA e Ferramentas",
     "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue AI",
+    "mrBlue": "Mr Blue IA",
     "marketplace": "Marketplace",
-    "travelPlanner": "Travel Planner"
+    "travelPlanner": "Planejador de Viagens"
   },
   "personal": {
-    "title": "Personal",
-    "savedPosts": "Saved Posts",
-    "favorites": "Favorites",
-    "settings": "Settings",
-    "bookmarks": "Bookmarks",
-    "activity": "Activity Log"
+    "title": "Pessoal",
+    "savedPosts": "Posts Salvos",
+    "favorites": "Favoritos",
+    "settings": "Configurações",
+    "bookmarks": "Marcadores",
+    "activity": "Registro de Atividades"
   },
   "admin": {
     "title": "Admin",
-    "dashboard": "Admin Dashboard",
-    "platform": "Platform",
-    "users": "User Management",
-    "content": "Content Moderation",
-    "reports": "User Reports",
-    "analytics": "Analytics"
+    "dashboard": "Painel Admin",
+    "platform": "Plataforma",
+    "users": "Gerenciamento de Usuários",
+    "content": "Moderação de Conteúdo",
+    "reports": "Relatórios de Usuários",
+    "analytics": "Análises"
   },
   "esa": {
-    "title": "ESA Framework",
-    "dashboard": "ESA Dashboard",
-    "tasks": "ESA Tasks",
-    "communications": "ESA Communications"
+    "title": "Framework ESA",
+    "dashboard": "Painel ESA",
+    "tasks": "Tarefas ESA",
+    "communications": "Comunicações ESA"
   },
   "footer": {
-    "company": "Company",
-    "about": "About Us",
-    "contact": "Contact",
-    "careers": "Careers",
-    "volunteer": "Volunteer",
+    "company": "Empresa",
+    "about": "Sobre Nós",
+    "contact": "Contato",
+    "careers": "Carreiras",
+    "volunteer": "Voluntariado",
     "legal": "Legal",
-    "terms": "Terms of Service",
-    "privacy": "Privacy Policy",
-    "guidelines": "Community Guidelines",
-    "support": "Support",
-    "pricing": "Pricing"
+    "terms": "Termos de Serviço",
+    "privacy": "Política de Privacidade",
+    "guidelines": "Diretrizes da Comunidade",
+    "support": "Suporte",
+    "pricing": "Preços"
   }
 }

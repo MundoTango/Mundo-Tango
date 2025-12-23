@@ -1,291 +1,229 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "로그인",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "로그인 - Mundo Tango",
+      "description": "Mundo Tango 계정에 로그인하여 전 세계 탱고 커뮤니티와 연결하고, 이벤트를 발견하고, 아르헨티나 탱고에 대한 열정을 공유하세요."
     },
-    "badge": "Welcome Back",
+    "badge": "다시 오신 것을 환영합니다",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "당신의 탱고 여정이 계속됩니다",
+      "paragraph": "로그인하여 전 세계 댄서들과 연결하고, 이벤트를 발견하고, 열정을 공유하세요"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "댄서",
+      "events": "이벤트"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "이메일",
+      "password": "비밀번호",
+      "signIn": "로그인",
+      "signingIn": "로그인 중...",
+      "forgotPassword": "비밀번호를 잊으셨나요?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "계정이 없으신가요?",
+    "createAccount": "지금 만드세요",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "다시 오신 것을 환영합니다!",
+      "successDescription": "성공적으로 로그인했습니다.",
+      "errorTitle": "로그인 실패",
+      "errorDescription": "잘못된 자격 증명"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "홈",
+    "pageLayoutTitle": "탱고와 커뮤니티가 만나는 곳",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - 전 세계 탱고 커뮤니티와 연결하세요",
+      "description": "전 세계 수천 명의 탱고 댄서들과 함께하세요. 이벤트를 발견하고, 선생님을 찾고, 댄서들과 연결하고, 아르헨티나 탱고의 열정적인 세계에 빠져보세요."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "글로벌 탱고 커뮤니티에 오신 것을 환영합니다",
+      "heading": "탱고와 커뮤니티가 만나는 곳",
+      "paragraph": "추억을 공유하고, 이벤트를 찾고, 탱고 기술의 미래를 함께 만들어 갑니다. 전 세계에서 연결되는 수천 명의 열정적인 댄서들과 함께하세요.",
+      "getStarted": "무료로 시작하기",
+      "volunteer": "MT 구축을 위한 자원봉사"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "작동 방식",
+      "description": "세 가지 간단한 단계로 탱고 여정을 시작하세요",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "프로필 만들기",
+        "description": "무료로 가입하고 탱고 여정, 경험 수준 및 춤 선호도에 대해 알려주세요"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "발견하고 연결하기",
+        "description": "근처의 이벤트, 선생님 및 장소를 찾으세요. 열정을 공유하는 댄서들과 연결하세요"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "춤추고 성장하기",
+        "description": "이벤트에 참석하고, 레슨을 받고, 친구를 사귀고, 글로벌 탱고 커뮤니티의 일원이 되세요"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "필요한 모든 것",
+      "description": "강력한 기능으로 탱고 여정을 연결, 발견, 성장시키세요",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "커뮤니티",
+        "heading": "전 세계 댄서들과 연결하세요",
+        "description": "활기찬 글로벌 탱고 애호가 커뮤니티에 가입하세요. 부에노스아이레스부터 도쿄까지 댄서, 선생님, 주최자와 연결하세요.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "댄서를 팔로우하고 네트워크를 구축하세요",
+          "groups": "관심사와 위치에 따라 그룹에 가입하세요",
+          "messaging": "실시간 메시징 및 채팅 기능",
+          "discover": "도시를 방문하는 댄서를 발견하세요"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "이벤트",
+        "heading": "어디서나 이벤트를 발견하세요",
+        "description": "밀롱가, 페스티벌 또는 워크샵을 놓치지 마세요. 저희 플랫폼은 전 세계 수천 개의 탱고 이벤트와 연결합니다.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "종합 이벤트 캘린더",
+          "rsvp": "예약 및 티켓 구매",
+          "notifications": "이벤트 알림 및 리마인더",
+          "map": "장소 인터랙티브 지도"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "라이브 스트리밍",
+          "description": "전 세계 밀롱가를 실시간으로 시청하세요"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "음악 라이브러리",
+          "description": "큐레이션된 탱고 플레이리스트 및 가이드"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "인증된 선생님",
+          "description": "인증된 강사에게 배우세요"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "여행 플래너",
+          "description": "여행을 계획하고 전 세계 호스트를 찾으세요"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "댄서들의 이야기",
+      "description": "전 세계 수천 명의 만족한 댄서들과 함께하세요",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "아르헨티나 부에노스아이레스",
+          "text": "Mundo Tango 덕분에 새 도시에서 춤 가족을 찾을 수 있었습니다. 커뮤니티가 따뜻하고 환영적이며 진정으로 탱고에 열정적입니다."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "미국 샌프란시스코",
+          "text": "이 플랫폼을 통해 놀라운 밀롱가와 워크샵을 발견했습니다. 제 탱고 여정에 필수가 되었습니다."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
-        }
-      }
-    },
-    "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
-      "items": {
-        "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
-        },
-        "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
-        },
-        "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
-        },
-        "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
-        },
-        "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
-        },
-        "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "location": "러시아 모스크바",
+          "text": "선생님 디렉토리 덕분에 훌륭한 강사를 찾을 수 있었습니다. 제 춤 실력이 엄청나게 향상되었습니다!"
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "여정을 시작할 준비가 되셨나요?",
+      "description": "수천 명의 열정적인 댄서들과 함께하고 오늘 탱고의 세계를 탐험하세요",
+      "button": "무료로 시작하기"
+    },
+    "footer": {
+      "copyright": "Mundo Tango. 모든 권리 보유.",
+      "terms": "이용약관",
+      "privacy": "개인정보 보호정책",
+      "contact": "연락처"
     }
   },
-  "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
-    "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+  "register": {
+    "pageName": "회원가입",
+    "seo": {
+      "title": "계정 만들기 - Mundo Tango",
+      "description": "글로벌 탱고 커뮤니티에 가입하세요. 무료 계정을 만들어 댄서들과 연결하고, 이벤트를 발견하고, 아르헨티나 탱고에 대한 열정을 공유하세요."
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "badge": "커뮤니티에 가입하세요",
+    "hero": {
+      "heading": "탱고 여정을 시작하세요",
+      "paragraph": "계정을 만들어 전 세계 댄서들과 연결하고 이벤트를 발견하세요"
+    },
+    "form": {
+      "username": "사용자 이름",
+      "email": "이메일",
+      "password": "비밀번호",
+      "confirmPassword": "비밀번호 확인",
+      "register": "계정 만들기",
+      "registering": "계정 만드는 중..."
+    },
+    "hasAccount": "이미 계정이 있으신가요?",
+    "signIn": "여기서 로그인",
+    "toast": {
+      "successTitle": "계정이 생성되었습니다!",
+      "successDescription": "Mundo Tango에 오신 것을 환영합니다.",
+      "errorTitle": "회원가입 실패",
+      "errorDescription": "계정을 만들 수 없습니다"
+    }
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
-    "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+    "pageName": "이벤트",
+    "seo": {
+      "title": "탱고 이벤트 - Mundo Tango",
+      "description": "근처와 전 세계에서 탱고 이벤트를 발견하세요. 밀롱가, 페스티벌, 워크샵 및 프랙티카를 찾으세요."
     },
-    "noEvents": "No events found"
+    "heading": "탱고 이벤트 발견하기",
+    "description": "근처의 탱고 이벤트를 찾고 참석하세요",
+    "filters": {
+      "all": "모든 이벤트",
+      "milonga": "밀롱가",
+      "festival": "페스티벌",
+      "workshop": "워크샵",
+      "practica": "프랙티카"
+    },
+    "noEvents": "이벤트를 찾을 수 없습니다",
+    "loadMore": "더 보기"
+  },
+  "cities": {
+    "pageName": "도시",
+    "seo": {
+      "title": "탱고 도시 - Mundo Tango",
+      "description": "전 세계 도시의 탱고 커뮤니티를 탐험하세요. 지역 이벤트, 선생님 및 댄서를 찾으세요."
+    },
+    "heading": "탱고 도시 탐험하기",
+    "description": "전 세계의 활기찬 탱고 커뮤니티를 발견하세요",
+    "searchPlaceholder": "도시 검색...",
+    "noCities": "도시를 찾을 수 없습니다"
+  },
+  "about": {
+    "pageName": "소개",
+    "seo": {
+      "title": "소개 - Mundo Tango",
+      "description": "Mundo Tango, 글로벌 탱고 커뮤니티를 연결하는 우리의 사명, 그리고 플랫폼 뒤의 팀에 대해 알아보세요."
+    },
+    "heading": "Mundo Tango 소개",
+    "mission": {
+      "heading": "우리의 사명",
+      "description": "전 세계 탱고 댄서들을 연결하고 모든 사람이 탱고 문화를 접할 수 있도록 합니다."
+    }
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "pageName": "프로필",
+    "seo": {
+      "title": "내 프로필 - Mundo Tango",
+      "description": "Mundo Tango 프로필을 관리하고, 댄서들과 연결하고, 탱고 여정을 추적하세요."
+    },
+    "heading": "내 프로필",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
-    },
-    "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "overview": "개요",
+      "events": "이벤트",
+      "connections": "연결",
+      "settings": "설정"
     }
   },
-  "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
-  },
-  "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
-    "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
-    },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
-  },
-  "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
-    "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
-    },
-    "getDirections": "Get Directions"
-  },
-  "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
-    "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
-    }
-  },
-  "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
-    "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
-    }
-  },
-  "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
-    "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
-    }
-  },
-  "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
-    "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
-    }
+  "notFound": {
+    "pageName": "페이지를 찾을 수 없음",
+    "heading": "페이지를 찾을 수 없음",
+    "description": "찾고 계신 페이지가 존재하지 않거나 이동되었습니다.",
+    "backHome": "홈으로 돌아가기"
   }
 }

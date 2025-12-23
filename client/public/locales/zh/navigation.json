@@ -1,84 +1,84 @@
 {
   "social": {
-    "title": "Social",
-    "memories": "Memories",
-    "feed": "Feed",
-    "profile": "Profile",
-    "discover": "Discover"
+    "title": "社交",
+    "memories": "回忆",
+    "feed": "动态",
+    "profile": "个人资料",
+    "discover": "发现"
   },
   "community": {
-    "title": "Community",
-    "friends": "Friends",
-    "recommendations": "Recommendations",
-    "invitations": "Invitations",
-    "notifications": "Notifications",
-    "groups": "Groups",
-    "messages": "Messages"
+    "title": "社区",
+    "friends": "好友",
+    "recommendations": "推荐",
+    "invitations": "邀请",
+    "notifications": "通知",
+    "groups": "群组",
+    "messages": "消息"
   },
   "events": {
-    "title": "Events",
-    "events": "Events",
-    "calendar": "Calendar",
-    "myEvents": "My Events",
-    "workshops": "Workshops"
+    "title": "活动",
+    "events": "活动",
+    "calendar": "日历",
+    "myEvents": "我的活动",
+    "workshops": "工作坊"
   },
   "tango": {
-    "title": "Tango Resources",
-    "teachers": "Teachers",
-    "venues": "Venues",
-    "tutorials": "Tutorials",
-    "musicLibrary": "Music Library",
-    "danceStyles": "Dance Styles"
+    "title": "探戈资源",
+    "teachers": "教师",
+    "venues": "场地",
+    "tutorials": "教程",
+    "musicLibrary": "音乐库",
+    "danceStyles": "舞蹈风格"
   },
   "resources": {
-    "title": "Resources",
-    "communityMap": "Community Map",
-    "blog": "Blog",
-    "newsletter": "Newsletter",
-    "faq": "FAQ",
-    "help": "Help"
+    "title": "资源",
+    "communityMap": "社区地图",
+    "blog": "博客",
+    "newsletter": "通讯",
+    "faq": "常见问题",
+    "help": "帮助"
   },
   "tools": {
-    "title": "AI & Tools",
+    "title": "AI与工具",
     "lifeCEO": "Life CEO",
     "mrBlue": "Mr Blue AI",
-    "marketplace": "Marketplace",
-    "travelPlanner": "Travel Planner"
+    "marketplace": "市场",
+    "travelPlanner": "旅行规划"
   },
   "personal": {
-    "title": "Personal",
-    "savedPosts": "Saved Posts",
-    "favorites": "Favorites",
-    "settings": "Settings",
-    "bookmarks": "Bookmarks",
-    "activity": "Activity Log"
+    "title": "个人",
+    "savedPosts": "已保存帖子",
+    "favorites": "收藏",
+    "settings": "设置",
+    "bookmarks": "书签",
+    "activity": "活动日志"
   },
   "admin": {
-    "title": "Admin",
-    "dashboard": "Admin Dashboard",
-    "platform": "Platform",
-    "users": "User Management",
-    "content": "Content Moderation",
-    "reports": "User Reports",
-    "analytics": "Analytics"
+    "title": "管理",
+    "dashboard": "管理面板",
+    "platform": "平台",
+    "users": "用户管理",
+    "content": "内容审核",
+    "reports": "用户报告",
+    "analytics": "分析"
   },
   "esa": {
-    "title": "ESA Framework",
-    "dashboard": "ESA Dashboard",
-    "tasks": "ESA Tasks",
-    "communications": "ESA Communications"
+    "title": "ESA框架",
+    "dashboard": "ESA面板",
+    "tasks": "ESA任务",
+    "communications": "ESA通讯"
   },
   "footer": {
-    "company": "Company",
-    "about": "About Us",
-    "contact": "Contact",
-    "careers": "Careers",
-    "volunteer": "Volunteer",
-    "legal": "Legal",
-    "terms": "Terms of Service",
-    "privacy": "Privacy Policy",
-    "guidelines": "Community Guidelines",
-    "support": "Support",
-    "pricing": "Pricing"
+    "company": "公司",
+    "about": "关于我们",
+    "contact": "联系",
+    "careers": "招聘",
+    "volunteer": "志愿者",
+    "legal": "法律",
+    "terms": "服务条款",
+    "privacy": "隐私政策",
+    "guidelines": "社区准则",
+    "support": "支持",
+    "pricing": "定价"
   }
 }
