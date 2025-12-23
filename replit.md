@@ -76,15 +76,24 @@ The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Pr
 
 ## Recent Changes (Dec 23, 2024)
 
-### Complete Internationalization - 100% Coverage (318/318 Non-Admin Pages)
-- **FINAL STATUS**: 318/318 non-admin pages (100%) have t() calls implemented
-- **Automation**: MB.MD batch scripts (i18n-complete.cjs, add-t-subdirs.cjs) processed 280+ pages
-- **Core pages**: LandingPage, HomePage, LoginPage, RegisterPage - fully translated with Spanish locale verified
-- **Marketing pages**: ForDancersPage, ForTeachersPage, ForOrganizersPage, VolunteerPage, SupportersPage, AmbassadorsPage, OpenSourcePage, SupportPage, TangoRolesPage, MrBluePage
-- **Onboarding pages**: WelcomePage, CitySelectionPage, DanceExperiencePage, TangoRolesPage, PhotoUploadPage, LanguagesPage, LegalAcceptance, GuidedTourPage, WaitlistConfirmationPage, SubscriptionOnboarding
-- **App pages**: All settings, messages, life-ceo, mrblue, housing, travel, crowdfunding, legal, hr, pro, platform, events, PRO groups
-- **Pattern**: `t('namespace:key', 'Fallback')` ensures UI never shows raw keys
-- **Translation Files**: Located in public/locales/{lng}/{ns}.json with namespaces: common, navigation, pages, errors
+### Complete Internationalization - Infrastructure Fixed & Verified
+- **FINAL STATUS**: 318/318 non-admin pages have t() calls, i18n infrastructure fully working
+- **Translation Files**: Located in `client/public/locales/{lng}/{ns}.json` (4 namespaces: common, navigation, pages, errors)
+- **69 Languages**: All synced from English base, ready for professional translations
 - **Language Selector**: Supports 69 languages including es-ar (Argentine Rioplatense Spanish) at position #2
 - **RTL Support**: Arabic, Hebrew, Persian, Urdu with automatic dir="rtl"/"ltr" switching
-- **Documentation**: docs/site-index.md (route hierarchy), docs/mb-md-i18n-plan.md (methodology learnings)
+- **URL Detection**: `?lng=` query parameter works for language switching
+- **E2E Verified**: Tests confirm locale files load correctly for ja, fr, es
+
+**i18n Configuration (client/src/lib/i18n.ts):**
+- Detection order: `['querystring', 'localStorage', 'navigator', 'htmlTag']`
+- Fallback: `en` (English)
+- Load mode: `languageOnly` (es-ar → es → en fallback chain)
+- Namespaces: common, navigation, pages, errors
+
+**MB.MD Learnings Applied:**
+1. ✅ Verify target directories before writing files (`client/public/locales/` not `public/locales/`)
+2. ✅ Ensure translation keys in JSON match what code calls
+3. ✅ Include `querystring` in i18n detection order for URL-based switching
+4. ✅ Sync all locales from English base before testing
+5. ✅ E2E test language switching on multiple pages before declaring complete
