@@ -1,17 +1,167 @@
 {
-  "home": {
-    "title": "Mundo Tango - Connect, Dance, Thrive",
-    "description": "Join the global tango community. Discover events, connect with dancers, and immerse yourself in the passion of tango.",
+  "login": {
+    "pageName": "Login",
+    "seo": {
+      "title": "Sign In - Mundo Tango",
+      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+    },
+    "badge": "Welcome Back",
     "hero": {
-      "headline": "Where Tango Lives",
-      "subtitle": "Connect with dancers worldwide, discover events in your city, and experience the magic of tango.",
-      "cta": "Join the Community",
-      "stats": {
-        "dancers": "{{count}}+ Dancers",
-        "events": "{{count}}+ Events Monthly",
-        "cities": "{{count}}+ Cities",
-        "countries": "{{count}}+ Countries"
+      "heading": "Your Tango Journey Continues",
+      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+    },
+    "stats": {
+      "dancers": "dancers",
+      "events": "events"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot password?"
+    },
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one now",
+    "toast": {
+      "successTitle": "Welcome back!",
+      "successDescription": "You've successfully logged in.",
+      "errorTitle": "Login failed",
+      "errorDescription": "Invalid credentials"
+    }
+  },
+  "home": {
+    "pageName": "Home",
+    "pageLayoutTitle": "Where Tango Meets Community",
+    "seo": {
+      "title": "Mundo Tango - Connect with the Global Tango Community",
+      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+    },
+    "hero": {
+      "badge": "Welcome to the Global Tango Community",
+      "heading": "Where Tango Meets Community",
+      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
+      "getStarted": "Get Started Free",
+      "volunteer": "Volunteer to Help Build MT"
+    },
+    "howItWorks": {
+      "heading": "How It Works",
+      "description": "Start your tango journey in three simple steps",
+      "step1": {
+        "title": "Create Your Profile",
+        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+      },
+      "step2": {
+        "title": "Discover & Connect",
+        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+      },
+      "step3": {
+        "title": "Dance & Grow",
+        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
       }
+    },
+    "features": {
+      "heading": "Everything You Need",
+      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "community": {
+        "badge": "Community",
+        "heading": "Connect with Dancers Worldwide",
+        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "items": {
+          "follow": "Follow dancers and build your network",
+          "groups": "Join groups based on interests and location",
+          "messaging": "Real-time messaging and chat features",
+          "discover": "Discover dancers visiting your city"
+        }
+      },
+      "events": {
+        "badge": "Events",
+        "heading": "Discover Events Everywhere",
+        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "items": {
+          "calendar": "Comprehensive event calendar",
+          "rsvp": "RSVP and ticket booking",
+          "notifications": "Event notifications and reminders",
+          "map": "Interactive map of venues"
+        }
+      },
+      "cards": {
+        "liveStreaming": {
+          "title": "Live Streaming",
+          "description": "Watch milongas worldwide in real-time"
+        },
+        "musicLibrary": {
+          "title": "Music Library",
+          "description": "Curated tango playlists and guides"
+        },
+        "verifiedTeachers": {
+          "title": "Verified Teachers",
+          "description": "Learn from certified instructors"
+        },
+        "travelPlanner": {
+          "title": "Travel Planner",
+          "description": "Plan trips and find hosts globally"
+        }
+      }
+    },
+    "testimonials": {
+      "heading": "What Dancers Say",
+      "description": "Join thousands of satisfied dancers worldwide",
+      "items": {
+        "testimonial1": {
+          "name": "Maria Rodriguez",
+          "location": "Buenos Aires, Argentina",
+          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+        },
+        "testimonial2": {
+          "name": "James Chen",
+          "location": "San Francisco, USA",
+          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+        },
+        "testimonial3": {
+          "name": "Elena Volkov",
+          "location": "Moscow, Russia",
+          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+        }
+      }
+    },
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "description": "Everything you need to know about Mundo Tango",
+      "items": {
+        "q1": {
+          "question": "What is Mundo Tango?",
+          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+        },
+        "q2": {
+          "question": "Is Mundo Tango free to use?",
+          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+        },
+        "q3": {
+          "question": "How do I find tango events near me?",
+          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+        },
+        "q4": {
+          "question": "Can I connect with other dancers?",
+          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+        },
+        "q5": {
+          "question": "How do I find tango teachers?",
+          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+        },
+        "q6": {
+          "question": "What makes Mundo Tango different?",
+          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+        }
+      }
+    },
+    "cta": {
+      "heading": "Ready to Join the Community?",
+      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
+      "button": "Join Mundo Tango Free",
+      "freeForever": "Free forever",
+      "noCreditCard": "No credit card",
+      "cancelAnytime": "Cancel anytime"
     }
   },
   "feed": {

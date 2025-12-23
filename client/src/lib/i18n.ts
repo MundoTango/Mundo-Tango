@@ -50,7 +50,8 @@ if (!(window as any)[i18nKey]) {
       },
       
       detection: {
-        order: ['localStorage', 'navigator', 'htmlTag'],
+        order: ['querystring', 'localStorage', 'navigator', 'htmlTag'],
+        lookupQuerystring: 'lng',
         caches: ['localStorage'],
         lookupLocalStorage: 'i18nextLng',
       },
