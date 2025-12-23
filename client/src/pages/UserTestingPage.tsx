@@ -10,6 +10,7 @@ import { Calendar, Video, Bug, TrendingUp, Play, X } from "lucide-react";
 import LiveSessionViewer from "@/components/userTesting/LiveSessionViewer";
 import BugReport from "@/components/userTesting/BugReport";
 import HeatmapViewer from "@/components/userTesting/HeatmapViewer";
+import { useTranslation } from 'react-i18next';
 
 interface Session {
   id: number;
@@ -26,6 +27,7 @@ interface Session {
 }
 
 export default function UserTestingPage() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [selectedSession, setSelectedSession] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"list" | "observe" | "bugs" | "patterns">("list");
@@ -105,7 +107,7 @@ export default function UserTestingPage() {
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Live Session Observer</h1>
+          <h1 className="text-3xl font-bold">{t('pages:usertesting.live_session_observer', 'Live Session Observer')}</h1>
           <Button
             variant="outline"
             onClick={() => {

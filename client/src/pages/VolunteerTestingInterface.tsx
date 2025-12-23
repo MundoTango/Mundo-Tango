@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Clock, CheckCircle2, AlertCircle, Star, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from 'react-i18next';
 
 interface TestScenario {
   id: number;
@@ -27,6 +28,7 @@ interface StepTiming {
 }
 
 export default function VolunteerTestingInterface() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
