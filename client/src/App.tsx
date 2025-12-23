@@ -31,6 +31,9 @@ import { HEAVY_FEATURES_ENABLED } from "./config/featureFlags";
 
 import { RouteLoader } from "./routes";
 
+// Note: Language from URL (?lng=...) is handled in i18n.ts initialization
+// which sets lng: urlLng before any components render
+
 const FeatureDisabled = lazy(() => import("./components/FeatureDisabled"));
 const VisualEditorSplitPane = HEAVY_FEATURES_ENABLED
   ? lazy(() =>

@@ -84,7 +84,7 @@ export default function TutorialDetailPage() {
           >
             <Card className="mb-8">
               <CardHeader className="border-b">
-                <CardTitle className="text-2xl font-serif">{t('pages:tutorial_detail.title', 'What You'll Learn')}</CardTitle>
+                <CardTitle className="text-2xl font-serif">{t('pages:tutorial_detail.title', "What You'll Learn")}</CardTitle>
               </CardHeader>
               <CardContent className="p-8">
                 <div className="grid gap-4 md:grid-cols-2">

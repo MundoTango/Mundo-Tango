@@ -96,10 +96,19 @@ function LanguageSelectorComponent() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
   
-  // Track selected language in state for proper re-renders
+  // Derive initial state from i18n.language (which is already set from URL by i18n.ts)
+  // This ensures we use the canonical source of truth, not localStorage
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
-    return localStorage.getItem('i18nextLng') || 'en';
+    // i18n.language is the single source of truth - it was set from URL param in i18n.ts
+    return i18n.language || 'en';
   });
+  
+  // Sync state when i18n.language changes (e.g., from URL param on navigation)
+  useEffect(() => {
+    if (i18n.language && i18n.language !== selectedLanguage) {
+      setSelectedLanguage(i18n.language);
+    }
+  }, [i18n.language, selectedLanguage]);
   
   // Track if user has made a selection to prevent sync from overriding it
   const userSelectedRef = useRef(false);
@@ -182,10 +191,19 @@ function LanguageSelectorButtonComponent() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
   
-  // Track selected language in state for proper re-renders
+  // Derive initial state from i18n.language (which is already set from URL by i18n.ts)
+  // This ensures we use the canonical source of truth, not localStorage
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
-    return localStorage.getItem('i18nextLng') || 'en';
+    // i18n.language is the single source of truth - it was set from URL param in i18n.ts
+    return i18n.language || 'en';
   });
+  
+  // Sync state when i18n.language changes (e.g., from URL param on navigation)
+  useEffect(() => {
+    if (i18n.language && i18n.language !== selectedLanguage) {
+      setSelectedLanguage(i18n.language);
+    }
+  }, [i18n.language, selectedLanguage]);
   
   // Track if user has made a selection to prevent sync from overriding it
   const userSelectedRef = useRef(false);

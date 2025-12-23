@@ -125,7 +125,7 @@ export default function TwoFactorVerify() {
             </CardContent>
           </Card>
         </div>
-      </PageLayout>
+      </SelfHealingErrorBoundary>
     );
   }
 
