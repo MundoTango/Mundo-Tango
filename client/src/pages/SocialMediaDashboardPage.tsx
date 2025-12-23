@@ -176,7 +176,7 @@ export default function SocialMediaDashboardPage() {
             <div className="text-center py-16 text-muted-foreground">
               <PenSquare className="w-16 h-16 mx-auto mb-4 opacity-50" />
               <h3 className="text-xl font-semibold mb-2">No posts yet</h3>
-              <p className="mb-4">Create your first cross-platform post</p>
+              <p className="mb-4">{t('pages:social_media_dashboard.description', 'Create your first cross-platform post')}</p>
               <Link href="/social/compose">
                 <Button>
                   <PenSquare className="w-4 h-4 mr-2" />

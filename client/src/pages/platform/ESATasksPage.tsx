@@ -195,7 +195,7 @@ export default function ESATasksPage() {
               <TabsContent value="all" className="mt-6">
                 <Card className="hover-elevate">
                   <CardHeader className="p-8">
-                    <CardTitle className="text-3xl font-serif font-bold">All Tasks</CardTitle>
+                    <CardTitle className="text-3xl font-serif font-bold">{t('pages:platform.esatasks.title', 'All Tasks')}</CardTitle>
                     <CardDescription className="text-base mt-2">
                       Complete task queue across all agents
                     </CardDescription>

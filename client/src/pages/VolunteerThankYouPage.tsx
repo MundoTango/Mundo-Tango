@@ -39,7 +39,7 @@ export default function VolunteerThankYouPage() {
                 </motion.div>
 
                 <h1 className="text-2xl font-bold mb-2" data-testid="heading-thank-you">
-                  Interview Complete!
+                  {t('pages:volunteerThankYou.title', 'Interview Complete!')}
                 </h1>
                 
                 <p className="text-muted-foreground mb-6" data-testid="text-thank-you-message">

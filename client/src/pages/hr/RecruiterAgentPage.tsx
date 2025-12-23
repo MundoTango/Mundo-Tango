@@ -35,7 +35,7 @@ export default function RecruiterAgentPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Recruiter Agent" fallbackRoute="/platform">
-    <PageLayout title="Recruiter Agent" showBreadcrumbs>
+    <PageLayout title={t('pages:hr.recruiteragent.title', 'Recruiter Agent')} showBreadcrumbs>
 <>
       <SEO
         title="Recruiter Agent - HR Dashboard"

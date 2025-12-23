@@ -283,7 +283,7 @@ export default function TravelEventCoordinationPage() {
             <TabsContent value="transportation">
               <Card>
                 <CardHeader>
-                  <CardTitle>Group Transportation</CardTitle>
+                  <CardTitle>{t('pages:travel.traveleventcoordination.title', 'Group Transportation')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">

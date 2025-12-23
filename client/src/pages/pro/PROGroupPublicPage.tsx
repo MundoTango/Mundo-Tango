@@ -60,6 +60,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
   });
 
   const isMember = profile?.tangoRoles?.includes(roleSlug) || professionals?.some(p => p.id === user?.id);
+  const searchPlaceholder = t('pages:proGroupPublic.searchPlaceholder', 'Search professionals...');
 
   const filteredProfessionals = professionals?.filter(p => {
     const matchesSearch = !searchQuery || 

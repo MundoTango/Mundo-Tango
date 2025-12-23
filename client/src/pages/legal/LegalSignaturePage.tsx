@@ -218,7 +218,7 @@ export default function LegalSignaturePage() {
       {/* Progress Indicator */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">Signature Progress</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('pages:legal.legalsignature.title', 'Signature Progress')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Progress value={progress} className="h-2" />

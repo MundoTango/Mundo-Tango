@@ -188,7 +188,7 @@ export default function SocialMediaConnectionsPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Activity className="w-5 h-5 text-turquoise-500" />
-              <CardTitle>API Health Status</CardTitle>
+              <CardTitle>{t('pages:social_media_connections.title', 'API Health Status')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>

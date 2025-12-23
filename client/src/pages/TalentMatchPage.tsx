@@ -8,7 +8,7 @@ export default function TalentMatchPage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Talent Match" fallbackRoute="/platform">
-      <PageLayout title="AI Talent Match" showBreadcrumbs>
+      <PageLayout title={t('pages:talentMatch.title', 'AI Talent Match')} showBreadcrumbs>
         <SEO
           title="AI Talent Match - Mundo Tango"
           description="Let AI match your skills with perfect volunteer opportunities at Mundo Tango. Our intelligent matching system finds the ideal role for your talents."

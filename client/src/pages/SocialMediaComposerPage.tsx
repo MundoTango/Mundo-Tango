@@ -34,8 +34,8 @@ export default function SocialMediaComposerPage() {
     },
     onSuccess: () => {
       toast({
-        title: "Post Created",
-        description: "Your post has been successfully created",
+        title: t('pages:socialMediaComposer.postCreated', 'Post Created'),
+        description: t('pages:socialMediaComposer.postCreatedDesc', 'Your post has been successfully created'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/social/posts"] });
       navigate("/social");

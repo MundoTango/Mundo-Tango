@@ -15,7 +15,7 @@ export default function CityGroupRedirectPage() {
   
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="flex items-center justify-center min-h-[50vh]" aria-label={t('pages:cityGroupRedirect.loading', 'Loading city group...')}>
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );

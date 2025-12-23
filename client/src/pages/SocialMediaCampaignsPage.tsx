@@ -326,7 +326,7 @@ export default function SocialMediaCampaignsPage() {
           <div className="text-center py-16 text-muted-foreground">
             <Target className="w-16 h-16 mx-auto mb-4 opacity-50" />
             <h3 className="text-xl font-semibold mb-2">No campaigns yet</h3>
-            <p className="mb-4">Create your first marketing campaign</p>
+            <p className="mb-4">{t('pages:social_media_campaigns.description', 'Create your first marketing campaign')}</p>
             <Button onClick={() => setIsCreateOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Create Campaign

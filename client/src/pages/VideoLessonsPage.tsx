@@ -171,7 +171,7 @@ export default function VideoLessonsPage() {
                 <Card>
                   <CardContent className="py-16 text-center text-muted-foreground">
                     <Play className="mx-auto h-16 w-16 mb-4 opacity-50" />
-                    <p className="text-lg">No lessons available in this category</p>
+                    <p className="text-lg">{t('pages:video_lessons.description', 'No lessons available in this category')}</p>
                     <p className="text-sm mt-2">Check back soon for new content</p>
                   </CardContent>
                 </Card>

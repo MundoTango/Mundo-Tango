@@ -274,7 +274,7 @@ export default function LegalDocumentDetailPage() {
           {/* Document Info */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Document Info</CardTitle>
+              <CardTitle className="text-lg">{t('pages:legal.legaldocumentdetail.title', 'Document Info')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>

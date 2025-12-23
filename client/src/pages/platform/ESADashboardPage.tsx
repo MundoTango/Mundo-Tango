@@ -156,7 +156,7 @@ export default function ESADashboardPage() {
       >
         <Card className="hover-elevate">
           <CardHeader className="p-8">
-            <CardTitle className="text-3xl font-serif font-bold">Agents by Type</CardTitle>
+            <CardTitle className="text-3xl font-serif font-bold">{t('pages:platform.esadashboard.title', 'Agents by Type')}</CardTitle>
             <CardDescription className="text-base mt-2">Distribution across 12 specialized categories</CardDescription>
           </CardHeader>
           <CardContent className="p-8">

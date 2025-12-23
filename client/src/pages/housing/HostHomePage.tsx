@@ -84,7 +84,7 @@ export default function HostHomePage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <Home className="w-16 h-16 text-muted-foreground mb-4" />
-        <h1 className="text-2xl font-bold mb-2">Listing not found</h1>
+        <h1 className="text-2xl font-bold mb-2">{t('pages:housing.hosthome.title', 'Listing not found')}</h1>
         <p className="text-muted-foreground">
           The listing you're looking for doesn't exist
         </p>

@@ -218,7 +218,7 @@ export default function TravelItineraryPage() {
                 {trip.notes && (
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">Notes</CardTitle>
+                      <CardTitle className="text-lg">{t('pages:travel.travelitinerary.title', 'Notes')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-muted-foreground whitespace-pre-wrap">

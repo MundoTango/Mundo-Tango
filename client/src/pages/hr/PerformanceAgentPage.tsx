@@ -34,7 +34,7 @@ export default function PerformanceAgentPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Performance Agent" fallbackRoute="/platform">
-    <PageLayout title="Performance Agent" showBreadcrumbs>
+    <PageLayout title={t('pages:hr.performanceagent.title', 'Performance Agent')} showBreadcrumbs>
 <>
       <SEO
         title="Performance Agent - HR Dashboard"

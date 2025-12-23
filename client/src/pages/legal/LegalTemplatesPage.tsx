@@ -134,7 +134,7 @@ export default function LegalTemplatesPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-4xl font-bold font-serif mb-2">Template Library</h1>
+          <h1 className="text-4xl font-bold font-serif mb-2">{t('pages:legal.legaltemplates.title', 'Template Library')}</h1>
           <p className="text-muted-foreground">
             Professional legal templates for the tango community
           </p>

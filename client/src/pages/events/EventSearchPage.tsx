@@ -152,7 +152,7 @@ export default function EventSearchPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Search Events</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('pages:events.eventsearch.title', 'Search Events')}</h1>
         <p className="text-muted-foreground">
           Find the perfect tango event with our advanced search filters
         </p>

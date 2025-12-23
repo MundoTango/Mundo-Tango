@@ -156,7 +156,7 @@ export default function TeacherProfilePage() {
                 >
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-2xl font-serif">About</CardTitle>
+                      <CardTitle className="text-2xl font-serif">{t('pages:teacher_profile.title', 'About')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-base text-muted-foreground whitespace-pre-line leading-relaxed">{teacher.bio}</p>

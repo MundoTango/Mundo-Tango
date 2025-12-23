@@ -36,7 +36,7 @@ export default function OnboardingAgentPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Onboarding Agent" fallbackRoute="/platform">
-    <PageLayout title="Onboarding Agent" showBreadcrumbs>
+    <PageLayout title={t('pages:hr.onboardingagent.title', 'Onboarding Agent')} showBreadcrumbs>
 <>
       <SEO
         title="Onboarding Agent - HR Dashboard"

@@ -41,7 +41,7 @@ export default function CultureAgentPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Culture Agent" fallbackRoute="/platform">
-    <PageLayout title="Culture Agent" showBreadcrumbs>
+    <PageLayout title={t('pages:hr.cultureagent.title', 'Culture Agent')} showBreadcrumbs>
 <>
       <SEO
         title="Culture Agent - HR Dashboard"

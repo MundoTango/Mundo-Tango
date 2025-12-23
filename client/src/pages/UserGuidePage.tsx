@@ -76,7 +76,7 @@ export default function UserGuidePage() {
   const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="User Guide" fallbackRoute="/">
-      <PageLayout title="User Guide" showBreadcrumbs>
+      <PageLayout title={t('pages:userGuide.title', 'User Guide')} showBreadcrumbs>
         <PublicLayout>
           <SEO
             title="User Guide - Mundo Tango"

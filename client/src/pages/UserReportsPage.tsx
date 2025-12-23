@@ -84,7 +84,7 @@ export default function UserReportsPage() {
                         <AlertCircle className="h-5 w-5 text-orange-500 shrink-0 mt-0.5" />
                         <div className="space-y-1">
                           <p className="font-semibold text-base">Reason</p>
-                          <p className="text-muted-foreground">Harassment and inappropriate behavior</p>
+                          <p className="text-muted-foreground">{t('pages:user_reports.description', 'Harassment and inappropriate behavior')}</p>
                         </div>
                       </div>
 

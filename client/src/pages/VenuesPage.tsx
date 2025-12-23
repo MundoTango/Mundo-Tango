@@ -245,7 +245,7 @@ export default function VenuesPage() {
               <CardContent className="py-16 text-center">
                 <MapPin className="mx-auto h-16 w-16 mb-6 opacity-30" />
                 <h3 className="text-xl font-serif font-bold mb-2">No Venues Found</h3>
-                <p className="text-muted-foreground">Try adjusting your search criteria</p>
+                <p className="text-muted-foreground">{t('pages:venues.description', 'Try adjusting your search criteria')}</p>
               </CardContent>
             </Card>
           )}

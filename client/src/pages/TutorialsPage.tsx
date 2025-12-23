@@ -173,7 +173,7 @@ export default function TutorialsPage() {
                 <Card>
                   <CardContent className="py-16 text-center text-muted-foreground">
                     <BookOpen className="mx-auto h-16 w-16 mb-4 opacity-50" />
-                    <p className="text-lg">No tutorials available for this level</p>
+                    <p className="text-lg">{t('pages:tutorials.description', 'No tutorials available for this level')}</p>
                     <p className="text-sm mt-2">Check back soon for new content</p>
                   </CardContent>
                 </Card>

@@ -357,7 +357,7 @@ export default function CreateListingPage() {
                   <Camera className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg">Add Photos</CardTitle>
+                  <CardTitle className="text-lg">{t('pages:housing.createlisting.title', 'Add Photos')}</CardTitle>
                   <CardDescription>Show guests what makes your space special</CardDescription>
                 </div>
               </div>

@@ -80,6 +80,7 @@ export default function VenueRecommendationsPage() {
     ? `/api/venue-recommendations?${queryString}`
     : '/api/venue-recommendations';
 
+  const pageTitle = t('pages:venueRecommendations.title', 'Venue Recommendations');
   const { data: venues = [], isLoading } = useQuery<VenueRecommendation[]>({
     queryKey: [queryKey],
   });

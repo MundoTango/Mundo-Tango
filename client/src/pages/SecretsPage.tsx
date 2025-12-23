@@ -291,7 +291,7 @@ export default function SecretsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Environment Variables</CardTitle>
+          <CardTitle>{t('pages:secrets.title', 'Environment Variables')}</CardTitle>
           <CardDescription>
             Secrets are encrypted and never displayed after creation
           </CardDescription>

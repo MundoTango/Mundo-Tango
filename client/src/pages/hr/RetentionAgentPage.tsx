@@ -35,7 +35,7 @@ export default function RetentionAgentPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Retention Agent" fallbackRoute="/platform">
-    <PageLayout title="Retention Agent" showBreadcrumbs>
+    <PageLayout title={t('pages:hr.retentionagent.title', 'Retention Agent')} showBreadcrumbs>
 <>
       <SEO
         title="Retention Agent - HR Dashboard"

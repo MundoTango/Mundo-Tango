@@ -205,7 +205,7 @@ export default function ESACommunicationsPage() {
               <TabsContent value="all" className="mt-6">
                 <Card className="hover-elevate">
                   <CardHeader className="p-8">
-                    <CardTitle className="text-3xl font-serif font-bold">Communication Log</CardTitle>
+                    <CardTitle className="text-3xl font-serif font-bold">{t('pages:platform.esacommunications.title', 'Communication Log')}</CardTitle>
                     <CardDescription className="text-base mt-2">
                       All inter-agent and human-agent communications
                     </CardDescription>

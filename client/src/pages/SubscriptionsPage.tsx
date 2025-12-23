@@ -342,7 +342,7 @@ export default function SubscriptionsPage() {
               <div className="space-y-6">
                 <Card className="backdrop-blur-md bg-card/50 border-border">
                   <CardHeader>
-                    <CardTitle className="text-lg">Can I change plans later?</CardTitle>
+                    <CardTitle className="text-lg">{t('pages:subscriptions.title', 'Can I change plans later?')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">

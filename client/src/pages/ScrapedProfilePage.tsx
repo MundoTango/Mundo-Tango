@@ -341,7 +341,7 @@ export default function ScrapedProfilePage() {
           <Card>
             <CardContent className="py-8 text-center">
               <Calendar className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-muted-foreground">No events found for this profile</p>
+              <p className="text-muted-foreground">{t('pages:scraped_profile.description', 'No events found for this profile')}</p>
             </CardContent>
           </Card>
         )}

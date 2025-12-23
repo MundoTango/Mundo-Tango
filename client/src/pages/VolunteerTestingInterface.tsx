@@ -264,7 +264,7 @@ export default function VolunteerTestingInterface() {
 
             <Card className="mb-6" data-testid="card-current-step">
               <CardHeader>
-                <CardTitle>Current Step</CardTitle>
+                <CardTitle>{t('pages:volunteer_testing_interface.title', 'Current Step')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">

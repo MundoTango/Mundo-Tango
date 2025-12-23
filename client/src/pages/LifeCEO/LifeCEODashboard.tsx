@@ -76,7 +76,7 @@ export default function LifeCEODashboard() {
         description="Manage all aspects of your life with 16 intelligent agents for health, finance, career, relationships, and personal growth"
         ogImage="/og-image.png"
       />
-      <PageLayout title="Life CEO" showBreadcrumbs>
+      <PageLayout title={t('pages:LifeCEO.lifeceodashboard.title', 'Life CEO')} showBreadcrumbs>
         <div className="container mx-auto py-8 px-4">
       
 

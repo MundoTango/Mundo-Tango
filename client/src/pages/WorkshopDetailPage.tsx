@@ -86,7 +86,7 @@ export default function WorkshopDetailPage() {
               >
                 <Card>
                   <CardHeader className="border-b">
-                    <CardTitle className="text-2xl font-serif">Workshop Details</CardTitle>
+                    <CardTitle className="text-2xl font-serif">{t('pages:workshop_detail.title', 'Workshop Details')}</CardTitle>
                   </CardHeader>
                   <CardContent className="p-8 space-y-6">
                     <div className="grid gap-6 md:grid-cols-2">

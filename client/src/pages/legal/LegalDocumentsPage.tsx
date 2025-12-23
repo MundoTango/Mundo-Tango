@@ -134,7 +134,7 @@ export default function LegalDocumentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-4xl font-bold font-serif mb-2">Document Library</h1>
+          <h1 className="text-4xl font-bold font-serif mb-2">{t('pages:legal.legaldocuments.title', 'Document Library')}</h1>
           <p className="text-muted-foreground">
             Manage and organize all your legal documents
           </p>

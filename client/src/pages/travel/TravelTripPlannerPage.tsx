@@ -97,7 +97,7 @@ export default function TravelTripPlannerPage() {
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <div className="mb-8">
-            <h1 className="text-4xl font-serif font-bold mb-2">Plan Your Trip</h1>
+            <h1 className="text-4xl font-serif font-bold mb-2">{t('pages:travel.traveltripplanner.title', 'Plan Your Trip')}</h1>
             <p className="text-muted-foreground">
               Create a detailed itinerary for your next tango adventure
             </p>
