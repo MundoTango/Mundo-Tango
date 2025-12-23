@@ -64,7 +64,7 @@ if (!i18n.isInitialized) {
       ns: ['common', 'navigation', 'pages', 'errors'],
       debug: true,
       load: 'currentOnly',
-      fallbackLng: 'en',
+      fallbackLng: '{ 'es-ar': ['es', 'en'], 'pt-br': ['pt', 'en'], default: ['en'] }',
       nonExplicitSupportedLngs: false,
       interpolation: { escapeValue: false },
       backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
