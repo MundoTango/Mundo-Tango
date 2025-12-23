@@ -106,7 +106,7 @@ export default function DiscoverPage() {
                   <div className="flex-1 relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60" />
                     <Input
-                      placeholder="Search events, cities, venues..."
+                      placeholder={t('pages:discover.searchPlaceholderSmall', 'Search events, cities, venues...')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10 bg-white/20 border-white/30 text-white placeholder:text-white/60"
@@ -115,12 +115,12 @@ export default function DiscoverPage() {
                   </div>
                   <Button className="gap-2 bg-white/20 hover:bg-white/30 text-white border-white/30" data-testid="button-search">
                     <Filter className="h-4 w-4" />
-                    Filters
+                    {t('pages:discover.filters', 'Filters')}
                   </Button>
                   <Link href="/calendar">
                     <Button variant="outline" className="gap-2 w-full md:w-auto bg-white/10 hover:bg-white/20 text-white border-white/30" data-testid="link-calendar">
                       <Calendar className="h-4 w-4" />
-                      Calendar View
+                      {t('pages:discover.calendarView', 'Calendar View')}
                     </Button>
                   </Link>
                 </div>
@@ -134,9 +134,9 @@ export default function DiscoverPage() {
       <section className="py-12 px-6">
         <div className="container mx-auto max-w-7xl">
           <motion.div {...fadeInUp} className="mb-12 space-y-4">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold" data-testid="text-upcoming-events-title">Upcoming Events</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold" data-testid="text-upcoming-events-title">{t('pages:discover.upcomingTitle', 'Upcoming Events')}</h2>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              Featured milongas, workshops, and festivals from around the world
+              {t('pages:discover.upcomingSubtitle', 'Featured milongas, workshops, and festivals from around the world')}
             </p>
           </motion.div>
 
@@ -178,14 +178,14 @@ export default function DiscoverPage() {
                         </div>
                         <div className="flex items-center gap-3">
                           <Users className="h-5 w-5 text-primary flex-shrink-0" />
-                          <span>{event.attendees} attending</span>
+                          <span>{event.attendees} {t('pages:discover.attending', 'attending')}</span>
                         </div>
                       </div>
                     </div>
 
                     <Link href={`/events/${event.id}`}>
                       <Button className="w-full gap-2" data-testid={`button-view-event-${event.id}`}>
-                        View Details
+                        {t('pages:discover.viewDetails', 'View Details')}
                         <ChevronRight className="h-4 w-4" />
                       </Button>
                     </Link>
@@ -198,7 +198,7 @@ export default function DiscoverPage() {
           <div className="text-center mt-12">
             <Link href="/calendar">
               <Button size="lg" variant="outline" data-testid="button-see-all-events">
-                See All Events
+                {t('pages:discover.seeAllEvents', 'See All Events')}
               </Button>
             </Link>
           </div>
@@ -209,18 +209,18 @@ export default function DiscoverPage() {
       <section className="py-12 px-6 bg-card/30">
         <div className="container mx-auto max-w-7xl">
           <motion.div {...fadeInUp} className="mb-12 text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold" data-testid="text-categories-title">Explore by Category</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold" data-testid="text-categories-title">{t('pages:discover.categoriesTitle', 'Explore by Category')}</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Find the perfect tango experience for you
+              {t('pages:discover.categoriesSubtitle', 'Find the perfect tango experience for you')}
             </p>
           </motion.div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: Music, title: "Milongas", count: "450+", color: "text-primary" },
-              { icon: Calendar, title: "Festivals", count: "120+", color: "text-secondary" },
-              { icon: Star, title: "Workshops", count: "300+", color: "text-accent" },
-              { icon: Globe, title: "Online Events", count: "80+", color: "text-primary" }
+              { icon: Music, title: t('pages:discover.categoryMilongas', 'Milongas'), count: "450+", color: "text-primary" },
+              { icon: Calendar, title: t('pages:discover.categoryFestivals', 'Festivals'), count: "120+", color: "text-secondary" },
+              { icon: Star, title: t('pages:discover.categoryWorkshops', 'Workshops'), count: "300+", color: "text-accent" },
+              { icon: Globe, title: t('pages:discover.categoryOnline', 'Online Events'), count: "80+", color: "text-primary" }
             ].map((category, idx) => (
               <motion.div 
                 key={idx} 
@@ -231,7 +231,7 @@ export default function DiscoverPage() {
                   <category.icon className={`h-12 w-12 mx-auto ${category.color}`} />
                   <h3 className="text-xl font-serif font-bold">{category.title}</h3>
                   <p className="text-3xl font-serif font-bold text-primary">{category.count}</p>
-                  <p className="text-base text-muted-foreground">Events worldwide</p>
+                  <p className="text-base text-muted-foreground">{t('pages:discover.eventsWorldwide', 'Events worldwide')}</p>
                 </Card>
               </motion.div>
             ))}
@@ -245,14 +245,14 @@ export default function DiscoverPage() {
           <div className="glass-card p-8 md:p-12 rounded-3xl space-y-8">
             <Heart className="h-16 w-16 text-primary mx-auto" />
             <div className="space-y-4">
-              <h2 className="text-3xl md:text-4xl font-serif font-bold" data-testid="text-cta-title">Join the Community</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold" data-testid="text-cta-title">{t('pages:discover.ctaTitle', 'Join the Community')}</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Create your free account to RSVP for events, connect with dancers, and never miss a milonga in your city.
+                {t('pages:discover.ctaDescription', 'Create your free account to RSVP for events, connect with dancers, and never miss a milonga in your city.')}
               </p>
             </div>
             <Link href="/register">
               <Button size="lg" className="gap-2" data-testid="button-join-now">
-                Join Now - It's Free
+                {t('pages:discover.joinNow', 'Join Now - It\'s Free')}
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </Link>

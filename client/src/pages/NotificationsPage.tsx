@@ -72,7 +72,7 @@ export default function NotificationsPage() {
 
   return (
     <PageLayout title={t('pages:notifications.title', 'Notifications')} showBreadcrumbs>
-      <SelfHealingErrorBoundary pageName="Notifications" fallbackRoute="/feed">
+      <SelfHealingErrorBoundary pageName={t('pages:notifications.errorBoundary', 'Notifications')} fallbackRoute="/feed">
         <>
           <SEO
             title={t('pages:notifications.seoTitle', 'Notifications')}
@@ -106,16 +106,11 @@ export default function NotificationsPage() {
                 </p>
 
                 {unreadCount > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                    className="mt-8"
-                  >
-                    <Badge className="text-lg px-6 py-2 bg-primary text-primary-foreground">
+                  <div className="mt-8">
+                    <Badge className="text-lg px-6 py-2 bg-primary text-primary-foreground animate-pulse">
                       {t('pages:notifications.newNotifications', { count: unreadCount, defaultValue: `${unreadCount} new ${unreadCount === 1 ? 'notification' : 'notifications'}` })}
                     </Badge>
-                  </motion.div>
+                  </div>
                 )}
               </motion.div>
             </div>

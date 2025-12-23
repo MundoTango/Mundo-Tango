@@ -92,28 +92,28 @@ export default function SearchPage() {
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6">
               <TabsTrigger value="all" data-testid="tab-all">
-                All
+                {t('pages:search.tabs.all', 'All')}
                 {allResults.length > 0 && (
                   <Badge variant="secondary" className="ml-2">{allResults.length}</Badge>
                 )}
               </TabsTrigger>
               <TabsTrigger value="users" data-testid="tab-users">
                 <Users className="h-4 w-4 mr-2" />
-                People
+                {t('pages:search.tabs.people', 'People')}
                 {filteredResults.users && (
                   <Badge variant="secondary" className="ml-2">{filteredResults.users.length}</Badge>
                 )}
               </TabsTrigger>
               <TabsTrigger value="events" data-testid="tab-events">
                 <Calendar className="h-4 w-4 mr-2" />
-                Events
+                {t('pages:search.tabs.events', 'Events')}
                 {filteredResults.events && (
                   <Badge variant="secondary" className="ml-2">{filteredResults.events.length}</Badge>
                 )}
               </TabsTrigger>
               <TabsTrigger value="groups" data-testid="tab-groups">
                 <MapPin className="h-4 w-4 mr-2" />
-                Groups
+                {t('pages:search.tabs.groups', 'Groups')}
                 {filteredResults.groups && (
                   <Badge variant="secondary" className="ml-2">{filteredResults.groups.length}</Badge>
                 )}
@@ -128,7 +128,7 @@ export default function SearchPage() {
                   animate={{ opacity: 1 }}
                   className="text-center py-12"
                 >
-                  <p className="text-muted-foreground">Searching...</p>
+                  <p className="text-muted-foreground">{t('pages:search.searching', 'Searching...')}</p>
                 </motion.div>
               ) : allResults.length > 0 ? (
                 <div className="space-y-6">
@@ -145,7 +145,7 @@ export default function SearchPage() {
                   ))}
                 </div>
               ) : (
-                <EmptyState message="No results found" />
+                <EmptyState message={t('pages:search.noResults', 'No results found')} />
               )}
             </TabsContent>
 
@@ -166,7 +166,7 @@ export default function SearchPage() {
                   ))}
                 </div>
               ) : (
-                <EmptyState message="No people found" />
+                <EmptyState message={t('pages:search.noPeople', 'No people found')} />
               )}
             </TabsContent>
 
@@ -187,7 +187,7 @@ export default function SearchPage() {
                   ))}
                 </div>
               ) : (
-                <EmptyState message="No events found" />
+                <EmptyState message={t('pages:search.noEvents', 'No events found')} />
               )}
             </TabsContent>
 
@@ -208,7 +208,7 @@ export default function SearchPage() {
                   ))}
                 </div>
               ) : (
-                <EmptyState message="No groups found" />
+                <EmptyState message={t('pages:search.noGroups', 'No groups found')} />
               )}
             </TabsContent>
           </Tabs>
@@ -216,7 +216,7 @@ export default function SearchPage() {
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
               <Search className="mx-auto h-12 w-12 mb-4 opacity-50" />
-              <p>Enter at least 3 characters to search</p>
+              <p>{t('pages:search.minCharacters', 'Enter at least 3 characters to search')}</p>
             </CardContent>
           </Card>
         )}
@@ -249,7 +249,7 @@ function UserCard({ user }: { user: any }) {
           </Link>
           <p className="text-muted-foreground">@{user.username}</p>
         </div>
-        <Badge variant="outline" className="shrink-0">Person</Badge>
+        <Badge variant="outline" className="shrink-0">{t('pages:search.labels.person', 'Person')}</Badge>
       </CardContent>
     </Card>
   );
@@ -279,7 +279,7 @@ function EventCard({ event }: { event: any }) {
                 <p className="text-sm">{event.location}</p>
               </div>
             </div>
-            <Badge variant="outline" className="shrink-0">Event</Badge>
+            <Badge variant="outline" className="shrink-0">{t('pages:search.labels.event', 'Event')}</Badge>
           </div>
         </CardContent>
       </div>
@@ -305,10 +305,10 @@ function GroupCard({ group }: { group: any }) {
             </Link>
             <div className="flex items-center gap-2 text-muted-foreground">
               <Users className="h-4 w-4 shrink-0" />
-              <p className="text-sm">{group.memberCount} members</p>
+              <p className="text-sm">{group.memberCount} {t('pages:search.labels.members', 'members')}</p>
             </div>
           </div>
-          <Badge variant="outline" className="shrink-0">Group</Badge>
+          <Badge variant="outline" className="shrink-0">{t('pages:search.labels.group', 'Group')}</Badge>
         </div>
       </CardContent>
     </Card>

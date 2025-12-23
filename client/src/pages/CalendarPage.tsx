@@ -101,7 +101,7 @@ export default function CalendarPage() {
                     onClick={() => setCurrentMonth(new Date())}
                     data-testid="button-today"
                   >
-                    Today
+                    {t('pages:calendar.today', 'Today')}
                   </Button>
                   <Button
                     variant="outline"
@@ -117,7 +117,15 @@ export default function CalendarPage() {
               <CardContent className="p-0">
                 {/* Day Headers */}
                 <div className="grid grid-cols-7 border-b">
-                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                  {[
+                    t('pages:calendar.days.sun', 'Sun'),
+                    t('pages:calendar.days.mon', 'Mon'),
+                    t('pages:calendar.days.tue', 'Tue'),
+                    t('pages:calendar.days.wed', 'Wed'),
+                    t('pages:calendar.days.thu', 'Thu'),
+                    t('pages:calendar.days.fri', 'Fri'),
+                    t('pages:calendar.days.sat', 'Sat')
+                  ].map((day) => (
                     <div
                       key={day}
                       className="p-4 text-center text-sm font-semibold text-muted-foreground border-r last:border-r-0"
@@ -172,7 +180,7 @@ export default function CalendarPage() {
                           ))}
                           {dayEvents.length > 2 && (
                             <div className="text-xs text-muted-foreground pl-1">
-                              +{dayEvents.length - 2} more
+                              +{dayEvents.length - 2} {t('pages:calendar.more', 'more')}
                             </div>
                           )}
                         </div>
@@ -185,7 +193,7 @@ export default function CalendarPage() {
 
             {/* Upcoming Events List */}
             <div className="mt-12">
-              <h2 className="text-3xl font-serif font-bold mb-6">Upcoming Events</h2>
+              <h2 className="text-3xl font-serif font-bold mb-6">{t('pages:calendar.upcomingTitle', 'Upcoming Events')}</h2>
               <div className="grid gap-6 md:grid-cols-2">
                 {events && Array.isArray(events) && events.slice(0, 4).map((event: any, index: number) => {
                   return (

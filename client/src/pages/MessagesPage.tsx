@@ -52,12 +52,12 @@ export default function MessagesPage() {
   ) || [];
 
   return (
-    <SelfHealingErrorBoundary pageName="Messages" fallbackRoute="/feed">
-      <PageLayout title="Messages" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:messages.errorBoundary', 'Messages')} fallbackRoute="/feed">
+      <PageLayout title={t('pages:messages.title', 'Messages')} showBreadcrumbs>
         <>
           <SEO 
-            title="Messages"
-            description="Stay connected with your tango community through private messaging. Chat with dancers, organize events, and build lasting friendships."
+            title={t('pages:messages.seoTitle', 'Messages')}
+            description={t('pages:messages.seoDescription', 'Stay connected with your tango community through private messaging. Chat with dancers, organize events, and build lasting friendships.')}
           />
 
           {/* Hero Section - 16:9 Editorial */}
@@ -84,15 +84,15 @@ export default function MessagesPage() {
                   data-testid="badge-hero-category"
                 >
                   <MessageCircle className="w-3 h-3 mr-1" />
-                  Stay Connected
+                  {t('pages:messages.stayConnected', 'Stay Connected')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                  Your Conversations
+                  {t('pages:messages.heroTitle', 'Your Conversations')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Build meaningful connections with dancers around the world
+                  {t('pages:messages.heroSubtitle', 'Build meaningful connections with dancers around the world')}
                 </p>
 
                 <div className="flex items-center justify-center gap-8 mt-8">
@@ -105,7 +105,7 @@ export default function MessagesPage() {
                     <div className="text-3xl font-serif font-bold text-white">
                       {conversations?.length || 0}
                     </div>
-                    <div className="text-sm text-white/70">Active Chats</div>
+                    <div className="text-sm text-white/70">{t('pages:messages.activeChats', 'Active Chats')}</div>
                   </motion.div>
 
                   <div className="h-12 w-px bg-white/30" />
@@ -119,7 +119,7 @@ export default function MessagesPage() {
                     <div className="text-3xl font-serif font-bold text-white">
                       <Users className="w-8 h-8 mx-auto" />
                     </div>
-                    <div className="text-sm text-white/70">Community</div>
+                    <div className="text-sm text-white/70">{t('common:community', 'Community')}</div>
                   </motion.div>
 
                   <div className="h-12 w-px bg-white/30" />
@@ -133,7 +133,7 @@ export default function MessagesPage() {
                     <div className="text-3xl font-serif font-bold text-white">
                       <Heart className="w-8 h-8 mx-auto" />
                     </div>
-                    <div className="text-sm text-white/70">Connections</div>
+                    <div className="text-sm text-white/70">{t('common:connections', 'Connections')}</div>
                   </motion.div>
                 </div>
               </motion.div>
@@ -153,7 +153,7 @@ export default function MessagesPage() {
                   <div className="p-4 border-b space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <h2 className="text-xl font-serif font-bold" data-testid="heading-messages">
-                        Messages
+                        {t('pages:messages.messagesTitle', 'Messages')}
                       </h2>
                       <div className="flex items-center gap-1">
                         <Dialog open={showSettings} onOpenChange={setShowSettings}>
@@ -162,14 +162,14 @@ export default function MessagesPage() {
                               size="icon" 
                               variant="ghost"
                               data-testid="button-channel-settings"
-                              title="Channel settings"
+                              title={t('pages:messages.channelSettings', 'Channel settings')}
                             >
                               <Settings className="h-5 w-5" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-lg">
                             <DialogHeader>
-                              <DialogTitle>Message Channels</DialogTitle>
+                              <DialogTitle>{t('pages:messages.messageChannels', 'Message Channels')}</DialogTitle>
                             </DialogHeader>
                             <ChannelSettingsPanel />
                           </DialogContent>
@@ -178,7 +178,7 @@ export default function MessagesPage() {
                           size="icon" 
                           variant="ghost"
                           data-testid="button-new-message"
-                          title="New conversation"
+                          title={t('pages:messages.newConversation', 'New conversation')}
                         >
                           <PenSquare className="h-5 w-5" />
                         </Button>
@@ -190,7 +190,7 @@ export default function MessagesPage() {
                       <TabsList className="w-full grid grid-cols-6 h-8">
                         <TabsTrigger value="all" className="text-xs px-2" data-testid="tab-channel-all">
                           <Inbox className="w-3 h-3 mr-1" />
-                          All
+                          {t('common:all', 'All')}
                         </TabsTrigger>
                         <TabsTrigger value="mt" className="text-xs px-2" data-testid="tab-channel-mt">
                           <MessageCircle className="w-3 h-3" />
@@ -213,7 +213,7 @@ export default function MessagesPage() {
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="Search conversations..."
+                        placeholder={t('pages:messages.searchPlaceholder', 'Search conversations...')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9"
@@ -222,11 +222,18 @@ export default function MessagesPage() {
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>
-                        {filteredConversations.length} of {conversations?.length || 0} conversation{conversations?.length !== 1 ? 's' : ''}
+                        {t('pages:messages.conversationCount', { 
+                          current: filteredConversations.length, 
+                          total: conversations?.length || 0,
+                          defaultValue: `${filteredConversations.length} of ${conversations?.length || 0} conversation${conversations?.length !== 1 ? 's' : ''}`
+                        })}
                       </span>
                       {hasConnectedChannels && (
                         <Badge variant="outline" className="text-[10px]">
-                          {connectedChannelsList.length} channel{connectedChannelsList.length !== 1 ? 's' : ''} connected
+                          {t('pages:messages.connectedChannelsCount', {
+                            count: connectedChannelsList.length,
+                            defaultValue: `${connectedChannelsList.length} channel${connectedChannelsList.length !== 1 ? 's' : ''} connected`
+                          })}
                         </Badge>
                       )}
                     </div>
@@ -276,7 +283,7 @@ export default function MessagesPage() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-2 mb-1">
                                   <p className="font-semibold truncate" data-testid={`text-conversation-name-${conversation.id}`}>
-                                    {conversation.name || "Conversation"}
+                                    {conversation.name || t('pages:messages.defaultConversationName', "Conversation")}
                                   </p>
                                   {conversation.unreadCount && conversation.unreadCount > 0 && (
                                     <Badge 
@@ -314,9 +321,9 @@ export default function MessagesPage() {
                       >
                         <MessageCircle className="w-12 h-12 mx-auto text-muted-foreground opacity-50" />
                         <div>
-                          <p className="font-medium text-muted-foreground">No messages yet</p>
+                          <p className="font-medium text-muted-foreground">{t('pages:messages.noMessages', 'No messages yet')}</p>
                           <p className="text-sm text-muted-foreground/70 mt-1">
-                            Start connecting with dancers
+                            {t('pages:messages.noMessagesDescription', 'Start connecting with dancers')}
                           </p>
                         </div>
                       </motion.div>
@@ -338,10 +345,10 @@ export default function MessagesPage() {
                       <MessageCircle className="w-16 h-16 text-muted-foreground opacity-30" />
                       <div>
                         <h3 className="text-xl font-serif font-bold text-muted-foreground">
-                          Select a conversation
+                          {t('pages:messages.selectConversation', 'Select a conversation')}
                         </h3>
                         <p className="text-sm text-muted-foreground/70 mt-2">
-                          Choose a conversation from the list to start messaging
+                          {t('pages:messages.selectConversationDescription', 'Choose a conversation from the list to start messaging')}
                         </p>
                       </div>
                     </motion.div>
@@ -407,7 +414,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
     }
   };
 
-  const conversationName = "Conversation";
+  const conversationName = t('pages:messages.defaultConversationName', "Conversation");
 
   return (
     <motion.div 
@@ -427,7 +434,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
           <h3 className="text-xl font-serif font-bold" data-testid="text-conversation-header-name">
             {conversationName}
           </h3>
-          <p className="text-sm text-muted-foreground">Active now</p>
+          <p className="text-sm text-muted-foreground">{t('pages:messages.activeNow', 'Active now')}</p>
         </div>
       </div>
 

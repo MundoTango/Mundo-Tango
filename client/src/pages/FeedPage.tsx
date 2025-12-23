@@ -82,17 +82,24 @@ const TANGO_QUOTES = [
   { quote: "Music is life, and tango is the beat of the soul", author: "Traditional" },
 ];
 
-const RECOMMENDATION_CATEGORIES = [
-  { id: "venue", label: "Venue", Icon: Home, color: "text-primary" },
-  { id: "teacher", label: "Teacher", Icon: GraduationCap, color: "text-purple-600 dark:text-purple-400" },
-  { id: "accommodation", label: "Accommodation", Icon: Home, color: "text-blue-600 dark:text-blue-400" },
-  { id: "restaurant", label: "Restaurant", Icon: Utensils, color: "text-orange-600 dark:text-orange-400" },
-  { id: "shop", label: "Shop", Icon: ShoppingBag, color: "text-pink-600 dark:text-pink-400" },
-  { id: "service", label: "Service", Icon: Wrench, color: "text-green-600 dark:text-green-400" },
+const RECOMMENDATION_CATEGORIES_BASE = [
+  { id: "venue", labelKey: "venue", fallback: "Venue", Icon: Home, color: "text-primary" },
+  { id: "teacher", labelKey: "teacher", fallback: "Teacher", Icon: GraduationCap, color: "text-purple-600 dark:text-purple-400" },
+  { id: "accommodation", labelKey: "accommodation", fallback: "Accommodation", Icon: Home, color: "text-blue-600 dark:text-blue-400" },
+  { id: "restaurant", labelKey: "restaurant", fallback: "Restaurant", Icon: Utensils, color: "text-orange-600 dark:text-orange-400" },
+  { id: "shop", labelKey: "shop", fallback: "Shop", Icon: ShoppingBag, color: "text-pink-600 dark:text-pink-400" },
+  { id: "service", labelKey: "service", fallback: "Service", Icon: Wrench, color: "text-green-600 dark:text-green-400" },
 ];
 
 export default function FeedPage() {
   const { t } = useTranslation(["pages", "common"]);
+  
+  // Translated recommendation categories (computed inside component)
+  const RECOMMENDATION_CATEGORIES = RECOMMENDATION_CATEGORIES_BASE.map(cat => ({
+    ...cat,
+    label: t(`pages:feed.recommendations.${cat.labelKey}`, cat.fallback)
+  }));
+  
   // Feed algorithm state (Features 12-13)
   const [feedType, setFeedType] = useState<"following" | "discover">("following");
   const [filter, setFilter] = useState<"all" | "friends" | "public" | "saved" | "my-posts" | "mentions">("all");
@@ -503,24 +510,30 @@ export default function FeedPage() {
       <Dialog open={showRecommendationDialog} onOpenChange={setShowRecommendationDialog}>
         <DialogContent data-testid="dialog-recommendation">
           <DialogHeader>
-            <DialogTitle>Add Recommendation</DialogTitle>
+            <DialogTitle>{t('pages:feed.addRecommendation', 'Add Recommendation')}</DialogTitle>
             <DialogDescription>
-              Recommend a {RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase()} and specify its location.
+              {t('pages:feed.recommendDescription', { 
+                category: RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase(),
+                defaultValue: `Recommend a ${RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase()} and specify its location.`
+              })}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="rec-name">Name *</Label>
+              <Label htmlFor="rec-name">{t('pages:feed.recNameLabel', 'Name *')}</Label>
               <Input
                 id="rec-name"
-                placeholder={`Enter ${RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase()} name`}
+                placeholder={t('pages:feed.recNamePlaceholder', {
+                  category: RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase(),
+                  defaultValue: `Enter ${RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase()} name`
+                })}
                 value={recName}
                 onChange={(e) => setRecName(e.target.value)}
                 data-testid="input-rec-name"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="rec-location">Location</Label>
+              <Label htmlFor="rec-location">{t('pages:feed.recLocationLabel', 'Location')}</Label>
               <UnifiedLocationPicker
                 value={recLocation}
                 coordinates={recCoordinates}
@@ -528,7 +541,7 @@ export default function FeedPage() {
                   setRecLocation(location);
                   setRecCoordinates(coords);
                 }}
-                placeholder="Search for a location..."
+                placeholder={t('pages:feed.locationPlaceholder', 'Search for a location...')}
                 data-testid="input-rec-location"
               />
             </div>
@@ -545,13 +558,13 @@ export default function FeedPage() {
               }}
               data-testid="button-cancel-rec"
             >
-              Cancel
+              {t('common:cancel', 'Cancel')}
             </Button>
             <Button
               onClick={addRecommendation}
               data-testid="button-add-rec"
             >
-              Add Recommendation
+              {t('pages:feed.addRecommendationButton', 'Add Recommendation')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -569,13 +582,13 @@ export default function FeedPage() {
       <AlertDialog open={deletingPostId !== null} onOpenChange={(open) => !open && setDeletingPostId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogTitle>{t('pages:feed.deletePostTitle', 'Delete Post')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this post? This action cannot be undone.
+              {t('pages:feed.deletePostDescription', 'Are you sure you want to delete this post? This action cannot be undone.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common:cancel', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
                 if (deletingPostId) {
@@ -583,13 +596,13 @@ export default function FeedPage() {
                     await apiRequest("DELETE", `/api/posts/${deletingPostId}`);
                     queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
                     toast({
-                      title: "Post deleted",
-                      description: "Your post has been deleted",
+                      title: t('pages:feed.postDeleted', 'Post deleted'),
+                      description: t('pages:feed.postDeletedDescription', 'Your post has been deleted'),
                     });
                   } catch (error) {
                     toast({
-                      title: "Delete failed",
-                      description: "Could not delete post",
+                      title: t('pages:feed.deleteFailed', 'Delete failed'),
+                      description: t('pages:feed.deleteFailedDescription', 'Could not delete post'),
                       variant: "destructive",
                     });
                   }
@@ -598,7 +611,7 @@ export default function FeedPage() {
               }}
               className="bg-destructive hover:bg-destructive/90"
             >
-              Delete
+              {t('common:delete', 'Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
