@@ -156,21 +156,21 @@ export default function VenuesPage() {
                     </div>
 
                     <CardContent className="p-6 space-y-4">
-                      {venue.rating && (
+                      {venue.rating != null && !isNaN(Number(venue.rating)) && (
                         <div className="flex items-center gap-2">
                           <div className="flex items-center gap-1">
                             {[...Array(5)].map((_, i) => (
                               <Star
                                 key={i}
                                 className={`h-4 w-4 ${
-                                  i < Math.floor(venue.rating)
+                                  i < Math.floor(Number(venue.rating))
                                     ? 'fill-yellow-400 text-yellow-400'
                                     : 'text-muted-foreground'
                                 }`}
                               />
                             ))}
                           </div>
-                          <span className="text-sm font-medium">{venue.rating.toFixed(1)}</span>
+                          <span className="text-sm font-medium">{Number(venue.rating).toFixed(1)}</span>
                           {venue.reviewCount && (
                             <span className="text-sm text-muted-foreground">
                               ({venue.reviewCount} reviews)
