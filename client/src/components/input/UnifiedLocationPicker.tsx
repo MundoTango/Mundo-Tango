@@ -113,7 +113,7 @@ export function UnifiedLocationPicker({
     if (inputContainerRef.current) {
       const rect = inputContainerRef.current.getBoundingClientRect();
       setDropdownPosition({
-        top: rect.bottom + window.scrollY + 8,
+        top: rect.bottom + window.scrollY + 2,
         left: rect.left + window.scrollX,
         width: rect.width,
       });
