@@ -463,11 +463,6 @@ const communityCache = {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Replit Auth setup (must be before other routes)
-  const { setupAuth, registerAuthRoutes } = await import("./replit_integrations/auth");
-  await setupAuth(app);
-  registerAuthRoutes(app);
-
   // MB.MD Metrics endpoint (must be before CSRF middleware for Prometheus scraping)
   const { mbmdMetrics } = await import("./services/mb-md-metrics");
   app.get("/metrics", async (req: Request, res: Response) => {
