@@ -13,10 +13,10 @@ export function PublicNavbar() {
 
   const navItems = [
     { label: t('common:home'), path: "/" },
-    { label: t('navigation:footer.about'), path: "/about" },
-    { label: t('navigation:footer.contact'), path: "/contact" },
-    { label: t('navigation:resources.help'), path: "/support" },
-    { label: t('navigation:footer.volunteer'), path: "/volunteer" },
+    { label: t('common:aboutUs', 'About Us'), path: "/about" },
+    { label: t('common:contact', 'Contact'), path: "/contact" },
+    { label: t('common:help', 'Help'), path: "/support" },
+    { label: t('common:volunteer', 'Volunteer'), path: "/volunteer" },
     { label: t('common:ambassadors', 'Ambassadors'), path: "/ambassadors" }
   ];
 
