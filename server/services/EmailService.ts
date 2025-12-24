@@ -52,9 +52,22 @@ async function getCredentials() {
 async function getResendClient(): Promise<{ client: Resend; fromEmail: string } | null> {
   try {
     const { apiKey, fromEmail } = await getCredentials();
+    
+    // Use Resend's test address if custom domain isn't verified yet
+    // This allows emails to work during development/testing
+    // Production should use verified custom domain
+    const isDomainVerified = process.env.RESEND_DOMAIN_VERIFIED === 'true';
+    const effectiveFromEmail = isDomainVerified 
+      ? fromEmail 
+      : 'Mundo Tango <onboarding@resend.dev>';
+    
+    if (!isDomainVerified) {
+      console.log('[EmailService] Using Resend test domain (set RESEND_DOMAIN_VERIFIED=true when domain is verified)');
+    }
+    
     return {
       client: new Resend(apiKey),
-      fromEmail
+      fromEmail: effectiveFromEmail
     };
   } catch (error) {
     console.warn('[EmailService] Resend not configured:', error);
@@ -142,7 +155,7 @@ export class EmailService {
       try {
         // Update status to sending
         await db.update(emailQueue)
-          .set({ status: 'sending', attempts: email.attempts + 1 })
+          .set({ status: 'sending', attempts: (email.attempts ?? 0) + 1 })
           .where(eq(emailQueue.id, email.id));
         
         // Send via Resend
