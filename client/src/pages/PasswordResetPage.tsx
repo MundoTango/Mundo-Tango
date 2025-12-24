@@ -1,17 +1,59 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Key, ChevronRight, Mail } from "lucide-react";
+import { Key, ChevronRight, Mail, CheckCircle, Loader2 } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function PasswordResetPage() {
   const { t } = useTranslation(['pages', 'common']);
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const forgotPasswordMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const response = await apiRequest("POST", "/api/auth/forgot-password", { email });
+      return response.json();
+    },
+    onSuccess: () => {
+      setIsSubmitted(true);
+      toast({
+        title: t('pages:passwordReset.emailSent', 'Email Sent'),
+        description: t('pages:passwordReset.checkInbox', 'Check your inbox for the reset link'),
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('common:error', 'Error'),
+        description: error.message || t('pages:passwordReset.sendError', 'Failed to send reset email'),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      toast({
+        title: t('common:error', 'Error'),
+        description: t('pages:passwordReset.emailRequired', 'Please enter your email address'),
+        variant: "destructive",
+      });
+      return;
+    }
+    forgotPasswordMutation.mutate(email);
+  };
+
   return (
     <SelfHealingErrorBoundary pageName="Password Reset" fallbackRoute="/login">
       <>
@@ -67,29 +109,81 @@ export default function PasswordResetPage() {
               <Card>
                 <CardHeader className="text-center border-b pb-6">
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                    <Mail className="h-8 w-8 text-primary" />
+                    {isSubmitted ? (
+                      <CheckCircle className="h-8 w-8 text-green-500" />
+                    ) : (
+                      <Mail className="h-8 w-8 text-primary" />
+                    )}
                   </div>
-                  <CardTitle className="text-2xl font-serif">{t('pages:passwordReset.formTitle', 'Enter Your Email')}</CardTitle>
+                  <CardTitle className="text-2xl font-serif">
+                    {isSubmitted 
+                      ? t('pages:passwordReset.checkEmail', 'Check Your Email')
+                      : t('pages:passwordReset.formTitle', 'Enter Your Email')
+                    }
+                  </CardTitle>
                   <p className="text-base text-muted-foreground leading-relaxed mt-2">
-                    {t('pages:passwordReset.formDescription', "We'll send you instructions to reset your password")}
+                    {isSubmitted
+                      ? t('pages:passwordReset.emailSentDescription', "We've sent a password reset link to your email address. Please check your inbox and spam folder.")
+                      : t('pages:passwordReset.formDescription', "We'll send you instructions to reset your password")
+                    }
                   </p>
                 </CardHeader>
                 <CardContent className="p-8 space-y-6">
-                  <div>
-                    <Label htmlFor="email" className="text-base">{t('pages:passwordReset.emailLabel', 'Email Address')}</Label>
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      placeholder={t('pages:passwordReset.emailPlaceholder', 'you@example.com')}
-                      className="mt-2 h-12"
-                      data-testid="input-email" 
-                    />
-                  </div>
+                  {!isSubmitted ? (
+                    <form onSubmit={handleSubmit}>
+                      <div className="space-y-6">
+                        <div>
+                          <Label htmlFor="email" className="text-base">{t('pages:passwordReset.emailLabel', 'Email Address')}</Label>
+                          <Input 
+                            id="email" 
+                            type="email" 
+                            placeholder={t('pages:passwordReset.emailPlaceholder', 'you@example.com')}
+                            className="mt-2 h-12"
+                            data-testid="input-email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={forgotPasswordMutation.isPending}
+                            required
+                          />
+                        </div>
 
-                  <Button className="w-full h-12 gap-2" data-testid="button-send">
-                    {t('pages:passwordReset.sendResetLink', 'Send Reset Link')}
-                    <ChevronRight className="h-5 w-5" />
-                  </Button>
+                        <Button 
+                          type="submit" 
+                          className="w-full h-12 gap-2" 
+                          data-testid="button-send"
+                          disabled={forgotPasswordMutation.isPending}
+                        >
+                          {forgotPasswordMutation.isPending ? (
+                            <>
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                              {t('pages:passwordReset.sending', 'Sending...')}
+                            </>
+                          ) : (
+                            <>
+                              {t('pages:passwordReset.sendResetLink', 'Send Reset Link')}
+                              <ChevronRight className="h-5 w-5" />
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="text-center space-y-4">
+                      <p className="text-muted-foreground">
+                        {t('pages:passwordReset.didntReceive', "Didn't receive the email?")}
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          setIsSubmitted(false);
+                          setEmail("");
+                        }}
+                        data-testid="button-try-again"
+                      >
+                        {t('pages:passwordReset.tryAgain', 'Try Again')}
+                      </Button>
+                    </div>
+                  )}
 
                   <div className="pt-6 border-t">
                     <p className="text-center text-base text-muted-foreground">

@@ -6,6 +6,7 @@ import RegisterPage from "@/pages/RegisterPage";
 
 const FacebookCallbackPage = lazy(() => import("@/pages/auth/FacebookCallbackPage"));
 const PasswordResetPage = lazy(() => import("@/pages/PasswordResetPage"));
+const NewPasswordPage = lazy(() => import("@/pages/NewPasswordPage"));
 const EmailVerificationPage = lazy(() => import("@/pages/EmailVerificationPage"));
 const TwoFactorAuthPage = lazy(() => import("@/pages/TwoFactorAuthPage"));
 
@@ -22,6 +23,16 @@ export function AuthRoutes() {
       <Route path="/password-reset">
         <Suspense fallback={<LoadingFallback />}>
           <PasswordResetPage />
+        </Suspense>
+      </Route>
+      <Route path="/forgot-password">
+        <Suspense fallback={<LoadingFallback />}>
+          <PasswordResetPage />
+        </Suspense>
+      </Route>
+      <Route path="/reset-password/:token">
+        <Suspense fallback={<LoadingFallback />}>
+          <NewPasswordPage />
         </Suspense>
       </Route>
       <Route path="/email-verification">

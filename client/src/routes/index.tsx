@@ -58,7 +58,7 @@ export function RouteLoader() {
     if (location.startsWith("/onboarding") || location.startsWith("/welcome-tour")) {
       return <OnboardingRoutes />;
     }
-    if (location.startsWith("/login") || location.startsWith("/register") || location.startsWith("/auth") || location.startsWith("/password-reset") || location.startsWith("/email-verification") || location.startsWith("/2fa")) {
+    if (location.startsWith("/login") || location.startsWith("/register") || location.startsWith("/auth") || location.startsWith("/password-reset") || location.startsWith("/forgot-password") || location.startsWith("/reset-password") || location.startsWith("/email-verification") || location.startsWith("/2fa")) {
       return <AuthRoutes />;
     }
     if (location.startsWith("/talent-match") || location.startsWith("/enhanced-talent") || location.startsWith("/volunteer-recruitment") || location.startsWith("/volunteer-testing") || location.startsWith("/user-testing") || location.startsWith("/error-detection") || location.startsWith("/premium-features") || location.startsWith("/ai-budget") || location.startsWith("/privacy-hub") || location.startsWith("/god-level") || location.startsWith("/autonomous") || location.startsWith("/my-tasks")) {
