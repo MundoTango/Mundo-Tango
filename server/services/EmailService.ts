@@ -488,6 +488,47 @@ export class EmailService {
           </div>
         </body>
         </html>
+      `,
+      
+      emailVerification: (data) => `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f4f4f4; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { padding: 30px; background: white; border-radius: 0 0 8px 8px; }
+            .button { display: inline-block; padding: 14px 28px; background: #28a745; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }
+            .info { background: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 6px; margin: 20px 0; color: #0c5460; }
+            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Verify Your Email</h1>
+            </div>
+            <div class="content">
+              <p>Hi ${data.name},</p>
+              <p>Welcome to Mundo Tango! Please verify your email address to complete your registration and unlock all features.</p>
+              <div style="text-align: center;">
+                <a href="${data.verifyUrl}" class="button">Verify My Email</a>
+              </div>
+              <div class="info">
+                <strong>This link expires in 24 hours.</strong><br>
+                If you didn't create an account on Mundo Tango, you can safely ignore this email.
+              </div>
+              <p>If the button doesn't work, copy and paste this link into your browser:</p>
+              <p style="word-break: break-all; color: #667eea;">${data.verifyUrl}</p>
+            </div>
+            <div class="footer">
+              <p>This email was sent by Mundo Tango. If you have questions, contact our support team.</p>
+              <p>Mundo Tango. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
       `
     };
     
@@ -550,6 +591,45 @@ export class EmailService {
       return true;
     } catch (error: any) {
       console.error(`[EmailService] Failed to send password reset email to ${email}:`, error);
+      return false;
+    }
+  }
+  
+  // Helper: Send email verification email (direct send, not queued - time-sensitive)
+  static async sendVerificationEmail(email: string, name: string, verificationToken: string): Promise<boolean> {
+    try {
+      let appUrl = process.env.APP_URL;
+      if (!appUrl && process.env.REPLIT_DEV_DOMAIN) {
+        appUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+      }
+      if (!appUrl) {
+        appUrl = 'http://localhost:5000';
+      }
+      const verifyUrl = `${appUrl}/verify-email/${verificationToken}`;
+      
+      const html = this.renderTemplate('emailVerification', {
+        name: name || 'Tango Dancer',
+        verifyUrl
+      });
+      
+      const resendClient = await getResendClient();
+      if (!resendClient) {
+        console.log(`[EmailService] Verification email would be sent to ${email} (Resend not configured)`);
+        console.log(`[EmailService] Verify URL: ${verifyUrl}`);
+        return true; // Return true so the registration endpoint still responds successfully
+      }
+      
+      const result = await resendClient.client.emails.send({
+        from: resendClient.fromEmail,
+        to: email,
+        subject: 'Verify Your Email - Mundo Tango',
+        html: html
+      });
+      
+      console.log(`[EmailService] Verification email sent to ${email}`, result);
+      return true;
+    } catch (error: any) {
+      console.error(`[EmailService] Failed to send verification email to ${email}:`, error);
       return false;
     }
   }

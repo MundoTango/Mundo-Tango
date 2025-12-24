@@ -36,6 +36,7 @@ const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
   twoFactorCode: z.string().optional(),
+  inviteCode: z.string().optional(),
 });
 
 const verifyEmailSchema = z.object({
@@ -144,42 +145,22 @@ router.post("/register", async (req: Request, res: Response) => {
       token: verificationToken,
       expiresAt,
     });
+    
+    // Send verification email (don't await - fire and forget to not block registration)
+    EmailService.sendVerificationEmail(user.email, user.name || user.username, verificationToken)
+      .then(sent => {
+        if (sent) {
+          console.log(`[Auth] Verification email sent to ${user.email}`);
+        }
+      })
+      .catch(err => console.error('[Auth] Failed to send verification email:', err));
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-
-    const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    await storage.createRefreshToken({
-      userId: user.id,
-      token: refreshToken,
-      expiresAt: refreshExpiresAt,
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/",
-    });
-
-    const userResponse = {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      name: user.name,
-      isVerified: user.isVerified,
-      role: user.role,
-      isOnboardingComplete: user.isOnboardingComplete,
-      formStatus: user.formStatus,
-      waitlist: user.waitlist,
-    };
-
+    // Do NOT issue tokens yet - user must verify email first
+    // This prevents users from bypassing email verification
     res.status(201).json({
-      message: "Registration successful",
-      user: userResponse,
-      accessToken,
-      verificationToken,
+      message: "Registration successful. Please check your email to verify your account.",
+      requiresVerification: true,
+      email: user.email,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -196,7 +177,7 @@ router.post("/register", async (req: Request, res: Response) => {
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
-    const { email, password, twoFactorCode } = loginSchema.parse(req.body);
+    const { email, password, twoFactorCode, inviteCode } = loginSchema.parse(req.body);
 
     const user = await storage.getUserByEmail(email);
     if (!user) {
@@ -214,6 +195,25 @@ router.post("/login", async (req: Request, res: Response) => {
 
     if (user.suspended) {
       return res.status(403).json({ message: "Account is suspended" });
+    }
+
+    // Check if user has verified their email
+    if (!user.isVerified) {
+      return res.status(403).json({ 
+        message: "Please verify your email before logging in. Check your inbox for the verification link.",
+        requiresVerification: true,
+        email: user.email
+      });
+    }
+
+    // Check if user is on waitlist and provided valid invite code to upgrade
+    const trimmedCode = inviteCode?.toLowerCase().trim();
+    const isValidInviteCode = trimmedCode && VALID_INVITE_CODES.includes(trimmedCode);
+    
+    if (user.waitlist && isValidInviteCode) {
+      // Upgrade user from waitlist to full access
+      await storage.updateUser(user.id, { waitlist: false });
+      console.log(`[Auth] User ${user.id} upgraded from waitlist with invite code`);
     }
 
     if (user.twoFactorEnabled) {
@@ -270,6 +270,10 @@ router.post("/login", async (req: Request, res: Response) => {
       expiresAt: refreshExpiresAt,
     });
 
+    // Determine current waitlist status (may have been upgraded above)
+    const wasUpgraded = user.waitlist && isValidInviteCode;
+    const currentWaitlist = wasUpgraded ? false : user.waitlist;
+    
     const userResponse = {
       id: user.id,
       email: user.email,
@@ -278,6 +282,7 @@ router.post("/login", async (req: Request, res: Response) => {
       isVerified: user.isVerified,
       role: user.role,
       twoFactorEnabled: user.twoFactorEnabled,
+      waitlist: currentWaitlist,
     };
 
     res.cookie("refreshToken", refreshToken, {
@@ -289,9 +294,10 @@ router.post("/login", async (req: Request, res: Response) => {
     });
 
     res.json({
-      message: "Login successful",
+      message: wasUpgraded ? "Login successful - Account upgraded!" : "Login successful",
       accessToken,
       user: userResponse,
+      upgraded: wasUpgraded,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -456,6 +462,117 @@ router.post("/verify-email", async (req: Request, res: Response) => {
       });
     }
     console.error("Email verification error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// GET endpoint for email verification (for clicking links in emails)
+router.get("/verify-email/:token", async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+    
+    if (!token || token.length < 32) {
+      return res.status(400).json({ message: "Invalid verification token" });
+    }
+
+    const verificationToken = await storage.getEmailVerificationToken(token);
+    if (!verificationToken) {
+      return res.status(400).json({ message: "Invalid or expired verification token" });
+    }
+
+    // Check if token has expired
+    if (verificationToken.expiresAt && new Date() > verificationToken.expiresAt) {
+      await storage.deleteEmailVerificationToken(token);
+      return res.status(400).json({ message: "Verification token has expired. Please request a new one." });
+    }
+
+    await storage.updateUser(verificationToken.userId, {
+      isVerified: true,
+    });
+
+    await storage.deleteEmailVerificationToken(token);
+
+    res.json({ message: "Email verified successfully" });
+  } catch (error) {
+    console.error("Email verification error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Resend verification email endpoint
+const resendVerificationSchema = z.object({
+  email: z.string().email(),
+});
+
+// Track resend attempts per email (in-memory rate limiting)
+const resendAttempts = new Map<string, { count: number; firstAttempt: Date }>();
+
+router.post("/resend-verification", async (req: Request, res: Response) => {
+  try {
+    const { email } = resendVerificationSchema.parse(req.body);
+    
+    // Rate limiting: max 3 resends per hour per email
+    const now = new Date();
+    const attempts = resendAttempts.get(email);
+    
+    if (attempts) {
+      const hoursSinceFirst = (now.getTime() - attempts.firstAttempt.getTime()) / (1000 * 60 * 60);
+      
+      if (hoursSinceFirst < 1 && attempts.count >= 3) {
+        return res.status(429).json({ 
+          message: "Too many verification requests. Please try again later.",
+          retryAfter: Math.ceil(60 - (hoursSinceFirst * 60))
+        });
+      }
+      
+      if (hoursSinceFirst >= 1) {
+        resendAttempts.set(email, { count: 1, firstAttempt: now });
+      } else {
+        resendAttempts.set(email, { count: attempts.count + 1, firstAttempt: attempts.firstAttempt });
+      }
+    } else {
+      resendAttempts.set(email, { count: 1, firstAttempt: now });
+    }
+    
+    const user = await storage.getUserByEmail(email);
+    
+    // Don't reveal if email exists or not for security
+    if (!user) {
+      return res.json({ message: "If an account exists with this email, a verification link has been sent." });
+    }
+    
+    if (user.isVerified) {
+      return res.json({ message: "Your email is already verified. You can log in." });
+    }
+    
+    // Delete any existing verification tokens for this user
+    const existingToken = await storage.getEmailVerificationTokenByUserId?.(user.id);
+    if (existingToken) {
+      await storage.deleteEmailVerificationToken(existingToken.token);
+    }
+    
+    // Create new verification token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    
+    await storage.createEmailVerificationToken({
+      userId: user.id,
+      token: verificationToken,
+      expiresAt,
+    });
+    
+    // Send verification email
+    await EmailService.sendVerificationEmail(user.email, user.name || user.username, verificationToken);
+    
+    res.json({ message: "If an account exists with this email, a verification link has been sent." });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        message: "Validation error", 
+        errors: error.errors 
+      });
+    }
+    console.error("Resend verification error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

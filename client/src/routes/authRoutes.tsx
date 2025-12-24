@@ -8,6 +8,7 @@ const FacebookCallbackPage = lazy(() => import("@/pages/auth/FacebookCallbackPag
 const PasswordResetPage = lazy(() => import("@/pages/PasswordResetPage"));
 const NewPasswordPage = lazy(() => import("@/pages/NewPasswordPage"));
 const EmailVerificationPage = lazy(() => import("@/pages/EmailVerificationPage"));
+const VerifyEmailPage = lazy(() => import("@/pages/VerifyEmailPage"));
 const TwoFactorAuthPage = lazy(() => import("@/pages/TwoFactorAuthPage"));
 
 export function AuthRoutes() {
@@ -38,6 +39,11 @@ export function AuthRoutes() {
       <Route path="/email-verification">
         <Suspense fallback={<LoadingFallback />}>
           <EmailVerificationPage />
+        </Suspense>
+      </Route>
+      <Route path="/verify-email/:token">
+        <Suspense fallback={<LoadingFallback />}>
+          <VerifyEmailPage />
         </Suspense>
       </Route>
       <Route path="/2fa">

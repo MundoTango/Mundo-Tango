@@ -58,8 +58,8 @@ interface AuthContextType {
   profile: Profile | null;
   session: { accessToken: string } | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: { name: string; username: string; email: string; password: string; inviteCode?: string }) => Promise<void>;
+  login: (email: string, password: string, inviteCode?: string) => Promise<{ upgraded?: boolean; requiresVerification?: boolean; verificationEmail?: string }>;
+  register: (data: { name: string; username: string; email: string; password: string; inviteCode?: string }) => Promise<{ requiresVerification: boolean; email: string }>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>;
   refreshCurrentUser: () => Promise<boolean>;
@@ -235,7 +235,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return match ? match[1] : null;
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, inviteCode?: string): Promise<{ upgraded?: boolean; requiresVerification?: boolean; verificationEmail?: string }> => {
     try {
       console.log("[Auth] Starting login for:", email);
       const csrfToken = getCsrfToken();
@@ -250,18 +250,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: "POST",
         headers,
         credentials: "include",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, inviteCode: inviteCode || undefined }),
       });
 
       console.log("[Auth] Login response status:", response.status);
       if (!response.ok) {
         const data = await response.json();
         console.error("[Auth] Login failed:", data.message);
+        
+        // Handle email verification required response
+        if (data.requiresVerification) {
+          console.log("[Auth] Email verification required for:", data.email);
+          return { requiresVerification: true, verificationEmail: data.email };
+        }
+        
         throw new Error(data.message || "Login failed");
       }
 
       const data = await response.json();
-      console.log("[Auth] Login successful, got accessToken:", !!data.accessToken);
+      console.log("[Auth] Login successful, got accessToken:", !!data.accessToken, "upgraded:", data.upgraded);
 
       localStorage.setItem("accessToken", data.accessToken);
       console.log("[Auth] Stored accessToken in localStorage");
@@ -274,15 +281,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log("[Auth] Login complete!");
 
       // Note: Redirect is handled by the caller (LoginPage) to support redirect query params
+      return { upgraded: data.upgraded };
     } catch (error) {
       console.error("[Auth] Login error:", error);
       throw error;
     }
   };
 
-  const register = async (registerData: { name: string; username: string; email: string; password: string; inviteCode?: string }) => {
+  const register = async (registerData: { name: string; username: string; email: string; password: string; inviteCode?: string }): Promise<{ requiresVerification: boolean; email: string }> => {
     try {
-      console.log("Starting registration for:", registerData.email);
+      console.log("[Auth] Starting registration for:", registerData.email);
       
       const csrfToken = getCsrfToken();
       const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -303,31 +311,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const data = await response.json();
-      console.log("Registration successful!", data);
+      console.log("[Auth] Registration response:", data);
       
-      localStorage.setItem("accessToken", data.accessToken);
-      setSession({ accessToken: data.accessToken });
-      setUser(data.user);
-      setProfile({
-        id: data.user.id,
-        username: data.user.username,
-        name: data.user.name,
-        email: data.user.email,
-        profileImage: data.user.profileImage,
-        bio: data.user.bio,
-        city: data.user.city,
-        country: data.user.country,
-        tangoRoles: data.user.tangoRoles || [],
-      });
-
-      if (!data.user.isOnboardingComplete) {
-        navigate("/onboarding/welcome");
-      } else {
-        // After registration and onboarding, redirect to volunteer/support page
-        navigate("/volunteer");
+      // New flow: registration requires email verification before login
+      if (data.requiresVerification) {
+        console.log("[Auth] Email verification required, redirecting to verification page");
+        return { requiresVerification: true, email: data.email };
       }
+      
+      // Legacy flow (if verification not required for some reason)
+      if (data.accessToken) {
+        localStorage.setItem("accessToken", data.accessToken);
+        setSession({ accessToken: data.accessToken });
+        setUser(data.user);
+        setProfile({
+          id: data.user.id,
+          username: data.user.username,
+          name: data.user.name,
+          email: data.user.email,
+          profileImage: data.user.profileImage,
+          bio: data.user.bio,
+          city: data.user.city,
+          country: data.user.country,
+          tangoRoles: data.user.tangoRoles || [],
+        });
+
+        if (!data.user.isOnboardingComplete) {
+          navigate("/onboarding/welcome");
+        } else {
+          navigate("/volunteer");
+        }
+      }
+      
+      return { requiresVerification: false, email: registerData.email };
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("[Auth] Registration error:", error);
       throw error;
     }
   };

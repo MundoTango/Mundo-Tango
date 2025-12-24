@@ -11,7 +11,7 @@ import { SEO } from "@/components/SEO";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import { Heart, Sparkles, Users, Loader2 } from "lucide-react";
+import { Heart, Sparkles, Users, Loader2, KeyRound, Check, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
@@ -19,8 +19,12 @@ export default function LoginPage() {
   const { t } = useTranslation(['pages', 'common']);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [showInviteCode, setShowInviteCode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  
+  const isCodeValid = inviteCode.toLowerCase().trim() === "nomad";
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   
@@ -42,11 +46,31 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      toast({
-        title: t('pages:login.toast.successTitle', 'Welcome back!'),
-        description: t('pages:login.toast.successDescription', "You've successfully logged in."),
-      });
+      const result = await login(email, password, inviteCode || undefined);
+      
+      // Handle email verification required
+      if (result?.requiresVerification) {
+        toast({
+          title: t('pages:login.toast.verificationRequired.title', 'Email verification required'),
+          description: t('pages:login.toast.verificationRequired.description', 'Please check your inbox and verify your email first.'),
+          variant: "destructive",
+        });
+        setLocation(`/email-verification?email=${encodeURIComponent(result.verificationEmail || email)}`);
+        return;
+      }
+      
+      if (result?.upgraded) {
+        toast({
+          title: t('pages:login.toast.upgradedTitle', 'Account Upgraded!'),
+          description: t('pages:login.toast.upgradedDescription', "Welcome! You now have full access to Mundo Tango."),
+        });
+      } else {
+        toast({
+          title: t('pages:login.toast.successTitle', 'Welcome back!'),
+          description: t('pages:login.toast.successDescription', "You've successfully logged in."),
+        });
+      }
+      
       // Redirect to the specified URL or default to /feed
       // Use setTimeout to ensure navigation happens after React state updates
       setTimeout(() => {
@@ -155,6 +179,48 @@ export default function LoginPage() {
                       data-testid="input-password"
                       className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
                     />
+                  </div>
+
+                  {/* Invite Code Section */}
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowInviteCode(!showInviteCode)}
+                      className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+                      data-testid="button-toggle-invite-code"
+                    >
+                      <KeyRound className="w-4 h-4" />
+                      {t('pages:login.form.haveInviteCode', 'Have an invite code?')}
+                    </button>
+                    
+                    {showInviteCode && (
+                      <div className="relative">
+                        <Input
+                          id="inviteCode"
+                          type="text"
+                          placeholder={t('pages:login.form.inviteCodePlaceholder', 'Enter invite code')}
+                          value={inviteCode}
+                          onChange={(e) => setInviteCode(e.target.value)}
+                          disabled={isLoading}
+                          data-testid="input-invite-code"
+                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
+                        />
+                        {inviteCode && (
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            {isCodeValid ? (
+                              <Check className="w-5 h-5 text-green-400" data-testid="icon-code-valid" />
+                            ) : (
+                              <X className="w-5 h-5 text-red-400" data-testid="icon-code-invalid" />
+                            )}
+                          </div>
+                        )}
+                        {isCodeValid && (
+                          <p className="text-xs text-green-400 mt-1" data-testid="text-upgrade-message">
+                            {t('pages:login.form.upgradeMessage', 'Your account will be upgraded from waitlist!')}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <Button

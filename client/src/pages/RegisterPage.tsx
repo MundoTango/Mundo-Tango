@@ -171,13 +171,21 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await register({ 
+      const result = await register({ 
         name, 
         username, 
         email, 
         password, 
         inviteCode: inviteCode.trim() || undefined 
       });
+      
+      if (result.requiresVerification) {
+        toast({
+          title: t('pages:register.toast.checkEmail.title', 'Check your email'),
+          description: t('pages:register.toast.checkEmail.description', 'We sent you a verification link. Please check your inbox.'),
+        });
+        navigate(`/email-verification?email=${encodeURIComponent(result.email)}`);
+      }
     } catch (error: any) {
       toast({
         title: isCodeValid 
