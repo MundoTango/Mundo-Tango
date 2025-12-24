@@ -1,15 +1,25 @@
 // ============================================================================
+// GLOBAL ERROR HANDLERS - MUST BE FIRST
+// ============================================================================
+process.on('uncaughtException', (err) => {
+  console.error('💥 UNCAUGHT EXCEPTION:', err);
+  console.error('Stack:', err.stack);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('💥 UNHANDLED REJECTION at:', promise);
+  console.error('Reason:', reason);
+});
+
+// ============================================================================
 // OPENTELEMETRY INSTRUMENTATION - MUST BE FIRST IMPORT
 // ============================================================================
 import './instrumentation';
 
-console.log("🔍 [DEBUG] Starting server/index.ts imports...");
 import express, { type Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-console.log("🔍 [DEBUG] About to import ./routes...");
 import { registerRoutes } from "./routes";
-console.log("✅ [DEBUG] ./routes imported");
 import { setupVite, serveStatic, log } from "./vite";
 import { startPreviewExpirationChecker } from "./lib/preview-expiration";
 import { initStoryExpirationJob } from "./jobs/expireStories";
@@ -20,7 +30,6 @@ import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from 
 import { PolicyMonitoringJobs } from "./jobs/policy-monitoring-jobs";
 import { recursiveContextService } from "./services/intelligence/RecursiveContextService";
 import { facelessContentService } from "./services/content/FacelessContentService";
-console.log("✅ [DEBUG] All imports complete in server/index.ts");
 // ============================================================================
 // SENTRY DISABLED: CSP VIOLATIONS FIX (MB.MD SUBAGENT 3)
 // Sentry was injecting 'unsafe-dynamic' and 'report-uri' causing 4891 CSP errors
@@ -42,8 +51,6 @@ import {
 } from "./middleware/rateLimiter";
 import { cspNonce, securityHeaders, additionalSecurityHeaders, applySecurity as applySecurityFromHeaders } from "./middleware/securityHeaders";
 import { setCsrfToken, verifyDoubleSubmitCookie } from "./middleware/csrf";
-
-console.log("✅ [DEBUG] All server/index.ts imports completed!");
 
 const app = express();
 
@@ -164,8 +171,6 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  console.log("🚀 [DEBUG] IIFE starting...");
-  
   // Apply rate limiting to specific route patterns
   app.use('/api/auth', authRateLimiter);
   app.use('/api/admin', adminRateLimiter);
@@ -177,9 +182,7 @@ app.use((req, res, next) => {
   // Note: setCsrfToken is already applied globally above, only verify on mutations here
   app.use('/api', verifyDoubleSubmitCookie); // Verify token on mutations
   
-  console.log("🔧 [DEBUG] About to register routes...");
   const server = await registerRoutes(app);
-  console.log("✅ [DEBUG] Routes registered successfully");
 
   // Sentry error handler (must be before other error handlers) - DISABLED (CSP FIX)
   // app.use(getSentryErrorHandler());
@@ -200,18 +203,10 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  console.log("🔧 [DEBUG] About to setup Vite/static...");
   if (app.get("env") === "development") {
-    try {
-      await setupVite(app, server);
-      console.log("✅ [DEBUG] Vite setup complete");
-    } catch (err) {
-      console.error("❌ [DEBUG] Vite setup failed:", err);
-      throw err;
-    }
+    await setupVite(app, server);
   } else {
     serveStatic(app);
-    console.log("✅ [DEBUG] Static serving setup complete");
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
