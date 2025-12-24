@@ -1,4 +1,13 @@
 {
+  "home": "Home",
+  "aboutUs": "Chi Siamo",
+  "contact": "Contatti",
+  "help": "Aiuto",
+  "volunteer": "Volontariato",
+  "ambassadors": "Ambasciatori",
+  "whoItsFor": "Per Chi È",
+  "tangoRoles": "Ruoli del Tango",
+  "openSource": "Open Source",
   "watchDemo": "Guarda la Demo",
   "globalMap": "Mappa Globale del Tango",
   "globalMapDesc": "Scopri ballerini, eventi e comunità in tutto il mondo. Non sentirti mai solo nel tuo viaggio nel tango.",
@@ -189,9 +198,5 @@
     "yourCity": "La Tua Città",
     "globalStatistics": "Statistiche Globali",
     "globalCommunity": "Comunità Globale"
-  },
-  "home": "home",
-  "ambassadors": "Ambassadors",
-  "tangoRoles": "Tango Roles",
-  "openSource": "Open Source"
+  }
 }

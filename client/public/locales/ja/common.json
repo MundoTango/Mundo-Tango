@@ -1,4 +1,13 @@
 {
+  "home": "ホーム",
+  "aboutUs": "私たちについて",
+  "contact": "お問い合わせ",
+  "help": "ヘルプ",
+  "volunteer": "ボランティア",
+  "ambassadors": "アンバサダー",
+  "whoItsFor": "対象者",
+  "tangoRoles": "タンゴの役割",
+  "openSource": "オープンソース",
   "watchDemo": "デモを見る",
   "globalMap": "グローバルタンゴマップ",
   "globalMapDesc": "世界中のダンサー、イベント、コミュニティを発見しましょう。タンゴの旅で孤独を感じることはありません。",
@@ -189,9 +198,5 @@
     "yourCity": "あなたの都市",
     "globalStatistics": "グローバル統計",
     "globalCommunity": "グローバルコミュニティ"
-  },
-  "home": "home",
-  "ambassadors": "Ambassadors",
-  "tangoRoles": "Tango Roles",
-  "openSource": "Open Source"
+  }
 }

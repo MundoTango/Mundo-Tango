@@ -1,4 +1,13 @@
 {
+  "home": "Home",
+  "aboutUs": "About Us",
+  "contact": "Contact",
+  "help": "Help",
+  "volunteer": "Volunteer",
+  "ambassadors": "Ambassadors",
+  "whoItsFor": "Who It's For",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source",
   "buttons": {
     "login": "Login",
     "logout": "Logout",

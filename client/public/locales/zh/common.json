@@ -1,4 +1,13 @@
 {
+  "home": "首页",
+  "aboutUs": "关于我们",
+  "contact": "联系我们",
+  "help": "帮助",
+  "volunteer": "志愿者",
+  "ambassadors": "大使",
+  "whoItsFor": "适用人群",
+  "tangoRoles": "探戈角色",
+  "openSource": "开源",
   "watchDemo": "观看演示",
   "globalMap": "全球探戈地图",
   "globalMapDesc": "发现世界各地的舞者、活动和社区。在探戈之旅中永不孤单。",
@@ -189,9 +198,5 @@
     "yourCity": "您的城市",
     "globalStatistics": "全球统计",
     "globalCommunity": "全球社区"
-  },
-  "home": "home",
-  "ambassadors": "Ambassadors",
-  "tangoRoles": "Tango Roles",
-  "openSource": "Open Source"
+  }
 }

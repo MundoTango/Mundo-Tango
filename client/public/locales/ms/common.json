@@ -1,4 +1,13 @@
 {
+  "home": "home",
+  "aboutUs": "About Us",
+  "contact": "Contact",
+  "help": "Help",
+  "volunteer": "Volunteer",
+  "ambassadors": "Ambassadors",
+  "whoItsFor": "Who It's For",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source",
   "buttons": {
     "login": "Login",
     "logout": "Logout",
@@ -134,11 +143,7 @@
     "globalStatistics": "Global Statistics",
     "globalCommunity": "Global Community"
   },
-  "home": "home",
-  "ambassadors": "Ambassadors",
   "forDancers": "For Dancers",
   "forTeachers": "For Teachers",
-  "forOrganizers": "For Organizers",
-  "tangoRoles": "Tango Roles",
-  "openSource": "Open Source"
+  "forOrganizers": "For Organizers"
 }

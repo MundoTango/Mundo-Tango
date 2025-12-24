@@ -1,4 +1,13 @@
 {
+  "home": "Главная",
+  "aboutUs": "О Нас",
+  "contact": "Контакты",
+  "help": "Помощь",
+  "volunteer": "Волонтёрство",
+  "ambassadors": "Амбассадоры",
+  "whoItsFor": "Для Кого",
+  "tangoRoles": "Роли Танго",
+  "openSource": "Открытый Код",
   "watchDemo": "Смотреть демо",
   "globalMap": "Глобальная карта танго",
   "globalMapDesc": "Откройте для себя танцоров, события и сообщества по всему миру. Никогда не чувствуйте себя одиноким в путешествии танго.",
@@ -189,9 +198,5 @@
     "yourCity": "Ваш город",
     "globalStatistics": "Глобальная статистика",
     "globalCommunity": "Глобальное сообщество"
-  },
-  "home": "home",
-  "ambassadors": "Ambassadors",
-  "tangoRoles": "Tango Roles",
-  "openSource": "Open Source"
+  }
 }

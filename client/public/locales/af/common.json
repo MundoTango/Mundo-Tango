@@ -1,4 +1,13 @@
 {
+  "home": "home",
+  "aboutUs": "About Us",
+  "contact": "Contact",
+  "help": "Help",
+  "volunteer": "Volunteer",
+  "ambassadors": "Ambassadors",
+  "whoItsFor": "Who It's For",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source",
   "watchDemo": "Kyk Demo",
   "globalMap": "Globale Tango Kaart",
   "globalMapDesc": "Ontdek dansers, geleenthede en gemeenskappe regoor die wêreld. Voel nooit alleen in jou tango-reis nie.",
@@ -189,9 +198,5 @@
     "yourCity": "Jou Stad",
     "globalStatistics": "Globale Statistieke",
     "globalCommunity": "Globale Gemeenskap"
-  },
-  "home": "home",
-  "ambassadors": "Ambassadors",
-  "tangoRoles": "Tango Roles",
-  "openSource": "Open Source"
+  }
 }

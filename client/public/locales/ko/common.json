@@ -1,4 +1,13 @@
 {
+  "home": "홈",
+  "aboutUs": "소개",
+  "contact": "연락처",
+  "help": "도움말",
+  "volunteer": "자원봉사",
+  "ambassadors": "앰배서더",
+  "whoItsFor": "대상",
+  "tangoRoles": "탱고 역할",
+  "openSource": "오픈 소스",
   "watchDemo": "데모 보기",
   "globalMap": "글로벌 탱고 지도",
   "globalMapDesc": "전 세계의 댄서, 이벤트, 커뮤니티를 발견하세요. 탱고 여정에서 결코 외롭지 않습니다.",
@@ -189,9 +198,5 @@
     "yourCity": "당신의 도시",
     "globalStatistics": "글로벌 통계",
     "globalCommunity": "글로벌 커뮤니티"
-  },
-  "home": "home",
-  "ambassadors": "Ambassadors",
-  "tangoRoles": "Tango Roles",
-  "openSource": "Open Source"
+  }
 }
