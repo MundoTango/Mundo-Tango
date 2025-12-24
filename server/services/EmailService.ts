@@ -529,6 +529,46 @@ export class EmailService {
           </div>
         </body>
         </html>
+      `,
+      
+      emailVerificationCode: (data) => `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f4f4f4; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { padding: 30px; background: white; border-radius: 0 0 8px 8px; }
+            .code-box { background: #f8f9fa; border: 2px dashed #667eea; padding: 20px; text-align: center; margin: 25px 0; border-radius: 8px; }
+            .code { font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #667eea; font-family: monospace; }
+            .info { background: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 6px; margin: 20px 0; color: #0c5460; }
+            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Your Verification Code</h1>
+            </div>
+            <div class="content">
+              <p>Hi ${data.name},</p>
+              <p>Welcome to Mundo Tango! Enter the following 6-digit code to verify your email and complete your registration:</p>
+              <div class="code-box">
+                <div class="code">${data.code}</div>
+              </div>
+              <div class="info">
+                <strong>This code expires in 24 hours.</strong><br>
+                If you didn't create an account on Mundo Tango, you can safely ignore this email.
+              </div>
+            </div>
+            <div class="footer">
+              <p>This email was sent by Mundo Tango. If you have questions, contact our support team.</p>
+              <p>Mundo Tango. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
       `
     };
     
@@ -631,6 +671,38 @@ export class EmailService {
       return true;
     } catch (error: any) {
       console.error(`[EmailService] Failed to send verification email to ${email}:`, error?.message || error);
+      console.error(`[EmailService] Full error details:`, JSON.stringify(error, null, 2));
+      return false;
+    }
+  }
+  
+  // Helper: Send email verification with 6-digit code (direct send, not queued - time-sensitive)
+  static async sendVerificationCodeEmail(email: string, name: string, verificationCode: string): Promise<boolean> {
+    try {
+      const html = this.renderTemplate('emailVerificationCode', {
+        name: name || 'Tango Dancer',
+        code: verificationCode
+      });
+      
+      const resendClient = await getResendClient();
+      if (!resendClient) {
+        console.log(`[EmailService] Verification code email would be sent to ${email} (Resend not configured)`);
+        console.log(`[EmailService] Verification Code: ${verificationCode}`);
+        return true; // Return true so the registration endpoint still responds successfully
+      }
+      
+      console.log(`[EmailService] Sending verification code email to ${email} from ${resendClient.fromEmail}`);
+      const result = await resendClient.client.emails.send({
+        from: resendClient.fromEmail,
+        to: email,
+        subject: 'Your Verification Code - Mundo Tango',
+        html: html
+      });
+      
+      console.log(`[EmailService] Verification code email sent to ${email}`, JSON.stringify(result));
+      return true;
+    } catch (error: any) {
+      console.error(`[EmailService] Failed to send verification code email to ${email}:`, error?.message || error);
       console.error(`[EmailService] Full error details:`, JSON.stringify(error, null, 2));
       return false;
     }

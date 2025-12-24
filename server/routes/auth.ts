@@ -137,17 +137,18 @@ router.post("/register", async (req: Request, res: Response) => {
       }
     }
 
-    const verificationToken = crypto.randomBytes(32).toString("hex");
+    // Generate 6-digit verification code (easier for users to enter)
+    const verificationCode = crypto.randomInt(100000, 999999).toString();
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
     
     await storage.createEmailVerificationToken({
       userId: user.id,
-      token: verificationToken,
+      token: verificationCode,
       expiresAt,
     });
     
-    // Send verification email (don't await - fire and forget to not block registration)
-    EmailService.sendVerificationEmail(user.email, user.name || user.username, verificationToken)
+    // Send verification email with 6-digit code (don't await - fire and forget to not block registration)
+    EmailService.sendVerificationCodeEmail(user.email, user.name || user.username, verificationCode)
       .then(sent => {
         if (sent) {
           console.log(`[Auth] Verification email sent to ${user.email}`);
@@ -551,20 +552,20 @@ router.post("/resend-verification", async (req: Request, res: Response) => {
       await storage.deleteEmailVerificationToken(existingToken.token);
     }
     
-    // Create new verification token
-    const verificationToken = crypto.randomBytes(32).toString("hex");
+    // Generate new 6-digit verification code
+    const verificationCode = crypto.randomInt(100000, 999999).toString();
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
     
     await storage.createEmailVerificationToken({
       userId: user.id,
-      token: verificationToken,
+      token: verificationCode,
       expiresAt,
     });
     
-    // Send verification email
-    await EmailService.sendVerificationEmail(user.email, user.name || user.username, verificationToken);
+    // Send verification email with code
+    await EmailService.sendVerificationCodeEmail(user.email, user.name || user.username, verificationCode);
     
-    res.json({ message: "If an account exists with this email, a verification link has been sent." });
+    res.json({ message: "If an account exists with this email, a verification code has been sent." });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ 
