@@ -102,7 +102,8 @@ if (!i18n.isInitialized) {
         lookupLocalStorage: "i18nextLng",
         caches: [],
         excludeCacheFor: ["cimode"],
-        convertDetectedLanguage: (lng: string) => lng,
+        // Normalize language codes to lowercase to match our locale folder names
+        convertDetectedLanguage: (lng: string) => lng.toLowerCase(),
       },
     });
 }
@@ -117,14 +118,18 @@ export function isRTLLanguage(lang: string): boolean {
 export async function changeLanguageWithRegionalSupport(
   languageCode: string,
 ): Promise<void> {
+  // Normalize to lowercase to match our locale folder names
+  const normalizedCode = languageCode.toLowerCase();
   console.log(
     "[i18n] changeLanguageWithRegionalSupport called with:",
     languageCode,
+    "normalized to:",
+    normalizedCode,
   );
 
   // Simply call changeLanguage - i18next should load resources naturally
   // since we have supportedLngs configured with the full locale codes
-  await i18n.changeLanguage(languageCode);
+  await i18n.changeLanguage(normalizedCode);
 
   console.log(
     "[i18n] After changeLanguage, i18n.language:",
@@ -134,11 +139,11 @@ export async function changeLanguageWithRegionalSupport(
   );
 
   // For regional variants, force reload resources to ensure they're fetched
-  if (languageCode.includes("-")) {
+  if (normalizedCode.includes("-")) {
     const namespaces = ["common", "navigation", "pages", "errors"];
     try {
-      await i18n.reloadResources(languageCode, namespaces);
-      console.log("[i18n] Resources reloaded for:", languageCode);
+      await i18n.reloadResources(normalizedCode, namespaces);
+      console.log("[i18n] Resources reloaded for:", normalizedCode);
     } catch (err) {
       console.error("[i18n] Error reloading resources:", err);
     }
@@ -194,8 +199,10 @@ export async function detectAndApplyLanguage(): Promise<void> {
 }
 
 i18n.on("languageChanged", (lng) => {
-  updateDocumentDirection(lng);
-  localStorage.setItem("i18nextLng", lng);
+  // Normalize to lowercase for consistency with our locale folder names
+  const normalizedLng = lng.toLowerCase();
+  updateDocumentDirection(normalizedLng);
+  localStorage.setItem("i18nextLng", normalizedLng);
 });
 
 if (typeof window !== "undefined") {
