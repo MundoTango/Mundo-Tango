@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
-import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, HandHeart, CreditCard, ArrowRight, KeyRound, PartyPopper } from "lucide-react";
+import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, HandHeart, CreditCard, ArrowRight, KeyRound, PartyPopper, Mail, CheckCircle, RefreshCw } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -37,8 +37,123 @@ export default function RegisterPage() {
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const [talentMatchOpen, setTalentMatchOpen] = useState(false);
+  const [showVerificationSection, setShowVerificationSection] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
   const { register } = useAuth();
   const { toast } = useToast();
+  
+  const getCsrfToken = () => {
+    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+    return match ? match[1] : null;
+  };
+  
+  const handleVerify = async () => {
+    if (!verificationCode || verificationCode.length !== 6) {
+      toast({
+        title: t('pages:register.toast.invalidCode.title', 'Invalid code'),
+        description: t('pages:register.toast.invalidCode.description', 'Please enter a valid 6-digit verification code.'),
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsVerifying(true);
+    
+    try {
+      const csrfToken = getCsrfToken();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (csrfToken) {
+        headers["x-xsrf-token"] = csrfToken;
+      }
+      
+      const response = await fetch("/api/auth/verify-email", {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: JSON.stringify({ token: verificationCode }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        toast({
+          title: t('pages:register.toast.verified.title', 'Email verified!'),
+          description: t('pages:register.toast.verified.description', 'Your email has been verified. Redirecting to login...'),
+        });
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } else {
+        toast({
+          title: t('pages:register.toast.verifyError.title', 'Verification failed'),
+          description: data.message || t('pages:register.toast.verifyError.description', 'Invalid or expired code. Please try again.'),
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: t('pages:register.toast.error.title', 'Error'),
+        description: t('pages:register.toast.error.description', 'Failed to verify email. Please try again.'),
+        variant: "destructive",
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+  
+  const handleResendCode = async () => {
+    if (!verificationEmail) return;
+    
+    setIsResending(true);
+    
+    try {
+      const csrfToken = getCsrfToken();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (csrfToken) {
+        headers["x-xsrf-token"] = csrfToken;
+      }
+      
+      const response = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: JSON.stringify({ email: verificationEmail }),
+      });
+      
+      if (response.status === 429) {
+        toast({
+          title: t('pages:register.toast.tooMany.title', 'Too many requests'),
+          description: t('pages:register.toast.tooMany.description', 'Please wait a few minutes before trying again.'),
+          variant: "destructive",
+        });
+      } else {
+        setResendSuccess(true);
+        setVerificationCode("");
+        toast({
+          title: t('pages:register.toast.codeSent.title', 'Code sent!'),
+          description: t('pages:register.toast.codeSent.description', 'Please check your inbox for a new code.'),
+        });
+        setTimeout(() => setResendSuccess(false), 5000);
+      }
+    } catch (error) {
+      toast({
+        title: t('pages:register.toast.error.title', 'Error'),
+        description: t('pages:register.toast.resendError.description', 'Failed to resend code. Please try again.'),
+        variant: "destructive",
+      });
+    } finally {
+      setIsResending(false);
+    }
+  };
+  
+  const handleCodeInputChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, '').slice(0, 6);
+    setVerificationCode(digitsOnly);
+  };
 
   const handleCodeChange = (code: string) => {
     setInviteCode(code);
@@ -184,7 +299,8 @@ export default function RegisterPage() {
           title: t('pages:register.toast.checkEmail.title', 'Check your email'),
           description: t('pages:register.toast.checkEmail.description', 'We sent you a 6-digit verification code. Please check your inbox.'),
         });
-        navigate(`/email-verification?email=${encodeURIComponent(result.email)}`);
+        setVerificationEmail(result.email);
+        setShowVerificationSection(true);
       }
     } catch (error: any) {
       toast({
@@ -626,38 +742,120 @@ export default function RegisterPage() {
                 </Link>
               </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <HandHeart className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white">
-                      {t('pages:register.volunteer.title', 'Want to volunteer?')}
-                    </h3>
-                    <p className="text-sm text-white/70">
-                      {t('pages:register.volunteer.subtitle', 'Help build the tango community')}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-sm text-white/80 mb-4">
-                  {t('pages:register.volunteer.description', 'Join our volunteer team and use your skills to make an impact. Our AI will match you with the perfect role.')}
-                </p>
-                <Button
-                  variant="outline"
-                  className="w-full bg-transparent border-white/30 text-white hover:bg-white/10"
-                  onClick={() => setTalentMatchOpen(true)}
-                  data-testid="button-start-talent-match"
+              {showVerificationSection ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mt-8 p-6 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20"
+                  data-testid="section-verification-code"
                 >
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  {t('pages:register.volunteer.startTalentMatch', 'Start Talent Match')}
-                </Button>
-              </motion.div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Mail className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white text-lg">
+                        {t('pages:register.verification.title', 'Enter Verification Code')}
+                      </h3>
+                      <p className="text-sm text-white/70">
+                        {t('pages:register.verification.subtitle', 'Code sent to:')} {verificationEmail}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-white/80 mb-4">
+                    {t('pages:register.verification.instructions', 'Enter the 6-digit code from your email to verify your account.')}
+                  </p>
+                  
+                  <div className="space-y-4">
+                    <div className="flex justify-center">
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="000000"
+                        value={verificationCode}
+                        onChange={(e) => handleCodeInputChange(e.target.value)}
+                        className="text-center text-2xl tracking-[0.5em] font-mono w-48 bg-white/20 border-white/30 text-white placeholder:text-white/30"
+                        maxLength={6}
+                        data-testid="input-verification-code"
+                      />
+                    </div>
+                    
+                    <Button 
+                      onClick={handleVerify}
+                      disabled={isVerifying || verificationCode.length !== 6}
+                      className="w-full gap-2"
+                      data-testid="button-verify"
+                    >
+                      {isVerifying ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <CheckCircle className="h-4 w-4" />
+                      )}
+                      {t('pages:register.verification.verifyButton', 'Verify Email')}
+                    </Button>
+                    
+                    <div className="text-center">
+                      <p className="text-white/60 text-sm mb-2">
+                        {t('pages:register.verification.didntReceive', "Didn't receive the code?")}
+                      </p>
+                      <Button 
+                        variant="ghost" 
+                        onClick={handleResendCode}
+                        disabled={isResending || resendSuccess}
+                        className="gap-2 text-white/80 hover:text-white hover:bg-white/10"
+                        data-testid="button-resend"
+                      >
+                        {isResending ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : resendSuccess ? (
+                          <CheckCircle className="h-4 w-4 text-green-400" />
+                        ) : (
+                          <RefreshCw className="h-4 w-4" />
+                        )}
+                        {resendSuccess 
+                          ? t('pages:register.verification.codeResent', 'Code Resent!')
+                          : t('pages:register.verification.resendButton', 'Resend Code')
+                        }
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                  className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                      <HandHeart className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">
+                        {t('pages:register.volunteer.title', 'Want to volunteer?')}
+                      </h3>
+                      <p className="text-sm text-white/70">
+                        {t('pages:register.volunteer.subtitle', 'Help build the tango community')}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-white/80 mb-4">
+                    {t('pages:register.volunteer.description', 'Join our volunteer team and use your skills to make an impact. Our AI will match you with the perfect role.')}
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="w-full bg-transparent border-white/30 text-white hover:bg-white/10"
+                    onClick={() => setTalentMatchOpen(true)}
+                    data-testid="button-start-talent-match"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    {t('pages:register.volunteer.startTalentMatch', 'Start Talent Match')}
+                  </Button>
+                </motion.div>
+              )}
             </motion.div>
           </div>
         </div>
