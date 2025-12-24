@@ -3,24 +3,39 @@ import { db } from "../db";
 import { errorPatterns, insertErrorPatternSchema } from "@shared/schema";
 import { eq, desc, sql } from "drizzle-orm";
 import { z } from "zod";
-import { ErrorAnalysisAgent } from "../services/mrBlue/errorAnalysisAgent";
-import { SolutionSuggesterAgent } from "../services/mrBlue/solutionSuggesterAgent";
 import { contextService } from "../services/mrBlue/ContextService";
-import { getAutoFixEngine } from "../services/mrBlue/AutoFixEngine";
 
 const router = Router();
 
-// Initialize AI agents
-const errorAnalysisAgent = new ErrorAnalysisAgent();
-const solutionSuggesterAgent = new SolutionSuggesterAgent();
-
-// Initialize AutoFixEngine for autonomous fixing
+// MB.MD Pattern: Lazy-loaded services to avoid circular dependencies
+let errorAnalysisAgent: any = null;
+let solutionSuggesterAgent: any = null;
 let autoFixEngine: any = null;
-(async () => {
-  autoFixEngine = await import('../services/mrBlue/AutoFixEngine').then(m => m.getAutoFixEngine());
-  await autoFixEngine.initialize();
-  console.log('[Error Analysis Routes] ✅ AutoFixEngine ready for autonomous fixing');
-})();
+
+async function getErrorAnalysisAgent() {
+  if (!errorAnalysisAgent) {
+    const { ErrorAnalysisAgent } = await import("../services/mrBlue/errorAnalysisAgent");
+    errorAnalysisAgent = new ErrorAnalysisAgent();
+  }
+  return errorAnalysisAgent;
+}
+
+async function getSolutionSuggesterAgent() {
+  if (!solutionSuggesterAgent) {
+    const { SolutionSuggesterAgent } = await import("../services/mrBlue/solutionSuggesterAgent");
+    solutionSuggesterAgent = new SolutionSuggesterAgent();
+  }
+  return solutionSuggesterAgent;
+}
+
+async function getAutoFixEngineInstance() {
+  if (!autoFixEngine) {
+    const { getAutoFixEngine } = await import("../services/mrBlue/AutoFixEngine");
+    autoFixEngine = await getAutoFixEngine();
+    await autoFixEngine.initialize();
+  }
+  return autoFixEngine;
+}
 
 // ============================================================================
 // ERROR ANALYSIS API - PHASE 3

@@ -12,33 +12,29 @@ import { db } from "../db";
 import { errorPatterns, agentEscalations } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { VibeCodingService } from "../services/mrBlue/VibeCodingService";
-import { AutoFixEngine } from "../services/mrBlue/AutoFixEngine";
 import { broadcastToUser } from "../services/websocket";
 
 const router = Router();
 
-// Initialize Vibe Coding Service
-const vibeCodingService = new VibeCodingService();
-let serviceInitialized = false;
+// Lazy-loaded services to avoid circular dependencies
+let vibeCodingService: any = null;
+let autoFixEngine: any = null;
 
-// ✅ MB.MD v9.2: Initialize AutoFixEngine
-const autoFixEngine = new AutoFixEngine();
-let autoFixInitialized = false;
-
-// Initialize service on first use
+// Initialize service on first use (lazy loading)
 async function ensureServiceInitialized() {
-  if (!serviceInitialized) {
+  if (!vibeCodingService) {
+    const { VibeCodingService } = await import("../services/mrBlue/VibeCodingService");
+    vibeCodingService = new VibeCodingService();
     await vibeCodingService.initialize();
-    serviceInitialized = true;
   }
 }
 
-// Initialize AutoFixEngine on first use
+// Initialize AutoFixEngine on first use (lazy loading)
 async function ensureAutoFixInitialized() {
-  if (!autoFixInitialized) {
+  if (!autoFixEngine) {
+    const { AutoFixEngine } = await import("../services/mrBlue/AutoFixEngine");
+    autoFixEngine = new AutoFixEngine();
     await autoFixEngine.initialize();
-    autoFixInitialized = true;
   }
 }
 

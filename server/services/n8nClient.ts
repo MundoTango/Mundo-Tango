@@ -44,8 +44,9 @@ interface WorkflowInfo {
 }
 
 class N8nClient {
-  private client: AxiosInstance;
+  private client: AxiosInstance | null = null;
   private config: N8nConfig;
+  private initialized: boolean = false;
 
   constructor() {
     // Load configuration from environment variables
@@ -55,10 +56,17 @@ class N8nClient {
       workspaceId: process.env.N8N_WORKSPACE_ID || 'syk1rkUErtEbe7rv'
     };
 
-    // Validate configuration
+    // Don't throw during module loading - gracefully handle missing API key
     if (!this.config.apiKey) {
-      throw new Error('N8N_API_KEY environment variable is required');
+      console.warn('[n8n] N8N_API_KEY not set - n8n integration disabled');
+      return;
     }
+
+    this.initializeClient();
+  }
+
+  private initializeClient(): void {
+    if (this.initialized) return;
 
     // Create axios instance with default config
     this.client = axios.create({

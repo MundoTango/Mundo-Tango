@@ -18,7 +18,8 @@
  * MB.MD Protocol v9.5 - Autonomous Intelligence
  */
 
-import { VibeCodingService, VibeCodeRequest, VibeCodeResult } from './VibeCodingService';
+// MB.MD Pattern: Type-only import to break circular dependency chain
+import type { VibeCodeRequest, VibeCodeResult } from './VibeCodingService';
 import { ErrorAnalysisAgent } from './errorAnalysisAgent';
 import { SolutionSuggesterAgent } from './solutionSuggesterAgent';
 import { db } from '../../db';
@@ -27,6 +28,16 @@ import { eq, desc } from 'drizzle-orm';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs/promises';
+
+// Lazy-loaded VibeCodingService to break circular dependency
+let _lazyVibeCodingService: any = null;
+async function getLazyVibeCodingService() {
+  if (!_lazyVibeCodingService) {
+    const { getVibeCodingService } = await import('./VibeCodingService');
+    _lazyVibeCodingService = getVibeCodingService();
+  }
+  return _lazyVibeCodingService;
+}
 
 const execAsync = promisify(exec);
 
@@ -129,7 +140,7 @@ const KNOWN_PATTERNS: KnownPattern[] = [
 // ==================== AUTO-FIX ENGINE ====================
 
 export class AutoFixEngine {
-  private vibeCoding: VibeCodingService;
+  private vibeCoding: any = null; // Lazy-loaded to break circular dependency
   private errorAnalysis: ErrorAnalysisAgent;
   private solutionSuggester: SolutionSuggesterAgent;
   
@@ -156,17 +167,30 @@ export class AutoFixEngine {
   private readonly DEFAULT_HISTORICAL_SUCCESS = 75; // Was 50%, now 75%
   
   constructor() {
-    this.vibeCoding = new VibeCodingService();
+    // VibeCodingService is now lazy-loaded to break circular dependency
     this.errorAnalysis = new ErrorAnalysisAgent();
     this.solutionSuggester = new SolutionSuggesterAgent();
     console.log('[AutoFixEngine] Initialized autonomous self-healing system');
   }
   
   /**
+   * Get lazy-loaded VibeCodingService
+   */
+  private async getVibeCoding() {
+    if (!this.vibeCoding) {
+      this.vibeCoding = await getLazyVibeCodingService();
+    }
+    return this.vibeCoding;
+  }
+  
+  /**
    * Initialize the engine
    */
   async initialize(): Promise<void> {
-    await this.vibeCoding.initialize();
+    const vibeCoding = await this.getVibeCoding();
+    if (vibeCoding.initialize) {
+      await vibeCoding.initialize();
+    }
     console.log('[AutoFixEngine] ✅ Ready for autonomous fixing');
   }
   
@@ -379,7 +403,8 @@ export class AutoFixEngine {
       sessionId: `autofix-${error.id}-${Date.now()}`,
     };
     
-    const vibeResult = await this.vibeCoding.generateCode(vibeRequest);
+    const vibeCoding = await this.getVibeCoding();
+    const vibeResult = await vibeCoding.generateCode(vibeRequest);
     
     if (!vibeResult.success) {
       throw new Error(`VibeCoding failed: ${vibeResult.error}`);
@@ -437,7 +462,8 @@ export class AutoFixEngine {
       sessionId: `autofix-staged-${error.id}-${Date.now()}`,
     };
     
-    const vibeResult = await this.vibeCoding.generateCode(vibeRequest);
+    const vibeCoding = await this.getVibeCoding();
+    const vibeResult = await vibeCoding.generateCode(vibeRequest);
     
     if (!vibeResult.success) {
       throw new Error(`VibeCoding failed: ${vibeResult.error}`);

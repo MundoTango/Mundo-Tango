@@ -17,10 +17,21 @@
 
 import Groq from 'groq-sdk';
 import { contextService } from './mrBlue/ContextService';
-import { vibeCodingService } from './mrBlue/VibeCodingService';
+// MB.MD Pattern: Lazy-loaded to avoid circular dependencies
+// import { vibeCodingService } from './mrBlue/VibeCodingService';
 import { AgentActivationService } from './self-healing/AgentActivationService';
 import { PageAuditService } from './self-healing/PageAuditService';
 import { SelfHealingService } from './self-healing/SelfHealingService';
+
+// Lazy-loaded VibeCodingService
+let vibeCodingServiceInstance: any = null;
+async function getLazyVibeCodingService() {
+  if (!vibeCodingServiceInstance) {
+    const { vibeCodingService } = await import('./mrBlue/VibeCodingService');
+    vibeCodingServiceInstance = vibeCodingService;
+  }
+  return vibeCodingServiceInstance;
+}
 
 // Initialize GROQ client
 const groq = new Groq({
@@ -396,6 +407,7 @@ GUIDELINES:
         sessionId,
       };
 
+      const vibeCodingService = await getLazyVibeCodingService();
       const vibeResult = await vibeCodingService.generateCode(vibeRequest);
 
       const duration = Date.now() - startTime;

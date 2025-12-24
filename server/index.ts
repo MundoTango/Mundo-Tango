@@ -1,18 +1,11 @@
 // ============================================================================
-// GLOBAL ERROR HANDLERS - MUST BE FIRST
+// BOOTSTRAP - MUST BE FIRST IMPORT
+// Keeps event loop alive during ESM module loading
 // ============================================================================
-process.on('uncaughtException', (err) => {
-  console.error('💥 UNCAUGHT EXCEPTION:', err);
-  console.error('Stack:', err.stack);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('💥 UNHANDLED REJECTION at:', promise);
-  console.error('Reason:', reason);
-});
+import { clearStartupKeepalive } from './bootstrap';
 
 // ============================================================================
-// OPENTELEMETRY INSTRUMENTATION - MUST BE FIRST IMPORT
+// OPENTELEMETRY INSTRUMENTATION - MUST BE SECOND IMPORT
 // ============================================================================
 import './instrumentation';
 
@@ -219,6 +212,8 @@ app.use((req, res, next) => {
     host: "0.0.0.0",
     reusePort: true,
   }, async () => {
+    // Server is listening - clear the startup keepalive
+    clearStartupKeepalive();
     log(`serving on port ${port}`);
     
     // ========================================================================

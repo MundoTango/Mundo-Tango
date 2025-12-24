@@ -131,3 +131,14 @@ The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Pr
 4. ✅ Sync all locales from English base before testing
 5. ✅ E2E test language switching on multiple pages before declaring complete
 6. ✅ Professional translations require human-quality text, not machine-translated placeholders
+
+## Recent Changes (Dec 24, 2024)
+
+### Critical Server Startup Fix
+- **Problem**: Server crashed during ESM module loading due to n8nClient.ts throwing when N8N_API_KEY was missing
+- **Root Cause**: In ESM, all `import` statements are hoisted and evaluated BEFORE any module-level code runs. Keepalive timers registered inline were useless.
+- **Solution**: 
+  1. Created `server/bootstrap.ts` module that MUST be imported first - it registers event loop keepalive before other imports
+  2. Fixed `server/services/n8nClient.ts` to gracefully warn instead of throw when API key is missing
+- **Key Learning**: ESM import hoisting means you cannot rely on inline code running before imports. Use a dedicated bootstrap module that is imported first.
+- **Files Changed**: `server/bootstrap.ts` (new), `server/index.ts`, `server/services/n8nClient.ts`

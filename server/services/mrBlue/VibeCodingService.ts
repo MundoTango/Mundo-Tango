@@ -19,11 +19,7 @@ import { CodeGenerator } from './CodeGenerator';
 import { agentEventBus } from './AgentEventBus';
 import { progressTrackingAgent } from './ProgressTrackingAgent';
 import { preferenceExtractor } from './preferenceExtractor';
-import { clarificationService } from '../clarification/ClarificationService';
-import { sequentialOrchestrator } from '../orchestration/SequentialOrchestrator';
 import { LearningRetentionService } from './LearningRetentionService';
-import { ValidationService } from '../validation/ValidationService';
-import { autoRetryService } from './AutoRetryService';
 import { escalationService } from './EscalationService';
 import { evidenceCollector } from './EvidenceCollector';
 import { visualValidationService } from './VisualValidationService';
@@ -35,7 +31,43 @@ import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
-const validationService = new ValidationService();
+// MB.MD Pattern: Lazy-loaded services to avoid circular dependencies
+let validationService: any = null;
+let clarificationService: any = null;
+let sequentialOrchestrator: any = null;
+let autoRetryService: any = null;
+
+async function getValidationService() {
+  if (!validationService) {
+    const { ValidationService } = await import('../validation/ValidationService');
+    validationService = new ValidationService();
+  }
+  return validationService;
+}
+
+async function getClarificationService() {
+  if (!clarificationService) {
+    const mod = await import('../clarification/ClarificationService');
+    clarificationService = mod.clarificationService;
+  }
+  return clarificationService;
+}
+
+async function getSequentialOrchestrator() {
+  if (!sequentialOrchestrator) {
+    const mod = await import('../orchestration/SequentialOrchestrator');
+    sequentialOrchestrator = mod.sequentialOrchestrator;
+  }
+  return sequentialOrchestrator;
+}
+
+async function getAutoRetryService() {
+  if (!autoRetryService) {
+    const mod = await import('./AutoRetryService');
+    autoRetryService = mod.autoRetryService;
+  }
+  return autoRetryService;
+}
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -952,5 +984,19 @@ Respond ONLY with valid JSON, no additional text.`;
   }
 }
 
-// Singleton instance
-export const vibeCodingService = new VibeCodingService();
+// MB.MD Pattern: Lazy singleton to avoid circular dependency during module loading
+let _vibeCodingServiceInstance: VibeCodingService | null = null;
+
+export function getVibeCodingService(): VibeCodingService {
+  if (!_vibeCodingServiceInstance) {
+    _vibeCodingServiceInstance = new VibeCodingService();
+  }
+  return _vibeCodingServiceInstance;
+}
+
+// Legacy export for backward compatibility (lazy getter)
+export const vibeCodingService = {
+  get instance() { return getVibeCodingService(); },
+  generateCode: (...args: any[]) => getVibeCodingService().generateCode(...args),
+  applyChange: (...args: any[]) => getVibeCodingService().applyChange(...args),
+};

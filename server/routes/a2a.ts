@@ -8,9 +8,20 @@
  */
 
 import { Router, type Request, type Response } from 'express';
-import { a2aProtocolService } from '../services/orchestration/A2AProtocolService';
+// MB.MD Pattern: Lazy-loaded to avoid circular dependencies
+// import { a2aProtocolService } from '../services/orchestration/A2AProtocolService';
 import { agentCardRegistry } from '../services/orchestration/AgentCardRegistry';
 import type { A2AMessage } from '../../shared/types/a2a';
+
+// Lazy-loaded A2A Protocol Service
+let a2aProtocolServiceInstance: any = null;
+async function getA2AProtocolService() {
+  if (!a2aProtocolServiceInstance) {
+    const { a2aProtocolService } = await import('../services/orchestration/A2AProtocolService');
+    a2aProtocolServiceInstance = a2aProtocolService;
+  }
+  return a2aProtocolServiceInstance;
+}
 
 const router = Router();
 
@@ -38,7 +49,8 @@ router.post('/route', async (req: Request, res: Response) => {
 
     console.log(`[A2A] 📨 Routing message to agent: ${agentId}, method: ${message.method}`);
 
-    const result = await a2aProtocolService.routeMessage(agentId, message);
+    const a2aService = await getA2AProtocolService();
+    const result = await a2aService.routeMessage(agentId, message);
 
     // Always return JSON-RPC response
     res.json(result);
@@ -66,7 +78,8 @@ router.post('/:agentId', async (req: Request, res: Response) => {
 
     console.log(`[A2A] 📨 Routing message to agent: ${agentId}, method: ${message.method}`);
 
-    const result = await a2aProtocolService.routeMessage(agentId, message);
+    const a2aService = await getA2AProtocolService();
+    const result = await a2aService.routeMessage(agentId, message);
 
     res.json(result);
   } catch (error: any) {

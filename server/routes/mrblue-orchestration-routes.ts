@@ -18,29 +18,42 @@ import { authenticateToken, type AuthRequest } from '../middleware/auth';
 import { agentEventBus, type ErrorDetectedEvent } from '../services/mrBlue/AgentEventBus';
 import { progressTrackingAgent } from '../services/mrBlue/ProgressTrackingAgent';
 import { agentOrchestrator, type Agent } from '../services/mrBlue/AgentOrchestrator';
-import { AutoFixEngine } from '../services/mrBlue/AutoFixEngine';
 import { commitChanges, type CommitRequest } from '../services/mrBlue/gitCommitGenerator';
-import { VibeCodingService } from '../services/mrBlue/VibeCodingService';
-import { ErrorAnalysisAgent } from '../services/mrBlue/errorAnalysisAgent';
 import { z } from 'zod';
 
 const router = Router();
 
-// Initialize services
-const autoFixEngine = new AutoFixEngine();
-const vibeCoding = new VibeCodingService();
-const errorAnalysis = new ErrorAnalysisAgent();
+// MB.MD Pattern: Lazy-loaded services to avoid circular dependencies during module loading
+let autoFixEngine: any = null;
+let vibeCoding: any = null;
+let errorAnalysis: any = null;
 
-// Initialize on startup
-(async () => {
-  try {
+// Lazy initialization on first use
+async function getAutoFixEngine() {
+  if (!autoFixEngine) {
+    const { AutoFixEngine } = await import('../services/mrBlue/AutoFixEngine');
+    autoFixEngine = new AutoFixEngine();
     await autoFixEngine.initialize();
-    await vibeCoding.initialize();
-    console.log('[Orchestration Routes] ✅ Services initialized');
-  } catch (error) {
-    console.error('[Orchestration Routes] ❌ Failed to initialize:', error);
   }
-})();
+  return autoFixEngine;
+}
+
+async function getVibeCoding() {
+  if (!vibeCoding) {
+    const { VibeCodingService } = await import('../services/mrBlue/VibeCodingService');
+    vibeCoding = new VibeCodingService();
+    await vibeCoding.initialize();
+  }
+  return vibeCoding;
+}
+
+async function getErrorAnalysis() {
+  if (!errorAnalysis) {
+    const { ErrorAnalysisAgent } = await import('../services/mrBlue/errorAnalysisAgent');
+    errorAnalysis = new ErrorAnalysisAgent();
+  }
+  return errorAnalysis;
+}
 
 // Validation schemas
 const errorDetectionSchema = z.object({

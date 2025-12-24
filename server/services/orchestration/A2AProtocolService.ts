@@ -586,4 +586,19 @@ Provide a deployment checklist with pass/fail status and blocking issues highlig
   }
 }
 
-export const a2aProtocolService = new A2AProtocolService();
+// MB.MD Pattern: Lazy singleton to avoid circular dependency during module loading
+let _a2aProtocolServiceInstance: A2AProtocolService | null = null;
+
+export function getA2AProtocolService(): A2AProtocolService {
+  if (!_a2aProtocolServiceInstance) {
+    _a2aProtocolServiceInstance = new A2AProtocolService();
+  }
+  return _a2aProtocolServiceInstance;
+}
+
+// Legacy export for backward compatibility (lazy getter)
+export const a2aProtocolService = {
+  get instance() { return getA2AProtocolService(); },
+  routeMessage: (...args: any[]) => getA2AProtocolService().routeMessage(...args),
+  sendAgentToAgent: (...args: any[]) => getA2AProtocolService().sendAgentToAgent(...args),
+};

@@ -4,7 +4,22 @@
  */
 
 import Redis from 'ioredis';
-import type { AIResponse } from '../ai/UnifiedAIOrchestrator';
+
+// Define AIResponse locally to avoid circular dependency with UnifiedAIOrchestrator
+export interface CachedAIResponse {
+  content: string;
+  platform: string;
+  model: string;
+  usage: {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+  };
+  cost: number;
+  latency: number;
+  fallbackUsed: boolean;
+  cached?: boolean;
+}
 
 // Only create Redis client if REDIS_URL is configured
 const redis = process.env.REDIS_URL ? new Redis(process.env.REDIS_URL, {

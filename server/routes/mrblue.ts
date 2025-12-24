@@ -15,9 +15,29 @@ import { storage } from "../storage";
 import { getMrBlueCapabilities, getTierName } from '../utils/mrBlueCapabilities';
 import { contextService } from "../services/mrBlue/ContextService";
 import { memoryService } from "../services/mrBlue/MemoryService";
-import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
-import { conversationOrchestrator } from "../services/ConversationOrchestrator";
+// MB.MD: Lazy-loaded to avoid circular dependencies
+// import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
 import { CostTracker } from "../services/ai/CostTracker";
+
+// MB.MD Pattern: Lazy-loaded services to break circular dependency chain
+let vibeCodingServiceInstance: any = null;
+let conversationOrchestratorInstance: any = null;
+
+async function getVibeCodingService() {
+  if (!vibeCodingServiceInstance) {
+    const { vibeCodingService } = await import("../services/mrBlue/VibeCodingService");
+    vibeCodingServiceInstance = vibeCodingService;
+  }
+  return vibeCodingServiceInstance;
+}
+
+async function getConversationOrchestrator() {
+  if (!conversationOrchestratorInstance) {
+    const { conversationOrchestrator } = await import("../services/ConversationOrchestrator");
+    conversationOrchestratorInstance = conversationOrchestrator;
+  }
+  return conversationOrchestratorInstance;
+}
 
 const router = Router();
 
@@ -353,6 +373,7 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
       // ================== MB.MD v9.2: CONVERSATION ORCHESTRATOR INTEGRATION ==================
       // Step 1: Enrich message with RAG context
       console.log('[Mr. Blue] 📚 Enriching message with RAG context...');
+      const conversationOrchestrator = await getConversationOrchestrator();
       const enriched = await conversationOrchestrator.enrichWithContext(message);
 
       // Step 2: Classify intent (question vs action vs page_analysis)
@@ -484,6 +505,7 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
           };
           
           console.log('[Mr. Blue] 🔨 Calling VibeCodingService...');
+          const vibeCodingService = await getVibeCodingService();
           const vibeResult = await vibeCodingService.generateCode(vibeRequest);
           
           if (vibeResult.success) {
@@ -1447,6 +1469,7 @@ router.post("/analyze-page", async (req: Request, res: Response) => {
 
     console.log(`[MrBlue] 🔍 Analyzing page: ${pageId} (autoHeal: ${autoHeal})`);
 
+    const conversationOrchestrator = await getConversationOrchestrator();
     const result = await conversationOrchestrator.analyzePage(pageId, autoHeal);
 
     console.log(`[MrBlue] ✅ Page analysis complete in ${result.totalTime}ms`);

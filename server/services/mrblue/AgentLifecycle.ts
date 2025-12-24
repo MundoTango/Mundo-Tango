@@ -16,10 +16,19 @@ import { agentRegistry } from './AgentRegistry';
 import { BasePageAgent } from './agents/BasePageAgent';
 import { PreFlightCheckService } from '../self-healing/PreFlightCheckService';
 import { PageAuditService, type AuditResults, type AuditIssue } from '../self-healing/PageAuditService';
-import { getAutoFixEngine } from '../mrBlue/AutoFixEngine';
 import { db } from '../../db';
 import { errorPatterns } from '@shared/schema';
 import { eq, and } from 'drizzle-orm';
+
+// MB.MD Pattern: Lazy-loaded AutoFixEngine to avoid circular dependencies
+let autoFixEngineInstance: any = null;
+async function getLazyAutoFixEngine() {
+  if (!autoFixEngineInstance) {
+    const { getAutoFixEngine } = await import('../mrBlue/AutoFixEngine');
+    autoFixEngineInstance = await getAutoFixEngine();
+  }
+  return autoFixEngineInstance;
+}
 
 export interface AgentActivationResult {
   route: string;
@@ -297,7 +306,7 @@ export class AgentLifecycle {
    */
   private async autoFixIssues(auditResults: AuditResults): Promise<number> {
     try {
-      const autoFixEngine = getAutoFixEngine();
+      const autoFixEngine = await getLazyAutoFixEngine();
       let fixedCount = 0;
       
       // Get critical issues from all categories (safe access with fallbacks)
