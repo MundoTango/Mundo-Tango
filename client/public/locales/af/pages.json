@@ -287,5 +287,19 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
+  },
+  "about": {
+    "badge": "Oor Ons",
+    "title": "Oor Mundo Tango",
+    "subtitle": "Verbind die globale tango-gemeenskap, een dans op 'n slag.",
+    "missionTitle": "Ons Missie",
+    "missionDescription": "Mundo Tango is toegewyd aan die bevordering van verbindings binne die globale tango-gemeenskap. Ons glo in die krag van dans om mense oor kulture, tale en grense saam te bring.",
+    "valuesTitle": "Ons Waardes",
+    "valueCommunityTitle": "Gemeenskap Eerste",
+    "valueCommunityDescription": "Ons prioritiseer egte verbintenisse en betekenisvolle interaksies.",
+    "valueAuthenticityTitle": "Echtheid",
+    "valueAuthenticityDescription": "Ons eer die tradisies van Argentynse tango terwyl ons sy evolusie omarm.",
+    "valueInclusivityTitle": "Inklusiviteit",
+    "valueInclusivityDescription": "Almal is welkom in ons gemeenskap."
   }
 }
