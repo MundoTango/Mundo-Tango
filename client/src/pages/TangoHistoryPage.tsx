@@ -7,6 +7,7 @@ import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import tangoHeroImage from "@assets/stock_images/argentine_tango_danc_6f0d98f5.jpg";
 
 export default function TangoHistoryPage() {
   const { t } = useTranslation(["pages", "common"]);
@@ -55,7 +56,7 @@ export default function TangoHistoryPage() {
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
             <div className="absolute inset-0 bg-cover bg-center" style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1445384763658-0400939829cd?w=1600&h=900&fit=crop')`
+              backgroundImage: `url(${tangoHeroImage})`
             }}>
               <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
             </div>

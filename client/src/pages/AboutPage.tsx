@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import scottPhoto1 from "@assets/optimized/Skoot_20-optimized.jpg";
 import scottPhoto2 from "@assets/optimized/Skoot_16-optimized.jpg";
+import tangoHeroImage from "@assets/stock_images/argentine_tango_danc_cc9bdfab.jpg";
 
 export default function AboutPage() {
   const { t } = useTranslation(['pages', 'common']);
@@ -24,7 +25,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=1600&h=900&fit=crop')`
+          backgroundImage: `url(${tangoHeroImage})`
         }}>
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         </div>

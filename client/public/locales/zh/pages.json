@@ -195,16 +195,18 @@
     "noCities": "未找到城市"
   },
   "about": {
-    "pageName": "关于",
-    "seo": {
-      "title": "关于我们 - Mundo Tango",
-      "description": "了解更多关于Mundo Tango、我们连接全球探戈社区的使命以及平台背后的团队。"
-    },
-    "heading": "关于Mundo Tango",
-    "mission": {
-      "heading": "我们的使命",
-      "description": "连接全球探戈舞者，让探戈文化惠及所有人。"
-    }
+    "badge": "关于我们",
+    "title": "关于世界探戈",
+    "subtitle": "连接全球探戈社区，一次舞蹈一个舞蹈",
+    "missionTitle": "我们的使命",
+    "missionDescription": "Mundo Tango致力于促进全球探戈社区内的联系。我们相信舞蹈的力量能够跨越文化、语言和国界，将人们团结在一起。",
+    "valuesTitle": "Nuestros Valores",
+    "valueCommunityTitle": "社区优先",
+    "valueCommunityDescription": "我们优先考虑真实的联系和有意义的互动。",
+    "valueAuthenticityTitle": "真实性",
+    "valueAuthenticityDescription": "我们尊重阿根廷探戈的传统，同时也拥抱它的发展。",
+    "valueInclusivityTitle": "包容性",
+    "valueInclusivityDescription": "每个人都欢迎加入我们的社区。"
   },
   "profile": {
     "pageName": "个人资料",
