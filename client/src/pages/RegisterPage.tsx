@@ -442,9 +442,9 @@ export default function RegisterPage() {
                 <>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    animate={{ opacity: showVerificationSection ? 0.4 : 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.1 }}
-                    className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-4 md:p-6 shadow-2xl mb-4"
+                    className={`backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-4 md:p-6 shadow-2xl mb-4 ${showVerificationSection ? 'pointer-events-none select-none' : ''}`}
                     data-testid="section-invite-code"
                   >
                     <div className="space-y-3">
@@ -485,10 +485,10 @@ export default function RegisterPage() {
 
                   <motion.form
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    animate={{ opacity: showVerificationSection ? 0.4 : 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
                     onSubmit={handleSubmit}
-                    className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 md:p-8 shadow-2xl"
+                    className={`backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 md:p-8 shadow-2xl ${showVerificationSection ? 'pointer-events-none select-none' : ''}`}
                     data-testid="form-register"
                   >
                     {!isCodeValid && (
@@ -728,9 +728,9 @@ export default function RegisterPage() {
 
               <motion.p
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                animate={{ opacity: showVerificationSection ? 0.4 : 1 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="text-sm text-center text-white/70 mt-6"
+                className={`text-sm text-center text-white/70 mt-6 ${showVerificationSection ? 'pointer-events-none select-none' : ''}`}
               >
                 {t('pages:register.alreadyHaveAccount', 'Already have an account?')}{" "}
                 <Link 
