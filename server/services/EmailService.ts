@@ -49,6 +49,8 @@ async function getCredentials() {
 }
 
 // WARNING: Never cache this client. Access tokens expire.
+let loggedTestDomainWarning = false;
+
 async function getResendClient(): Promise<{ client: Resend; fromEmail: string } | null> {
   try {
     const { apiKey, fromEmail } = await getCredentials();
@@ -61,8 +63,9 @@ async function getResendClient(): Promise<{ client: Resend; fromEmail: string } 
       ? fromEmail 
       : 'Mundo Tango <onboarding@resend.dev>';
     
-    if (!isDomainVerified) {
+    if (!isDomainVerified && !loggedTestDomainWarning) {
       console.log('[EmailService] Using Resend test domain (set RESEND_DOMAIN_VERIFIED=true when domain is verified)');
+      loggedTestDomainWarning = true;
     }
     
     return {
