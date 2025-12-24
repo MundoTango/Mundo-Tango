@@ -49,6 +49,9 @@ export const closenessVisibilitySchema = z.enum([
   'friends_3rd',
 ]);
 
+// Re-export Replit Auth schemas (sessions and users for OAuth)
+export * from "./models/auth";
+
 // Re-export message schemas
 export * from "./messageSchemas";
 

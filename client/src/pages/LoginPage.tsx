@@ -11,7 +11,8 @@ import { SEO } from "@/components/SEO";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import { Heart, Sparkles, Users, Loader2 } from "lucide-react";
+import { Heart, Sparkles, Users, Loader2, LogIn } from "lucide-react";
+import { SiReplit } from "react-icons/si";
 import { useQuery } from "@tanstack/react-query";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
@@ -165,6 +166,29 @@ export default function LoginPage() {
                     size="lg"
                   >
                     {isLoading ? t('pages:login.form.signingIn', 'Signing in...') : t('pages:login.form.signIn', 'Sign In')}
+                  </Button>
+
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white/20" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-transparent px-2 text-white/60 backdrop-blur-sm">
+                        {t('pages:login.form.orContinueWith', 'or continue with')}
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full bg-[#0D101E] border-[#F26207] text-white hover:bg-[#F26207]/10 hover:text-white gap-2"
+                    onClick={() => window.location.href = '/api/login'}
+                    data-testid="button-login-replit"
+                    size="lg"
+                  >
+                    <SiReplit className="w-5 h-5 text-[#F26207]" />
+                    {t('pages:login.form.loginWithReplit', 'Login with Replit')}
                   </Button>
 
                   <Link 
