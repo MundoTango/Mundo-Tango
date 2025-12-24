@@ -3,7 +3,12 @@ import { db } from '@shared/db';
 import { emailQueue, emailPreferences, emailLogs } from '@shared/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
+
+if (!RESEND_API_KEY) {
+  console.warn('[EmailService] RESEND_API_KEY not configured - emails will be logged but not sent');
+}
 
 export class EmailService {
   // Check if user can receive emails (rate limiting)
@@ -65,6 +70,11 @@ export class EmailService {
   
   // Send email from queue
   static async sendQueuedEmails() {
+    if (!resend) {
+      console.log('[EmailService] Resend not configured - skipping queue processing');
+      return;
+    }
+    
     const pending = await db.query.emailQueue.findMany({
       where: and(
         eq(emailQueue.status, 'pending'),
@@ -450,6 +460,12 @@ export class EmailService {
         name: name || 'Tango Dancer',
         resetUrl
       });
+      
+      if (!resend) {
+        console.log(`[EmailService] Password reset email would be sent to ${email} (Resend not configured)`);
+        console.log(`[EmailService] Reset URL: ${resetUrl}`);
+        return true; // Return true so the forgot-password endpoint still responds successfully
+      }
       
       const result = await resend.emails.send({
         from: 'Mundo Tango <noreply@mundotango.life>',

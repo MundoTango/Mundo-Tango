@@ -14,6 +14,7 @@ import {
 } from "../middleware/auth";
 // Note: insertUserSchema not imported - using direct z.object() for registerSchema to avoid Zod v4 .extend() issues
 import { ensureCityGroupExists } from "../utils/cityGroupAutomation";
+import { EmailService } from "../services/EmailService";
 
 const router = Router();
 
