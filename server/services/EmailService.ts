@@ -619,6 +619,7 @@ export class EmailService {
         return true; // Return true so the registration endpoint still responds successfully
       }
       
+      console.log(`[EmailService] Sending verification email to ${email} from ${resendClient.fromEmail}`);
       const result = await resendClient.client.emails.send({
         from: resendClient.fromEmail,
         to: email,
@@ -626,10 +627,11 @@ export class EmailService {
         html: html
       });
       
-      console.log(`[EmailService] Verification email sent to ${email}`, result);
+      console.log(`[EmailService] Verification email sent to ${email}`, JSON.stringify(result));
       return true;
     } catch (error: any) {
-      console.error(`[EmailService] Failed to send verification email to ${email}:`, error);
+      console.error(`[EmailService] Failed to send verification email to ${email}:`, error?.message || error);
+      console.error(`[EmailService] Full error details:`, JSON.stringify(error, null, 2));
       return false;
     }
   }
