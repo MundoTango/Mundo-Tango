@@ -165,6 +165,7 @@ router.post("/register", async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error("[Auth] Zod validation error details:", JSON.stringify(error.errors, null, 2));
       return res.status(400).json({ 
         message: "Validation error", 
         errors: error.errors 
