@@ -164,6 +164,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  console.log("🚀 [DEBUG] IIFE starting...");
+  
   // Apply rate limiting to specific route patterns
   app.use('/api/auth', authRateLimiter);
   app.use('/api/admin', adminRateLimiter);
@@ -175,7 +177,9 @@ app.use((req, res, next) => {
   // Note: setCsrfToken is already applied globally above, only verify on mutations here
   app.use('/api', verifyDoubleSubmitCookie); // Verify token on mutations
   
+  console.log("🔧 [DEBUG] About to register routes...");
   const server = await registerRoutes(app);
+  console.log("✅ [DEBUG] Routes registered successfully");
 
   // Sentry error handler (must be before other error handlers) - DISABLED (CSP FIX)
   // app.use(getSentryErrorHandler());
@@ -191,16 +195,23 @@ app.use((req, res, next) => {
     });
 
     res.status(status).json({ message });
-    throw err;
   });
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
+  console.log("🔧 [DEBUG] About to setup Vite/static...");
   if (app.get("env") === "development") {
-    await setupVite(app, server);
+    try {
+      await setupVite(app, server);
+      console.log("✅ [DEBUG] Vite setup complete");
+    } catch (err) {
+      console.error("❌ [DEBUG] Vite setup failed:", err);
+      throw err;
+    }
   } else {
     serveStatic(app);
+    console.log("✅ [DEBUG] Static serving setup complete");
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
