@@ -24,7 +24,7 @@ export default function WelcomePage() {
   }, [user, navigate]);
 
   const handleContinue = () => {
-    navigate("/onboarding/step-1");
+    navigate("/onboarding/city");
   };
 
   const features = [

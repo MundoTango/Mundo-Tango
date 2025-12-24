@@ -69,24 +69,25 @@ export default function CitySelectionPage() {
         throw new Error(errorMessage);
       }
 
-      const autoJoinResponse = await fetch("/api/communities/auto-join", {
+      // Trigger location change effects (auto-join city group, create if needed)
+      const autoJoinResponse = await fetch("/api/location/change-effects", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          cityName: selectedCity.name,
-          country: selectedCity.country,
+          newCity: selectedCity.name,
+          newCountry: selectedCity.country,
         }),
       });
 
       if (!autoJoinResponse.ok) {
-        const errorMessage = await extractApiError(autoJoinResponse, { context: "Community auto-join" });
-        throw new Error(errorMessage);
+        // Non-critical error - log but continue with onboarding
+        console.warn("[CitySelection] Auto-join failed, continuing with onboarding");
       }
 
-      navigate("/onboarding/step-2");
+      navigate("/onboarding/photo");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : t('pages:onboarding.city.errors.saveFailed', 'Failed to save city');
       toast({

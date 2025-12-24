@@ -641,7 +641,7 @@ export default function DanceExperiencePage() {
                   <CardFooter className="bg-muted/30 p-6 flex flex-wrap justify-between gap-2">
                     <Button 
                       variant="outline" 
-                      onClick={() => navigate("/onboarding/step-4")}
+                      onClick={() => navigate("/onboarding/languages")}
                       data-testid="button-back"
                     >
                       <ChevronLeft className="h-4 w-4 mr-2" />

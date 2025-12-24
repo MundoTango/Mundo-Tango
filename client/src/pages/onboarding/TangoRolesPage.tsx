@@ -127,7 +127,7 @@ export default function TangoRolesPage() {
         throw new Error(errorMessage);
       }
 
-      navigate("/onboarding/step-4");
+      navigate("/onboarding/languages");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : t('pages:onboarding.roles.errors.saveFailed', 'Failed to save roles');
       toast({
@@ -426,7 +426,7 @@ export default function TangoRolesPage() {
                   <CardFooter className="p-8 bg-muted/20 flex justify-between">
                     <Button
                       variant="outline"
-                      onClick={() => navigate("/onboarding/step-2")}
+                      onClick={() => navigate("/onboarding/photo")}
                       disabled={isLoading}
                       data-testid="button-back"
                     >

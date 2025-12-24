@@ -79,7 +79,7 @@ export default function LanguagesPage() {
         throw new Error(errorMessage);
       }
 
-      navigate("/onboarding/step-5");
+      navigate("/onboarding/experience");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : t('pages:onboarding.languages.errors.saveFailed', 'Failed to save languages');
       toast({
@@ -201,7 +201,7 @@ export default function LanguagesPage() {
                   <CardFooter className="bg-muted/30 p-6 flex justify-between">
                     <Button 
                       variant="outline" 
-                      onClick={() => navigate("/onboarding/step-3")}
+                      onClick={() => navigate("/onboarding/roles")}
                       data-testid="button-back"
                     >
                       <ChevronLeft className="h-4 w-4 mr-2" />

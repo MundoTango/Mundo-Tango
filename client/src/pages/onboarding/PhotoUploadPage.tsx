@@ -80,7 +80,7 @@ export default function PhotoUploadPage() {
 
   const handleUpload = async () => {
     if (!file) {
-      navigate("/onboarding/step-3");
+      navigate("/onboarding/roles");
       return;
     }
 
@@ -114,7 +114,7 @@ export default function PhotoUploadPage() {
         }),
       });
 
-      navigate("/onboarding/step-3");
+      navigate("/onboarding/roles");
     } catch (error) {
       toast({
         title: t('pages:onboarding.photo.errors.uploadFailed', 'Upload failed'),
@@ -139,7 +139,7 @@ export default function PhotoUploadPage() {
           formStatus: 2,
         }),
       });
-      navigate("/onboarding/step-3");
+      navigate("/onboarding/roles");
     } catch (error) {
       toast({
         title: t('common:errors.error', 'Error'),
@@ -292,7 +292,7 @@ export default function PhotoUploadPage() {
                   <CardFooter className="p-8 bg-muted/20 flex justify-between">
                     <Button
                       variant="outline"
-                      onClick={() => navigate("/onboarding/step-1")}
+                      onClick={() => navigate("/onboarding/city")}
                       disabled={isLoading}
                       data-testid="button-back"
                     >

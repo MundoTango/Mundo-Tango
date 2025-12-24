@@ -90,9 +90,9 @@ export default function RegisterPage() {
           description: t('pages:register.toast.verified.description', 'Welcome to Mundo Tango! Starting your onboarding...'),
         });
         
-        // Full page reload to /onboarding so AuthContext re-initializes with new token
+        // Full page reload to /onboarding/welcome (modular flow) so AuthContext re-initializes with new token
         setTimeout(() => {
-          window.location.href = "/onboarding";
+          window.location.href = "/onboarding/welcome";
         }, 1000);
       } else {
         toast({
