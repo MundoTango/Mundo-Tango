@@ -80,13 +80,20 @@ export default function RegisterPage() {
       const data = await response.json();
       
       if (response.ok) {
+        // Store access token for auto-login
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+        }
+        
         toast({
           title: t('pages:register.toast.verified.title', 'Email verified!'),
-          description: t('pages:register.toast.verified.description', 'Your email has been verified. Redirecting to login...'),
+          description: t('pages:register.toast.verified.description', 'Welcome to Mundo Tango! Starting your onboarding...'),
         });
+        
+        // Redirect to onboarding after short delay
         setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+          navigate("/onboarding");
+        }, 1000);
       } else {
         toast({
           title: t('pages:register.toast.verifyError.title', 'Verification failed'),

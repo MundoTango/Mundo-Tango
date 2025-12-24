@@ -455,7 +455,44 @@ router.post("/verify-email", async (req: Request, res: Response) => {
 
     await storage.deleteEmailVerificationToken(token);
 
-    res.json({ message: "Email verified successfully" });
+    // Auto-login: Get user and generate tokens
+    const user = await storage.getUser(verificationToken.userId);
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    // Store refresh token
+    await storage.createRefreshToken({
+      userId: user.id,
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    // Set refresh token as httpOnly cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
+    res.json({ 
+      message: "Email verified successfully",
+      accessToken,
+      user: {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        isVerified: true,
+        onboardingCompleted: user.onboardingCompleted,
+      }
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ 
