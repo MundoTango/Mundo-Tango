@@ -133,5 +133,12 @@
     "yourCity": "Your City",
     "globalStatistics": "Global Statistics",
     "globalCommunity": "Global Community"
-  }
+  },
+  "home": "home",
+  "ambassadors": "Ambassadors",
+  "forDancers": "For Dancers",
+  "forTeachers": "For Teachers",
+  "forOrganizers": "For Organizers",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source"
 }

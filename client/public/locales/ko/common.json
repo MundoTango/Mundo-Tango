@@ -189,5 +189,9 @@
     "yourCity": "당신의 도시",
     "globalStatistics": "글로벌 통계",
     "globalCommunity": "글로벌 커뮤니티"
-  }
+  },
+  "home": "home",
+  "ambassadors": "Ambassadors",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source"
 }

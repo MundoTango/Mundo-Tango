@@ -189,5 +189,9 @@
     "yourCity": "您的城市",
     "globalStatistics": "全球统计",
     "globalCommunity": "全球社区"
-  }
+  },
+  "home": "home",
+  "ambassadors": "Ambassadors",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source"
 }

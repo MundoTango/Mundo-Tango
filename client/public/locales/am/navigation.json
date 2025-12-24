@@ -1,84 +1,84 @@
 {
   "social": {
-    "title": "Social",
-    "memories": "Memories",
-    "feed": "Feed",
-    "profile": "Profile",
-    "discover": "Discover"
+    "title": "ማህበረሰብ",
+    "memories": "እንደማስታወሻዎች",
+    "feed": "እንቁላል",
+    "profile": "መገለጫ",
+    "discover": "እንደምን አውቀው ይገናኙ"
   },
   "community": {
-    "title": "Community",
-    "friends": "Friends",
-    "recommendations": "Recommendations",
-    "invitations": "Invitations",
-    "notifications": "Notifications",
-    "groups": "Groups",
-    "messages": "Messages"
+    "title": "አካባቢ",
+    "friends": "ጓደኞች",
+    "recommendations": "መነሻዎች",
+    "invitations": "ግብዣዎች",
+    "notifications": "ማስታወቂያዎች",
+    "groups": "ቡድኖች",
+    "messages": "መልእክቶች"
   },
   "events": {
-    "title": "Events",
-    "events": "Events",
-    "calendar": "Calendar",
-    "myEvents": "My Events",
-    "workshops": "Workshops"
+    "title": "ክስተቶች",
+    "events": "ክስተቶች",
+    "calendar": "የቀን ዝርዝር",
+    "myEvents": "የእኔ ዝግጅቶች",
+    "workshops": "የስራ ስርዓቶች"
   },
   "tango": {
-    "title": "Tango Resources",
-    "teachers": "Teachers",
-    "venues": "Venues",
-    "tutorials": "Tutorials",
-    "musicLibrary": "Music Library",
-    "danceStyles": "Dance Styles"
+    "title": "ታንጎ ምንጮች",
+    "teachers": "መምህራን",
+    "venues": "ቦታዎች",
+    "tutorials": "መማር መመሪያዎች",
+    "musicLibrary": "ሙዚቃ ቤተ መዝሙር",
+    "danceStyles": "እንቅስቃሴ ዘይት ዓይነቶች"
   },
   "resources": {
-    "title": "Resources",
-    "communityMap": "Community Map",
-    "blog": "Blog",
-    "newsletter": "Newsletter",
-    "faq": "FAQ",
-    "help": "Help"
+    "title": "ምንጮች",
+    "communityMap": "አካባቢ ካርታ",
+    "blog": "ብሎግ",
+    "newsletter": "የዜና ዋነኛ ገጽ",
+    "faq": "እንደ አስተያየት ጥያቄዎች",
+    "help": "እባኮትን ይረዱ።"
   },
   "tools": {
-    "title": "AI & Tools",
-    "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue AI",
-    "marketplace": "Marketplace",
-    "travelPlanner": "Travel Planner"
+    "title": "አይ እና መሣሪያዎች",
+    "lifeCEO": "የእንቅስቃሴ ዋና አስተዳደር",
+    "mrBlue": "አቶ ቡሉ ኤይአይ",
+    "marketplace": "ገበያ",
+    "travelPlanner": "ጉዞ እቅድ አዘጋጅ"
   },
   "personal": {
-    "title": "Personal",
-    "savedPosts": "Saved Posts",
-    "favorites": "Favorites",
-    "settings": "Settings",
-    "bookmarks": "Bookmarks",
-    "activity": "Activity Log"
+    "title": "ግለሰቦች",
+    "savedPosts": "የተያዙ ጽሁፎች",
+    "favorites": "የወደዳቸው",
+    "settings": "ቅንብሮች",
+    "bookmarks": "መዝገቦች",
+    "activity": "እንቅስቃሴ መዝገብ"
   },
   "admin": {
-    "title": "Admin",
-    "dashboard": "Admin Dashboard",
-    "platform": "Platform",
-    "users": "User Management",
-    "content": "Content Moderation",
-    "reports": "User Reports",
-    "analytics": "Analytics"
+    "title": "አስተዳደር",
+    "dashboard": "አድሚን ዳሽቦርድ",
+    "platform": "መድረክ",
+    "users": "ተጠቃሚ አስተዳደር",
+    "content": "የይዘት መቆጣጠር",
+    "reports": "ተጠቃሚ ዘገባዎች",
+    "analytics": "ትንበያ"
   },
   "esa": {
-    "title": "ESA Framework",
-    "dashboard": "ESA Dashboard",
-    "tasks": "ESA Tasks",
-    "communications": "ESA Communications"
+    "title": "ESA አውድ ወቅት",
+    "dashboard": "ESA ዳሽቦርድ",
+    "tasks": "የኢንተርነት ሥራዎች",
+    "communications": "ኤሳ ኮሙኒኬሽንስ"
   },
   "footer": {
-    "company": "Company",
-    "about": "About Us",
-    "contact": "Contact",
-    "careers": "Careers",
-    "volunteer": "Volunteer",
-    "legal": "Legal",
-    "terms": "Terms of Service",
-    "privacy": "Privacy Policy",
-    "guidelines": "Community Guidelines",
-    "support": "Support",
-    "pricing": "Pricing"
+    "company": "ኩባንያ",
+    "about": "እኛን ስለ እኛ",
+    "contact": "ያግኙ",
+    "careers": "ስራዎች",
+    "volunteer": "እንቅስቃሴ",
+    "legal": "ሕጋዊ",
+    "terms": "አገልግሎት ውል",
+    "privacy": "የግለሰቦች መረጃ የደህንነት ፖሊሲ",
+    "guidelines": "አካባቢ መመሪያዎች",
+    "support": "ድጋፍ",
+    "pricing": "ዋጋ እንደገና"
   }
 }

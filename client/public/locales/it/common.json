@@ -189,5 +189,9 @@
     "yourCity": "La Tua Città",
     "globalStatistics": "Statistiche Globali",
     "globalCommunity": "Comunità Globale"
-  }
+  },
+  "home": "home",
+  "ambassadors": "Ambassadors",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source"
 }
