@@ -1720,6 +1720,19 @@ export class DbStorage implements IStorage {
     await db.delete(emailVerificationTokens).where(eq(emailVerificationTokens.token, token));
   }
 
+  async getEmailVerificationTokenByUserId(userId: number): Promise<SelectEmailVerificationToken | undefined> {
+    const result = await db
+      .select()
+      .from(emailVerificationTokens)
+      .where(and(
+        eq(emailVerificationTokens.userId, userId),
+        gt(emailVerificationTokens.expiresAt, new Date())
+      ))
+      .orderBy(emailVerificationTokens.createdAt)
+      .limit(1);
+    return result[0];
+  }
+
   async createPasswordResetToken(token: InsertPasswordResetToken): Promise<SelectPasswordResetToken> {
     const result = await db.insert(passwordResetTokens).values(token).returning();
     return result[0];

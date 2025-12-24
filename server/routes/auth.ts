@@ -856,4 +856,32 @@ router.post("/2fa/disable", authenticateToken, async (req: AuthRequest, res: Res
   }
 });
 
+// Test endpoint for E2E testing - get verification token by email
+// Only available in development mode
+if (process.env.NODE_ENV !== "production") {
+  router.get("/test/verification-token", async (req: Request, res: Response) => {
+    try {
+      const { email } = req.query;
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const token = await storage.getEmailVerificationTokenByUserId(user.id);
+      if (!token) {
+        return res.status(404).json({ message: "No verification token found" });
+      }
+
+      res.json({ token: token.token, userId: user.id, email: user.email });
+    } catch (error) {
+      console.error("Test verification token error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+}
+
 export default router;
