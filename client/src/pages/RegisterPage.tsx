@@ -182,7 +182,7 @@ export default function RegisterPage() {
       if (result.requiresVerification) {
         toast({
           title: t('pages:register.toast.checkEmail.title', 'Check your email'),
-          description: t('pages:register.toast.checkEmail.description', 'We sent you a verification link. Please check your inbox.'),
+          description: t('pages:register.toast.checkEmail.description', 'We sent you a 6-digit verification code. Please check your inbox.'),
         });
         navigate(`/email-verification?email=${encodeURIComponent(result.email)}`);
       }
