@@ -87,7 +87,7 @@ if (!i18n.isInitialized) {
       debug: false,
       load: "currentOnly",
       fallbackLng: {
-        "es-ar": ["en"],
+        "es-ar": ["es", "en"],
         default: ["en"],
       },
       nonExplicitSupportedLngs: true,
