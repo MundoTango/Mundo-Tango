@@ -287,5 +287,19 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
+  },
+  "about": {
+    "badge": "About Us",
+    "title": "About Mundo Tango",
+    "subtitle": "Connecting the global tango community, one dance at a time",
+    "missionTitle": "Our Mission",
+    "missionDescription": "Mundo Tango is dedicated to fostering connections within the global tango community. We believe in the power of dance to bring people together across cultures, languages, and borders.",
+    "valuesTitle": "Our Values",
+    "valueCommunityTitle": "Community First",
+    "valueCommunityDescription": "We prioritize authentic connections and meaningful interactions.",
+    "valueAuthenticityTitle": "Authenticity",
+    "valueAuthenticityDescription": "We honor the traditions of Argentine tango while embracing its evolution.",
+    "valueInclusivityTitle": "Inclusivity",
+    "valueInclusivityDescription": "Everyone is welcome in our community."
   }
 }

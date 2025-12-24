@@ -195,16 +195,18 @@
     "noCities": "도시를 찾을 수 없습니다"
   },
   "about": {
-    "pageName": "소개",
-    "seo": {
-      "title": "소개 - Mundo Tango",
-      "description": "Mundo Tango, 글로벌 탱고 커뮤니티를 연결하는 우리의 사명, 그리고 플랫폼 뒤의 팀에 대해 알아보세요."
-    },
-    "heading": "Mundo Tango 소개",
-    "mission": {
-      "heading": "우리의 사명",
-      "description": "전 세계 탱고 댄서들을 연결하고 모든 사람이 탱고 문화를 접할 수 있도록 합니다."
-    }
+    "badge": "우리에 대해",
+    "title": "무르노 탱고에 대하여",
+    "subtitle": "전 세계 탱고 커뮤니티를 연결하며, 한 번의 춤으로",
+    "missionTitle": "우리의 사명",
+    "missionDescription": "문도 탱고는 전 세계 탱고 커뮤니티 내의 연결을 촉진하는 데 전념하고 있습니다. 우리는 춤의 힘이 문화, 언어, 국경을 초월하여 사람들을 하나로 모을 수 있다고 믿습니다.",
+    "valuesTitle": "우리의 가치",
+    "valueCommunityTitle": "커뮤니티 우선",
+    "valueCommunityDescription": "우리는 진정한 연결과 의미 있는 상호작용을 우선시합니다.",
+    "valueAuthenticityTitle": "진정성",
+    "valueAuthenticityDescription": "우리는 아르헨티나 탱고의 전통을 존중하면서 그 발전을 수용합니다.",
+    "valueInclusivityTitle": "포용성",
+    "valueInclusivityDescription": "우리 커뮤니티에는 모두 환영합니다."
   },
   "profile": {
     "pageName": "프로필",

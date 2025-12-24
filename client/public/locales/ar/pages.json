@@ -1,167 +1,167 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "تسجيل الدخول",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "تسجيل الدخول - عالم التانغو",
+      "description": "سجل الدخول إلى حسابك في Mundo Tango للتواصل مع مجتمع التانغو العالمي، واكتشاف الفعاليات، ومشاركة شغفك بالتانغو الأرجنتيني."
     },
-    "badge": "Welcome Back",
+    "badge": "مرحباً بعودتك",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "تستمر رحلتك مع التانغو",
+      "paragraph": "سجّل الدخول للتواصل مع الراقصين حول العالم، اكتشف الفعاليات، وشارك شغفك"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "راقصون",
+      "events": "أحداث"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "بريد إلكتروني",
+      "password": "كلمة المرور",
+      "signIn": "تسجيل الدخول",
+      "signingIn": "تسجيل الدخول...",
+      "forgotPassword": "هل نسيت كلمة المرور؟"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "ليس لديك حساب؟",
+    "createAccount": "أنشئ واحدًا الآن",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "¡مرحبا بعودتك!",
+      "successDescription": "لقد سجلت الدخول بنجاح.",
+      "errorTitle": "فشل تسجيل الدخول",
+      "errorDescription": "بيانات اعتماد غير صالحة"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "منزل",
+    "pageLayoutTitle": "حيث يلتقي التانغو بالمجتمع",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "موند تانغو - تواصل مع مجتمع التانغو العالمي",
+      "description": "انضم إلى آلاف من راقصي التانغو حول العالم. اكتشف الفعاليات، وابحث عن معلمين، وتواصل مع الراقصين، وانغمس في العالم العاطفي لتانغو الأرجنتيني."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "مرحبًا بكم في المجتمع العالمي للتانغو",
+      "heading": "حيث يلتقي التانغو بالمجتمع",
+      "paragraph": "شارك الذكريات، وابحث عن الأحداث، وساعدنا في بناء مستقبل تكنولوجيا التانغو. انضم إلى آلاف الراقصين الشغوفين المتصلين حول العالم.",
+      "getStarted": "ابدأ مجانًا",
+      "volunteer": "تطوع للمساعدة في بناء MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "كيف يعمل",
+      "description": "ابدأ رحلتك في التانغو بثلاث خطوات بسيطة",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "أنشئ ملفك الشخصي",
+        "description": "انضم مجانًا وأخبرنا عن رحلتك مع التانغو، مستوى خبرتك، وتفضيلاتك في الرقص."
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "اكتشف واتصل",
+        "description": "ابحث عن الفعاليات والمعلمين والأماكن بالقرب منك. تواصل مع الراقصين الذين يشاركونك شغفك."
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "ارقص وازدهر",
+        "description": "احضر الفعاليات، خذ دروسًا، كوّن صداقات، وكن جزءًا من مجتمع التانغو العالمي."
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "كل ما تحتاجه",
+      "description": "اتصل، اكتشف، وازدهر في رحلتك مع التانغو بميزات قوية",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "مجتمع",
+        "heading": "اتصل بالراقصين حول العالم",
+        "description": "انضم إلى مجتمع عالمي نابض بالحياة من محبي التانغو. تواصل مع الراقصين والمعلمين والمنظمين من بوينس آيرس إلى طوكيو.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "تابع الراقصين وابنِ شبكتك",
+          "groups": "انضم إلى مجموعات بناءً على الاهتمامات والموقع.",
+          "messaging": "ميزات المراسلة والدردشة في الوقت الفعلي",
+          "discover": "اكتشف الراقصين الذين يزورون مدينتك"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "أحداث",
+        "heading": "اكتشف الفعاليات في كل مكان",
+        "description": "لا تفوت أبداً أي ميلونغا أو مهرجان أو ورشة عمل. منصتنا تربطك بآلاف فعاليات التانغو التي تحدث في جميع أنحاء العالم.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "تقويم شامل للفعاليات",
+          "rsvp": "حجز الردود والتذاكر",
+          "notifications": "إشعارات الأحداث والتذكيرات",
+          "map": "خريطة تفاعلية للأماكن"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "البث المباشر",
+          "description": "شاهد الميلونغات حول العالم في الوقت الحقيقي"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "مكتبة الموسيقى",
+          "description": "قوائم تشغيل التانغو المنتقاة وأدلة"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "معلمون معتمدون",
+          "description": "تعلّم من مدرّسين معتمدين"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "مخطط السفر",
+          "description": "خطط للرحلات وابحث عن مضيفين حول العالم"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "ما يقوله الراقصون",
+      "description": "انضم إلى آلاف الراقصين الراضين في جميع أنحاء العالم",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "ماريا رودريغيز",
+          "location": "بوينس آيرس، الأرجنتين",
+          "text": "ساعدني Mundo Tango في العثور على عائلتي الراقصة في مدينة جديدة. المجتمع دافئ ومرحب ومتحمس حقًا للتانغو."
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "جيمس تشين",
+          "location": "سان فرانسيسكو، الولايات المتحدة الأمريكية",
+          "text": "لقد اكتشفت ميلونغات وورش عمل رائعة من خلال هذه المنصة. لقد أصبحت جزءًا أساسيًا من رحلتي في التانغو."
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "إلينا فولكوف",
+          "location": "موسكو، روسيا",
+          "text": "ساعدني دليل المعلمين في العثور على مدربين رائعين. لقد تحسن رقصي بشكل كبير!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "الأسئلة الشائعة",
+      "description": "كل ما تحتاج معرفته عن عالم التانغو",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "ما هو موندو تانغو؟",
+          "answer": "منصة \"مندو تانغو\" هي منصة عالمية تربط بين راقصي التانغو والمعلمين والمنظمين. نساعدك على اكتشاف الفعاليات، والعثور على شركاء للرقص، والتعلم من أفضل المدربين، والانغماس في مجتمع التانغو النابض بالحياة في جميع أنحاء العالم."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "هل يمكن استخدام Mundo Tango مجانًا؟",
+          "answer": "نعم! نحن نقدم فئة مجانية تشمل إنشاء ملف تعريف أساسي، واكتشاف الفعاليات، والمراسلة. الميزات المميزة مثل المراسلة غير المحدودة، ومطابقة شريك الرقص بواسطة الذكاء الاصطناعي، وإشعارات الفعاليات ذات الأولوية متاحة مع اشتراك Pro الخاص بنا."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "كيف أجد فعاليات التانغو بالقرب مني؟",
+          "answer": "ببساطة استخدم تقويم الفعاليات أو ميزات البحث لتصفية النتائج حسب المدينة، التاريخ، ونوع الفعالية. يمكنك اكتشاف الميلونغات، المهرجانات، الورش، وجلسات التدريب التي تحدث في منطقتك أو في أي مكان في العالم."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "هل يمكنني التواصل مع راقصين آخرين؟",
+          "answer": "بالتأكيد! تابع الراقصين، انضم إلى المجموعات، أرسل طلبات صداقة، وتحدث مع المجتمع. منصتنا مصممة لتعزيز الروابط الحقيقية داخل عالم التانغو."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "كيف أجد معلمي التانغو؟",
+          "answer": "قم بزيارة دليل المعلمين لدينا لتصفح المدرسين المعتمدين حول العالم. قم بتصفية النتائج حسب الموقع، التخصص، ومستوى الخبرة. اقرأ تقييمات الطلاب الآخرين واحجز دروسًا خاصة مباشرة من خلال المنصة."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "ما الذي يجعل موندو تانجو مختلفًا؟",
+          "answer": "نحن مبنيون من قبل راقصي التانغو، لراقصي التانغو. تركيزنا على بناء مجتمع حقيقي، وتنظيم فعاليات ذات جودة، وربطك بعائلة التانغو العالمية - وليس مجرد شبكة اجتماعية أخرى."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "هل أنت مستعد للانضمام إلى المجتمع؟",
+      "description": "أنشئ حسابك المجاني اليوم وابدأ بالتواصل مع راقصي التانغو المتحمسين حول العالم. لا حاجة لبطاقة ائتمان.",
+      "button": "انضم إلى Mundo Tango مجانًا",
+      "freeForever": "مجاني للأبد",
+      "noCreditCard": "بدون بطاقة ائتمان",
+      "cancelAnytime": "إلغاء في أي وقت"
     }
   },
   "feed": {
@@ -287,5 +287,19 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
+  },
+  "about": {
+    "badge": "معلومات عنا",
+    "title": "عن موندو تانغو",
+    "subtitle": "ربط مجتمع التانغو العالمي، رقصة واحدة في كل مرة",
+    "missionTitle": "مهمتنا",
+    "missionDescription": "موندوتانغو مكرس لتعزيز الروابط داخل مجتمع التانغو العالمي. نؤمن بقوة الرقص في جمع الناس عبر الثقافات واللغات والحدود.",
+    "valuesTitle": "قيمنا",
+    "valueCommunityTitle": "المجتمع أولاً",
+    "valueCommunityDescription": "نحن نُعطي الأولوية للروابط الأصيلة والتفاعلات ذات المعنى.",
+    "valueAuthenticityTitle": "الأصالة",
+    "valueAuthenticityDescription": "نحن نكرم تقاليد التانغو الأرجنتيني بينما نحتضن تطوره.",
+    "valueInclusivityTitle": "الشمولية",
+    "valueInclusivityDescription": "الجميع مرحب بهم في مجتمعنا."
   }
 }

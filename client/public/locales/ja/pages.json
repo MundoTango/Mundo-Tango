@@ -287,5 +287,19 @@
       "analytics": "分析",
       "settings": "設定"
     }
+  },
+  "about": {
+    "badge": "私たちについて",
+    "title": "ムンドタンゴについて",
+    "subtitle": "世界のタンゴコミュニティを、一回のダンスでつなげる",
+    "missionTitle": "私たちの使命",
+    "missionDescription": "ムンド・タンゴは、世界のタンゴコミュニティ内でのつながりを育むことに専念しています。私たちは、ダンスの力が文化、言語、国境を越えて人々を結びつけると信じています。",
+    "valuesTitle": "私たちの価値観",
+    "valueCommunityTitle": "コミュニティファースト",
+    "valueCommunityDescription": "私たちは本物のつながりと意義のある交流を優先します。",
+    "valueAuthenticityTitle": "本物性",
+    "valueAuthenticityDescription": "アルゼンチンタンゴの伝統を尊重しながら、その進化を受け入れます。",
+    "valueInclusivityTitle": "インクルーシビティ",
+    "valueInclusivityDescription": "私たちのコミュニティには誰でも歓迎です。"
   }
 }

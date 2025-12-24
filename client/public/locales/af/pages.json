@@ -1,167 +1,167 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "Teken aan",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Meld Aan - Mundo Tango",
+      "description": "Meld aan by jou Mundo Tango-rekening om met die wêreldwye tango-gemeenskap te verbind, geleenthede te ontdek en jou passie vir Argentynse tango te deel."
     },
-    "badge": "Welcome Back",
+    "badge": "Welkom Terug",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Jou Tango-reis Gaan Voort",
+      "paragraph": "Meld aan om met dansers wêreldwyd te verbind, geleenthede te ontdek, en jou passie te deel."
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "dansers",
+      "events": "gebeure"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "E-pos",
+      "password": "Wagwoord",
+      "signIn": "Teken In",
+      "signingIn": "Teken in...",
+      "forgotPassword": "Vergeet wagwoord?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Het jy nie 'n rekening nie?",
+    "createAccount": "Skep nou een.",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Welkom terug!",
+      "successDescription": "Jy het suksesvol aangemeld.",
+      "errorTitle": "Aanmelding het misluk",
+      "errorDescription": "Ongeldige geloofsbriewe"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Tuis",
+    "pageLayoutTitle": "Waar Tango Gemeenskap Ontmoet",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Verbind met die Globale Tango Gemeenskap",
+      "description": "Sluit aan by duisende tangodansers wêreldwyd. Ontdek geleenthede, vind onderwysers, maak kontak met dansers, en dompel jouself in die passievolle wêreld van Argentynse tango."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Welkom by die Globale Tango Gemeenskap",
+      "heading": "Waar Tango Gemeenskap Ontmoet",
+      "paragraph": "Deel herinneringe, vind geleenthede, en help ons om die toekoms van tango-tegnologie te bou. Sluit aan by duisende passievolle dansers wat wêreldwyd verbind.",
+      "getStarted": "Begin Gratis",
+      "volunteer": "Vrywilliger om MT te help bou"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Hoe dit werk",
+      "description": "Begin jou tango-reis in drie eenvoudige stappe",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Skep Jou Profiel",
+        "description": "Sluit gratis aan en vertel ons van jou tango-reis, ervaringsvlak en dansvoorkeure."
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Ontdek & Verbind",
+        "description": "Vind geleenthede, onderwysers, en plekke naby jou. Skakel met dansers wat jou passie deel."
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Dans & Groei",
+        "description": "Woon geleenthede by, neem lesse, maak vriende, en word deel van die globale tango-gemeenskap."
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Alles Wat Jy Nodig Het",
+      "description": "Verbind, ontdek, en laat jou tango-reis groei met kragtige kenmerke",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Gemeenskap",
+        "heading": "Skakel met Dansers Wêreldwyd",
+        "description": "Sluit aan by 'n lewendige wêreldwye gemeenskap van tango-entoesiaste. Skakel met dansers, onderwysers en organiseerders van Buenos Aires tot Tokio.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Volg dansers en bou jou netwerk",
+          "groups": "Sluit aan by groepe gebaseer op belangstellings en ligging.",
+          "messaging": "Regstreekse boodskap- en kletskenmerke",
+          "discover": "Ontdek dansers wat jou stad besoek"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Gebeure",
+        "heading": "Ontdek Gebeure Oral",
+        "description": "Moet nooit 'n milonga, fees of werkswinkel misloop nie. Ons platform verbind jou met duisende tango-geleenthede wat wêreldwyd plaasvind.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Omvattende gebeurteniskalender",
+          "rsvp": "RSVP en kaartjie bespreking",
+          "notifications": "Kennisgewings en herinneringe van geleenthede",
+          "map": "Interaktiewe kaart van lokale"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Regstreekse Uitsending",
+          "description": "Kyk milongas wêreldwyd in regte tyd."
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Musiekbiblioteek",
+          "description": "Gekeurde tango-speellyste en gidse"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Geverifieerde Onderwysers",
+          "description": "Leer by gesertifiseerde instrukteurs"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Reisbeplanner",
+          "description": "Beplan reise en vind gashere wêreldwyd"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Wat Dansers Sê",
+      "description": "Sluit aan by duisende tevrede dansers wêreldwyd",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "Buenos Aires, Argentinië",
+          "text": "Mundo Tango het my gehelp om my dansfamilie in 'n nuwe stad te vind. Die gemeenskap is warm, verwelkomend, en werklik passievol oor tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, VSA",
+          "text": "Ek het wonderlike milongas en werkswinkels deur hierdie platform ontdek. Dit het noodsaaklik geword vir my tango-reis."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moskou, Rusland",
+          "text": "Die onderwysersgids het my gehelp om ongelooflike instrukteurs te vind. My dans het geweldig verbeter!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Gereelde Vrae",
+      "description": "Alles wat jy moet weet oor Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Wat is Mundo Tango?",
+          "answer": "Mundo Tango is 'n globale platform wat tango dansers, onderwysers, en organiseerders verbind. Ons help jou om geleenthede te ontdek, dansmaats te vind, by top instrukteurs te leer, en jouself in die lewendige tango-gemeenskap wêreldwyd te verdiep."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Is Mundo Tango gratis om te gebruik?",
+          "answer": "Ja! Ons bied 'n gratis vlak aan wat basiese profielskep, gebeurtenisontdekking, en boodskappe insluit. Premium kenmerke soos onbeperkte boodskappe, KI-dansmaatpassing, en prioriteitsgebeurteniskennisgewings is beskikbaar met ons Pro-intekening."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Hoe vind ek tango-geleenthede naby my?",
+          "answer": "Gebruik eenvoudig ons Gebeurekalender of Soekfunksies om volgens stad, datum en gebeurtenistipe te filter. Jy kan milongas, feeste, werkswinkels en oefensessies ontdek wat in jou area of enige plek in die wêreld plaasvind."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Kan ek met ander dansers verbind?",
+          "answer": "Absoluut! Volg dansers, sluit aan by groepe, stuur vriendversoeke, en gesels met die gemeenskap. Ons platform is ontwerp om egte verbindings binne die tango-wêreld te bevorder."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Hoe vind ek tango-onderwysers?",
+          "answer": "Besoek ons Onderwysersgids om deur geverifieerde instrukteurs wêreldwyd te blaai. Filter volgens ligging, spesialiteit en ervaringsvlak. Lees resensies van ander studente en bespreek privaat lesse direk deur die platform."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Wat maak Mundo Tango anders?",
+          "answer": "Ons is deur tangodansers gebou, vir tangodansers. Ons fokus is op egte gemeenskapsbou, kwaliteit gebeurtenis kurasie, en om jou met die globale tango familie te verbind - nie net nog 'n sosiale netwerk nie."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Gereed om by die Gemeenskap aan te sluit?",
+      "description": "Skep vandag jou gratis rekening en begin verbind met passievolle tangodansers wêreldwyd. Geen kredietkaart benodig nie.",
+      "button": "Sluit aan by Mundo Tango Gratis",
+      "freeForever": "Vir altyd gratis",
+      "noCreditCard": "Geen kredietkaart",
+      "cancelAnytime": "Kanselleer enige tyd"
     }
   },
   "feed": {

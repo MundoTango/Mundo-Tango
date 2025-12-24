@@ -195,16 +195,18 @@
     "noCities": "Keine Städte gefunden"
   },
   "about": {
-    "pageName": "Über uns",
-    "seo": {
-      "title": "Über uns - Mundo Tango",
-      "description": "Erfahren Sie mehr über Mundo Tango, unsere Mission, die weltweite Tango-Community zu verbinden, und das Team hinter der Plattform."
-    },
-    "heading": "Über Mundo Tango",
-    "mission": {
-      "heading": "Unsere Mission",
-      "description": "Tango-Tänzer weltweit zu verbinden und die Tango-Kultur für alle zugänglich zu machen."
-    }
+    "badge": "Über uns",
+    "title": "Über Mundo Tango",
+    "subtitle": "Die globale Tango-Community verbinden, einen Tanz nach dem anderen.",
+    "missionTitle": "Unsere Mission",
+    "missionDescription": "Mundo Tango widmet sich der Förderung von Verbindungen innerhalb der globalen Tango-Community. Wir glauben an die Kraft des Tanzes, Menschen über Kulturen, Sprachen und Grenzen hinweg zusammenzubringen.",
+    "valuesTitle": "Unsere Werte",
+    "valueCommunityTitle": "Gemeinschaft zuerst",
+    "valueCommunityDescription": "Wir priorisieren authentische Verbindungen und bedeutungsvolle Interaktionen.",
+    "valueAuthenticityTitle": "Authentizität",
+    "valueAuthenticityDescription": "Wir ehren die Traditionen des argentinischen Tangos und umarmen gleichzeitig seine Evolution.",
+    "valueInclusivityTitle": "Inklusivität",
+    "valueInclusivityDescription": "Jeder ist in unserer Gemeinschaft willkommen."
   },
   "profile": {
     "pageName": "Profil",
