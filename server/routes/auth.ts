@@ -456,7 +456,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
     await storage.deleteEmailVerificationToken(token);
 
     // Auto-login: Get user and generate tokens
-    const user = await storage.getUser(verificationToken.userId);
+    const user = await storage.getUserById(verificationToken.userId);
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
