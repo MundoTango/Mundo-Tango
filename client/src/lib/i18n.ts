@@ -60,35 +60,21 @@ export function isRTLLanguage(lang: string): boolean {
 export async function changeLanguageWithRegionalSupport(languageCode: string): Promise<void> {
   console.log('[i18n] changeLanguageWithRegionalSupport called with:', languageCode);
   
-  // For regional variants like es-ar, manually load resources
+  // Simply call changeLanguage - i18next should load resources naturally
+  // since we have supportedLngs configured with the full locale codes
+  await i18n.changeLanguage(languageCode);
+  
+  console.log('[i18n] After changeLanguage, i18n.language:', i18n.language, 'resolvedLanguage:', i18n.resolvedLanguage);
+  
+  // For regional variants, force reload resources to ensure they're fetched
   if (languageCode.includes('-')) {
+    const namespaces = ['common', 'navigation', 'pages', 'errors'];
     try {
-      const namespaces = ['common', 'navigation', 'pages', 'errors'];
-      for (const ns of namespaces) {
-        const res = await fetch(`/locales/${languageCode}/${ns}.json`);
-        if (res.ok) {
-          const data = await res.json();
-          i18n.addResourceBundle(languageCode, ns, data, true, true);
-          console.log(`[i18n] Loaded ${languageCode}/${ns}.json`);
-        }
-      }
-      // Call changeLanguage
-      await i18n.changeLanguage(languageCode);
-      // Force the language to stay as requested if i18next normalized it
-      if (i18n.language !== languageCode) {
-        console.log(`[i18n] Forcing language from ${i18n.language} to ${languageCode}`);
-        (i18n as any).language = languageCode;
-        (i18n as any).languages = [languageCode, 'en'];
-        // Emit language changed event
-        i18n.emit('languageChanged', languageCode);
-      }
-      console.log('[i18n] After regional load, i18n.language:', i18n.language);
+      await i18n.reloadResources(languageCode, namespaces);
+      console.log('[i18n] Resources reloaded for:', languageCode);
     } catch (err) {
-      console.error('[i18n] Error loading regional variant:', err);
-      await i18n.changeLanguage(languageCode);
+      console.error('[i18n] Error reloading resources:', err);
     }
-  } else {
-    await i18n.changeLanguage(languageCode);
   }
 }
 
