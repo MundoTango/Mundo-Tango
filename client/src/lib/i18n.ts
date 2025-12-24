@@ -91,7 +91,7 @@ if (!i18n.isInitialized) {
       },
       nonExplicitSupportedLngs: true,
       cleanCode: false,
-      lowerCaseLng: false,
+      lowerCaseLng: true,
       interpolation: { escapeValue: false },
       backend: { loadPath: "/locales/{{lng}}/{{ns}}.json" },
       react: { useSuspense: true },
