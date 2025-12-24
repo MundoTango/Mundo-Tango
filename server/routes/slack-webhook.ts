@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { N8nWebhookService } from '../services/messaging/N8nWebhookService';
+import { n8nClient } from '../services/n8nClient';
 
 const router = Router();
 const n8nService = new N8nWebhookService();
@@ -43,6 +44,50 @@ router.post('/slack/events', async (req, res) => {
 
       // Send to n8n for processing
       await n8nService.processIncomingMessage(incomingMessage);
+
+            // Check if message contains n8n workflow trigger commands
+      // Following Mr. Blue's coordination protocol
+      const workflowTriggers = [
+        { pattern: /execute.*(workflow|n8n|automation)/i, workflowId: 'workflow_general' },
+        { pattern: /scrape\s+events?/i, workflowId: 'workflow_event_scraping' },
+        { pattern: /send\s+notifications?/i, workflowId: 'workflow_notifications' },
+        { pattern: /sync\s+data/i, workflowId: 'workflow_data_sync' },
+      ];
+
+      for (const trigger of workflowTriggers) {
+        if (trigger.pattern.test(cleanText)) {
+          console.log(`[n8n] Detected workflow trigger: ${trigger.workflowId}`);
+          
+          try {
+            // Execute n8n workflow
+            const execution = await n8nClient.executeWorkflow({
+              workflowId: trigger.workflowId,
+              data: {
+                trigger: 'slack_mention',
+                user_id: user,
+                channel_id: channel,
+                message: cleanText,
+                thread_ts: ts
+              },
+              waitForCompletion: false // Async execution
+            });
+
+            console.log(`[n8n] Workflow ${trigger.workflowId} started: ${execution.id}`);
+            
+            // Post confirmation to Slack thread
+            // Note: Actual Slack posting would require Slack Web API client
+            // This is a placeholder for the integration point
+            console.log(`[Slack] Would post: 🔄 Starting ${trigger.workflowId}...`);
+            
+          } catch (error) {
+            console.error(`[n8n] Workflow execution failed:`, error);
+            // Post error to Slack thread
+            console.log(`[Slack] Would post: ❌ Workflow failed: ${error.message}`);
+          }
+          
+          break; // Only trigger first matching workflow
+        }
+      }
 
       // Acknowledge receipt immediately
       res.status(200).json({ ok: true });
