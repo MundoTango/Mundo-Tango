@@ -55,12 +55,35 @@ export default function OnboardingPage() {
   const totalSteps = 6;
   const progress = (currentStep / totalSteps) * 100;
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      // After onboarding, redirect to volunteer/support page
-      setLocationNav("/volunteer");
+      // Finalizing onboarding
+      try {
+        // 1. Update user profile with city/country and onboarding status
+        await apiRequest("PATCH", "/api/users/me", {
+          city,
+          country,
+          tangoRoles: selectedRoles,
+          isOnboardingComplete: true,
+        });
+
+        // 2. Trigger location change effects (auto-join city group, notifications, etc.)
+        if (city && country) {
+          await apiRequest("POST", "/api/location/change-effects", {
+            newCity: city,
+            newCountry: country,
+          });
+        }
+
+        // 3. After onboarding, redirect to volunteer/support page
+        setLocationNav("/volunteer");
+      } catch (error) {
+        console.error("[Onboarding] Completion failed:", error);
+        // Fallback to simple navigation if API fails
+        setLocationNav("/volunteer");
+      }
     }
   };
 

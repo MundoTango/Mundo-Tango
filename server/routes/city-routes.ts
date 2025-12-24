@@ -337,9 +337,10 @@ router.get("/find-group", async (req: Request, res: Response) => {
            c.country.toLowerCase().includes(normalizedCountry)
     );
     
+    const slug = cityName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const newGroupData = {
       name: cityName,
-      slug: cityName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      slug: slug,
       type: 'city' as const,
       city: cityName,
       country: countryName || undefined,
@@ -351,6 +352,25 @@ router.get("/find-group", async (req: Request, res: Response) => {
     };
 
     const [newGroup] = await db.insert(groups).values(newGroupData).returning();
+
+    // MUNDO TANGO: Ensure it exists in the world map 'cities' table too
+    try {
+      const existingCity = await db.select().from(cities).where(eq(cities.slug, slug)).limit(1);
+      if (!existingCity.length) {
+        await db.insert(cities).values({
+          name: cityName,
+          slug: slug,
+          country: countryName || '',
+          latitude: popularCity?.lat?.toString(),
+          longitude: popularCity?.lng?.toString(),
+          description: `Tango community for ${cityName}`,
+          isActive: true,
+          legacyGroupId: newGroup.id,
+        });
+      }
+    } catch (syncErr) {
+      console.error(`[CityFindGroup] Failed to sync with cities table:`, syncErr);
+    }
     
     console.log(`[CityFindGroup] Created new city group: ${newGroup.name} (ID: ${newGroup.id})`);
 

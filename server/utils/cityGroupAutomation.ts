@@ -124,6 +124,25 @@ export async function ensureCityGroupExists(
     })
     .returning();
 
+  // MUNDO TANGO: Sync with world map cities table
+  try {
+    const existingCity = await db.select().from(cities).where(eq(cities.slug, slug)).limit(1);
+    if (!existingCity.length) {
+      await db.insert(cities).values({
+        name: normalizedCity,
+        slug: slug,
+        country: normalizedCountry || '',
+        latitude: latitude ? String(latitude) : null,
+        longitude: longitude ? String(longitude) : null,
+        description: `The official tango community for ${normalizedCity}.`,
+        isActive: true,
+        legacyGroupId: newGroup.id,
+      });
+    }
+  } catch (syncErr) {
+    console.error(`[CityGroupAutomation] Failed to sync with cities table:`, syncErr);
+  }
+
   await db.insert(groupMembers).values({
     groupId: newGroup.id,
     userId: creatorUserId,
