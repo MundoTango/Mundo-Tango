@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
+import { apiRequest } from "@/lib/queryClient";
 import { 
   ChevronLeft, ChevronRight, MapPin, Camera, Heart, Sparkles,
   User, Users, GraduationCap, Music, Radio, Calendar, Home,
