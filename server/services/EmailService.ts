@@ -365,6 +365,48 @@ export class EmailService {
           </div>
         </body>
         </html>
+      `,
+      
+      passwordReset: (data) => `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f4f4f4; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { padding: 30px; background: white; border-radius: 0 0 8px 8px; }
+            .button { display: inline-block; padding: 14px 28px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight: bold; }
+            .warning { background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 6px; margin: 20px 0; }
+            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Password Reset Request</h1>
+            </div>
+            <div class="content">
+              <p>Hi ${data.name},</p>
+              <p>We received a request to reset your password for your Mundo Tango account.</p>
+              <p>Click the button below to create a new password:</p>
+              <div style="text-align: center;">
+                <a href="${data.resetUrl}" class="button">Reset My Password</a>
+              </div>
+              <div class="warning">
+                <strong>This link expires in 1 hour.</strong><br>
+                If you didn't request this password reset, you can safely ignore this email. Your password will remain unchanged.
+              </div>
+              <p>If the button doesn't work, copy and paste this link into your browser:</p>
+              <p style="word-break: break-all; color: #667eea;">${data.resetUrl}</p>
+            </div>
+            <div class="footer">
+              <p>This email was sent by Mundo Tango. If you have questions, contact our support team.</p>
+              <p>Mundo Tango. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
       `
     };
     
@@ -390,6 +432,38 @@ export class EmailService {
       location: event.location,
       eventUrl: `${appUrl}/events/${event.id}`
     });
+  }
+  
+  // Helper: Send password reset email (direct send, not queued - time-sensitive)
+  static async sendPasswordResetEmail(email: string, name: string, resetToken: string): Promise<boolean> {
+    try {
+      let appUrl = process.env.APP_URL;
+      if (!appUrl && process.env.REPLIT_DEV_DOMAIN) {
+        appUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+      }
+      if (!appUrl) {
+        appUrl = 'http://localhost:5000';
+      }
+      const resetUrl = `${appUrl}/reset-password/${resetToken}`;
+      
+      const html = this.renderTemplate('passwordReset', {
+        name: name || 'Tango Dancer',
+        resetUrl
+      });
+      
+      const result = await resend.emails.send({
+        from: 'Mundo Tango <noreply@mundotango.life>',
+        to: email,
+        subject: 'Reset Your Mundo Tango Password',
+        html: html
+      });
+      
+      console.log(`[EmailService] Password reset email sent to ${email}`, result);
+      return true;
+    } catch (error: any) {
+      console.error(`[EmailService] Failed to send password reset email to ${email}:`, error);
+      return false;
+    }
   }
 }
 

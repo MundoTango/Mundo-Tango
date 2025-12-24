@@ -465,6 +465,7 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
 
     const user = await storage.getUserByEmail(email);
     if (!user) {
+      // Security: Don't reveal if email exists
       return res.json({ 
         message: "If the email exists, a password reset link has been sent" 
       });
@@ -481,10 +482,28 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
       expiresAt,
     });
 
-    res.json({ 
-      message: "If the email exists, a password reset link has been sent",
-      resetToken,
-    });
+    // Send the password reset email
+    const emailSent = await EmailService.sendPasswordResetEmail(
+      user.email,
+      user.name || user.username || 'Tango Dancer',
+      resetToken
+    );
+    
+    if (!emailSent) {
+      console.error(`[Auth] Failed to send password reset email to ${email}`);
+    }
+
+    // Always return success message (don't reveal email existence)
+    const response: { message: string; resetToken?: string } = { 
+      message: "If the email exists, a password reset link has been sent"
+    };
+    
+    // Only include resetToken in development for testing
+    if (process.env.NODE_ENV !== 'production') {
+      response.resetToken = resetToken;
+    }
+    
+    res.json(response);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ 
