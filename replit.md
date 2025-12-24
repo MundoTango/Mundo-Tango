@@ -134,6 +134,17 @@ The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Pr
 
 ## Recent Changes (Dec 24, 2024)
 
+### Email Service Enhanced with Replit Resend Connector
+- **Integration**: EmailService now uses Replit's official Resend connector (connection:conn_resend_01KD7MY1R1YM7PJRHZQJAFXCA6)
+- **Architecture**: Uses async `getResendClient()` function to fetch credentials from Replit connector
+- **Fallback**: Falls back to `RESEND_API_KEY` environment variable for local development
+- **Important**: Never cache the Resend client - access tokens expire. Always call `getResendClient()` for each operation.
+- **Features**:
+  - Password reset emails (direct send, not queued - time-sensitive)
+  - Welcome emails, event reminders, notifications (queued with rate limiting)
+  - Professional HTML templates with Mundo Tango branding
+- **Files Changed**: `server/services/EmailService.ts`
+
 ### Critical Server Startup Fix
 - **Problem**: Server crashed during ESM module loading due to n8nClient.ts throwing when N8N_API_KEY was missing
 - **Root Cause**: In ESM, all `import` statements are hoisted and evaluated BEFORE any module-level code runs. Keepalive timers registered inline were useless.

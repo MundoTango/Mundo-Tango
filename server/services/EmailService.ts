@@ -3,12 +3,66 @@ import { db } from '@shared/db';
 import { emailQueue, emailPreferences, emailLogs } from '@shared/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
+// Resend integration using Replit connector
+// Reference: Resend connector (connection:conn_resend_01KD7MY1R1YM7PJRHZQJAFXCA6)
+let connectionSettings: any;
 
-if (!RESEND_API_KEY) {
-  console.warn('[EmailService] RESEND_API_KEY not configured - emails will be logged but not sent');
+async function getCredentials() {
+  const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
+  const xReplitToken = process.env.REPL_IDENTITY 
+    ? 'repl ' + process.env.REPL_IDENTITY 
+    : process.env.WEB_REPL_RENEWAL 
+    ? 'depl ' + process.env.WEB_REPL_RENEWAL 
+    : null;
+
+  if (!xReplitToken || !hostname) {
+    // Fallback to environment variable for local development
+    const apiKey = process.env.RESEND_API_KEY;
+    if (apiKey) {
+      return { apiKey, fromEmail: 'Mundo Tango <noreply@mundotango.life>' };
+    }
+    throw new Error('Resend not configured: No Replit connector or RESEND_API_KEY');
+  }
+
+  connectionSettings = await fetch(
+    'https://' + hostname + '/api/v2/connection?include_secrets=true&connector_names=resend',
+    {
+      headers: {
+        'Accept': 'application/json',
+        'X_REPLIT_TOKEN': xReplitToken
+      }
+    }
+  ).then(res => res.json()).then(data => data.items?.[0]);
+
+  if (!connectionSettings || (!connectionSettings.settings.api_key)) {
+    // Fallback to environment variable
+    const apiKey = process.env.RESEND_API_KEY;
+    if (apiKey) {
+      return { apiKey, fromEmail: 'Mundo Tango <noreply@mundotango.life>' };
+    }
+    throw new Error('Resend not connected');
+  }
+  return { 
+    apiKey: connectionSettings.settings.api_key, 
+    fromEmail: connectionSettings.settings.from_email || 'Mundo Tango <noreply@mundotango.life>' 
+  };
 }
+
+// WARNING: Never cache this client. Access tokens expire.
+async function getResendClient(): Promise<{ client: Resend; fromEmail: string } | null> {
+  try {
+    const { apiKey, fromEmail } = await getCredentials();
+    return {
+      client: new Resend(apiKey),
+      fromEmail
+    };
+  } catch (error) {
+    console.warn('[EmailService] Resend not configured:', error);
+    return null;
+  }
+}
+
+console.log('[EmailService] Using Replit connector for Resend with env fallback');
 
 export class EmailService {
   // Check if user can receive emails (rate limiting)
@@ -70,7 +124,8 @@ export class EmailService {
   
   // Send email from queue
   static async sendQueuedEmails() {
-    if (!resend) {
+    const resendClient = await getResendClient();
+    if (!resendClient) {
       console.log('[EmailService] Resend not configured - skipping queue processing');
       return;
     }
@@ -93,8 +148,8 @@ export class EmailService {
         // Send via Resend
         const html = this.renderTemplate(email.templateName, email.templateData);
         
-        await resend.emails.send({
-          from: 'Mundo Tango <notifications@mundotango.life>',
+        await resendClient.client.emails.send({
+          from: resendClient.fromEmail,
           to: email.toEmail,
           subject: email.subject,
           html: html
@@ -461,14 +516,15 @@ export class EmailService {
         resetUrl
       });
       
-      if (!resend) {
+      const resendClient = await getResendClient();
+      if (!resendClient) {
         console.log(`[EmailService] Password reset email would be sent to ${email} (Resend not configured)`);
         console.log(`[EmailService] Reset URL: ${resetUrl}`);
         return true; // Return true so the forgot-password endpoint still responds successfully
       }
       
-      const result = await resend.emails.send({
-        from: 'Mundo Tango <noreply@mundotango.life>',
+      const result = await resendClient.client.emails.send({
+        from: resendClient.fromEmail,
         to: email,
         subject: 'Reset Your Mundo Tango Password',
         html: html
