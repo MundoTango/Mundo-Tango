@@ -915,4 +915,113 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
+// Protected maintenance endpoint for cleaning up corrupted user accounts
+// This is env-guarded and should be removed/disabled after use
+router.post("/internal/maintenance/cleanup-users", async (req: Request, res: Response) => {
+  try {
+    // Security: Validate maintenance token
+    const maintenanceToken = req.headers["x-maintenance-token"];
+    const expectedToken = process.env.MAINTENANCE_TOKEN;
+    
+    if (!expectedToken) {
+      console.error("[Maintenance] MAINTENANCE_TOKEN env var not set");
+      return res.status(503).json({ message: "Maintenance endpoint not configured" });
+    }
+    
+    if (maintenanceToken !== expectedToken) {
+      console.warn("[Maintenance] Invalid maintenance token attempt");
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { emailPattern } = req.body;
+    if (!emailPattern || typeof emailPattern !== "string") {
+      return res.status(400).json({ message: "emailPattern is required" });
+    }
+
+    // Safety check: only allow patterns from env var (comma-separated)
+    const allowedPatternsEnv = process.env.MAINTENANCE_ALLOWED_PATTERNS;
+    if (!allowedPatternsEnv) {
+      console.error("[Maintenance] MAINTENANCE_ALLOWED_PATTERNS env var not set");
+      return res.status(503).json({ message: "Maintenance patterns not configured" });
+    }
+    
+    const allowedPatterns = allowedPatternsEnv.split(",").map(p => p.trim());
+    if (!allowedPatterns.includes(emailPattern)) {
+      console.warn(`[Maintenance] Rejected pattern: ${emailPattern}`);
+      return res.status(400).json({ message: "Invalid email pattern" });
+    }
+
+    console.log(`[Maintenance] Starting cleanup for pattern: ${emailPattern}`);
+
+    // Use raw SQL with snake_case column names for production compatibility
+    const { db } = await import("../db");
+    const { sql } = await import("drizzle-orm");
+
+    // Step 1: Get all user IDs matching the pattern
+    const usersResult = await db.execute(
+      sql`SELECT id, email FROM users WHERE email LIKE ${emailPattern}`
+    );
+    const users = usersResult.rows as { id: number; email: string }[];
+    console.log(`[Maintenance] Found ${users.length} users to clean up:`, users.map(u => u.email));
+
+    if (users.length === 0) {
+      return res.json({ message: "No users found matching pattern", deletedCount: 0 });
+    }
+
+    const userIds = users.map(u => u.id);
+
+    // Step 2: Delete all related tokens (using snake_case column names)
+    let deletedTokens = { email: 0, refresh: 0, password: 0, twoFactor: 0 };
+
+    for (const userId of userIds) {
+      // Delete email verification tokens
+      const emailResult = await db.execute(
+        sql`DELETE FROM email_verification_tokens WHERE user_id = ${userId}`
+      );
+      deletedTokens.email += (emailResult.rowCount || 0);
+
+      // Delete refresh tokens
+      const refreshResult = await db.execute(
+        sql`DELETE FROM refresh_tokens WHERE user_id = ${userId}`
+      );
+      deletedTokens.refresh += (refreshResult.rowCount || 0);
+
+      // Delete password reset tokens
+      const passwordResult = await db.execute(
+        sql`DELETE FROM password_reset_tokens WHERE user_id = ${userId}`
+      );
+      deletedTokens.password += (passwordResult.rowCount || 0);
+
+      // Delete two factor secrets
+      const twoFactorResult = await db.execute(
+        sql`DELETE FROM two_factor_secrets WHERE user_id = ${userId}`
+      );
+      deletedTokens.twoFactor += (twoFactorResult.rowCount || 0);
+    }
+
+    console.log(`[Maintenance] Deleted tokens:`, deletedTokens);
+
+    // Step 3: Delete the users
+    const deleteUsersResult = await db.execute(
+      sql`DELETE FROM users WHERE email LIKE ${emailPattern}`
+    );
+    const deletedUsersCount = deleteUsersResult.rowCount || 0;
+
+    console.log(`[Maintenance] Deleted ${deletedUsersCount} users`);
+
+    res.json({
+      message: "Cleanup completed successfully",
+      deletedUsers: deletedUsersCount,
+      deletedTokens,
+      emails: users.map(u => u.email)
+    });
+  } catch (error) {
+    console.error("[Maintenance] Cleanup error:", error);
+    res.status(500).json({ 
+      message: "Cleanup failed", 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    });
+  }
+});
+
 export default router;

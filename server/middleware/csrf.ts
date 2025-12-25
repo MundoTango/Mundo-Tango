@@ -86,7 +86,8 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     "/api/auth/forgot-password",
     "/api/auth/reset-password",
     "/api/auth/verify-email",
-    "/api/auth/resend-verification"
+    "/api/auth/resend-verification",
+    "/api/auth/internal/maintenance"  // Protected by maintenance token
   ];
   if (publicAuthEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
@@ -267,7 +268,8 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/auth/forgot-password",
     "/api/auth/reset-password",
     "/api/auth/verify-email",
-    "/api/auth/resend-verification"
+    "/api/auth/resend-verification",
+    "/api/auth/internal/maintenance"  // Protected by maintenance token
   ];
   if (publicAuthEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
