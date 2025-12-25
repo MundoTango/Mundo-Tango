@@ -442,34 +442,62 @@ router.post("/refresh", async (req: Request, res: Response) => {
 
 router.post("/verify-email", async (req: Request, res: Response) => {
   try {
+    console.log("[Auth] Verify email request body:", JSON.stringify(req.body));
     const { token } = verifyEmailSchema.parse(req.body);
+    console.log("[Auth] Parsed token:", token);
 
     const verificationToken = await storage.getEmailVerificationToken(token);
+    console.log("[Auth] Verification token lookup result:", verificationToken ? `Found for userId ${verificationToken.userId}` : "Not found");
+    
     if (!verificationToken) {
-      return res.status(400).json({ message: "Invalid or expired verification token" });
+      return res.status(400).json({ message: "Invalid or expired verification code. Please request a new code." });
     }
 
-    await storage.updateUser(verificationToken.userId, {
-      isVerified: true,
-    });
-
-    await storage.deleteEmailVerificationToken(token);
-
-    // Auto-login: Get user and generate tokens
+    // Get user first to ensure they exist
     const user = await storage.getUserById(verificationToken.userId);
+    console.log("[Auth] User lookup result:", user ? `Found ${user.email}` : "Not found");
+    
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      // Clean up orphaned token
+      await storage.deleteEmailVerificationToken(token);
+      return res.status(400).json({ message: "User account not found. Please register again." });
+    }
+
+    // Update user verification status
+    try {
+      await storage.updateUser(verificationToken.userId, {
+        isVerified: true,
+      });
+      console.log("[Auth] User verification status updated");
+    } catch (updateError) {
+      console.error("[Auth] Failed to update user verification status:", updateError);
+      return res.status(500).json({ message: "Failed to update verification status. Please try again." });
+    }
+
+    // Delete verification token
+    try {
+      await storage.deleteEmailVerificationToken(token);
+      console.log("[Auth] Verification token deleted");
+    } catch (deleteError) {
+      console.error("[Auth] Failed to delete verification token:", deleteError);
+      // Non-critical - continue with login
     }
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
     // Store refresh token
-    await storage.createRefreshToken({
-      userId: user.id,
-      token: refreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    });
+    try {
+      await storage.createRefreshToken({
+        userId: user.id,
+        token: refreshToken,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      });
+      console.log("[Auth] Refresh token created for user:", user.id);
+    } catch (refreshError) {
+      console.error("[Auth] Failed to create refresh token:", refreshError);
+      // Still return success - user is verified, they can login manually
+    }
 
     // Set refresh token as httpOnly cookie
     res.cookie("refreshToken", refreshToken, {
@@ -480,6 +508,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
       path: "/",
     });
 
+    console.log("[Auth] Email verification successful for:", user.email);
     res.json({ 
       message: "Email verified successfully",
       accessToken,
@@ -495,13 +524,15 @@ router.post("/verify-email", async (req: Request, res: Response) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error("[Auth] Zod validation error:", error.errors);
       return res.status(400).json({ 
-        message: "Validation error", 
+        message: "Invalid verification code format", 
         errors: error.errors 
       });
     }
-    console.error("Email verification error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("[Auth] Email verification error:", error);
+    console.error("[Auth] Error stack:", error instanceof Error ? error.stack : "No stack");
+    res.status(500).json({ message: "Verification failed. Please try again or request a new code." });
   }
 });
 
