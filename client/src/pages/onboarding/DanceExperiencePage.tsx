@@ -305,7 +305,7 @@ export default function DanceExperiencePage() {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
-      navigate(user.waitlist ? "/waitlist-confirmation" : "/feed");
+      navigate(user.waitlist ? "/onboarding/waitlist" : "/feed");
     }
   }, [user, navigate]);
 
@@ -416,7 +416,7 @@ export default function DanceExperiencePage() {
           description: t('pages:onboarding.hobbies.success.waitlistDesc', "We'll notify you when your account is ready."),
         });
         setTimeout(() => {
-          navigate("/waitlist-confirmation");
+          navigate("/onboarding/waitlist");
         }, 1500);
       } else {
         toast({
