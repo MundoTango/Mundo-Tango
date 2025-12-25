@@ -22,6 +22,8 @@ const BASE_URL = process.env.BASE_URL || 'https://e0001089-5956-480e-9ebc-7b1a6c
 const SCREENSHOTS_DIR = path.join(process.cwd(), 'marketing-assets/screenshots');
 const VIDEOS_DIR = path.join(process.cwd(), 'marketing-assets/videos');
 
+
+test.use({ colorScheme: "dark" });
 // Ensure directories exist
 if (!fs.existsSync(SCREENSHOTS_DIR)) {
     fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
