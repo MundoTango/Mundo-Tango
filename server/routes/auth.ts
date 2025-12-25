@@ -443,7 +443,22 @@ router.post("/refresh", async (req: Request, res: Response) => {
 router.post("/verify-email", async (req: Request, res: Response) => {
   let step = "init";
   try {
+    // Log request details immediately for debugging production issues
+    console.log("[Auth] Verify-email request received");
+    console.log("[Auth] Content-Type:", req.headers["content-type"]);
+    console.log("[Auth] Body type:", typeof req.body);
+    console.log("[Auth] Body keys:", req.body ? Object.keys(req.body) : "null/undefined");
+    
     step = "parsing";
+    // Defensive check for body parsing issues
+    if (!req.body || typeof req.body !== "object") {
+      console.error("[Auth] Request body is not an object:", req.body);
+      return res.status(400).json({ 
+        message: "Invalid request body. Expected JSON object.",
+        step
+      });
+    }
+    
     console.log("[Auth] Verify email request body:", JSON.stringify(req.body));
     const { token } = verifyEmailSchema.parse(req.body);
     console.log("[Auth] Parsed token:", token);

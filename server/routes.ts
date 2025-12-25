@@ -329,8 +329,18 @@ const createPostBodySchema = insertPostSchema.omit({ userId: true });
 const createCommentBodySchema = insertPostCommentSchema.omit({ userId: true, postId: true });
 
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error("Error:", err);
+  // Log full error details for debugging
+  console.error("[GlobalErrorHandler] Error on", req.method, req.originalUrl);
+  console.error("[GlobalErrorHandler] Error name:", err.name);
+  console.error("[GlobalErrorHandler] Error message:", err.message);
+  console.error("[GlobalErrorHandler] Error stack:", err.stack);
   
+  // If headers already sent, delegate to Express default error handler
+  if (res.headersSent) {
+    return next(err);
+  }
+  
+  // Handle Zod validation errors
   if (err.name === "ZodError") {
     return res.status(400).json({ 
       message: "Validation error", 
@@ -338,9 +348,31 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
     });
   }
   
-  res.status(500).json({ 
-    message: "Internal server error",
-    error: process.env.NODE_ENV === "development" ? err.message : undefined
+  // Handle JSON parsing errors
+  if (err.type === "entity.parse.failed") {
+    return res.status(400).json({
+      message: "Invalid JSON in request body",
+      error: err.message
+    });
+  }
+  
+  // Handle payload too large
+  if (err.type === "entity.too.large") {
+    return res.status(413).json({
+      message: "Request payload too large",
+      error: err.message
+    });
+  }
+  
+  // Preserve status code if set on error object
+  const statusCode = err.statusCode || err.status || 500;
+  
+  // In production, still include the error message for debugging critical issues
+  // but omit stack traces
+  res.status(statusCode).json({ 
+    message: err.message || "Internal server error",
+    path: req.originalUrl,
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack })
   });
 };
 
