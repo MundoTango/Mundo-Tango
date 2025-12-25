@@ -10,6 +10,8 @@ import { motion, AnimatePresence } from "framer-motion";
 const HIDDEN_PAGES = [
   '/mr-blue-chat', 
   '/admin/visual-editor',
+  // Onboarding pages - hide Mr Blue for focused onboarding experience
+  '/onboarding',
   // Marketing pages - hide Mr Blue for clean marketing experience
   '/landing',
   '/lander',
