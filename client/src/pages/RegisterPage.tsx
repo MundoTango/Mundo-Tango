@@ -78,6 +78,7 @@ export default function RegisterPage() {
       });
       
       const data = await response.json();
+      console.log("[RegisterPage] Verify-email response:", response.status, data);
       
       if (response.ok) {
         // Store access token for auto-login
@@ -93,6 +94,7 @@ export default function RegisterPage() {
         // Full page reload to /onboarding/welcome (modular flow) so AuthContext re-initializes with new token
         window.location.href = "/onboarding/welcome";
       } else {
+        console.error("[RegisterPage] Verify-email error - step:", data.step, "error:", data.error, "message:", data.message);
         toast({
           title: t('pages:register.toast.verifyError.title', 'Verification failed'),
           description: data.message || t('pages:register.toast.verifyError.description', 'Invalid or expired code. Please try again.'),
