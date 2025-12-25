@@ -155,10 +155,10 @@ test.describe('Marketing Videos - All Features', () => {
           },
     });
 
-    test.beforeeach(async ({ page }) => {
-                                              // Skip login - marketing videos don't require authentication
-        page.setdefaulttimeout(90000);
-                });
+    test.beforeEach(async ({ page }) => {
+        // Skip login - marketing videos don't require authentication
+        page.setDefaultTimeout(90000);
+    });
 
                 test('Video 01 - Memory Feed Demo', async ({ page }) => {
                       console.log('🎥 Recording: Memory Feed');
