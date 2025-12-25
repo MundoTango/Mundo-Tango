@@ -441,12 +441,25 @@ router.post("/refresh", async (req: Request, res: Response) => {
 });
 
 router.post("/verify-email", async (req: Request, res: Response) => {
+  let step = "init";
   try {
+    step = "parsing";
     console.log("[Auth] Verify email request body:", JSON.stringify(req.body));
     const { token } = verifyEmailSchema.parse(req.body);
     console.log("[Auth] Parsed token:", token);
 
-    const verificationToken = await storage.getEmailVerificationToken(token);
+    step = "token_lookup";
+    let verificationToken;
+    try {
+      verificationToken = await storage.getEmailVerificationToken(token);
+    } catch (lookupError) {
+      console.error("[Auth] Token lookup failed:", lookupError);
+      return res.status(500).json({ 
+        message: "Database error during token lookup", 
+        step,
+        error: lookupError instanceof Error ? lookupError.message : "Unknown"
+      });
+    }
     console.log("[Auth] Verification token lookup result:", verificationToken ? `Found for userId ${verificationToken.userId}` : "Not found");
     
     if (!verificationToken) {
@@ -454,7 +467,18 @@ router.post("/verify-email", async (req: Request, res: Response) => {
     }
 
     // Get user first to ensure they exist
-    const user = await storage.getUserById(verificationToken.userId);
+    step = "user_lookup";
+    let user;
+    try {
+      user = await storage.getUserById(verificationToken.userId);
+    } catch (userError) {
+      console.error("[Auth] User lookup failed:", userError);
+      return res.status(500).json({ 
+        message: "Database error during user lookup", 
+        step,
+        error: userError instanceof Error ? userError.message : "Unknown"
+      });
+    }
     console.log("[Auth] User lookup result:", user ? `Found ${user.email}` : "Not found");
     
     if (!user) {
@@ -464,6 +488,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
     }
 
     // Update user verification status
+    step = "update_user";
     try {
       await storage.updateUser(verificationToken.userId, {
         isVerified: true,
@@ -475,6 +500,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
     }
 
     // Delete verification token
+    step = "delete_token";
     try {
       await storage.deleteEmailVerificationToken(token);
       console.log("[Auth] Verification token deleted");
@@ -483,6 +509,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
       // Non-critical - continue with login
     }
 
+    step = "generate_tokens";
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
@@ -530,9 +557,13 @@ router.post("/verify-email", async (req: Request, res: Response) => {
         errors: error.errors 
       });
     }
-    console.error("[Auth] Email verification error:", error);
+    console.error(`[Auth] Email verification error at step "${step}":`, error);
     console.error("[Auth] Error stack:", error instanceof Error ? error.stack : "No stack");
-    res.status(500).json({ message: "Verification failed. Please try again or request a new code." });
+    res.status(500).json({ 
+      message: "Verification failed. Please try again or request a new code.",
+      step,
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
   }
 });
 
@@ -1059,6 +1090,57 @@ router.get("/internal/maintenance/diagnose", async (req: Request, res: Response)
     });
   } catch (error) {
     console.error("[Maintenance] Diagnose error:", error);
+    res.status(500).json({ 
+      message: "Diagnose failed", 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    });
+  }
+});
+
+// Detailed user/token diagnostic endpoint
+router.get("/internal/maintenance/diagnose-user", async (req: Request, res: Response) => {
+  try {
+    const maintenanceToken = req.headers["x-maintenance-token"];
+    const expectedToken = process.env.MAINTENANCE_TOKEN;
+    
+    if (!expectedToken || maintenanceToken !== expectedToken) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const email = req.query.email as string;
+    if (!email) {
+      return res.status(400).json({ message: "Email parameter required" });
+    }
+
+    const { db } = await import("../db");
+    const { sql } = await import("drizzle-orm");
+
+    // Get user by email
+    const userResult = await db.execute(
+      sql`SELECT id, email, is_verified, is_active, name, username FROM users WHERE email = ${email}`
+    );
+
+    // Get verification tokens for this user
+    let tokensResult = { rows: [] as any[] };
+    if (userResult.rows.length > 0) {
+      const userId = (userResult.rows[0] as any).id;
+      tokensResult = await db.execute(
+        sql`SELECT id, user_id, token, expires_at, created_at FROM email_verification_tokens WHERE user_id = ${userId}`
+      );
+    }
+
+    // Get all recent tokens
+    const recentTokens = await db.execute(
+      sql`SELECT id, user_id, token, expires_at, created_at FROM email_verification_tokens ORDER BY created_at DESC LIMIT 5`
+    );
+
+    res.json({
+      user: userResult.rows[0] || null,
+      userTokens: tokensResult.rows,
+      recentTokens: recentTokens.rows
+    });
+  } catch (error) {
+    console.error("[Maintenance] Diagnose-user error:", error);
     res.status(500).json({ 
       message: "Diagnose failed", 
       error: error instanceof Error ? error.message : "Unknown error" 
