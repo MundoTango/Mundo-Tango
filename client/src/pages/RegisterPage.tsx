@@ -91,9 +91,7 @@ export default function RegisterPage() {
         });
         
         // Full page reload to /onboarding/welcome (modular flow) so AuthContext re-initializes with new token
-        setTimeout(() => {
-          window.location.href = "/onboarding/welcome";
-        }, 1000);
+        window.location.href = "/onboarding/welcome";
       } else {
         toast({
           title: t('pages:register.toast.verifyError.title', 'Verification failed'),

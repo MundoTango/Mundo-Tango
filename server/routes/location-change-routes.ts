@@ -3,6 +3,7 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { storage, db } from "../storage";
 import { groups, groupMembers } from "@shared/schema";
 import { eq, and, ilike, sql } from "drizzle-orm";
+import { geocodingService } from "../services/GeocodingService";
 
 const router = Router();
 
@@ -90,6 +91,21 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
       console.log(`[LocationChangeEffects] No city group found for ${newCity}, creating new group...`);
       try {
         const slug = newCity.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        
+        // Geocode the city to get coordinates for the world map
+        let latitude: string | null = null;
+        let longitude: string | null = null;
+        try {
+          const geoResult = await geocodingService.geocodeAddress(null, newCity, newCountry || null);
+          if (geoResult) {
+            latitude = String(geoResult.lat);
+            longitude = String(geoResult.lng);
+            console.log(`[LocationChangeEffects] Geocoded ${newCity}: ${latitude}, ${longitude}`);
+          }
+        } catch (geoErr) {
+          console.warn(`[LocationChangeEffects] Geocoding failed for ${newCity}:`, geoErr);
+        }
+        
         const [newGroup] = await db.insert(groups).values({
           name: newCity,
           slug: `city-${slug}-${Date.now()}`,
@@ -97,6 +113,8 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
           type: 'city',
           city: newCity,
           country: newCountry || null,
+          latitude,
+          longitude,
           visibility: 'public',
           joinApproval: true,
           allowEvents: true,
