@@ -861,6 +861,11 @@ export function UnifiedLocationPicker({
                             {source === 'popular' && (
                               <Star className="w-3 h-3 text-amber-300 shrink-0" />
                             )}
+                            {source === 'nominatim' && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-blue-500/30 text-blue-100 border-blue-400/50 shrink-0">
+                                New city
+                              </Badge>
+                            )}
                           </div>
                           <div className="text-xs text-white/80 truncate">
                             {mode === "city" ? getDisplayName(location) : location.display_name}

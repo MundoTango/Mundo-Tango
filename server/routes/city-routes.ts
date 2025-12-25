@@ -56,6 +56,7 @@ interface CitySearchResult {
   memberCount?: number;
   groupId?: number;
   coordinates?: { lat: number; lng: number };
+  isExternal?: boolean; // True for nominatim results (will auto-create city)
 }
 
 /**
@@ -143,34 +144,57 @@ router.get("/search", async (req: Request, res: Response) => {
 
     console.log(`[CitySearch] Tier 2 (Popular): ${filteredPopularCities.length} results`);
 
-    // Tier 3: Nominatim fallback (only if Tier 1+2 have < 3 results)
+    // Tier 3: ALWAYS query Nominatim for external cities
+    // This allows users to select ANY city worldwide, even if not in our database
     let nominatimResults: CitySearchResult[] = [];
-    if (cityGroups.length + filteredPopularCities.length < 3) {
-      try {
-        const nominatimResponse = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&featuretype=city`,
-          {
-            headers: { 'User-Agent': 'MundoTango/1.0' },
-          }
-        );
-        
-        if (nominatimResponse.ok) {
-          const nominatimData = await nominatimResponse.json();
-          nominatimResults = nominatimData
-            .filter((r: any) => r.type === 'city' || r.type === 'town' || r.type === 'administrative')
-            .slice(0, 5)
-            .map((r: any) => ({
+    try {
+      const nominatimResponse = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=8&addressdetails=1`,
+        {
+          headers: { 'User-Agent': 'MundoTango/1.0 (https://mundotango.life)' },
+        }
+      );
+      
+      if (nominatimResponse.ok) {
+        const nominatimData = await nominatimResponse.json();
+        // Accept cities, towns, villages, and administrative areas
+        nominatimResults = nominatimData
+          .filter((r: any) => {
+            const validTypes = ['city', 'town', 'village', 'municipality', 'administrative', 'suburb', 'hamlet'];
+            return validTypes.includes(r.type) || r.class === 'place' || r.class === 'boundary';
+          })
+          .slice(0, 8)
+          .map((r: any) => {
+            // Extract city name and country from address details
+            const address = r.address || {};
+            const cityName = address.city || address.town || address.village || 
+                           address.municipality || address.suburb || r.display_name.split(',')[0];
+            const countryName = address.country || r.display_name.split(',').pop()?.trim() || '';
+            
+            return {
               id: `nominatim_${r.place_id}`,
-              name: r.display_name.split(',')[0],
-              country: r.display_name.split(',').pop()?.trim() || '',
+              name: cityName,
+              country: countryName,
               source: 'nominatim' as const,
               coordinates: { lat: parseFloat(r.lat), lng: parseFloat(r.lon) },
-            }));
-          console.log(`[CitySearch] Tier 3 (Nominatim): ${nominatimResults.length} results`);
-        }
-      } catch (nominatimError) {
-        console.error('[CitySearch] Nominatim fallback failed:', nominatimError);
+              // Mark as external for UI badge
+              isExternal: true,
+            };
+          });
+        
+        // Filter out nominatim results that already exist in cityGroups (match by city+country)
+        const existingCityKeys = new Set([
+          ...cityGroups.map(g => `${g.name.toLowerCase()}|${g.country.toLowerCase()}`),
+          ...filteredPopularCities.map(c => `${c.name.toLowerCase()}|${c.country.toLowerCase()}`)
+        ]);
+        nominatimResults = nominatimResults.filter(
+          r => !existingCityKeys.has(`${r.name.toLowerCase()}|${r.country.toLowerCase()}`)
+        );
+        
+        console.log(`[CitySearch] Tier 3 (Nominatim): ${nominatimResults.length} results`);
       }
+    } catch (nominatimError) {
+      console.error('[CitySearch] Nominatim failed:', nominatimError);
     }
 
     const result = {
