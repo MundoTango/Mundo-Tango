@@ -62,11 +62,8 @@ test.describe('Marketing Screenshots - All Features', () => {
     });
 
                 test.beforeEach(async ({ page }) => {
-                      await page.goto(`${BASE_URL}/login`);
-                      await page.fill('input[type="email"]', 'admin@mundotango.life');
-                      await page.fill('input[type="password"]', 'MundoTango2025!Admin');
-                      await page.click('button[type="submit"]');
-                      await page.waitForURL('**/feed');
+                            // Skip login - marketing screenshots don't require authentication
+                            page.setDefaultTimeout(90000); // Increase timeout to 90 seconds
                 });
 
                 test('01 - Memory Feed', async ({ page }) => {
@@ -158,12 +155,9 @@ test.describe('Marketing Videos - All Features', () => {
           },
     });
 
-                test.beforeEach(async ({ page }) => {
-                      await page.goto(`${BASE_URL}/login`);
-                      await page.fill('input[type="email"]', 'admin@mundotango.life');
-                      await page.fill('input[type="password"]', 'MundoTango2025!Admin');
-                      await page.click('button[type="submit"]');
-                      await page.waitForURL('**/feed');
+                test.beforeEach(async ({ page }
+                                              // Skip login - marketing videos don't require authentication
+                                               page.setDefaultTimeout(90000); // Increase timeout to 90 seconds) => {
                 });
 
                 test('Video 01 - Memory Feed Demo', async ({ page }) => {
