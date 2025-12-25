@@ -1024,4 +1024,46 @@ router.post("/internal/maintenance/cleanup-users", async (req: Request, res: Res
   }
 });
 
+// Diagnostic endpoint to check database schema
+router.get("/internal/maintenance/diagnose", async (req: Request, res: Response) => {
+  try {
+    const maintenanceToken = req.headers["x-maintenance-token"];
+    const expectedToken = process.env.MAINTENANCE_TOKEN;
+    
+    if (!expectedToken || maintenanceToken !== expectedToken) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { db } = await import("../db");
+    const { sql } = await import("drizzle-orm");
+
+    // Check email_verification_tokens schema
+    const evtSchema = await db.execute(
+      sql`SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'email_verification_tokens'`
+    );
+
+    // Check for any verification tokens
+    const tokenCount = await db.execute(
+      sql`SELECT COUNT(*) as count FROM email_verification_tokens`
+    );
+
+    // Check users table schema
+    const usersSchema = await db.execute(
+      sql`SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users' LIMIT 20`
+    );
+
+    res.json({
+      emailVerificationTokensSchema: evtSchema.rows,
+      tokenCount: tokenCount.rows[0],
+      usersSchema: usersSchema.rows
+    });
+  } catch (error) {
+    console.error("[Maintenance] Diagnose error:", error);
+    res.status(500).json({ 
+      message: "Diagnose failed", 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    });
+  }
+});
+
 export default router;
