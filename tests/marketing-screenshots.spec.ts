@@ -13,7 +13,7 @@ import * as path from 'path';
  * Run with: npx playwright test tests/marketing-screenshots.spec.ts
  */
 
-const BASE_URL = process.env.BASE_URL || 'https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev';const SCREENSHOTS_DIR = path.join(process.cwd(), '../marketing-assets/screenshots');
+const BASE_URL = process.env.BASE_URL || 'https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev';const SCREENSHOTS_DIR = path.join(process.cwd(), 'marketing-assets/screenshots');
 
 // Ensure screenshots directory exists
 if (!fs.existsSync(SCREENSHOTS_DIR)) {
