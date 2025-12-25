@@ -269,6 +269,7 @@ export interface IStorage {
   
   createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<SelectEmailVerificationToken>;
   getEmailVerificationToken(token: string): Promise<SelectEmailVerificationToken | undefined>;
+  getEmailVerificationTokenByUserId(userId: number): Promise<SelectEmailVerificationToken | undefined>;
   deleteEmailVerificationToken(token: string): Promise<void>;
   
   createPasswordResetToken(token: InsertPasswordResetToken): Promise<SelectPasswordResetToken>;

@@ -585,7 +585,7 @@ router.post("/resend-verification", async (req: Request, res: Response) => {
     }
     
     // Delete any existing verification tokens for this user
-    const existingToken = await storage.getEmailVerificationTokenByUserId?.(user.id);
+    const existingToken = await storage.getEmailVerificationTokenByUserId(user.id);
     if (existingToken) {
       await storage.deleteEmailVerificationToken(existingToken.token);
     }
