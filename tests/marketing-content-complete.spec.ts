@@ -148,18 +148,12 @@ test.describe('Marketing Screenshots - All Features', () => {
                 });
 });
 
+// Video configuration moved to playwright.config.ts to avoid worker issues
 test.describe('Marketing Videos - All Features', () => {
-    test.use({
-          viewport: { width: 1920, height: 1080 },
-          video: {
-                  mode: 'on',
-                  size: { width: 1920, height: 1080 }
-          },
-    });
-
     test.beforeEach(async ({ page }) => {
         // Skip login - marketing videos don't require authentication
         page.setDefaultTimeout(90000);
+        await page.setViewportSize({ width: 1920, height: 1080 });
     });
 
                 test('Video 01 - Memory Feed Demo', async ({ page }) => {
