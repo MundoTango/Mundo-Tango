@@ -84,10 +84,22 @@ export function TalentMatchExperience({
   const { session, createSession, updateSession, clearSession } = useTalentMatchSession();
   const { toast } = useToast();
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Ref for accessing fresh uploadedDocuments state in async functions
+  const uploadedDocumentsRef = useRef<UploadedDocument[]>([]);
 
   // State for authenticated mode
   const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Keep ref in sync with state
+  useEffect(() => {
+    uploadedDocumentsRef.current = uploadedDocuments;
+  }, [uploadedDocuments]);
+  
+  // State for authenticated embed mode (for interview completion submission)
+  const [embedVolunteerId, setEmbedVolunteerId] = useState<number | null>(null);
+  const [embedClarifierId, setEmbedClarifierId] = useState<number | null>(null);
 
   // State for guest mode intake form (name/email collection)
   const [intakeName, setIntakeName] = useState(initialName || "");
@@ -240,7 +252,7 @@ export function TalentMatchExperience({
         const extension = docName.toLowerCase().split('.').pop();
         const isBinaryFile = extension === 'pdf' || extension === 'docx';
         
-        reader.onload = (event) => {
+        reader.onload = async (event) => {
           if (isBinaryFile) {
             const arrayBuffer = event.target?.result as ArrayBuffer;
             const uint8Array = new Uint8Array(arrayBuffer);
@@ -249,9 +261,31 @@ export function TalentMatchExperience({
               binaryString += String.fromCharCode(uint8Array[i]);
             }
             const base64Buffer = btoa(binaryString);
+            
+            // Parse binary file on server (same as guest flow)
+            let parsedText = `[Binary file - ${extension?.toUpperCase()}]`;
+            try {
+              const parseResponse = await fetch("/api/talent-match/parse-resume", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  filename: docName,
+                  fileBuffer: base64Buffer,
+                }),
+              });
+              
+              if (parseResponse.ok) {
+                const parseResult = await parseResponse.json();
+                parsedText = parseResult.parsedText || parsedText;
+                console.log(`[TalentMatch] Parsed ${docName}: ${parsedText.length} chars`);
+              }
+            } catch (parseError) {
+              console.error("[TalentMatch] Parse request failed:", parseError);
+            }
+            
             setUploadedDocuments(prev => 
               prev.map(d => (d.file.name === docName && d.file.size === docSize) 
-                ? { ...d, base64Buffer, text: `[Binary file - ${extension?.toUpperCase()}]`, status: "parsed" } 
+                ? { ...d, base64Buffer, text: parsedText, status: "parsed" } 
                 : d)
             );
           } else {
@@ -485,13 +519,56 @@ export function TalentMatchExperience({
 
       // In embed mode, use in-place interview (like guest flow) instead of redirecting
       if (embedMode) {
+        // Store IDs for interview completion submission
+        setEmbedVolunteerId(volunteer.id);
+        setEmbedClarifierId(clarifierSession.id);
+        
+        // Wait for all documents to be fully parsed (not placeholder text)
+        // Use ref to access fresh state in async context
+        const waitForParsing = async (maxWaitMs = 10000): Promise<boolean> => {
+          const startTime = Date.now();
+          const checkInterval = 500;
+          
+          while (Date.now() - startTime < maxWaitMs) {
+            const freshDocs = uploadedDocumentsRef.current;
+            const allParsed = freshDocs.every(d => 
+              d.status === "parsed" && d.text && !d.text.startsWith("[Binary file")
+            );
+            
+            if (allParsed) return true;
+            await new Promise(resolve => setTimeout(resolve, checkInterval));
+          }
+          
+          // After timeout, check one more time
+          const freshDocs = uploadedDocumentsRef.current;
+          return freshDocs.every(d => 
+            d.status === "parsed" && d.text && !d.text.startsWith("[Binary file")
+          );
+        };
+        
+        const parsingComplete = await waitForParsing();
+        
+        if (!parsingComplete) {
+          // Hard block: Don't proceed without parsed resume content
+          toast({
+            title: "Resume processing incomplete",
+            description: "Please wait for your documents to finish processing or try re-uploading.",
+            variant: "destructive"
+          });
+          setIsSubmitting(false);
+          return;
+        }
+        
         toast({
           title: "Profile created!",
           description: "Starting your AI interview now.",
         });
         
+        // Get fresh documents from ref (not stale closure)
+        const freshDocuments = uploadedDocumentsRef.current;
+        
         // Convert authenticated docs to storedDocs format for the interview
-        const convertedDocs: StoredDocument[] = uploadedDocuments.map(d => ({
+        const convertedDocs: StoredDocument[] = freshDocuments.map(d => ({
           fileName: d.file.name,
           fileSize: d.file.size,
           parsedText: d.text,
@@ -501,10 +578,10 @@ export function TalentMatchExperience({
         setStoredDocs(convertedDocs);
         setStep("interview");
         
-        // Start interview with AI greeting
+        // Start interview with AI greeting (use freshDocuments for parsed content)
         setIsAiTyping(true);
-        const resumeContent = uploadedDocuments
-          .filter(d => d.status === "parsed")
+        const resumeContent = freshDocuments
+          .filter(d => d.status === "parsed" && d.text && !d.text.startsWith("[Binary file"))
           .map(d => d.text)
           .join("\n\n")
           .substring(0, 3000);
@@ -651,20 +728,28 @@ Keep the entire response concise (2-3 paragraphs max).`,
     setIsSubmitting(false);
   };
 
-  // Guest mode: send message
-  const sendGuestMessage = async () => {
+  // Interview message handler (works for both guest and authenticated embed modes)
+  const sendInterviewMessage = async () => {
     if (!currentMessage.trim()) return;
     
     const userMessage = { role: "user" as const, content: currentMessage };
     const updatedMessages = [...interviewMessages, userMessage];
     setCurrentMessage("");
     setInterviewMessages(updatedMessages);
-    updateSession({ interviewMessages: updatedMessages });
+    
+    // Only update session for guest mode (authenticated embed mode doesn't use guest session)
+    if (mode === "guest") {
+      updateSession({ interviewMessages: updatedMessages });
+    }
     setIsAiTyping(true);
     
     const nextIndex = questionIndex + 1;
     const parsedDocs = storedDocs.filter(d => d.status === "parsed" && d.parsedText);
     const resumeContent = parsedDocs.map(d => d.parsedText).join("\n\n").substring(0, 2000);
+    
+    // Get candidate name from user (authenticated) or session (guest)
+    const candidateName = user?.name || session?.name || initialName || "there";
+    const candidateEmail = user?.email || session?.email || initialEmail || "";
     
     if (nextIndex >= totalQuestions) {
       try {
@@ -676,7 +761,7 @@ Keep the entire response concise (2-3 paragraphs max).`,
             message: "Generate interview completion message",
             systemPrompt: `You are Mr. Blue completing a volunteer interview for Mundo Tango.
 
-The candidate ${session?.name || initialName} just answered all 10 questions. Their resume shows:
+The candidate ${candidateName} just answered all 10 questions. Their resume shows:
 ${resumeContent.substring(0, 1000)}
 
 Their interview answers were:
@@ -698,35 +783,58 @@ Keep it to 2-3 paragraphs.`,
         } else {
           completionMessage = {
             role: "ai" as const,
-            content: `Thank you for completing all 10 questions, ${session?.name || initialName}! Your responses have been recorded and your application is being submitted.\n\nOur team will review your profile and get back to you soon. We appreciate your interest in volunteering with Mundo Tango!`
+            content: `Thank you for completing all 10 questions, ${candidateName}! Your responses have been recorded and your application is being submitted.\n\nOur team will review your profile and get back to you soon. We appreciate your interest in volunteering with Mundo Tango!`
           };
         }
         
         const finalMessages = [...updatedMessages, completionMessage];
         setInterviewMessages(finalMessages);
-        updateSession({ interviewMessages: finalMessages, step: "complete" });
+        if (mode === "guest") {
+          updateSession({ interviewMessages: finalMessages, step: "complete" });
+        }
         setIsAiTyping(false);
         
-        await submitGuestApplication(finalMessages);
-        setTimeout(() => setStep("complete"), 2000);
+        // Submit application (guest uses submitGuestApplication, authenticated embed submits to clarifier)
+        let submissionSucceeded = true;
+        if (mode === "guest") {
+          await submitGuestApplication(finalMessages);
+        } else if (mode === "authenticated" && embedMode) {
+          submissionSucceeded = await submitEmbedInterview(finalMessages);
+        }
+        
+        // Only proceed to complete step if submission succeeded (or guest mode)
+        if (submissionSucceeded || mode === "guest") {
+          setTimeout(() => setStep("complete"), 2000);
+        }
+        // If submission failed for authenticated embed, stay on interview step
+        // User can retry by refreshing or contacting support (data is persisted to localStorage)
       } catch {
         const completionMessage = {
           role: "ai" as const,
-          content: `Thank you for completing the interview, ${session?.name || initialName}! Your application is being submitted. We'll be in touch soon!`
+          content: `Thank you for completing the interview, ${candidateName}! Your application is being submitted. We'll be in touch soon!`
         };
         const finalMessages = [...updatedMessages, completionMessage];
         setInterviewMessages(finalMessages);
-        updateSession({ interviewMessages: finalMessages, step: "complete" });
+        if (mode === "guest") {
+          updateSession({ interviewMessages: finalMessages, step: "complete" });
+        }
         setIsAiTyping(false);
         
-        await submitGuestApplication(finalMessages);
-        setTimeout(() => setStep("complete"), 2000);
+        let submissionSucceeded = true;
+        if (mode === "guest") {
+          await submitGuestApplication(finalMessages);
+        } else if (mode === "authenticated" && embedMode) {
+          submissionSucceeded = await submitEmbedInterview(finalMessages);
+        }
+        
+        if (submissionSucceeded || mode === "guest") {
+          setTimeout(() => setStep("complete"), 2000);
+        }
       }
     } else {
       const isBackground = nextIndex < TOTAL_BACKGROUND_QUESTIONS;
       const questionNumber = nextIndex + 1;
       const questionType = isBackground ? "Background" : "Platform";
-      const candidateName = session?.name || initialName || "there";
       
       // Gather previous answers for context
       const previousAnswers = updatedMessages
@@ -818,7 +926,9 @@ Keep the entire response concise (2-3 sentences max).`;
         
         const finalMessages = [...updatedMessages, aiMessage];
         setInterviewMessages(finalMessages);
-        updateSession({ interviewMessages: finalMessages });
+        if (mode === "guest") {
+          updateSession({ interviewMessages: finalMessages });
+        }
         setQuestionIndex(nextIndex);
         setIsAiTyping(false);
       } catch {
@@ -832,7 +942,9 @@ Keep the entire response concise (2-3 sentences max).`;
         };
         const finalMessages = [...updatedMessages, aiMessage];
         setInterviewMessages(finalMessages);
-        updateSession({ interviewMessages: finalMessages });
+        if (mode === "guest") {
+          updateSession({ interviewMessages: finalMessages });
+        }
         setQuestionIndex(nextIndex);
         setIsAiTyping(false);
       }
@@ -866,6 +978,77 @@ Keep the entire response concise (2-3 sentences max).`;
       }
     } catch (error) {
       console.error("[TalentMatch] Submit error:", error);
+    } finally {
+      setIsSubmittingApplication(false);
+    }
+  };
+
+  // Submit interview completion for authenticated embed mode
+  // Returns true if submission succeeded, false if failed (so caller can block completion)
+  const submitEmbedInterview = async (messages: Array<{role: "ai" | "user", content: string}>, retryCount = 0): Promise<boolean> => {
+    // Always persist to localStorage first for durability
+    const persistKey = `talent-match-embed-${embedVolunteerId || 'unknown'}-${Date.now()}`;
+    try {
+      localStorage.setItem(persistKey, JSON.stringify({
+        volunteerId: embedVolunteerId,
+        clarifierId: embedClarifierId,
+        messages,
+        timestamp: new Date().toISOString()
+      }));
+    } catch (e) {
+      console.warn("[TalentMatch] Failed to persist to localStorage:", e);
+    }
+    
+    if (!embedVolunteerId || !embedClarifierId) {
+      console.error("[TalentMatch] Missing volunteer or clarifier ID for submission");
+      toast({
+        title: "Submission issue",
+        description: "Interview saved locally. Please contact support if your application doesn't appear.",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    setIsSubmittingApplication(true);
+    try {
+      // Submit interview answers to the clarifier session
+      const response = await apiRequest("PATCH", `/api/v1/volunteers/clarifier/${embedClarifierId}`, {
+        interviewMessages: messages.map(m => ({
+          role: m.role === "ai" ? "assistant" : "user",
+          content: m.content
+        })),
+        status: "completed",
+        completedAt: new Date().toISOString()
+      });
+      
+      if (response.ok) {
+        // Clear localStorage on successful submission
+        try {
+          localStorage.removeItem(persistKey);
+        } catch (e) {
+          console.warn("[TalentMatch] Failed to clear localStorage:", e);
+        }
+        toast({
+          title: "Interview completed",
+          description: "Your answers have been submitted for review!",
+        });
+        return true;
+      } else if (retryCount < 2) {
+        // Retry on failure (up to 2 retries)
+        console.warn(`[TalentMatch] Submission failed, retrying (${retryCount + 1}/2)...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return submitEmbedInterview(messages, retryCount + 1);
+      } else {
+        throw new Error("Failed after retries");
+      }
+    } catch (error) {
+      console.error("[TalentMatch] Embed interview submit error:", error);
+      toast({
+        title: "Submission failed",
+        description: "Your responses were saved locally. Please try again or contact support.",
+        variant: "destructive"
+      });
+      return false;
     } finally {
       setIsSubmittingApplication(false);
     }
@@ -1061,7 +1244,7 @@ Keep the entire response concise (2-3 sentences max).`;
           isComplete={questionIndex >= totalQuestions}
           input={currentMessage}
           onInputChange={setCurrentMessage}
-          onSend={sendGuestMessage}
+          onSend={sendInterviewMessage}
           progress={interviewProgress}
           phases={guestPhases}
           currentPhaseLabel={isBackgroundPhase ? "Phase 1: Background" : "Phase 2: Platform Skills"}
