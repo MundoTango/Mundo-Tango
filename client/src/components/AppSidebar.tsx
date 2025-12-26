@@ -451,6 +451,45 @@ function AppSidebarComponent() {
       });
     });
 
+    // Add other missing "My Stuff" items (e.g., Groups, Events, Messages)
+    const extraItems = [
+      {
+        title: "My Events",
+        url: "/events?tab=my",
+        icon: Calendar,
+        color: "#F59E0B",
+        tooltip: "Your planned and attending events",
+      },
+      {
+        title: "My Groups",
+        url: "/groups?tab=joined",
+        icon: Users,
+        color: "#3B82F6",
+        tooltip: "Groups you are a member of",
+      },
+      {
+        title: "My Inbox",
+        url: "/messages",
+        icon: MessageSquare,
+        color: "#10B981",
+        tooltip: "Your recent conversations",
+      },
+      {
+        title: "Tango Résumé",
+        url: "/reputation/resume",
+        icon: Star,
+        color: "#FFD700",
+        tooltip: "Your professional tango profile",
+      }
+    ];
+
+    extraItems.forEach(item => {
+      if (!addedUrls.has(item.url)) {
+        addedUrls.add(item.url);
+        items.push(item);
+      }
+    });
+
     userTangoRoles.forEach((roleValue) => {
       const role = getRoleByValue(roleValue);
       const normalizedValue = normalizeRole(roleValue);
