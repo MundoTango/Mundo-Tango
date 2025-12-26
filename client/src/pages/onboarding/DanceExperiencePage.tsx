@@ -77,6 +77,31 @@ const HOBBIES_WITH_SUBCATEGORIES: HobbyCategory[] = [
       { id: "fitness_tennis", label: "Tennis" },
       { id: "fitness_soccer", label: "Soccer/Football" },
       { id: "fitness_basketball", label: "Basketball" },
+      { id: "fitness_fencing", label: "Fencing" },
+    ]
+  },
+  {
+    id: "tech",
+    label: "Tech & Innovation",
+    icon: Globe,
+    color: "#3B82F6",
+    subcategories: [
+      { id: "tech_coding", label: "Coding & Dev" },
+      { id: "tech_ai", label: "AI & Future Tech" },
+      { id: "tech_crypto", label: "Web3 & Crypto" },
+      { id: "tech_gaming", label: "Gaming Culture" },
+    ]
+  },
+  {
+    id: "spirituality",
+    label: "Spirituality & Growth",
+    icon: Moon,
+    color: "#8B5CF6",
+    subcategories: [
+      { id: "spirit_meditation", label: "Meditation" },
+      { id: "spirit_astrology", label: "Astrology" },
+      { id: "spirit_philosophy", label: "Philosophy" },
+      { id: "spirit_community", label: "Community Building" },
     ]
   },
   { 
@@ -479,131 +504,112 @@ export default function DanceExperiencePage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <Card className="overflow-hidden">
-                  <CardHeader className="bg-card p-8">
+                  <CardHeader className="bg-card p-8 pb-4">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-3 rounded-xl bg-primary/10">
                         <Palette className="h-6 w-6 text-primary" />
                       </div>
-                      <h2 className="text-2xl md:text-3xl font-serif font-bold">{t('pages:onboarding.hobbies.cardTitle', 'Other Hobbies')}</h2>
+                      <h2 className="text-2xl md:text-3xl font-serif font-bold">Communities</h2>
                     </div>
                     <p className="text-muted-foreground leading-relaxed">
-                      {t('pages:onboarding.hobbies.cardDescription', 'Share your interests to connect with like-minded dancers (optional)')}
+                      What other communities do you belong to that you are as or more passionate than tango?
                     </p>
                   </CardHeader>
 
                   <CardContent className="p-8 space-y-6">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder={t('pages:onboarding.hobbies.searchPlaceholder', 'Search hobbies...')}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10"
-                        data-testid="input-hobby-search"
-                      />
-                      {searchQuery && (
-                        <button
-                          onClick={() => setSearchQuery("")}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search communities or add a new one..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-10"
+                          data-testid="input-hobby-search"
+                        />
+                      </div>
+                      {searchQuery && !filteredCategories.some(c => c.subcategories.some(s => s.label.toLowerCase() === searchQuery.toLowerCase())) && (
+                        <Button 
+                          onClick={() => {
+                            const newId = `custom_${searchQuery.toLowerCase().replace(/\s+/g, '_')}`;
+                            toggleSubHobby(newId);
+                            setSearchQuery("");
+                          }}
+                          className="shrink-0"
                         >
-                          <X className="h-4 w-4" />
-                        </button>
+                          Add "{searchQuery}"
+                        </Button>
                       )}
                     </div>
 
-                    {filteredCategories.length === 0 ? (
-                      <div className="text-center py-8 text-muted-foreground">
-                        {t('pages:onboarding.hobbies.noResults', 'No hobbies found matching "{{query}}"', { query: searchQuery })}
-                      </div>
-                    ) : (
-                      <Accordion
-                        type="multiple"
-                        value={expandedCategories}
-                        onValueChange={setExpandedCategories}
-                        className="space-y-2"
-                      >
-                        {filteredCategories.map((category) => {
-                          const IconComponent = category.icon;
-                          const selectionCount = getCategorySelectionCount(category.id);
-                          const totalCount = category.subcategories.length;
-                          
-                          return (
-                            <AccordionItem
-                              key={category.id}
-                              value={category.id}
-                              className="border rounded-lg overflow-hidden"
-                              data-testid={`accordion-${category.id}`}
-                            >
-                              <AccordionTrigger className="px-4 py-3 hover:no-underline hover-elevate">
-                                <div className="flex items-center gap-3 flex-1">
-                                  <div 
-                                    className="p-2 rounded-lg" 
-                                    style={{ backgroundColor: `${category.color}20` }}
-                                  >
-                                    <IconComponent 
-                                      className="h-5 w-5" 
-                                      style={{ color: category.color }} 
-                                    />
-                                  </div>
-                                  <span className="font-medium text-left">{category.label}</span>
-                                  {selectionCount > 0 && (
-                                    <Badge 
-                                      variant="default" 
-                                      className="ml-auto mr-2 text-xs"
-                                      style={{ backgroundColor: category.color }}
-                                    >
-                                      {selectionCount}/{totalCount}
-                                    </Badge>
-                                  )}
-                                </div>
-                              </AccordionTrigger>
-                              <AccordionContent className="px-4 pb-4">
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 pt-2">
-                                  {category.subcategories.map((sub) => {
-                                    const isSelected = selectedHobbies.includes(sub.id);
-                                    return (
-                                      <button
-                                        key={sub.id}
-                                        onClick={() => toggleSubHobby(sub.id)}
-                                        className={`flex items-center gap-2 p-3 rounded-lg border text-left text-sm transition-all hover-elevate active-elevate-2 ${
-                                          isSelected
-                                            ? "border-primary bg-primary/10"
-                                            : "border-muted"
-                                        }`}
-                                        data-testid={`hobby-${sub.id}`}
-                                      >
-                                        {isSelected ? (
-                                          <div 
-                                            className="h-4 w-4 rounded-full flex items-center justify-center"
-                                            style={{ backgroundColor: category.color }}
-                                          >
-                                            <Check className="h-3 w-3 text-white" />
-                                          </div>
-                                        ) : (
-                                          <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30" />
-                                        )}
-                                        <span className={isSelected ? "font-medium" : ""}>
-                                          {sub.label}
-                                        </span>
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="mt-3 w-full text-xs"
-                                  onClick={() => toggleCategory(category.id)}
-                                  data-testid={`toggle-all-${category.id}`}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {filteredCategories.map((category) => {
+                        const IconComponent = category.icon;
+                        const selectionCount = getCategorySelectionCount(category.id);
+                        
+                        return (
+                          <div 
+                            key={category.id}
+                            className="group relative h-48 rounded-xl border bg-card overflow-hidden hover-elevate transition-all cursor-default"
+                          >
+                            {/* Static content */}
+                            <div className="absolute inset-0 p-6 flex flex-col items-center justify-center text-center group-hover:opacity-0 transition-opacity duration-300">
+                              <div 
+                                className="p-4 rounded-2xl mb-4" 
+                                style={{ backgroundColor: `${category.color}15` }}
+                              >
+                                <IconComponent 
+                                  className="h-8 w-8" 
+                                  style={{ color: category.color }} 
+                                />
+                              </div>
+                              <h3 className="text-xl font-bold font-serif">{category.label}</h3>
+                              {selectionCount > 0 && (
+                                <Badge 
+                                  className="mt-2"
+                                  style={{ backgroundColor: category.color }}
                                 >
-                                  {selectionCount === totalCount ? t('pages:onboarding.hobbies.deselectAll', 'Deselect All') : t('pages:onboarding.hobbies.selectAll', 'Select All')}
+                                  {selectionCount} selected
+                                </Badge>
+                              )}
+                            </div>
+
+                            {/* Hover reveal content */}
+                            <div className="absolute inset-0 p-4 bg-background/95 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-300 overflow-y-auto">
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="font-bold text-sm text-muted-foreground uppercase tracking-wider">{category.label}</span>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-6 text-[10px]"
+                                  onClick={() => toggleCategory(category.id)}
+                                >
+                                  Toggle All
                                 </Button>
-                              </AccordionContent>
-                            </AccordionItem>
-                          );
-                        })}
-                      </Accordion>
-                    )}
+                              </div>
+                              <div className="flex flex-wrap gap-1.5">
+                                {category.subcategories.map((sub) => {
+                                  const isSelected = selectedHobbies.includes(sub.id);
+                                  return (
+                                    <button
+                                      key={sub.id}
+                                      onClick={() => toggleSubHobby(sub.id)}
+                                      className={`px-2 py-1 rounded-md text-xs border transition-all ${
+                                        isSelected 
+                                          ? "bg-primary text-primary-foreground border-primary" 
+                                          : "bg-muted/50 hover:bg-muted border-transparent"
+                                      }`}
+                                    >
+                                      {sub.label}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
 
                     <AnimatePresence>
                       {selectedHobbies.length > 0 && (
