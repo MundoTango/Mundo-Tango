@@ -38,25 +38,13 @@ export default function HousingListingDetailPage() {
     },
   });
 
-  if (isLoading) {
-    return (
-      <div className="bg-background flex items-center justify-center py-12">
-        <p className="text-muted-foreground">{t('pages:housingListingDetail.loading', 'Loading listing...')}</p>
-      </div>
-    );
-  }
-
-  if (!listingData) {
-    return (
-      <div className="bg-background flex items-center justify-center py-12">
-        <p className="text-muted-foreground">{t('pages:housingListingDetail.notFound', 'Listing not found')}</p>
-      </div>
-    );
-  }
-
-  const listing = listingData.listing;
-  const host = listingData.host;
+  // Process images - must be before early returns to satisfy React hooks rules
+  const listing = listingData?.listing;
+  const host = listingData?.host;
+  
   const images = useMemo(() => {
+    if (!listing) return [];
+    
     const rawPhotos = listing.photos || [];
     const photoUrls = rawPhotos.map((p: any) => {
       let url = typeof p === 'string' ? p : p.url;
@@ -93,7 +81,23 @@ export default function HousingListingDetailPage() {
     
     // De-duplicate URLs
     return Array.from(new Set(all));
-  }, [listing.photos, listing.images, listing.coverPhotoUrl]);
+  }, [listing]);
+
+  if (isLoading) {
+    return (
+      <div className="bg-background flex items-center justify-center py-12">
+        <p className="text-muted-foreground">{t('pages:housingListingDetail.loading', 'Loading listing...')}</p>
+      </div>
+    );
+  }
+
+  if (!listingData || !listing) {
+    return (
+      <div className="bg-background flex items-center justify-center py-12">
+        <p className="text-muted-foreground">{t('pages:housingListingDetail.notFound', 'Listing not found')}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background">

@@ -10,6 +10,7 @@ import { clearStartupKeepalive } from './bootstrap';
 import './instrumentation';
 
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import { registerRoutes } from "./routes";
@@ -118,6 +119,13 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: false, limit: '200mb' }));
 app.use(cookieParser());
+
+// Serve only stock_images subdirectory for housing/city images (security: don't expose voice_temp, logs, etc.)
+app.use('/attached_assets/stock_images', express.static(path.join(process.cwd(), 'attached_assets', 'stock_images'), {
+  maxAge: '1d',
+  etag: true,
+  lastModified: true
+}));
 
 // CSRF Protection - set token for GET requests
 app.use(setCsrfToken);
