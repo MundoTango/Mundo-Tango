@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Brain } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface TalentMatchModalProps {
   open: boolean;
@@ -9,6 +10,16 @@ interface TalentMatchModalProps {
 }
 
 export function TalentMatchModal({ open, onOpenChange }: TalentMatchModalProps) {
+  const { user } = useAuth();
+  
+  // Construct embed URL with user info if authenticated
+  const embedUrl = new URL("/talent-match-embed", window.location.origin);
+  if (user) {
+    embedUrl.searchParams.set("name", user.name || "");
+    embedUrl.searchParams.set("email", user.email || "");
+    embedUrl.searchParams.set("mode", "authenticated");
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[95vh] p-0 overflow-hidden" data-testid="modal-talent-match">
@@ -25,7 +36,7 @@ export function TalentMatchModal({ open, onOpenChange }: TalentMatchModalProps) 
         <div className="w-full h-[calc(95vh-60px)]">
           {open && (
             <iframe
-              src="/talent-match-embed"
+              src={embedUrl.toString()}
               className="w-full h-full border-0"
               title="Talent Match Application"
               data-testid="iframe-talent-match"

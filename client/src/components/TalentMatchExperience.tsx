@@ -95,7 +95,7 @@ export function TalentMatchExperience({
   // State for guest mode interview - add "intake" as first step for anonymous users
   const [step, setStep] = useState<"intake" | "upload" | "interview" | "complete">(
     // Start at intake if guest mode with no session and no initial credentials
-    mode === "guest" && !session && !initialName && !initialEmail ? "intake" : "upload"
+    (mode === "guest" && !session && !initialName && !initialEmail && !user) ? "intake" : "upload"
   );
   const [storedDocs, setStoredDocs] = useState<StoredDocument[]>([]);
   const [interviewMessages, setInterviewMessages] = useState<Array<{role: "ai" | "user", content: string}>>([]);
