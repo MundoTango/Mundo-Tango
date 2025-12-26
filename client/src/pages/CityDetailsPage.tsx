@@ -1010,40 +1010,54 @@ function CityHousingTab({ city }: { city: CityData }) {
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      <div className="lg:col-span-3 space-y-6">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between px-1">
-            <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground">Stay Filters</h3>
-            <Button variant="ghost" size="sm" className="h-auto p-0 text-[10px] font-black uppercase text-primary tracking-widest" onClick={() => setFilters({ type: 'all', radius: '5', price: 'any' })}>Reset</Button>
-          </div>
-          
-          <div className="space-y-3 p-4 bg-muted/20 rounded-2xl border border-primary/5">
-            <Label className="text-[10px] font-black uppercase tracking-widest opacity-60">Accommodation</Label>
-            <div className="flex flex-col gap-1">
+    <div className="space-y-8">
+      {/* Redesigned horizontal filters */}
+      <div className="flex flex-wrap items-center gap-4 p-6 bg-muted/10 rounded-[2rem] border border-primary/5">
+        <div className="flex items-center gap-3">
+          <h3 className="font-black text-[10px] uppercase tracking-widest text-muted-foreground whitespace-nowrap">Stay Filters</h3>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-auto p-0 text-[10px] font-black uppercase text-primary tracking-widest hover:bg-transparent" 
+            onClick={() => setFilters({ type: 'all', radius: '5', price: 'any' })}
+          >
+            Reset
+          </Button>
+        </div>
+
+        <div className="h-8 w-px bg-primary/10 mx-2 hidden md:block" />
+
+        <div className="flex flex-wrap items-center gap-6 flex-1">
+          {/* Accommodation Type */}
+          <div className="flex items-center gap-3">
+            <Label className="text-[10px] font-black uppercase tracking-widest opacity-40 whitespace-nowrap">Type</Label>
+            <div className="flex items-center gap-1 bg-muted/20 p-1 rounded-xl">
               {['all', 'apartment', 'room', 'hotel', 'guesthouse'].map(type => (
                 <Button 
                   key={type}
                   variant={filters.type === type ? 'secondary' : 'ghost'} 
                   size="sm" 
-                  className="justify-start h-9 text-[10px] font-black uppercase tracking-widest rounded-xl"
+                  className="h-8 px-3 text-[10px] font-black uppercase tracking-widest rounded-lg"
                   onClick={() => setFilters(f => ({ ...f, type }))}
                 >
-                  {type === 'all' ? 'All Stays' : `${type}s`}
+                  {type === 'all' ? 'All' : `${type}s`}
                 </Button>
               ))}
             </div>
           </div>
 
-          <div className="space-y-3 p-4 bg-muted/20 rounded-2xl border border-primary/5">
-            <Label className="text-[10px] font-black uppercase tracking-widest opacity-60">Community Proximity</Label>
-            <div className="grid grid-cols-3 gap-2">
+          <div className="h-6 w-px bg-primary/5 hidden xl:block" />
+
+          {/* Community Proximity */}
+          <div className="flex items-center gap-3">
+            <Label className="text-[10px] font-black uppercase tracking-widest opacity-40 whitespace-nowrap">Proximity</Label>
+            <div className="flex items-center gap-1 bg-muted/20 p-1 rounded-xl">
               {['2', '5', '10'].map(r => (
                 <Button 
                   key={r}
-                  variant={filters.radius === r ? 'default' : 'outline'} 
+                  variant={filters.radius === r ? 'default' : 'ghost'} 
                   size="sm" 
-                  className="h-9 text-[10px] font-black uppercase tracking-widest rounded-xl"
+                  className="h-8 px-3 text-[10px] font-black uppercase tracking-widest rounded-lg"
                   onClick={() => setFilters(f => ({ ...f, radius: r }))}
                 >
                   {r}km
@@ -1052,15 +1066,18 @@ function CityHousingTab({ city }: { city: CityData }) {
             </div>
           </div>
 
-          <div className="space-y-3 p-4 bg-muted/20 rounded-2xl border border-primary/5">
-            <Label className="text-[10px] font-black uppercase tracking-widest opacity-60">Price Range</Label>
-            <div className="flex flex-col gap-1">
+          <div className="h-6 w-px bg-primary/5 hidden xl:block" />
+
+          {/* Price Range */}
+          <div className="flex items-center gap-3">
+            <Label className="text-[10px] font-black uppercase tracking-widest opacity-40 whitespace-nowrap">Price</Label>
+            <div className="flex items-center gap-1 bg-muted/20 p-1 rounded-xl">
               {['any', 'budget', 'mid', 'luxury'].map(p => (
                 <Button 
                   key={p}
                   variant={filters.price === p ? 'secondary' : 'ghost'} 
                   size="sm" 
-                  className="justify-start h-9 text-[10px] font-black uppercase tracking-widest rounded-xl"
+                  className="h-8 px-3 text-[10px] font-black uppercase tracking-widest rounded-lg"
                   onClick={() => setFilters(f => ({ ...f, price: p }))}
                 >
                   {p}
@@ -1071,15 +1088,19 @@ function CityHousingTab({ city }: { city: CityData }) {
         </div>
       </div>
 
-      <div className="lg:col-span-9 space-y-6">
-        <div className="flex items-center justify-between pb-4 border-b">
-          <h2 className="text-2xl font-black tracking-tighter uppercase">Local Stays</h2>
-          <Badge variant="outline" className="font-black text-[10px] tracking-widest uppercase border-primary/20 text-primary px-3">
-            VERIFIED FOR VISITORS
-          </Badge>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between pb-4 border-b border-primary/5">
+          <div className="flex items-center gap-4">
+            <h2 className="text-2xl font-black tracking-tighter uppercase">Local Stays</h2>
+            <Badge variant="outline" className="font-black text-[10px] tracking-widest uppercase border-primary/20 text-primary px-3">
+              VERIFIED FOR VISITORS
+            </Badge>
+          </div>
         </div>
         <AirbnbHousingView 
           city={city.city || city.name.replace(' Tango Community', '')} 
+          propertyType={filters.type === 'all' ? 'all' : filters.type}
+          priceRange={filters.price}
         />
       </div>
     </div>

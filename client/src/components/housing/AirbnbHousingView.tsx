@@ -1,4 +1,4 @@
-import { useState, useMemo, Suspense, lazy } from "react";
+import { useState, useMemo, useEffect, Suspense, lazy } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,12 +67,16 @@ interface AirbnbHousingViewProps {
   city?: string;
   initialListings?: HousingListing[];
   showCreateButton?: boolean;
+  propertyType?: string;
+  priceRange?: string;
 }
 
 export function AirbnbHousingView({ 
   city,
   initialListings,
-  showCreateButton = true 
+  showCreateButton = true,
+  propertyType: externalPropertyType,
+  priceRange: externalPriceRange
 }: AirbnbHousingViewProps) {
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
@@ -80,6 +84,15 @@ export function AirbnbHousingView({
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
   const [propertyType, setPropertyType] = useState<string>("all");
   const [priceRange, setPriceRange] = useState<string>("all");
+
+  // Sync external filters if provided
+  useEffect(() => {
+    if (externalPropertyType) setPropertyType(externalPropertyType);
+  }, [externalPropertyType]);
+
+  useEffect(() => {
+    if (externalPriceRange) setPriceRange(externalPriceRange);
+  }, [externalPriceRange]);
 
   const { data: rawListings = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/housing/listings", { city, status: "active" }],
@@ -166,7 +179,7 @@ export function AirbnbHousingView({
 
   return (
     <div className="flex flex-col h-full" data-testid="airbnb-housing-view">
-      {/* Header with filters */}
+      {/* Header with search and primary actions (filters removed as they are now external) */}
       <div className="flex flex-wrap items-center gap-3 p-4 border-b bg-background sticky top-0 z-10">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className="font-medium text-foreground">{filteredListings.length} homes</span>
@@ -193,37 +206,6 @@ export function AirbnbHousingView({
             />
           </div>
         </div>
-        
-        <Select value={propertyType} onValueChange={setPropertyType}>
-          <SelectTrigger className="w-[140px]" data-testid="select-property-type">
-            <SelectValue placeholder="Property type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All types</SelectItem>
-            <SelectItem value="entire_place">Entire place</SelectItem>
-            <SelectItem value="private_room">Private room</SelectItem>
-            <SelectItem value="shared_room">Shared room</SelectItem>
-            <SelectItem value="apartment">Apartment</SelectItem>
-            <SelectItem value="house">House</SelectItem>
-          </SelectContent>
-        </Select>
-        
-        <Select value={priceRange} onValueChange={setPriceRange}>
-          <SelectTrigger className="w-[130px]" data-testid="select-price-range">
-            <SelectValue placeholder="Price" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Any price</SelectItem>
-            <SelectItem value="budget">Under $100</SelectItem>
-            <SelectItem value="mid">$100 - $250</SelectItem>
-            <SelectItem value="luxury">$250+</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Button variant="outline" size="sm" className="gap-2" data-testid="button-more-filters">
-          <SlidersHorizontal className="h-4 w-4" />
-          Filters
-        </Button>
         
         {showCreateButton && (
           <Button asChild className="ml-auto gap-2" data-testid="button-become-host">
