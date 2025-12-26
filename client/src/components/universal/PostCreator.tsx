@@ -912,6 +912,12 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               <MapPin className="w-4 h-4 text-orange-500" />
               Hidden Gems - Share your favorite places
             </h3>
+            
+            <p className="text-sm text-muted-foreground">
+              Help fellow dancers discover the best spots! Your recommendation will appear on the city's map 
+              and feed, helping travelers and locals find quality restaurants, cafés, tango venues, and more. 
+              The community votes on recommendations to surface the most loved places.
+            </p>
 
             {/* Business Name Input - Simple text input */}
             <div>
