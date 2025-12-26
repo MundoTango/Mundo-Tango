@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -66,8 +66,10 @@ export function AirbnbListingCard({
     const rawPhotos = listing.photos || [];
     const photoUrls = rawPhotos.map((p: any) => {
       const url = typeof p === 'string' ? p : p.url;
+      if (!url) return null;
       return url.startsWith('http') || url.startsWith('/') ? url : `/${url}`;
-    });
+    }).filter(Boolean);
+    
     const imageUrls = (listing.images || []).map((url: string) => 
       url.startsWith('http') || url.startsWith('/') ? url : `/${url}`
     );
@@ -81,7 +83,10 @@ export function AirbnbListingCard({
       ...photoUrls
     ];
     
-    return all.length > 0 ? all : ["/placeholder-house.jpg"];
+    // De-duplicate URLs
+    const unique = Array.from(new Set(all));
+    
+    return unique.length > 0 ? unique : ["/placeholder-house.jpg"];
   }, [listing.photos, listing.images, listing.coverPhotoUrl]);
   
   const handlePrevImage = (e: React.MouseEvent) => {
