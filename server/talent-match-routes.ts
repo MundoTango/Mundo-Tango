@@ -379,11 +379,11 @@ Keep responses concise (2-3 sentences max).`;
         return res.status(404).json({ error: "Volunteer not found" });
       }
 
-      // Update chatLog with provided messages
+      // Update chatLog with provided messages (handle both 'message' and 'content' field names)
       const chatLog = interviewMessages?.map((m: any) => ({
         role: m.role,
-        message: m.content,
-        timestamp: new Date().toISOString()
+        message: m.message ?? m.content,
+        timestamp: m.timestamp || new Date().toISOString()
       })) || session.chatLog;
 
       // Update the clarifier session
