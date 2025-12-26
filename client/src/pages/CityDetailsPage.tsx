@@ -1043,7 +1043,10 @@ export default function CityDetailsPage() {
     queryKey: ["/api/cities", city?.id, "membership"],
     queryFn: async () => {
       const res = await fetch(`/api/cities/${city!.id}/membership`);
-      if (!res.ok) return { isMember: false, isFollowing: false, isResident: false, membershipType: null };
+      if (!res.ok) {
+        // Return a safe default instead of throwing to prevent React Query crashes on 401/404
+        return { isMember: false, isFollowing: false, isResident: false, membershipType: null };
+      }
       return res.json();
     },
     enabled: !!city?.id && !!user,
