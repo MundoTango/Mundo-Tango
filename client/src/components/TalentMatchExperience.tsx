@@ -38,6 +38,7 @@ interface TalentMatchExperienceProps {
   onClose?: () => void;
   showHero?: boolean;
   showBackLink?: boolean;
+  embedMode?: boolean; // When true, keeps interview in-place instead of redirecting
 }
 
 interface UploadedDocument {
@@ -75,7 +76,8 @@ export function TalentMatchExperience({
   initialEmail, 
   onClose,
   showHero = true,
-  showBackLink = true
+  showBackLink = true,
+  embedMode = false
 }: TalentMatchExperienceProps) {
   const [, setLocation] = useLocation();
   const { user, isLoading: authLoading } = useAuth();
@@ -481,12 +483,84 @@ export function TalentMatchExperience({
       const sessionResponse = await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/clarifier`);
       const clarifierSession = await sessionResponse.json();
 
-      toast({
-        title: "Profile created!",
-        description: "Starting AI interview. After completion, visit H2AC Dashboard for your agent assignments.",
-      });
+      // In embed mode, use in-place interview (like guest flow) instead of redirecting
+      if (embedMode) {
+        toast({
+          title: "Profile created!",
+          description: "Starting your AI interview now.",
+        });
+        
+        // Convert authenticated docs to storedDocs format for the interview
+        const convertedDocs: StoredDocument[] = uploadedDocuments.map(d => ({
+          fileName: d.file.name,
+          fileSize: d.file.size,
+          parsedText: d.text,
+          base64Buffer: d.base64Buffer,
+          status: d.status
+        }));
+        setStoredDocs(convertedDocs);
+        setStep("interview");
+        
+        // Start interview with AI greeting
+        setIsAiTyping(true);
+        const resumeContent = uploadedDocuments
+          .filter(d => d.status === "parsed")
+          .map(d => d.text)
+          .join("\n\n")
+          .substring(0, 3000);
+        const candidateName = user?.name || initialName || "there";
+        
+        try {
+          const response = await fetch("/api/mrblue/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              message: "Generate resume question 1",
+              systemPrompt: `You are Mr. Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Background Deep-Dive.
 
-      setLocation(`/talent-match-interview?session=${clarifierSession.id}&volunteer=${volunteer.id}&returnTo=/h2ac-dashboard`);
+The volunteer ${candidateName} has uploaded this resume/profile:
+${resumeContent}
+
+Question 1 of ${TOTAL_BACKGROUND_QUESTIONS}.
+
+Your goal: Start with a warm greeting acknowledging their resume, then ask ONE specific, insightful question about their background.
+
+Be conversational and warm. Reference specific details from their resume when possible.
+Format: Start with a personalized greeting, then ask your question clearly marked as **Question 1 of 10 (Background):**
+
+Keep the entire response concise (2-3 paragraphs max).`,
+            }),
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            const welcomeMessage = {
+              role: "ai" as const,
+              content: data.message || data.response || `Hello ${candidateName}! I've reviewed your resume and I'm impressed. Let's begin!\n\n**Question 1 of 10 (Background):**\n${FALLBACK_BACKGROUND_QUESTIONS[0]}`
+            };
+            setInterviewMessages([welcomeMessage]);
+          } else {
+            throw new Error("API failed");
+          }
+        } catch {
+          const welcomeMessage = {
+            role: "ai" as const,
+            content: `Hello ${candidateName}! I'm Mr. Blue, and I've reviewed your resume. I'm excited to learn more about you!\n\n**Question 1 of 10 (Background):**\n${FALLBACK_BACKGROUND_QUESTIONS[0]}`
+          };
+          setInterviewMessages([welcomeMessage]);
+        }
+        
+        setIsAiTyping(false);
+        setQuestionIndex(0);
+      } else {
+        toast({
+          title: "Profile created!",
+          description: "Starting AI interview. After completion, visit H2AC Dashboard for your agent assignments.",
+        });
+
+        setLocation(`/talent-match-interview?session=${clarifierSession.id}&volunteer=${volunteer.id}&returnTo=/h2ac-dashboard`);
+      }
 
     } catch (error: any) {
       toast({
@@ -943,8 +1017,8 @@ Keep the entire response concise (2-3 sentences max).`;
     );
   }
 
-  // Guest mode: Interview step
-  if (mode === "guest" && step === "interview") {
+  // Interview step (guest mode OR authenticated embed mode)
+  if ((mode === "guest" || (mode === "authenticated" && embedMode)) && step === "interview") {
     const isBackgroundPhase = questionIndex < TOTAL_BACKGROUND_QUESTIONS;
     const backgroundProgress = Math.min(questionIndex, TOTAL_BACKGROUND_QUESTIONS);
     const platformProgress = Math.max(0, questionIndex - TOTAL_BACKGROUND_QUESTIONS);
@@ -1002,8 +1076,8 @@ Keep the entire response concise (2-3 sentences max).`;
     );
   }
 
-  // Guest mode: Complete step
-  if (mode === "guest" && step === "complete") {
+  // Complete step (guest mode OR authenticated embed mode)
+  if ((mode === "guest" || (mode === "authenticated" && embedMode)) && step === "complete") {
     return (
       <div className="text-center py-12">
         <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -1014,10 +1088,10 @@ Keep the entire response concise (2-3 sentences max).`;
           )}
         </div>
         <h2 className="text-3xl font-serif font-bold mb-3" data-testid="text-thank-you">
-          Thank You, {session?.name || initialName}!
+          Thank You, {user?.name || session?.name || initialName}!
         </h2>
         <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-          Your volunteer application has been submitted. We'll review your profile and get back to you at {session?.email || initialEmail}.
+          Your volunteer application has been submitted. We'll review your profile and get back to you at {user?.email || session?.email || initialEmail}.
         </p>
         
         <Badge variant="outline" className="mb-8">

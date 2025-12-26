@@ -39,6 +39,7 @@ export default function TalentMatchEmbedPage() {
             showHero={true}
             showBackLink={false}
             onClose={handleClose}
+            embedMode={true}
           />
         </div>
       </div>
