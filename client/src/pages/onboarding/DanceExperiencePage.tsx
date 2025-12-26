@@ -550,23 +550,23 @@ export default function DanceExperiencePage() {
                         return (
                           <div 
                             key={category.id}
-                            className="group relative h-48 rounded-xl border bg-card overflow-hidden hover-elevate transition-all cursor-default"
+                            className="group relative h-64 rounded-2xl border bg-card overflow-hidden hover-elevate transition-all cursor-default shadow-sm hover:shadow-xl"
                           >
                             {/* Static content */}
-                            <div className="absolute inset-0 p-6 flex flex-col items-center justify-center text-center group-hover:opacity-0 transition-opacity duration-300">
+                            <div className="absolute inset-0 p-8 flex flex-col items-center justify-center text-center group-hover:opacity-0 transition-all duration-500 ease-in-out">
                               <div 
-                                className="p-4 rounded-2xl mb-4" 
+                                className="p-6 rounded-3xl mb-6 transform group-hover:scale-110 transition-transform duration-500" 
                                 style={{ backgroundColor: `${category.color}15` }}
                               >
                                 <IconComponent 
-                                  className="h-8 w-8" 
+                                  className="h-12 w-12" 
                                   style={{ color: category.color }} 
                                 />
                               </div>
-                              <h3 className="text-xl font-bold font-serif">{category.label}</h3>
+                              <h3 className="text-2xl font-bold font-serif tracking-tight">{category.label}</h3>
                               {selectionCount > 0 && (
                                 <Badge 
-                                  className="mt-2"
+                                  className="mt-4 px-3 py-1 text-sm font-medium"
                                   style={{ backgroundColor: category.color }}
                                 >
                                   {selectionCount} selected
@@ -575,29 +575,29 @@ export default function DanceExperiencePage() {
                             </div>
 
                             {/* Hover reveal content */}
-                            <div className="absolute inset-0 p-4 bg-background/95 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-300 overflow-y-auto">
-                              <div className="flex items-center justify-between mb-3">
-                                <span className="font-bold text-sm text-muted-foreground uppercase tracking-wider">{category.label}</span>
+                            <div className="absolute inset-0 p-6 bg-background/98 backdrop-blur-xl translate-y-full group-hover:translate-y-0 transition-all duration-500 ease-in-out overflow-y-auto border-t-4" style={{ borderTopColor: category.color }}>
+                              <div className="flex items-center justify-between mb-4 border-b pb-2">
+                                <span className="font-bold text-sm text-muted-foreground uppercase tracking-widest">{category.label}</span>
                                 <Button 
                                   variant="ghost" 
                                   size="sm" 
-                                  className="h-6 text-[10px]"
+                                  className="h-8 px-2 text-[11px] font-bold hover:bg-muted"
                                   onClick={() => toggleCategory(category.id)}
                                 >
-                                  Toggle All
+                                  Select All
                                 </Button>
                               </div>
-                              <div className="flex flex-wrap gap-1.5">
+                              <div className="flex flex-wrap gap-2">
                                 {category.subcategories.map((sub) => {
                                   const isSelected = selectedHobbies.includes(sub.id);
                                   return (
                                     <button
                                       key={sub.id}
                                       onClick={() => toggleSubHobby(sub.id)}
-                                      className={`px-2 py-1 rounded-md text-xs border transition-all ${
+                                      className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all duration-200 ${
                                         isSelected 
-                                          ? "bg-primary text-primary-foreground border-primary" 
-                                          : "bg-muted/50 hover:bg-muted border-transparent"
+                                          ? "bg-primary text-primary-foreground border-primary shadow-md scale-105" 
+                                          : "bg-muted/30 hover:bg-muted/60 border-transparent hover:border-muted-foreground/20"
                                       }`}
                                     >
                                       {sub.label}
