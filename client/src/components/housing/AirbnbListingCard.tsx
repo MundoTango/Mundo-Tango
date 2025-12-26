@@ -65,17 +65,32 @@ export function AirbnbListingCard({
   const images = useMemo(() => {
     const rawPhotos = listing.photos || [];
     const photoUrls = rawPhotos.map((p: any) => {
-      const url = typeof p === 'string' ? p : p.url;
+      let url = typeof p === 'string' ? p : p.url;
       if (!url) return null;
+      // Handle Replit attached_assets path correctly
+      if (url.startsWith('attached_assets/')) {
+        url = '/' + url;
+      }
       return url.startsWith('http') || url.startsWith('/') ? url : `/${url}`;
     }).filter(Boolean);
     
-    const imageUrls = (listing.images || []).map((url: string) => 
-      url.startsWith('http') || url.startsWith('/') ? url : `/${url}`
-    );
+    const imageUrls = (listing.images || []).map((url: string) => {
+      let u = url;
+      if (u.startsWith('attached_assets/')) {
+        u = '/' + u;
+      }
+      return u.startsWith('http') || u.startsWith('/') ? u : `/${u}`;
+    });
     
     const coverUrl = listing.coverPhotoUrl;
-    const formattedCover = coverUrl ? (coverUrl.startsWith('http') || coverUrl.startsWith('/') ? coverUrl : `/${coverUrl}`) : null;
+    let formattedCover = null;
+    if (coverUrl) {
+      let u = coverUrl;
+      if (u.startsWith('attached_assets/')) {
+        u = '/' + u;
+      }
+      formattedCover = u.startsWith('http') || u.startsWith('/') ? u : `/${u}`;
+    }
     
     const all = [
       ...(formattedCover ? [formattedCover] : []),
