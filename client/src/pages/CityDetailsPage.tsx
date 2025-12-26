@@ -804,64 +804,170 @@ function CityOverviewTab({ city }: { city: CityData }) {
           )}
         </div>
 
-        {/* Right: Quick Stats & Navigation */}
+        {/* Right: Dynamic Content Based on Active Layer */}
         <div className="lg:col-span-3 space-y-6">
-          {/* Upcoming Events Preview */}
-          {events.length > 0 && (
-            <div className="space-y-4">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">Next Events</h4>
-              <div className="space-y-2">
-                {events.slice(0, 3).map((event: any) => (
+          {/* Events Section - Show when 'all' or 'events' is selected */}
+          {(activeLayer === 'all' || activeLayer === 'events') && events.length > 0 && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-rose-500/10">
+                  <Calendar className="h-4 w-4 text-rose-500" />
+                </div>
+                <h4 className="text-xs font-black uppercase tracking-widest text-rose-600">Upcoming Events</h4>
+              </div>
+              <div className="space-y-3">
+                {events.slice(0, activeLayer === 'events' ? 8 : 3).map((event: any) => (
                   <Link key={event.id} href={`/events/${event.id}`}>
-                    <div className="group p-3 rounded-xl bg-card border hover:border-primary/20 transition-all hover:shadow-sm">
-                      <h5 className="text-sm font-bold truncate group-hover:text-primary transition-colors">{event.title}</h5>
-                      <p className="text-[10px] text-muted-foreground font-medium mt-1">
-                        {safeDateFormat(getEventDate(event), 'EEE, MMM d')}
-                      </p>
-                    </div>
+                    <Card className="group hover-elevate overflow-hidden border-rose-500/10 hover:border-rose-500/30">
+                      <CardContent className="p-4 space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <h5 className="text-sm font-bold line-clamp-2 group-hover:text-rose-600 transition-colors">{event.title}</h5>
+                          <Badge variant="outline" className="shrink-0 text-[9px] font-bold border-rose-500/20 text-rose-600">
+                            {event.eventType || 'Event'}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium">
+                          <Clock className="h-3 w-3 text-rose-400" />
+                          {safeDateFormat(getEventDate(event), 'EEE, MMM d @ h:mm a')}
+                        </div>
+                        {event.location && (
+                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium">
+                            <MapPin className="h-3 w-3 text-rose-400" />
+                            <span className="truncate">{event.location}</span>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
                   </Link>
                 ))}
               </div>
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm"
-                className="w-full h-9 text-xs font-bold"
+                className="w-full h-10 rounded-xl text-xs font-bold border-rose-500/20 text-rose-600 hover:bg-rose-500/5"
                 onClick={() => {
                   const eventsTab = document.querySelector('[data-testid="tab-events"]') as HTMLButtonElement;
                   if (eventsTab) eventsTab.click();
                 }}
               >
-                View All Events
+                View All {events.length} Events
               </Button>
             </div>
           )}
           
-          {/* Housing Preview */}
-          {housing.length > 0 && (
-            <div className="space-y-4">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">Available Housing</h4>
-              <div className="space-y-2">
-                {housing.slice(0, 2).map((listing: any) => (
-                  <div key={listing.id} className="group p-3 rounded-xl bg-card border hover:border-emerald-500/20 transition-all hover:shadow-sm">
-                    <h5 className="text-sm font-bold truncate group-hover:text-emerald-600 transition-colors">{listing.title}</h5>
-                    <p className="text-[10px] text-emerald-600 font-bold mt-1">
-                      ${listing.pricePerNight || listing.price}/night
-                    </p>
-                  </div>
+          {/* Housing Section - Show when 'all' or 'housing' is selected */}
+          {(activeLayer === 'all' || activeLayer === 'housing') && housing.length > 0 && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500 delay-150">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-emerald-500/10">
+                  <Home className="h-4 w-4 text-emerald-500" />
+                </div>
+                <h4 className="text-xs font-black uppercase tracking-widest text-emerald-600">Available Housing</h4>
+              </div>
+              <div className="space-y-3">
+                {housing.slice(0, activeLayer === 'housing' ? 6 : 2).map((listing: any) => (
+                  <Card key={listing.id} className="group hover-elevate overflow-hidden border-emerald-500/10 hover:border-emerald-500/30">
+                    <CardContent className="p-4 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <h5 className="text-sm font-bold line-clamp-2 group-hover:text-emerald-600 transition-colors">{listing.title}</h5>
+                        <Badge className="shrink-0 bg-emerald-500 text-white text-xs font-bold">
+                          ${listing.pricePerNight || listing.price}
+                        </Badge>
+                      </div>
+                      {listing.description && (
+                        <p className="text-[10px] text-muted-foreground line-clamp-2">{listing.description}</p>
+                      )}
+                      <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-medium">
+                        {listing.maxGuests && (
+                          <span className="flex items-center gap-1">
+                            <Users className="h-3 w-3 text-emerald-400" />
+                            {listing.maxGuests} guests
+                          </span>
+                        )}
+                        {listing.neighborhood && (
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3 text-emerald-400" />
+                            {listing.neighborhood}
+                          </span>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm"
-                className="w-full h-9 text-xs font-bold"
+                className="w-full h-10 rounded-xl text-xs font-bold border-emerald-500/20 text-emerald-600 hover:bg-emerald-500/5"
                 onClick={() => {
                   const housingTab = document.querySelector('[data-testid="tab-housing"]') as HTMLButtonElement;
                   if (housingTab) housingTab.click();
                 }}
               >
-                Browse Housing
+                Browse All Housing
               </Button>
             </div>
+          )}
+
+          {/* Tips Section - Show when 'all' or 'tips' is selected */}
+          {(activeLayer === 'all' || activeLayer === 'tips') && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500 delay-300">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-amber-500/10">
+                  <Lightbulb className="h-4 w-4 text-amber-500" />
+                </div>
+                <h4 className="text-xs font-black uppercase tracking-widest text-amber-600">Local Tips</h4>
+              </div>
+              {tips.length > 0 ? (
+                <div className="space-y-3">
+                  {tips.slice(0, activeLayer === 'tips' ? 6 : 2).map((tip: any) => (
+                    <Card key={tip.id} className="group hover-elevate overflow-hidden border-amber-500/10 hover:border-amber-500/30">
+                      <CardContent className="p-4 space-y-2">
+                        <h5 className="text-sm font-bold group-hover:text-amber-600 transition-colors">{tip.title || tip.name}</h5>
+                        {tip.description && (
+                          <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">{tip.description}</p>
+                        )}
+                        <Badge variant="outline" className="text-[9px] border-amber-500/20 text-amber-600">
+                          {tip.category || 'General'}
+                        </Badge>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="border-dashed border-amber-500/20 bg-amber-500/5">
+                  <CardContent className="p-6 text-center">
+                    <Lightbulb className="h-8 w-8 text-amber-400/40 mx-auto mb-2" />
+                    <p className="text-xs text-muted-foreground font-medium">No tips yet for this city</p>
+                    <Button variant="link" size="sm" className="text-amber-600 mt-2">Share your knowledge</Button>
+                  </CardContent>
+                </Card>
+              )}
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="w-full h-10 rounded-xl text-xs font-bold border-amber-500/20 text-amber-600 hover:bg-amber-500/5"
+                onClick={() => {
+                  const tipsTab = document.querySelector('[data-testid="tab-tips"]') as HTMLButtonElement;
+                  if (tipsTab) tipsTab.click();
+                }}
+              >
+                View All Tips
+              </Button>
+            </div>
+          )}
+
+          {/* Empty State - when no content for selected layer */}
+          {activeLayer !== 'all' && (
+            (activeLayer === 'events' && events.length === 0) ||
+            (activeLayer === 'housing' && housing.length === 0) ||
+            (activeLayer === 'tips' && tips.length === 0)
+          ) && (
+            <Card className="border-dashed">
+              <CardContent className="p-8 text-center">
+                <p className="text-muted-foreground font-medium">No {activeLayer} available yet</p>
+              </CardContent>
+            </Card>
           )}
         </div>
       </div>
