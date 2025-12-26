@@ -573,7 +573,20 @@ export interface IStorage {
   getCommunityStatsByCity(city: string, country: string): Promise<SelectCommunityStats | undefined>;
   getAllCommunityStats(params?: { limit?: number; offset?: number }): Promise<SelectCommunityStats[]>;
   updateCommunityStats(id: number, data: Partial<SelectCommunityStats>): Promise<SelectCommunityStats | undefined>;
-  
+
+  // Cities
+  getCityBySlug(slug: string): Promise<City | undefined>;
+  getCityById(id: number): Promise<City | undefined>;
+  listCities(params: { isActive?: boolean; isFeatured?: boolean; limit?: number; offset?: number }): Promise<City[]>;
+  updateCity(id: number, data: Partial<City>): Promise<City | undefined>;
+
+  // City Members (Followers)
+  followCity(cityId: number, userId: number, membershipType?: string): Promise<CityMember>;
+  unfollowCity(cityId: number, userId: number): Promise<void>;
+  getCityMembers(cityId: number): Promise<CityMember[]>;
+  isCityMember(cityId: number, userId: number): Promise<boolean>;
+  getUserFollowedCities(userId: number): Promise<City[]>;
+
   // Platform Independence: Deployments
   createDeployment(deployment: InsertDeployment): Promise<Deployment>;
   getDeploymentById(id: number): Promise<Deployment | undefined>;
@@ -4765,6 +4778,83 @@ export class DbStorage implements IStorage {
       .where(eq(communityStats.id, id))
       .returning();
     return result[0];
+  }
+
+  // Cities Methods
+  async getCityBySlug(slug: string): Promise<City | undefined> {
+    const [city] = await db.select().from(cities).where(eq(cities.slug, slug));
+    return city;
+  }
+
+  async getCityById(id: number): Promise<City | undefined> {
+    const [city] = await db.select().from(cities).where(eq(cities.id, id));
+    return city;
+  }
+
+  async listCities(params: { isActive?: boolean; isFeatured?: boolean; limit?: number; offset?: number }): Promise<City[]> {
+    const conditions = [];
+    if (params.isActive !== undefined) conditions.push(eq(cities.isActive, params.isActive));
+    if (params.isFeatured !== undefined) conditions.push(eq(cities.isFeatured, params.isFeatured));
+    
+    return await db
+      .select()
+      .from(cities)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .limit(params.limit ?? 50)
+      .offset(params.offset ?? 0)
+      .orderBy(desc(cities.eventCount));
+  }
+
+  async updateCity(id: number, data: Partial<City>): Promise<City | undefined> {
+    const [updated] = await db
+      .update(cities)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(cities.id, id))
+      .returning();
+    return updated;
+  }
+
+  // City Members (Followers) Methods
+  async followCity(cityId: number, userId: number, membershipType: string = "follower"): Promise<CityMember> {
+    const [member] = await db
+      .insert(cityMembers)
+      .values({ cityId, userId, membershipType })
+      .onConflictDoUpdate({
+        target: [cityMembers.cityId, cityMembers.userId],
+        set: { membershipType, status: "active", lastVisitAt: new Date() }
+      })
+      .returning();
+    return member;
+  }
+
+  async unfollowCity(cityId: number, userId: number): Promise<void> {
+    await db
+      .delete(cityMembers)
+      .where(and(eq(cityMembers.cityId, cityId), eq(cityMembers.userId, userId)));
+  }
+
+  async getCityMembers(cityId: number): Promise<CityMember[]> {
+    return await db.select().from(cityMembers).where(eq(cityMembers.cityId, cityId));
+  }
+
+  async isCityMember(cityId: number, userId: number): Promise<boolean> {
+    const [member] = await db
+      .select()
+      .from(cityMembers)
+      .where(and(eq(cityMembers.cityId, cityId), eq(cityMembers.userId, userId)));
+    return !!member;
+  }
+
+  async getUserFollowedCities(userId: number): Promise<City[]> {
+    const userCityMemberships = await db
+      .select()
+      .from(cityMembers)
+      .where(eq(cityMembers.userId, userId));
+    
+    if (userCityMemberships.length === 0) return [];
+    
+    const cityIds = userCityMemberships.map(m => m.cityId);
+    return await db.select().from(cities).where(inArray(cities.id, cityIds));
   }
 
   // ============================================================================
