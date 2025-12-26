@@ -437,10 +437,22 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
     if (roleFilter === 'all') return allMembers;
     return allMembers.filter((m: any) => {
       // Check member's direct role
-      if (m.role === roleFilter || m.user?.role === roleFilter) return true;
-      // Check member's tangoRoles array
+      const memberRole = m.role || m.user?.role || '';
+      if (memberRole === roleFilter) return true;
+      // Check member's tangoRoles array with proper normalization
       const tangoRoles = m.tangoRoles || m.user?.tangoRoles || [];
-      return tangoRoles.some((r: string) => r.toLowerCase().includes(roleFilter.replace('-', '')));
+      // Handle dancer-leader/dancer-follower specially
+      if (roleFilter === 'dancer-leader') {
+        return tangoRoles.some((r: string) => r.toLowerCase().includes('leader') || r === 'dancer-leader');
+      }
+      if (roleFilter === 'dancer-follower') {
+        return tangoRoles.some((r: string) => r.toLowerCase().includes('follower') || r === 'dancer-follower');
+      }
+      // For other roles, match by normalized value
+      return tangoRoles.some((r: string) => {
+        const normalizedRole = r.toLowerCase().replace(/[\s_]+/g, '-');
+        return normalizedRole === roleFilter || normalizedRole.includes(roleFilter);
+      });
     });
   }, [allMembers, roleFilter]);
 
@@ -1108,6 +1120,7 @@ function CityTipsTab({ city }: { city: CityData }) {
       <div className="lg:col-span-9">
         <RecommendationsList 
           city={cityName}
+          category={tipCategory !== 'all' ? tipCategory : undefined}
           limit={50}
         />
       </div>
