@@ -1276,13 +1276,13 @@ export default function CityDetailsPage() {
   const cityNameLower = city?.name?.toLowerCase() || '';
   const cityFieldLower = (city?.city || '').toLowerCase();
   
-  const isUserResident = userCitySlug !== '' && (
+  const isUserResident = (userCitySlug !== '' && (
     userCitySlug === canonicalCitySlug ||
     userCityLower === cityNameLower ||
     userCityLower === cityFieldLower ||
     canonicalCitySlug.startsWith(userCitySlug + '-') ||
     canonicalCitySlug === userCitySlug
-  );
+  )) || membership?.isResident === true;
 
   const followMutation = useMutation({
     mutationFn: async () => {
@@ -1393,7 +1393,7 @@ export default function CityDetailsPage() {
                       ) : (
                         <Check className="h-5 w-5" />
                       )}
-                      {membership?.isResident || isUserResident ? "Home Community" : "Following Hub"}
+                      {membership?.isResident || isUserResident ? (membership?.isResident ? "Resident" : "Establish Residency") : "Follow Community"}
                     </Button>
                   ) : (
                     <Button
@@ -1409,7 +1409,7 @@ export default function CityDetailsPage() {
                       ) : (
                         <Heart className="h-5 w-5 group-hover:fill-current" />
                       )}
-                      {isUserResident ? "Establish Residency" : "Follow Community"}
+                      {membership?.isResident || isUserResident ? (membership?.isResident ? "Resident" : "Establish Residency") : "Follow Community"}
                     </Button>
                   )}
                 </div>

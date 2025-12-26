@@ -1028,45 +1028,45 @@ router.get("/:id/membership", async (req: Request, res: Response) => {
       .where(and(eq(cityMembers.cityId, cityId), eq(cityMembers.userId, userId)))
       .limit(1);
     
+    // Check if user lives in this city using canonical slug comparison
+    // This prevents false positives like "Newark" matching "New York"
+    const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
+    const [userRecord] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    const userCityRaw = userRecord?.city?.trim() || '';
+    
+    // Generate slug for comparison
+    const toSlug = (name: string): string => name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    
+    // Handle "City, Country" format - extract just the city part
+    const userCityName = userCityRaw.includes(',') 
+      ? userCityRaw.split(',')[0].trim()
+      : userCityRaw;
+    const userCitySlug = toSlug(userCityName);
+    const canonicalCitySlug = city?.slug || '';
+    // Also check without -tango suffix for more flexible matching
+    const canonicalCitySlugBase = canonicalCitySlug.replace(/-tango(-community)?$/, '');
+    const userCityLower = userCityName.toLowerCase();
+    // Clean city name for comparison (remove Tango Community suffix)
+    const cityNameLower = city?.name?.toLowerCase().replace(' tango community', '').replace(' tango', '').trim() || '';
+    const cityFieldLower = (city?.city || '').toLowerCase();
+    
+    // User is resident if their city matches canonical slug or name
+    // MB.MD v9.9.3: More flexible matching for resident detection
+    const isResident = userCitySlug !== '' && (
+      userCitySlug === canonicalCitySlug ||
+      userCitySlug === canonicalCitySlugBase ||
+      userCityLower === cityNameLower ||
+      userCityLower === cityFieldLower ||
+      canonicalCitySlug.startsWith(userCitySlug + '-') ||
+      canonicalCitySlugBase === userCitySlug
+    );
+
     if (!membership) {
-      // Check if user lives in this city using canonical slug comparison
-      // This prevents false positives like "Newark" matching "New York"
-      const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
-      const [userRecord] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-      const userCityRaw = userRecord?.city?.trim() || '';
-      
-      // Generate slug for comparison
-      const toSlug = (name: string): string => name
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '');
-      
-      // Handle "City, Country" format - extract just the city part
-      const userCityName = userCityRaw.includes(',') 
-        ? userCityRaw.split(',')[0].trim()
-        : userCityRaw;
-      const userCitySlug = toSlug(userCityName);
-      const canonicalCitySlug = city?.slug || '';
-      // Also check without -tango suffix for more flexible matching
-      const canonicalCitySlugBase = canonicalCitySlug.replace(/-tango(-community)?$/, '');
-      const userCityLower = userCityName.toLowerCase();
-      // Clean city name for comparison (remove Tango Community suffix)
-      const cityNameLower = city?.name?.toLowerCase().replace(' tango community', '').replace(' tango', '').trim() || '';
-      const cityFieldLower = (city?.city || '').toLowerCase();
-      
-      // User is resident if their city matches canonical slug or name
-      // MB.MD v9.9.3: More flexible matching for resident detection
-      const isResident = userCitySlug !== '' && (
-        userCitySlug === canonicalCitySlug ||
-        userCitySlug === canonicalCitySlugBase ||
-        userCityLower === cityNameLower ||
-        userCityLower === cityFieldLower ||
-        canonicalCitySlug.startsWith(userCitySlug + '-') ||
-        canonicalCitySlugBase === userCitySlug
-      );
-      
       // If user is a resident, auto-create membership record so they appear as member
       if (isResident && city) {
         try {
@@ -1104,10 +1104,33 @@ router.get("/:id/membership", async (req: Request, res: Response) => {
       });
     }
     
+    // If membership exists but type is 'follower', but isResident is true, update it to 'resident'
+    if (membership.membershipType === 'follower' && isResident) {
+      try {
+        const [updatedMembership] = await db
+          .update(cityMembers)
+          .set({ membershipType: 'resident' })
+          .where(eq(cityMembers.id, membership.id))
+          .returning();
+        
+        console.log(`[CityMembership] Upgraded user ${userId} to resident in city ${cityId}`);
+        
+        return res.json({
+          isMember: true,
+          isFollowing: true,
+          isResident: true,
+          membershipType: 'resident',
+          membership: updatedMembership
+        });
+      } catch (updateErr) {
+        console.error(`[CityMembership] Failed to upgrade membership:`, updateErr);
+      }
+    }
+    
     res.json({
       isMember: true,
       isFollowing: true,
-      isResident: membership.membershipType === 'resident',
+      isResident: membership.membershipType === 'resident' || isResident,
       membershipType: membership.membershipType,
       membership
     });
