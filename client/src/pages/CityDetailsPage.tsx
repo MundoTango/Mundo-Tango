@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare, MapPinHouse, UserCheck, Lightbulb } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -290,13 +291,13 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredEvents.map((event) => {
+            {filteredEvents.map((event, idx) => {
               const eventDate = getEventDate(event);
               const userRsvp = rsvps?.find((r: any) => r.eventId === event.id);
 
               return (
                 <motion.div
-                  key={event.id}
+                  key={`${event.id}-${idx}`}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
@@ -405,7 +406,7 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
     const seen = new Set<number>();
     return combined.filter((m: any) => {
       const id = m.userId || m.user?.id || m.id;
-      if (seen.has(id)) return false;
+      if (!id || seen.has(id)) return false;
       seen.add(id);
       return true;
     });
@@ -553,16 +554,36 @@ function CityOverviewTab({ city }: { city: CityData }) {
 
   const { data: events = [] } = useQuery<any[]>({
     queryKey: ["/api/events", { city: cityName }],
+    queryFn: async () => {
+      const res = await fetch(`/api/events?city=${encodeURIComponent(cityName)}&limit=250`);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.map((item: any) => ({
+        ...(item.event || item),
+        organizer: item.organizer,
+        rsvpCount: item._count
+      }));
+    },
     enabled: activeLayer === 'all' || activeLayer === 'events'
   });
 
   const { data: housing = [] } = useQuery<any[]>({
     queryKey: ["/api/cities", city.id, "housing"],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/${city.id}/housing`);
+      if (!res.ok) return [];
+      return res.json();
+    },
     enabled: activeLayer === 'all' || activeLayer === 'housing'
   });
 
   const { data: tips = [] } = useQuery<any[]>({
     queryKey: ["/api/cities", city.id, "tips"],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/${city.id}/tips`);
+      if (!res.ok) return [];
+      return res.json();
+    },
     enabled: activeLayer === 'all' || activeLayer === 'tips'
   });
 
@@ -797,63 +818,67 @@ function CityHousingTab({ city }: { city: CityData }) {
       </div>
     );
   }
-  
+
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Home className="h-5 w-5" />
-            Housing in {cityName}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground mb-4">
-            Find tango-friendly accommodations in {cityName}. Many hosts are dancers themselves and can provide local tips.
-          </p>
-        </CardContent>
-      </Card>
-      
-      {listings.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {listings.map((listing: any) => (
-            <Card key={listing.id} className="hover-elevate" data-testid={`card-housing-${listing.id}`}>
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <h4 className="font-semibold line-clamp-2">{listing.title}</h4>
-                    <Badge variant="secondary" className="shrink-0">
-                      ${listing.pricePerNight}/{listing.currency || 'night'}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="lg:col-span-3 space-y-4">
+        <Card className="bg-primary/5 border-primary/10">
+          <CardContent className="p-4 space-y-3">
+            <h3 className="font-bold text-sm">Housing in {city.name}</h3>
+            <p className="text-xs text-muted-foreground">Find a place to stay with fellow tango dancers.</p>
+            <Button className="w-full text-xs" size="sm">List Your Place</Button>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="lg:col-span-9">
+        {listings.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <Home className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="font-semibold mb-2">No listings yet</h3>
+              <p className="text-muted-foreground">Check back later or list your own space!</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {listings.map((listing: any) => (
+              <Card key={listing.id} className="overflow-hidden hover-elevate group" data-testid={`card-housing-${listing.id}`}>
+                <div className="aspect-video relative overflow-hidden">
+                  <img 
+                    src={listing.imageUrl || "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800"} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    alt={listing.title}
+                  />
+                  <div className="absolute top-2 right-2">
+                    <Badge className="bg-background/90 text-foreground backdrop-blur-sm">
+                      ${listing.pricePerNight || listing.price}/night
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{listing.description}</p>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    {listing.bedrooms && <span>{listing.bedrooms} bed</span>}
-                    {listing.bathrooms && <span>{listing.bathrooms} bath</span>}
-                    {listing.maxGuests && <span>Max {listing.maxGuests} guests</span>}
-                  </div>
-                  <div className="flex items-center gap-2 pt-2 border-t">
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src={listing.host?.profileImage} />
-                      <AvatarFallback>{(listing.host?.name || 'H').charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm">Hosted by {listing.host?.name || listing.host?.username}</span>
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <AirbnbHousingView city={cityName} />
-      )}
+                <CardContent className="p-4">
+                  <h4 className="font-bold line-clamp-1">{listing.title}</h4>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{listing.description}</p>
+                  <div className="flex items-center gap-4 mt-4 pt-4 border-t">
+                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Users className="h-3 w-3" />
+                      {listing.maxGuests || listing.capacity} guests
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <MapPin className="h-3 w-3" />
+                      {listing.neighborhood || 'Local'}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 function CityVisitorsTab({ city }: { city: CityData }) {
-  const cityName = city.city || city.name.replace(' Tango Community', '');
-  
   const { data: visitors = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/cities", city.id, "visitors"],
     queryFn: async () => {
@@ -872,86 +897,80 @@ function CityVisitorsTab({ city }: { city: CityData }) {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Plane className="h-5 w-5" />
-            Visitors to {cityName}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Connect with dancers who are traveling to {cityName}. Share tips and meet up at milongas!
-          </p>
-        </CardContent>
-      </Card>
-
-      {visitors.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <Plane className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="font-semibold mb-2">No upcoming visitors</h3>
-            <p className="text-muted-foreground">
-              When dancers plan trips to {cityName}, they'll appear here.
-            </p>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="lg:col-span-3 space-y-4">
+        <Card className="bg-primary/5 border-primary/10">
+          <CardContent className="p-4 space-y-3">
+            <h3 className="font-bold text-sm">Visiting {city.name}</h3>
+            <p className="text-xs text-muted-foreground">See who's coming to town and coordinate meetups.</p>
+            <Button className="w-full text-xs" size="sm">Add My Trip</Button>
           </CardContent>
         </Card>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {visitors.map((visitor: any) => (
-            <Card key={visitor.id} className="hover-elevate">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src={visitor.profileImage} />
-                    <AvatarFallback>
-                      {(visitor.name || 'V').charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <Link href={`/profile/${visitor.username}`}>
-                      <h4 className="font-medium hover:text-primary transition-colors truncate">
-                        {visitor.name || 'Visitor'}
-                      </h4>
-                    </Link>
-                    <p className="text-sm text-muted-foreground">
-                      {visitor.arrivalDate && `Arriving ${visitor.arrivalDate}`}
-                    </p>
+      </div>
+      <div className="lg:col-span-9">
+        {visitors.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <Plane className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="font-semibold mb-2">No visitors planned</h3>
+              <p className="text-muted-foreground">Planning a trip? Share it with the community!</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {visitors.map((visitor: any) => (
+              <Card key={visitor.id} className="hover-elevate">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={visitor.user?.profileImage || visitor.profileImage} />
+                      <AvatarFallback>{(visitor.user?.name || visitor.name || 'U').charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-sm truncate">{visitor.user?.name || visitor.name || visitor.user?.username || visitor.username}</h4>
+                      <p className="text-[10px] text-muted-foreground">
+                        {visitor.startDate ? safeDateFormat(new Date(visitor.startDate), 'MMM d') : visitor.arrivalDate} 
+                        {visitor.endDate ? ` - ${safeDateFormat(new Date(visitor.endDate), 'MMM d')}` : ''}
+                      </p>
+                      {visitor.status && (
+                        <Badge variant="secondary" className="mt-2 text-[8px] h-4 py-0 uppercase tracking-tighter">
+                          {visitor.status}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 function CityTipsTab({ city }: { city: CityData }) {
   const cityName = city.city || city.name.replace(' Tango Community', '');
-  
-  return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="h-5 w-5" />
-            Local Tips for {cityName}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Discover the best restaurants, cafes, and spots recommended by local dancers.
-          </p>
-        </CardContent>
-      </Card>
 
-      <RecommendationsList 
-        city={cityName}
-        limit={50}
-      />
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="lg:col-span-3 space-y-4">
+        <Card className="bg-amber-500/5 border-amber-500/10">
+          <CardContent className="p-4 space-y-3">
+            <h3 className="font-bold text-sm flex items-center gap-2">
+              <Lightbulb className="h-4 w-4 text-amber-500" /> Local Wisdom
+            </h3>
+            <p className="text-xs text-muted-foreground">Insider tips for the best tango experience in {city.name}.</p>
+            <Button variant="outline" className="w-full text-xs" size="sm">Share a Tip</Button>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="lg:col-span-9">
+        <RecommendationsList 
+          city={cityName}
+          limit={50}
+        />
+      </div>
     </div>
   );
 }
