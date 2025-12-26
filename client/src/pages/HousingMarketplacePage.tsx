@@ -74,9 +74,15 @@ export default function HousingMarketplacePage() {
         ) : listings && listings.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {listings.map((item: any) => {
-              const listing = item.listing;
-              const host = item.host;
-              const coverImage = listing.coverPhotoUrl || listing.images?.[0];
+              const listing = item.listing || item;
+              const host = item.host || listing.host;
+              const coverImageRaw = listing.coverPhotoUrl || listing.photos?.[0] || listing.images?.[0];
+              let coverImage = coverImageRaw;
+              if (coverImage && coverImage.startsWith('attached_assets/')) {
+                coverImage = '/' + coverImage;
+              } else if (coverImage && !coverImage.startsWith('http') && !coverImage.startsWith('/')) {
+                coverImage = '/' + coverImage;
+              }
 
               return (
                 <Card key={listing.id} className="hover-elevate overflow-hidden" data-testid={`card-listing-${listing.id}`}>
