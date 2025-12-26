@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare, MapPinHouse, UserCheck } from "lucide-react";
+import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare, MapPinHouse, UserCheck, Lightbulb, Building } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -413,6 +413,134 @@ function CityOverviewTab({ city }: { city: CityData }) {
   );
 }
 
+function CityHousingTab({ city }: { city: CityData }) {
+  const cityName = city.city || city.name.replace(' Tango Community', '');
+  
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Home className="h-5 w-5" />
+            Housing in {cityName}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground mb-4">
+            Find tango-friendly accommodations in {cityName}. Many hosts are dancers themselves and can provide local tips.
+          </p>
+        </CardContent>
+      </Card>
+      <AirbnbHousingView city={cityName} />
+    </div>
+  );
+}
+
+function CityVisitorsTab({ city }: { city: CityData }) {
+  const cityName = city.city || city.name.replace(' Tango Community', '');
+  
+  const { data: visitors = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/cities", city.id, "visitors"],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/${city.id}/visitors`);
+      if (!res.ok) return [];
+      return res.json();
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Plane className="h-5 w-5" />
+            Visitors to {cityName}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">
+            Connect with dancers who are traveling to {cityName}. Share tips and meet up at milongas!
+          </p>
+        </CardContent>
+      </Card>
+
+      {visitors.length === 0 ? (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <Plane className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="font-semibold mb-2">No upcoming visitors</h3>
+            <p className="text-muted-foreground">
+              When dancers plan trips to {cityName}, they'll appear here.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {visitors.map((visitor: any) => (
+            <Card key={visitor.id} className="hover-elevate">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={visitor.profileImage} />
+                    <AvatarFallback>
+                      {(visitor.name || 'V').charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/profile/${visitor.username}`}>
+                      <h4 className="font-medium hover:text-primary transition-colors truncate">
+                        {visitor.name || 'Visitor'}
+                      </h4>
+                    </Link>
+                    <p className="text-sm text-muted-foreground">
+                      {visitor.arrivalDate && `Arriving ${visitor.arrivalDate}`}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CityTipsTab({ city }: { city: CityData }) {
+  const cityName = city.city || city.name.replace(' Tango Community', '');
+  
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Lightbulb className="h-5 w-5" />
+            Local Tips for {cityName}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">
+            Discover the best restaurants, cafes, and spots recommended by local dancers.
+          </p>
+        </CardContent>
+      </Card>
+
+      <RecommendationsList 
+        city={cityName}
+        limit={50}
+      />
+    </div>
+  );
+}
+
 export default function CityDetailsPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [, params] = useRoute("/cities/:citySlug");
@@ -618,6 +746,10 @@ export default function CityDetailsPage() {
                 <MessageSquare className="h-4 w-4" />
                 Discussion
               </TabsTrigger>
+              <TabsTrigger value="overview" className="gap-2" data-testid="tab-overview">
+                <Compass className="h-4 w-4" />
+                Overview
+              </TabsTrigger>
               <TabsTrigger value="events" className="gap-2" data-testid="tab-events">
                 <Calendar className="h-4 w-4" />
                 Events
@@ -626,9 +758,17 @@ export default function CityDetailsPage() {
                 <Users className="h-4 w-4" />
                 Followers
               </TabsTrigger>
-              <TabsTrigger value="overview" className="gap-2" data-testid="tab-overview">
-                <Compass className="h-4 w-4" />
-                Overview
+              <TabsTrigger value="housing" className="gap-2" data-testid="tab-housing">
+                <Home className="h-4 w-4" />
+                Housing
+              </TabsTrigger>
+              <TabsTrigger value="visitors" className="gap-2" data-testid="tab-visitors">
+                <Plane className="h-4 w-4" />
+                Visitors
+              </TabsTrigger>
+              <TabsTrigger value="tips" className="gap-2" data-testid="tab-tips">
+                <Lightbulb className="h-4 w-4" />
+                Tips
               </TabsTrigger>
             </TabsList>
 
@@ -678,6 +818,18 @@ export default function CityDetailsPage() {
 
             <TabsContent value="overview" className="mt-0">
               <CityOverviewTab city={city} />
+            </TabsContent>
+
+            <TabsContent value="housing" className="mt-0">
+              <CityHousingTab city={city} />
+            </TabsContent>
+
+            <TabsContent value="visitors" className="mt-0">
+              <CityVisitorsTab city={city} />
+            </TabsContent>
+
+            <TabsContent value="tips" className="mt-0">
+              <CityTipsTab city={city} />
             </TabsContent>
           </Tabs>
         </div>
