@@ -4,11 +4,6 @@ import L from 'leaflet';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { 
   Globe, 
   MapPin, 
@@ -16,24 +11,25 @@ import {
   Calendar, 
   Home,
   Building2,
-  X,
   ChevronRight
 } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { toCitySlug } from "@/lib/utils";
 import { Link, useLocation } from "wouter";
 
 // Fix Leaflet default marker icon
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-});
+if (typeof window !== 'undefined') {
+  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+  });
+}
 
 interface CommunityLocation {
   id: number;
@@ -60,9 +56,9 @@ interface MapLayer {
 export default function CommunityWorldMapPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
-  const [selectedCity, setSelectedCity] = useState<CommunityLocation | null>(null);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([20, 0]); // World view centered
-  const [mapZoom, setMapZoom] = useState(2); // Zoom out to see all cities
+  const [selectedCity] = useState<CommunityLocation | null>(null);
+  const [mapCenter] = useState<[number, number]>([20, 0]); // World view centered
+  const [mapZoom] = useState(2); // Zoom out to see all cities
   
   // Layer toggles - labels are translated via useMemo for i18n
   const translatedLayers = useMemo(() => [
@@ -70,11 +66,10 @@ export default function CommunityWorldMapPage() {
     { id: 'housing', label: t('pages:communityWorldMap.layerHousing', 'Housing'), enabled: true, icon: Home },
     { id: 'recommendations', label: t('pages:communityWorldMap.layerRecommendations', 'Recommendations'), enabled: true, icon: Building2 },
   ], [t]);
-  const [layers, setLayers] = useState<MapLayer[]>(translatedLayers);
+  const [layers] = useState<MapLayer[]>(translatedLayers);
 
   // Advanced filters
-  const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     minMembers: 0,
     minEvents: 0,
     activeOnly: false,
@@ -84,6 +79,7 @@ export default function CommunityWorldMapPage() {
 
   const { data: locations = [], isLoading } = useQuery<CommunityLocation[]>({
     queryKey: ["/api/community/locations"],
+    staleTime: 60000, // Cache for 1 minute
   });
 
   const { data: stats } = useQuery<{
@@ -96,79 +92,12 @@ export default function CommunityWorldMapPage() {
     totalHousing: number;
   }>({
     queryKey: ["/api/community/stats"],
+    staleTime: 300000, // Cache for 5 minutes
   });
 
-  // Buenos Aires flagship city data (fallback)
-  const buenosAires: CommunityLocation = {
-    id: 1,
-    city: "Buenos Aires",
-    country: "Argentina",
-    coordinates: { lat: -34.6037, lng: -58.3816 },
-    memberCount: 3542,
-    activeEvents: 127,
-    recommendations: 43,
-    housing: 18,
-    isActive: true,
-    groupId: 1
-  };
-
-  // Mock locations with Buenos Aires + others (fallback only)
-  const mockLocations: CommunityLocation[] = [
-    buenosAires,
-    {
-      id: 2,
-      city: "Paris",
-      country: "France",
-      coordinates: { lat: 48.8566, lng: 2.3522 },
-      memberCount: 1842,
-      activeEvents: 56,
-      recommendations: 28,
-      housing: 12,
-      isActive: true,
-      groupId: 2
-    },
-    {
-      id: 3,
-      city: "New York",
-      country: "USA",
-      coordinates: { lat: 40.7128, lng: -74.0060 },
-      memberCount: 2314,
-      activeEvents: 73,
-      recommendations: 31,
-      housing: 15,
-      isActive: true,
-      groupId: 3
-    },
-    {
-      id: 4,
-      city: "Tokyo",
-      country: "Japan",
-      coordinates: { lat: 35.6762, lng: 139.6503 },
-      memberCount: 1523,
-      activeEvents: 42,
-      recommendations: 19,
-      housing: 8,
-      isActive: true,
-      groupId: 4
-    },
-    {
-      id: 5,
-      city: "Berlin",
-      country: "Germany",
-      coordinates: { lat: 52.5200, lng: 13.4050 },
-      memberCount: 1687,
-      activeEvents: 51,
-      recommendations: 24,
-      housing: 11,
-      isActive: true,
-      groupId: 5
-    }
-  ];
-
   const allLocations = useMemo(() => {
-    // Use real locations from API, only fallback to mock if loading
-    return locations && locations.length > 0 ? locations : (isLoading ? mockLocations : locations);
-  }, [locations, isLoading]);
+    return locations || [];
+  }, [locations]);
 
   // Apply filters
   const filteredLocations = useMemo(() => {
@@ -194,22 +123,18 @@ export default function CommunityWorldMapPage() {
     return sorted;
   }, [filteredLocations, filters.sortBy]);
 
-  // Filter to only locations with groups (city communities)
-  const cityLocations = useMemo(() => {
-    return sortedLocations.filter(loc => loc.groupId);
-  }, [sortedLocations]);
-
-  const toggleLayer = (id: string) => {
-    setLayers(prev => prev.map(layer => 
-      layer.id === id ? { ...layer, enabled: !layer.enabled } : layer
-    ));
-  };
-
   const handleCityClick = (location: CommunityLocation) => {
-    // Navigate to the city hub page using stored slug from API (preferred) or generated slug (fallback)
     const citySlug = location.slug || toCitySlug(location.city);
     setLocation(`/cities/${citySlug}`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <SelfHealingErrorBoundary pageName={t('pages:communityWorldMap.title', 'Community World Map')} fallbackRoute="/discover">
@@ -223,11 +148,11 @@ export default function CommunityWorldMapPage() {
           </div>
           
           <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-            >
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+              >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <Globe className="w-3 h-3 mr-1.5" />
                 {t('pages:communityWorldMap.globalNetwork', 'Global Network')}
@@ -246,7 +171,12 @@ export default function CommunityWorldMapPage() {
 
         <div className="container mx-auto px-6 py-12 space-y-6">
             {/* Global Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              className="grid grid-cols-2 md:grid-cols-5 gap-4"
+            >
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">{t('pages:communityWorldMap.cities', 'Cities')}</CardTitle>
@@ -311,31 +241,42 @@ export default function CommunityWorldMapPage() {
                   <p className="text-xs text-muted-foreground">{t('pages:communityWorldMap.availableListings', 'Available listings')}</p>
                 </CardContent>
               </Card>
-            </div>
+            </motion.div>
 
             {/* Interactive Map - Full Width */}
-            <Card className="overflow-hidden">
-              <CardHeader>
-                <CardTitle>{t('pages:communityWorldMap.interactiveMap', 'Interactive Map')}</CardTitle>
-                <CardDescription>
-                  {t('pages:communityWorldMap.mapDescription', 'Click on any marker to see city details. Toggle layers to filter by type.')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="w-full h-[600px]" data-testid="map-container">
-                  <CommunityMapWithLayers
-                    locations={sortedLocations}
-                    layers={layers}
-                    center={mapCenter}
-                    zoom={mapZoom}
-                    onCityClick={handleCityClick}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
+              <Card className="overflow-hidden">
+                <CardHeader>
+                  <CardTitle>{t('pages:communityWorldMap.interactiveMap', 'Interactive Map')}</CardTitle>
+                  <CardDescription>
+                    {t('pages:communityWorldMap.mapDescription', 'Click on any marker to see city details. Toggle layers to filter by type.')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="w-full h-[600px]" data-testid="map-container">
+                    <CommunityMapWithLayers
+                      locations={sortedLocations}
+                      layers={layers}
+                      center={mapCenter}
+                      zoom={mapZoom}
+                      onCityClick={handleCityClick}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* Cities List - Entry into City Groups */}
-            <div className="space-y-4">
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+              className="space-y-4"
+            >
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-serif font-bold flex items-center gap-2">
@@ -357,12 +298,12 @@ export default function CommunityWorldMapPage() {
                 </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {sortedLocations.map((location) => (
+                  {sortedLocations.map((location, index) => (
                     <motion.div
                       key={location.id}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
+                      transition={{ duration: 0.2, delay: Math.min(index * 0.05, 0.3) }}
                     >
                       <Card 
                         className={`overflow-hidden hover-elevate cursor-pointer transition-all group ${
@@ -376,6 +317,7 @@ export default function CommunityWorldMapPage() {
                           <img
                             src={getCityImageUrl(location.city)}
                             alt={`${location.city}, ${location.country}`}
+                            loading="lazy"
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
@@ -439,7 +381,7 @@ export default function CommunityWorldMapPage() {
                   ))}
                 </div>
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
     </SelfHealingErrorBoundary>
