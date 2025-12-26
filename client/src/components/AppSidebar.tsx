@@ -1,4 +1,5 @@
 import { memo, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import {
   Home,
@@ -10,6 +11,8 @@ import {
   UserPlus,
   GraduationCap,
   MapPin,
+  MapPinHouse,
+  MapPinPlus,
   Brain,
   ShoppingBag,
   Globe,
@@ -340,6 +343,25 @@ const roleToProDiscoveryMap: Record<string, string> = {
   fan: "/pro/community",
 };
 
+// Helper to generate city slug from name
+function toCitySlug(cityName: string): string {
+  return cityName
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+interface FollowedCity {
+  id: number;
+  slug: string;
+  name: string;
+  country: string;
+  membershipType: string;
+  isResident: boolean;
+}
+
 function AppSidebarComponent() {
   const { t } = useTranslation(['navigation', 'common']);
   const [location] = useLocation();
@@ -351,6 +373,17 @@ function AppSidebarComponent() {
   // Read from user first (has authoritative data from API), fallback to profile
   const userCity = (user as any)?.city || profile?.city;
   const userTangoRoles = (user as any)?.tangoRoles || (profile as any)?.tangoRoles || [];
+
+  // Fetch followed cities for "My Stuff" section
+  const { data: followedCities = [] } = useQuery<FollowedCity[]>({
+    queryKey: ["/api/cities/followed"],
+    queryFn: async () => {
+      const res = await fetch("/api/cities/followed");
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!user,
+  });
 
   const myStuffItems = useMemo(() => {
     const items: Array<{
@@ -364,15 +397,37 @@ function AppSidebarComponent() {
     // Track added URLs to prevent duplicates
     const addedUrls = new Set<string>();
 
+    // Add home city first (from user profile) with MapPinHouse icon
     if (userCity) {
+      const citySlug = toCitySlug(userCity);
+      const cityUrl = `/cities/${citySlug}`;
       items.push({
         title: userCity,
-        url: `/groups/city/${encodeURIComponent(userCity)}`,
-        icon: MapPin,
+        url: cityUrl,
+        icon: MapPinHouse,
         color: "#40E0D0",
-        tooltip: `Your city: ${userCity}`,
+        tooltip: `Your home city: ${userCity}`,
       });
+      addedUrls.add(cityUrl);
     }
+
+    // Add followed cities with MapPinPlus icon
+    followedCities.forEach((city) => {
+      const cityUrl = `/cities/${city.slug}`;
+      // Skip if already added (e.g., home city)
+      if (addedUrls.has(cityUrl)) return;
+      // Skip if this is the user's home city (already added above)
+      if (city.isResident) return;
+      
+      addedUrls.add(cityUrl);
+      items.push({
+        title: city.name,
+        url: cityUrl,
+        icon: MapPinPlus,
+        color: "#8B5CF6", // Purple for followed cities
+        tooltip: `Following: ${city.name}`,
+      });
+    });
 
     userTangoRoles.forEach((roleValue) => {
       const role = getRoleByValue(roleValue);
@@ -392,7 +447,7 @@ function AppSidebarComponent() {
     });
 
     return items;
-  }, [userCity, userTangoRoles]);
+  }, [userCity, userTangoRoles, followedCities]);
 
   const isActive = (url: string) =>
     location === url || location.startsWith(url + "/");

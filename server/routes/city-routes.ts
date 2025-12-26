@@ -1,7 +1,7 @@
 import { Router, type Response, type Request } from "express";
 import { db } from "../storage";
-import { groups, groupMembers, cities, cityMembers, events } from "@shared/schema";
-import { eq, ilike, sql, or, and, desc } from "drizzle-orm";
+import { groups, groupMembers, cities, cityMembers, events, users } from "@shared/schema";
+import { eq, ilike, sql, or, and, desc, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -702,6 +702,253 @@ router.get("/:id/members", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("[CityMembers] Error:", error);
     res.status(500).json({ error: "Failed to get city members" });
+  }
+});
+
+/**
+ * POST /api/cities/:id/follow
+ * Follow a city (non-resident) - adds city to user's "My Stuff" and includes events in feed
+ */
+router.post("/:id/follow", async (req: Request, res: Response) => {
+  try {
+    const cityId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    
+    if (isNaN(cityId)) {
+      return res.status(400).json({ error: "Invalid city ID" });
+    }
+    
+    // Check if city exists
+    const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
+    if (!city) {
+      return res.status(404).json({ error: "City not found" });
+    }
+    
+    // Check if already following
+    const [existing] = await db
+      .select()
+      .from(cityMembers)
+      .where(and(eq(cityMembers.cityId, cityId), eq(cityMembers.userId, userId)))
+      .limit(1);
+    
+    if (existing) {
+      return res.json({ message: "Already following this city", membership: existing });
+    }
+    
+    // Check if user lives in this city (compare user's profile city with city name)
+    const [userRecord] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    const userCity = userRecord?.city?.toLowerCase().trim() || '';
+    const cityName = city.name.toLowerCase().trim();
+    const isResident = userCity === cityName || cityName.includes(userCity) || userCity.includes(cityName);
+    
+    // Create membership
+    const [membership] = await db
+      .insert(cityMembers)
+      .values({
+        cityId,
+        userId,
+        role: 'member',
+        status: 'active',
+        membershipType: isResident ? 'resident' : 'follower',
+      })
+      .returning();
+    
+    console.log(`[CityFollow] User ${userId} ${isResident ? 'joined as resident' : 'followed'} city ${city.name}`);
+    
+    res.json({ 
+      message: isResident ? "Joined as resident" : "Now following this city", 
+      membership,
+      isResident 
+    });
+  } catch (error) {
+    console.error("[CityFollow] Error:", error);
+    res.status(500).json({ error: "Failed to follow city" });
+  }
+});
+
+/**
+ * DELETE /api/cities/:id/follow
+ * Unfollow a city
+ */
+router.delete("/:id/follow", async (req: Request, res: Response) => {
+  try {
+    const cityId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    
+    if (isNaN(cityId)) {
+      return res.status(400).json({ error: "Invalid city ID" });
+    }
+    
+    await db
+      .delete(cityMembers)
+      .where(and(eq(cityMembers.cityId, cityId), eq(cityMembers.userId, userId)));
+    
+    console.log(`[CityUnfollow] User ${userId} unfollowed city ${cityId}`);
+    
+    res.json({ message: "Unfollowed city" });
+  } catch (error) {
+    console.error("[CityUnfollow] Error:", error);
+    res.status(500).json({ error: "Failed to unfollow city" });
+  }
+});
+
+/**
+ * GET /api/cities/:id/membership
+ * Check if current user is a member/follower of this city
+ */
+router.get("/:id/membership", async (req: Request, res: Response) => {
+  try {
+    const cityId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+    
+    if (!userId) {
+      return res.json({ isMember: false, isFollowing: false, isResident: false });
+    }
+    
+    if (isNaN(cityId)) {
+      return res.status(400).json({ error: "Invalid city ID" });
+    }
+    
+    const [membership] = await db
+      .select()
+      .from(cityMembers)
+      .where(and(eq(cityMembers.cityId, cityId), eq(cityMembers.userId, userId)))
+      .limit(1);
+    
+    if (!membership) {
+      // Check if user lives in this city by comparing profile city
+      const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
+      const [userRecord] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+      const userCity = userRecord?.city?.toLowerCase().trim() || '';
+      const cityName = city?.name?.toLowerCase().trim() || '';
+      const isResident = userCity && cityName && (userCity === cityName || cityName.includes(userCity) || userCity.includes(cityName));
+      
+      return res.json({ 
+        isMember: false, 
+        isFollowing: false, 
+        isResident,
+        membershipType: null 
+      });
+    }
+    
+    res.json({
+      isMember: true,
+      isFollowing: true,
+      isResident: membership.membershipType === 'resident',
+      membershipType: membership.membershipType,
+      membership
+    });
+  } catch (error) {
+    console.error("[CityMembership] Error:", error);
+    res.status(500).json({ error: "Failed to check membership" });
+  }
+});
+
+/**
+ * GET /api/cities/followed
+ * Get all cities the current user is following (for "My Stuff" sidebar)
+ */
+router.get("/followed", async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+    
+    if (!userId) {
+      return res.json([]);
+    }
+    
+    const followedCities = await db
+      .select({
+        membership: cityMembers,
+        city: cities,
+      })
+      .from(cityMembers)
+      .innerJoin(cities, eq(cityMembers.cityId, cities.id))
+      .where(and(
+        eq(cityMembers.userId, userId),
+        eq(cityMembers.status, 'active')
+      ));
+    
+    res.json(followedCities.map(fc => ({
+      ...fc.city,
+      membershipType: fc.membership.membershipType,
+      isResident: fc.membership.membershipType === 'resident',
+    })));
+  } catch (error) {
+    console.error("[FollowedCities] Error:", error);
+    res.status(500).json({ error: "Failed to get followed cities" });
+  }
+});
+
+/**
+ * POST /api/cities/:id/join (Legacy endpoint - same logic as follow)
+ * Join a city community - auto-detects if user is resident or follower
+ */
+router.post("/:id/join", async (req: Request, res: Response) => {
+  try {
+    const cityId = parseInt(req.params.id);
+    const userId = (req as any).user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    
+    if (isNaN(cityId)) {
+      return res.status(400).json({ error: "Invalid city ID" });
+    }
+    
+    // Check if city exists
+    const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
+    if (!city) {
+      return res.status(404).json({ error: "City not found" });
+    }
+    
+    // Check if already following
+    const [existing] = await db
+      .select()
+      .from(cityMembers)
+      .where(and(eq(cityMembers.cityId, cityId), eq(cityMembers.userId, userId)))
+      .limit(1);
+    
+    if (existing) {
+      return res.json({ message: "Already following this city", membership: existing });
+    }
+    
+    // Check if user lives in this city
+    const [userRecord] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    const userCity = userRecord?.city?.toLowerCase().trim() || '';
+    const cityName = city.name.toLowerCase().trim();
+    const isResident = userCity === cityName || cityName.includes(userCity) || userCity.includes(cityName);
+    
+    // Create membership
+    const [membership] = await db
+      .insert(cityMembers)
+      .values({
+        cityId,
+        userId,
+        role: 'member',
+        status: 'active',
+        membershipType: isResident ? 'resident' : 'follower',
+      })
+      .returning();
+    
+    console.log(`[CityJoin] User ${userId} ${isResident ? 'joined as resident' : 'followed'} city ${city.name}`);
+    
+    res.json({ 
+      message: isResident ? "Joined as resident" : "Now following this city", 
+      membership,
+      isResident 
+    });
+  } catch (error) {
+    console.error("[CityJoin] Error:", error);
+    res.status(500).json({ error: "Failed to join city" });
   }
 });
 

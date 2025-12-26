@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare } from "lucide-react";
+import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare, MapPinHouse, UserCheck } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -434,17 +434,69 @@ export default function CityDetailsPage() {
     retry: false
   });
 
-  const joinMutation = useMutation({
+  // Check user's membership status for this city
+  const { data: membership } = useQuery<{
+    isMember: boolean;
+    isFollowing: boolean;
+    isResident: boolean;
+    membershipType: string | null;
+  }>({
+    queryKey: ["/api/cities", city?.id, "membership"],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/${city!.id}/membership`);
+      if (!res.ok) return { isMember: false, isFollowing: false, isResident: false, membershipType: null };
+      return res.json();
+    },
+    enabled: !!city?.id && !!user,
+  });
+
+  // Check if user lives in this city (profile city matches)
+  const userCity = (user as any)?.city?.toLowerCase().trim() || '';
+  const cityName = city?.name?.toLowerCase().trim() || '';
+  const cityFieldName = city?.city?.toLowerCase().trim() || '';
+  const isUserResident = userCity && (
+    userCity === cityName || 
+    userCity === cityFieldName ||
+    cityName.includes(userCity) || 
+    userCity.includes(cityName) ||
+    cityFieldName.includes(userCity) ||
+    userCity.includes(cityFieldName)
+  );
+
+  const followMutation = useMutation({
     mutationFn: async () => {
       if (!city) throw new Error("City not found");
-      return apiRequest("POST", `/api/cities/${city.id}/join`);
+      return apiRequest("POST", `/api/cities/${city.id}/follow`);
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/cities/by-slug", citySlug] });
-      toast({ title: "Now following this city!" });
+      queryClient.invalidateQueries({ queryKey: ["/api/cities", city?.id, "membership"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cities/followed"] });
+      toast({ 
+        title: data.isResident ? "Welcome home!" : "Now following this city!",
+        description: data.isResident 
+          ? "You're now a member of your home city community" 
+          : "You'll see events from this city in your feed"
+      });
     },
     onError: () => {
       toast({ title: "Failed to follow", variant: "destructive" });
+    }
+  });
+
+  const unfollowMutation = useMutation({
+    mutationFn: async () => {
+      if (!city) throw new Error("City not found");
+      return apiRequest("DELETE", `/api/cities/${city.id}/follow`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cities/by-slug", citySlug] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cities", city?.id, "membership"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cities/followed"] });
+      toast({ title: "Unfollowed city" });
+    },
+    onError: () => {
+      toast({ title: "Failed to unfollow", variant: "destructive" });
     }
   });
 
@@ -503,19 +555,40 @@ export default function CityDetailsPage() {
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    onClick={() => joinMutation.mutate()}
-                    disabled={joinMutation.isPending}
-                    className="gap-2"
-                    data-testid="button-follow-city"
-                  >
-                    {joinMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Heart className="h-4 w-4" />
-                    )}
-                    Follow
-                  </Button>
+                  {membership?.isFollowing ? (
+                    <Button
+                      variant="outline"
+                      onClick={() => unfollowMutation.mutate()}
+                      disabled={unfollowMutation.isPending}
+                      className="gap-2 bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+                      data-testid="button-unfollow-city"
+                    >
+                      {unfollowMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : membership?.isResident || isUserResident ? (
+                        <MapPinHouse className="h-4 w-4" />
+                      ) : (
+                        <Check className="h-4 w-4" />
+                      )}
+                      {membership?.isResident || isUserResident ? "Member" : "Following"}
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => followMutation.mutate()}
+                      disabled={followMutation.isPending}
+                      className="gap-2"
+                      data-testid="button-follow-city"
+                    >
+                      {followMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : isUserResident ? (
+                        <MapPinHouse className="h-4 w-4" />
+                      ) : (
+                        <Heart className="h-4 w-4" />
+                      )}
+                      {isUserResident ? "Join as Member" : "Follow"}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
