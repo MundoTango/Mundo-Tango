@@ -55,8 +55,8 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   res.setHeader('Surrogate-Control', 'no-store');
   
   // CSP Version header to force browser cache refresh (change this when CSP changes)
-  // Updated to allow GoFundMe embed script and iframe
-  res.setHeader('X-CSP-Version', '2024-12-14-v4-gofundme-csp');
+  // Updated to allow Supademo embed iframe
+  res.setHeader('X-CSP-Version', '2024-12-26-v5-supademo-csp');
   
   helmet({
     contentSecurityPolicy: {
@@ -150,8 +150,8 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
               "wss:"
             ],
         
-        // Frame sources - allow Stripe for payment elements and GoFundMe for embed
-        frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com", "https://www.gofundme.com"],
+        // Frame sources - allow Stripe for payment elements, GoFundMe for embed, and Supademo for demo
+        frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com", "https://www.gofundme.com", "https://app.supademo.com"],
         
         // Object sources - block all plugins (Flash, Java, etc.)
         objectSrc: ["'none'"],
