@@ -626,28 +626,52 @@ function CityOverviewTab({ city }: { city: CityData }) {
     if (activeLayer === 'all' || activeLayer === 'events') {
       events.forEach(e => {
         if (e.latitude && e.longitude) {
-          items.push({ ...e, type: 'event', color: 'rose' });
+          items.push({ 
+            id: `event-${e.id}`, 
+            lat: parseFloat(e.latitude), 
+            lng: parseFloat(e.longitude), 
+            title: e.title,
+            type: 'event', 
+            color: '#E11D48', // Rose 600
+            data: e 
+          });
         }
       });
     }
     if (activeLayer === 'all' || activeLayer === 'housing') {
       housing.forEach(h => {
         if (h.latitude && h.longitude) {
-          items.push({ ...h, type: 'housing', color: 'emerald' });
+          items.push({ 
+            id: `housing-${h.id}`, 
+            lat: parseFloat(h.latitude), 
+            lng: parseFloat(h.longitude), 
+            title: h.title || h.name,
+            type: 'housing', 
+            color: '#10B981', // Emerald 500
+            data: h 
+          });
         }
       });
     }
     if (activeLayer === 'all' || activeLayer === 'tips') {
       tips.forEach(t => {
         if (t.latitude && t.longitude) {
-          items.push({ ...t, type: 'tip', color: 'amber' });
+          items.push({ 
+            id: `tip-${t.id}`, 
+            lat: parseFloat(t.latitude), 
+            lng: parseFloat(t.longitude), 
+            title: t.title || t.name,
+            type: 'tip', 
+            color: '#F59E0B', // Amber 500
+            data: t 
+          });
         }
       });
     }
     return items;
   }, [activeLayer, events, housing, tips]);
 
-  const totalItems = (events.length || 0) + (housing.length || 0) + (tips.length || 0);
+  const mapCenter: [number, number] = lat && lng ? [lat, lng] : [-34.6037, -58.3816];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -705,6 +729,101 @@ function CityOverviewTab({ city }: { city: CityData }) {
           </div>
         </div>
       </div>
+
+      {/* Map Section */}
+      <div className="relative group">
+        <div className="absolute -top-12 left-0 flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-background/50 backdrop-blur px-3 py-1.5 rounded-full border shadow-sm">
+            <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-tighter opacity-70">Geo-Community Hub</span>
+          </div>
+          <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Interactive Map Design v4.2</p>
+        </div>
+
+        <div className="absolute top-4 right-4 z-[50] flex flex-col gap-2">
+          <div className="bg-background/90 backdrop-blur border p-2 rounded-xl shadow-xl flex flex-col gap-1">
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-1 px-1">Active Pins</p>
+            <Badge variant="outline" className="justify-start gap-2 border-none bg-rose-500/10 text-rose-500 text-[10px] font-bold py-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-500" /> {events.length} Events
+            </Badge>
+            <Badge variant="outline" className="justify-start gap-2 border-none bg-emerald-500/10 text-emerald-500 text-[10px] font-bold py-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> {housing.length} Housing
+            </Badge>
+            <Badge variant="outline" className="justify-start gap-2 border-none bg-amber-500/10 text-amber-500 text-[10px] font-bold py-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> {tips.length} Tips
+            </Badge>
+          </div>
+        </div>
+
+        <div className="h-[500px] w-full rounded-3xl overflow-hidden border-4 border-muted/20 shadow-2xl relative">
+          {lat && lng ? (
+            <MapContainer 
+              center={mapCenter} 
+              zoom={13} 
+              style={{ height: '100%', width: '100%', zIndex: 10 }}
+              scrollWheelZoom={false}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {mapItems.map((item) => (
+                <Marker 
+                  key={item.id} 
+                  position={[item.lat, item.lng]}
+                  icon={L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div style="background-color: ${item.color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6]
+                  })}
+                >
+                  <Popup>
+                    <div className="p-1">
+                      <h4 className="font-bold text-sm mb-1">{item.title}</h4>
+                      <Badge variant="outline" className="text-[10px] capitalize">
+                        {item.type}
+                      </Badge>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          ) : (
+            <div className="w-full h-full bg-muted/20 flex flex-col items-center justify-center border-4 border-dashed border-muted/30 rounded-3xl">
+              <div className="p-8 text-center space-y-4">
+                <div className="w-20 h-20 bg-muted/30 rounded-full flex items-center justify-center mx-auto">
+                  <MapIcon className="w-10 h-10 text-muted-foreground/40" />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-black text-muted-foreground uppercase tracking-[0.3em] text-sm">Geospatial Data Missing</p>
+                  <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Coordinates not yet verified for {cityName}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Map Overlay Bottom */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[50] w-[90%] max-w-md">
+            <div className="bg-background/80 backdrop-blur-xl border-2 border-primary/20 p-4 rounded-2xl shadow-2xl flex items-center gap-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                <Compass className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Current Focus</p>
+                <h4 className="font-bold truncate">{cityName} Community Hub</h4>
+              </div>
+              <div className="flex gap-2">
+                <Button size="icon" variant="outline" className="rounded-lg h-9 w-9"><Compass className="w-4 h-4" /></Button>
+                <Button size="icon" variant="outline" className="rounded-lg h-9 w-9"><Layers className="w-4 h-4" /></Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 
       {/* Center: Interactive Geo-Hub */}
