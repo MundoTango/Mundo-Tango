@@ -2,6 +2,7 @@ import { Router, type Response, type Request } from "express";
 import { db } from "../storage";
 import { groups, groupMembers, cities, cityMembers, events, users, housingListings, travelPlans, groupPosts } from "@shared/schema";
 import { eq, ilike, sql, or, and, desc, inArray, gte } from "drizzle-orm";
+import { normalizeCityName, citiesMatch } from "../utils/city-normalize";
 
 const router = Router();
 
@@ -1105,12 +1106,14 @@ router.get("/:id/visitors", async (req: Request, res: Response) => {
     
     const cityName = city.name.replace(' Tango Community', '');
     
-    // Query travel_plans for this city (either by cityId or city name)
-    const visitors = await db
+    // Query travel_plans for this city using both cityId and canonical name matching
+    // MB.MD v9.9.3: Use cityId as primary match, normalized string as fallback
+    const allPlans = await db
       .select({
         id: travelPlans.id,
         userId: travelPlans.userId,
         city: travelPlans.city,
+        cityId: travelPlans.cityId,
         startDate: travelPlans.startDate,
         endDate: travelPlans.endDate,
         status: travelPlans.status,
@@ -1128,16 +1131,17 @@ router.get("/:id/visitors", async (req: Request, res: Response) => {
       .innerJoin(users, eq(travelPlans.userId, users.id))
       .where(
         and(
-          or(
-            eq(travelPlans.cityId, cityId),
-            ilike(travelPlans.city, `%${cityName}%`)
-          ),
           gte(travelPlans.endDate, new Date()),
           eq(travelPlans.visibility, 'public')
         )
       )
       .orderBy(travelPlans.startDate)
-      .limit(50);
+      .limit(200);
+    
+    // Filter using cityId match OR canonical name matching (handles diacritics, prefixes, etc.)
+    const visitors = allPlans.filter(plan => 
+      plan.cityId === cityId || citiesMatch(plan.city || '', cityName)
+    ).slice(0, 50);
     
     // Format response
     const formattedVisitors = visitors.map(v => ({
@@ -1179,8 +1183,9 @@ router.get("/:id/housing", async (req: Request, res: Response) => {
     
     const cityName = city.name.replace(' Tango Community', '');
     
-    // Query housing_listings for this city
-    const listings = await db
+    // Query housing_listings using canonical name matching
+    // MB.MD v9.9.3: Use normalized comparison for diacritics/prefixes/suffixes
+    const allListings = await db
       .select({
         id: housingListings.id,
         title: housingListings.title,
@@ -1207,9 +1212,13 @@ router.get("/:id/housing", async (req: Request, res: Response) => {
       })
       .from(housingListings)
       .innerJoin(users, eq(housingListings.hostId, users.id))
-      .where(ilike(housingListings.city, `%${cityName}%`))
       .orderBy(desc(housingListings.id))
-      .limit(50);
+      .limit(200);
+    
+    // Filter using canonical name matching (handles diacritics, prefixes, etc.)
+    const listings = allListings.filter(listing => 
+      citiesMatch(listing.city || '', cityName)
+    ).slice(0, 50);
     
     console.log(`[CityHousing] Found ${listings.length} housing listings for ${cityName}`);
     res.json(listings);

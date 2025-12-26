@@ -344,7 +344,17 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
     enabled: !!legacyGroupId
   });
 
-  const allMembers = [...members, ...legacyMembers];
+  // Deduplicate members by userId to avoid duplicates between city members and legacy group members
+  const allMembers = useMemo(() => {
+    const combined = [...members, ...legacyMembers];
+    const seen = new Set<number>();
+    return combined.filter((m: any) => {
+      const id = m.userId || m.user?.id || m.id;
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }, [members, legacyMembers]);
   
   const roleFilters = ['all', 'organizer', 'teacher', 'dj', 'musician', 'dancer', 'leader', 'follower', 'photographer', 'host'];
   
