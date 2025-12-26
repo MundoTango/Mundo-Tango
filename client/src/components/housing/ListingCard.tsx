@@ -17,9 +17,13 @@ interface ListingCardProps {
   showCloseness?: boolean;
 }
 
-export function ListingCard({ listing, onClick, showCloseness = true }: ListingCardProps) {
+export function ListingCard({ listing: rawListing, onClick, showCloseness = true }: ListingCardProps) {
+  // Flatten listing if it's in {listing, host} format
+  const listing = (rawListing as any).listing || rawListing;
+  const host = (rawListing as any).host || (rawListing as any).host;
+  
   const coverPhoto = listing.coverPhotoUrl || listing.images?.[0] || "/placeholder-house.jpg";
-  const hostId = listing.host?.id || listing.hostId;
+  const hostId = host?.id || listing.hostId;
 
   const { data: closenessData } = useQuery<FriendClosenessData>({
     queryKey: ["/api/housing/closeness", hostId],
@@ -40,7 +44,7 @@ export function ListingCard({ listing, onClick, showCloseness = true }: ListingC
           data-testid={`img-listing-cover-${listing.id}`}
         />
         <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
-          {listing.verificationStatus === "verified" && (
+          {listing.status === "verified" && (
             <Badge
               className="bg-primary/90 backdrop-blur-sm"
               data-testid="badge-verified"
@@ -113,7 +117,7 @@ export function ListingCard({ listing, onClick, showCloseness = true }: ListingC
           <div className="flex items-baseline gap-1">
             <DollarSign className="h-4 w-4 text-muted-foreground" />
             <span className="text-2xl font-bold" data-testid="text-listing-price">
-              {listing.pricePerNight}
+              {listing.pricePerNight || listing.price}
             </span>
             <span className="text-sm text-muted-foreground">
               {listing.currency || "USD"} / night
