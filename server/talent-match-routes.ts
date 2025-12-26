@@ -362,6 +362,69 @@ Keep responses concise (2-3 sentences max).`;
     }
   });
 
+  // PATCH endpoint for authenticated embed mode interview completion
+  // This handles the frontend's PATCH /api/v1/volunteers/clarifier/:clarifierId call
+  router.patch("/volunteers/clarifier/:clarifierId", async (req, res) => {
+    try {
+      const clarifierId = parseInt(req.params.clarifierId);
+      const { interviewMessages, status, completedAt } = req.body;
+
+      const session = await storage.getClarifierSessionById(clarifierId);
+      if (!session) {
+        return res.status(404).json({ error: "Session not found" });
+      }
+
+      const volunteer = await storage.getVolunteerById(session.volunteerId);
+      if (!volunteer) {
+        return res.status(404).json({ error: "Volunteer not found" });
+      }
+
+      // Update chatLog with provided messages
+      const chatLog = interviewMessages?.map((m: any) => ({
+        role: m.role,
+        message: m.content,
+        timestamp: new Date().toISOString()
+      })) || session.chatLog;
+
+      // Update the clarifier session
+      const updated = await storage.updateClarifierSession(clarifierId, {
+        chatLog,
+        status: status || "completed",
+        completedAt: completedAt ? new Date(completedAt) : new Date()
+      });
+
+      // Create pipeline entry for admin review (authenticated users)
+      const { db } = await import("./db");
+      const { candidatePipelines } = await import("@shared/schema");
+      
+      // Check if pipeline entry already exists for this user
+      const { eq, and } = await import("drizzle-orm");
+      const existingPipeline = await db
+        .select()
+        .from(candidatePipelines)
+        .where(eq(candidatePipelines.candidateId, volunteer.userId || 0))
+        .limit(1);
+      
+      if (existingPipeline.length === 0 && volunteer.userId) {
+        await db.insert(candidatePipelines).values({
+          userId: 1, // System/admin user
+          candidateId: volunteer.userId,
+          stage: "offered",
+          source: "talent_match_authenticated",
+          notes: `Completed AI interview. Session ID: ${clarifierId}. Messages: ${chatLog?.length || 0}`,
+        });
+        console.log(`[TalentMatch] Created pipeline entry for authenticated user ${volunteer.userId}`);
+      }
+
+      console.log(`[TalentMatch] Clarifier session ${clarifierId} completed for volunteer ${session.volunteerId}`);
+      
+      res.json({ success: true, ...updated });
+    } catch (error: any) {
+      console.error("[TalentMatch] Error completing clarifier session:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Get clarifier session
   router.get("/clarifier/:sessionId", async (req, res) => {
     try {
