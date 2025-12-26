@@ -63,11 +63,9 @@ export default function EmailVerificationPage() {
         setIsVerified(true);
         toast({
           title: t('pages:emailVerification.toast.verified.title', 'Email verified!'),
-          description: t('pages:emailVerification.toast.verified.description', 'Your email has been verified. Redirecting to login...'),
+          description: t('pages:emailVerification.toast.verified.description', 'Your email has been verified. Redirecting...'),
         });
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        navigate("/login");
       } else {
         toast({
           title: t('pages:emailVerification.toast.verifyError.title', 'Verification failed'),

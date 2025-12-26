@@ -71,7 +71,7 @@ export default function WelcomePage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
               {t('pages:onboarding.welcome.badge', 'Onboarding')}
@@ -88,7 +88,7 @@ export default function WelcomePage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
             >
               <Button 
                 onClick={handleContinue} 
@@ -110,7 +110,7 @@ export default function WelcomePage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.3, delay: 0.15 }}
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
@@ -129,7 +129,7 @@ export default function WelcomePage() {
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 + (index * 0.1) }}
+                  transition={{ duration: 0.25, delay: 0.2 + (index * 0.05) }}
                 >
                   <Card className="hover-elevate h-full">
                     <CardContent className="p-8">

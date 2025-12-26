@@ -115,7 +115,7 @@ export default function LanguagesPage() {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-4">
                   {t('pages:onboarding.languages.step', 'Step 4 of 5')}
@@ -137,7 +137,7 @@ export default function LanguagesPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
               >
                 <Card className="overflow-hidden">
                   <CardHeader className="bg-card p-8">

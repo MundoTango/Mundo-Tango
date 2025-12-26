@@ -794,6 +794,8 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
       country: userWithoutPassword.country ?? null,
     };
 
+    // MB.MD Performance: Set short cache header for client-side caching
+    res.set('Cache-Control', 'private, max-age=10');
     res.json({ user: userResponse });
   } catch (error) {
     console.error("Get current user error:", error);
