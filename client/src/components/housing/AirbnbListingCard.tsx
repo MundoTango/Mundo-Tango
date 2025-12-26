@@ -62,11 +62,27 @@ export function AirbnbListingCard({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   
-  const images = listing.images?.length 
-    ? listing.images 
-    : (listing.photos?.length 
-      ? listing.photos.map((p: any) => typeof p === 'string' ? p : p.url)
-      : [listing.coverPhotoUrl || "/placeholder-house.jpg"]);
+  const images = useMemo(() => {
+    const rawPhotos = listing.photos || [];
+    const photoUrls = rawPhotos.map((p: any) => {
+      const url = typeof p === 'string' ? p : p.url;
+      return url.startsWith('http') || url.startsWith('/') ? url : `/${url}`;
+    });
+    const imageUrls = (listing.images || []).map((url: string) => 
+      url.startsWith('http') || url.startsWith('/') ? url : `/${url}`
+    );
+    
+    const coverUrl = listing.coverPhotoUrl;
+    const formattedCover = coverUrl ? (coverUrl.startsWith('http') || coverUrl.startsWith('/') ? coverUrl : `/${coverUrl}`) : null;
+    
+    const all = [
+      ...(formattedCover ? [formattedCover] : []),
+      ...imageUrls,
+      ...photoUrls
+    ];
+    
+    return all.length > 0 ? all : ["/placeholder-house.jpg"];
+  }, [listing.photos, listing.images, listing.coverPhotoUrl]);
   
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
