@@ -23,8 +23,11 @@ export default function CityGroupRedirectPage() {
   
   const result = groups?.[0];
   if (result?.group) {
-    return <Redirect to={`/groups/${result.group.id}`} />;
+    // Redirect to /cities/ route for city groups (MB.MD v9.9.3 compliance)
+    const citySlug = result.group.slug || result.group.city?.toLowerCase().replace(/\s+/g, '-') || result.group.id;
+    return <Redirect to={`/cities/${citySlug}`} />;
   }
   
-  return <Redirect to={`/city-groups?city=${encodeURIComponent(cityName)}`} />;
+  // Fallback to city groups page
+  return <Redirect to={`/cities/${cityName.toLowerCase().replace(/\s+/g, '-')}`} />;
 }

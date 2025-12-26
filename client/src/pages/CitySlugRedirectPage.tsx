@@ -58,14 +58,17 @@ export default function CitySlugRedirectPage() {
   }
   
   // Check for group result - API returns array with { group: {...}, memberCount, eventCount }
+  // Redirect to /cities/ route for city groups (MB.MD v9.9.3 compliance)
   const result = groups?.[0];
   if (result?.group?.id) {
-    return <Redirect to={`/groups/${result.group.id}`} />;
+    const slug = result.group.slug || citySlug.toLowerCase().replace(/\s+/g, '-') + '-tango';
+    return <Redirect to={`/cities/${slug}`} />;
   }
   
-  // Fallback: direct id on result
+  // Fallback: direct id on result - still redirect to cities
   if (result?.id) {
-    return <Redirect to={`/groups/${result.id}`} />;
+    const slug = result.slug || citySlug.toLowerCase().replace(/\s+/g, '-') + '-tango';
+    return <Redirect to={`/cities/${slug}`} />;
   }
   
   // No city group exists - show city info page for this scraped city

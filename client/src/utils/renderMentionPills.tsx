@@ -18,10 +18,11 @@ const getMentionPath = (type: EntityType, id: string): string => {
     case 'event':
       return `/events/${numericId}`;
     case 'group':
+      // Groups still use /groups/ route for non-city groups
       return `/groups/${numericId}`;
     case 'city':
-      // Cities might have a community page or search results
-      return `/communities?city=${encodeURIComponent(id)}`;
+      // Cities use /cities/:slug route (MB.MD v9.9.3 compliance)
+      return `/cities/${id.toLowerCase().replace(/\s+/g, '-')}-tango`;
     default:
       return '#';
   }
