@@ -707,7 +707,14 @@ function CityOverviewTab({ city }: { city: CityData }) {
     queryFn: async () => {
       const res = await fetch(`/api/cities/${city.id}/housing`);
       if (!res.ok) return [];
-      return res.json();
+      const data = await res.json();
+      // Ensure each housing item has the necessary fields for mapping
+      return data.map((item: any) => ({
+        ...item,
+        // Fallback to city coordinates if housing coords are missing
+        latitude: item.latitude || city.latitude,
+        longitude: item.longitude || city.longitude
+      }));
     }
   });
 
@@ -747,7 +754,9 @@ function CityOverviewTab({ city }: { city: CityData }) {
   const mapItems = useMemo(() => {
     const items: any[] = [];
     if (activeLayer === 'all' || activeLayer === 'events') {
-      filteredEvents.forEach(e => {
+      // Use full events list for 'all' or 'events' view to show all 120+ pins
+      const eventList = activeLayer === 'events' ? events : filteredEvents;
+      eventList.forEach(e => {
         if (e.latitude && e.longitude) {
           items.push({ 
             id: `event-${e.id}`, 
@@ -814,10 +823,13 @@ function CityOverviewTab({ city }: { city: CityData }) {
               variant={activeLayer === 'events' ? 'default' : 'ghost'} 
               size="sm"
               className={`rounded-2xl h-12 px-8 font-black text-xs uppercase tracking-widest transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'events' ? 'text-rose-500 hover:bg-rose-500/10' : 'bg-rose-500 hover:bg-rose-600'}`}
-              onClick={() => setActiveLayer('events')}
+              onClick={() => {
+                setActiveLayer('events');
+                setTimeFilter('all'); // Reset time filter when focusing on events to show all pins
+              }}
             >
               <Calendar className="w-4 h-4 mr-2" />
-              EVENTS <Badge variant="secondary" className="ml-3 bg-background/50 font-black px-2">{filteredEvents.length}</Badge>
+              EVENTS <Badge variant="secondary" className="ml-3 bg-background/50 font-black px-2">{events.length}</Badge>
             </Button>
             <Button 
               variant={activeLayer === 'housing' ? 'default' : 'ghost'} 
@@ -940,6 +952,11 @@ function CityOverviewTab({ city }: { city: CityData }) {
                   key={item.id} 
                   position={[item.lat, item.lng]}
                   icon={createCityMapIcon(item.type as 'event' | 'housing' | 'tip')}
+                  eventHandlers={{
+                    click: () => {
+                      // Optional: handle marker click
+                    }
+                  }}
                 >
                   <Popup className="city-map-popup" offset={[0, -10]}>
                     <div className="w-[280px] max-w-[280px] overflow-hidden rounded-lg bg-card flex flex-col p-4 space-y-3">
@@ -957,9 +974,11 @@ function CityOverviewTab({ city }: { city: CityData }) {
                           <MapPin className="w-3 h-3" /> {item.data.venue}
                         </p>
                       )}
-                      <Button size="sm" className="w-full h-9 rounded-xl font-black text-[10px] tracking-widest uppercase">
-                        View Details
-                      </Button>
+                      <Link href={item.type === 'event' ? `/events/${item.data.id}` : (item.type === 'housing' ? `/housing/${item.data.id}` : '#')}>
+                        <Button size="sm" className="w-full h-9 rounded-xl font-black text-[10px] tracking-widest uppercase">
+                          View Details
+                        </Button>
+                      </Link>
                     </div>
                   </Popup>
                 </Marker>
