@@ -709,9 +709,7 @@ export function UnifiedLocationPicker({
             <X className="w-4 h-4" />
           </button>
         )}
-      </div>
 
-      {typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
           {/* Venue mode dropdown */}
           {showResults && hasVenueResults && (
@@ -720,12 +718,7 @@ export function UnifiedLocationPicker({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="fixed z-[9999]"
-              style={{
-                top: dropdownPosition.top,
-                left: dropdownPosition.left,
-                width: dropdownPosition.width,
-              }}
+              className="absolute z-[9999] left-0 right-0 top-full mt-2"
               onMouseDown={(e) => e.stopPropagation()}
             >
               <Card
@@ -801,12 +794,7 @@ export function UnifiedLocationPicker({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="fixed z-[9999]"
-              style={{
-                top: dropdownPosition.top,
-                left: dropdownPosition.left,
-                width: dropdownPosition.width,
-              }}
+              className="absolute z-[9999] left-0 right-0 top-full mt-2"
               onMouseDown={(e) => e.stopPropagation()}
             >
               <Card
@@ -878,9 +866,8 @@ export function UnifiedLocationPicker({
               </Card>
             </motion.div>
           )}
-        </AnimatePresence>,
-        document.body
-      )}
+        </AnimatePresence>
+      </div>
 
       {showCoordinates && selectedLocation && coordinates && coordinates.lat !== 0 && (
         <div className="mt-2 p-2 rounded-lg bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20">
