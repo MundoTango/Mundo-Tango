@@ -1,6 +1,6 @@
 import { Router, type Response, type Request } from "express";
 import { db } from "../storage";
-import { groups, groupMembers, cities, cityMembers, events, users, housingListings, travelPlans, groupPosts } from "@shared/schema";
+import { groups, groupMembers, cities, cityMembers, events, users, housingListings, travelPlans, groupPosts, placeRecommendations } from "@shared/schema";
 import { eq, ilike, sql, or, and, desc, inArray, gte } from "drizzle-orm";
 import { normalizeCityName, citiesMatch } from "../utils/city-normalize";
 
@@ -1421,6 +1421,55 @@ router.post("/:id/join", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("[CityJoin] Error:", error);
     res.status(500).json({ error: "Failed to join city" });
+  }
+});
+
+/**
+ * GET /api/cities/:id/tips
+ * Get place recommendations/tips for a city
+ */
+router.get("/:id/tips", async (req: Request, res: Response) => {
+  try {
+    const cityId = parseInt(req.params.id);
+    
+    // Get city info
+    const [city] = await db
+      .select()
+      .from(cities)
+      .where(eq(cities.id, cityId))
+      .limit(1);
+    
+    if (!city) {
+      return res.status(404).json({ error: "City not found" });
+    }
+    
+    // Get place recommendations that match this city
+    // Match by address containing city name
+    const tips = await db
+      .select({
+        id: placeRecommendations.id,
+        name: placeRecommendations.placeName,
+        title: placeRecommendations.placeName,
+        category: placeRecommendations.category,
+        description: placeRecommendations.description,
+        latitude: placeRecommendations.latitude,
+        longitude: placeRecommendations.longitude,
+        address: placeRecommendations.address,
+        priceRange: placeRecommendations.priceRange,
+        recommendationCount: placeRecommendations.recommendationCount,
+        averageRating: placeRecommendations.averageRating,
+        createdAt: placeRecommendations.createdAt,
+      })
+      .from(placeRecommendations)
+      .where(
+        sql`LOWER(${placeRecommendations.address}) LIKE LOWER(${'%' + city.name + '%'})`
+      )
+      .orderBy(desc(placeRecommendations.recommendationCount));
+    
+    res.json(tips);
+  } catch (error) {
+    console.error("[CityTips] Error:", error);
+    res.status(500).json({ error: "Failed to fetch tips" });
   }
 });
 
