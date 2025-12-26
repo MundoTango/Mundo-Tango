@@ -100,6 +100,132 @@ export function TalentMatchExperience({
   // State for authenticated embed mode (for interview completion submission)
   const [embedVolunteerId, setEmbedVolunteerId] = useState<number | null>(null);
   const [embedClarifierId, setEmbedClarifierId] = useState<number | null>(null);
+  const [embedSubmissionFailed, setEmbedSubmissionFailed] = useState(false);
+  const [pendingFinalMessages, setPendingFinalMessages] = useState<Array<{role: "ai" | "user", content: string}> | null>(null);
+  const [isRetryingStored, setIsRetryingStored] = useState(false);
+  
+  // Ref for concurrency control - persists across renders
+  const isRetryingRef = useRef(false);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Rehydrate failure state and auto-retry stored transcripts with exponential backoff
+  useEffect(() => {
+    if (mode !== "authenticated" || !embedMode) return;
+    
+    const findStoredTranscripts = () => {
+      return Object.keys(localStorage).filter(k => k.startsWith("talent-match-embed-"));
+    };
+    
+    const calculateBackoff = (attemptCount: number): number => {
+      // Exponential backoff: 30s, 60s, 120s, 240s, max 5 minutes
+      const baseDelay = 30000;
+      const maxDelay = 300000;
+      return Math.min(baseDelay * Math.pow(2, attemptCount), maxDelay);
+    };
+    
+    const processStoredTranscripts = async () => {
+      if (isRetryingRef.current) return; // Prevent concurrent retries
+      
+      const storedKeys = findStoredTranscripts();
+      if (storedKeys.length === 0) return;
+      
+      isRetryingRef.current = true;
+      setIsRetryingStored(true);
+      
+      // Process transcripts sequentially to prevent API spam
+      for (const key of storedKeys) {
+        try {
+          const stored = JSON.parse(localStorage.getItem(key) || "{}");
+          if (!stored.clarifierId || !stored.messages) continue;
+          
+          // Check backoff - skip if not enough time has passed
+          const attemptCount = stored.attemptCount || 0;
+          const lastAttempt = stored.lastAttempt ? new Date(stored.lastAttempt).getTime() : 0;
+          const backoffMs = calculateBackoff(attemptCount);
+          const now = Date.now();
+          
+          if (lastAttempt && (now - lastAttempt) < backoffMs) {
+            console.log(`[TalentMatch] Skipping ${key} - backoff (${Math.round((backoffMs - (now - lastAttempt)) / 1000)}s remaining)`);
+            continue;
+          }
+          
+          // Update attempt metadata before trying
+          const updatedStored = {
+            ...stored,
+            attemptCount: attemptCount + 1,
+            lastAttempt: new Date().toISOString()
+          };
+          localStorage.setItem(key, JSON.stringify(updatedStored));
+          
+          const response = await apiRequest("PATCH", `/api/v1/volunteers/clarifier/${stored.clarifierId}`, {
+            interviewMessages: stored.messages.map((m: {role: string, content: string}) => ({
+              role: m.role === "ai" ? "assistant" : "user",
+              content: m.content
+            })),
+            status: "completed",
+            completedAt: stored.timestamp || new Date().toISOString()
+          });
+          
+          if (response.ok) {
+            localStorage.removeItem(key);
+            console.log(`[TalentMatch] Auto-retry succeeded: ${key} (attempt ${attemptCount + 1})`);
+            setEmbedSubmissionFailed(false);
+            setPendingFinalMessages(null);
+            setStep("complete");
+            toast({
+              title: "Interview submitted",
+              description: "Your pending interview was successfully delivered.",
+            });
+          }
+        } catch (e) {
+          console.warn(`[TalentMatch] Retry failed for ${key}:`, e);
+        }
+      }
+      
+      isRetryingRef.current = false;
+      setIsRetryingStored(false);
+      
+      // Schedule next check based on remaining transcripts
+      const remainingKeys = findStoredTranscripts();
+      if (remainingKeys.length > 0) {
+        retryTimeoutRef.current = setTimeout(processStoredTranscripts, 30000);
+      }
+    };
+    
+    // Rehydrate UI state from most recent stored transcript
+    const rehydrateState = () => {
+      const storedKeys = findStoredTranscripts();
+      if (storedKeys.length === 0) return;
+      
+      const mostRecentKey = storedKeys.sort().pop();
+      if (mostRecentKey) {
+        try {
+          const stored = JSON.parse(localStorage.getItem(mostRecentKey) || "{}");
+          if (stored.messages && stored.clarifierId) {
+            setPendingFinalMessages(stored.messages);
+            setEmbedVolunteerId(stored.volunteerId || null);
+            setEmbedClarifierId(stored.clarifierId);
+            setEmbedSubmissionFailed(true);
+            setInterviewMessages(stored.messages);
+            setStep("interview");
+            console.log(`[TalentMatch] Rehydrated failed submission (attempt ${stored.attemptCount || 0})`);
+          }
+        } catch (e) {
+          console.warn("[TalentMatch] Failed to rehydrate:", e);
+        }
+      }
+    };
+    
+    // Initial rehydration and retry
+    rehydrateState();
+    const initialTimer = setTimeout(processStoredTranscripts, 2000);
+    
+    return () => {
+      clearTimeout(initialTimer);
+      if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
+      isRetryingRef.current = false;
+    };
+  }, [mode, embedMode]);
 
   // State for guest mode intake form (name/email collection)
   const [intakeName, setIntakeName] = useState(initialName || "");
@@ -800,14 +926,20 @@ Keep it to 2-3 paragraphs.`,
           await submitGuestApplication(finalMessages);
         } else if (mode === "authenticated" && embedMode) {
           submissionSucceeded = await submitEmbedInterview(finalMessages);
+          if (!submissionSucceeded) {
+            // Track failed submission for retry UI
+            setEmbedSubmissionFailed(true);
+            setPendingFinalMessages(finalMessages);
+          }
         }
         
         // Only proceed to complete step if submission succeeded (or guest mode)
         if (submissionSucceeded || mode === "guest") {
+          setEmbedSubmissionFailed(false);
+          setPendingFinalMessages(null);
           setTimeout(() => setStep("complete"), 2000);
         }
-        // If submission failed for authenticated embed, stay on interview step
-        // User can retry by refreshing or contacting support (data is persisted to localStorage)
+        // If submission failed for authenticated embed, stay on interview step with retry UI
       } catch {
         const completionMessage = {
           role: "ai" as const,
@@ -825,9 +957,15 @@ Keep it to 2-3 paragraphs.`,
           await submitGuestApplication(finalMessages);
         } else if (mode === "authenticated" && embedMode) {
           submissionSucceeded = await submitEmbedInterview(finalMessages);
+          if (!submissionSucceeded) {
+            setEmbedSubmissionFailed(true);
+            setPendingFinalMessages(finalMessages);
+          }
         }
         
         if (submissionSucceeded || mode === "guest") {
+          setEmbedSubmissionFailed(false);
+          setPendingFinalMessages(null);
           setTimeout(() => setStep("complete"), 2000);
         }
       }
@@ -1054,6 +1192,25 @@ Keep the entire response concise (2-3 sentences max).`;
     }
   };
 
+  // Retry submission for failed embed interviews
+  const retryEmbedSubmission = async () => {
+    if (!pendingFinalMessages) {
+      toast({
+        title: "Nothing to retry",
+        description: "No pending submission found.",
+      });
+      return;
+    }
+    
+    const success = await submitEmbedInterview(pendingFinalMessages);
+    if (success) {
+      setEmbedSubmissionFailed(false);
+      setPendingFinalMessages(null);
+      setStep("complete");
+    }
+    // If still failed, state remains for another retry attempt
+  };
+
   const startOver = () => {
     clearSession();
     setStoredDocs([]);
@@ -1233,28 +1390,58 @@ Keep the entire response concise (2-3 sentences max).`;
     );
 
     return (
-      <div className="h-[600px]">
-        <TalentMatchInterviewChat
-          messages={interviewMessages.map((msg, idx) => ({
-            id: String(idx),
-            role: msg.role === "ai" ? "assistant" : "user",
-            content: msg.content
-          }))}
-          isLoading={isAiTyping}
-          isComplete={questionIndex >= totalQuestions}
-          input={currentMessage}
-          onInputChange={setCurrentMessage}
-          onSend={sendInterviewMessage}
-          progress={interviewProgress}
-          phases={guestPhases}
-          currentPhaseLabel={isBackgroundPhase ? "Phase 1: Background" : "Phase 2: Platform Skills"}
-          questionDescription={`Question ${Math.min(questionIndex + 1, totalQuestions)} of ${totalQuestions}`}
-          showTimestamps={false}
-          backButton={backButton}
-          useScrollArea={false}
-          useTextarea={true}
-          inputPlaceholder="Type your response..."
-        />
+      <div className="h-[600px] flex flex-col">
+        {/* Retry banner for failed embed submissions */}
+        {embedSubmissionFailed && pendingFinalMessages && (
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 mb-4 flex items-center justify-between gap-4">
+            <div className="flex-1">
+              <p className="font-medium text-destructive">Submission Failed</p>
+              <p className="text-sm text-muted-foreground">Your interview responses were saved locally. Please retry to submit them.</p>
+            </div>
+            <Button 
+              onClick={retryEmbedSubmission} 
+              disabled={isSubmittingApplication}
+              variant="destructive"
+              size="sm"
+              data-testid="button-retry-submission"
+            >
+              {isSubmittingApplication ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Retrying...
+                </>
+              ) : (
+                <>
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Retry Submission
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+        <div className="flex-1">
+          <TalentMatchInterviewChat
+            messages={interviewMessages.map((msg, idx) => ({
+              id: String(idx),
+              role: msg.role === "ai" ? "assistant" : "user",
+              content: msg.content
+            }))}
+            isLoading={isAiTyping}
+            isComplete={questionIndex >= totalQuestions}
+            input={currentMessage}
+            onInputChange={setCurrentMessage}
+            onSend={sendInterviewMessage}
+            progress={interviewProgress}
+            phases={guestPhases}
+            currentPhaseLabel={isBackgroundPhase ? "Phase 1: Background" : "Phase 2: Platform Skills"}
+            questionDescription={`Question ${Math.min(questionIndex + 1, totalQuestions)} of ${totalQuestions}`}
+            showTimestamps={false}
+            backButton={backButton}
+            useScrollArea={false}
+            useTextarea={true}
+            inputPlaceholder="Type your response..."
+          />
+        </div>
       </div>
     );
   }
