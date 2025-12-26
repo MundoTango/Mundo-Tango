@@ -676,7 +676,11 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
 
 function CityOverviewTab({ city }: { city: CityData }) {
   const [activeLayer, setActiveLayer] = useState<'all' | 'events' | 'housing' | 'tips'>('all');
-  const [timeFilter, setTimeFilter] = useState<'today' | 'weekend' | 'all'>('all');
+  const [timeFilter, setTimeFilter] = useState<'today' | 'weekend' | 'all' | 'custom'>('all');
+  const [dateRange, setDateRange] = useState<{from: Date | undefined, to: Date | undefined}>({
+    from: undefined,
+    to: undefined
+  });
   
   const lat = city.latitude ? parseFloat(city.latitude) : null;
   const lng = city.longitude ? parseFloat(city.longitude) : null;
@@ -715,20 +719,28 @@ function CityOverviewTab({ city }: { city: CityData }) {
   });
 
   const filteredEvents = useMemo(() => {
-    if (timeFilter === 'all') return events;
-    const now = new Date();
-    if (timeFilter === 'today') {
-      const todayStr = now.toISOString().split('T')[0];
-      return events.filter(e => getEventDate(e).toISOString().split('T')[0] === todayStr);
-    }
-    if (timeFilter === 'weekend') {
-      return events.filter(e => {
-        const d = getEventDate(e).getDay();
-        return d === 0 || d === 6;
-      });
-    }
-    return events;
-  }, [events, timeFilter]);
+    return events.filter(e => {
+      const eventDate = getEventDate(e);
+      const now = new Date();
+      
+      // Custom Date Range
+      if (timeFilter === 'custom' && dateRange.from && dateRange.to) {
+        return eventDate >= dateRange.from && eventDate <= dateRange.to;
+      }
+
+      if (timeFilter === 'today') {
+        const todayStr = now.toISOString().split('T')[0];
+        return eventDate.toISOString().split('T')[0] === todayStr;
+      }
+      
+      if (timeFilter === 'weekend') {
+        const d = eventDate.getDay();
+        return d === 0 || d === 6; // Sunday or Saturday
+      }
+      
+      return true;
+    });
+  }, [events, timeFilter, dateRange]);
 
   const mapItems = useMemo(() => {
     const items: any[] = [];
@@ -852,6 +864,47 @@ function CityOverviewTab({ city }: { city: CityData }) {
               >
                 This Weekend
               </Button>
+              <div className="w-px h-4 bg-muted-foreground/20 mx-2" />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={`h-9 px-4 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center gap-2 ${timeFilter === 'custom' ? 'bg-background shadow-sm' : 'opacity-60'}`}
+                  >
+                    <CalendarIcon className="w-3 h-3" />
+                    {timeFilter === 'custom' && dateRange.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, "LLL dd")} - {format(dateRange.to, "LLL dd")}
+                        </>
+                      ) : (
+                        format(dateRange.from, "LLL dd")
+                      )
+                    ) : (
+                      "PICK DATES"
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 z-[200]" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={dateRange.from || new Date()}
+                    selected={{ from: dateRange.from, to: dateRange.to }}
+                    onSelect={(range: any) => {
+                      if (range?.from) {
+                        setDateRange(range);
+                        setTimeFilter('custom');
+                      } else {
+                        setDateRange({ from: undefined, to: undefined });
+                        setTimeFilter('all');
+                      }
+                    }}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
               <div className="w-px h-4 bg-muted-foreground/20 mx-2" />
               <Button variant="ghost" size="sm" className="h-9 px-4 text-[10px] font-black uppercase tracking-widest rounded-lg opacity-60">Milongas</Button>
               <Button variant="ghost" size="sm" className="h-9 px-4 text-[10px] font-black uppercase tracking-widest rounded-lg opacity-60">Classes</Button>
