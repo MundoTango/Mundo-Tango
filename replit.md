@@ -38,6 +38,14 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **PostCreator Context Types**: Supports 'feed', 'event', 'group', 'city', 'memory' contexts
 - **Auto-Append Mentions**: Posts in city/group/event contexts auto-append canonical @mention format (@type:type_id:Name_With_Underscores)
 - **Privacy-by-Default**: City posts default to 'private' visibility (user can change before posting); groups maintain public default
+- **City Page 7 Tabs**: All tabs implemented per CITY_PAGE.md spec:
+  - Discussion: Chip filters (All/Recent/Popular) + sticky composer with backdrop-blur
+  - Overview: Layer toggle cards (All/Events/Housing/Tips) with color coding + compact map
+  - Events: Weekday filter tabs [Sun-Sat] + "Plan My Trip" CTA that switches to Housing tab
+  - Members: Role filter chips + PRO ribbons with gradient styling
+  - Housing: Airbnb housing view integration
+  - Visitors: List of travelers visiting the city
+  - Tips: Lucide icons (no emojis) via CategoryIcon component
 
 ### Data Architecture & Statistics
 **Cities Table**: The authoritative data source for city information with 301 cities migrated from the legacy `groups` table. The `cities` table contains `legacyGroupId` to link back to the groups table for discussion features.
