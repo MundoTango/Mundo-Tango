@@ -668,8 +668,7 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
               </CardContent>
             </Card>
           );
-        }
-        ))}
+        })}
       </div>
     </div>
   );
