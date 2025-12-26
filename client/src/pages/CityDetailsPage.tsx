@@ -450,17 +450,27 @@ export default function CityDetailsPage() {
     enabled: !!city?.id && !!user,
   });
 
-  // Check if user lives in this city (profile city matches)
-  const userCity = (user as any)?.city?.toLowerCase().trim() || '';
-  const cityName = city?.name?.toLowerCase().trim() || '';
-  const cityFieldName = city?.city?.toLowerCase().trim() || '';
-  const isUserResident = userCity && (
-    userCity === cityName || 
-    userCity === cityFieldName ||
-    cityName.includes(userCity) || 
-    userCity.includes(cityName) ||
-    cityFieldName.includes(userCity) ||
-    userCity.includes(cityFieldName)
+  // Check if user lives in this city using canonical slug comparison
+  // This prevents false positives like "Newark" matching "New York"
+  const toSlug = (name: string): string => name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  
+  const userCityRaw = (user as any)?.city?.trim() || '';
+  const userCitySlug = toSlug(userCityRaw);
+  const canonicalCitySlug = city?.slug || '';
+  const userCityLower = userCityRaw.toLowerCase();
+  const cityNameLower = city?.name?.toLowerCase() || '';
+  
+  // User is resident if their city matches canonical slug or name
+  const isUserResident = userCitySlug !== '' && (
+    userCitySlug === canonicalCitySlug ||
+    userCityLower === cityNameLower ||
+    canonicalCitySlug.startsWith(userCitySlug + '-') ||
+    canonicalCitySlug === userCitySlug
   );
 
   const followMutation = useMutation({

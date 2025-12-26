@@ -652,6 +652,44 @@ router.get("/list", async (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/cities/followed
+ * Get all cities the current user is following (for "My Stuff" sidebar)
+ * IMPORTANT: This route MUST be defined BEFORE /:id to prevent route matching conflicts
+ */
+router.get("/followed", async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+    
+    if (!userId) {
+      return res.json([]);
+    }
+    
+    const followedCities = await db
+      .select({
+        membership: cityMembers,
+        city: cities,
+      })
+      .from(cityMembers)
+      .innerJoin(cities, eq(cityMembers.cityId, cities.id))
+      .where(and(
+        eq(cityMembers.userId, userId),
+        eq(cityMembers.status, 'active')
+      ));
+    
+    console.log(`[FollowedCities] User ${userId} has ${followedCities.length} followed cities`);
+    
+    res.json(followedCities.map(fc => ({
+      ...fc.city,
+      membershipType: fc.membership.membershipType,
+      isResident: fc.membership.membershipType === 'resident',
+    })));
+  } catch (error) {
+    console.error("[FollowedCities] Error:", error);
+    res.status(500).json({ error: "Failed to get followed cities" });
+  }
+});
+
+/**
  * GET /api/cities/:id
  * Get city by ID
  */
@@ -850,12 +888,32 @@ router.get("/:id/membership", async (req: Request, res: Response) => {
       .limit(1);
     
     if (!membership) {
-      // Check if user lives in this city by comparing profile city
+      // Check if user lives in this city using canonical slug comparison
+      // This prevents false positives like "Newark" matching "New York"
       const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
       const [userRecord] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-      const userCity = userRecord?.city?.toLowerCase().trim() || '';
-      const cityName = city?.name?.toLowerCase().trim() || '';
-      const isResident = userCity && cityName && (userCity === cityName || cityName.includes(userCity) || userCity.includes(cityName));
+      const userCityRaw = userRecord?.city?.trim() || '';
+      
+      // Generate slug for comparison
+      const toSlug = (name: string): string => name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+      
+      const userCitySlug = toSlug(userCityRaw);
+      const canonicalCitySlug = city?.slug || '';
+      const userCityLower = userCityRaw.toLowerCase();
+      const cityNameLower = city?.name?.toLowerCase() || '';
+      
+      // User is resident if their city matches canonical slug or name
+      const isResident = userCitySlug !== '' && (
+        userCitySlug === canonicalCitySlug ||
+        userCityLower === cityNameLower ||
+        canonicalCitySlug.startsWith(userCitySlug + '-') ||
+        canonicalCitySlug === userCitySlug
+      );
       
       return res.json({ 
         isMember: false, 
@@ -875,41 +933,6 @@ router.get("/:id/membership", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("[CityMembership] Error:", error);
     res.status(500).json({ error: "Failed to check membership" });
-  }
-});
-
-/**
- * GET /api/cities/followed
- * Get all cities the current user is following (for "My Stuff" sidebar)
- */
-router.get("/followed", async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user?.id;
-    
-    if (!userId) {
-      return res.json([]);
-    }
-    
-    const followedCities = await db
-      .select({
-        membership: cityMembers,
-        city: cities,
-      })
-      .from(cityMembers)
-      .innerJoin(cities, eq(cityMembers.cityId, cities.id))
-      .where(and(
-        eq(cityMembers.userId, userId),
-        eq(cityMembers.status, 'active')
-      ));
-    
-    res.json(followedCities.map(fc => ({
-      ...fc.city,
-      membershipType: fc.membership.membershipType,
-      isResident: fc.membership.membershipType === 'resident',
-    })));
-  } catch (error) {
-    console.error("[FollowedCities] Error:", error);
-    res.status(500).json({ error: "Failed to get followed cities" });
   }
 });
 
