@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
@@ -55,7 +56,30 @@ export default function HousingListingDetailPage() {
 
   const listing = listingData.listing;
   const host = listingData.host;
-  const images = listing.images || [];
+  const images = useMemo(() => {
+    const rawPhotos = listing.photos || [];
+    const photoUrls = rawPhotos.map((p: any) => {
+      const url = typeof p === 'string' ? p : p.url;
+      if (!url) return null;
+      return url.startsWith('http') || url.startsWith('/') ? url : `/${url}`;
+    }).filter(Boolean);
+    
+    const imageUrls = (listing.images || []).map((url: string) => 
+      url.startsWith('http') || url.startsWith('/') ? url : `/${url}`
+    );
+    
+    const coverUrl = listing.coverPhotoUrl;
+    const formattedCover = coverUrl ? (coverUrl.startsWith('http') || coverUrl.startsWith('/') ? coverUrl : `/${coverUrl}`) : null;
+    
+    const all = [
+      ...(formattedCover ? [formattedCover] : []),
+      ...imageUrls,
+      ...photoUrls
+    ];
+    
+    // De-duplicate URLs
+    return Array.from(new Set(all));
+  }, [listing.photos, listing.images, listing.coverPhotoUrl]);
 
   return (
     <div className="bg-background">
