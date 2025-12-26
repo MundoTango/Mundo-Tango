@@ -6,23 +6,17 @@ import type { SelectHousingListing } from "@shared/client-types";
 import { FriendClosenessIndicator, type FriendClosenessData } from "./FriendClosenessIndicator";
 
 interface ListingCardProps {
-  listing: SelectHousingListing & {
-    host?: {
-      id: number;
-      name: string;
-      email: string;
-    };
-  };
+  listing: any;
   onClick?: () => void;
   showCloseness?: boolean;
 }
 
 export function ListingCard({ listing: rawListing, onClick, showCloseness = true }: ListingCardProps) {
   // Flatten listing if it's in {listing, host} format
-  const listing = (rawListing as any).listing || rawListing;
-  const host = (rawListing as any).host || (rawListing as any).host;
+  const listing = rawListing.listing || rawListing;
+  const host = rawListing.host || rawListing.host;
   
-  const coverPhoto = listing.coverPhotoUrl || listing.images?.[0] || "/placeholder-house.jpg";
+  const coverPhoto = listing.coverPhotoUrl || (listing.photos && listing.photos[0]?.url) || listing.images?.[0] || "/placeholder-house.jpg";
   const hostId = host?.id || listing.hostId;
 
   const { data: closenessData } = useQuery<FriendClosenessData>({
