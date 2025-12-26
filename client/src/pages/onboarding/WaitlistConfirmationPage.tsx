@@ -72,7 +72,7 @@ export default function WaitlistConfirmationPage() {
                     {t('pages:onboarding.waitlist.whileYouWait', 'While you wait, help us grow')}
                   </p>
                   
-                  <Link href="/volunteer">
+                  <Link href="/talent-match">
                     <Button 
                       className="w-full bg-white text-black hover:bg-white/90"
                       size="lg"

@@ -210,45 +210,52 @@ When user follows a city:
 │  🌐 All  │ │ 📅Events │ │ 🏠Housing│ │  ⭐ Tips │
 │   234    │ │   198    │ │    36    │ │    12    │
 └──────────┘ └──────────┘ └──────────┘ └──────────┘
-  Primary      Red          Green        Amber
+  Primary      Red (#FF5A5F)  Teal (#00A699) Amber (#FFB400)
 ```
 
-| Layer | Color | Data Source |
-|-------|-------|-------------|
-| All Items | Primary | events + housing + recommendations |
-| Events | #ef4444 | `/api/events?city=` |
-| Housing | #22c55e | `/api/housing/listings?city=` |
-| Recommendations | #f59e0b | `/api/venues/recommendations/by-city/` |
+| Layer | Color | Data Source | Icon Styling |
+|-------|-------|-------------|--------------|
+| All Items | Primary | events + housing + tips | Mix of types |
+| Events | #FF5A5F | `/api/events?city=` | Red marker, calendar icon |
+| Housing | #00A699 | `/api/cities/:id/housing` | Teal marker, house icon |
+| Tips | #FFB400 | `/api/cities/:id/tips` | Amber marker, lightbulb icon |
 
-### 7.2 Event Filters
+### 7.2 Map Visualization (Premium Dark Mode)
+- **Tiles:** CARTO Dark All (https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png)
+- **Pins:** Custom styled white circular background with drop shadow and pointer tip.
+- **Interactions:** Popup showing title, venue, and "View Details" CTA.
+- **Resizing:** Auto-invalidation on tab switch to prevent gray tiles.
 
-| Filter | Type | Options |
-|--------|------|---------|
-| Event Type | Select | All, Milonga, Practica, Class, Workshop, Festival, Marathon |
-| Date From/To | Date Picker | Calendar |
-| Dance Style | Select | All, Traditional, Nuevo, Vals, Milonga, Fusion |
-| Skill Level | Select | All, Beginner, Intermediate, Advanced, All Levels |
-| Online/Offline | Toggle | Show online events |
-| Verified Only | Toggle | Show verified events |
-| Tags | Multi-select | Live Music, BYOB, Free Parking, Outdoors, Live DJ, Potluck |
-
-### 7.3 Housing Filters
-
-| Filter | Type | Options |
-|--------|------|---------|
-| Property Type | Select | All, Apartment, Private Room, House, Studio |
-| Price Range | Dual Slider | $0 - $500/night |
-| Check-in/out | Date Picker | Calendar |
-
-### 7.4 Recommendation Filters
-
-| Filter | Type | Options |
-|--------|------|---------|
-| Category | Select | All, Restaurant, Cafe, Bar, Venue, Milonga Venue |
+### 7.3 Advanced Filtering (Global Filter Bar)
+- **Time Range Filter:** 
+  - Presets: All Dates, Today, This Weekend.
+  - Custom: Premium Date Range Picker (Popover + Calendar).
+- **Type Filters:** Milongas, Classes, Practicas.
 
 ---
 
-## 8. Events Tab Specification
+## 8. Card Design Specifications
+
+### 8.1 Member Cards (Community Followers)
+- **Avatar:** Large (16x16) with premium gradient fallback (primary theme colors).
+- **Name Display:** Robust fallback (Name → Username → email prefix).
+- **Badges:** 
+  - PRO Ribbon: Gold/Red gradient top-right positioning.
+  - Role: Primary-themed badge for platform role (Admin, Organizer, etc.).
+  - Tango Roles: Outline badges for up to 2 dance roles (Leader, Follower).
+- **Context:** MapPin icon + home city display.
+
+### 8.2 Visitor Cards (Incoming Travelers)
+- **Design:** Similar to member cards but with unique traveler attributes.
+- **Icon Overlay:** Sky-blue Plane icon badge on avatar corner.
+- **Trip Context:** 
+  - "From [City]" metadata.
+  - Visit Date with sky-blue calendar icon styling.
+- **CTA:** Link to public profile view.
+
+---
+
+## 9. Events Tab Specification
 
 ### 8.1 Data Source
 
