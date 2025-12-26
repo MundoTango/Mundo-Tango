@@ -107,6 +107,28 @@ use mb.md: legacy                → Load mb-legacy.md (complete v9.10)
 10. COMPLETE   → Mark done, report to user
 ```
 
+### Critical Learnings (December 2025)
+
+**Pattern: Three-Layer Feature Completion**
+UI scaffolding ≠ functional feature completion. Every feature requires:
+1. **UI Layer** - Visual components and layout
+2. **Data Layer** - API endpoints + database queries 
+3. **Interaction Layer** - User flows, mutations, cache invalidation
+
+**Anti-Pattern: UI-Only Delivery**
+- Symptom: Buttons exist but don't work, tabs render but show no data
+- Fix: Always validate each layer before marking complete
+- Validation: Use real data, not just "renders without errors"
+
+**City Page Data Integration Pattern**
+- Discussion → posts table filtered by cityId/legacyGroupId
+- Overview → parallel queries (events, housing, recommendations) + map pins
+- Events → reuse shared event filter builder from /events page
+- Members → users.city === cityName (Members) vs group_members via legacyGroupId (Followers)
+- Housing → housing_listings WHERE city = cityName
+- Visitors → travel_plans WHERE cityId = city.id AND arrival > now()
+- Follow → POST/DELETE via group_members using legacyGroupId
+
 ### Cognitive Framework Selection
 
 | Situation | Framework | Load Command |

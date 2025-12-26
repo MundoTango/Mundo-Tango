@@ -346,7 +346,7 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
 
   const allMembers = [...members, ...legacyMembers];
   
-  const roleFilters = ['all', 'organizer', 'teacher', 'dj', 'musician'];
+  const roleFilters = ['all', 'organizer', 'teacher', 'dj', 'musician', 'dancer', 'leader', 'follower', 'photographer', 'host'];
   
   const keyPeople = useMemo(() => {
     return allMembers.filter((m: any) => 
@@ -373,8 +373,8 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
       <Card>
         <CardContent className="py-12 text-center">
           <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="font-semibold mb-2">No followers yet</h3>
-          <p className="text-muted-foreground">Be the first to follow this city!</p>
+          <h3 className="font-semibold mb-2">No members yet</h3>
+          <p className="text-muted-foreground">Be the first to join this city community!</p>
         </CardContent>
       </Card>
     );
@@ -584,7 +584,7 @@ function CityOverviewTab({ city }: { city: CityData }) {
             <Users className="w-8 h-8 text-primary" />
             <div>
               <div className="text-2xl font-bold">{city.memberCount}</div>
-              <div className="text-xs text-muted-foreground">Followers</div>
+              <div className="text-xs text-muted-foreground">Members</div>
             </div>
           </CardContent>
         </Card>
@@ -605,6 +605,23 @@ function CityOverviewTab({ city }: { city: CityData }) {
 function CityHousingTab({ city }: { city: CityData }) {
   const cityName = city.city || city.name.replace(' Tango Community', '');
   
+  const { data: listings = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/cities", city.id, "housing"],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/${city.id}/housing`);
+      if (!res.ok) return [];
+      return res.json();
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+  
   return (
     <div className="space-y-6">
       <Card>
@@ -620,7 +637,40 @@ function CityHousingTab({ city }: { city: CityData }) {
           </p>
         </CardContent>
       </Card>
-      <AirbnbHousingView city={cityName} />
+      
+      {listings.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {listings.map((listing: any) => (
+            <Card key={listing.id} className="hover-elevate" data-testid={`card-housing-${listing.id}`}>
+              <CardContent className="p-4">
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="font-semibold line-clamp-2">{listing.title}</h4>
+                    <Badge variant="secondary" className="shrink-0">
+                      ${listing.pricePerNight}/{listing.currency || 'night'}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{listing.description}</p>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    {listing.bedrooms && <span>{listing.bedrooms} bed</span>}
+                    {listing.bathrooms && <span>{listing.bathrooms} bath</span>}
+                    {listing.maxGuests && <span>Max {listing.maxGuests} guests</span>}
+                  </div>
+                  <div className="flex items-center gap-2 pt-2 border-t">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={listing.host?.profileImage} />
+                      <AvatarFallback>{(listing.host?.name || 'H').charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">Hosted by {listing.host?.name || listing.host?.username}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <AirbnbHousingView city={cityName} />
+      )}
     </div>
   );
 }
@@ -943,9 +993,9 @@ export default function CityDetailsPage() {
                 <Calendar className="h-4 w-4" />
                 Events
               </TabsTrigger>
-              <TabsTrigger value="members" className="gap-2" data-testid="tab-followers">
+              <TabsTrigger value="members" className="gap-2" data-testid="tab-members">
                 <Users className="h-4 w-4" />
-                Followers
+                Members
               </TabsTrigger>
               <TabsTrigger value="housing" className="gap-2" data-testid="tab-housing">
                 <Home className="h-4 w-4" />

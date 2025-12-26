@@ -1,7 +1,7 @@
 import { Router, type Response, type Request } from "express";
 import { db } from "../storage";
-import { groups, groupMembers, cities, cityMembers, events, users } from "@shared/schema";
-import { eq, ilike, sql, or, and, desc, inArray } from "drizzle-orm";
+import { groups, groupMembers, cities, cityMembers, events, users, housingListings, travelPlans, groupPosts } from "@shared/schema";
+import { eq, ilike, sql, or, and, desc, inArray, gte } from "drizzle-orm";
 
 const router = Router();
 
@@ -1086,6 +1086,198 @@ router.get("/:id/membership", async (req: Request, res: Response) => {
  * POST /api/cities/:id/join (Legacy endpoint - same logic as follow)
  * Join a city community - auto-detects if user is resident or follower
  */
+/**
+ * GET /api/cities/:id/visitors
+ * Get visitors/travelers planning to visit this city
+ */
+router.get("/:id/visitors", async (req: Request, res: Response) => {
+  try {
+    const cityId = parseInt(req.params.id);
+    if (isNaN(cityId)) {
+      return res.status(400).json({ error: "Invalid city ID" });
+    }
+    
+    // Get city info
+    const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
+    if (!city) {
+      return res.status(404).json({ error: "City not found" });
+    }
+    
+    const cityName = city.name.replace(' Tango Community', '');
+    
+    // Query travel_plans for this city (either by cityId or city name)
+    const visitors = await db
+      .select({
+        id: travelPlans.id,
+        userId: travelPlans.userId,
+        city: travelPlans.city,
+        startDate: travelPlans.startDate,
+        endDate: travelPlans.endDate,
+        status: travelPlans.status,
+        visibility: travelPlans.visibility,
+        user: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+          profileImage: users.profileImage,
+          city: users.city,
+          country: users.country,
+        }
+      })
+      .from(travelPlans)
+      .innerJoin(users, eq(travelPlans.userId, users.id))
+      .where(
+        and(
+          or(
+            eq(travelPlans.cityId, cityId),
+            ilike(travelPlans.city, `%${cityName}%`)
+          ),
+          gte(travelPlans.endDate, new Date()),
+          eq(travelPlans.visibility, 'public')
+        )
+      )
+      .orderBy(travelPlans.startDate)
+      .limit(50);
+    
+    // Format response
+    const formattedVisitors = visitors.map(v => ({
+      id: v.id,
+      username: v.user.username,
+      name: v.user.name || v.user.username,
+      profileImage: v.user.profileImage,
+      homeCity: v.user.city,
+      homeCountry: v.user.country,
+      arrivalDate: v.startDate ? new Date(v.startDate).toLocaleDateString() : null,
+      departureDate: v.endDate ? new Date(v.endDate).toLocaleDateString() : null,
+      status: v.status,
+    }));
+    
+    console.log(`[CityVisitors] Found ${formattedVisitors.length} visitors for ${cityName}`);
+    res.json(formattedVisitors);
+  } catch (error) {
+    console.error("[CityVisitors] Error:", error);
+    res.status(500).json({ error: "Failed to get visitors" });
+  }
+});
+
+/**
+ * GET /api/cities/:id/housing
+ * Get housing listings in this city
+ */
+router.get("/:id/housing", async (req: Request, res: Response) => {
+  try {
+    const cityId = parseInt(req.params.id);
+    if (isNaN(cityId)) {
+      return res.status(400).json({ error: "Invalid city ID" });
+    }
+    
+    // Get city info
+    const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
+    if (!city) {
+      return res.status(404).json({ error: "City not found" });
+    }
+    
+    const cityName = city.name.replace(' Tango Community', '');
+    
+    // Query housing_listings for this city
+    const listings = await db
+      .select({
+        id: housingListings.id,
+        title: housingListings.title,
+        description: housingListings.description,
+        propertyType: housingListings.propertyType,
+        bedrooms: housingListings.bedrooms,
+        bathrooms: housingListings.bathrooms,
+        maxGuests: housingListings.maxGuests,
+        pricePerNight: housingListings.pricePerNight,
+        currency: housingListings.currency,
+        city: housingListings.city,
+        country: housingListings.country,
+        latitude: housingListings.latitude,
+        longitude: housingListings.longitude,
+        amenities: housingListings.amenities,
+        images: housingListings.images,
+        hostId: housingListings.hostId,
+        host: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+          profileImage: users.profileImage,
+        }
+      })
+      .from(housingListings)
+      .innerJoin(users, eq(housingListings.hostId, users.id))
+      .where(ilike(housingListings.city, `%${cityName}%`))
+      .orderBy(desc(housingListings.id))
+      .limit(50);
+    
+    console.log(`[CityHousing] Found ${listings.length} housing listings for ${cityName}`);
+    res.json(listings);
+  } catch (error) {
+    console.error("[CityHousing] Error:", error);
+    res.status(500).json({ error: "Failed to get housing" });
+  }
+});
+
+/**
+ * GET /api/cities/:id/posts
+ * Get discussion posts for this city (via legacyGroupId)
+ */
+router.get("/:id/posts", async (req: Request, res: Response) => {
+  try {
+    const cityId = parseInt(req.params.id);
+    if (isNaN(cityId)) {
+      return res.status(400).json({ error: "Invalid city ID" });
+    }
+    
+    // Get city info to find legacyGroupId
+    const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
+    if (!city) {
+      return res.status(404).json({ error: "City not found" });
+    }
+    
+    if (!city.legacyGroupId) {
+      return res.json([]);
+    }
+    
+    // Query group_posts using legacyGroupId
+    const posts = await db
+      .select({
+        id: groupPosts.id,
+        content: groupPosts.content,
+        title: groupPosts.title,
+        postType: groupPosts.postType,
+        mediaUrls: groupPosts.mediaUrls,
+        likeCount: groupPosts.likeCount,
+        commentCount: groupPosts.commentCount,
+        isPinned: groupPosts.isPinned,
+        createdAt: groupPosts.createdAt,
+        author: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+          profileImage: users.profileImage,
+        }
+      })
+      .from(groupPosts)
+      .innerJoin(users, eq(groupPosts.authorId, users.id))
+      .where(
+        and(
+          eq(groupPosts.groupId, city.legacyGroupId),
+          eq(groupPosts.status, 'published')
+        )
+      )
+      .orderBy(desc(groupPosts.isPinned), desc(groupPosts.createdAt))
+      .limit(50);
+    
+    console.log(`[CityPosts] Found ${posts.length} posts for city ${city.name} (groupId: ${city.legacyGroupId})`);
+    res.json(posts);
+  } catch (error) {
+    console.error("[CityPosts] Error:", error);
+    res.status(500).json({ error: "Failed to get posts" });
+  }
+});
+
 router.post("/:id/join", async (req: Request, res: Response) => {
   try {
     const cityId = parseInt(req.params.id);
