@@ -27,6 +27,7 @@ import {
 import { SiFacebook, SiInstagram } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
+import { Link } from "wouter";
 
 // 15 predefined tags with Lucide icons
 const MEMORY_TAGS = [
@@ -914,7 +915,14 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
             </h3>
             
             <p className="text-sm text-muted-foreground">
-              Help fellow dancers discover the best spots! Your recommendation will appear on the city's map 
+              Help your friends discover the best spots! Your recommendation will appear on{' '}
+              {context.type === 'city' && context.id ? (
+                <Link href={`/cities/${context.id}`} className="text-primary underline hover:text-primary/80">
+                  the city's map
+                </Link>
+              ) : (
+                "the city's map"
+              )}{' '}
               and feed, helping travelers and locals find quality restaurants, cafés, tango venues, and more. 
               The community votes on recommendations to surface the most loved places.
             </p>

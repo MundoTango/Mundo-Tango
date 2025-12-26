@@ -403,8 +403,22 @@ function AppSidebarComponent() {
     // Track added URLs to prevent duplicates
     const addedUrls = new Set<string>();
 
-    // Add home city first (from user profile) with MapPinHouse icon
-    if (userCity) {
+    // Find home city from followed cities list (resident type) - uses canonical slug
+    const homeCity = followedCities.find(city => city.isResident);
+    
+    if (homeCity) {
+      // Use server-provided canonical slug
+      const cityUrl = `/cities/${homeCity.slug}`;
+      items.push({
+        title: homeCity.name,
+        url: cityUrl,
+        icon: MapPinHouse,
+        color: "#40E0D0", // Turquoise for home city
+        tooltip: `Your home city: ${homeCity.name}`,
+      });
+      addedUrls.add(cityUrl);
+    } else if (userCity) {
+      // Fallback: show profile city with generated slug (may not link correctly)
       const citySlug = toCitySlug(userCity);
       const cityUrl = `/cities/${citySlug}`;
       items.push({
@@ -419,13 +433,13 @@ function AppSidebarComponent() {
 
     // Add followed cities with MapPinPlus icon (use server-provided slug)
     followedCities.forEach((city) => {
-      // Use server-provided slug, fallback to generated slug
-      const citySlug = city.slug || toCitySlug(city.name);
-      const cityUrl = `/cities/${citySlug}`;
-      // Skip if already added (e.g., home city)
-      if (addedUrls.has(cityUrl)) return;
-      // Skip if this is the user's home city (already added above with MapPinHouse)
+      // Skip home city (already added above with MapPinHouse)
       if (city.isResident) return;
+      
+      // Use server-provided canonical slug
+      const cityUrl = `/cities/${city.slug}`;
+      // Skip if already added
+      if (addedUrls.has(cityUrl)) return;
       
       addedUrls.add(cityUrl);
       items.push({

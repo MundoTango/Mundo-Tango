@@ -460,15 +460,21 @@ export default function CityDetailsPage() {
     .replace(/^-|-$/g, '');
   
   const userCityRaw = (user as any)?.city?.trim() || '';
-  const userCitySlug = toSlug(userCityRaw);
+  // Handle "City, Country" format - extract just the city part
+  const userCityName = userCityRaw.includes(',') 
+    ? userCityRaw.split(',')[0].trim()
+    : userCityRaw;
+  const userCitySlug = toSlug(userCityName);
   const canonicalCitySlug = city?.slug || '';
-  const userCityLower = userCityRaw.toLowerCase();
+  const userCityLower = userCityName.toLowerCase();
   const cityNameLower = city?.name?.toLowerCase() || '';
+  const cityFieldLower = (city?.city || '').toLowerCase();
   
   // User is resident if their city matches canonical slug or name
   const isUserResident = userCitySlug !== '' && (
     userCitySlug === canonicalCitySlug ||
     userCityLower === cityNameLower ||
+    userCityLower === cityFieldLower ||
     canonicalCitySlug.startsWith(userCitySlug + '-') ||
     canonicalCitySlug === userCitySlug
   );

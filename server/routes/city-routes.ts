@@ -783,6 +783,7 @@ router.post("/:id/follow", async (req: Request, res: Response) => {
     const userCityRaw = userRecord?.city?.trim() || '';
     
     // Generate slug for user's profile city
+    // Also extract just the city name if format is "City, Country"
     const toSlug = (name: string): string => name
       .toLowerCase()
       .normalize('NFD')
@@ -790,21 +791,27 @@ router.post("/:id/follow", async (req: Request, res: Response) => {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
     
-    const userCitySlug = toSlug(userCityRaw);
+    // Handle "City, Country" format - extract just the city part
+    const userCityName = userCityRaw.includes(',') 
+      ? userCityRaw.split(',')[0].trim()
+      : userCityRaw;
+    const userCitySlug = toSlug(userCityName);
     
     // Use canonical city slug OR compare slugified names
     // Also check if user city exactly matches city name (case-insensitive)
     const canonicalCitySlug = city.slug || '';
-    const userCityLower = userCityRaw.toLowerCase();
+    const userCityLower = userCityName.toLowerCase();
     const cityNameLower = city.name.toLowerCase();
+    const cityFieldLower = (city.city || '').toLowerCase();
     
     // User is resident if:
     // 1. User's slugified city matches canonical city slug, OR
-    // 2. User's city name exactly matches city name (case-insensitive), OR
+    // 2. User's city name exactly matches city name or city field (case-insensitive), OR
     // 3. Canonical slug starts with user's city slug (e.g., "berlin" matches "berlin-tango")
     const isResident = userCitySlug !== '' && (
       userCitySlug === canonicalCitySlug ||
       userCityLower === cityNameLower ||
+      userCityLower === cityFieldLower ||
       canonicalCitySlug.startsWith(userCitySlug + '-') ||
       canonicalCitySlug === userCitySlug
     );
@@ -902,15 +909,21 @@ router.get("/:id/membership", async (req: Request, res: Response) => {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '');
       
-      const userCitySlug = toSlug(userCityRaw);
+      // Handle "City, Country" format - extract just the city part
+      const userCityName = userCityRaw.includes(',') 
+        ? userCityRaw.split(',')[0].trim()
+        : userCityRaw;
+      const userCitySlug = toSlug(userCityName);
       const canonicalCitySlug = city?.slug || '';
-      const userCityLower = userCityRaw.toLowerCase();
+      const userCityLower = userCityName.toLowerCase();
       const cityNameLower = city?.name?.toLowerCase() || '';
+      const cityFieldLower = (city?.city || '').toLowerCase();
       
       // User is resident if their city matches canonical slug or name
       const isResident = userCitySlug !== '' && (
         userCitySlug === canonicalCitySlug ||
         userCityLower === cityNameLower ||
+        userCityLower === cityFieldLower ||
         canonicalCitySlug.startsWith(userCitySlug + '-') ||
         canonicalCitySlug === userCitySlug
       );
