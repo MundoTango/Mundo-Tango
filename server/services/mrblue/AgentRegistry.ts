@@ -169,16 +169,7 @@ export class AgentRegistry {
   }
 }
 
-// MB.MD Performance: Export lazy getter function instead of eager singleton
-// Consumers should call getAgentRegistry() instead of using the const directly
-export function getAgentRegistry(): AgentRegistry {
-  return AgentRegistry.getInstance();
-}
-
-// Legacy export - creates a Proxy that defers initialization until first access
-// This allows existing code using agentRegistry.method() to work without changes
-export const agentRegistry = new Proxy({} as AgentRegistry, {
-  get(target, prop: string | symbol) {
-    return (AgentRegistry.getInstance() as any)[prop];
-  }
-});
+// Export singleton instance - agents initialize on first import of this module
+// Note: The singleton pattern within getInstance() is already lazy (creates on first call)
+// To further optimize startup, consider dynamically importing this module only when needed
+export const agentRegistry = AgentRegistry.getInstance();
