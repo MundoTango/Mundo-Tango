@@ -99,7 +99,6 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
       const res = await fetch(`/api/events?city=${encodeURIComponent(cityName)}&limit=250`);
       if (!res.ok) return [];
       const data = await res.json();
-      // API returns { event: {...}, organizer: {...}, _count: n } - flatten to event with organizer
       return data.map((item: any) => ({
         ...(item.event || item),
         organizer: item.organizer,
@@ -149,6 +148,7 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
   }
 
   const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const eventTypes = Array.from(new Set(events.map(e => e.eventType).filter(Boolean))) as string[];
   
   const toggleWeekday = (day: number) => {
     setFilters(f => ({
@@ -159,164 +159,219 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
     }));
   };
 
-  const clearWeekdays = () => {
-    setFilters(f => ({ ...f, weekdays: [] }));
+  const toggleEventType = (type: string) => {
+    setFilters(f => ({
+      ...f,
+      eventTypes: f.eventTypes.includes(type)
+        ? f.eventTypes.filter(t => t !== type)
+        : [...f.eventTypes, type]
+    }));
   };
 
   return (
-    <div className="space-y-4">
-      {/* Plan my trip CTA */}
-      <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Plane className="h-5 w-5 text-primary" />
-              <div>
-                <h4 className="font-semibold">Planning a trip to {cityName}?</h4>
-                <p className="text-sm text-muted-foreground">Find housing and events for your visit</p>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Left Sidebar: Filters */}
+      <div className="lg:col-span-3 space-y-6">
+        <div className="space-y-4">
+          <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground px-1">Filters</h3>
+          
+          <div className="space-y-3">
+            <Label className="text-xs font-bold">Timeframe</Label>
+            <div className="flex flex-col gap-2">
+              <Button 
+                variant={filters.dateRange === 'upcoming' ? 'default' : 'outline'}
+                size="sm"
+                className="justify-start h-8 text-xs"
+                onClick={() => setFilters(f => ({ ...f, dateRange: 'upcoming' }))}
+              >
+                Upcoming Events
+              </Button>
+              <Button 
+                variant={filters.dateRange === 'past' ? 'default' : 'outline'}
+                size="sm"
+                className="justify-start h-8 text-xs"
+                onClick={() => setFilters(f => ({ ...f, dateRange: 'past' }))}
+              >
+                Past Events
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Label className="text-xs font-bold">Weekdays</Label>
+            <div className="grid grid-cols-4 gap-1">
+              {weekdayNames.map((name, idx) => (
+                <Button
+                  key={idx}
+                  variant={filters.weekdays.includes(idx) ? 'default' : 'outline'}
+                  className="h-7 text-[10px] p-0"
+                  onClick={() => toggleWeekday(idx)}
+                >
+                  {name}
+                </Button>
+              ))}
+              <Button
+                variant={filters.weekdays.length === 0 ? 'default' : 'outline'}
+                className="h-7 text-[10px] p-0 col-span-1"
+                onClick={() => setFilters(f => ({ ...f, weekdays: [] }))}
+              >
+                All
+              </Button>
+            </div>
+          </div>
+
+          {eventTypes.length > 0 && (
+            <div className="space-y-3">
+              <Label className="text-xs font-bold">Event Type</Label>
+              <div className="flex flex-wrap gap-1">
+                {eventTypes.map(type => (
+                  <Badge
+                    key={type}
+                    variant={filters.eventTypes.includes(type) ? 'default' : 'outline'}
+                    className="cursor-pointer text-[10px] px-2 py-0 h-5"
+                    onClick={() => toggleEventType(type)}
+                  >
+                    {type}
+                  </Badge>
+                ))}
               </div>
             </div>
+          )}
+        </div>
+
+        <Card className="bg-primary/5 border-primary/10">
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-center gap-2 text-primary">
+              <Plane className="h-4 w-4" />
+              <span className="text-xs font-bold">Visiting {cityName}?</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground leading-tight">
+              Switch to the Housing tab to find a place to stay near these events.
+            </p>
             <Button 
-              variant="default" 
               size="sm" 
-              data-testid="button-plan-trip"
+              className="w-full h-7 text-[10px]" 
               onClick={() => {
                 const housingTab = document.querySelector('[data-testid="tab-housing"]') as HTMLButtonElement;
                 if (housingTab) housingTab.click();
               }}
             >
-              <Plane className="h-4 w-4 mr-2" />
-              Plan My Trip
+              Find Housing
             </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Weekday filter tabs - per CITY_PAGE.md spec */}
-      <div className="flex flex-wrap items-center gap-2">
-        {weekdayNames.map((name, idx) => (
-          <Badge
-            key={idx}
-            variant={filters.weekdays.includes(idx) ? 'default' : 'outline'}
-            className="cursor-pointer"
-            onClick={() => toggleWeekday(idx)}
-            data-testid={`filter-weekday-${name.toLowerCase()}`}
-          >
-            {name}
-          </Badge>
-        ))}
-        <Badge
-          variant={filters.weekdays.length === 0 ? 'default' : 'outline'}
-          className="cursor-pointer"
-          onClick={clearWeekdays}
-          data-testid="filter-weekday-all"
-        >
-          All Days
-        </Badge>
-      </div>
-
-      {/* Date range filters */}
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge 
-          variant={filters.dateRange === 'upcoming' ? 'default' : 'outline'}
-          className="cursor-pointer"
-          onClick={() => setFilters(f => ({ ...f, dateRange: 'upcoming' }))}
-          data-testid="filter-date-upcoming"
-        >
-          Upcoming
-        </Badge>
-        <Badge 
-          variant={filters.dateRange === 'past' ? 'default' : 'outline'}
-          className="cursor-pointer"
-          onClick={() => setFilters(f => ({ ...f, dateRange: 'past' }))}
-          data-testid="filter-date-past"
-        >
-          Past
-        </Badge>
-        <Badge 
-          variant={filters.dateRange === 'all' ? 'default' : 'outline'}
-          className="cursor-pointer"
-          onClick={() => setFilters(f => ({ ...f, dateRange: 'all' }))}
-          data-testid="filter-date-all"
-        >
-          All
-        </Badge>
-        <span className="text-sm text-muted-foreground ml-2">
-          {filteredEvents.length} {filters.weekdays.length > 0 ? `${weekdayNames[filters.weekdays[0]]} ` : ''}events
-        </span>
-      </div>
-
-      {filteredEvents.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="font-semibold mb-2">No events found</h3>
-            <p className="text-muted-foreground">Try adjusting your filters</p>
           </CardContent>
         </Card>
-      ) : (
-        <div className="space-y-3">
-          {filteredEvents.map((event) => {
-            const eventDate = getEventDate(event);
-            const userRsvp = rsvps?.find((r: any) => r.eventId === event.id);
+      </div>
 
-            return (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Card className="hover-elevate">
-                  <CardContent className="p-4">
-                    <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-16 text-center">
-                        <div className="text-sm font-medium text-primary">
-                          {safeDateFormat(eventDate, 'MMM')}
-                        </div>
-                        <div className="text-2xl font-bold">
-                          {safeDateFormat(eventDate, 'd')}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {safeDateFormat(eventDate, 'EEE')}
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <Link href={`/events/${event.id}`}>
-                          <h3 className="font-semibold hover:text-primary transition-colors line-clamp-1" data-testid={`event-title-${event.id}`}>
-                            {event.title}
-                          </h3>
-                        </Link>
-                        <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-muted-foreground">
-                          <Badge variant="outline" className="text-xs">
-                            {event.eventType || 'Event'}
-                          </Badge>
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {safeDateFormat(eventDate, 'h:mm a')}
-                          </span>
-                          {event.venue && (
-                            <span className="flex items-center gap-1">
-                              <MapPin className="h-3 w-3" />
-                              {event.venue}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex-shrink-0">
-                        <UnifiedRSVPButton
-                          eventId={event.id}
-                          currentStatus={userRsvp?.status as RSVPStatus}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
+      {/* Main Content: Event Feed */}
+      <div className="lg:col-span-9 space-y-4">
+        <div className="flex items-center justify-between pb-2 border-b">
+          <h2 className="text-xl font-bold">{filters.dateRange === 'upcoming' ? 'Upcoming' : 'Past'} Events</h2>
+          <span className="text-xs text-muted-foreground">
+            Showing {filteredEvents.length} events
+          </span>
         </div>
-      )}
+
+        {filteredEvents.length === 0 ? (
+          <div className="py-20 text-center bg-muted/5 rounded-xl border border-dashed">
+            <Calendar className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
+            <h3 className="font-medium text-muted-foreground">No events match your filters</h3>
+            <Button 
+              variant="link" 
+              className="text-xs text-primary"
+              onClick={() => setFilters({
+                eventTypes: [],
+                weekdays: [],
+                dateRange: 'upcoming',
+                sortBy: 'date-asc'
+              })}
+            >
+              Clear all filters
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredEvents.map((event) => {
+              const eventDate = getEventDate(event);
+              const userRsvp = rsvps?.find((r: any) => r.eventId === event.id);
+
+              return (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Card className="hover-elevate overflow-hidden border-none shadow-sm bg-card/50 hover:bg-card">
+                    <CardContent className="p-0">
+                      <div className="flex flex-col sm:flex-row">
+                        {/* Date Box */}
+                        <div className="flex sm:flex-col items-center justify-center p-4 bg-muted/30 sm:w-24 text-center border-b sm:border-b-0 sm:border-r">
+                          <span className="text-xs font-bold text-primary uppercase">{safeDateFormat(eventDate, 'MMM')}</span>
+                          <span className="text-3xl font-black leading-none my-1">{safeDateFormat(eventDate, 'd')}</span>
+                          <span className="text-xs font-medium text-muted-foreground hidden sm:block">{safeDateFormat(eventDate, 'EEEE')}</span>
+                          <span className="text-xs font-medium text-muted-foreground sm:hidden ml-2">- {safeDateFormat(eventDate, 'EEE')}</span>
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
+                          <div>
+                            <div className="flex items-start justify-between gap-4">
+                              <Link href={`/events/${event.id}`}>
+                                <h3 className="font-bold text-lg hover:text-primary transition-colors cursor-pointer line-clamp-1">
+                                  {event.title}
+                                </h3>
+                              </Link>
+                              <Badge variant="outline" className="text-[10px] whitespace-nowrap">
+                                {event.eventType || 'Event'}
+                              </Badge>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 mt-3">
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Clock className="h-3.5 w-3.5 text-primary/60" />
+                                <span>{safeDateFormat(eventDate, 'h:mm a')}</span>
+                              </div>
+                              {event.venue && (
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  <MapPin className="h-3.5 w-3.5 text-primary/60" />
+                                  <span className="truncate">{event.venue}</span>
+                                </div>
+                              )}
+                              {event.organizer && (
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  <Users className="h-3.5 w-3.5 text-primary/60" />
+                                  <span className="truncate">By {event.organizer.name || event.organizer.username}</span>
+                                </div>
+                              )}
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Star className="h-3.5 w-3.5 text-primary/60" />
+                                <span>{event.rsvpCount || 0} attending</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 pt-4 border-t flex items-center justify-between gap-4">
+                            <div className="flex -space-x-2">
+                              {/* Participant avatars would go here */}
+                              <div className="h-6 w-6 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[8px] font-bold">
+                                +{event.rsvpCount || 0}
+                              </div>
+                            </div>
+                            <UnifiedRSVPButton
+                              eventId={event.id}
+                              currentStatus={userRsvp?.status as RSVPStatus}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -494,117 +549,228 @@ function CityOverviewTab({ city }: { city: CityData }) {
   const lat = city.latitude ? parseFloat(city.latitude) : null;
   const lng = city.longitude ? parseFloat(city.longitude) : null;
   
+  const cityName = city.city || city.name.replace(' Tango Community', '');
+
+  const { data: events = [] } = useQuery<any[]>({
+    queryKey: ["/api/events", { city: cityName }],
+    enabled: activeLayer === 'all' || activeLayer === 'events'
+  });
+
+  const { data: housing = [] } = useQuery<any[]>({
+    queryKey: ["/api/cities", city.id, "housing"],
+    enabled: activeLayer === 'all' || activeLayer === 'housing'
+  });
+
+  const { data: tips = [] } = useQuery<any[]>({
+    queryKey: ["/api/cities", city.id, "tips"],
+    enabled: activeLayer === 'all' || activeLayer === 'tips'
+  });
+
+  const mapItems = useMemo(() => {
+    const items: any[] = [];
+    if (activeLayer === 'all' || activeLayer === 'events') {
+      events.forEach(e => items.push({ ...e, type: 'event', color: 'red' }));
+    }
+    if (activeLayer === 'all' || activeLayer === 'housing') {
+      housing.forEach(h => items.push({ ...h, type: 'housing', color: 'green' }));
+    }
+    if (activeLayer === 'all' || activeLayer === 'tips') {
+      tips.forEach(t => items.push({ ...t, type: 'tip', color: 'amber' }));
+    }
+    return items;
+  }, [activeLayer, events, housing, tips]);
+
   const totalItems = (city.eventCount || 0) + (city.housingCount || 0) + (city.recommendationCount || 0);
 
   return (
-    <div className="space-y-6">
-      {/* Layer Toggle Cards - per CITY_PAGE.md spec Section 7.1 */}
-      <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
-        <Card 
-          className={`cursor-pointer transition-all ${activeLayer === 'all' ? 'ring-2 ring-primary' : 'hover-elevate'}`}
-          onClick={() => setActiveLayer('all')}
-          data-testid="layer-toggle-all"
-        >
-          <CardContent className="pt-4 text-center">
-            <Compass className="w-6 h-6 mx-auto text-primary mb-1" />
-            <div className="text-xl font-bold">{totalItems}</div>
-            <div className="text-xs text-muted-foreground">All Items</div>
-          </CardContent>
-        </Card>
-        <Card 
-          className={`cursor-pointer transition-all ${activeLayer === 'events' ? 'ring-2 ring-red-500' : 'hover-elevate'}`}
-          onClick={() => setActiveLayer('events')}
-          data-testid="layer-toggle-events"
-        >
-          <CardContent className="pt-4 text-center">
-            <Calendar className="w-6 h-6 mx-auto text-red-500 mb-1" />
-            <div className="text-xl font-bold">{city.eventCount || 0}</div>
-            <div className="text-xs text-muted-foreground">Events</div>
-          </CardContent>
-        </Card>
-        <Card 
-          className={`cursor-pointer transition-all ${activeLayer === 'housing' ? 'ring-2 ring-green-500' : 'hover-elevate'}`}
-          onClick={() => setActiveLayer('housing')}
-          data-testid="layer-toggle-housing"
-        >
-          <CardContent className="pt-4 text-center">
-            <Home className="w-6 h-6 mx-auto text-green-500 mb-1" />
-            <div className="text-xl font-bold">{city.housingCount || 0}</div>
-            <div className="text-xs text-muted-foreground">Housing</div>
-          </CardContent>
-        </Card>
-        <Card 
-          className={`cursor-pointer transition-all ${activeLayer === 'tips' ? 'ring-2 ring-amber-500' : 'hover-elevate'}`}
-          onClick={() => setActiveLayer('tips')}
-          data-testid="layer-toggle-tips"
-        >
-          <CardContent className="pt-4 text-center">
-            <Lightbulb className="w-6 h-6 mx-auto text-amber-500 mb-1" />
-            <div className="text-xl font-bold">{city.recommendationCount || 0}</div>
-            <div className="text-xs text-muted-foreground">Tips</div>
-          </CardContent>
-        </Card>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
+      {/* Left Column: Filters & Layer Toggles */}
+      <div className="lg:col-span-3 space-y-4">
+        <h3 className="font-semibold text-lg px-1">Explore {city.name}</h3>
+        <div className="space-y-2">
+          <Card 
+            className={`cursor-pointer transition-all hover-elevate border-none shadow-none bg-transparent ${activeLayer === 'all' ? 'ring-2 ring-primary bg-primary/5' : ''}`}
+            onClick={() => setActiveLayer('all')}
+          >
+            <CardContent className="p-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-md bg-primary/10">
+                  <Compass className="w-5 h-5 text-primary" />
+                </div>
+                <span className="font-medium">All Items</span>
+              </div>
+              <Badge variant="secondary" className="rounded-full">{totalItems}</Badge>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className={`cursor-pointer transition-all hover-elevate border-none shadow-none bg-transparent ${activeLayer === 'events' ? 'ring-2 ring-red-500 bg-red-500/5' : ''}`}
+            onClick={() => setActiveLayer('events')}
+          >
+            <CardContent className="p-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-md bg-red-500/10">
+                  <Calendar className="w-5 h-5 text-red-500" />
+                </div>
+                <span className="font-medium">Events</span>
+              </div>
+              <Badge variant="secondary" className="rounded-full">{city.eventCount || 0}</Badge>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className={`cursor-pointer transition-all hover-elevate border-none shadow-none bg-transparent ${activeLayer === 'housing' ? 'ring-2 ring-green-500 bg-green-500/5' : ''}`}
+            onClick={() => setActiveLayer('housing')}
+          >
+            <CardContent className="p-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-md bg-green-500/10">
+                  <Home className="w-5 h-5 text-green-500" />
+                </div>
+                <span className="font-medium">Housing</span>
+              </div>
+              <Badge variant="secondary" className="rounded-full">{city.housingCount || 0}</Badge>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className={`cursor-pointer transition-all hover-elevate border-none shadow-none bg-transparent ${activeLayer === 'tips' ? 'ring-2 ring-amber-500 bg-amber-500/5' : ''}`}
+            onClick={() => setActiveLayer('tips')}
+          >
+            <CardContent className="p-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-md bg-amber-500/10">
+                  <Lightbulb className="w-5 h-5 text-amber-500" />
+                </div>
+                <span className="font-medium">Tips</span>
+              </div>
+              <Badge variant="secondary" className="rounded-full">{city.recommendationCount || 0}</Badge>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="pt-4 border-t space-y-3">
+          <h4 className="text-sm font-semibold px-1">Stats</h4>
+          <div className="grid grid-cols-1 gap-2">
+            <div className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+              <span className="text-xs text-muted-foreground flex items-center gap-2">
+                <Users className="h-3 w-3" /> Members
+              </span>
+              <span className="text-sm font-bold">{city.memberCount}</span>
+            </div>
+            <div className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+              <span className="text-xs text-muted-foreground flex items-center gap-2">
+                <MapPinHouse className="h-3 w-3" /> Location
+              </span>
+              <span className="text-sm font-bold truncate max-w-[100px]">{city.country}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Compact Map - per CITY_PAGE.md spec */}
-      {lat && lng && (
-        <Card>
-          <CardContent className="p-0">
-            <div className="h-[200px] rounded-lg overflow-hidden">
-              <MapContainer
-                center={[lat, lng]}
-                zoom={12}
-                style={{ height: '100%', width: '100%' }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <Marker position={[lat, lng]}>
-                  <Popup>{city.name}, {city.country}</Popup>
-                </Marker>
-              </MapContainer>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Middle Column: Map */}
+      <div className="lg:col-span-6 space-y-4">
+        {lat && lng ? (
+          <div className="rounded-xl overflow-hidden border bg-card h-[500px] shadow-sm relative group">
+            <MapContainer
+              center={[lat, lng]}
+              zoom={13}
+              style={{ height: '100%', width: '100%' }}
+              className="z-0"
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              
+              <Marker position={[lat, lng]}>
+                <Popup>
+                  <div className="p-1">
+                    <h3 className="font-bold text-lg">{city.name}</h3>
+                    <p className="text-sm text-muted-foreground">{city.country}</p>
+                  </div>
+                </Popup>
+              </Marker>
 
-      {/* About Section */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Compass className="h-4 w-4" />
-            About {city.name}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {city.description || `Welcome to the ${city.name} tango community! Connect with local dancers, find milongas, and explore the tango scene.`}
+              {mapItems.map((item, idx) => {
+                const iLat = item.latitude ? parseFloat(item.latitude) : null;
+                const iLng = item.longitude ? parseFloat(item.longitude) : null;
+                if (!iLat || !iLng) return null;
+
+                return (
+                  <Marker 
+                    key={`${item.type}-${item.id}-${idx}`} 
+                    position={[iLat, iLng]}
+                  >
+                    <Popup>
+                      <div className="p-1 min-w-[150px]">
+                        <Badge variant="outline" className={`mb-1 text-${item.color}-500 border-${item.color}-500/20 bg-${item.color}-500/5`}>
+                          {item.type}
+                        </Badge>
+                        <h4 className="font-bold text-sm">{item.title || item.name}</h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{item.description}</p>
+                        <Link href={item.type === 'event' ? `/events/${item.id}` : '#'}>
+                          <Button size="sm" className="w-full mt-3 h-8 text-xs font-medium">View Details</Button>
+                        </Link>
+                      </div>
+                    </Popup>
+                  </Marker>
+                );
+              })}
+            </MapContainer>
+          </div>
+        ) : (
+          <div className="h-[500px] flex flex-col items-center justify-center bg-muted/10 rounded-xl border border-dashed">
+            <MapPin className="h-10 w-10 text-muted-foreground/30 mb-2" />
+            <p className="text-sm text-muted-foreground">Coordinates not set for this city</p>
+          </div>
+        )}
+      </div>
+
+      {/* Right Column: About & Tips/Quick List */}
+      <div className="lg:col-span-3 space-y-6">
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg">About</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {city.description || `Welcome to the ${city.name} tango community! Explore milongas, find practitioners, and stay updated with the local scene.`}
           </p>
-          {city.longDescription && (
-            <p className="mt-3 text-sm text-muted-foreground">{city.longDescription}</p>
-          )}
-        </CardContent>
-      </Card>
+          
+          <div className="space-y-3 pt-4 border-t">
+            <h4 className="text-sm font-semibold">Popular Tips</h4>
+            {tips.slice(0, 3).length > 0 ? (
+              <div className="space-y-2">
+                {tips.slice(0, 3).map((tip: any) => (
+                  <div key={tip.id} className="p-2 rounded-md bg-muted/20 border border-border/50">
+                    <h5 className="text-xs font-bold truncate">{tip.title}</h5>
+                    <p className="text-[10px] text-muted-foreground line-clamp-1">{tip.description}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground italic">No tips shared yet</p>
+            )}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="w-full text-xs text-primary hover:bg-primary/5"
+              onClick={() => {
+                const tipsTab = document.querySelector('[data-testid="tab-tips"]') as HTMLButtonElement;
+                if (tipsTab) tipsTab.click();
+              }}
+            >
+              View All Tips <ChevronRight className="h-3 w-3 ml-1" />
+            </Button>
+          </div>
+        </div>
 
-      {/* Quick Stats */}
-      <div className="grid gap-3 grid-cols-2">
-        <Card>
-          <CardContent className="pt-4 flex items-center gap-3">
-            <Users className="w-8 h-8 text-primary" />
-            <div>
-              <div className="text-2xl font-bold">{city.memberCount}</div>
-              <div className="text-xs text-muted-foreground">Members</div>
+        <Card className="bg-primary/5 border-primary/10">
+          <CardContent className="p-4 space-y-3 text-center">
+            <Star className="h-6 w-6 text-amber-500 mx-auto" />
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold">Become a City Guide</h4>
+              <p className="text-[11px] text-muted-foreground">Share your local knowledge with the community</p>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4 flex items-center gap-3">
-            <MapPin className="w-8 h-8 text-primary" />
-            <div>
-              <div className="text-sm font-bold">{city.country}</div>
-              <div className="text-xs text-muted-foreground">Location</div>
-            </div>
+            <Button size="sm" className="w-full text-xs">Apply Now</Button>
           </CardContent>
         </Card>
       </div>
