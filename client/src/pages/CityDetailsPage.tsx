@@ -9,7 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare, MapPinHouse, UserCheck, Lightbulb } from "lucide-react";
+import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare, MapPinHouse, UserCheck, Lightbulb, Camera, Drama, Building2, Briefcase, User } from "lucide-react";
+import { TANGO_ROLES, getRoleByValue } from "@/lib/tangoRoles";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -412,7 +413,18 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
     });
   }, [members, legacyMembers]);
   
-  const roleFilters = ['all', 'organizer', 'teacher', 'dj', 'musician', 'dancer', 'leader', 'follower', 'photographer', 'host'];
+  // Use TANGO_ROLES for icon-based role filters
+  const roleFilters = [
+    { value: 'all', label: 'All', icon: Users, color: '#6B7280' },
+    { value: 'teacher', label: 'Teachers', icon: GraduationCap, color: '#10B981' },
+    { value: 'dj', label: 'DJs', icon: Music, color: '#8B5CF6' },
+    { value: 'performer', label: 'Performers', icon: Drama, color: '#F59E0B' },
+    { value: 'organizer', label: 'Organizers', icon: Calendar, color: '#3B82F6' },
+    { value: 'photographer', label: 'Photographers', icon: Camera, color: '#EF4444' },
+    { value: 'venue-owner', label: 'Venues', icon: Building2, color: '#6B7280' },
+    { value: 'dancer-leader', label: 'Leaders', icon: Users, color: '#1E90FF' },
+    { value: 'dancer-follower', label: 'Followers', icon: User, color: '#EC4899' },
+  ];
   
   const keyPeople = useMemo(() => {
     return allMembers.filter((m: any) => 
@@ -423,7 +435,13 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
   
   const filteredMembers = useMemo(() => {
     if (roleFilter === 'all') return allMembers;
-    return allMembers.filter((m: any) => m.role === roleFilter || m.user?.role === roleFilter);
+    return allMembers.filter((m: any) => {
+      // Check member's direct role
+      if (m.role === roleFilter || m.user?.role === roleFilter) return true;
+      // Check member's tangoRoles array
+      const tangoRoles = m.tangoRoles || m.user?.tangoRoles || [];
+      return tangoRoles.some((r: string) => r.toLowerCase().includes(roleFilter.replace('-', '')));
+    });
   }, [allMembers, roleFilter]);
 
   if (isLoading) {
@@ -486,20 +504,27 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
         </Card>
       )}
       
-      {/* Role filter chips - per CITY_PAGE.md spec */}
-      <div className="flex flex-wrap items-center gap-2">
-        {roleFilters.map((role) => (
-          <Badge
-            key={role}
-            variant={roleFilter === role ? 'default' : 'outline'}
-            className="cursor-pointer capitalize"
-            onClick={() => setRoleFilter(role)}
-            data-testid={`filter-role-${role}`}
-          >
-            {role === 'all' ? 'All Members' : role}
-          </Badge>
-        ))}
-        <span className="text-sm text-muted-foreground ml-2">
+      {/* Role filter icons - per CITY_PAGE.md spec */}
+      <div className="flex flex-wrap items-center gap-2 p-2 bg-muted/30 rounded-xl">
+        {roleFilters.map((role) => {
+          const IconComponent = role.icon;
+          const isActive = roleFilter === role.value;
+          return (
+            <Button
+              key={role.value}
+              variant={isActive ? 'default' : 'ghost'}
+              size="sm"
+              className={`gap-2 h-9 px-3 rounded-lg transition-all ${isActive ? '' : 'hover:bg-muted'}`}
+              style={isActive ? { backgroundColor: role.color } : {}}
+              onClick={() => setRoleFilter(role.value)}
+              data-testid={`filter-role-${role.value}`}
+            >
+              <IconComponent className="h-4 w-4" style={{ color: isActive ? 'white' : role.color }} />
+              <span className={isActive ? 'text-white' : ''}>{role.label}</span>
+            </Button>
+          );
+        })}
+        <span className="text-sm text-muted-foreground ml-auto">
           {filteredMembers.length} followers
         </span>
       </div>
@@ -767,155 +792,68 @@ function CityOverviewTab({ city }: { city: CityData }) {
           )}
         </div>
 
-        {/* Right: Narrative & Curation */}
-        <div className="lg:col-span-3 space-y-8">
-          <div className="space-y-4">
-            <h3 className="font-black text-xl tracking-tight">Community Voice</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
-              "{city.description || `The ${city.name} community is a vibrant hub for tango enthusiasts, offering world-class milongas and a welcoming atmosphere for travelers.`}"
-            </p>
-          </div>
-
-          <div className="bg-amber-500/5 border border-amber-500/10 rounded-3xl p-6 space-y-6 shadow-sm">
-            <div className="flex items-center gap-3 text-amber-600">
-              <div className="p-2 rounded-xl bg-amber-500/10">
-                <Star className="h-5 w-5 fill-current" />
+        {/* Right: Quick Stats & Navigation */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Upcoming Events Preview */}
+          {events.length > 0 && (
+            <div className="space-y-4">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">Next Events</h4>
+              <div className="space-y-2">
+                {events.slice(0, 3).map((event: any) => (
+                  <Link key={event.id} href={`/events/${event.id}`}>
+                    <div className="group p-3 rounded-xl bg-card border hover:border-primary/20 transition-all hover:shadow-sm">
+                      <h5 className="text-sm font-bold truncate group-hover:text-primary transition-colors">{event.title}</h5>
+                      <p className="text-[10px] text-muted-foreground font-medium mt-1">
+                        {safeDateFormat(getEventDate(event), 'EEE, MMM d')}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
               </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Curated Tips</span>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="w-full h-9 text-xs font-bold"
+                onClick={() => {
+                  const eventsTab = document.querySelector('[data-testid="tab-events"]') as HTMLButtonElement;
+                  if (eventsTab) eventsTab.click();
+                }}
+              >
+                View All Events
+              </Button>
             </div>
-            {tips.length > 0 ? (
-              <div className="space-y-4">
-                {tips.slice(0, 2).map((tip: any) => (
-                  <div key={tip.id} className="group space-y-1.5 cursor-default">
-                    <h5 className="text-sm font-black transition-colors group-hover:text-amber-600">{tip.title}</h5>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed font-medium line-clamp-2">{tip.description}</p>
+          )}
+          
+          {/* Housing Preview */}
+          {housing.length > 0 && (
+            <div className="space-y-4">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">Available Housing</h4>
+              <div className="space-y-2">
+                {housing.slice(0, 2).map((listing: any) => (
+                  <div key={listing.id} className="group p-3 rounded-xl bg-card border hover:border-emerald-500/20 transition-all hover:shadow-sm">
+                    <h5 className="text-sm font-bold truncate group-hover:text-emerald-600 transition-colors">{listing.title}</h5>
+                    <p className="text-[10px] text-emerald-600 font-bold mt-1">
+                      ${listing.pricePerNight || listing.price}/night
+                    </p>
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="py-4 text-center">
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-50">Awaiting your insights</p>
-              </div>
-            )}
-            <Button 
-              variant="link" 
-              className="p-0 h-auto text-[10px] font-black text-amber-600 hover:text-amber-700 tracking-widest uppercase"
-              onClick={() => {
-                const tipsTab = document.querySelector('[data-testid="tab-tips"]') as HTMLButtonElement;
-                if (tipsTab) tipsTab.click();
-              }}
-            >
-              EXPAND KNOWLEDGE BASE &rarr;
-            </Button>
-          </div>
-
-          <div className="relative overflow-hidden bg-primary rounded-3xl p-6 text-center shadow-2xl shadow-primary/20 group">
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
-            <div className="relative z-10 space-y-5">
-              <div className="bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/10 w-fit mx-auto transition-transform group-hover:scale-110">
-                <Star className="h-6 w-6 text-white fill-current" />
-              </div>
-              <div className="space-y-2">
-                <h4 className="text-lg font-black tracking-tight text-white leading-tight">Elite City Guide</h4>
-                <p className="text-[11px] text-white/80 font-medium leading-relaxed px-4">Monetize your expertise and lead the local community.</p>
-              </div>
-              <Button size="sm" className="w-full h-11 rounded-xl font-black text-xs uppercase tracking-widest bg-white text-primary hover:bg-white/90 border-none shadow-xl shadow-black/10">APPLY FOR LEADERSHIP</Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="w-full h-9 text-xs font-bold"
+                onClick={() => {
+                  const housingTab = document.querySelector('[data-testid="tab-housing"]') as HTMLButtonElement;
+                  if (housingTab) housingTab.click();
+                }}
+              >
+                Browse Housing
+              </Button>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* MB.MD Content Grids: Dynamic Reveal */}
-      <div className="pt-12 border-t space-y-16">
-        {(activeLayer === 'all' || activeLayer === 'events') && events.length > 0 && (
-          <section className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-            <div className="flex items-end justify-between">
-              <div className="space-y-2">
-                <Badge variant="outline" className="text-rose-500 border-rose-500/20 bg-rose-500/5 font-black text-[10px] tracking-[0.2em] uppercase">Calendar</Badge>
-                <h3 className="text-3xl font-black tracking-tighter">Premier Milongas</h3>
-              </div>
-              <Button variant="ghost" size="sm" className="h-10 rounded-xl px-6 font-black text-xs tracking-widest uppercase text-primary hover:bg-primary/5" onClick={() => {
-                const eventsTab = document.querySelector('[data-testid="tab-events"]') as HTMLButtonElement;
-                if (eventsTab) eventsTab.click();
-              }}>FULL SCHEDULE</Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {events.slice(0, 4).map(event => (
-                <Card key={event.id} className="hover-elevate border shadow-sm bg-card transition-all hover:shadow-xl hover:border-rose-500/20 overflow-hidden group">
-                  <div className="h-2 w-full bg-rose-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <CardContent className="p-6 space-y-4">
-                    <h4 className="font-black text-lg tracking-tight line-clamp-1 group-hover:text-rose-500 transition-colors">{event.title}</h4>
-                    <div className="flex items-center gap-2.5 text-xs text-muted-foreground font-bold">
-                      <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-500">
-                        <Clock className="h-3.5 w-3.5" />
-                      </div>
-                      {safeDateFormat(getEventDate(event), 'EEEE, MMM d @ h:mm a')}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {(activeLayer === 'all' || activeLayer === 'housing') && housing.length > 0 && (
-          <section className="space-y-8 animate-in slide-in-from-bottom-4 duration-700 delay-150">
-            <div className="flex items-end justify-between">
-              <div className="space-y-2">
-                <Badge variant="outline" className="text-emerald-500 border-emerald-500/20 bg-emerald-500/5 font-black text-[10px] tracking-[0.2em] uppercase">Accommodations</Badge>
-                <h3 className="text-3xl font-black tracking-tighter">Dancer's Quarters</h3>
-              </div>
-              <Button variant="ghost" size="sm" className="h-10 rounded-xl px-6 font-black text-xs tracking-widest uppercase text-primary hover:bg-primary/5" onClick={() => {
-                const housingTab = document.querySelector('[data-testid="tab-housing"]') as HTMLButtonElement;
-                if (housingTab) housingTab.click();
-              }}>EXPLORE ALL</Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {housing.slice(0, 4).map(listing => (
-                <Card key={listing.id} className="hover-elevate border shadow-sm bg-card transition-all hover:shadow-xl hover:border-emerald-500/20 overflow-hidden group">
-                  <div className="h-2 w-full bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <CardContent className="p-6 space-y-4">
-                    <h4 className="font-black text-lg tracking-tight line-clamp-1 group-hover:text-emerald-500 transition-colors">{listing.title}</h4>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl font-black text-emerald-600 tabular-nums">${listing.pricePerNight}</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">/ Night</span>
-                      </div>
-                      <Badge variant="secondary" className="rounded-lg font-black text-[9px] uppercase tracking-widest">{listing.neighborhood || 'Local'}</Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {(activeLayer === 'all' || activeLayer === 'tips') && tips.length > 0 && (
-          <section className="space-y-8 animate-in slide-in-from-bottom-4 duration-700 delay-300">
-            <div className="flex items-end justify-between">
-              <div className="space-y-2">
-                <Badge variant="outline" className="text-amber-500 border-amber-500/20 bg-amber-500/5 font-black text-[10px] tracking-[0.2em] uppercase">Collective Intelligence</Badge>
-                <h3 className="text-3xl font-black tracking-tighter">Milonga Etiquette & Tips</h3>
-              </div>
-              <Button variant="ghost" size="sm" className="h-10 rounded-xl px-6 font-black text-xs tracking-widest uppercase text-primary hover:bg-primary/5" onClick={() => {
-                const tipsTab = document.querySelector('[data-testid="tab-tips"]') as HTMLButtonElement;
-                if (tipsTab) tipsTab.click();
-              }}>KNOWLEDGE BASE</Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {tips.slice(0, 4).map(tip => (
-                <Card key={tip.id} className="hover-elevate border shadow-sm bg-card transition-all hover:shadow-xl hover:border-amber-500/20 overflow-hidden group">
-                  <div className="h-2 w-full bg-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <CardContent className="p-6 space-y-3">
-                    <h4 className="font-black text-lg tracking-tight line-clamp-1 group-hover:text-amber-500 transition-colors">{tip.title}</h4>
-                    <p className="text-xs text-muted-foreground font-medium leading-relaxed line-clamp-3">{tip.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
     </div>
   );
 }
@@ -1111,20 +1049,62 @@ function CityVisitorsTab({ city }: { city: CityData }) {
 
 function CityTipsTab({ city }: { city: CityData }) {
   const cityName = city.city || city.name.replace(' Tango Community', '');
+  const [tipCategory, setTipCategory] = useState<string>('all');
+  
+  const tipCategories = [
+    { value: 'all', label: 'All Tips', icon: Lightbulb },
+    { value: 'milonga', label: 'Milongas', icon: Music },
+    { value: 'transport', label: 'Transport', icon: Plane },
+    { value: 'food', label: 'Food & Dining', icon: MapPin },
+    { value: 'safety', label: 'Safety', icon: Heart },
+  ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div className="lg:col-span-3 space-y-4">
-        <Card className="bg-amber-500/5 border-amber-500/10">
-          <CardContent className="p-4 space-y-3">
-            <h3 className="font-bold text-sm flex items-center gap-2">
-              <Lightbulb className="h-4 w-4 text-amber-500" /> Local Wisdom
-            </h3>
-            <p className="text-xs text-muted-foreground">Insider tips for the best tango experience in {city.name}.</p>
-            <Button variant="outline" className="w-full text-xs" size="sm">Share a Tip</Button>
-          </CardContent>
-        </Card>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-in fade-in duration-500">
+      {/* Left Sidebar */}
+      <div className="lg:col-span-3 space-y-6">
+        <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-6 space-y-6 shadow-sm">
+          <div className="flex items-center gap-3 text-amber-600">
+            <div className="p-2.5 rounded-xl bg-amber-500/10">
+              <Lightbulb className="h-6 w-6" />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Local Wisdom</span>
+          </div>
+          <div className="space-y-2">
+            <h3 className="font-black text-xl tracking-tight leading-tight">Tips for {cityName}</h3>
+            <p className="text-xs text-muted-foreground font-medium leading-relaxed">Insider knowledge from the local tango community.</p>
+          </div>
+          <Button className="w-full h-11 rounded-xl font-black text-xs uppercase tracking-widest bg-amber-500 hover:bg-amber-600 text-white border-none shadow-lg shadow-amber-500/20 hover-elevate active-elevate-2">
+            Share a Tip
+          </Button>
+        </div>
+        
+        {/* Category Filters */}
+        <div className="space-y-3">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70 px-1">Categories</h4>
+          <div className="space-y-1">
+            {tipCategories.map((cat) => {
+              const IconComponent = cat.icon;
+              const isActive = tipCategory === cat.value;
+              return (
+                <Button
+                  key={cat.value}
+                  variant={isActive ? 'default' : 'ghost'}
+                  size="sm"
+                  className={`w-full justify-start gap-3 h-10 rounded-xl ${isActive ? 'bg-amber-500 hover:bg-amber-600 text-white' : ''}`}
+                  onClick={() => setTipCategory(cat.value)}
+                  data-testid={`filter-tip-${cat.value}`}
+                >
+                  <IconComponent className="h-4 w-4" />
+                  {cat.label}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
       </div>
+      
+      {/* Main Content */}
       <div className="lg:col-span-9">
         <RecommendationsList 
           city={cityName}
