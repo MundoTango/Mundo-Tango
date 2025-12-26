@@ -32,7 +32,7 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
     // Helper function for smooth scrolling
     const smoothScroll = async (
       scrollPositions: number[],
-      delayMs: number = 2000,
+      delayMs: number = 1000,
     ) => {
       for (const position of scrollPositions) {
         await page.evaluate(
@@ -45,15 +45,15 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
 
     // 1. LANDING PAGE
     console.log("📍 1/5: Recording Landing Page...");
-    await page.goto(`${BASE_URL}/landing`, {
+    await page.goto(`${BASE_URL}/feed`, {
       waitUntil: "load",
       timeout: 90000,
     });
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(1000);
 
     // Scroll through landing page sections
     await smoothScroll([600, 1200, 1800, 2400, 0], 2500);
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
 
     // 2. EVENTS PAGE
     console.log("📍 2/5: Recording Events Page...");
@@ -61,11 +61,11 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
       waitUntil: "load",
       timeout: 90000,
     });
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(1000);
 
     // Scroll through events
     await smoothScroll([500, 1000, 1500, 0], 2500);
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
 
     // 3. HOUSING PAGE
     console.log("📍 3/5: Recording Housing Page...");
@@ -73,11 +73,11 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
       waitUntil: "load",
       timeout: 90000,
     });
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(1000);
 
     // Scroll through housing listings
     await smoothScroll([500, 1000, 1500, 0], 2500);
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
 
     // 4. GROUPS PAGE
     console.log("📍 4/5: Recording Groups/Communities Page...");
@@ -85,11 +85,11 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
       waitUntil: "load",
       timeout: 90000,
     });
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(1000);
 
     // Scroll through groups
     await smoothScroll([500, 1000, 1500, 0], 2500);
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
 
     // 5. NETWORK PAGE
     console.log("📍 5/5: Recording Network/People Page...");
@@ -97,19 +97,19 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
       waitUntil: "load",
       timeout: 90000,
     });
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(1000);
 
     // Scroll through network
     await smoothScroll([500, 1000, 1500, 0], 2500);
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
 
     // Return to landing for nice ending
     console.log("📍 Finale: Returning to Landing Page...");
-    await page.goto(`${BASE_URL}/landing`, {
+    await page.goto(`${BASE_URL}/feed`, {
       waitUntil: "load",
       timeout: 90000,
     });
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(1000);
 
     console.log("✅ Comprehensive platform flyover recording complete!");
   } catch (error) {
