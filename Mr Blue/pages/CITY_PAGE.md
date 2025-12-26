@@ -227,10 +227,22 @@ When user follows a city:
 - **Resizing:** Auto-invalidation on tab switch to prevent gray tiles.
 
 ### 7.3 Advanced Filtering (Global Filter Bar)
+- **Unified Filter Bar:** Consolidated filters (Time Range, Type, Price) in a single horizontal bar above content.
 - **Time Range Filter:** 
   - Presets: All Dates, Today, This Weekend.
   - Custom: Premium Date Range Picker (Popover + Calendar).
 - **Type Filters:** Milongas, Classes, Practicas.
+- **Housing Integration:** `AirbnbHousingView` with external filter support and map synchronization.
+
+### 7.4 Map Synchronization
+- **Invalidation:** Auto-invalidation on tab switch to ensure correct rendering.
+- **Custom Icons:** Unique high-contrast pins for events (#FF5A5F), housing (#00A699), and tips (#FFB400).
+- **Z-Index:** Popovers and tooltips use high z-index (200+) to remain visible over map layers.
+
+### 7.5 Content Hierarchy
+- **Primary:** Discussion & Events (highest engagement).
+- **Secondary:** Overview (Map-centric navigation).
+- **Tertiary:** Members, Housing, Visitors, Tips.
 
 ---
 
