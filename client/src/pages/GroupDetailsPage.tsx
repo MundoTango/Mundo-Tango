@@ -219,7 +219,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   const filteredEvents = useMemo(() => {
     if (!events) return [];
     
-    // Deduplicate events by id (in case of duplicate returns from city + groupId match)
+    // Deduplicate events by id
     const seenIds = new Set<number>();
     const deduped = events.filter(event => {
       if (seenIds.has(event.id)) return false;
@@ -228,6 +228,12 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     });
     
     return deduped.filter(event => {
+      // MB.MD Fix: Strict city filtering for city groups to prevent cross-city event leakage
+      if (groupCity) {
+        const eventCity = (event.city || '').toLowerCase();
+        if (eventCity !== groupCity.toLowerCase()) return false;
+      }
+
       if (filters.q) {
         const searchTerm = filters.q.toLowerCase();
         const titleMatch = event.title?.toLowerCase().includes(searchTerm);
