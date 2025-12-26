@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -8,13 +7,11 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 import { PartyPopper, HandHeart, CreditCard, ArrowRight, Mail, CheckCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { TalentMatchModal } from "@/components/TalentMatchModal";
 import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 export default function WaitlistConfirmationPage() {
   const { user } = useAuth();
   const { t } = useTranslation(['pages', 'common']);
-  const [talentMatchOpen, setTalentMatchOpen] = useState(false);
 
   return (
     <SelfHealingErrorBoundary pageName="WaitlistConfirmation" fallbackRoute="/">
@@ -75,18 +72,19 @@ export default function WaitlistConfirmationPage() {
                     {t('pages:onboarding.waitlist.whileYouWait', 'While you wait, help us grow')}
                   </p>
                   
-                  <Button 
-                    className="w-full bg-white text-black hover:bg-white/90"
-                    size="lg"
-                    onClick={() => setTalentMatchOpen(true)}
-                    data-testid="button-volunteer-cta"
-                  >
-                    <HandHeart className="mr-2 h-5 w-5" />
-                    {t('pages:onboarding.waitlist.volunteerButton', 'Volunteer with us')}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+                  <Link href="/volunteer">
+                    <Button 
+                      className="w-full bg-white text-black hover:bg-white/90"
+                      size="lg"
+                      data-testid="button-volunteer-cta"
+                    >
+                      <HandHeart className="mr-2 h-5 w-5" />
+                      {t('pages:onboarding.waitlist.volunteerButton', 'Volunteer with us')}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </Link>
 
-                  <Link href="/crowdfunding">
+                  <a href="https://www.gofundme.com/mundo-tango" target="_blank" rel="noopener noreferrer">
                     <Button 
                       variant="outline" 
                       className="w-full border-white/30 text-white hover:bg-white/10"
@@ -97,7 +95,7 @@ export default function WaitlistConfirmationPage() {
                       {t('pages:onboarding.waitlist.supportButton', 'Support Mundo Tango')}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
-                  </Link>
+                  </a>
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-white/10">
@@ -111,13 +109,6 @@ export default function WaitlistConfirmationPage() {
                 </div>
               </motion.div>
             </motion.div>
-
-            <TalentMatchModal 
-              open={talentMatchOpen}
-              onOpenChange={setTalentMatchOpen}
-              initialName={user?.name || ""}
-              initialEmail={user?.email || ""}
-            />
           </div>
         </div>
       </PageLayout>

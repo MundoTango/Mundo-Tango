@@ -46,8 +46,8 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
     // 1. LANDING PAGE
     console.log("📍 1/5: Recording Landing Page...");
     await page.goto(`${BASE_URL}/landing`, {
-      waitUntil: "networkidle",
-      timeout: 60000,
+      waitUntil: "load",
+      timeout: 90000,
     });
     await page.waitForTimeout(3000);
 
@@ -58,8 +58,8 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
     // 2. EVENTS PAGE
     console.log("📍 2/5: Recording Events Page...");
     await page.goto(`${BASE_URL}/events`, {
-      waitUntil: "networkidle",
-      timeout: 60000,
+      waitUntil: "load",
+      timeout: 90000,
     });
     await page.waitForTimeout(3000);
 
@@ -70,8 +70,8 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
     // 3. HOUSING PAGE
     console.log("📍 3/5: Recording Housing Page...");
     await page.goto(`${BASE_URL}/housing`, {
-      waitUntil: "networkidle",
-      timeout: 60000,
+      waitUntil: "load",
+      timeout: 90000,
     });
     await page.waitForTimeout(3000);
 
@@ -82,8 +82,8 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
     // 4. GROUPS PAGE
     console.log("📍 4/5: Recording Groups/Communities Page...");
     await page.goto(`${BASE_URL}/groups`, {
-      waitUntil: "networkidle",
-      timeout: 60000,
+      waitUntil: "load",
+      timeout: 90000,
     });
     await page.waitForTimeout(3000);
 
@@ -94,8 +94,8 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
     // 5. NETWORK PAGE
     console.log("📍 5/5: Recording Network/People Page...");
     await page.goto(`${BASE_URL}/network`, {
-      waitUntil: "networkidle",
-      timeout: 60000,
+      waitUntil: "load",
+      timeout: 90000,
     });
     await page.waitForTimeout(3000);
 
@@ -106,8 +106,8 @@ test("Record Comprehensive Platform Flyover Video", async ({ browser }) => {
     // Return to landing for nice ending
     console.log("📍 Finale: Returning to Landing Page...");
     await page.goto(`${BASE_URL}/landing`, {
-      waitUntil: "networkidle",
-      timeout: 60000,
+      waitUntil: "load",
+      timeout: 90000,
     });
     await page.waitForTimeout(3000);
 
