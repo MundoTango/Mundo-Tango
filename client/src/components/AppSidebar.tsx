@@ -378,11 +378,17 @@ function AppSidebarComponent() {
   const { data: followedCities = [] } = useQuery<FollowedCity[]>({
     queryKey: ["/api/cities/followed"],
     queryFn: async () => {
-      const res = await fetch("/api/cities/followed");
-      if (!res.ok) return [];
+      const res = await fetch("/api/cities/followed", {
+        credentials: "include",
+      });
+      if (!res.ok) {
+        console.error("[AppSidebar] Failed to fetch followed cities:", res.status);
+        return [];
+      }
       return res.json();
     },
     enabled: !!user,
+    staleTime: 60000, // Cache for 1 minute
   });
 
   const myStuffItems = useMemo(() => {
@@ -411,12 +417,14 @@ function AppSidebarComponent() {
       addedUrls.add(cityUrl);
     }
 
-    // Add followed cities with MapPinPlus icon
+    // Add followed cities with MapPinPlus icon (use server-provided slug)
     followedCities.forEach((city) => {
-      const cityUrl = `/cities/${city.slug}`;
+      // Use server-provided slug, fallback to generated slug
+      const citySlug = city.slug || toCitySlug(city.name);
+      const cityUrl = `/cities/${citySlug}`;
       // Skip if already added (e.g., home city)
       if (addedUrls.has(cityUrl)) return;
-      // Skip if this is the user's home city (already added above)
+      // Skip if this is the user's home city (already added above with MapPinHouse)
       if (city.isResident) return;
       
       addedUrls.add(cityUrl);

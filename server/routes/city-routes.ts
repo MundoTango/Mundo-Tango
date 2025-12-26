@@ -739,11 +739,37 @@ router.post("/:id/follow", async (req: Request, res: Response) => {
       return res.json({ message: "Already following this city", membership: existing });
     }
     
-    // Check if user lives in this city (compare user's profile city with city name)
+    // Check if user lives in this city using canonical slug comparison
+    // This prevents false positives like "Newark" matching "New York"
     const [userRecord] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-    const userCity = userRecord?.city?.toLowerCase().trim() || '';
-    const cityName = city.name.toLowerCase().trim();
-    const isResident = userCity === cityName || cityName.includes(userCity) || userCity.includes(cityName);
+    const userCityRaw = userRecord?.city?.trim() || '';
+    
+    // Generate slug for user's profile city
+    const toSlug = (name: string): string => name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    
+    const userCitySlug = toSlug(userCityRaw);
+    
+    // Use canonical city slug OR compare slugified names
+    // Also check if user city exactly matches city name (case-insensitive)
+    const canonicalCitySlug = city.slug || '';
+    const userCityLower = userCityRaw.toLowerCase();
+    const cityNameLower = city.name.toLowerCase();
+    
+    // User is resident if:
+    // 1. User's slugified city matches canonical city slug, OR
+    // 2. User's city name exactly matches city name (case-insensitive), OR
+    // 3. Canonical slug starts with user's city slug (e.g., "berlin" matches "berlin-tango")
+    const isResident = userCitySlug !== '' && (
+      userCitySlug === canonicalCitySlug ||
+      userCityLower === cityNameLower ||
+      canonicalCitySlug.startsWith(userCitySlug + '-') ||
+      canonicalCitySlug === userCitySlug
+    );
     
     // Create membership
     const [membership] = await db
@@ -921,11 +947,29 @@ router.post("/:id/join", async (req: Request, res: Response) => {
       return res.json({ message: "Already following this city", membership: existing });
     }
     
-    // Check if user lives in this city
+    // Check if user lives in this city using canonical slug comparison
     const [userRecord] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-    const userCity = userRecord?.city?.toLowerCase().trim() || '';
-    const cityName = city.name.toLowerCase().trim();
-    const isResident = userCity === cityName || cityName.includes(userCity) || userCity.includes(cityName);
+    const userCityRaw = userRecord?.city?.trim() || '';
+    
+    const toSlug = (name: string): string => name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    
+    const userCitySlug = toSlug(userCityRaw);
+    const canonicalCitySlug = city.slug || '';
+    const userCityLower = userCityRaw.toLowerCase();
+    const cityNameLower = city.name.toLowerCase();
+    
+    // User is resident if their city matches (same logic as /follow endpoint)
+    const isResident = userCitySlug !== '' && (
+      userCitySlug === canonicalCitySlug ||
+      userCityLower === cityNameLower ||
+      canonicalCitySlug.startsWith(userCitySlug + '-') ||
+      canonicalCitySlug === userCitySlug
+    );
     
     // Create membership
     const [membership] = await db
