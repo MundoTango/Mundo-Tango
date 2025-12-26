@@ -25,7 +25,7 @@ import { UnifiedRSVPButton, type RSVPStatus } from "@/components/unified/Unified
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { fromCitySlug, toCitySlug } from "@/lib/utils";
 import { RecommendationsList } from "@/components/recommendations/RecommendationsList";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { AirbnbHousingView } from "@/components/housing/AirbnbHousingView";
@@ -36,6 +36,85 @@ L.Icon.Default.mergeOptions({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
+
+function MapResizer() {
+  const map = useMap();
+  useEffect(() => {
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+  }, [map]);
+  return null;
+}
+
+const PIN_CONFIG = {
+  event: { 
+    bg: '#FF5A5F', 
+    shadow: 'rgba(255, 90, 95, 0.4)', 
+    svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="white"><rect x="3" y="4" width="18" height="18" rx="2" stroke="white" stroke-width="2" fill="none"/><line x1="8" y1="2" x2="8" y2="6" stroke="white" stroke-width="2"/><line x1="16" y1="2" x2="16" y2="6" stroke="white" stroke-width="2"/></svg>' 
+  },
+  housing: { 
+    bg: '#00A699', 
+    shadow: 'rgba(0, 166, 153, 0.4)', 
+    svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="white"><path d="M3 12l9-9 9 9M5 10v10h14V10" stroke="white" stroke-width="2" fill="none"/></svg>' 
+  },
+  tip: { 
+    bg: '#FFB400', 
+    shadow: 'rgba(255, 180, 0, 0.4)', 
+    svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="white"><circle cx="12" cy="8" r="4" fill="white"/><path d="M10 14h4v6h-4z" fill="white"/></svg>' 
+  },
+};
+
+const createCityMapIcon = (type: 'event' | 'housing' | 'tip') => {
+  const config = PIN_CONFIG[type];
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `
+      <div style="
+        position: relative;
+        width: 34px;
+        height: 42px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      ">
+        <div style="
+          background: white;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px ${config.shadow};
+          transition: transform 0.2s;
+        ">
+          <div style="
+            background: ${config.bg};
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            ${config.svg}
+          </div>
+        </div>
+        <div style="
+          width: 0;
+          height: 0;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-top: 8px solid white;
+          margin-top: -2px;
+        "></div>
+      </div>
+    `,
+    iconSize: [34, 42],
+    iconAnchor: [17, 42],
+  });
+};
 
 interface CityData {
   id: number;
@@ -756,39 +835,43 @@ function CityOverviewTab({ city }: { city: CityData }) {
       </div>
 
       <div className="relative group">
-        <div className="h-[600px] w-full rounded-[3rem] overflow-hidden border-[12px] border-muted/10 shadow-2xl relative bg-card">
+        <div className="h-[600px] w-full rounded-2xl overflow-hidden shadow-2xl relative bg-[#1a1a2e]">
           {lat && lng ? (
             <MapContainer 
               center={mapCenter} 
               zoom={13} 
               style={{ height: '100%', width: '100%', zIndex: 1 }}
               scrollWheelZoom={false}
+              maxBounds={[[-85, -180], [85, 180]]}
+              maxBoundsViscosity={1.0}
+              minZoom={2}
+              worldCopyJump={false}
             >
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                noWrap={true}
               />
+              <MapResizer />
               {mapItems.map((item) => (
                 <Marker 
                   key={item.id} 
                   position={[item.lat, item.lng]}
-                  icon={L.divIcon({
-                    className: 'custom-div-icon',
-                    html: `<div style="background-color: ${item.color}; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>`,
-                    iconSize: [16, 16],
-                    iconAnchor: [8, 8]
-                  })}
+                  icon={createCityMapIcon(item.type as 'event' | 'housing' | 'tip')}
                 >
-                  <Popup className="mb-md-popup">
-                    <div className="p-4 min-w-[200px] space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Badge className="font-black text-[9px] uppercase tracking-widest" style={{ backgroundColor: item.color }}>
+                  <Popup className="city-map-popup" offset={[0, -10]}>
+                    <div className="w-[280px] max-w-[280px] overflow-hidden rounded-lg bg-card flex flex-col p-4 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Badge 
+                          className="font-black text-[9px] uppercase tracking-widest text-white" 
+                          style={{ backgroundColor: PIN_CONFIG[item.type as keyof typeof PIN_CONFIG]?.bg || '#666' }}
+                        >
                           {item.type}
                         </Badge>
                       </div>
-                      <h4 className="font-black text-lg tracking-tight leading-none uppercase">{item.title}</h4>
+                      <h4 className="font-semibold text-lg leading-tight">{item.title}</h4>
                       {item.data?.venue && (
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
                           <MapPin className="w-3 h-3" /> {item.data.venue}
                         </p>
                       )}
