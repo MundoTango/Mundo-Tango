@@ -1049,18 +1049,52 @@ router.get("/:id/membership", async (req: Request, res: Response) => {
         : userCityRaw;
       const userCitySlug = toSlug(userCityName);
       const canonicalCitySlug = city?.slug || '';
+      // Also check without -tango suffix for more flexible matching
+      const canonicalCitySlugBase = canonicalCitySlug.replace(/-tango(-community)?$/, '');
       const userCityLower = userCityName.toLowerCase();
-      const cityNameLower = city?.name?.toLowerCase() || '';
+      // Clean city name for comparison (remove Tango Community suffix)
+      const cityNameLower = city?.name?.toLowerCase().replace(' tango community', '').replace(' tango', '').trim() || '';
       const cityFieldLower = (city?.city || '').toLowerCase();
       
       // User is resident if their city matches canonical slug or name
+      // MB.MD v9.9.3: More flexible matching for resident detection
       const isResident = userCitySlug !== '' && (
         userCitySlug === canonicalCitySlug ||
+        userCitySlug === canonicalCitySlugBase ||
         userCityLower === cityNameLower ||
         userCityLower === cityFieldLower ||
         canonicalCitySlug.startsWith(userCitySlug + '-') ||
-        canonicalCitySlug === userCitySlug
+        canonicalCitySlugBase === userCitySlug
       );
+      
+      // If user is a resident, auto-create membership record so they appear as member
+      if (isResident && city) {
+        try {
+          const [newMembership] = await db
+            .insert(cityMembers)
+            .values({
+              cityId,
+              userId,
+              role: 'member',
+              status: 'active',
+              membershipType: 'resident',
+            })
+            .returning();
+          
+          console.log(`[CityMembership] Auto-created resident membership for user ${userId} in city ${city.name}`);
+          
+          return res.json({
+            isMember: true,
+            isFollowing: true,
+            isResident: true,
+            membershipType: 'resident',
+            membership: newMembership
+          });
+        } catch (autoJoinErr) {
+          // Might fail due to unique constraint if race condition, that's OK
+          console.error(`[CityMembership] Failed to auto-create membership:`, autoJoinErr);
+        }
+      }
       
       return res.json({ 
         isMember: false, 
