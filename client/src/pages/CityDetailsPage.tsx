@@ -609,38 +609,66 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
       </div>
       
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredMembers.map((member: any) => (
-          <Card key={member.id || member.userId} className="hover-elevate relative overflow-visible rounded-[1.5rem] border-none bg-card/40 hover:bg-card transition-all">
-            {(member.isPro || member.user?.isPro) && (
-              <div className="absolute -top-2 -right-2 z-10">
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-black uppercase tracking-widest shadow-lg border-2 border-background py-1 px-2">
-                  PRO
-                </Badge>
-              </div>
-            )}
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <Avatar className="h-14 w-14 border-2 border-primary/5">
-                  <AvatarImage src={member.profileImage || member.user?.profileImage} />
-                  <AvatarFallback className="font-black">
-                    {(member.name || member.user?.name || 'U').charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <Link href={`/profile/${member.username || member.user?.username}`}>
-                    <h4 className="font-black text-lg hover:text-primary transition-colors truncate uppercase tracking-tight">
-                      {member.name || member.user?.name || 'Member'}
-                    </h4>
-                  </Link>
-                  {member.role && member.role !== 'member' && (
-                    <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-widest mt-1 bg-muted/50 border-none">
-                      {member.role}
-                    </Badge>
-                  )}
+        {filteredMembers.map((member: any) => {
+          const memberName = member.name || member.user?.name || member.username || member.user?.username || 'Member';
+          const memberUsername = member.username || member.user?.username;
+          const memberImage = member.profileImage || member.user?.profileImage;
+          const memberRole = member.role || member.user?.role;
+          const tangoRoles = member.tangoRoles || member.user?.tangoRoles || [];
+          const isPro = member.isPro || member.user?.isPro;
+          const city = member.city || member.user?.city;
+          
+          return (
+            <Card key={member.id || member.userId} className="hover-elevate relative overflow-visible rounded-2xl border-none bg-card/60 hover:bg-card transition-all group">
+              {isPro && (
+                <div className="absolute -top-2 -right-2 z-10">
+                  <Badge className="bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 text-white text-[8px] font-black uppercase tracking-widest shadow-lg border-2 border-background py-1 px-2.5 rounded-full">
+                    PRO
+                  </Badge>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              )}
+              <CardContent className="p-5">
+                <Link href={`/profile/${memberUsername}`}>
+                  <div className="flex items-start gap-4">
+                    <div className="relative">
+                      <Avatar className="h-16 w-16 border-3 border-primary/10 shadow-lg transition-transform group-hover:scale-105">
+                        <AvatarImage src={memberImage} />
+                        <AvatarFallback className="font-black text-xl bg-gradient-to-br from-primary/20 to-primary/5">
+                          {memberName.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <h4 className="font-bold text-base hover:text-primary transition-colors truncate leading-tight">
+                        {memberName}
+                      </h4>
+                      {memberUsername && (
+                        <p className="text-xs text-muted-foreground/60 truncate">@{memberUsername}</p>
+                      )}
+                      <div className="flex flex-wrap gap-1.5">
+                        {memberRole && memberRole !== 'member' && (
+                          <Badge variant="secondary" className="text-[8px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-none px-2 py-0.5">
+                            {memberRole}
+                          </Badge>
+                        )}
+                        {tangoRoles.slice(0, 2).map((role: string, idx: number) => (
+                          <Badge key={idx} variant="outline" className="text-[8px] font-medium uppercase tracking-wider border-muted-foreground/20 text-muted-foreground px-2 py-0.5">
+                            {typeof role === 'string' ? role.replace(/-/g, ' ') : role}
+                          </Badge>
+                        ))}
+                      </div>
+                      {city && (
+                        <p className="text-[10px] text-muted-foreground/50 flex items-center gap-1 mt-1">
+                          <MapPin className="w-3 h-3" /> {city}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              </CardContent>
+            </Card>
+          );
+        }
         ))}
       </div>
     </div>
@@ -977,8 +1005,7 @@ function CityHousingTab({ city }: { city: CityData }) {
           </Badge>
         </div>
         <AirbnbHousingView 
-          cityName={city.city || city.name.replace(' Tango Community', '')} 
-          cityId={city.id}
+          city={city.city || city.name.replace(' Tango Community', '')} 
         />
       </div>
     </div>
@@ -1016,28 +1043,71 @@ function CityVisitorsTab({ city }: { city: CityData }) {
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {visitors.map((visitor: any) => (
-        <Card key={visitor.id} className="hover-elevate border-none shadow-lg bg-card/40 hover:bg-card rounded-[2rem] transition-all group">
-          <CardContent className="p-6">
-            <Link href={`/profile/${visitor.username}`}>
-              <div className="flex items-center gap-4">
-                <Avatar className="h-14 w-14 border-4 border-background shadow-lg transition-transform group-hover:scale-110">
-                  <AvatarImage src={visitor.profileImage} />
-                  <AvatarFallback className="font-black">{(visitor.name || 'V').charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-black text-lg truncate uppercase tracking-tighter">{visitor.name || visitor.username}</p>
-                  <p className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest flex items-center gap-1">
-                    <Calendar className="w-3 h-3 text-primary" />
-                    {visitor.visitDate ? safeDateFormat(new Date(visitor.visitDate), 'MMM d, yyyy') : 'Trip Planned'}
-                  </p>
-                </div>
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {visitors.map((visitor: any) => {
+        const visitorName = visitor.name || visitor.username || 'Visitor';
+        const visitorUsername = visitor.username;
+        const tangoRoles = visitor.tangoRoles || [];
+        const isPro = visitor.isPro;
+        const homeCity = visitor.city;
+        
+        return (
+          <Card key={visitor.id} className="hover-elevate relative overflow-visible rounded-2xl border-none bg-card/60 hover:bg-card transition-all group">
+            {isPro && (
+              <div className="absolute -top-2 -right-2 z-10">
+                <Badge className="bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 text-white text-[8px] font-black uppercase tracking-widest shadow-lg border-2 border-background py-1 px-2.5 rounded-full">
+                  PRO
+                </Badge>
               </div>
-            </Link>
-          </CardContent>
-        </Card>
-      ))}
+            )}
+            <CardContent className="p-5">
+              <Link href={`/profile/${visitorUsername}`}>
+                <div className="flex items-start gap-4">
+                  <div className="relative">
+                    <Avatar className="h-16 w-16 border-3 border-primary/10 shadow-lg transition-transform group-hover:scale-105">
+                      <AvatarImage src={visitor.profileImage} />
+                      <AvatarFallback className="font-black text-xl bg-gradient-to-br from-primary/20 to-primary/5">
+                        {visitorName.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="absolute -bottom-1 -right-1">
+                      <Badge className="h-6 w-6 p-0 flex items-center justify-center bg-sky-500 text-white border-2 border-background rounded-full">
+                        <Plane className="h-3 w-3" />
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <h4 className="font-bold text-base hover:text-primary transition-colors truncate leading-tight">
+                      {visitorName}
+                    </h4>
+                    {visitorUsername && (
+                      <p className="text-xs text-muted-foreground/60 truncate">@{visitorUsername}</p>
+                    )}
+                    <div className="flex flex-wrap gap-1.5">
+                      {tangoRoles.slice(0, 2).map((role: string, idx: number) => (
+                        <Badge key={idx} variant="outline" className="text-[8px] font-medium uppercase tracking-wider border-muted-foreground/20 text-muted-foreground px-2 py-0.5">
+                          {typeof role === 'string' ? role.replace(/-/g, ' ') : role}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-3 text-[10px] text-muted-foreground/60">
+                      {homeCity && (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3" /> From {homeCity}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-sky-500" />
+                        {visitor.visitDate ? safeDateFormat(new Date(visitor.visitDate), 'MMM d, yyyy') : 'Trip Planned'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
