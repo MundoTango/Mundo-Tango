@@ -563,8 +563,7 @@ function CityOverviewTab({ city }: { city: CityData }) {
         organizer: item.organizer,
         rsvpCount: item._count
       }));
-    },
-    enabled: activeLayer === 'all' || activeLayer === 'events'
+    }
   });
 
   const { data: housing = [] } = useQuery<any[]>({
@@ -573,8 +572,7 @@ function CityOverviewTab({ city }: { city: CityData }) {
       const res = await fetch(`/api/cities/${city.id}/housing`);
       if (!res.ok) return [];
       return res.json();
-    },
-    enabled: activeLayer === 'all' || activeLayer === 'housing'
+    }
   });
 
   const { data: tips = [] } = useQuery<any[]>({
@@ -583,217 +581,340 @@ function CityOverviewTab({ city }: { city: CityData }) {
       const res = await fetch(`/api/cities/${city.id}/tips`);
       if (!res.ok) return [];
       return res.json();
-    },
-    enabled: activeLayer === 'all' || activeLayer === 'tips'
+    }
   });
 
   const mapItems = useMemo(() => {
     const items: any[] = [];
     if (activeLayer === 'all' || activeLayer === 'events') {
-      events.forEach(e => items.push({ ...e, type: 'event', color: 'red' }));
+      events.forEach(e => {
+        if (e.latitude && e.longitude) {
+          items.push({ ...e, type: 'event', color: 'rose' });
+        }
+      });
     }
     if (activeLayer === 'all' || activeLayer === 'housing') {
-      housing.forEach(h => items.push({ ...h, type: 'housing', color: 'green' }));
+      housing.forEach(h => {
+        if (h.latitude && h.longitude) {
+          items.push({ ...h, type: 'housing', color: 'emerald' });
+        }
+      });
     }
     if (activeLayer === 'all' || activeLayer === 'tips') {
-      tips.forEach(t => items.push({ ...t, type: 'tip', color: 'amber' }));
+      tips.forEach(t => {
+        if (t.latitude && t.longitude) {
+          items.push({ ...t, type: 'tip', color: 'amber' });
+        }
+      });
     }
     return items;
   }, [activeLayer, events, housing, tips]);
 
-  const totalItems = (city.eventCount || 0) + (city.housingCount || 0) + (city.recommendationCount || 0);
+  const totalItems = (events.length || 0) + (housing.length || 0) + (tips.length || 0);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
-      {/* Left Column: Filters & Layer Toggles */}
-      <div className="lg:col-span-3 space-y-4">
-        <h3 className="font-semibold text-lg px-1">Explore {city.name}</h3>
-        <div className="space-y-2">
-          <Card 
-            className={`cursor-pointer transition-all hover-elevate border-none shadow-none bg-transparent ${activeLayer === 'all' ? 'ring-2 ring-primary bg-primary/5' : ''}`}
+    <div className="space-y-8 animate-in fade-in duration-500">
+      {/* MB.MD Header: Sticky Filters with Backdrop Blur */}
+      <div className="sticky top-0 z-[100] bg-background/80 backdrop-blur-md py-4 -mx-4 px-4 border-b lg:border-none lg:bg-transparent lg:backdrop-blur-none lg:static lg:p-0">
+        <div className="flex flex-wrap items-center gap-3 p-1.5 bg-muted/30 rounded-2xl w-fit border shadow-sm">
+          <Button 
+            variant={activeLayer === 'all' ? 'default' : 'ghost'} 
+            size="sm"
+            className="rounded-xl h-10 px-6 font-black transition-all hover-elevate active-elevate-2"
             onClick={() => setActiveLayer('all')}
           >
-            <CardContent className="p-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-md bg-primary/10">
-                  <Compass className="w-5 h-5 text-primary" />
-                </div>
-                <span className="font-medium">All Items</span>
-              </div>
-              <Badge variant="secondary" className="rounded-full">{totalItems}</Badge>
-            </CardContent>
-          </Card>
-          
-          <Card 
-            className={`cursor-pointer transition-all hover-elevate border-none shadow-none bg-transparent ${activeLayer === 'events' ? 'ring-2 ring-red-500 bg-red-500/5' : ''}`}
+            Explore All <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{totalItems}</Badge>
+          </Button>
+          <Button 
+            variant={activeLayer === 'events' ? 'default' : 'ghost'} 
+            size="sm"
+            className={`rounded-xl h-10 px-6 font-black transition-all hover-elevate active-elevate-2 ${activeLayer !== 'events' ? 'text-rose-500 hover:bg-rose-500/10' : 'bg-rose-500 hover:bg-rose-600'}`}
             onClick={() => setActiveLayer('events')}
           >
-            <CardContent className="p-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-md bg-red-500/10">
-                  <Calendar className="w-5 h-5 text-red-500" />
-                </div>
-                <span className="font-medium">Events</span>
-              </div>
-              <Badge variant="secondary" className="rounded-full">{city.eventCount || 0}</Badge>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className={`cursor-pointer transition-all hover-elevate border-none shadow-none bg-transparent ${activeLayer === 'housing' ? 'ring-2 ring-green-500 bg-green-500/5' : ''}`}
+            <Calendar className="w-4 h-4 mr-2" />
+            Events <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{events.length}</Badge>
+          </Button>
+          <Button 
+            variant={activeLayer === 'housing' ? 'default' : 'ghost'} 
+            size="sm"
+            className={`rounded-xl h-10 px-6 font-black transition-all hover-elevate active-elevate-2 ${activeLayer !== 'housing' ? 'text-emerald-500 hover:bg-emerald-500/10' : 'bg-emerald-500 hover:bg-emerald-600'}`}
             onClick={() => setActiveLayer('housing')}
           >
-            <CardContent className="p-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-md bg-green-500/10">
-                  <Home className="w-5 h-5 text-green-500" />
-                </div>
-                <span className="font-medium">Housing</span>
-              </div>
-              <Badge variant="secondary" className="rounded-full">{city.housingCount || 0}</Badge>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className={`cursor-pointer transition-all hover-elevate border-none shadow-none bg-transparent ${activeLayer === 'tips' ? 'ring-2 ring-amber-500 bg-amber-500/5' : ''}`}
+            <Home className="w-4 h-4 mr-2" />
+            Housing <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{housing.length}</Badge>
+          </Button>
+          <Button 
+            variant={activeLayer === 'tips' ? 'default' : 'ghost'} 
+            size="sm"
+            className={`rounded-xl h-10 px-6 font-black transition-all hover-elevate active-elevate-2 ${activeLayer !== 'tips' ? 'text-amber-500 hover:bg-amber-500/10' : 'bg-amber-500 hover:bg-amber-600'}`}
             onClick={() => setActiveLayer('tips')}
           >
-            <CardContent className="p-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-md bg-amber-500/10">
-                  <Lightbulb className="w-5 h-5 text-amber-500" />
-                </div>
-                <span className="font-medium">Tips</span>
-              </div>
-              <Badge variant="secondary" className="rounded-full">{city.recommendationCount || 0}</Badge>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="pt-4 border-t space-y-3">
-          <h4 className="text-sm font-semibold px-1">Stats</h4>
-          <div className="grid grid-cols-1 gap-2">
-            <div className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
-              <span className="text-xs text-muted-foreground flex items-center gap-2">
-                <Users className="h-3 w-3" /> Members
-              </span>
-              <span className="text-sm font-bold">{city.memberCount}</span>
-            </div>
-            <div className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
-              <span className="text-xs text-muted-foreground flex items-center gap-2">
-                <MapPinHouse className="h-3 w-3" /> Location
-              </span>
-              <span className="text-sm font-bold truncate max-w-[100px]">{city.country}</span>
-            </div>
-          </div>
+            <Lightbulb className="w-4 h-4 mr-2" />
+            Tips <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{tips.length}</Badge>
+          </Button>
         </div>
       </div>
 
-      {/* Middle Column: Map */}
-      <div className="lg:col-span-6 space-y-4">
-        {lat && lng ? (
-          <div className="rounded-xl overflow-hidden border bg-card h-[500px] shadow-sm relative group">
-            <MapContainer
-              center={[lat, lng]}
-              zoom={13}
-              style={{ height: '100%', width: '100%' }}
-              className="z-0"
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              
-              <Marker position={[lat, lng]}>
-                <Popup>
-                  <div className="p-1">
-                    <h3 className="font-bold text-lg">{city.name}</h3>
-                    <p className="text-sm text-muted-foreground">{city.country}</p>
+      {/* MB.MD 3-Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left: Community Profile & Stats */}
+        <div className="lg:col-span-3 space-y-8">
+          <div className="space-y-4">
+            <h3 className="font-black text-3xl tracking-tighter leading-none bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent">
+              {cityName}
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+              Join {city.memberCount} dancers in the heart of {city.country}'s tango scene.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70 px-1">Vital Statistics</h4>
+            <div className="space-y-3">
+              <div className="group flex items-center justify-between p-4 rounded-2xl bg-card border shadow-sm transition-all hover:shadow-md hover:border-primary/20">
+                <div className="flex items-center gap-4">
+                  <div className="p-2.5 rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
+                    <Users className="h-5 w-5 text-primary" />
                   </div>
-                </Popup>
-              </Marker>
-
-              {mapItems.map((item, idx) => {
-                const iLat = item.latitude ? parseFloat(item.latitude) : null;
-                const iLng = item.longitude ? parseFloat(item.longitude) : null;
-                if (!iLat || !iLng) return null;
-
-                return (
-                  <Marker 
-                    key={`${item.type}-${item.id}-${idx}`} 
-                    position={[iLat, iLng]}
-                  >
-                    <Popup>
-                      <div className="p-1 min-w-[150px]">
-                        <Badge variant="outline" className={`mb-1 text-${item.color}-500 border-${item.color}-500/20 bg-${item.color}-500/5`}>
-                          {item.type}
-                        </Badge>
-                        <h4 className="font-bold text-sm">{item.title || item.name}</h4>
-                        <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{item.description}</p>
-                        <Link href={item.type === 'event' ? `/events/${item.id}` : '#'}>
-                          <Button size="sm" className="w-full mt-3 h-8 text-xs font-medium">View Details</Button>
-                        </Link>
-                      </div>
-                    </Popup>
-                  </Marker>
-                );
-              })}
-            </MapContainer>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">Followers</p>
+                    <p className="text-xl font-black tabular-nums">{city.memberCount}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="group flex items-center justify-between p-4 rounded-2xl bg-card border shadow-sm transition-all hover:shadow-md hover:border-primary/20">
+                <div className="flex items-center gap-4">
+                  <div className="p-2.5 rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
+                    <MapPin className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">Region</p>
+                    <p className="text-sm font-black truncate">{city.country}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        ) : (
-          <div className="h-[500px] flex flex-col items-center justify-center bg-muted/10 rounded-xl border border-dashed">
-            <MapPin className="h-10 w-10 text-muted-foreground/30 mb-2" />
-            <p className="text-sm text-muted-foreground">Coordinates not set for this city</p>
-          </div>
-        )}
-      </div>
+        </div>
 
-      {/* Right Column: About & Tips/Quick List */}
-      <div className="lg:col-span-3 space-y-6">
-        <div className="space-y-4">
-          <h3 className="font-semibold text-lg">About</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {city.description || `Welcome to the ${city.name} tango community! Explore milongas, find practitioners, and stay updated with the local scene.`}
-          </p>
-          
-          <div className="space-y-3 pt-4 border-t">
-            <h4 className="text-sm font-semibold">Popular Tips</h4>
-            {tips.slice(0, 3).length > 0 ? (
-              <div className="space-y-2">
-                {tips.slice(0, 3).map((tip: any) => (
-                  <div key={tip.id} className="p-2 rounded-md bg-muted/20 border border-border/50">
-                    <h5 className="text-xs font-bold truncate">{tip.title}</h5>
-                    <p className="text-[10px] text-muted-foreground line-clamp-1">{tip.description}</p>
+        {/* Center: Interactive Geo-Hub */}
+        <div className="lg:col-span-6 relative">
+          {lat && lng ? (
+            <div className="rounded-[2.5rem] overflow-hidden border-8 border-card bg-card h-[550px] shadow-2xl relative z-0 group">
+              <MapContainer
+                center={[lat, lng]}
+                zoom={13}
+                style={{ height: '100%', width: '100%' }}
+                className="z-0"
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                
+                <Marker position={[lat, lng]}>
+                  <Popup className="mb-md-popup">
+                    <div className="p-2 text-center">
+                      <h3 className="font-black text-lg leading-none mb-1">{city.name}</h3>
+                      <p className="text-xs font-bold text-primary uppercase tracking-widest">{city.country}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+
+                {mapItems.map((item, idx) => {
+                  const iLat = item.latitude ? parseFloat(item.latitude) : null;
+                  const iLng = item.longitude ? parseFloat(item.longitude) : null;
+                  if (!iLat || !iLng) return null;
+
+                  return (
+                    <Marker 
+                      key={`${item.type}-${item.id}-${idx}`} 
+                      position={[iLat, iLng]}
+                    >
+                      <Popup className="mb-md-popup">
+                        <div className="p-2 min-w-[220px] space-y-3">
+                          <Badge variant="outline" className={`font-black text-[9px] uppercase tracking-tighter border-none bg-${item.color}-500/10 text-${item.color}-600`}>
+                            {item.type}
+                          </Badge>
+                          <h4 className="font-black text-base leading-tight tracking-tight">{item.title || item.name}</h4>
+                          {item.description && (
+                            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed font-medium">{item.description}</p>
+                          )}
+                          <div className="pt-3 border-t">
+                            <Link href={item.type === 'event' ? `/events/${item.id}` : '#'}>
+                              <Button size="sm" className="w-full h-10 rounded-xl font-black text-[10px] tracking-widest uppercase hover-elevate">VIEW DESTINATION</Button>
+                            </Link>
+                          </div>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                })}
+              </MapContainer>
+              <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <Badge className="bg-background/90 backdrop-blur-md text-foreground border-none px-4 py-2 rounded-full shadow-lg font-black text-[10px] tracking-widest uppercase">
+                  {mapItems.length} POINTS OF INTEREST
+                </Badge>
+              </div>
+            </div>
+          ) : (
+            <div className="h-[550px] flex flex-col items-center justify-center bg-muted/10 rounded-[2.5rem] border-4 border-dashed border-muted transition-colors hover:border-primary/20">
+              <div className="p-6 rounded-full bg-muted/20 mb-4">
+                <MapPin className="h-10 w-10 text-muted-foreground/30" />
+              </div>
+              <p className="font-black text-muted-foreground uppercase tracking-widest text-sm">Coordinates not verified</p>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Narrative & Curation */}
+        <div className="lg:col-span-3 space-y-8">
+          <div className="space-y-4">
+            <h3 className="font-black text-xl tracking-tight">Community Voice</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
+              "{city.description || `The ${city.name} community is a vibrant hub for tango enthusiasts, offering world-class milongas and a welcoming atmosphere for travelers.`}"
+            </p>
+          </div>
+
+          <div className="bg-amber-500/5 border border-amber-500/10 rounded-3xl p-6 space-y-6 shadow-sm">
+            <div className="flex items-center gap-3 text-amber-600">
+              <div className="p-2 rounded-xl bg-amber-500/10">
+                <Star className="h-5 w-5 fill-current" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Curated Tips</span>
+            </div>
+            {tips.length > 0 ? (
+              <div className="space-y-4">
+                {tips.slice(0, 2).map((tip: any) => (
+                  <div key={tip.id} className="group space-y-1.5 cursor-default">
+                    <h5 className="text-sm font-black transition-colors group-hover:text-amber-600">{tip.title}</h5>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed font-medium line-clamp-2">{tip.description}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground italic">No tips shared yet</p>
+              <div className="py-4 text-center">
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-50">Awaiting your insights</p>
+              </div>
             )}
             <Button 
-              variant="ghost" 
-              size="sm" 
-              className="w-full text-xs text-primary hover:bg-primary/5"
+              variant="link" 
+              className="p-0 h-auto text-[10px] font-black text-amber-600 hover:text-amber-700 tracking-widest uppercase"
               onClick={() => {
                 const tipsTab = document.querySelector('[data-testid="tab-tips"]') as HTMLButtonElement;
                 if (tipsTab) tipsTab.click();
               }}
             >
-              View All Tips <ChevronRight className="h-3 w-3 ml-1" />
+              EXPAND KNOWLEDGE BASE &rarr;
             </Button>
           </div>
-        </div>
 
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 space-y-3 text-center">
-            <Star className="h-6 w-6 text-amber-500 mx-auto" />
-            <div className="space-y-1">
-              <h4 className="text-sm font-bold">Become a City Guide</h4>
-              <p className="text-[11px] text-muted-foreground">Share your local knowledge with the community</p>
+          <div className="relative overflow-hidden bg-primary rounded-3xl p-6 text-center shadow-2xl shadow-primary/20 group">
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+            <div className="relative z-10 space-y-5">
+              <div className="bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/10 w-fit mx-auto transition-transform group-hover:scale-110">
+                <Star className="h-6 w-6 text-white fill-current" />
+              </div>
+              <div className="space-y-2">
+                <h4 className="text-lg font-black tracking-tight text-white leading-tight">Elite City Guide</h4>
+                <p className="text-[11px] text-white/80 font-medium leading-relaxed px-4">Monetize your expertise and lead the local community.</p>
+              </div>
+              <Button size="sm" className="w-full h-11 rounded-xl font-black text-xs uppercase tracking-widest bg-white text-primary hover:bg-white/90 border-none shadow-xl shadow-black/10">APPLY FOR LEADERSHIP</Button>
             </div>
-            <Button size="sm" className="w-full text-xs">Apply Now</Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* MB.MD Content Grids: Dynamic Reveal */}
+      <div className="pt-12 border-t space-y-16">
+        {(activeLayer === 'all' || activeLayer === 'events') && events.length > 0 && (
+          <section className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
+            <div className="flex items-end justify-between">
+              <div className="space-y-2">
+                <Badge variant="outline" className="text-rose-500 border-rose-500/20 bg-rose-500/5 font-black text-[10px] tracking-[0.2em] uppercase">Calendar</Badge>
+                <h3 className="text-3xl font-black tracking-tighter">Premier Milongas</h3>
+              </div>
+              <Button variant="ghost" size="sm" className="h-10 rounded-xl px-6 font-black text-xs tracking-widest uppercase text-primary hover:bg-primary/5" onClick={() => {
+                const eventsTab = document.querySelector('[data-testid="tab-events"]') as HTMLButtonElement;
+                if (eventsTab) eventsTab.click();
+              }}>FULL SCHEDULE</Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {events.slice(0, 4).map(event => (
+                <Card key={event.id} className="hover-elevate border shadow-sm bg-card transition-all hover:shadow-xl hover:border-rose-500/20 overflow-hidden group">
+                  <div className="h-2 w-full bg-rose-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-6 space-y-4">
+                    <h4 className="font-black text-lg tracking-tight line-clamp-1 group-hover:text-rose-500 transition-colors">{event.title}</h4>
+                    <div className="flex items-center gap-2.5 text-xs text-muted-foreground font-bold">
+                      <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-500">
+                        <Clock className="h-3.5 w-3.5" />
+                      </div>
+                      {safeDateFormat(getEventDate(event), 'EEEE, MMM d @ h:mm a')}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {(activeLayer === 'all' || activeLayer === 'housing') && housing.length > 0 && (
+          <section className="space-y-8 animate-in slide-in-from-bottom-4 duration-700 delay-150">
+            <div className="flex items-end justify-between">
+              <div className="space-y-2">
+                <Badge variant="outline" className="text-emerald-500 border-emerald-500/20 bg-emerald-500/5 font-black text-[10px] tracking-[0.2em] uppercase">Accommodations</Badge>
+                <h3 className="text-3xl font-black tracking-tighter">Dancer's Quarters</h3>
+              </div>
+              <Button variant="ghost" size="sm" className="h-10 rounded-xl px-6 font-black text-xs tracking-widest uppercase text-primary hover:bg-primary/5" onClick={() => {
+                const housingTab = document.querySelector('[data-testid="tab-housing"]') as HTMLButtonElement;
+                if (housingTab) housingTab.click();
+              }}>EXPLORE ALL</Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {housing.slice(0, 4).map(listing => (
+                <Card key={listing.id} className="hover-elevate border shadow-sm bg-card transition-all hover:shadow-xl hover:border-emerald-500/20 overflow-hidden group">
+                  <div className="h-2 w-full bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-6 space-y-4">
+                    <h4 className="font-black text-lg tracking-tight line-clamp-1 group-hover:text-emerald-500 transition-colors">{listing.title}</h4>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl font-black text-emerald-600 tabular-nums">${listing.pricePerNight}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">/ Night</span>
+                      </div>
+                      <Badge variant="secondary" className="rounded-lg font-black text-[9px] uppercase tracking-widest">{listing.neighborhood || 'Local'}</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {(activeLayer === 'all' || activeLayer === 'tips') && tips.length > 0 && (
+          <section className="space-y-8 animate-in slide-in-from-bottom-4 duration-700 delay-300">
+            <div className="flex items-end justify-between">
+              <div className="space-y-2">
+                <Badge variant="outline" className="text-amber-500 border-amber-500/20 bg-amber-500/5 font-black text-[10px] tracking-[0.2em] uppercase">Collective Intelligence</Badge>
+                <h3 className="text-3xl font-black tracking-tighter">Milonga Etiquette & Tips</h3>
+              </div>
+              <Button variant="ghost" size="sm" className="h-10 rounded-xl px-6 font-black text-xs tracking-widest uppercase text-primary hover:bg-primary/5" onClick={() => {
+                const tipsTab = document.querySelector('[data-testid="tab-tips"]') as HTMLButtonElement;
+                if (tipsTab) tipsTab.click();
+              }}>KNOWLEDGE BASE</Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {tips.slice(0, 4).map(tip => (
+                <Card key={tip.id} className="hover-elevate border shadow-sm bg-card transition-all hover:shadow-xl hover:border-amber-500/20 overflow-hidden group">
+                  <div className="h-2 w-full bg-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-6 space-y-3">
+                    <h4 className="font-black text-lg tracking-tight line-clamp-1 group-hover:text-amber-500 transition-colors">{tip.title}</h4>
+                    <p className="text-xs text-muted-foreground font-medium leading-relaxed line-clamp-3">{tip.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
@@ -813,60 +934,170 @@ function CityHousingTab({ city }: { city: CityData }) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-12 w-12 animate-spin text-primary opacity-20" />
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div className="lg:col-span-3 space-y-4">
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 space-y-3">
-            <h3 className="font-bold text-sm">Housing in {city.name}</h3>
-            <p className="text-xs text-muted-foreground">Find a place to stay with fellow tango dancers.</p>
-            <Button className="w-full text-xs" size="sm">List Your Place</Button>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="lg:col-span-3 space-y-6">
+        <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-[2rem] p-6 space-y-6 shadow-sm">
+          <div className="flex items-center gap-3 text-emerald-600">
+            <div className="p-2.5 rounded-xl bg-emerald-500/10">
+              <Home className="h-6 w-6" />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">City Housing</span>
+          </div>
+          <div className="space-y-2">
+            <h3 className="font-black text-xl tracking-tight leading-tight">Stay in {city.name}</h3>
+            <p className="text-xs text-muted-foreground font-medium leading-relaxed">Exclusive accommodations curated for the global tango community.</p>
+          </div>
+          <Button className="w-full h-11 rounded-xl font-black text-xs uppercase tracking-widest bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-lg shadow-emerald-500/20 hover-elevate active-elevate-2">LIST YOUR SPACE</Button>
+        </div>
+
+        <Card className="bg-card border shadow-sm rounded-3xl overflow-hidden">
+          <CardContent className="p-6 space-y-4">
+            <h4 className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">Community Insight</h4>
+            <p className="text-xs font-medium leading-relaxed">"Staying with local dancers is the best way to discover hidden milongas and improve your dance."</p>
+            <div className="flex items-center gap-2 pt-2">
+              <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-black">MT</div>
+              <span className="text-[10px] font-black uppercase tracking-widest">Mundo Tango Staff</span>
+            </div>
           </CardContent>
         </Card>
       </div>
+
       <div className="lg:col-span-9">
         {listings.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <Home className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="font-semibold mb-2">No listings yet</h3>
-              <p className="text-muted-foreground">Check back later or list your own space!</p>
-            </CardContent>
-          </Card>
+          <div className="flex flex-col items-center justify-center py-24 bg-muted/5 rounded-[3rem] border-4 border-dashed border-muted/20">
+            <div className="p-8 rounded-full bg-muted/10 mb-6">
+              <Home className="h-16 w-16 text-muted-foreground/20" />
+            </div>
+            <h3 className="text-2xl font-black tracking-tighter mb-2">No Listings Found</h3>
+            <p className="text-muted-foreground font-medium mb-8">Be the first to offer housing in this city.</p>
+            <Button variant="outline" className="rounded-xl h-11 px-8 font-black text-xs uppercase tracking-widest hover-elevate">CREATE FIRST LISTING</Button>
+          </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-2">
             {listings.map((listing: any) => (
-              <Card key={listing.id} className="overflow-hidden hover-elevate group" data-testid={`card-housing-${listing.id}`}>
-                <div className="aspect-video relative overflow-hidden">
+              <Card key={listing.id} className="overflow-hidden hover-elevate group rounded-[2.5rem] border-none shadow-md bg-card transition-all hover:shadow-2xl" data-testid={`card-housing-${listing.id}`}>
+                <div className="aspect-[16/10] relative overflow-hidden">
                   <img 
                     src={listing.imageUrl || "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800"} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     alt={listing.title}
                   />
-                  <div className="absolute top-2 right-2">
-                    <Badge className="bg-background/90 text-foreground backdrop-blur-sm">
-                      ${listing.pricePerNight || listing.price}/night
+                  <div className="absolute top-4 right-4">
+                    <Badge className="bg-background/90 text-foreground backdrop-blur-md px-4 py-2 rounded-full font-black text-sm shadow-xl border-none">
+                      ${listing.pricePerNight || listing.price} <span className="text-[10px] opacity-60 ml-1">/ NIGHT</span>
+                    </Badge>
+                  </div>
+                  <div className="absolute bottom-4 left-4">
+                    <Badge variant="secondary" className="bg-emerald-500/90 text-white backdrop-blur-md px-3 py-1 rounded-lg font-black text-[10px] tracking-widest uppercase border-none">
+                      VERIFIED HOST
                     </Badge>
                   </div>
                 </div>
-                <CardContent className="p-4">
-                  <h4 className="font-bold line-clamp-1">{listing.title}</h4>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{listing.description}</p>
-                  <div className="flex items-center gap-4 mt-4 pt-4 border-t">
-                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                      <Users className="h-3 w-3" />
-                      {listing.maxGuests || listing.capacity} guests
+                <CardContent className="p-8 space-y-4">
+                  <div className="space-y-1.5">
+                    <h4 className="text-xl font-black tracking-tight leading-none group-hover:text-emerald-600 transition-colors">{listing.title}</h4>
+                    <p className="text-xs text-muted-foreground font-medium line-clamp-2 leading-relaxed">{listing.description}</p>
+                  </div>
+                  <div className="flex items-center gap-6 pt-6 border-t">
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <Users className="h-3.5 w-3.5 text-emerald-500" />
+                      {listing.maxGuests || listing.capacity} Guests
                     </div>
-                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                      <MapPin className="h-3 w-3" />
-                      {listing.neighborhood || 'Local'}
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <MapPin className="h-3.5 w-3.5 text-emerald-500" />
+                      {listing.neighborhood || 'Local District'}
                     </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CityVisitorsTab({ city }: { city: CityData }) {
+  const { data: visitors = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/cities", city.id, "visitors"],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/${city.id}/visitors`);
+      if (!res.ok) return [];
+      return res.json();
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-12 w-12 animate-spin text-primary opacity-20" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="lg:col-span-3 space-y-6">
+        <div className="bg-primary/5 border border-primary/10 rounded-[2rem] p-6 space-y-6 shadow-sm">
+          <div className="flex items-center gap-3 text-primary">
+            <div className="p-2.5 rounded-xl bg-primary/10">
+              <Plane className="h-6 w-6" />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Travel Registry</span>
+          </div>
+          <div className="space-y-2">
+            <h3 className="font-black text-xl tracking-tight leading-none">Visiting {city.name}?</h3>
+            <p className="text-xs text-muted-foreground font-medium leading-relaxed">Coordinate meetups and find dance partners before you arrive.</p>
+          </div>
+          <Button className="w-full h-11 rounded-xl font-black text-xs uppercase tracking-widest bg-primary hover:bg-primary/90 text-white border-none shadow-lg shadow-primary/20 hover-elevate active-elevate-2">ADD MY TRIP</Button>
+        </div>
+      </div>
+
+      <div className="lg:col-span-9">
+        {visitors.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 bg-muted/5 rounded-[3rem] border-4 border-dashed border-muted/20">
+            <div className="p-8 rounded-full bg-muted/10 mb-6">
+              <Plane className="h-16 w-16 text-muted-foreground/20" />
+            </div>
+            <h3 className="text-2xl font-black tracking-tighter mb-2">Registry Empty</h3>
+            <p className="text-muted-foreground font-medium mb-8">Be the first to announce your visit to {city.name}.</p>
+            <Button variant="outline" className="rounded-xl h-11 px-8 font-black text-xs uppercase tracking-widest hover-elevate">REGISTER TRAVEL</Button>
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {visitors.map((visitor: any) => (
+              <Card key={visitor.id} className="hover-elevate rounded-[2rem] border shadow-sm bg-card transition-all hover:shadow-xl group overflow-hidden" data-testid={`card-visitor-${visitor.id}`}>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <Avatar className="h-14 w-14 rounded-2xl border-2 border-background shadow-lg group-hover:scale-105 transition-transform">
+                      <AvatarImage src={visitor.user?.profileImage || visitor.profileImage} className="object-cover" />
+                      <AvatarFallback className="bg-primary/10 text-primary font-black">{(visitor.user?.name || visitor.name || 'U').charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <h4 className="font-black text-base tracking-tight truncate group-hover:text-primary transition-colors">{visitor.user?.name || visitor.name || visitor.user?.username}</h4>
+                      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                        <Clock className="h-3 w-3" />
+                        {visitor.startDate ? safeDateFormat(new Date(visitor.startDate), 'MMM d') : visitor.arrivalDate} 
+                        {visitor.endDate ? ` — ${safeDateFormat(new Date(visitor.endDate), 'MMM d')}` : ''}
+                      </div>
+                    </div>
+                  </div>
+                  {visitor.notes && (
+                    <p className="mt-4 text-[11px] text-muted-foreground leading-relaxed font-medium line-clamp-2 bg-muted/30 p-3 rounded-xl italic">
+                      "{visitor.notes}"
+                    </p>
+                  )}
+                  <div className="mt-6 flex gap-2">
+                    <Button size="sm" variant="outline" className="flex-1 rounded-xl h-9 font-black text-[10px] tracking-widest uppercase hover-elevate active-elevate-2">PROFILE</Button>
+                    <Button size="sm" className="flex-1 rounded-xl h-9 font-black text-[10px] tracking-widest uppercase hover-elevate active-elevate-2">MESSAGE</Button>
                   </div>
                 </CardContent>
               </Card>
