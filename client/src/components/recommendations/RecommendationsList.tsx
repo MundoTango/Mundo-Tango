@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, MapPin, Users, DollarSign, ExternalLink } from 'lucide-react';
+import { Loader2, MapPin, Users, DollarSign, ExternalLink, UtensilsCrossed, Coffee, Building2, Theater, Target, Wine, GraduationCap, Home, ShoppingBag, Wrench, type LucideIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -29,18 +29,23 @@ interface RecommendationsListProps {
   compact?: boolean;
 }
 
-const CATEGORY_ICONS: Record<string, string> = {
-  restaurant: '🍽️',
-  cafe: '☕',
-  hotel: '🏨',
-  venue: '🎭',
-  activity: '🎯',
-  bar: '🍷',
-  teacher: '👨‍🏫',
-  accommodation: '🏠',
-  shop: '🛍️',
-  service: '🔧',
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  restaurant: UtensilsCrossed,
+  cafe: Coffee,
+  hotel: Building2,
+  venue: Theater,
+  activity: Target,
+  bar: Wine,
+  teacher: GraduationCap,
+  accommodation: Home,
+  shop: ShoppingBag,
+  service: Wrench,
 };
+
+function CategoryIcon({ category, className }: { category: string; className?: string }) {
+  const Icon = CATEGORY_ICONS[category] || MapPin;
+  return <Icon className={className || "w-4 h-4"} />;
+}
 
 export function RecommendationsList({ 
   latitude,
@@ -117,7 +122,7 @@ export function RecommendationsList({
             data-testid={`recommendation-${place.id}`}
           >
             <div className="flex items-center gap-2">
-              <span className="text-base">{CATEGORY_ICONS[place.category] || '📍'}</span>
+              <CategoryIcon category={place.category} className="w-4 h-4 text-primary" />
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">{place.placeName}</p>
                 <p className="text-xs text-muted-foreground truncate">{place.address || place.category}</p>
@@ -146,9 +151,9 @@ export function RecommendationsList({
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">{CATEGORY_ICONS[place.category] || '📍'}</span>
+                  <CategoryIcon category={place.category} className="w-5 h-5 text-primary" />
                   <h3 className="font-semibold text-sm">{place.placeName}</h3>
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs capitalize">
                     {place.category}
                   </Badge>
                 </div>

@@ -148,14 +148,72 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
     );
   }
 
+  const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  
+  const toggleWeekday = (day: number) => {
+    setFilters(f => ({
+      ...f,
+      weekdays: f.weekdays.includes(day)
+        ? f.weekdays.filter(d => d !== day)
+        : [...f.weekdays, day]
+    }));
+  };
+
+  const clearWeekdays = () => {
+    setFilters(f => ({ ...f, weekdays: [] }));
+  };
+
   return (
     <div className="space-y-4">
-      {/* Simple inline filters */}
+      {/* Plan my trip CTA */}
+      <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+        <CardContent className="p-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Plane className="h-5 w-5 text-primary" />
+              <div>
+                <h4 className="font-semibold">Planning a trip to {cityName}?</h4>
+                <p className="text-sm text-muted-foreground">Find housing and events for your visit</p>
+              </div>
+            </div>
+            <Button variant="default" size="sm" data-testid="button-plan-trip">
+              <Plane className="h-4 w-4 mr-2" />
+              Plan My Trip
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Weekday filter tabs - per CITY_PAGE.md spec */}
+      <div className="flex flex-wrap items-center gap-2">
+        {weekdayNames.map((name, idx) => (
+          <Badge
+            key={idx}
+            variant={filters.weekdays.includes(idx) ? 'default' : 'outline'}
+            className="cursor-pointer"
+            onClick={() => toggleWeekday(idx)}
+            data-testid={`filter-weekday-${name.toLowerCase()}`}
+          >
+            {name}
+          </Badge>
+        ))}
+        <Badge
+          variant={filters.weekdays.length === 0 ? 'default' : 'outline'}
+          className="cursor-pointer"
+          onClick={clearWeekdays}
+          data-testid="filter-weekday-all"
+        >
+          All Days
+        </Badge>
+      </div>
+
+      {/* Date range filters */}
       <div className="flex flex-wrap items-center gap-2">
         <Badge 
           variant={filters.dateRange === 'upcoming' ? 'default' : 'outline'}
           className="cursor-pointer"
           onClick={() => setFilters(f => ({ ...f, dateRange: 'upcoming' }))}
+          data-testid="filter-date-upcoming"
         >
           Upcoming
         </Badge>
@@ -163,6 +221,7 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
           variant={filters.dateRange === 'past' ? 'default' : 'outline'}
           className="cursor-pointer"
           onClick={() => setFilters(f => ({ ...f, dateRange: 'past' }))}
+          data-testid="filter-date-past"
         >
           Past
         </Badge>
@@ -170,11 +229,12 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
           variant={filters.dateRange === 'all' ? 'default' : 'outline'}
           className="cursor-pointer"
           onClick={() => setFilters(f => ({ ...f, dateRange: 'all' }))}
+          data-testid="filter-date-all"
         >
           All
         </Badge>
         <span className="text-sm text-muted-foreground ml-2">
-          {filteredEvents.length} events
+          {filteredEvents.length} {filters.weekdays.length > 0 ? `${weekdayNames[filters.weekdays[0]]} ` : ''}events
         </span>
       </div>
 
@@ -254,6 +314,8 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
 }
 
 function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; cityName: string; legacyGroupId?: number }) {
+  const [roleFilter, setRoleFilter] = useState<string>('all');
+  
   const { data: members = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/cities", cityId, "members"],
     queryFn: async () => {
@@ -275,6 +337,20 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
   });
 
   const allMembers = [...members, ...legacyMembers];
+  
+  const roleFilters = ['all', 'organizer', 'teacher', 'dj', 'musician'];
+  
+  const keyPeople = useMemo(() => {
+    return allMembers.filter((m: any) => 
+      m.role === 'organizer' || m.role === 'teacher' || m.role === 'admin' ||
+      m.user?.isPro || m.isPro
+    ).slice(0, 6);
+  }, [allMembers]);
+  
+  const filteredMembers = useMemo(() => {
+    if (roleFilter === 'all') return allMembers;
+    return allMembers.filter((m: any) => m.role === roleFilter || m.user?.role === roleFilter);
+  }, [allMembers, roleFilter]);
 
   if (isLoading) {
     return (
@@ -297,101 +373,166 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {allMembers.map((member: any) => (
-        <Card key={member.id || member.userId} className="hover-elevate">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <Avatar>
-                <AvatarImage src={member.profileImage || member.user?.profileImage} />
-                <AvatarFallback>
-                  {(member.name || member.user?.name || 'U').charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <Link href={`/profile/${member.username || member.user?.username}`}>
-                  <h4 className="font-medium hover:text-primary transition-colors truncate">
-                    {member.name || member.user?.name || 'Member'}
-                  </h4>
+    <div className="space-y-6">
+      {/* Key People Strip - per CITY_PAGE.md spec */}
+      {keyPeople.length > 0 && (
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Star className="h-4 w-4 text-amber-500" />
+              Key People in {cityName}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 overflow-x-auto pb-2">
+              {keyPeople.map((member: any) => (
+                <Link key={member.id || member.userId} href={`/profile/${member.username || member.user?.username}`}>
+                  <div className="flex flex-col items-center gap-1 min-w-[80px]">
+                    <div className="relative">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={member.profileImage || member.user?.profileImage} />
+                        <AvatarFallback>
+                          {(member.name || member.user?.name || 'U').charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      {(member.isPro || member.user?.isPro) && (
+                        <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px]">
+                          PRO
+                        </Badge>
+                      )}
+                    </div>
+                    <span className="text-xs text-center truncate w-full">
+                      {member.name || member.user?.name || 'Member'}
+                    </span>
+                  </div>
                 </Link>
-                {member.role && member.role !== 'member' && (
-                  <Badge variant="secondary" className="text-xs mt-1">
-                    {member.role}
-                  </Badge>
-                )}
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
-      ))}
+      )}
+      
+      {/* Role filter chips - per CITY_PAGE.md spec */}
+      <div className="flex flex-wrap items-center gap-2">
+        {roleFilters.map((role) => (
+          <Badge
+            key={role}
+            variant={roleFilter === role ? 'default' : 'outline'}
+            className="cursor-pointer capitalize"
+            onClick={() => setRoleFilter(role)}
+            data-testid={`filter-role-${role}`}
+          >
+            {role === 'all' ? 'All Members' : role}
+          </Badge>
+        ))}
+        <span className="text-sm text-muted-foreground ml-2">
+          {filteredMembers.length} followers
+        </span>
+      </div>
+      
+      {/* Members grid with PRO ribbons */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {filteredMembers.map((member: any) => (
+          <Card key={member.id || member.userId} className="hover-elevate relative overflow-visible">
+            {/* PRO ribbon - per CITY_PAGE.md spec */}
+            {(member.isPro || member.user?.isPro) && (
+              <div className="absolute -top-2 -right-2 z-10">
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs shadow-lg">
+                  PRO
+                </Badge>
+              </div>
+            )}
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <Avatar>
+                  <AvatarImage src={member.profileImage || member.user?.profileImage} />
+                  <AvatarFallback>
+                    {(member.name || member.user?.name || 'U').charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <Link href={`/profile/${member.username || member.user?.username}`}>
+                    <h4 className="font-medium hover:text-primary transition-colors truncate">
+                      {member.name || member.user?.name || 'Member'}
+                    </h4>
+                  </Link>
+                  {member.role && member.role !== 'member' && (
+                    <Badge variant="secondary" className="text-xs mt-1 capitalize">
+                      {member.role}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
 
 function CityOverviewTab({ city }: { city: CityData }) {
+  const [activeLayer, setActiveLayer] = useState<'all' | 'events' | 'housing' | 'tips'>('all');
   const lat = city.latitude ? parseFloat(city.latitude) : null;
   const lng = city.longitude ? parseFloat(city.longitude) : null;
+  
+  const totalItems = (city.eventCount || 0) + (city.housingCount || 0) + (city.recommendationCount || 0);
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Compass className="h-5 w-5" />
-            About {city.name}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            {city.description || `Welcome to the ${city.name} tango community! Connect with local dancers, find milongas, and explore the tango scene.`}
-          </p>
-          {city.longDescription && (
-            <p className="mt-4 text-muted-foreground">{city.longDescription}</p>
-          )}
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
+      {/* Layer Toggle Cards - per CITY_PAGE.md spec Section 7.1 */}
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
+        <Card 
+          className={`cursor-pointer transition-all ${activeLayer === 'all' ? 'ring-2 ring-primary' : 'hover-elevate'}`}
+          onClick={() => setActiveLayer('all')}
+          data-testid="layer-toggle-all"
+        >
           <CardContent className="pt-4 text-center">
-            <Calendar className="w-8 h-8 mx-auto text-blue-500 mb-2" />
-            <div className="text-2xl font-bold">{city.eventCount}</div>
-            <div className="text-sm text-muted-foreground">Events</div>
+            <Compass className="w-6 h-6 mx-auto text-primary mb-1" />
+            <div className="text-xl font-bold">{totalItems}</div>
+            <div className="text-xs text-muted-foreground">All Items</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card 
+          className={`cursor-pointer transition-all ${activeLayer === 'events' ? 'ring-2 ring-red-500' : 'hover-elevate'}`}
+          onClick={() => setActiveLayer('events')}
+          data-testid="layer-toggle-events"
+        >
           <CardContent className="pt-4 text-center">
-            <Users className="w-8 h-8 mx-auto text-green-500 mb-2" />
-            <div className="text-2xl font-bold">{city.memberCount}</div>
-            <div className="text-sm text-muted-foreground">Members</div>
+            <Calendar className="w-6 h-6 mx-auto text-red-500 mb-1" />
+            <div className="text-xl font-bold">{city.eventCount || 0}</div>
+            <div className="text-xs text-muted-foreground">Events</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card 
+          className={`cursor-pointer transition-all ${activeLayer === 'housing' ? 'ring-2 ring-green-500' : 'hover-elevate'}`}
+          onClick={() => setActiveLayer('housing')}
+          data-testid="layer-toggle-housing"
+        >
           <CardContent className="pt-4 text-center">
-            <Home className="w-8 h-8 mx-auto text-amber-500 mb-2" />
-            <div className="text-2xl font-bold">{city.housingCount}</div>
-            <div className="text-sm text-muted-foreground">Housing</div>
+            <Home className="w-6 h-6 mx-auto text-green-500 mb-1" />
+            <div className="text-xl font-bold">{city.housingCount || 0}</div>
+            <div className="text-xs text-muted-foreground">Housing</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card 
+          className={`cursor-pointer transition-all ${activeLayer === 'tips' ? 'ring-2 ring-amber-500' : 'hover-elevate'}`}
+          onClick={() => setActiveLayer('tips')}
+          data-testid="layer-toggle-tips"
+        >
           <CardContent className="pt-4 text-center">
-            <Star className="w-8 h-8 mx-auto text-purple-500 mb-2" />
-            <div className="text-2xl font-bold">{city.recommendationCount}</div>
-            <div className="text-sm text-muted-foreground">Recommendations</div>
+            <Lightbulb className="w-6 h-6 mx-auto text-amber-500 mb-1" />
+            <div className="text-xl font-bold">{city.recommendationCount || 0}</div>
+            <div className="text-xs text-muted-foreground">Tips</div>
           </CardContent>
         </Card>
       </div>
 
+      {/* Compact Map - per CITY_PAGE.md spec */}
       {lat && lng && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapIcon className="h-5 w-5" />
-              Location
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px] rounded-lg overflow-hidden">
+          <CardContent className="p-0">
+            <div className="h-[200px] rounded-lg overflow-hidden">
               <MapContainer
                 center={[lat, lng]}
                 zoom={12}
@@ -409,6 +550,46 @@ function CityOverviewTab({ city }: { city: CityData }) {
           </CardContent>
         </Card>
       )}
+
+      {/* About Section */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Compass className="h-4 w-4" />
+            About {city.name}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            {city.description || `Welcome to the ${city.name} tango community! Connect with local dancers, find milongas, and explore the tango scene.`}
+          </p>
+          {city.longDescription && (
+            <p className="mt-3 text-sm text-muted-foreground">{city.longDescription}</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Quick Stats */}
+      <div className="grid gap-3 grid-cols-2">
+        <Card>
+          <CardContent className="pt-4 flex items-center gap-3">
+            <Users className="w-8 h-8 text-primary" />
+            <div>
+              <div className="text-2xl font-bold">{city.memberCount}</div>
+              <div className="text-xs text-muted-foreground">Followers</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 flex items-center gap-3">
+            <MapPin className="w-8 h-8 text-primary" />
+            <div>
+              <div className="text-sm font-bold">{city.country}</div>
+              <div className="text-xs text-muted-foreground">Location</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
@@ -773,19 +954,46 @@ export default function CityDetailsPage() {
             </TabsList>
 
             <TabsContent value="discussion" className="mt-0 space-y-4">
-              {/* City Post Creator - only show when city has legacyGroupId for posting infrastructure */}
+              {/* Sticky Composer - per CITY_PAGE.md spec */}
               {user && city.legacyGroupId && (
-                <PostCreator
-                  context={{ 
-                    type: 'city', 
-                    id: String(city.id), 
-                    name: city.name 
-                  }}
-                  onPostCreated={() => {
-                    queryClient.invalidateQueries({ queryKey: ["/api/groups", city.legacyGroupId, "posts"] });
-                  }}
-                />
+                <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-4 border-b border-border/50">
+                  <PostCreator
+                    context={{ 
+                      type: 'city', 
+                      id: String(city.id), 
+                      name: city.name 
+                    }}
+                    onPostCreated={() => {
+                      queryClient.invalidateQueries({ queryKey: ["/api/groups", city.legacyGroupId, "posts"] });
+                    }}
+                  />
+                </div>
               )}
+              
+              {/* Chip filters - per CITY_PAGE.md spec */}
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge 
+                  variant="default"
+                  className="cursor-pointer"
+                  data-testid="filter-posts-all"
+                >
+                  All
+                </Badge>
+                <Badge 
+                  variant="outline"
+                  className="cursor-pointer"
+                  data-testid="filter-posts-recent"
+                >
+                  Recent
+                </Badge>
+                <Badge 
+                  variant="outline"
+                  className="cursor-pointer"
+                  data-testid="filter-posts-popular"
+                >
+                  Popular
+                </Badge>
+              </div>
               
               {city.legacyGroupId ? (
                 <GroupPostFeed groupId={city.legacyGroupId} groupName={city.name} />
