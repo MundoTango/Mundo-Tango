@@ -64,9 +64,9 @@ export function AirbnbListingCard({
   
   const images = listing.images?.length 
     ? listing.images 
-    : listing.photos?.length 
-      ? listing.photos 
-      : [listing.coverPhotoUrl || "/placeholder-house.jpg"];
+    : (listing.photos?.length 
+      ? listing.photos.map((p: any) => typeof p === 'string' ? p : p.url)
+      : [listing.coverPhotoUrl || "/placeholder-house.jpg"]);
   
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();

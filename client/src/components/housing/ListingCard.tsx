@@ -92,7 +92,7 @@ export function ListingCard({ listing: rawListing, onClick, showCloseness = true
 
         {listing.amenities && listing.amenities.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {listing.amenities.slice(0, 3).map((amenity, index) => (
+            {listing.amenities.slice(0, 3).map((amenity: string, index: number) => (
               <Badge key={index} variant="secondary" className="text-xs">
                 {amenity}
               </Badge>
