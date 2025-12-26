@@ -162,10 +162,8 @@ function SupportPageContent() {
                     {t('pages:support.story.title', 'Built by a Dancer, For Dancers')}
                   </motion.h2>
                   <motion.p variants={fadeInUp} className="text-muted-foreground">
-                    {t('pages:support.story.paragraph1', 'Scott started dancing tango in September 2007. Over {{years}} years, he\'s traveled to {{cities}} cities across {{countries}} countries for tango. He knows the frustrations: finding events in new cities, connecting with local dancers, and navigating unfamiliar tango communities.', {
-                      years: publicStats?.platformStats?.yearsOfDancing || 18,
-                      cities: publicStats?.platformStats?.cities || 79,
-                      countries: publicStats?.platformStats?.countries || 27
+                    {t('pages:support.story.paragraph1', 'Scott started dancing tango in September 2007. Over {{years}} years, just in the last 5 years alone he\'s traveled to 80+ cities across 30+ countries for tango. He knows the frustrations: finding events in new cities, connecting with local dancers, and navigating unfamiliar tango communities.', {
+                      years: publicStats?.platformStats?.yearsOfDancing || 18
                     })}
                   </motion.p>
                   <motion.p variants={fadeInUp} className="text-muted-foreground">
@@ -194,7 +192,7 @@ function SupportPageContent() {
                   </div>
                   <div className="bg-muted rounded-lg p-4 text-center">
                     <Globe className="h-6 w-6 mx-auto mb-2 text-primary" />
-                    <div className="text-2xl font-bold">{publicStats?.platformStats?.cities || 79}</div>
+                    <div className="text-2xl font-bold">80+</div>
                     <div className="text-sm text-muted-foreground">{t('pages:support.story.citiesVisited', 'Cities Visited')}</div>
                   </div>
                   <div className="bg-muted rounded-lg p-4 text-center">
