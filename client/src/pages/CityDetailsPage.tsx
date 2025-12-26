@@ -1345,6 +1345,10 @@ export default function CityDetailsPage() {
     );
   }
 
+  useEffect(() => {
+    // Debugging logic removed in production
+  }, [user, city, isUserResident, membership]);
+
   const coverImageUrl = getCityImageUrl(city.name, city.country);
 
   return (
@@ -1378,39 +1382,43 @@ export default function CityDetailsPage() {
                   </p>
                 </div>
                 <div className="flex gap-3">
-                  {membership?.isFollowing ? (
-                    <Button
-                      variant="outline"
-                      onClick={() => unfollowMutation.mutate()}
-                      disabled={unfollowMutation.isPending}
-                      className="gap-3 h-14 px-8 rounded-2xl bg-white/5 backdrop-blur-xl border-white/20 text-white font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all border-2"
-                      data-testid="button-unfollow-city"
-                    >
-                      {unfollowMutation.isPending ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      ) : membership?.isResident || isUserResident ? (
-                        <MapPinHouse className="h-5 w-5" />
-                      ) : (
-                        <Check className="h-5 w-5" />
-                      )}
-                      {membership?.isResident || isUserResident ? (membership?.isResident ? "Resident" : "Establish Residency") : "Follow Community"}
-                    </Button>
+                  {/* Hide follow/unfollow button entirely if user is a verified resident of this city */}
+                  {!(membership?.isResident || isUserResident) ? (
+                    membership?.isFollowing ? (
+                      <Button
+                        variant="outline"
+                        onClick={() => unfollowMutation.mutate()}
+                        disabled={unfollowMutation.isPending}
+                        className="gap-3 h-14 px-8 rounded-2xl bg-white/5 backdrop-blur-xl border-white/20 text-white font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all border-2"
+                        data-testid="button-unfollow-city"
+                      >
+                        {unfollowMutation.isPending ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <Check className="h-5 w-5" />
+                        )}
+                        Following Hub
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => followMutation.mutate()}
+                        disabled={followMutation.isPending}
+                        className="gap-3 h-14 px-8 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl shadow-primary/40 group hover:scale-105 transition-all"
+                        data-testid="button-follow-city"
+                      >
+                        {followMutation.isPending ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <Heart className="h-5 w-5 group-hover:fill-current" />
+                        )}
+                        Follow Community
+                      </Button>
+                    )
                   ) : (
-                    <Button
-                      onClick={() => followMutation.mutate()}
-                      disabled={followMutation.isPending}
-                      className="gap-3 h-14 px-8 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl shadow-primary/40 group hover:scale-105 transition-all"
-                      data-testid="button-follow-city"
-                    >
-                      {followMutation.isPending ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      ) : isUserResident ? (
-                        <MapPinHouse className="h-5 w-5" />
-                      ) : (
-                        <Heart className="h-5 w-5 group-hover:fill-current" />
-                      )}
-                      {membership?.isResident || isUserResident ? (membership?.isResident ? "Resident" : "Establish Residency") : "Follow Community"}
-                    </Button>
+                    <div className="flex items-center gap-3 h-14 px-8 rounded-2xl bg-primary/10 border-2 border-primary/20 text-primary font-black text-sm uppercase tracking-widest shadow-lg backdrop-blur-sm">
+                      <MapPinHouse className="h-5 w-5" />
+                      Home Community
+                    </div>
                   )}
                 </div>
               </div>

@@ -1032,6 +1032,7 @@ router.get("/:id/membership", async (req: Request, res: Response) => {
     // This prevents false positives like "Newark" matching "New York"
     const [city] = await db.select().from(cities).where(eq(cities.id, cityId)).limit(1);
     const [userRecord] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    
     const userCityRaw = userRecord?.city?.trim() || '';
     
     // Generate slug for comparison
@@ -1105,7 +1106,7 @@ router.get("/:id/membership", async (req: Request, res: Response) => {
     }
     
     // If membership exists but type is 'follower', but isResident is true, update it to 'resident'
-    if (membership.membershipType === 'follower' && isResident) {
+    if (membership && membership.membershipType === 'follower' && isResident) {
       try {
         const [updatedMembership] = await db
           .update(cityMembers)
