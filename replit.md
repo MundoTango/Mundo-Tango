@@ -40,7 +40,14 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Privacy-by-Default**: City posts default to 'private' visibility (user can change before posting); groups maintain public default
 
 ### Data Architecture & Statistics
-The database contains 276 city groups and 254 unique cities with event data, totaling 811 events and 820 active users across 62 countries. All city groups follow the Buenos Aires template specification and have geocoded coordinates.
+**Cities Table**: The authoritative data source for city information with 301 cities migrated from the legacy `groups` table. The `cities` table contains `legacyGroupId` to link back to the groups table for discussion features.
+
+**API Architecture**:
+- `/api/cities/by-slug/:slug` - Searches `cities` table first, falls back to `groups` table
+- Slug normalization handles both "tbilisi" and "tbilisi-tango" variations
+- Returns `id` (city table ID) and `legacyGroupId` (for Discussion tab compatibility)
+
+The database contains 301 cities (migrated from 278 city groups), totaling 811 events and 820 active users across 62 countries. All cities follow the CITY_PAGE.md specification with geocoded coordinates.
 
 ### Testing & Production
 The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.

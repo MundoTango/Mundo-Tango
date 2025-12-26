@@ -421,8 +421,8 @@ function normalizeDiacritics(str: string): string {
 
 /**
  * GET /api/cities/by-slug/:slug
- * Resolve ASCII city slug to city group data
- * Example: /api/cities/by-slug/miami-tango -> full city group data
+ * Resolve ASCII city slug to city data (cities table first, groups fallback)
+ * Example: /api/cities/by-slug/tbilisi-tango -> full city data
  */
 router.get("/by-slug/:slug", async (req: Request, res: Response) => {
   try {
@@ -433,20 +433,120 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
 
     console.log(`[CityBySlug] Looking up slug: "${slug}"`);
 
-    // Look for city group by slug
+    // Normalize slug for matching - handle with and without -tango suffix
+    const normalizedSlug = slug.toLowerCase().trim();
+    const slugWithTango = normalizedSlug.endsWith('-tango') ? normalizedSlug : `${normalizedSlug}-tango`;
+    const slugWithoutTango = normalizedSlug.replace(/-tango(-community)?$/, '');
+
+    // PRIORITY 1: Search cities table first (new normalized data)
+    let cityResult = await db
+      .select()
+      .from(cities)
+      .where(
+        or(
+          eq(cities.slug, normalizedSlug),
+          eq(cities.slug, slugWithTango),
+          ilike(cities.slug, `${slugWithoutTango}%`)
+        )
+      )
+      .limit(1);
+
+    if (cityResult.length > 0) {
+      const city = cityResult[0];
+      console.log(`[CityBySlug] Found in cities table: ${city.name} (ID: ${city.id}, legacyGroupId: ${city.legacyGroupId})`);
+      
+      // Get counts from events and city_members
+      const [memberCountResult, eventCountResult] = await Promise.all([
+        db.select({ count: sql<number>`COUNT(*)::int` })
+          .from(cityMembers)
+          .where(and(eq(cityMembers.cityId, city.id), eq(cityMembers.status, 'active'))),
+        db.select({ count: sql<number>`COUNT(*)::int` })
+          .from(events)
+          .where(ilike(events.city, city.name))
+      ]);
+      
+      const memberCount = memberCountResult[0]?.count || 0;
+      const eventCount = eventCountResult[0]?.count || 0;
+      
+      return res.json({
+        id: city.id,
+        slug: city.slug,
+        name: city.name,
+        city: city.name,
+        country: city.country,
+        region: city.region,
+        description: city.description,
+        longDescription: city.longDescription,
+        coverImage: city.coverImage,
+        logoImage: city.logoImage,
+        latitude: city.latitude,
+        longitude: city.longitude,
+        memberCount,
+        eventCount,
+        postCount: city.postCount || 0,
+        housingCount: city.housingCount || 0,
+        recommendationCount: city.recommendationCount || 0,
+        venueCount: city.venueCount || 0,
+        timezone: city.timezone,
+        isActive: city.isActive,
+        isFeatured: city.isFeatured,
+        legacyGroupId: city.legacyGroupId,
+      });
+    }
+
+    // PRIORITY 2: Fallback to groups table for legacy data
+    console.log(`[CityBySlug] Not in cities table, checking groups for: "${slug}"`);
+    
     let groupResult = await db
       .select()
       .from(groups)
       .where(
         and(
           eq(groups.type, "city"),
-          eq(groups.slug, slug)
+          or(
+            eq(groups.slug, normalizedSlug),
+            eq(groups.slug, slugWithTango),
+            ilike(groups.slug, `${slugWithoutTango}%`)
+          )
         )
       )
       .limit(1);
 
     if (groupResult.length > 0) {
       const group = groupResult[0];
+      
+      // Check if city exists in cities table by legacyGroupId
+      let existingCity = await db
+        .select()
+        .from(cities)
+        .where(eq(cities.legacyGroupId, group.id))
+        .limit(1);
+      
+      let cityId: number;
+      if (existingCity.length > 0) {
+        cityId = existingCity[0].id;
+        console.log(`[CityBySlug] Found existing city row for group ${group.id}: city ID ${cityId}`);
+      } else {
+        // Create city row from group data
+        const citySlug = group.slug || `${(group.city || group.name).toLowerCase().replace(/[^a-z0-9]+/g, '-')}-tango`;
+        const [newCity] = await db.insert(cities).values({
+          name: group.city || group.name,
+          slug: citySlug,
+          country: group.country || '',
+          region: null,
+          latitude: group.latitude,
+          longitude: group.longitude,
+          description: group.description,
+          longDescription: group.longDescription,
+          coverImage: group.coverImage,
+          logoImage: group.logoImage,
+          legacyGroupId: group.id,
+          isActive: true,
+          isFeatured: false,
+        }).returning();
+        cityId = newCity.id;
+        console.log(`[CityBySlug] Created new city row for group ${group.id}: city ID ${cityId}`);
+      }
       
       // Get counts separately for reliability
       const [memberCountResult, eventCountResult] = await Promise.all([
@@ -461,9 +561,9 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
       const memberCount = memberCountResult[0]?.count || 0;
       const eventCount = eventCountResult[0]?.count || 0;
       
-      console.log(`[CityBySlug] Found city group: ${group.name} (ID: ${group.id}), events: ${eventCount}, cover: ${group.coverImage ? 'yes' : 'no'}`);
+      console.log(`[CityBySlug] Found city group: ${group.name} (ID: ${group.id}), cityId: ${cityId}, events: ${eventCount}`);
       return res.json({
-        id: group.id,
+        id: cityId,  // Return city table ID, NOT group.id
         slug: group.slug,
         name: group.name,
         city: group.city,
@@ -514,6 +614,39 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
     if (fallbackResult.length > 0) {
       const group = fallbackResult[0];
       
+      // Check if city exists in cities table by legacyGroupId
+      let existingCity = await db
+        .select()
+        .from(cities)
+        .where(eq(cities.legacyGroupId, group.id))
+        .limit(1);
+      
+      let cityId: number;
+      if (existingCity.length > 0) {
+        cityId = existingCity[0].id;
+        console.log(`[CityBySlug] Found existing city row for group ${group.id}: city ID ${cityId}`);
+      } else {
+        // Create city row from group data
+        const citySlug = group.slug || `${(group.city || group.name).toLowerCase().replace(/[^a-z0-9]+/g, '-')}-tango`;
+        const [newCity] = await db.insert(cities).values({
+          name: group.city || group.name,
+          slug: citySlug,
+          country: group.country || '',
+          region: null,
+          latitude: group.latitude,
+          longitude: group.longitude,
+          description: group.description,
+          longDescription: group.longDescription,
+          coverImage: group.coverImage,
+          logoImage: group.logoImage,
+          legacyGroupId: group.id,
+          isActive: true,
+          isFeatured: false,
+        }).returning();
+        cityId = newCity.id;
+        console.log(`[CityBySlug] Created new city row for group ${group.id}: city ID ${cityId}`);
+      }
+      
       // Get counts separately for reliability
       const [memberCountResult, eventCountResult] = await Promise.all([
         db.select({ count: sql<number>`COUNT(*)::int` })
@@ -527,9 +660,9 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
       const memberCount = memberCountResult[0]?.count || 0;
       const eventCount = eventCountResult[0]?.count || 0;
       
-      console.log(`[CityBySlug] Found via fallback: ${group.name} (ID: ${group.id}), events: ${eventCount}, cover: ${group.coverImage ? 'yes' : 'no'}`);
+      console.log(`[CityBySlug] Found via fallback: ${group.name} (groupId: ${group.id}), cityId: ${cityId}, events: ${eventCount}`);
       return res.json({
-        id: group.id,
+        id: cityId,  // Return city table ID, NOT group.id
         slug: group.slug,
         name: group.name,
         city: group.city,
