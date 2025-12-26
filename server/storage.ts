@@ -4857,11 +4857,7 @@ export class DbStorage implements IStorage {
     return await db.select().from(cities).where(inArray(cities.id, cityIds));
   }
 
-  // ============================================================================
-  // GROUPS - ENHANCED OPERATIONS IMPLEMENTATION
-  // ============================================================================
-
-  // Group Invites
+  // Group Invites Methods
   async sendGroupInvite(invite: InsertGroupInvite): Promise<SelectGroupInvite> {
     const result = await db.insert(groupInvites).values(invite).returning();
     return result[0];
