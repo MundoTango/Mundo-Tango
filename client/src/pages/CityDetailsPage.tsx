@@ -592,7 +592,7 @@ function CityOverviewTab({ city }: { city: CityData }) {
   const { data: events = [] } = useQuery<any[]>({
     queryKey: ["/api/events", { city: cityName }],
     queryFn: async () => {
-      const res = await fetch(`/api/events?city=${encodeURIComponent(cityName)}&limit=250`);
+      const res = await fetch(`/api/events?city=${encodeURIComponent(cityName)}&limit=500`);
       if (!res.ok) return [];
       const data = await res.json();
       return data.map((item: any) => ({
@@ -652,324 +652,299 @@ function CityOverviewTab({ city }: { city: CityData }) {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* MB.MD Header: Sticky Filters with Backdrop Blur */}
-      <div className="sticky top-0 z-[100] bg-background/80 backdrop-blur-md py-4 -mx-4 px-4 border-b lg:border-none lg:bg-transparent lg:backdrop-blur-none lg:static lg:p-0">
-        <div className="flex flex-wrap items-center gap-3 p-1.5 bg-muted/30 rounded-2xl w-fit border shadow-sm">
-          <Button 
-            variant={activeLayer === 'all' ? 'default' : 'ghost'} 
-            size="sm"
-            className="rounded-xl h-10 px-6 font-black transition-all hover-elevate active-elevate-2"
-            onClick={() => setActiveLayer('all')}
-          >
-            Explore All <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{totalItems}</Badge>
-          </Button>
-          <Button 
-            variant={activeLayer === 'events' ? 'default' : 'ghost'} 
-            size="sm"
-            className={`rounded-xl h-10 px-6 font-black transition-all hover-elevate active-elevate-2 ${activeLayer !== 'events' ? 'text-rose-500 hover:bg-rose-500/10' : 'bg-rose-500 hover:bg-rose-600'}`}
-            onClick={() => setActiveLayer('events')}
-          >
-            <Calendar className="w-4 h-4 mr-2" />
-            Events <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{events.length}</Badge>
-          </Button>
-          <Button 
-            variant={activeLayer === 'housing' ? 'default' : 'ghost'} 
-            size="sm"
-            className={`rounded-xl h-10 px-6 font-black transition-all hover-elevate active-elevate-2 ${activeLayer !== 'housing' ? 'text-emerald-500 hover:bg-emerald-500/10' : 'bg-emerald-500 hover:bg-emerald-600'}`}
-            onClick={() => setActiveLayer('housing')}
-          >
-            <Home className="w-4 h-4 mr-2" />
-            Housing <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{housing.length}</Badge>
-          </Button>
-          <Button 
-            variant={activeLayer === 'tips' ? 'default' : 'ghost'} 
-            size="sm"
-            className={`rounded-xl h-10 px-6 font-black transition-all hover-elevate active-elevate-2 ${activeLayer !== 'tips' ? 'text-amber-500 hover:bg-amber-500/10' : 'bg-amber-500 hover:bg-amber-600'}`}
-            onClick={() => setActiveLayer('tips')}
-          >
-            <Lightbulb className="w-4 h-4 mr-2" />
-            Tips <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{tips.length}</Badge>
-          </Button>
+      <div className="sticky top-0 z-[100] bg-background/80 backdrop-blur-md py-6 -mx-4 px-4 border-b">
+        <div className="max-w-7xl mx-auto space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <Button 
+              variant={activeLayer === 'all' ? 'default' : 'ghost'} 
+              size="sm"
+              className="rounded-xl h-11 px-6 font-black transition-all hover-elevate active-elevate-2 shadow-sm"
+              onClick={() => setActiveLayer('all')}
+            >
+              EXPLORE ALL <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{totalItems}</Badge>
+            </Button>
+            <Button 
+              variant={activeLayer === 'events' ? 'default' : 'ghost'} 
+              size="sm"
+              className={`rounded-xl h-11 px-6 font-black transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'events' ? 'text-rose-500 hover:bg-rose-500/10' : 'bg-rose-500 hover:bg-rose-600'}`}
+              onClick={() => setActiveLayer('events')}
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              EVENTS <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{events.length}</Badge>
+            </Button>
+            <Button 
+              variant={activeLayer === 'housing' ? 'default' : 'ghost'} 
+              size="sm"
+              className={`rounded-xl h-11 px-6 font-black transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'housing' ? 'text-emerald-500 hover:bg-emerald-500/10' : 'bg-emerald-500 hover:bg-emerald-600'}`}
+              onClick={() => setActiveLayer('housing')}
+            >
+              <Home className="w-4 h-4 mr-2" />
+              HOUSING <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{housing.length}</Badge>
+            </Button>
+            <Button 
+              variant={activeLayer === 'tips' ? 'default' : 'ghost'} 
+              size="sm"
+              className={`rounded-xl h-11 px-6 font-black transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'tips' ? 'text-amber-500 hover:bg-amber-500/10' : 'bg-amber-500 hover:bg-amber-600'}`}
+              onClick={() => setActiveLayer('tips')}
+            >
+              <Lightbulb className="w-4 h-4 mr-2" />
+              TIPS <Badge variant="secondary" className="ml-2 bg-background/50 font-bold">{tips.length}</Badge>
+            </Button>
+          </div>
+          
+          {/* Advanced Filters Row */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <div className="flex items-center gap-2 p-1 bg-muted/30 rounded-lg border">
+              <span className="text-[10px] font-black uppercase tracking-widest px-2 opacity-40">Filter</span>
+              <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase tracking-widest rounded-md hover:bg-background">Today</Button>
+              <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase tracking-widest rounded-md hover:bg-background">Weekend</Button>
+              <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase tracking-widest rounded-md hover:bg-background">Milongas</Button>
+              <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase tracking-widest rounded-md hover:bg-background">Classes</Button>
+              <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase tracking-widest rounded-md hover:bg-background">Practicas</Button>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* MB.MD 3-Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left: Community Profile & Stats */}
-        <div className="lg:col-span-3 space-y-8">
-          <div className="space-y-4">
-            <h3 className="font-black text-3xl tracking-tighter leading-none bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent">
-              {cityName}
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-              Join {city.memberCount} dancers in the heart of {city.country}'s tango scene.
-            </p>
-          </div>
 
-          <div className="space-y-4">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70 px-1">Vital Statistics</h4>
-            <div className="space-y-3">
-              <div className="group flex items-center justify-between p-4 rounded-2xl bg-card border shadow-sm transition-all hover:shadow-md hover:border-primary/20">
-                <div className="flex items-center gap-4">
-                  <div className="p-2.5 rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                    <Users className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">Followers</p>
-                    <p className="text-xl font-black tabular-nums">{city.memberCount}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="group flex items-center justify-between p-4 rounded-2xl bg-card border shadow-sm transition-all hover:shadow-md hover:border-primary/20">
-                <div className="flex items-center gap-4">
-                  <div className="p-2.5 rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                    <MapPin className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/60">Region</p>
-                    <p className="text-sm font-black truncate">{city.country}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* Center: Interactive Geo-Hub */}
+      <div className="relative">
+        <div className="flex items-center justify-between mb-6 px-4">
+          <div className="space-y-1">
+            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/60">Geo-Community Hub</h4>
+            <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Interactive Map Design v4.2</p>
           </div>
+          <Badge variant="outline" className="h-8 rounded-full px-4 font-black text-[10px] tracking-widest uppercase border-primary/20 bg-primary/5 text-primary">
+            {mapItems.length} ACTIVE PINS
+          </Badge>
         </div>
 
-        {/* Center: Interactive Geo-Hub */}
-        <div className="lg:col-span-6 relative">
-          {lat && lng ? (
-            <div className="rounded-[2.5rem] overflow-hidden border-8 border-card bg-card h-[550px] shadow-2xl relative z-0 group">
-              <MapContainer
-                center={[lat, lng]}
-                zoom={13}
-                style={{ height: '100%', width: '100%' }}
-                className="z-0"
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                
-                <Marker position={[lat, lng]}>
-                  <Popup className="mb-md-popup">
-                    <div className="p-2 text-center">
-                      <h3 className="font-black text-lg leading-none mb-1">{city.name}</h3>
-                      <p className="text-xs font-bold text-primary uppercase tracking-widest">{city.country}</p>
+        {lat && lng ? (
+          <div className="rounded-[3rem] overflow-hidden border-[12px] border-card bg-card h-[600px] shadow-2xl relative z-0 group ring-1 ring-primary/5">
+            <MapContainer
+              center={[lat, lng]}
+              zoom={13}
+              style={{ height: '100%', width: '100%' }}
+              className="z-0"
+              scrollWheelZoom={false}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              
+              <Marker position={[lat, lng]}>
+                <Popup className="mb-md-popup">
+                  <div className="p-3 text-center space-y-2">
+                    <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                      <MapPin className="h-5 w-5 text-primary" />
                     </div>
-                  </Popup>
-                </Marker>
+                    <div>
+                      <h3 className="font-black text-lg leading-none mb-1 tracking-tighter">{city.name}</h3>
+                      <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{city.country}</p>
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
 
-                {mapItems.map((item, idx) => {
-                  const iLat = item.latitude ? parseFloat(item.latitude) : null;
-                  const iLng = item.longitude ? parseFloat(item.longitude) : null;
-                  if (!iLat || !iLng) return null;
+              {mapItems.map((item, idx) => {
+                const iLat = item.latitude ? parseFloat(item.latitude) : null;
+                const iLng = item.longitude ? parseFloat(item.longitude) : null;
+                if (!iLat || !iLng) return null;
 
-                  return (
-                    <Marker 
-                      key={`${item.type}-${item.id}-${idx}`} 
-                      position={[iLat, iLng]}
-                    >
-                      <Popup className="mb-md-popup">
-                        <div className="p-2 min-w-[220px] space-y-3">
-                          <Badge variant="outline" className={`font-black text-[9px] uppercase tracking-tighter border-none bg-${item.color}-500/10 text-${item.color}-600`}>
+                return (
+                  <Marker 
+                    key={`${item.type}-${item.id}-${idx}`} 
+                    position={[iLat, iLng]}
+                  >
+                    <Popup className="mb-md-popup">
+                      <div className="p-4 min-w-[260px] space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline" className={`font-black text-[9px] uppercase tracking-widest border-none bg-${item.color}-500/10 text-${item.color}-600 px-2 py-0.5 rounded`}>
                             {item.type}
                           </Badge>
-                          <h4 className="font-black text-base leading-tight tracking-tight">{item.title || item.name}</h4>
-                          {item.description && (
-                            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed font-medium">{item.description}</p>
-                          )}
-                          <div className="pt-3 border-t">
-                            <Link href={item.type === 'event' ? `/events/${item.id}` : '#'}>
-                              <Button size="sm" className="w-full h-10 rounded-xl font-black text-[10px] tracking-widest uppercase hover-elevate">VIEW DESTINATION</Button>
-                            </Link>
-                          </div>
+                          <span className="text-[10px] font-bold text-muted-foreground/60 tabular-nums">#{item.id}</span>
                         </div>
-                      </Popup>
-                    </Marker>
-                  );
-                })}
-              </MapContainer>
-              <div className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <Badge className="bg-background/90 backdrop-blur-md text-foreground border-none px-4 py-2 rounded-full shadow-lg font-black text-[10px] tracking-widest uppercase">
-                  {mapItems.length} POINTS OF INTEREST
-                </Badge>
-              </div>
-            </div>
-          ) : (
-            <div className="h-[550px] flex flex-col items-center justify-center bg-muted/10 rounded-[2.5rem] border-4 border-dashed border-muted transition-colors hover:border-primary/20">
-              <div className="p-6 rounded-full bg-muted/20 mb-4">
-                <MapPin className="h-10 w-10 text-muted-foreground/30" />
-              </div>
-              <p className="font-black text-muted-foreground uppercase tracking-widest text-sm">Coordinates not verified</p>
-            </div>
-          )}
-        </div>
-
-        {/* Right: Dynamic Content Based on Active Layer */}
-        <div className="lg:col-span-3 space-y-6">
-          {/* Events Section - Show when 'all' or 'events' is selected */}
-          {(activeLayer === 'all' || activeLayer === 'events') && events.length > 0 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-rose-500/10">
-                  <Calendar className="h-4 w-4 text-rose-500" />
+                        <h4 className="font-black text-lg leading-tight tracking-tight group-hover:text-primary transition-colors">{item.title || item.name}</h4>
+                        {item.description && (
+                          <p className="text-[11px] text-muted-foreground line-clamp-3 leading-relaxed font-medium bg-muted/20 p-3 rounded-xl">{item.description}</p>
+                        )}
+                        <div className="pt-4 border-t border-muted">
+                          <Link href={item.type === 'event' ? `/events/${item.id}` : '#'}>
+                            <Button size="sm" className={`w-full h-11 rounded-xl font-black text-[10px] tracking-[0.2em] uppercase bg-${item.color}-500 hover:bg-${item.color}-600 text-white border-none shadow-lg shadow-${item.color}-500/20 hover-elevate`}>
+                              VIEW DESTINATION
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                );
+              })}
+            </MapContainer>
+            
+            {/* Standard Map Overlay Design */}
+            <div className="absolute inset-x-0 bottom-0 p-8 z-10 bg-gradient-to-t from-black/60 to-transparent pointer-events-none">
+              <div className="flex items-end justify-between pointer-events-auto">
+                <div className="bg-background/90 backdrop-blur-xl p-4 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4 animate-in slide-in-from-bottom-8 duration-700">
+                  <div className="h-10 w-10 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Current Focus</p>
+                    <p className="text-sm font-black tracking-tight">{cityName} Community Hub</p>
+                  </div>
                 </div>
-                <h4 className="text-xs font-black uppercase tracking-widest text-rose-600">Upcoming Events</h4>
+                
+                <div className="flex gap-2">
+                  <Button size="icon" variant="secondary" className="h-12 w-12 rounded-2xl bg-background/90 backdrop-blur-xl border-none shadow-2xl hover-elevate">
+                    <Compass className="h-5 w-5" />
+                  </Button>
+                  <Button size="icon" variant="secondary" className="h-12 w-12 rounded-2xl bg-background/90 backdrop-blur-xl border-none shadow-2xl hover-elevate">
+                    <Layers className="h-5 w-5" />
+                  </Button>
+                </div>
               </div>
-              <div className="space-y-3">
-                {events.slice(0, activeLayer === 'events' ? 8 : 3).map((event: any) => (
+            </div>
+          </div>
+        ) : (
+          <div className="h-[600px] flex flex-col items-center justify-center bg-muted/10 rounded-[3rem] border-4 border-dashed border-muted/20 transition-all hover:border-primary/10">
+            <div className="p-8 rounded-[2rem] bg-muted/20 mb-4 animate-pulse">
+              <MapPin className="h-12 w-12 text-muted-foreground/20" />
+            </div>
+            <div className="text-center space-y-1">
+              <p className="font-black text-muted-foreground uppercase tracking-[0.3em] text-sm">Geospatial Data Missing</p>
+              <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Coordinates not yet verified for {cityName}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 3-Column Content System */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Events Column */}
+        {(activeLayer === 'all' || activeLayer === 'events') && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center gap-3 px-1">
+              <div className="p-2 rounded-xl bg-rose-500/10">
+                <Calendar className="h-5 w-5 text-rose-500" />
+              </div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-rose-600">Upcoming Events</h4>
+            </div>
+            <div className="space-y-4">
+              {events.length > 0 ? (
+                events.slice(0, 6).map((event: any) => (
                   <Link key={event.id} href={`/events/${event.id}`}>
                     <Card className="group hover-elevate overflow-hidden border-rose-500/10 hover:border-rose-500/30">
-                      <CardContent className="p-4 space-y-2">
+                      <CardContent className="p-4 space-y-3">
                         <div className="flex items-start justify-between gap-2">
                           <h5 className="text-sm font-bold line-clamp-2 group-hover:text-rose-600 transition-colors">{event.title}</h5>
-                          <Badge variant="outline" className="shrink-0 text-[9px] font-bold border-rose-500/20 text-rose-600">
+                          <Badge variant="outline" className="shrink-0 text-[9px] font-bold border-rose-500/20 text-rose-600 uppercase">
                             {event.eventType || 'Event'}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium">
-                          <Clock className="h-3 w-3 text-rose-400" />
-                          {safeDateFormat(getEventDate(event), 'EEE, MMM d @ h:mm a')}
-                        </div>
-                        {event.location && (
-                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium">
-                            <MapPin className="h-3 w-3 text-rose-400" />
-                            <span className="truncate">{event.location}</span>
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                            <Clock className="h-3 w-3 text-rose-400" />
+                            {safeDateFormat(getEventDate(event), 'EEE, MMM d @ h:mm a')}
                           </div>
-                        )}
+                          {event.location && (
+                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium">
+                              <MapPin className="h-3 w-3 text-rose-400" />
+                              <span className="truncate">{event.location}</span>
+                            </div>
+                          )}
+                        </div>
                       </CardContent>
                     </Card>
                   </Link>
-                ))}
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="w-full h-10 rounded-xl text-xs font-bold border-rose-500/20 text-rose-600 hover:bg-rose-500/5"
-                onClick={() => {
-                  const eventsTab = document.querySelector('[data-testid="tab-events"]') as HTMLButtonElement;
-                  if (eventsTab) eventsTab.click();
-                }}
-              >
-                View All {events.length} Events
-              </Button>
-            </div>
-          )}
-          
-          {/* Housing Section - Show when 'all' or 'housing' is selected */}
-          {(activeLayer === 'all' || activeLayer === 'housing') && housing.length > 0 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500 delay-150">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-emerald-500/10">
-                  <Home className="h-4 w-4 text-emerald-500" />
-                </div>
-                <h4 className="text-xs font-black uppercase tracking-widest text-emerald-600">Available Housing</h4>
-              </div>
-              <div className="space-y-3">
-                {housing.slice(0, activeLayer === 'housing' ? 6 : 2).map((listing: any) => (
-                  <Card key={listing.id} className="group hover-elevate overflow-hidden border-emerald-500/10 hover:border-emerald-500/30">
-                    <CardContent className="p-4 space-y-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <h5 className="text-sm font-bold line-clamp-2 group-hover:text-emerald-600 transition-colors">{listing.title}</h5>
-                        <Badge className="shrink-0 bg-emerald-500 text-white text-xs font-bold">
-                          ${listing.pricePerNight || listing.price}
-                        </Badge>
-                      </div>
-                      {listing.description && (
-                        <p className="text-[10px] text-muted-foreground line-clamp-2">{listing.description}</p>
-                      )}
-                      <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-medium">
-                        {listing.maxGuests && (
-                          <span className="flex items-center gap-1">
-                            <Users className="h-3 w-3 text-emerald-400" />
-                            {listing.maxGuests} guests
-                          </span>
-                        )}
-                        {listing.neighborhood && (
-                          <span className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-emerald-400" />
-                            {listing.neighborhood}
-                          </span>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="w-full h-10 rounded-xl text-xs font-bold border-emerald-500/20 text-emerald-600 hover:bg-emerald-500/5"
-                onClick={() => {
-                  const housingTab = document.querySelector('[data-testid="tab-housing"]') as HTMLButtonElement;
-                  if (housingTab) housingTab.click();
-                }}
-              >
-                Browse All Housing
-              </Button>
-            </div>
-          )}
-
-          {/* Tips Section - Show when 'all' or 'tips' is selected */}
-          {(activeLayer === 'all' || activeLayer === 'tips') && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500 delay-300">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-amber-500/10">
-                  <Lightbulb className="h-4 w-4 text-amber-500" />
-                </div>
-                <h4 className="text-xs font-black uppercase tracking-widest text-amber-600">Local Tips</h4>
-              </div>
-              {tips.length > 0 ? (
-                <div className="space-y-3">
-                  {tips.slice(0, activeLayer === 'tips' ? 6 : 2).map((tip: any) => (
-                    <Card key={tip.id} className="group hover-elevate overflow-hidden border-amber-500/10 hover:border-amber-500/30">
-                      <CardContent className="p-4 space-y-2">
-                        <h5 className="text-sm font-bold group-hover:text-amber-600 transition-colors">{tip.title || tip.name}</h5>
-                        {tip.description && (
-                          <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">{tip.description}</p>
-                        )}
-                        <Badge variant="outline" className="text-[9px] border-amber-500/20 text-amber-600">
-                          {tip.category || 'General'}
-                        </Badge>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                ))
               ) : (
-                <Card className="border-dashed border-amber-500/20 bg-amber-500/5">
-                  <CardContent className="p-6 text-center">
-                    <Lightbulb className="h-8 w-8 text-amber-400/40 mx-auto mb-2" />
-                    <p className="text-xs text-muted-foreground font-medium">No tips yet for this city</p>
-                    <Button variant="link" size="sm" className="text-amber-600 mt-2">Share your knowledge</Button>
+                <Card className="border-dashed border-rose-500/20 bg-rose-500/5">
+                  <CardContent className="p-8 text-center">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Registry Empty</p>
                   </CardContent>
                 </Card>
               )}
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="w-full h-10 rounded-xl text-xs font-bold border-amber-500/20 text-amber-600 hover:bg-amber-500/5"
-                onClick={() => {
-                  const tipsTab = document.querySelector('[data-testid="tab-tips"]') as HTMLButtonElement;
-                  if (tipsTab) tipsTab.click();
-                }}
-              >
-                View All Tips
-              </Button>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Empty State - when no content for selected layer */}
-          {activeLayer !== 'all' && (
-            (activeLayer === 'events' && events.length === 0) ||
-            (activeLayer === 'housing' && housing.length === 0) ||
-            (activeLayer === 'tips' && tips.length === 0)
-          ) && (
-            <Card className="border-dashed">
-              <CardContent className="p-8 text-center">
-                <p className="text-muted-foreground font-medium">No {activeLayer} available yet</p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+        {/* Housing Column */}
+        {(activeLayer === 'all' || activeLayer === 'housing') && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+            <div className="flex items-center gap-3 px-1">
+              <div className="p-2 rounded-xl bg-emerald-500/10">
+                <Home className="h-5 w-5 text-emerald-500" />
+              </div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-600">Available Housing</h4>
+            </div>
+            <div className="space-y-4">
+              {housing.length > 0 ? (
+                housing.slice(0, 4).map((listing: any) => (
+                  <Card key={listing.id} className="group hover-elevate overflow-hidden border-emerald-500/10 hover:border-emerald-500/30">
+                    <CardContent className="p-4 space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <h5 className="text-sm font-bold line-clamp-2 group-hover:text-emerald-600 transition-colors">{listing.title}</h5>
+                        <Badge className="shrink-0 bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm">
+                          ${listing.pricePerNight || listing.price}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-muted-foreground/70 pt-2 border-t border-emerald-500/5">
+                        <span className="flex items-center gap-1.5">
+                          <Users className="h-3 w-3 text-emerald-400" />
+                          {listing.maxGuests || 2} GUESTS
+                        </span>
+                        <span className="flex items-center gap-1.5 truncate">
+                          <MapPin className="h-3 w-3 text-emerald-400" />
+                          {listing.neighborhood || 'Local District'}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Card className="border-dashed border-emerald-500/20 bg-emerald-500/5">
+                  <CardContent className="p-8 text-center">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">No listings found</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Tips Column */}
+        {(activeLayer === 'all' || activeLayer === 'tips') && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+            <div className="flex items-center gap-3 px-1">
+              <div className="p-2 rounded-xl bg-amber-500/10">
+                <Lightbulb className="h-5 w-5 text-amber-500" />
+              </div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-amber-600">Local Knowledge</h4>
+            </div>
+            <div className="space-y-4">
+              {tips.length > 0 ? (
+                tips.slice(0, 4).map((tip: any) => (
+                  <Card key={tip.id} className="group hover-elevate overflow-hidden border-amber-500/10 hover:border-amber-500/30">
+                    <CardContent className="p-4 space-y-3">
+                      <h5 className="text-sm font-bold group-hover:text-amber-600 transition-colors">{tip.title || tip.name}</h5>
+                      <Badge variant="outline" className="text-[9px] font-black tracking-widest uppercase border-amber-500/20 text-amber-600">
+                        {tip.category || 'Local Tip'}
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Card className="border-dashed border-amber-500/20 bg-amber-500/5">
+                  <CardContent className="p-8 text-center">
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">No tips shared</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
     </div>
