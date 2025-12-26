@@ -708,12 +708,13 @@ function CityOverviewTab({ city }: { city: CityData }) {
       const res = await fetch(`/api/cities/${city.id}/housing`);
       if (!res.ok) return [];
       const data = await res.json();
-      // Ensure each housing item has the necessary fields for mapping
+      // Ensure each housing item is flattened for components that expect HousingListing structure
       return data.map((item: any) => ({
-        ...item,
+        ...(item.listing || item),
+        host: item.host,
         // Fallback to city coordinates if housing coords are missing
-        latitude: item.latitude || city.latitude,
-        longitude: item.longitude || city.longitude
+        latitude: item.listing?.latitude || item.latitude || city.latitude,
+        longitude: item.listing?.longitude || item.longitude || city.longitude
       }));
     }
   });

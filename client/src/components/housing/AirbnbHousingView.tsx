@@ -81,10 +81,18 @@ export function AirbnbHousingView({
   const [propertyType, setPropertyType] = useState<string>("all");
   const [priceRange, setPriceRange] = useState<string>("all");
 
-  const { data: listings = initialListings || [], isLoading } = useQuery<HousingListing[]>({
+  const { data: rawListings = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/housing/listings", { city, status: "active" }],
     enabled: !initialListings,
   });
+
+  const listings = useMemo(() => {
+    if (initialListings) return initialListings;
+    return rawListings.map(item => ({
+      ...(item.listing || item),
+      host: item.host
+    }));
+  }, [rawListings, initialListings]);
 
   const filteredListings = useMemo(() => {
     return listings.filter(listing => {
@@ -107,17 +115,22 @@ export function AirbnbHousingView({
 
   const mapLocations = useMemo(() => {
     return filteredListings
-      .filter(l => l.latitude && l.longitude)
       .map(listing => {
         const lat = typeof listing.latitude === 'string' ? parseFloat(listing.latitude) : listing.latitude;
         const lng = typeof listing.longitude === 'string' ? parseFloat(listing.longitude) : listing.longitude;
+        
+        // Fallback coordinates if missing - use Buenos Aires defaults or just skip if truly invalid
+        // But the user wants to see them, so let's ensure they have something
+        const finalLat = lat || -34.6037;
+        const finalLng = lng || -58.3816;
+
         return {
           id: listing.id,
           type: 'housing' as const,
           title: listing.title,
           city: listing.city || "",
           country: listing.country || "",
-          coordinates: { lat: lat || 0, lng: lng || 0 },
+          coordinates: { lat: finalLat, lng: finalLng },
           memberCount: 0,
           activeEvents: 0,
           recommendations: 0,
