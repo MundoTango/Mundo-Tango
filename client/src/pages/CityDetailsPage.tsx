@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare, MapPinHouse, UserCheck, Lightbulb, Camera, Drama, Building2, Briefcase, User } from "lucide-react";
+import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare, MapPinHouse, UserCheck, Lightbulb, Camera, Drama, Building2, Briefcase, User, Layers } from "lucide-react";
 import { TANGO_ROLES, getRoleByValue } from "@/lib/tangoRoles";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -819,9 +819,122 @@ function CityOverviewTab({ city }: { city: CityData }) {
           </div>
         )}
       </div>
-          limit={50}
-        />
+    </div>
+  );
+}
+
+function CityHousingTab({ city }: { city: CityData }) {
+  return (
+    <div className="space-y-6">
+      <AirbnbHousingView 
+        cityName={city.city || city.name.replace(' Tango Community', '')} 
+        cityId={city.id}
+      />
+    </div>
+  );
+}
+
+function CityVisitorsTab({ city }: { city: CityData }) {
+  const { data: visitors = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/cities", city.id, "visitors"],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/${city.id}/visitors`);
+      if (!res.ok) return [];
+      return res.json();
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
+    );
+  }
+
+  if (visitors.length === 0) {
+    return (
+      <Card>
+        <CardContent className="py-12 text-center">
+          <Plane className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <h3 className="font-semibold mb-2">No visitors yet</h3>
+          <p className="text-muted-foreground">Be the first to visit {city.name}!</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {visitors.map((visitor: any) => (
+        <Card key={visitor.id} className="hover-elevate">
+          <CardContent className="p-4">
+            <Link href={`/profile/${visitor.username}`}>
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={visitor.profileImage} />
+                  <AvatarFallback>{(visitor.name || 'V').charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium truncate">{visitor.name || visitor.username}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {visitor.visitDate ? safeDateFormat(new Date(visitor.visitDate), 'MMM d, yyyy') : 'Planning to visit'}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function CityTipsTab({ city }: { city: CityData }) {
+  const { data: tips = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/cities", city.id, "tips"],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/${city.id}/tips`);
+      if (!res.ok) return [];
+      return res.json();
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (tips.length === 0) {
+    return (
+      <Card>
+        <CardContent className="py-12 text-center">
+          <Lightbulb className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <h3 className="font-semibold mb-2">No tips yet</h3>
+          <p className="text-muted-foreground">Share your local knowledge about {city.name}!</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {tips.map((tip: any) => (
+        <Card key={tip.id} className="hover-elevate">
+          <CardContent className="p-4 space-y-3">
+            <h4 className="font-semibold">{tip.title || tip.name}</h4>
+            {tip.description && (
+              <p className="text-sm text-muted-foreground line-clamp-3">{tip.description}</p>
+            )}
+            <Badge variant="outline" className="text-xs">
+              {tip.category || 'Local Tip'}
+            </Badge>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }
