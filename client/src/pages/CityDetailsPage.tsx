@@ -555,7 +555,7 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
             )}
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <Avatar>
+                <Avatar className="h-12 w-12 border-2 border-primary/10">
                   <AvatarImage src={member.profileImage || member.user?.profileImage} />
                   <AvatarFallback>
                     {(member.name || member.user?.name || 'U').charAt(0).toUpperCase()}
@@ -672,6 +672,7 @@ function CityOverviewTab({ city }: { city: CityData }) {
   }, [activeLayer, events, housing, tips]);
 
   const mapCenter: [number, number] = lat && lng ? [lat, lng] : [-34.6037, -58.3816];
+  const totalItems = (events.length || 0) + (housing.length || 0) + (tips.length || 0);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -820,123 +821,6 @@ function CityOverviewTab({ city }: { city: CityData }) {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-
-      {/* Center: Interactive Geo-Hub */}
-      <div className="relative">
-        <div className="flex items-center justify-between mb-6 px-4">
-          <div className="space-y-1">
-            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/60">Geo-Community Hub</h4>
-            <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Interactive Map Design v4.2</p>
-          </div>
-          <Badge variant="outline" className="h-8 rounded-full px-4 font-black text-[10px] tracking-widest uppercase border-primary/20 bg-primary/5 text-primary">
-            {mapItems.length} ACTIVE PINS
-          </Badge>
-        </div>
-
-        {lat && lng ? (
-          <div className="rounded-[3rem] overflow-hidden border-[12px] border-card bg-card h-[600px] shadow-2xl relative z-0 group ring-1 ring-primary/5">
-            <MapContainer
-              center={[lat, lng]}
-              zoom={13}
-              style={{ height: '100%', width: '100%' }}
-              className="z-0"
-              scrollWheelZoom={false}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              
-              <Marker position={[lat, lng]}>
-                <Popup className="mb-md-popup">
-                  <div className="p-3 text-center space-y-2">
-                    <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                      <MapPin className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-black text-lg leading-none mb-1 tracking-tighter">{city.name}</h3>
-                      <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{city.country}</p>
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
-
-              {mapItems.map((item, idx) => {
-                const iLat = item.latitude ? parseFloat(item.latitude) : null;
-                const iLng = item.longitude ? parseFloat(item.longitude) : null;
-                if (!iLat || !iLng) return null;
-
-                return (
-                  <Marker 
-                    key={`${item.type}-${item.id}-${idx}`} 
-                    position={[iLat, iLng]}
-                  >
-                    <Popup className="mb-md-popup">
-                      <div className="p-4 min-w-[260px] space-y-4">
-                        <div className="flex items-center justify-between">
-                          <Badge variant="outline" className={`font-black text-[9px] uppercase tracking-widest border-none bg-${item.color}-500/10 text-${item.color}-600 px-2 py-0.5 rounded`}>
-                            {item.type}
-                          </Badge>
-                          <span className="text-[10px] font-bold text-muted-foreground/60 tabular-nums">#{item.id}</span>
-                        </div>
-                        <h4 className="font-black text-lg leading-tight tracking-tight group-hover:text-primary transition-colors">{item.title || item.name}</h4>
-                        {item.description && (
-                          <p className="text-[11px] text-muted-foreground line-clamp-3 leading-relaxed font-medium bg-muted/20 p-3 rounded-xl">{item.description}</p>
-                        )}
-                        <div className="pt-4 border-t border-muted">
-                          <Link href={item.type === 'event' ? `/events/${item.id}` : '#'}>
-                            <Button size="sm" className={`w-full h-11 rounded-xl font-black text-[10px] tracking-[0.2em] uppercase bg-${item.color}-500 hover:bg-${item.color}-600 text-white border-none shadow-lg shadow-${item.color}-500/20 hover-elevate`}>
-                              VIEW DESTINATION
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                    </Popup>
-                  </Marker>
-                );
-              })}
-            </MapContainer>
-            
-            {/* Standard Map Overlay Design */}
-            <div className="absolute inset-x-0 bottom-0 p-8 z-10 bg-gradient-to-t from-black/60 to-transparent pointer-events-none">
-              <div className="flex items-end justify-between pointer-events-auto">
-                <div className="bg-background/90 backdrop-blur-xl p-4 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4 animate-in slide-in-from-bottom-8 duration-700">
-                  <div className="h-10 w-10 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Current Focus</p>
-                    <p className="text-sm font-black tracking-tight">{cityName} Community Hub</p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-2">
-                  <Button size="icon" variant="secondary" className="h-12 w-12 rounded-2xl bg-background/90 backdrop-blur-xl border-none shadow-2xl hover-elevate">
-                    <Compass className="h-5 w-5" />
-                  </Button>
-                  <Button size="icon" variant="secondary" className="h-12 w-12 rounded-2xl bg-background/90 backdrop-blur-xl border-none shadow-2xl hover-elevate">
-                    <Layers className="h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="h-[600px] flex flex-col items-center justify-center bg-muted/10 rounded-[3rem] border-4 border-dashed border-muted/20 transition-all hover:border-primary/10">
-            <div className="p-8 rounded-[2rem] bg-muted/20 mb-4 animate-pulse">
-              <MapPin className="h-12 w-12 text-muted-foreground/20" />
-            </div>
-            <div className="text-center space-y-1">
-              <p className="font-black text-muted-foreground uppercase tracking-[0.3em] text-sm">Geospatial Data Missing</p>
-              <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Coordinates not yet verified for {cityName}</p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -1337,31 +1221,23 @@ export default function CityDetailsPage() {
                 <Card>
                   <CardContent className="py-12 text-center">
                     <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="font-semibold mb-2">No discussions yet</h3>
-                    <p className="text-muted-foreground">This city's discussion features are coming soon!</p>
+                    <h3 className="font-semibold mb-2">No discussion yet</h3>
+                    <p className="text-muted-foreground">Start the conversation in {city.name}!</p>
                   </CardContent>
                 </Card>
               )}
             </TabsContent>
 
+            <TabsContent value="overview" className="mt-0">
+              <CityOverviewTab city={city} />
+            </TabsContent>
+
             <TabsContent value="events" className="mt-0">
-              <CityEventsTab 
-                cityId={city.id} 
-                cityName={city.city || city.name.replace(' Tango Community', '')}
-                legacyGroupId={city.legacyGroupId}
-              />
+              <CityEventsTab cityId={city.id} cityName={city.name} legacyGroupId={city.legacyGroupId} />
             </TabsContent>
 
             <TabsContent value="members" className="mt-0">
-              <CityMembersTab 
-                cityId={city.id}
-                cityName={city.name}
-                legacyGroupId={city.legacyGroupId}
-              />
-            </TabsContent>
-
-            <TabsContent value="overview" className="mt-0">
-              <CityOverviewTab city={city} />
+              <CityMembersTab cityId={city.id} cityName={city.name} legacyGroupId={city.legacyGroupId} />
             </TabsContent>
 
             <TabsContent value="housing" className="mt-0">
