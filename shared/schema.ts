@@ -291,6 +291,7 @@ export const cityMembers = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     role: varchar("role", { length: 50 }).default("member"), // member, moderator, admin
     status: varchar("status", { length: 50 }).default("active"), // active, pending, banned
+    membershipType: varchar("membership_type", { length: 20 }).default("follower").notNull(), // 'resident' = lives in city, 'follower' = follows for events
     joinedAt: timestamp("joined_at").defaultNow().notNull(),
     lastVisitAt: timestamp("last_visit_at").defaultNow(),
   },
@@ -300,6 +301,7 @@ export const cityMembers = pgTable(
     uniqueMembership: unique("city_members_unique").on(table.cityId, table.userId),
     roleIdx: index("city_members_role_idx").on(table.cityId, table.role),
     statusIdx: index("city_members_status_idx").on(table.cityId, table.status),
+    membershipTypeIdx: index("city_members_membership_type_idx").on(table.cityId, table.membershipType),
   }),
 );
 
