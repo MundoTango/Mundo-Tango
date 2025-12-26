@@ -68,7 +68,7 @@ const PRICE_RANGES = [
 interface PostCreatorProps {
   onPostCreated?: () => void;
   context?: {
-    type: 'feed' | 'event' | 'group' | 'memory';
+    type: 'feed' | 'event' | 'group' | 'city' | 'memory';
     id?: string;
     name?: string;
   };
@@ -106,7 +106,10 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
   // Feature state
   const [selectedTags, setSelectedTags] = useState<string[]>(existingPost?.tags || []);
-  const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>(existingPost?.visibility || 'public');
+  // Default visibility: private for city context only (user can change), public for groups/events/feed
+  // Per MB.MD spec: cities use privacy-by-default, groups maintain existing public default
+  const defaultVisibility = context.type === 'city' ? 'private' : 'public';
+  const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>(existingPost?.visibility || defaultVisibility);
   const [audienceCloseness, setAudienceCloseness] = useState<ClosenessVisibility>(existingPost?.audienceCloseness || 'all');
   const [isRecommendation, setIsRecommendation] = useState(existingPost?.isRecommendation || false);
   const [recommendationType, setRecommendationType] = useState(existingPost?.recommendationType || "");
@@ -461,10 +464,11 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     try {
       let finalContent = showEnhancement && enhancedContent ? enhancedContent : content;
       
-      // Auto-append @mention of group/event name for context-specific posts (in canonical format)
-      if ((context.type === 'group' || context.type === 'event') && context.name && context.id) {
-        const mentionType = context.type === 'event' ? 'event' : 'group';
-        const entityId = typeof context.id === 'string' ? parseInt(context.id) : context.id;
+      // Auto-append @mention of group/event/city name for context-specific posts (in canonical format)
+      if ((context.type === 'group' || context.type === 'event' || context.type === 'city') && context.name && context.id) {
+        const mentionType = context.type === 'event' ? 'event' : context.type === 'city' ? 'city' : 'group';
+        // Use string ID directly to avoid NaN from non-numeric IDs
+        const entityId = String(context.id);
         const safeName = context.name.replace(/ /g, '_');
         // Use canonical format: @type:id:Name_With_Underscores
         const canonicalMention = `@${mentionType}:${mentionType}_${entityId}:${safeName}`;

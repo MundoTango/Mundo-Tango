@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { GroupPostFeed } from "@/components/groups/GroupPostFeed";
+import { PostCreator } from "@/components/universal/PostCreator";
 import { EnhancedMembersList } from "@/components/groups/EnhancedMembersList";
 // Local filter interface for city events tab
 interface CityEventFilterValues {
@@ -288,8 +289,8 @@ function CityMembersTab({ cityId, cityName, legacyGroupId }: { cityId: number; c
       <Card>
         <CardContent className="py-12 text-center">
           <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="font-semibold mb-2">No members yet</h3>
-          <p className="text-muted-foreground">Be the first to join this city community!</p>
+          <h3 className="font-semibold mb-2">No followers yet</h3>
+          <p className="text-muted-foreground">Be the first to follow this city!</p>
         </CardContent>
       </Card>
     );
@@ -440,10 +441,10 @@ export default function CityDetailsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cities/by-slug", citySlug] });
-      toast({ title: "Joined city community!" });
+      toast({ title: "Now following this city!" });
     },
     onError: () => {
-      toast({ title: "Failed to join", variant: "destructive" });
+      toast({ title: "Failed to follow", variant: "destructive" });
     }
   });
 
@@ -506,14 +507,14 @@ export default function CityDetailsPage() {
                     onClick={() => joinMutation.mutate()}
                     disabled={joinMutation.isPending}
                     className="gap-2"
-                    data-testid="button-join-city"
+                    data-testid="button-follow-city"
                   >
                     {joinMutation.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <Heart className="h-4 w-4" />
                     )}
-                    Join Community
+                    Follow
                   </Button>
                 </div>
               </div>
@@ -532,9 +533,9 @@ export default function CityDetailsPage() {
                 <Calendar className="h-4 w-4" />
                 Events
               </TabsTrigger>
-              <TabsTrigger value="members" className="gap-2" data-testid="tab-members">
+              <TabsTrigger value="members" className="gap-2" data-testid="tab-followers">
                 <Users className="h-4 w-4" />
-                Members
+                Followers
               </TabsTrigger>
               <TabsTrigger value="overview" className="gap-2" data-testid="tab-overview">
                 <Compass className="h-4 w-4" />
@@ -542,15 +543,29 @@ export default function CityDetailsPage() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="discussion" className="mt-0">
+            <TabsContent value="discussion" className="mt-0 space-y-4">
+              {/* City Post Creator - only show when city has legacyGroupId for posting infrastructure */}
+              {user && city.legacyGroupId && (
+                <PostCreator
+                  context={{ 
+                    type: 'city', 
+                    id: String(city.id), 
+                    name: city.name 
+                  }}
+                  onPostCreated={() => {
+                    queryClient.invalidateQueries({ queryKey: ["/api/groups", city.legacyGroupId, "posts"] });
+                  }}
+                />
+              )}
+              
               {city.legacyGroupId ? (
-                <GroupPostFeed groupId={city.legacyGroupId} />
+                <GroupPostFeed groupId={city.legacyGroupId} groupName={city.name} />
               ) : (
                 <Card>
                   <CardContent className="py-12 text-center">
                     <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                     <h3 className="font-semibold mb-2">No discussions yet</h3>
-                    <p className="text-muted-foreground">Start a conversation in this city community!</p>
+                    <p className="text-muted-foreground">This city's discussion features are coming soon!</p>
                   </CardContent>
                 </Card>
               )}

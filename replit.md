@@ -32,6 +32,13 @@ A multi-stage scraping architecture coordinated by a Master Orchestrator, includ
 ### Platform Features
 Core functionalities include social features (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and an International Payment System supporting 30 currencies. All 276 city groups have valid coordinates, auto-geocoding, and public city pages. A comprehensive Data Quality System is in place.
 
+### MB.MD Compliance (v9.9.3)
+- **City-First Branding**: Cities use "Follow/Follower" terminology instead of "Join Group/Member" per CITY_PAGE.md specification
+- **Shadow Group Architecture**: Cities have `legacyGroupId` linking to underlying group infrastructure for Discussion/Follower features
+- **PostCreator Context Types**: Supports 'feed', 'event', 'group', 'city', 'memory' contexts
+- **Auto-Append Mentions**: Posts in city/group/event contexts auto-append canonical @mention format (@type:type_id:Name_With_Underscores)
+- **Privacy-by-Default**: City posts default to 'private' visibility (user can change before posting); groups maintain public default
+
 ### Data Architecture & Statistics
 The database contains 276 city groups and 254 unique cities with event data, totaling 811 events and 820 active users across 62 countries. All city groups follow the Buenos Aires template specification and have geocoded coordinates.
 
