@@ -176,7 +176,15 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
                 <p className="text-sm text-muted-foreground">Find housing and events for your visit</p>
               </div>
             </div>
-            <Button variant="default" size="sm" data-testid="button-plan-trip">
+            <Button 
+              variant="default" 
+              size="sm" 
+              data-testid="button-plan-trip"
+              onClick={() => {
+                const housingTab = document.querySelector('[data-testid="tab-housing"]') as HTMLButtonElement;
+                if (housingTab) housingTab.click();
+              }}
+            >
               <Plane className="h-4 w-4 mr-2" />
               Plan My Trip
             </Button>
