@@ -96,28 +96,50 @@ export function AirbnbHousingView({
 
   const { data: rawListings = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/housing/listings", { city, status: "active" }],
+    queryFn: async () => {
+      const url = new URL("/api/housing/listings", window.location.origin);
+      if (city) url.searchParams.append("city", city);
+      url.searchParams.append("status", "active");
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error("Failed to fetch listings");
+      const data = await res.json();
+      console.log("[AirbnbHousingView] API Data:", data);
+      return data;
+    },
     enabled: !initialListings,
   });
 
   const listings = useMemo(() => {
     if (initialListings) return initialListings;
-    return rawListings.map(item => ({
-      ...(item.listing || item),
-      host: item.host
-    }));
+    return rawListings.map(item => {
+      const listing = item.listing || item;
+      return {
+        ...listing,
+        host: item.host || listing.host
+      };
+    });
   }, [rawListings, initialListings]);
 
   const filteredListings = useMemo(() => {
+    console.log("[AirbnbHousingView] Filtering listings:", {
+      total: listings.length,
+      propertyType,
+      priceRange,
+      searchQuery
+    });
+    
     return listings.filter(listing => {
       const matchesSearch = !searchQuery || 
-        listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        listing.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         listing.city?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         listing.description?.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const matchesType = propertyType === "all" || listing.propertyType === propertyType;
+      const matchesType = propertyType === "all" || 
+        String(listing.listingType).toLowerCase() === propertyType.toLowerCase() || 
+        String(listing.propertyType).toLowerCase() === propertyType.toLowerCase();
       
       const price = listing.pricePerNight || (listing.price ? parseInt(listing.price) : 0);
-      const matchesPrice = priceRange === "all" ||
+      const matchesPrice = priceRange === "all" || priceRange === "any" ||
         (priceRange === "budget" && price <= 100) ||
         (priceRange === "mid" && price > 100 && price <= 250) ||
         (priceRange === "luxury" && price > 250);

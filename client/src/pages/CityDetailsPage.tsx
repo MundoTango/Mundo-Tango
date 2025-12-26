@@ -9,7 +9,39 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Users, MapPin, Calendar, Home, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, Loader2, Map as MapIcon, Plane, MessageSquare, MapPinHouse, UserCheck, Lightbulb, Camera, Drama, Building2, Briefcase, User, Layers, Search, Filter, Calendar as CalendarIcon } from "lucide-react";
+import { 
+  Calendar as CalendarIcon, 
+  MapPin, 
+  Plane, 
+  Lightbulb, 
+  MessageSquare, 
+  Compass, 
+  Users, 
+  Home, 
+  Loader2, 
+  Check, 
+  Heart, 
+  MapPinHouse, 
+  Map as MapIcon,
+  ChevronRight,
+  Music,
+  Mic2,
+  Star,
+  Clock,
+  ExternalLink,
+  GraduationCap,
+  UserCheck,
+  Camera,
+  Drama,
+  Building2,
+  Briefcase,
+  User,
+  Layers,
+  Search,
+  Filter,
+  Calendar
+} from "lucide-react";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { TANGO_ROLES, getRoleByValue } from "@/lib/tangoRoles";
@@ -902,7 +934,7 @@ function CityOverviewTab({ city }: { city: CityData }) {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 z-[200]" align="start">
-                  <Calendar
+                  <CalendarComponent
                     initialFocus
                     mode="range"
                     defaultMonth={dateRange.from || new Date()}
