@@ -258,8 +258,19 @@ export default function LandingPage() {
 
               <motion.div
                 variants={fadeInUp}
-                className="bg-transparent text-white text-lg px-8 py-6 h-auto font-semibold"
+                className="space-y-6"
               >
+                <div style={{ position: 'relative', boxSizing: 'content-box', maxHeight: '80vh', width: '100%', aspectRatio: '1.83', padding: '40px 0 40px 0' }}>
+                  <iframe
+                    src="https://app.supademo.com/embed/cmjndbuaj5i483zz2jwg0vsca?embed_v=2&utm_source=embed"
+                    loading="lazy"
+                    title="Plan Travel and Connect with Tango Community Worldwide"
+                    allow="clipboard-write"
+                    frameBorder="0"
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                    data-testid="iframe-supademo"
+                  />
+                </div>
                 <Link href="/register">
                   <Button
                     size="lg"
@@ -270,16 +281,6 @@ export default function LandingPage() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Button
-                  size="lg"
-                  variant="default"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 h-auto"
-                  data-testid="button-watch-demo"
-                  onClick={() => setDemoModalOpen(true)}
-                >
-                  <Play className="mr-2 h-5 w-5" />
-                  {t('common:watchDemo', 'Watch Demo')}
-                </Button>
               </motion.div>
             </div>
 
