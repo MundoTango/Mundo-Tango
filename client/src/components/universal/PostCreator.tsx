@@ -260,6 +260,23 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     };
   }, []);
 
+  // Handle Escape key to close expanded panels (tags, recommendations, visibility, AI)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showTags) setShowTags(false);
+        if (showRecommendations) setShowRecommendations(false);
+        if (showVisibility) setShowVisibility(false);
+        if (showAiPanel) setShowAiPanel(false);
+      }
+    };
+    
+    if (showTags || showRecommendations || showVisibility || showAiPanel) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [showTags, showRecommendations, showVisibility, showAiPanel]);
+
   const removeMedia = (index: number) => {
     // Cleanup blob URL to prevent memory leak
     const urlToRemove = mediaPreviews[index];
