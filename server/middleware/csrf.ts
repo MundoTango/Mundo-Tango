@@ -341,6 +341,17 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     return next();
   }
   
+  // Skip CSRF for Talent Match endpoints (guest flow with rate limiting + session cookies)
+  // These endpoints have their own security: rate limiting, session tracking, size limits
+  const talentMatchPublicEndpoints = [
+    "/api/talent-match/parse-resume",   // Resume parsing for guest users
+    "/api/talent-match/session",        // Guest session management
+    "/api/talent-match/submit"          // Guest application submission
+  ];
+  if (talentMatchPublicEndpoints.some(endpoint => req.originalUrl === endpoint)) {
+    return next();
+  }
+  
   // Skip CSRF for auth endpoints in development/testing (Playwright E2E tests)
   // Production uses additional security: rate limiting, bot detection, CAPTCHA
   const isDev = process.env.NODE_ENV === 'development';
