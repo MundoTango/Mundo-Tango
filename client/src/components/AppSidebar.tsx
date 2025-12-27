@@ -81,7 +81,7 @@ const socialItems = [
     titleKey: "sidebar.social.volunteer",
     titleFallback: "Volunteer",
     url: "/talent-match",
-    icon: Handshake,
+    icon: Sparkles,
     tooltipKey: "sidebar.social.volunteerTooltip",
     tooltipFallback: "Help create Mundo Tango",
   },
