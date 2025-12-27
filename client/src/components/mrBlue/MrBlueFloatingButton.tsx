@@ -94,7 +94,7 @@ export function MrBlueFloatingButton() {
                 </div>
                 <div>
                   <h2 className="font-semibold">Mr. Blue</h2>
-                  <p className="text-xs text-muted-foreground">AI Assistant with Voice & VibeCoding</p>
+                  <p className="text-xs text-muted-foreground">Your AI Assistant</p>
                 </div>
               </div>
               <Button
@@ -107,9 +107,9 @@ export function MrBlueFloatingButton() {
               </Button>
             </div>
 
-            {/* Full MrBlueChat Component with all features */}
+            {/* Simple Chat Interface */}
             <div className="flex-1 overflow-hidden">
-              <MrBlueChat enableVoice={true} enableVibecoding={true} />
+              <MrBlueChat />
             </div>
           </motion.div>
         )}
