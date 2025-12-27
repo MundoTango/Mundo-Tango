@@ -241,8 +241,14 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     
     try {
       // MB.MD Pattern 53: For god-level users, use enhanced self-heal endpoint
+      // Re-check god level status (auth may have loaded async after constructor)
       if (isGodLevel) {
         console.log('[Self-Healing] 👑 God-level user detected - activating MB.MD self-heal...');
+        
+        // Update state to reflect current god-level status for render
+        if (!this.state.isGodLevel) {
+          this.setState({ isGodLevel: true });
+        }
         
         const selfHealRequest = {
           errorMessage: error.toString(),
@@ -266,8 +272,8 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
           const selfHealData = await selfHealResponse.json();
           console.log('[Self-Healing] 🔧 MB.MD Analysis:', selfHealData.analysis);
           
-          // Store analysis in state for display
-          this.setState({ mbmdAnalysis: selfHealData.analysis });
+          // Store analysis in state for display (also ensure isGodLevel is true for render)
+          this.setState({ mbmdAnalysis: selfHealData.analysis, isGodLevel: true });
           
           // Dispatch custom event to trigger Mr. Blue chat auto-open
           const selfHealEvent = new CustomEvent('mrblue:self-heal', {
