@@ -266,10 +266,10 @@ export default function CitySelectionPage() {
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {scrapers.scrapers.map((s) => {
-                              let hostname = "local source";
+                              let displayUrl = s.sourceUrl || "local source";
                               try {
                                 if (s.sourceUrl && s.sourceUrl.startsWith('http')) {
-                                  hostname = new URL(s.sourceUrl).hostname;
+                                  displayUrl = s.sourceUrl;
                                 }
                               } catch (e) {
                                 console.warn("[CitySelection] Invalid scraper URL:", s.sourceUrl);
@@ -280,19 +280,19 @@ export default function CitySelectionPage() {
                                   href={s.sourceUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors max-w-full"
                                   data-testid={`link-scraper-source-${s.id}`}
                                 >
-                                  <Globe className="h-3 w-3" />
-                                  {hostname}
+                                  <Globe className="h-3 w-3 shrink-0" />
+                                  <span className="truncate">{displayUrl}</span>
                                 </a>
                               );
                             })}
                             {scrapers.websites.map((w) => {
-                              let hostname = "event website";
+                              let displayUrl = w.websiteUrl || "event website";
                               try {
                                 if (w.websiteUrl && w.websiteUrl.startsWith('http')) {
-                                  hostname = new URL(w.websiteUrl).hostname;
+                                  displayUrl = w.websiteUrl;
                                 }
                               } catch (e) {
                                 console.warn("[CitySelection] Invalid website URL:", w.websiteUrl);
@@ -303,11 +303,11 @@ export default function CitySelectionPage() {
                                   href={w.websiteUrl} 
                                   target="_blank" 
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors max-w-full"
                                   data-testid={`link-event-source-${w.id}`}
                                 >
-                                  <Globe className="h-3 w-3" />
-                                  {hostname}
+                                  <Globe className="h-3 w-3 shrink-0" />
+                                  <span className="truncate">{displayUrl}</span>
                                 </a>
                               );
                             })}
