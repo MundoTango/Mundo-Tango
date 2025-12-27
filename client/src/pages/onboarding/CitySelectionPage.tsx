@@ -272,7 +272,7 @@ export default function CitySelectionPage() {
                       ) : (
                         <div className="bg-muted/50 rounded-lg p-4 border border-dashed">
                           <p className="text-sm text-muted-foreground italic">
-                            No event scrapers are active for this city yet.
+                            Looks like we don't have a website for local events for this city.
                           </p>
                         </div>
                       )}
