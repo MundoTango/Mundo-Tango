@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Route } from "wouter";
+import { Route, Switch } from "wouter";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/AppLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
@@ -95,7 +95,7 @@ const PROResearchersPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").t
 
 export function MiscRoutes() {
   return (
-    <>
+    <Switch>
       <Route path="/teachers">
         <AppLayout>
           <Suspense fallback={<LoadingFallback />}>
@@ -600,6 +600,6 @@ export function MiscRoutes() {
       <Route path="/pro/dancers"><AppLayout><Suspense fallback={<LoadingFallback />}><PRODancersPage /></Suspense></AppLayout></Route>
       <Route path="/pro/researchers"><AppLayout><Suspense fallback={<LoadingFallback />}><PROResearchersPage /></Suspense></AppLayout></Route>
       <Route component={NotFound} />
-    </>
+    </Switch>
   );
 }
