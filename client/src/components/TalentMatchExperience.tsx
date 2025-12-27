@@ -409,11 +409,23 @@ export function TalentMatchExperience({
               console.error("[TalentMatch] Parse request failed:", parseError);
             }
             
+            // Check if parsing actually succeeded (not just placeholder text)
+            const parsingFailed = !parsedText || parsedText.startsWith("[Binary file") || parsedText.length < 20;
+            
             setUploadedDocuments(prev => 
               prev.map(d => (d.file.name === docName && d.file.size === docSize) 
-                ? { ...d, base64Buffer, text: parsedText, status: "parsed" } 
+                ? { ...d, base64Buffer, text: parsedText, status: parsingFailed ? "error" : "parsed" } 
                 : d)
             );
+            
+            // Show warning if parsing failed
+            if (parsingFailed) {
+              toast({
+                title: "PDF parsing issue",
+                description: `Could not extract text from ${docName}. Try a TXT or DOCX file instead.`,
+                variant: "destructive"
+              });
+            }
           } else {
             const text = event.target?.result as string;
             setUploadedDocuments(prev => 
@@ -676,9 +688,18 @@ export function TalentMatchExperience({
         
         if (!parsingComplete) {
           // Hard block: Don't proceed without parsed resume content
+          // Check what the actual issue is
+          const freshDocs = uploadedDocumentsRef.current;
+          const hasErrors = freshDocs.some(d => d.status === "error");
+          const hasPending = freshDocs.some(d => d.status === "pending");
+          
           toast({
-            title: "Resume processing incomplete",
-            description: "Please wait for your documents to finish processing or try re-uploading.",
+            title: hasErrors ? "Resume parsing failed" : hasPending ? "Resume still processing" : "Resume processing incomplete",
+            description: hasErrors 
+              ? "Your PDF could not be read. Please try uploading a TXT or DOCX file instead, or a different PDF."
+              : hasPending 
+              ? "Please wait a moment for your documents to finish processing."
+              : "Please wait for your documents to finish processing or try re-uploading.",
             variant: "destructive"
           });
           setIsSubmitting(false);
