@@ -311,6 +311,103 @@ When a design template changes that affects all instances:
 
 ---
 
+## 🔧 PRODUCTION DATABASE ADMIN TOOLS
+
+For troubleshooting production users without direct database access. Uses Supabase REST API.
+
+### Invocation Syntax
+
+```markdown
+use mb.md: admin:production        → Production admin tools overview
+use mb.md: admin:user-lookup       → Diagnose specific user
+use mb.md: admin:user-search       → Search users by name/email
+use mb.md: admin:stats             → Production statistics
+```
+
+### Available Endpoints (Authenticated Admin Only)
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/admin/production/status` | Check Supabase connection status |
+| `GET /api/admin/production/user/:email` | Lookup user + login diagnosis |
+| `GET /api/admin/production/users/search?q=term` | Search users by name/email |
+| `GET /api/admin/production/users/recent` | List recent registrations |
+| `GET /api/admin/production/waitlist` | List waitlist users |
+| `GET /api/admin/production/stats` | Total users, active, suspended |
+
+### User Lookup Response Format
+
+```json
+{
+  "success": true,
+  "user": {
+    "id": 123,
+    "email": "user@example.com",
+    "displayName": "User Name",
+    "role": "user",
+    "isActive": true,
+    "isVerified": true,
+    "isSuspended": false,
+    "createdAt": "2025-01-15T..."
+  },
+  "loginDiagnosis": {
+    "canLogin": true,
+    "issues": [],
+    "recommendation": "User can login normally"
+  }
+}
+```
+
+### Login Diagnosis Checks
+
+| Check | Issue Code | Fix |
+|-------|------------|-----|
+| `isActive = false` | `INACTIVE` | Activate account |
+| `isSuspended = true` | `SUSPENDED` | Unsuspend account |
+| `isVerified = false` | `UNVERIFIED` | Resend verification email |
+| `onWaitlist = true` | `WAITLISTED` | Approve from waitlist |
+
+### Troubleshooting Workflow
+
+```
+STEP 1: GET STATUS
+curl https://mundotango.life/api/admin/production/status
+→ Verify Supabase connection is active
+
+STEP 2: LOOKUP USER
+curl https://mundotango.life/api/admin/production/user/{email}
+→ Get user details and login diagnosis
+
+STEP 3: DIAGNOSE
+Check loginDiagnosis.issues array:
+- INACTIVE → User needs account activation
+- SUSPENDED → Admin suspended, needs review
+- UNVERIFIED → Email not verified
+- WAITLISTED → Still on waitlist
+
+STEP 4: FIX (via Supabase Dashboard)
+1. Go to Supabase → Table Editor → users
+2. Find user by email
+3. Update: is_active=true, is_verified=true, is_suspended=false
+4. Remove from waitlist if present
+```
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `server/services/ProductionDatabaseService.ts` | Supabase REST API client |
+| `server/routes/admin-routes.ts` | Admin endpoint handlers |
+
+### Environment Requirements
+
+- `SUPABASE_URL` - Production Supabase URL
+- `SUPABASE_ANON_KEY` - Supabase anonymous key
+
+**Note:** These endpoints only work when deployed to production (mundotango.life). Development environment has network restrictions preventing Supabase access.
+
+---
+
 ## 🛡️ DEPLOYMENT PROTECTION
 
 **CRITICAL:** These files are protected and must NEVER be deleted:
