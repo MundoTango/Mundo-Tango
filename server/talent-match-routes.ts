@@ -729,9 +729,24 @@ Keep responses concise (2-3 sentences max).`;
 
   // Get current session
   router.get("/session", async (req, res) => {
-    // Return 404 if no session in cookie, but we'll implement a stub for now
-    // to match what the frontend expects
-    res.status(404).json({ error: "No session found" });
+    try {
+      const sessionId = req.cookies.talentMatchSessionId;
+      if (!sessionId) {
+        return res.status(404).json({ error: "No session found" });
+      }
+
+      // In a real app, we'd fetch from DB. For now, we'll return a successful response
+      // if the cookie exists, as the frontend will fallback to localStorage for data.
+      res.json({ 
+        success: true, 
+        session: { 
+          sessionId,
+          // Other fields will be merged from localStorage on the frontend
+        } 
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
   });
 
   return router;
