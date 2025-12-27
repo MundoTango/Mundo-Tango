@@ -569,6 +569,67 @@ export class EmailService {
           </div>
         </body>
         </html>
+      `,
+      
+      waitlistInvite: (data) => `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f4f4f4; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { padding: 40px; background: white; border-radius: 0 0 8px 8px; }
+            .invite-code { background: #f8f9fa; border: 3px solid #667eea; padding: 25px; text-align: center; margin: 30px 0; border-radius: 10px; }
+            .code { font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #667eea; font-family: monospace; }
+            .button { display: inline-block; padding: 16px 32px; background: #28a745; color: white; text-decoration: none; border-radius: 6px; margin: 25px 0; font-weight: bold; font-size: 18px; }
+            .highlight { background: #fff3cd; padding: 20px; border-left: 4px solid #ffc107; margin: 20px 0; border-radius: 4px; }
+            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Your Mundo Tango Invite is Here!</h1>
+            </div>
+            <div class="content">
+              <p>Hi ${data.name},</p>
+              <p>Great news! You've been selected to join Mundo Tango - the global community where tango dancers connect, discover events, and share their passion for tango.</p>
+              
+              <div class="highlight">
+                <strong>Special Offer:</strong> Use the invite code below to join with exclusive tango community benefits!
+              </div>
+              
+              <div class="invite-code">
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">Your Exclusive Invite Code:</p>
+                <div class="code">${data.code}</div>
+              </div>
+              
+              <div style="text-align: center;">
+                <a href="${data.signupUrl}" class="button">Join Mundo Tango Now</a>
+              </div>
+              
+              <p style="margin-top: 30px;">This code grants you:</p>
+              <ul style="line-height: 2;">
+                <li>Access to our global tango community</li>
+                <li>Discover events worldwide</li>
+                <li>Connect with dancers globally</li>
+                <li>Access to tango housing marketplace</li>
+                <li>Free access to all community features</li>
+              </ul>
+              
+              <p>Simply click the button above and enter your code <strong>${data.code}</strong> during registration.</p>
+              
+              <p style="margin-top: 30px;">See you on the dance floor!</p>
+              <p>The Mundo Tango Team</p>
+            </div>
+            <div class="footer">
+              <p>This email was sent by Mundo Tango. If you have questions, contact our support team.</p>
+              <p>Mundo Tango. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
       `
     };
     
@@ -704,6 +765,48 @@ export class EmailService {
     } catch (error: any) {
       console.error(`[EmailService] Failed to send verification code email to ${email}:`, error?.message || error);
       console.error(`[EmailService] Full error details:`, JSON.stringify(error, null, 2));
+      return false;
+    }
+  }
+  
+  // Helper: Send waitlist invite email with TANGO code (direct send, not queued)
+  static async sendWaitlistInvite(email: string, name: string): Promise<boolean> {
+    try {
+      let appUrl = process.env.APP_URL;
+      if (!appUrl && process.env.REPLIT_DEV_DOMAIN) {
+        appUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+      }
+      if (!appUrl) {
+        appUrl = 'https://mundotango.life';
+      }
+      
+      const signupUrl = `${appUrl}/signup?code=tango`;
+      
+      const html = this.renderTemplate('waitlistInvite', {
+        name: name || 'Tango Dancer',
+        code: 'TANGO',
+        signupUrl
+      });
+      
+      const resendClient = await getResendClient();
+      if (!resendClient) {
+        console.log(`[EmailService] Waitlist invite would be sent to ${email} (Resend not configured)`);
+        console.log(`[EmailService] Signup URL: ${signupUrl}`);
+        return true;
+      }
+      
+      console.log(`[EmailService] Sending waitlist invite to ${email} from ${resendClient.fromEmail}`);
+      const result = await resendClient.client.emails.send({
+        from: resendClient.fromEmail,
+        to: email,
+        subject: 'Your Mundo Tango Invite - Join the Global Tango Community!',
+        html: html
+      });
+      
+      console.log(`[EmailService] Waitlist invite sent to ${email}`, JSON.stringify(result));
+      return true;
+    } catch (error: any) {
+      console.error(`[EmailService] Failed to send waitlist invite to ${email}:`, error?.message || error);
       return false;
     }
   }

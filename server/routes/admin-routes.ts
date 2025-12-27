@@ -495,6 +495,84 @@ router.delete("/users/:userId", authenticateToken, requireAdmin, async (req, res
 });
 
 /**
+ * POST /api/admin/waitlist/:userId/send-invite
+ * Send waitlist invite email to specific user
+ */
+router.post("/waitlist/:userId/send-invite", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { EmailService } = await import("../services/EmailService");
+    
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, parseInt(userId))
+    });
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    if (!user.waitlist) {
+      return res.status(400).json({ error: "User is not on the waitlist" });
+    }
+    
+    const success = await EmailService.sendWaitlistInvite(user.email, user.name || user.username || "Tango Dancer");
+    
+    if (success) {
+      res.json({ success: true, message: `Invite sent to ${user.email}` });
+    } else {
+      res.status(500).json({ error: "Failed to send invite email" });
+    }
+  } catch (error: any) {
+    console.error("Error sending waitlist invite:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/waitlist/send-all-invites
+ * Send invite emails to all waitlist users (batch)
+ */
+router.post("/waitlist/send-all-invites", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { EmailService } = await import("../services/EmailService");
+    
+    const waitlistUsers = await db.query.users.findMany({
+      where: eq(users.waitlist, true),
+      columns: { id: true, email: true, name: true, username: true }
+    });
+    
+    if (waitlistUsers.length === 0) {
+      return res.json({ success: true, message: "No users on the waitlist", sent: 0 });
+    }
+    
+    let sentCount = 0;
+    let failedCount = 0;
+    
+    for (const user of waitlistUsers) {
+      const success = await EmailService.sendWaitlistInvite(user.email, user.name || user.username || "Tango Dancer");
+      if (success) {
+        sentCount++;
+      } else {
+        failedCount++;
+      }
+      // Small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+    
+    res.json({ 
+      success: true, 
+      message: `Invites sent: ${sentCount}, failed: ${failedCount}`,
+      sent: sentCount,
+      failed: failedCount,
+      total: waitlistUsers.length
+    });
+  } catch (error: any) {
+    console.error("Error sending batch waitlist invites:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * GET /api/admin/content/flagged
  * Get flagged content (posts, comments, etc.)
  */
