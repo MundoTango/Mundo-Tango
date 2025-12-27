@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Brain, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,6 +13,8 @@ interface TalentMatchModalProps {
 export function TalentMatchModal({ open, onOpenChange }: TalentMatchModalProps) {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const [isPreloaded, setIsPreloaded] = useState(false);
+  const preloadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Construct embed URL with user info if authenticated
   const embedUrl = new URL("/talent-match-embed", window.location.origin);
@@ -21,6 +23,34 @@ export function TalentMatchModal({ open, onOpenChange }: TalentMatchModalProps) 
     embedUrl.searchParams.set("email", user.email || "");
     embedUrl.searchParams.set("mode", "authenticated");
   }
+
+  // Preload the embed page for faster modal opening
+  useEffect(() => {
+    if (isPreloaded) return;
+    
+    // Preload after a short delay to not block initial page render
+    preloadTimeoutRef.current = setTimeout(() => {
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = '/talent-match-embed';
+      link.as = 'document';
+      document.head.appendChild(link);
+      setIsPreloaded(true);
+    }, 2000);
+    
+    return () => {
+      if (preloadTimeoutRef.current) {
+        clearTimeout(preloadTimeoutRef.current);
+      }
+    };
+  }, [isPreloaded]);
+
+  // Reset loading state when modal opens
+  useEffect(() => {
+    if (open) {
+      setIsLoading(true);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -41,7 +71,7 @@ export function TalentMatchModal({ open, onOpenChange }: TalentMatchModalProps) 
               {isLoading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm z-50">
                   <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
-                  <p className="text-sm text-muted-foreground animate-pulse">Initializing Talent Match AI...</p>
+                  <p className="text-sm text-muted-foreground animate-pulse">Loading Talent Match...</p>
                 </div>
               )}
               <iframe
@@ -50,6 +80,7 @@ export function TalentMatchModal({ open, onOpenChange }: TalentMatchModalProps) 
                 title="Talent Match Application"
                 data-testid="iframe-talent-match"
                 onLoad={() => setIsLoading(false)}
+                loading="eager"
               />
             </>
           )}
