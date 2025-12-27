@@ -273,11 +273,13 @@ export default function CitySelectionPage() {
                                   href={s.sourceUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors max-w-full"
+                                  className="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors max-w-full group"
                                   data-testid={`link-scraper-source-${s.id}`}
                                 >
-                                  <Globe className="h-3 w-3 shrink-0" />
-                                  <span className="truncate">{displayUrl}</span>
+                                  <Globe className="h-3.5 w-3.5 shrink-0" />
+                                  <span className="truncate inline-block max-w-[200px] sm:max-w-[400px] underline decoration-primary/30 underline-offset-2 group-hover:decoration-primary">
+                                    {displayUrl}
+                                  </span>
                                 </a>
                               );
                             })}
@@ -289,11 +291,13 @@ export default function CitySelectionPage() {
                                   href={w.websiteUrl} 
                                   target="_blank" 
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors max-w-full"
+                                  className="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors max-w-full group"
                                   data-testid={`link-event-source-${w.id}`}
                                 >
-                                  <Globe className="h-3 w-3 shrink-0" />
-                                  <span className="truncate">{displayUrl}</span>
+                                  <Globe className="h-3.5 w-3.5 shrink-0" />
+                                  <span className="truncate inline-block max-w-[200px] sm:max-w-[400px] underline decoration-primary/30 underline-offset-2 group-hover:decoration-primary">
+                                    {displayUrl}
+                                  </span>
                                 </a>
                               );
                             })}
