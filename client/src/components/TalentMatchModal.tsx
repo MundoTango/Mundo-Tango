@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Brain } from "lucide-react";
+import { Brain, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface TalentMatchModalProps {
@@ -11,6 +12,7 @@ interface TalentMatchModalProps {
 
 export function TalentMatchModal({ open, onOpenChange }: TalentMatchModalProps) {
   const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
   
   // Construct embed URL with user info if authenticated
   const embedUrl = new URL("/talent-match-embed", window.location.origin);
@@ -33,14 +35,23 @@ export function TalentMatchModal({ open, onOpenChange }: TalentMatchModalProps) 
           </DialogDescription>
         </DialogHeader>
 
-        <div className="w-full h-[calc(95vh-60px)]">
+        <div className="w-full h-[calc(95vh-60px)] relative">
           {open && (
-            <iframe
-              src={embedUrl.toString()}
-              className="w-full h-full border-0"
-              title="Talent Match Application"
-              data-testid="iframe-talent-match"
-            />
+            <>
+              {isLoading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm z-50">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+                  <p className="text-sm text-muted-foreground animate-pulse">Initializing Talent Match AI...</p>
+                </div>
+              )}
+              <iframe
+                src={embedUrl.toString()}
+                className="w-full h-full border-0"
+                title="Talent Match Application"
+                data-testid="iframe-talent-match"
+                onLoad={() => setIsLoading(false)}
+              />
+            </>
           )}
         </div>
       </DialogContent>
