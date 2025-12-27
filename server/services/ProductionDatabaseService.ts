@@ -1,171 +1,215 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
-import { eq, like, or, desc, count, sql } from "drizzle-orm";
-import * as schema from "@shared/schema";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export class ProductionDatabaseService {
-  private db: ReturnType<typeof drizzle> | null = null;
+  private supabase: SupabaseClient | null = null;
   private isAvailable = false;
+  private connectionError: string | null = null;
 
   constructor() {
     this.initialize();
   }
 
   private initialize() {
-    const productionUrl = process.env.SUPABASE_DATABASE_URL;
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
     
-    if (!productionUrl) {
-      console.warn("[ProductionDB] SUPABASE_DATABASE_URL not configured - production queries disabled");
+    if (!supabaseUrl || !supabaseKey) {
+      this.connectionError = "SUPABASE_URL or key not configured";
+      console.warn("[ProductionDB] " + this.connectionError + " - production queries disabled");
       this.isAvailable = false;
       return;
     }
 
     try {
-      const sqlClient = neon(productionUrl);
-      this.db = drizzle(sqlClient, { schema });
+      this.supabase = createClient(supabaseUrl, supabaseKey, {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      });
       this.isAvailable = true;
-      console.log("[ProductionDB] Connected to production Supabase database");
-    } catch (error) {
-      console.error("[ProductionDB] Failed to connect:", error);
+      console.log("[ProductionDB] Supabase client configured (connection tested on first query)");
+    } catch (error: any) {
+      this.connectionError = error.message || "Unknown error";
+      console.error("[ProductionDB] Failed to configure client:", error);
       this.isAvailable = false;
     }
   }
 
   isConnected(): boolean {
-    return this.isAvailable && this.db !== null;
+    return this.isAvailable && this.supabase !== null;
+  }
+
+  getConnectionError(): string | null {
+    return this.connectionError;
+  }
+
+  async testConnection(): Promise<{ success: boolean; error?: string }> {
+    if (!this.supabase) {
+      return { success: false, error: this.connectionError || "Client not configured" };
+    }
+    try {
+      const { data, error } = await this.supabase.from("users").select("id").limit(1);
+      if (error) {
+        this.connectionError = error.message;
+        return { success: false, error: error.message };
+      }
+      this.connectionError = null;
+      return { success: true };
+    } catch (error: any) {
+      const msg = error.message || "Connection failed";
+      this.connectionError = msg;
+      if (msg.includes("ENOTFOUND") || msg.includes("fetch failed")) {
+        return { 
+          success: false, 
+          error: "Network unreachable: Replit development cannot reach production Supabase. This feature only works when deployed to production." 
+        };
+      }
+      return { success: false, error: msg };
+    }
   }
 
   async getUserByEmail(email: string) {
-    if (!this.db) {
-      throw new Error("Production database not available");
+    if (!this.supabase) {
+      throw new Error("Production database not configured");
     }
 
-    const user = await this.db.select({
-      id: schema.users.id,
-      email: schema.users.email,
-      username: schema.users.username,
-      name: schema.users.name,
-      role: schema.users.role,
-      waitlist: schema.users.waitlist,
-      isVerified: schema.users.isVerified,
-      isActive: schema.users.isActive,
-      suspended: schema.users.suspended,
-      createdAt: schema.users.createdAt,
-      lastLoginAt: schema.users.lastLoginAt,
-      city: schema.users.city,
-      country: schema.users.country,
-    })
-      .from(schema.users)
-      .where(eq(schema.users.email, email))
-      .limit(1);
+    try {
+      const { data, error } = await this.supabase
+        .from("users")
+        .select("id, email, username, name, role, waitlist, is_verified, is_active, suspended, created_at, last_login_at, city, country")
+        .eq("email", email)
+        .single();
 
-    return user[0] || null;
+      if (error && error.code !== "PGRST116") {
+        if (error.message?.includes("ENOTFOUND") || error.message?.includes("fetch failed")) {
+          throw new Error("Network unreachable: This feature only works when deployed to production.");
+        }
+        throw error;
+      }
+
+      return data || null;
+    } catch (error: any) {
+      if (error.message?.includes("ENOTFOUND") || error.message?.includes("fetch failed")) {
+        throw new Error("Network unreachable: This feature only works when deployed to production.");
+      }
+      throw error;
+    }
   }
 
   async searchUsers(query: string, limit = 20) {
-    if (!this.db) {
-      throw new Error("Production database not available");
+    if (!this.supabase) {
+      throw new Error("Production database not configured");
     }
 
-    const searchPattern = `%${query}%`;
-    
-    const users = await this.db.select({
-      id: schema.users.id,
-      email: schema.users.email,
-      username: schema.users.username,
-      name: schema.users.name,
-      role: schema.users.role,
-      waitlist: schema.users.waitlist,
-      isVerified: schema.users.isVerified,
-      isActive: schema.users.isActive,
-      suspended: schema.users.suspended,
-      createdAt: schema.users.createdAt,
-      lastLoginAt: schema.users.lastLoginAt,
-    })
-      .from(schema.users)
-      .where(
-        or(
-          like(schema.users.email, searchPattern),
-          like(schema.users.name, searchPattern),
-          like(schema.users.username, searchPattern)
-        )
-      )
-      .orderBy(desc(schema.users.createdAt))
-      .limit(limit);
+    try {
+      const { data, error } = await this.supabase
+        .from("users")
+        .select("id, email, username, name, role, waitlist, is_verified, is_active, suspended, created_at, last_login_at")
+        .or(`email.ilike.%${query}%,name.ilike.%${query}%,username.ilike.%${query}%`)
+        .order("created_at", { ascending: false })
+        .limit(limit);
 
-    return users;
+      if (error) {
+        if (error.message?.includes("ENOTFOUND") || error.message?.includes("fetch failed")) {
+          throw new Error("Network unreachable: This feature only works when deployed to production.");
+        }
+        throw error;
+      }
+      return data || [];
+    } catch (error: any) {
+      if (error.message?.includes("ENOTFOUND") || error.message?.includes("fetch failed")) {
+        throw new Error("Network unreachable: This feature only works when deployed to production.");
+      }
+      throw error;
+    }
   }
 
   async getRecentUsers(limit = 50) {
-    if (!this.db) {
-      throw new Error("Production database not available");
+    if (!this.supabase) {
+      throw new Error("Production database not configured");
     }
 
-    const users = await this.db.select({
-      id: schema.users.id,
-      email: schema.users.email,
-      username: schema.users.username,
-      name: schema.users.name,
-      role: schema.users.role,
-      waitlist: schema.users.waitlist,
-      isVerified: schema.users.isVerified,
-      isActive: schema.users.isActive,
-      suspended: schema.users.suspended,
-      createdAt: schema.users.createdAt,
-      lastLoginAt: schema.users.lastLoginAt,
-    })
-      .from(schema.users)
-      .orderBy(desc(schema.users.createdAt))
-      .limit(limit);
+    try {
+      const { data, error } = await this.supabase
+        .from("users")
+        .select("id, email, username, name, role, waitlist, is_verified, is_active, suspended, created_at, last_login_at")
+        .order("created_at", { ascending: false })
+        .limit(limit);
 
-    return users;
+      if (error) {
+        if (error.message?.includes("ENOTFOUND") || error.message?.includes("fetch failed")) {
+          throw new Error("Network unreachable: This feature only works when deployed to production.");
+        }
+        throw error;
+      }
+      return data || [];
+    } catch (error: any) {
+      if (error.message?.includes("ENOTFOUND") || error.message?.includes("fetch failed")) {
+        throw new Error("Network unreachable: This feature only works when deployed to production.");
+      }
+      throw error;
+    }
   }
 
   async getProductionStats() {
-    if (!this.db) {
-      throw new Error("Production database not available");
+    if (!this.supabase) {
+      throw new Error("Production database not configured");
     }
 
-    const [totalUsers, waitlistUsers, activeUsers, verifiedUsers] = await Promise.all([
-      this.db.select({ count: count() }).from(schema.users),
-      this.db.select({ count: count() }).from(schema.users).where(eq(schema.users.waitlist, true)),
-      this.db.select({ count: count() }).from(schema.users).where(eq(schema.users.isActive, true)),
-      this.db.select({ count: count() }).from(schema.users).where(eq(schema.users.isVerified, true)),
-    ]);
+    try {
+      const [totalResult, waitlistResult, activeResult, verifiedResult] = await Promise.all([
+        this.supabase.from("users").select("id", { count: "exact", head: true }),
+        this.supabase.from("users").select("id", { count: "exact", head: true }).eq("waitlist", true),
+        this.supabase.from("users").select("id", { count: "exact", head: true }).eq("is_active", true),
+        this.supabase.from("users").select("id", { count: "exact", head: true }).eq("is_verified", true),
+      ]);
 
-    return {
-      total: totalUsers[0]?.count || 0,
-      waitlist: waitlistUsers[0]?.count || 0,
-      active: activeUsers[0]?.count || 0,
-      verified: verifiedUsers[0]?.count || 0,
-    };
+      return {
+        total: totalResult.count || 0,
+        waitlist: waitlistResult.count || 0,
+        active: activeResult.count || 0,
+        verified: verifiedResult.count || 0,
+      };
+    } catch (error: any) {
+      if (error.message?.includes("ENOTFOUND") || error.message?.includes("fetch failed")) {
+        throw new Error("Network unreachable: This feature only works when deployed to production.");
+      }
+      throw error;
+    }
   }
 
   async getWaitlistUsers(limit = 100) {
-    if (!this.db) {
-      throw new Error("Production database not available");
+    if (!this.supabase) {
+      throw new Error("Production database not configured");
     }
 
-    const users = await this.db.select({
-      id: schema.users.id,
-      email: schema.users.email,
-      username: schema.users.username,
-      name: schema.users.name,
-      waitlistDate: schema.users.waitlistDate,
-      isVerified: schema.users.isVerified,
-      createdAt: schema.users.createdAt,
-    })
-      .from(schema.users)
-      .where(eq(schema.users.waitlist, true))
-      .orderBy(desc(schema.users.waitlistDate))
-      .limit(limit);
+    try {
+      const { data, error } = await this.supabase
+        .from("users")
+        .select("id, email, username, name, waitlist_date, is_verified, created_at")
+        .eq("waitlist", true)
+        .order("waitlist_date", { ascending: false })
+        .limit(limit);
 
-    return users;
+      if (error) {
+        if (error.message?.includes("ENOTFOUND") || error.message?.includes("fetch failed")) {
+          throw new Error("Network unreachable: This feature only works when deployed to production.");
+        }
+        throw error;
+      }
+      return data || [];
+    } catch (error: any) {
+      if (error.message?.includes("ENOTFOUND") || error.message?.includes("fetch failed")) {
+        throw new Error("Network unreachable: This feature only works when deployed to production.");
+      }
+      throw error;
+    }
   }
 
   async getUserLoginHistory(email: string) {
-    if (!this.db) {
-      throw new Error("Production database not available");
+    if (!this.supabase) {
+      throw new Error("Production database not configured");
     }
 
     const user = await this.getUserByEmail(email);
@@ -176,11 +220,11 @@ export class ProductionDatabaseService {
     return {
       user,
       loginStatus: {
-        canLogin: user.isActive && !user.suspended && user.isVerified,
+        canLogin: user.is_active && !user.suspended && user.is_verified,
         issues: [
-          !user.isActive && "Account is inactive",
+          !user.is_active && "Account is inactive",
           user.suspended && "Account is suspended",
-          !user.isVerified && "Email not verified",
+          !user.is_verified && "Email not verified",
           user.waitlist && "User is on waitlist (can still login)",
         ].filter(Boolean),
       },

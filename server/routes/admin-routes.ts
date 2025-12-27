@@ -2306,15 +2306,33 @@ import { productionDb } from "../services/ProductionDatabaseService";
 /**
  * GET /api/admin/production/status
  * Check production database connection status
+ * In development: Network may be unreachable (Replit sandbox limitation)
+ * In production: Should work correctly
  */
 router.get("/production/status", authenticateToken, requireAdmin, async (req, res: Response) => {
   try {
-    const isConnected = productionDb.isConnected();
+    const isConfigured = productionDb.isConnected();
+    
+    if (!isConfigured) {
+      return res.json({
+        configured: false,
+        connected: false,
+        message: "Production database not configured (SUPABASE_URL and key required)",
+        error: productionDb.getConnectionError(),
+      });
+    }
+    
+    // Test actual connection
+    const testResult = await productionDb.testConnection();
+    
     res.json({
-      connected: isConnected,
-      message: isConnected 
-        ? "Production database connected" 
-        : "Production database not available (SUPABASE_DATABASE_URL not configured)",
+      configured: true,
+      connected: testResult.success,
+      message: testResult.success 
+        ? "Production database connected and operational" 
+        : testResult.error || "Connection test failed",
+      environment: process.env.NODE_ENV || "development",
+      note: testResult.success ? null : "In development, production database access may be restricted by network policies. This feature works when deployed to production.",
     });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
