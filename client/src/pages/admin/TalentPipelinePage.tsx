@@ -125,7 +125,7 @@ export default function TalentPipelinePage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            
+            <h1 className="text-3xl font-bold mb-2">Talent Pipeline</h1>
             <p className="text-muted-foreground">
               Track volunteer applications from submission to approval
             </p>

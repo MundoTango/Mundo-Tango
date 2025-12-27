@@ -218,33 +218,6 @@ export default function UserManagementPage() {
     return <Badge variant="default" data-testid={`badge-status-${user.id}`}>Active</Badge>;
   };
 
-  const exportToCSV = () => {
-    if (!users) return;
-    
-    const csv = [
-      ['ID', 'Name', 'Email', 'Username', 'Role', 'Status', 'Join Date'].join(','),
-      ...users.map(u => [
-        u.id,
-        u.name,
-        u.email,
-        u.username,
-        u.role,
-        u.suspended ? 'Suspended' : u.isActive ? 'Active' : 'Inactive',
-        new Date(u.createdAt).toLocaleDateString()
-      ].join(','))
-    ].join('\n');
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `users-${new Date().toISOString().split('T')[0]}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-  };
-
   return (
     <div className="space-y-8" data-testid="page-user-management">
       <div className="flex items-center justify-between">
