@@ -704,5 +704,35 @@ Keep responses concise (2-3 sentences max).`;
     });
   });
 
+  // Create or retrieve session
+  router.post("/session", async (req, res) => {
+    try {
+      const { name, email } = req.body;
+      const sessionId = `tm_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+      
+      const session = {
+        sessionId,
+        name,
+        email,
+        step: "upload",
+        uploadedDocuments: [],
+        interviewMessages: [],
+        createdAt: Date.now(),
+        lastUpdatedAt: Date.now(),
+      };
+      
+      res.json({ success: true, session });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get current session
+  router.get("/session", async (req, res) => {
+    // Return 404 if no session in cookie, but we'll implement a stub for now
+    // to match what the frontend expects
+    res.status(404).json({ error: "No session found" });
+  });
+
   return router;
 }

@@ -513,6 +513,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  const talentMatchRoutes = createTalentMatchRoutes(storage);
+  app.use("/api/talent-match", talentMatchRoutes);
+
   // Security middleware (CSP headers already applied in server/index.ts via Helmet)
   app.use(setCsrfToken);
   
