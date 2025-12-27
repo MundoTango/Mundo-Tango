@@ -347,6 +347,53 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
       // Log received context for debugging
       console.log('[Mr. Blue] Received context:', JSON.stringify(parsedContext, null, 2));
 
+      // ================== MB.MD: PRODUCTION USER LOOKUP FOR ADMINS ==================
+      // Detect if admin is asking about a production user
+      const productionUserPattern = /(?:lookup|find|check|troubleshoot|diagnose|search|what(?:'s| is) wrong with|why can'?t|help|debug|production)\s+(?:user|account|login|email)?\s*[:\s]*([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i;
+      const productionStatsPattern = /production\s+(?:stats|statistics|status|health|overview)/i;
+      const productionMatch = message.match(productionUserPattern);
+      
+      if (userId && (productionMatch || productionStatsPattern.test(message))) {
+        const isAdmin = await isGodLevelUser(userId);
+        
+        if (isAdmin) {
+          if (productionMatch) {
+            const email = productionMatch[1];
+            console.log(`[Mr. Blue] 🔍 Admin production user lookup for: ${email}`);
+            
+            const userInfo = await lookupProductionUser(email, userId);
+            const response = formatUserInfoForMrBlue(userInfo);
+            
+            return res.json({
+              success: true,
+              mode: 'production_admin',
+              response: response,
+              intent: 'production_lookup',
+              confidence: 0.95
+            });
+          } else if (productionStatsPattern.test(message)) {
+            console.log('[Mr. Blue] 📊 Admin requesting production stats');
+            
+            const stats = await getProductionStats(userId);
+            const response = stats.error 
+              ? `**Production Stats Error:** ${stats.error}`
+              : `**Production Database Stats:**
+- Total Users: ${stats.totalUsers}
+- Active Users: ${stats.activeUsers}
+- New Users (24h): ${stats.newUsersToday}
+- Verified Emails: ${stats.verifiedEmails}`;
+            
+            return res.json({
+              success: true,
+              mode: 'production_admin',
+              response: response,
+              intent: 'production_stats',
+              confidence: 0.95
+            });
+          }
+        }
+      }
+
       // ================== MB.MD FIX: Handle custom systemPrompt for Talent Match interviews ==================
       if (req.body.systemPrompt && typeof req.body.systemPrompt === 'string') {
         console.log('[Mr. Blue] Using custom system prompt for Talent Match');
