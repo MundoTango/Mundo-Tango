@@ -2652,7 +2652,7 @@ export type SelectGroupInvite = typeof groupInvites.$inferSelect;
 
 // Group Posts
 export const insertGroupPostSchema = createInsertSchema(groupPosts, {
-  content: z.string().min(1),
+  content: (schema) => schema.min(1),
 }).omit({
   id: true,
   createdAt: true,
@@ -2667,7 +2667,7 @@ export type SelectGroupPost = typeof groupPosts.$inferSelect;
 
 // Group Categories
 export const insertGroupCategorySchema = createInsertSchema(groupCategories, {
-  name: z.string().min(1).max(100),
+  name: (schema) => schema.min(1).max(100),
 }).omit({
   id: true,
   groupCount: true,
@@ -2677,7 +2677,7 @@ export type SelectGroupCategory = typeof groupCategories.$inferSelect;
 
 // Posts
 export const insertPostSchema = createInsertSchema(posts, {
-  content: z.string().min(0), // Allow empty content when posting media only
+  content: (schema) => schema.min(0), // Allow empty content when posting media only
 }).omit({
   id: true,
   createdAt: true,
@@ -2692,7 +2692,7 @@ export type SelectPost = typeof posts.$inferSelect;
 
 // Post Comments
 export const insertPostCommentSchema = createInsertSchema(postComments, {
-  content: z.string().min(1),
+  content: (schema) => schema.min(1),
 }).omit({
   id: true,
   createdAt: true,
@@ -2704,7 +2704,7 @@ export type SelectPostComment = typeof postComments.$inferSelect;
 
 // Chat Messages
 export const insertChatMessageSchema = createInsertSchema(chatMessages, {
-  message: z.string().min(1),
+  message: (schema) => schema.min(1),
 }).omit({
   id: true,
   createdAt: true,
