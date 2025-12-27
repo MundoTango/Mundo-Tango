@@ -8689,6 +8689,12 @@ export class DbStorage implements IStorage {
       .where(ilike(venues.city, city));
     return result[0]?.count || 0;
   }
+
+  // Notification system
+  async createNotification(notification: any): Promise<any> {
+    const [newNotification] = await db.insert(notifications).values(notification).returning();
+    return newNotification;
+  }
 }
 
 export const storage = new DbStorage();

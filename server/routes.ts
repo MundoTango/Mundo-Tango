@@ -494,7 +494,12 @@ const communityCache = {
   }
 };
 
+import onboardingRoutes from "./routes/onboarding-routes";
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Register modular routes
+  app.use("/api/cities", cityRoutes);
+  app.use("/api/onboarding", onboardingRoutes);
   // MB.MD Metrics endpoint (must be before CSRF middleware for Prometheus scraping)
   const { mbmdMetrics } = await import("./services/mb-md-metrics");
   app.get("/metrics", async (req: Request, res: Response) => {

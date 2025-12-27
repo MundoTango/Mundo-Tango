@@ -181,6 +181,8 @@ export const cityWebsites = pgTable(
     websiteUrl: text("website_url").notNull(),
     latitude: numeric("latitude", { precision: 10, scale: 7 }).notNull(),
     longitude: numeric("longitude", { precision: 10, scale: 7 }).notNull(),
+    submissionStatus: varchar("submission_status", { length: 50 }).default("approved").notNull(), // 'pending_review', 'approved', 'rejected'
+    submittedBy: integer("submitted_by").references(() => users.id),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },

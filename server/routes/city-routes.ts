@@ -1,10 +1,113 @@
 import { Router, type Response, type Request } from "express";
 import { db } from "../storage";
-import { groups, groupMembers, cities, cityMembers, events, users, housingListings, travelPlans, groupPosts, placeRecommendations } from "@shared/schema";
-import { eq, ilike, sql, or, and, desc, inArray, gte } from "drizzle-orm";
+import { groups, groupMembers, cities, cityMembers, events, users, housingListings, travelPlans, groupPosts, placeRecommendations, cityWebsites, eventScrapingSources } from "@shared/schema";
+import { eq, ilike, sql, or, and, desc, inArray, gte, isNull } from "drizzle-orm";
 import { normalizeCityName, citiesMatch } from "../utils/city-normalize";
+import { authenticateToken, AuthRequest } from "../middleware/auth";
+import { storage } from "../storage";
 
 const router = Router();
+
+/**
+ * GET /api/cities/:city/scrapers
+ * Returns existing scrapers and associated websites for a city
+ */
+router.get("/:city/scrapers", async (req: Request, res: Response) => {
+  const cityName = req.params.city;
+  const country = req.query.country as string;
+
+  try {
+    // 1. Find city group to get canonical city/country if needed
+    const normalizedCity = cityName.toLowerCase();
+    
+    // 2. Get associated websites from city_websites table
+    const associatedWebsites = await db
+      .select()
+      .from(cityWebsites)
+      .where(
+        and(
+          ilike(cityWebsites.city, cityName),
+          country ? ilike(cityWebsites.country, country) : undefined,
+          eq(cityWebsites.submissionStatus, 'approved')
+        )
+      );
+
+    // 3. Get existing scrapers from event_scraping_sources
+    const existingScrapers = await db
+      .select()
+      .from(eventScrapingSources)
+      .where(
+        and(
+          ilike(eventScrapingSources.city, cityName),
+          country ? ilike(eventScrapingSources.country, country) : undefined,
+          eq(eventScrapingSources.isActive, true)
+        )
+      );
+
+    res.json({
+      websites: associatedWebsites,
+      scrapers: existingScrapers,
+    });
+  } catch (error) {
+    console.error("[CityScrapers] Error:", error);
+    res.status(500).json({ error: "Failed to fetch city scrapers" });
+  }
+});
+
+/**
+ * POST /api/cities/suggest-source
+ * User suggests a new event source during onboarding
+ */
+router.post("/suggest-source", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { city, country, websiteUrl, latitude, longitude } = req.body;
+
+    if (!city || !websiteUrl) {
+      return res.status(400).json({ error: "City and Website URL are required" });
+    }
+
+    // Insert as pending review
+    const [suggestion] = await db.insert(cityWebsites).values({
+      city,
+      country: country || 'Unknown',
+      websiteUrl,
+      latitude: latitude?.toString() || "0",
+      longitude: longitude?.toString() || "0",
+      submissionStatus: 'pending_review',
+      submittedBy: userId,
+    }).returning();
+
+    // Notify admin (scott@boddye.com)
+    try {
+      const admin = await db.query.users.findFirst({
+        where: eq(users.email, 'scott@boddye.com')
+      });
+
+      if (admin) {
+        await storage.createNotification({
+          userId: admin.id,
+          type: 'system',
+          title: 'New Scraper Submission',
+          message: `User suggested a new event source for ${city}: ${websiteUrl}`,
+          link: `/admin/pending-sources`, // Hypothetical admin route
+          read: false,
+        });
+      }
+    } catch (notifyError) {
+      console.error("[SuggestSource] Notification failed:", notifyError);
+    }
+
+    res.json({
+      success: true,
+      message: "Source suggested successfully. It will be reviewed by an admin.",
+      suggestion
+    });
+  } catch (error) {
+    console.error("[SuggestSource] Error:", error);
+    res.status(500).json({ error: "Failed to suggest source" });
+  }
+});
 
 // In-memory cache for city search results (TTL: 5 minutes)
 const citySearchCache = new Map<string, { data: any; timestamp: number }>();
