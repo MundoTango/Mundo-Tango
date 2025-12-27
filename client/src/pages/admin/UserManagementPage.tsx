@@ -184,22 +184,6 @@ export default function UserManagementPage() {
       });
     },
   });
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
-      toast({
-        title: 'User Deleted',
-        description: 'The user has been successfully deleted.',
-      });
-      setShowEditDialog(false);
-    },
-    onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete user.',
-        variant: 'destructive',
-      });
-    },
-  });
 
   const getRoleColor = (role: string) => {
     switch (role.toLowerCase()) {
@@ -232,7 +216,6 @@ export default function UserManagementPage() {
           Export CSV
         </Button>
       </div>
-
       <Card data-testid="card-filters">
         <CardHeader>
           <CardTitle>Filters</CardTitle>

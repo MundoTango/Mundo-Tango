@@ -124,6 +124,7 @@ export default function WelcomePage() {
             <p className="text-lg text-muted-foreground">
               {t('pages:onboarding.welcome.profileSubtitle', 'Four simple steps to join the community')}
             </p>
+            </div>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -166,6 +167,7 @@ export default function WelcomePage() {
               <Badge variant="outline">{t('pages:onboarding.welcome.stepIndicator', 'Step 1 of 4')}</Badge>
               <span>•</span>
               <span>{t('pages:onboarding.welcome.duration', 'Takes 2-3 minutes')}</span>
+            </div>
             </div>
           </motion.div>
         </div>

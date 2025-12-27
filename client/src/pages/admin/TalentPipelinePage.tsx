@@ -120,16 +120,17 @@ export default function TalentPipelinePage() {
 
       <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
         <div className="container mx-auto max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <h1 className="text-3xl font-bold mb-2">Talent Pipeline</h1>
-            <p className="text-muted-foreground">
-              Track volunteer applications from submission to approval
-            </p>
-          </motion.div>
+          <div className="mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h1 className="text-3xl font-bold mb-2">Talent Pipeline</h1>
+              <p className="text-muted-foreground">
+                Track volunteer applications from submission to approval
+              </p>
+            </motion.div>
+          </div>
 
           {/* Pipeline Overview */}
           <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6 mb-8">
