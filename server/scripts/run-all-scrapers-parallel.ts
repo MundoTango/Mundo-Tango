@@ -47,11 +47,11 @@ async function runTangoCat(): Promise<number> {
 }
 
 async function runTangoMango(): Promise<number> {
-  console.log('[TangoMango] Starting...');
+  console.log('[TangoMango] Starting (cities + regional multi-county)...');
   try {
     const scraper = new TangoMangoScraper();
-    const count = await scraper.scrapeAllCities();
-    console.log(`[TangoMango] ✅ Scraped ${count} events`);
+    const count = await scraper.scrapeAll(); // Uses both city and regional configs
+    console.log(`[TangoMango] ✅ Scraped ${count} events (cities + regional)`);
     return count;
   } catch (error: any) {
     console.error('[TangoMango] ❌ Error:', error.message);

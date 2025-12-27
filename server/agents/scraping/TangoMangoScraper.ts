@@ -76,6 +76,43 @@ export class TangoMangoScraper {
   ];
 
   /**
+   * Regional configs covering multiple counties for comprehensive coverage
+   * These URLs aggregate events from multiple nearby areas
+   */
+  private regionalConfigs: Array<{region: string, urlParam: string, primaryCity: string, state: string}> = [
+    { 
+      region: 'San Francisco Bay Area', 
+      primaryCity: 'San Francisco',
+      state: 'CA',
+      urlParam: 'San_Francisco,CA+Alameda,CA+San_Mateo,CA+Santa_Clara,CA+Marin,CA+Contra_Costa,CA+Sacramento,CA+Santa_Cruz,CA+Monterey,CA+Sonoma,CA+Mendocino,CA+Stanislaus,CA' 
+    },
+    { 
+      region: 'South Florida', 
+      primaryCity: 'Miami',
+      state: 'FL',
+      urlParam: 'Miami-Dade,FL+Broward,FL+Palm_Beach,FL' 
+    },
+    { 
+      region: 'Greater Chicago', 
+      primaryCity: 'Chicago',
+      state: 'IL',
+      urlParam: 'Cook,IL+Lake,IL+Du_Page,IL' 
+    },
+    { 
+      region: 'Southern California', 
+      primaryCity: 'Los Angeles',
+      state: 'CA',
+      urlParam: 'Los_Angeles,CA+San_Diego,CA+Santa_Barbara,CA+Orange,CA+Ventura,CA+Riverside,CA+San_Luis_Obispo,CA+Fresno,CA+Yolo,CA' 
+    },
+    { 
+      region: 'Greater Philadelphia', 
+      primaryCity: 'Philadelphia',
+      state: 'PA',
+      urlParam: 'Philadelphia,PA+Berks,PA+Bucks,PA+Delaware,PA+Chester,PA+Lancaster,PA+Lehigh,PA+Mercer,PA+Montgomery,PA+Northampton,%20PA' 
+    },
+  ];
+
+  /**
    * Scrape all US cities from TangoMango
    */
   async scrapeAllCities(): Promise<number> {
@@ -96,6 +133,133 @@ export class TangoMangoScraper {
     }
 
     console.log(`[TangoMango] 🎉 Total events scraped: ${totalEvents}`);
+    return totalEvents;
+  }
+
+  /**
+   * Scrape all regional multi-county areas from TangoMango
+   * These are comprehensive regional URLs that cover multiple counties
+   */
+  async scrapeAllRegions(): Promise<number> {
+    console.log('[TangoMango] 🌎 Starting regional multi-county scraping...');
+    let totalEvents = 0;
+
+    for (const config of this.regionalConfigs) {
+      try {
+        const events = await this.scrapeRegion(config);
+        totalEvents += events;
+        console.log(`[TangoMango] ✅ ${config.region}: ${events} events`);
+        
+        // Rate limiting - be respectful
+        await this.delay(2000); // Longer delay for regional (larger) requests
+      } catch (error: any) {
+        console.error(`[TangoMango] ❌ Failed ${config.region}:`, error.message);
+      }
+    }
+
+    console.log(`[TangoMango] 🎉 Total regional events scraped: ${totalEvents}`);
+    return totalEvents;
+  }
+
+  /**
+   * Scrape a single regional multi-county area
+   * Uses address parsing to extract actual city from event details
+   */
+  async scrapeRegion(config: {region: string, urlParam: string, primaryCity: string, state: string}): Promise<number> {
+    const calendarUrl = `${this.baseUrl}/index.php?show=${config.urlParam}`;
+    
+    // Fetch calendar page
+    const response = await fetch(calendarUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; MundoTangoBot/1.0; +https://mundotango.life)',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const html = await response.text();
+    
+    // Extract event IDs and dates from loadevent() calls
+    const eventMatches = Array.from(html.matchAll(/loadevent\(this,'(\d{4}-\d{2}-\d{2})',(\d+),event\)/g));
+    const eventRefs = new Set<string>();
+    
+    for (const match of eventMatches) {
+      const date = match[1];
+      const eventId = match[2];
+      eventRefs.add(`${date}|${eventId}`);
+    }
+
+    console.log(`[TangoMango] Found ${eventRefs.size} unique events in ${config.region}`);
+
+    let savedCount = 0;
+    
+    // Fetch and save each event 
+    // Use regional parsing to extract actual city from address
+    for (const ref of Array.from(eventRefs)) {
+      const [date, eventId] = ref.split('|');
+      
+      try {
+        const event = await this.fetchEventDetails(
+          date, 
+          parseInt(eventId), 
+          {
+            city: config.primaryCity, // Default fallback
+            state: config.state,
+            urlParam: config.urlParam
+          },
+          true // Enable regional parsing to extract actual city from address
+        );
+        if (event) {
+          await this.saveEvent(event);
+          savedCount++;
+        }
+        
+        // Rate limiting
+        await this.delay(300);
+      } catch (error: any) {
+        console.error(`[TangoMango] Failed to fetch event ${eventId}:`, error.message);
+      }
+    }
+
+    // Update source scraping timestamp for regional source
+    await this.updateRegionalSourceTimestamp(config.region, config.urlParam);
+
+    return savedCount;
+  }
+
+  /**
+   * Update regional source timestamp by URL pattern
+   */
+  private async updateRegionalSourceTimestamp(region: string, urlParam: string): Promise<void> {
+    try {
+      // Match by URL pattern since regional sources have unique URLs
+      const sourceUrl = `${this.baseUrl}/index.php?show=${urlParam}`;
+      await db.update(eventScrapingSources)
+        .set({ lastScrapedAt: new Date() })
+        .where(eq(eventScrapingSources.url, sourceUrl));
+      console.log(`[TangoMango] Updated timestamp for regional source: ${region}`);
+    } catch (error) {
+      // Ignore errors - source might not exist in database
+    }
+  }
+
+  /**
+   * Comprehensive scrape: both individual cities AND regional multi-county areas
+   */
+  async scrapeAll(): Promise<number> {
+    console.log('[TangoMango] 🚀 Starting comprehensive US scraping (cities + regions)...');
+    
+    // Scrape individual cities first
+    const cityEvents = await this.scrapeAllCities();
+    
+    // Then scrape regional multi-county areas for additional coverage
+    const regionalEvents = await this.scrapeAllRegions();
+    
+    const totalEvents = cityEvents + regionalEvents;
+    console.log(`[TangoMango] 🎉 Comprehensive scrape complete: ${totalEvents} total events (${cityEvents} city + ${regionalEvents} regional)`);
+    
     return totalEvents;
   }
 
@@ -157,12 +321,34 @@ export class TangoMangoScraper {
   }
 
   /**
+   * Extract city from address string (for regional scraping)
+   * Parses city name from address like "123 Main St, Oakland, CA 94612"
+   */
+  private extractCityFromAddress(address: string, defaultCity: string): string {
+    if (!address) return defaultCity;
+    
+    // Try to find city pattern: ", CityName, STATE" or ", CityName STATE"
+    const cityMatch = address.match(/,\s*([A-Za-z\s]+),?\s*(?:CA|FL|IL|PA|NY|TX|WA|OR|CO|AZ|NV|UT|TN|LA|NC|MO|GA|MI|OH|MN|DC)\s*\d{0,5}/i);
+    if (cityMatch && cityMatch[1]) {
+      const extractedCity = cityMatch[1].trim();
+      // Only use if it looks like a valid city name (not street suffix)
+      if (extractedCity.length > 2 && !extractedCity.match(/^(St|Ave|Blvd|Dr|Rd|Way|Ct|Pl)$/i)) {
+        return extractedCity;
+      }
+    }
+    
+    return defaultCity;
+  }
+
+  /**
    * Fetch event details from loadevent.php
+   * @param useRegionalParsing - If true, attempt to extract actual city from address (for regional multi-county scraping)
    */
   private async fetchEventDetails(
     date: string, 
     eventId: number, 
-    config: {city: string, state: string, urlParam: string}
+    config: {city: string, state: string, urlParam: string},
+    useRegionalParsing: boolean = false
   ): Promise<TangoMangoEvent | null> {
     const detailUrl = `${this.baseUrl}/lib/loadevent.php?date=${date}&eventid=${eventId}`;
     
@@ -199,6 +385,12 @@ export class TangoMangoScraper {
     const venueMatch = detailsHtml.match(/<br>\s*([^<]+(?:Building|Center|Studio|Hall|Room|Academy|Club|Hotel|Restaurant|Ballroom)[^<]*)/i);
     const venue = venueMatch ? venueMatch[1].trim() : '';
     
+    // For regional scraping, try to extract actual city from address
+    let city = config.city;
+    if (useRegionalParsing && address) {
+      city = this.extractCityFromAddress(address, config.city);
+    }
+    
     // Extract keywords for event type
     const keywordsMatch = detailsText.match(/Keywords:\s*([^;]+)/);
     const keywordsStr = keywordsMatch ? keywordsMatch[1] : '';
@@ -227,7 +419,7 @@ export class TangoMangoScraper {
       description: detailsText.substring(0, 1000),
       venue,
       address,
-      city: config.city,
+      city,
       state: config.state,
       eventType,
       sourceUrl: `${this.baseUrl}/index.php?show=${config.urlParam}`,

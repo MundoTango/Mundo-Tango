@@ -22,12 +22,12 @@ async function main() {
   console.log('RUN ALL SCRAPERS - MB.MD Pattern');
   console.log('========================================\n');
   
-  // Step 1: Run TangoMango scraper (US cities - most reliable)
-  console.log('[1/5] Running TangoMango scraper (US cities)...');
+  // Step 1: Run TangoMango scraper (US cities + regional multi-county - most reliable)
+  console.log('[1/5] Running TangoMango scraper (US cities + regional multi-county)...');
   try {
     const tangoMangoScraper = new TangoMangoScraper();
-    const mangoCount = await tangoMangoScraper.scrapeAllCities();
-    console.log(`TangoMango: Scraped ${mangoCount} events`);
+    const mangoCount = await tangoMangoScraper.scrapeAll(); // Uses both city and regional configs
+    console.log(`TangoMango: Scraped ${mangoCount} events (cities + regional)`);
   } catch (error: any) {
     console.error('TangoMango error:', error.message);
   }

@@ -151,7 +151,15 @@ VALUES
 ('https://www.tangocat.com/events', 'website', 'js', NULL, NULL, true),
 ('https://www.tangopolix.com/tango-events', 'website', 'static', NULL, NULL, true),
 ('https://tangofestivals.net/events/', 'website', 'static', NULL, NULL, true),
-('https://tangomapa.com/events', 'website', 'js', NULL, NULL, true);
+('https://tangomapa.com/events', 'website', 'js', NULL, NULL, true),
+
+-- 🇺🇸 TangoMango Regional Multi-County Sources (comprehensive US coverage)
+-- Note: URLs must match TangoMangoScraper.ts baseUrl (http://tangomango.org) for timestamp updates
+('http://tangomango.org/index.php?show=San_Francisco,CA+Alameda,CA+San_Mateo,CA+Santa_Clara,CA+Marin,CA+Contra_Costa,CA+Sacramento,CA+Santa_Cruz,CA+Monterey,CA+Sonoma,CA+Mendocino,CA+Stanislaus,CA', 'website', 'tangomango', 'San Francisco', 'United States', true),
+('http://tangomango.org/index.php?show=Miami-Dade,FL+Broward,FL+Palm_Beach,FL', 'website', 'tangomango', 'Miami', 'United States', true),
+('http://tangomango.org/index.php?show=Cook,IL+Lake,IL+Du_Page,IL', 'website', 'tangomango', 'Chicago', 'United States', true),
+('http://tangomango.org/index.php?show=Los_Angeles,CA+San_Diego,CA+Santa_Barbara,CA+Orange,CA+Ventura,CA+Riverside,CA+San_Luis_Obispo,CA+Fresno,CA+Yolo,CA', 'website', 'tangomango', 'Los Angeles', 'United States', true),
+('http://tangomango.org/index.php?show=Philadelphia,PA+Berks,PA+Bucks,PA+Delaware,PA+Chester,PA+Lancaster,PA+Lehigh,PA+Mercer,PA+Montgomery,PA+Northampton,%20PA', 'website', 'tangomango', 'Philadelphia', 'United States', true);
 
 
 -- ============================================================================
