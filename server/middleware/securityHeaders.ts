@@ -162,8 +162,8 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
         // Form actions - only allow same-origin form submissions
         formAction: ["'self'"],
         
-        // Frame ancestors - prevent clickjacking (same as X-Frame-Options: DENY)
-        frameAncestors: ["'none'"],
+        // Frame ancestors - allow same origin for talent match embed
+        frameAncestors: ["'self'"],
         
         // Upgrade insecure requests in production only
         ...(isDevelopment ? {} : { upgradeInsecureRequests: [] }),
@@ -177,9 +177,9 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
       preload: true,
     },
     
-    // Prevent clickjacking (X-Frame-Options: DENY)
+    // Prevent clickjacking (X-Frame-Options: SAMEORIGIN)
     frameguard: {
-      action: 'deny',
+      action: 'sameorigin',
     },
     
     // Referrer Policy - only send origin when crossing origins
