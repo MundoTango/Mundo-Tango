@@ -1,5 +1,11 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+
+// Type-safe motion components for React 19 compatibility
+const MotionDiv = motion.div as any;
+const MotionH1 = motion.h1 as any;
+const MotionH2 = motion.h2 as any;
+const MotionP = motion.p as any;
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -46,6 +52,7 @@ function SupportPageContent() {
 
   const { data: legends } = useQuery<TangoLegend[]>({
     queryKey: ["/api/public/tango-legends"],
+    staleTime: 5 * 60 * 1000, // 5 minutes cache for instant revisits
   });
 
   const { data: donationStats } = useQuery<{
@@ -54,6 +61,7 @@ function SupportPageContent() {
     donorCount: number;
   }>({
     queryKey: ["/api/public/donation-stats"],
+    staleTime: 5 * 60 * 1000, // 5 minutes cache for instant revisits
   });
 
   const { data: publicStats } = useQuery<{
@@ -66,6 +74,7 @@ function SupportPageContent() {
     };
   }>({
     queryKey: ["/api/stats/public"],
+    staleTime: 5 * 60 * 1000, // 5 minutes cache for instant revisits
   });
 
   const tierIcons = {
@@ -96,37 +105,37 @@ function SupportPageContent() {
         <div className="absolute inset-0 bg-black/20" />
 
         <div className="relative z-10 container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
             className="max-w-4xl mx-auto text-center"
           >
             <div className="glass-card rounded-2xl p-8 md:p-12 space-y-6">
-              <motion.div variants={fadeInUp}>
+              <MotionDiv variants={fadeInUp}>
                 <Badge variant="secondary" className="mb-4">
                   <Heart className="h-3 w-3 mr-1" />
                   {t('pages:support.badge', 'Community Supported')}
                 </Badge>
-              </motion.div>
+              </MotionDiv>
 
-              <motion.h1
+              <MotionH1
                 variants={fadeInUp}
                 className="text-4xl md:text-5xl font-bold text-white"
                 data-testid="text-hero-headline"
               >
                 {t('pages:support.hero.title', 'Become a Tango Legend')}
-              </motion.h1>
+              </MotionH1>
 
-              <motion.p
+              <MotionP
                 variants={fadeInUp}
                 className="text-xl text-white/90 max-w-2xl mx-auto"
               >
                 {t('pages:support.hero.subtitle', 'Support the platform that connects dancers worldwide. Your contribution honors the legends who shaped tango and helps build its future.')}
-              </motion.p>
+              </MotionP>
 
               {donationStats && donationStats.donorCount > 0 && (
-                <motion.div
+                <MotionDiv
                   variants={fadeInUp}
                   className="flex justify-center gap-8 pt-4"
                 >
@@ -138,17 +147,17 @@ function SupportPageContent() {
                     <div className="text-3xl font-bold text-white">{donationStats.donorCount}</div>
                     <div className="text-sm text-white/80">{t('pages:support.stats.supporters', 'Supporters')}</div>
                   </div>
-                </motion.div>
+                </MotionDiv>
               )}
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
 
       {/* Scott's Story Section */}
       <section className="py-16" data-testid="section-story">
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -158,25 +167,25 @@ function SupportPageContent() {
             <Card className="p-8">
               <div className="grid md:grid-cols-2 gap-8 items-center">
                 <div className="space-y-4">
-                  <motion.h2 variants={fadeInUp} className="text-2xl font-bold">
+                  <MotionH2 variants={fadeInUp} className="text-2xl font-bold">
                     {t('pages:support.story.title', 'Built by a Dancer, For Dancers')}
-                  </motion.h2>
-                  <motion.p variants={fadeInUp} className="text-muted-foreground">
+                  </MotionH2>
+                  <MotionP variants={fadeInUp} className="text-muted-foreground">
                     {t('pages:support.story.paragraph1', 'Scott started dancing tango in September 2007. Over {{years}} years, just in the last 5 years alone he\'s traveled to 80+ cities across 30+ countries for tango. He knows the frustrations: finding events in new cities, connecting with local dancers, and navigating unfamiliar tango communities.', {
                       years: publicStats?.platformStats?.yearsOfDancing || 18
                     })}
-                  </motion.p>
-                  <motion.p variants={fadeInUp} className="text-muted-foreground">
+                  </MotionP>
+                  <MotionP variants={fadeInUp} className="text-muted-foreground">
                     {t('pages:support.story.paragraph2', 'In April 2024, Scott began building Mundo Tango. He\'s invested over {{hours}} hours and ${{amount}} of his own money to create the platform the tango community deserves.', {
                       hours: (publicStats?.platformStats?.hoursInvested || 3000).toLocaleString(),
                       amount: (publicStats?.platformStats?.amountInvested || 30000).toLocaleString()
                     })}
-                  </motion.p>
-                  <motion.p variants={fadeInUp} className="text-muted-foreground">
+                  </MotionP>
+                  <MotionP variants={fadeInUp} className="text-muted-foreground">
                     {t('pages:support.story.paragraph3', 'Your support helps cover server costs, AI services, and continued development. Every contribution brings us closer to a self-sustaining platform that serves dancers worldwide.')}
-                  </motion.p>
+                  </MotionP>
                 </div>
-                <motion.div 
+                <MotionDiv 
                   variants={fadeInUp}
                   className="grid grid-cols-2 gap-4"
                 >
@@ -200,17 +209,17 @@ function SupportPageContent() {
                     <div className="text-2xl font-bold">{publicStats?.platformStats?.yearsOfDancing || 18}</div>
                     <div className="text-sm text-muted-foreground">{t('pages:support.story.yearsDancing', 'Years Dancing')}</div>
                   </div>
-                </motion.div>
+                </MotionDiv>
               </div>
             </Card>
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
 
       {/* Tango Legends Tiers Section */}
       <section className="py-16 bg-muted/30" data-testid="section-tiers">
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -218,12 +227,12 @@ function SupportPageContent() {
             className="space-y-12"
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
-              <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-bold">
+              <MotionH2 variants={fadeInUp} className="text-3xl md:text-4xl font-bold">
                 {t('pages:support.tiers.title', 'Honor the Legends Who Shaped Tango')}
-              </motion.h2>
-              <motion.p variants={fadeInUp} className="text-lg text-muted-foreground">
+              </MotionH2>
+              <MotionP variants={fadeInUp} className="text-lg text-muted-foreground">
                 {t('pages:support.tiers.subtitle', "Each tier is named after a tango legend who contributed to the art form we love. Your support helps preserve their legacy while building tango's future.")}
-              </motion.p>
+              </MotionP>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -232,7 +241,7 @@ function SupportPageContent() {
                 const colorClass = tierColors[legend.id as keyof typeof tierColors] || "";
                 
                 return (
-                  <motion.div key={legend.id} variants={fadeInUp}>
+                  <MotionDiv key={legend.id} variants={fadeInUp}>
                     <Card 
                       className={`h-full hover-elevate border-2 ${colorClass}`}
                       data-testid={`card-tier-${legend.id}`}
@@ -273,18 +282,18 @@ function SupportPageContent() {
                         </Link>
                       </CardFooter>
                     </Card>
-                  </motion.div>
+                  </MotionDiv>
                 );
               })}
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
 
       {/* Other Ways to Help */}
       <section className="py-16" data-testid="section-other-ways">
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -292,16 +301,16 @@ function SupportPageContent() {
             className="space-y-12"
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
-              <motion.h2 variants={fadeInUp} className="text-3xl font-bold">
+              <MotionH2 variants={fadeInUp} className="text-3xl font-bold">
                 {t('pages:support.otherWays.title', 'Other Ways to Support')}
-              </motion.h2>
-              <motion.p variants={fadeInUp} className="text-muted-foreground">
+              </MotionH2>
+              <MotionP variants={fadeInUp} className="text-muted-foreground">
                 {t('pages:support.otherWays.subtitle', "Money isn't the only way to contribute. Join our community of volunteers.")}
-              </motion.p>
+              </MotionP>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <motion.div variants={fadeInUp}>
+              <MotionDiv variants={fadeInUp}>
                 <Card className="h-full hover-elevate">
                   <CardHeader>
                     <Users className="h-8 w-8 text-primary mb-2" />
@@ -320,9 +329,9 @@ function SupportPageContent() {
                     </Link>
                   </CardFooter>
                 </Card>
-              </motion.div>
+              </MotionDiv>
 
-              <motion.div variants={fadeInUp}>
+              <MotionDiv variants={fadeInUp}>
                 <Card className="h-full hover-elevate">
                   <CardHeader>
                     <Code className="h-8 w-8 text-primary mb-2" />
@@ -341,9 +350,9 @@ function SupportPageContent() {
                     </Link>
                   </CardFooter>
                 </Card>
-              </motion.div>
+              </MotionDiv>
 
-              <motion.div variants={fadeInUp}>
+              <MotionDiv variants={fadeInUp}>
                 <Card className="h-full hover-elevate">
                   <CardHeader>
                     <Sparkles className="h-8 w-8 text-primary mb-2" />
@@ -376,16 +385,16 @@ function SupportPageContent() {
                     </Button>
                   </CardFooter>
                 </Card>
-              </motion.div>
+              </MotionDiv>
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
 
       {/* GoFundMe Section */}
       <section className="py-16 bg-muted/30" data-testid="section-gofundme">
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -393,17 +402,17 @@ function SupportPageContent() {
             className="max-w-2xl mx-auto"
           >
             <div className="text-center mb-8">
-              <motion.h2 variants={fadeInUp} className="text-3xl font-bold mb-4">
+              <MotionH2 variants={fadeInUp} className="text-3xl font-bold mb-4">
                 {t('pages:support.gofundme.title', 'Support Through GoFundMe')}
-              </motion.h2>
-              <motion.p variants={fadeInUp} className="text-muted-foreground">
+              </MotionH2>
+              <MotionP variants={fadeInUp} className="text-muted-foreground">
                 {t('pages:support.gofundme.subtitle', 'Make a contribution through our GoFundMe campaign to help build the platform the tango community deserves.')}
-              </motion.p>
+              </MotionP>
             </div>
-            <motion.div variants={fadeInUp} className="flex justify-center mb-6">
+            <MotionDiv variants={fadeInUp} className="flex justify-center mb-6">
               <GoFundMeEmbed showCard={false} />
-            </motion.div>
-            <motion.div variants={fadeInUp} className="text-center">
+            </MotionDiv>
+            <MotionDiv variants={fadeInUp} className="text-center">
               <a 
                 href="https://www.gofundme.com/f/mundo-tango" 
                 target="_blank" 
@@ -414,28 +423,28 @@ function SupportPageContent() {
                   {t('pages:support.gofundme.viewCampaign', 'View Full Campaign')}
                 </Button>
               </a>
-            </motion.div>
-          </motion.div>
+            </MotionDiv>
+          </MotionDiv>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-16 ocean-gradient" data-testid="section-cta">
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={staggerContainer}
             className="text-center max-w-3xl mx-auto space-y-6"
           >
-            <motion.h2 variants={fadeInUp} className="text-3xl font-bold text-white">
+            <MotionH2 variants={fadeInUp} className="text-3xl font-bold text-white">
               {t('pages:support.finalCta.title', 'Every Contribution Matters')}
-            </motion.h2>
-            <motion.p variants={fadeInUp} className="text-white/90 text-lg">
+            </MotionH2>
+            <MotionP variants={fadeInUp} className="text-white/90 text-lg">
               {t('pages:support.finalCta.subtitle', 'From $10 to $500, every supporter helps build the platform the tango community deserves. Join the movement. Become a Tango Legend.')}
-            </motion.p>
-            <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
+            </MotionP>
+            <MotionDiv variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
               <a 
                 href="https://www.gofundme.com/f/mundo-tango" 
                 target="_blank" 
@@ -460,8 +469,8 @@ function SupportPageContent() {
                   {t('pages:support.cta.viewSupporters', 'View Supporters')}
                 </Button>
               </Link>
-            </motion.div>
-          </motion.div>
+            </MotionDiv>
+          </MotionDiv>
         </div>
       </section>
     </div>
