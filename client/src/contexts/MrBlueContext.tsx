@@ -18,6 +18,13 @@ interface SelfHealErrorContext {
   };
 }
 
+// CTO welcome context for god-level login
+interface CTOWelcomeContext {
+  userName: string;
+  userEmail: string;
+  userRole: string;
+}
+
 interface MrBlueContextType {
   isChatOpen: boolean;
   openChat: () => void;
@@ -43,6 +50,10 @@ interface MrBlueContextType {
   selfHealError: SelfHealErrorContext | null;
   openChatWithError: (error: SelfHealErrorContext) => void;
   clearSelfHealError: () => void;
+  
+  // CTO welcome for god-level login
+  ctoWelcome: CTOWelcomeContext | null;
+  clearCTOWelcome: () => void;
 }
 
 const MrBlueContext = createContext<MrBlueContextType | undefined>(undefined);
@@ -62,6 +73,9 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
   
   // Self-healing state for god-level users (MB.MD Pattern 53)
   const [selfHealError, setSelfHealError] = useState<SelfHealErrorContext | null>(null);
+  
+  // CTO welcome state for god-level login
+  const [ctoWelcome, setCTOWelcome] = useState<CTOWelcomeContext | null>(null);
 
   useEffect(() => {
     if (location !== currentPage) {
@@ -89,12 +103,31 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('mrblue:self-heal', handleSelfHealEvent as EventListener);
     };
   }, []);
+  
+  // CTO Welcome: Listen for god-level login events
+  useEffect(() => {
+    const handleCTOLoginEvent = (event: CustomEvent) => {
+      const { userName, userEmail, userRole } = event.detail;
+      console.log('[MrBlue] CTO login detected:', userEmail, userRole);
+      
+      // Set CTO welcome context and open chat
+      setCTOWelcome({ userName, userEmail, userRole });
+      setCurrentExpression('excited');
+      setIsChatOpen(true);
+    };
+    
+    window.addEventListener('mrblue:cto-login', handleCTOLoginEvent as EventListener);
+    return () => {
+      window.removeEventListener('mrblue:cto-login', handleCTOLoginEvent as EventListener);
+    };
+  }, []);
 
   const openChat = () => setIsChatOpen(true);
   const closeChat = () => {
     setIsChatOpen(false);
     setCurrentExpression('idle');
     setSelfHealError(null); // Clear error context when closing
+    setCTOWelcome(null); // Clear CTO welcome context when closing
   };
   const toggleChat = () => setIsChatOpen(prev => !prev);
 
@@ -117,6 +150,10 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
   
   const clearSelfHealError = () => {
     setSelfHealError(null);
+  };
+  
+  const clearCTOWelcome = () => {
+    setCTOWelcome(null);
   };
 
   return (
@@ -142,6 +179,8 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
         selfHealError,
         openChatWithError,
         clearSelfHealError,
+        ctoWelcome,
+        clearCTOWelcome,
       }}
     >
       {children}

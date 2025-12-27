@@ -284,6 +284,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log("[Auth] Loading current user...");
       await loadCurrentUser();
       console.log("[Auth] Login complete!");
+      
+      // Check for god-level login and dispatch CTO welcome event
+      const godLevelRoles = ['super_admin', 'admin', 'god', 'founder'];
+      const godLevelEmails = ['admin@mundotango.life', 'founder@mundotango.life'];
+      const userRole = data.user?.role || '';
+      const userEmail = email.toLowerCase();
+      const isGodLevel = godLevelRoles.includes(userRole) || godLevelEmails.includes(userEmail);
+      
+      if (isGodLevel) {
+        console.log("[Auth] God-level user detected, dispatching CTO welcome event");
+        const ctoEvent = new CustomEvent('mrblue:cto-login', {
+          detail: {
+            userName: data.user?.name || email.split('@')[0],
+            userEmail: userEmail,
+            userRole: userRole || 'admin',
+          }
+        });
+        window.dispatchEvent(ctoEvent);
+      }
 
       // Note: Redirect is handled by the caller (LoginPage) to support redirect query params
       return { upgraded: data.upgraded };

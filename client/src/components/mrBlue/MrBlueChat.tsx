@@ -8,6 +8,7 @@ import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { useMrBlue } from "@/contexts/MrBlueContext";
 
 interface Message {
   id: string;
@@ -17,11 +18,41 @@ interface Message {
 }
 
 export function MrBlueChat() {
+  const { ctoWelcome, clearCTOWelcome, selfHealError, clearSelfHealError } = useMrBlue();
+  
+  // Generate welcome message based on context
+  const getWelcomeMessage = () => {
+    if (ctoWelcome) {
+      return `Welcome back, ${ctoWelcome.userName}! I detected you're a ${ctoWelcome.userRole} user.
+
+Ready to start the **Self-Healing System walkthrough**? Here's what we can do:
+
+1. **Test Resume Parsing** - Upload a PDF at /volunteer to verify the CSRF fix
+2. **Trigger Error Boundary** - Test the MB.MD Pattern 53 self-healing flow
+3. **Review System Status** - Check platform health and recent deployments
+
+Just say "start walkthrough" or ask me anything about the platform!`;
+    }
+    if (selfHealError) {
+      return `I detected an error on the ${selfHealError.page} page. Let me help you fix it.
+
+**Error:** ${selfHealError.errorMessage.substring(0, 200)}...
+
+**MB.MD Analysis:**
+- Pattern: ${selfHealError.mbmdAnalysis?.mbmdPattern || 'Unknown'}
+- Root Cause: ${selfHealError.mbmdAnalysis?.rootCause || 'Analyzing...'}
+- Recommended Fix: ${selfHealError.mbmdAnalysis?.recommendedFix || 'Let me investigate...'}
+
+Would you like me to help apply the fix, or explain the issue in more detail?`;
+    }
+    return "Hi! I'm Mr. Blue, your AI companion. I can help you navigate the platform, answer questions, and provide personalized recommendations. What can I help you with today?";
+  };
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: "Hi! I'm Mr. Blue, your AI companion. I can help you navigate the platform, answer questions, and provide personalized recommendations. What can I help you with today?",
+      content: getWelcomeMessage(),
       timestamp: new Date()
     }
   ]);
@@ -31,6 +62,18 @@ export function MrBlueChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [location] = useLocation();
   const { toast } = useToast();
+  
+  // Update welcome message when CTO or self-heal context changes
+  useEffect(() => {
+    if (ctoWelcome || selfHealError) {
+      setMessages([{
+        id: '1',
+        role: 'assistant',
+        content: getWelcomeMessage(),
+        timestamp: new Date()
+      }]);
+    }
+  }, [ctoWelcome, selfHealError]);
   
   const { data: fetchedMessages, refetch: refetchMessages } = useQuery<Message[]>({
     queryKey: [`/api/mrblue/conversations/${currentConversationId}/messages`],
@@ -43,15 +86,16 @@ export function MrBlueChat() {
   
   useEffect(() => {
     if (fetchedMessages && fetchedMessages.length > 0) {
+      // Use context-aware welcome message (CTO/self-heal) instead of generic one
       const welcomeMessage = {
         id: '1',
         role: 'assistant' as const,
-        content: "Hi! I'm Mr. Blue, your AI companion. I can help you navigate the platform, answer questions, and provide personalized recommendations. What can I help you with today?",
+        content: getWelcomeMessage(),
         timestamp: new Date()
       };
       setMessages([welcomeMessage, ...fetchedMessages]);
     }
-  }, [fetchedMessages]);
+  }, [fetchedMessages, ctoWelcome, selfHealError]);
   
   useEffect(() => {
     if (recentConversations && recentConversations.length > 0 && !currentConversationId) {
