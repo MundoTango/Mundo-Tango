@@ -59,6 +59,7 @@ import mrBlueAgentEventsRoutes from "./routes/mrblue-agent-events-routes";
 import mrBlueDependenciesRoutes from "./routes/mrblue-dependencies-routes";
 import mrBlueRoleAdapterRoutes from "./routes/mrblue-role-adapter-routes";
 import mrBlueSelfHealRoutes from "./routes/mrblue-self-heal-routes";
+import ctoWalkthroughRoutes from "./routes/cto-walkthrough-routes";
 import mrBlueSubscriptionRoutes from "./routes/mrblue-subscription-routes";
 import mrBlueLearningRoutes from "./routes/mrblue-learning-routes";
 import mrBlueQAResearchRoutes from "./routes/mrblue-qa-research-routes";
@@ -1187,6 +1188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/dependencies", mrBlueDependenciesRoutes); // Agent #50: File dependency analysis
   app.use("/api/mrblue/role", mrBlueRoleAdapterRoutes); // Agent #47: Tier-based feature gating
   app.use("/api/mrblue", mrBlueSelfHealRoutes); // MB.MD Pattern 53: Self-healing for god-level users
+  app.use("/api/cto/walkthrough", ctoWalkthroughRoutes); // CTO walkthrough with Playwright preview
   app.use("/api/mrblue/subscription", mrBlueSubscriptionRoutes); // Agent #48: Quota management
   app.use("/api/mrblue/learning", mrBlueLearningRoutes); // Agent #49: 10-pathway learning coordinator
   app.use("/api/mrblue/qa", mrBlueQAResearchRoutes); // Agent #50: Q&A research and test orchestration

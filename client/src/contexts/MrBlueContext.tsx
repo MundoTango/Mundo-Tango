@@ -48,12 +48,18 @@ interface MrBlueContextType {
   
   // Self-healing for god-level users (MB.MD Pattern 53)
   selfHealError: SelfHealErrorContext | null;
+  setSelfHealError: (error: SelfHealErrorContext | null) => void;
   openChatWithError: (error: SelfHealErrorContext) => void;
   clearSelfHealError: () => void;
   
   // CTO welcome for god-level login
   ctoWelcome: CTOWelcomeContext | null;
   clearCTOWelcome: () => void;
+  
+  // CTO Walkthrough preview
+  isWalkthroughOpen: boolean;
+  openWalkthrough: () => void;
+  closeWalkthrough: () => void;
 }
 
 const MrBlueContext = createContext<MrBlueContextType | undefined>(undefined);
@@ -76,6 +82,9 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
   
   // CTO welcome state for god-level login
   const [ctoWelcome, setCTOWelcome] = useState<CTOWelcomeContext | null>(null);
+  
+  // CTO Walkthrough preview state
+  const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false);
 
   useEffect(() => {
     if (location !== currentPage) {
@@ -155,6 +164,17 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
   const clearCTOWelcome = () => {
     setCTOWelcome(null);
   };
+  
+  // CTO Walkthrough controls
+  const openWalkthrough = () => {
+    console.log('[MrBlue] Opening CTO walkthrough preview');
+    setIsWalkthroughOpen(true);
+  };
+  
+  const closeWalkthrough = () => {
+    console.log('[MrBlue] Closing CTO walkthrough preview');
+    setIsWalkthroughOpen(false);
+  };
 
   return (
     <MrBlueContext.Provider
@@ -177,10 +197,14 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
         inCall,
         setInCall,
         selfHealError,
+        setSelfHealError,
         openChatWithError,
         clearSelfHealError,
         ctoWelcome,
         clearCTOWelcome,
+        isWalkthroughOpen,
+        openWalkthrough,
+        closeWalkthrough,
       }}
     >
       {children}

@@ -18,7 +18,7 @@ interface Message {
 }
 
 export function MrBlueChat() {
-  const { ctoWelcome, clearCTOWelcome, selfHealError, clearSelfHealError } = useMrBlue();
+  const { ctoWelcome, clearCTOWelcome, selfHealError, clearSelfHealError, openWalkthrough } = useMrBlue();
   
   // Generate welcome message based on context
   const getWelcomeMessage = () => {
@@ -109,6 +109,27 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     }
   }, [messages]);
 
+  // Check if message is a CTO walkthrough trigger
+  const isWalkthroughTrigger = (text: string): boolean => {
+    const triggers = [
+      'yes', 'start walkthrough', 'start the walkthrough', 'begin walkthrough',
+      'run test', 'run the test', 'test resume', 'test resume parsing',
+      'let\'s go', 'let\'s start', 'begin', 'ok', 'okay', 'sure', 'go ahead'
+    ];
+    const lowerText = text.toLowerCase().trim();
+    return triggers.some(trigger => lowerText === trigger || lowerText.includes('start walkthrough'));
+  };
+  
+  // Check if message is a fix approval trigger
+  const isFixApprovalTrigger = (text: string): boolean => {
+    const triggers = [
+      'yes', 'apply fix', 'apply the fix', 'fix it', 'do it', 
+      'go ahead', 'approve', 'ok', 'okay', 'sure'
+    ];
+    const lowerText = text.toLowerCase().trim();
+    return triggers.some(trigger => lowerText === trigger);
+  };
+
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
@@ -122,6 +143,69 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
+    
+    // Check for CTO walkthrough trigger when in CTO welcome context
+    if (ctoWelcome && isWalkthroughTrigger(messageText)) {
+      const responseMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: "Opening the walkthrough preview now. You'll see a live test of the resume upload flow on the waitlist page. I'll monitor for any issues and report back.",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, responseMessage]);
+      
+      // Small delay then open walkthrough
+      setTimeout(() => {
+        openWalkthrough();
+      }, 500);
+      return;
+    }
+    
+    // Check for fix approval when in self-heal context
+    if (selfHealError && isFixApprovalTrigger(messageText)) {
+      setIsLoading(true);
+      
+      try {
+        const response = await fetch('/api/cto/walkthrough/apply-fix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            errorType: selfHealError.mbmdAnalysis?.mbmdPattern || 'unknown',
+            mbmdPattern: selfHealError.mbmdAnalysis?.mbmdPattern,
+            recommendedFix: selfHealError.mbmdAnalysis?.recommendedFix
+          })
+        });
+        
+        const data = await response.json();
+        
+        const fixResultMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: data.success
+            ? `Fix applied successfully!\n\n**Files Modified:**\n${data.filesModified?.join(', ') || 'None'}\n\n**Result:** ${data.message}\n\nWould you like me to re-run the walkthrough to verify the fix?`
+            : `Fix could not be applied: ${data.error}\n\nWould you like me to try an alternative approach?`,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, fixResultMessage]);
+        
+        if (data.success) {
+          clearSelfHealError();
+        }
+      } catch (error) {
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: "Sorry, I encountered an error while applying the fix. Let me try a different approach.",
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
     setIsLoading(true);
 
     try {

@@ -3,7 +3,9 @@ import { createPortal } from "react-dom";
 import { Bot, X, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MrBlueChat } from "./MrBlueChat";
+import { CTOWalkthroughPreview } from "./CTOWalkthroughPreview";
 import { useAuth } from "@/contexts/AuthContext";
+import { useMrBlue } from "@/contexts/MrBlueContext";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -36,11 +38,19 @@ export function MrBlueFloatingButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { user } = useAuth();
+  const { isWalkthroughOpen, closeWalkthrough, isChatOpen } = useMrBlue();
   const [location] = useLocation();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+  
+  // Sync local state with context state (for auto-open on CTO login)
+  useEffect(() => {
+    if (isChatOpen && !isOpen) {
+      setIsOpen(true);
+    }
+  }, [isChatOpen]);
 
   // Hide if URL has hideControls=true (for iframe embedding)
   const urlParams = new URLSearchParams(window.location.search);
@@ -60,6 +70,12 @@ export function MrBlueFloatingButton() {
 
   const content = (
     <>
+      {/* CTO Walkthrough Preview Modal */}
+      <CTOWalkthroughPreview 
+        isOpen={isWalkthroughOpen} 
+        onClose={closeWalkthrough}
+      />
+      
       {/* Floating Button - Uses portal for z-index isolation */}
       {!isOpen && (
         <div className="fixed bottom-6 right-6 z-[9999]" data-testid="global-mr-blue">
