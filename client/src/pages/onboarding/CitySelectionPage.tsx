@@ -266,14 +266,7 @@ export default function CitySelectionPage() {
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {scrapers.scrapers.map((s) => {
-                              let displayUrl = s.sourceUrl || "local source";
-                              try {
-                                if (s.sourceUrl && s.sourceUrl.startsWith('http')) {
-                                  displayUrl = s.sourceUrl;
-                                }
-                              } catch (e) {
-                                console.warn("[CitySelection] Invalid scraper URL:", s.sourceUrl);
-                              }
+                              const displayUrl = s.sourceUrl || "local source";
                               return (
                                 <a 
                                   key={`s-${s.id}`}
@@ -289,14 +282,7 @@ export default function CitySelectionPage() {
                               );
                             })}
                             {scrapers.websites.map((w) => {
-                              let displayUrl = w.websiteUrl || "event website";
-                              try {
-                                if (w.websiteUrl && w.websiteUrl.startsWith('http')) {
-                                  displayUrl = w.websiteUrl;
-                                }
-                              } catch (e) {
-                                console.warn("[CitySelection] Invalid website URL:", w.websiteUrl);
-                              }
+                              const displayUrl = w.websiteUrl || "event website";
                               return (
                                 <a 
                                   key={`w-${w.id}`} 
