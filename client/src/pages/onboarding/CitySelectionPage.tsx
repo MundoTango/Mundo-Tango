@@ -27,7 +27,7 @@ interface SelectedCity {
 
 interface CityScrapers {
   websites: Array<{ id: number; websiteUrl: string }>;
-  scrapers: Array<{ id: number; name: string; platform: string; sourceUrl: string }>;
+  scrapers: Array<{ id: number; name: string; platform: string; url: string }>;
 }
 
 export default function CitySelectionPage() {
@@ -266,11 +266,11 @@ export default function CitySelectionPage() {
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {scrapers.scrapers.map((s) => {
-                              const displayUrl = s.sourceUrl || "local source";
+                              const displayUrl = s.url || "local source";
                               return (
                                 <a 
                                   key={`s-${s.id}`}
-                                  href={s.sourceUrl}
+                                  href={s.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors max-w-full group"
