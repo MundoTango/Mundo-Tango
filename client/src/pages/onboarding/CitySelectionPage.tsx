@@ -265,32 +265,52 @@ export default function CitySelectionPage() {
                             We already collect events from these local sources:
                           </p>
                           <div className="flex flex-wrap gap-2">
-                            {scrapers.scrapers.map((s) => (
-                              <a 
-                                key={`s-${s.id}`}
-                                href={s.sourceUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                                data-testid={`link-scraper-source-${s.id}`}
-                              >
-                                <Globe className="h-3 w-3" />
-                                {new URL(s.sourceUrl).hostname}
-                              </a>
-                            ))}
-                            {scrapers.websites.map((w) => (
-                              <a 
-                                key={`w-${w.id}`} 
-                                href={w.websiteUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                                data-testid={`link-event-source-${w.id}`}
-                              >
-                                <Globe className="h-3 w-3" />
-                                {new URL(w.websiteUrl).hostname}
-                              </a>
-                            ))}
+                            {scrapers.scrapers.map((s) => {
+                              let hostname = "local source";
+                              try {
+                                if (s.sourceUrl && s.sourceUrl.startsWith('http')) {
+                                  hostname = new URL(s.sourceUrl).hostname;
+                                }
+                              } catch (e) {
+                                console.warn("[CitySelection] Invalid scraper URL:", s.sourceUrl);
+                              }
+                              return (
+                                <a 
+                                  key={`s-${s.id}`}
+                                  href={s.sourceUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                  data-testid={`link-scraper-source-${s.id}`}
+                                >
+                                  <Globe className="h-3 w-3" />
+                                  {hostname}
+                                </a>
+                              );
+                            })}
+                            {scrapers.websites.map((w) => {
+                              let hostname = "event website";
+                              try {
+                                if (w.websiteUrl && w.websiteUrl.startsWith('http')) {
+                                  hostname = new URL(w.websiteUrl).hostname;
+                                }
+                              } catch (e) {
+                                console.warn("[CitySelection] Invalid website URL:", w.websiteUrl);
+                              }
+                              return (
+                                <a 
+                                  key={`w-${w.id}`} 
+                                  href={w.websiteUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                  data-testid={`link-event-source-${w.id}`}
+                                >
+                                  <Globe className="h-3 w-3" />
+                                  {hostname}
+                                </a>
+                              );
+                            })}
                           </div>
                         </div>
                       ) : (
