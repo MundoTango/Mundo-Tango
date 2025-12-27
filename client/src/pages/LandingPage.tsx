@@ -1,12 +1,5 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-
-// Type-safe motion components for React 19 compatibility
-// Using 'any' type assertion to bypass React 19 + framer-motion v11 type conflicts
-const MotionDiv = motion.div as any;
-const MotionH2 = motion.h2 as any;
-const MotionP = motion.p as any;
-import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { DemoModal } from "@/components/marketing/DemoModal";
+import { MotionDiv, MotionH2, MotionP } from "@/components/marketing/MotionComponents";
 import {
   MapPin,
   Users,
@@ -39,6 +33,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 export default function LandingPage() {
   const { t } = useTranslation(['pages', 'navigation', 'common']);

@@ -31,6 +31,12 @@
   "donate": "Donate",
   "volunteer": "Volunteer",
   "ambassadors": "Ambassadors",
+  "cookieConsent": {
+    "title": "Cookie Settings",
+    "description": "We use cookies to enhance your experience and recognize you across sessions. By continuing to use Mundo Tango, you agree to our use of cookies.",
+    "accept": "Accept All",
+    "decline": "Decline"
+  },
   "whoItsFor": "Who It's For",
   "forDancers": "For Dancers",
   "forTeachers": "For Teachers",

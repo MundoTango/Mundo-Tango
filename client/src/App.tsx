@@ -14,6 +14,7 @@ import { LoadingFallback } from "./components/LoadingFallback";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
+import { CookieConsent } from "./components/marketing/CookieConsent";
 import {
   initErrorDetection,
   cleanupErrorDetection,
@@ -123,6 +124,7 @@ function AppContent() {
       <Suspense fallback={<LoadingFallback />}>
         <RouteLoader />
       </Suspense>
+      <CookieConsent />
       {isVisualEditorOpen && (
         <Suspense fallback={<LoadingFallback />}>
           <VisualEditorSplitPane
