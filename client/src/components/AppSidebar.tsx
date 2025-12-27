@@ -313,6 +313,14 @@ const servicesItems = [
     tooltipKey: "sidebar.services.lifeCeoTooltip",
     tooltipFallback: "AI-powered life management",
   },
+    {
+    titleKey: "sidebar.services.mrBlue",
+    titleFallback: "Mr Blue Chat",
+    url: "/mr-blue-chat",
+    icon: MessageSquare,
+    tooltipKey: "sidebar.services.mrBlueTooltip",
+    tooltipFallback: "Chat with Mr Blue AI Assistant",
+  },
 ];
 
 const roleToProDiscoveryMap: Record<string, string> = {
