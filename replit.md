@@ -65,8 +65,19 @@ The platform utilizes End-to-End (E2E) tests with Playwright, automated unit tes
 ### Marketing Site Architecture
 The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Program and an Ambassador Program. Public statistics are backed by real database data, and donations are handled via GoFundMe. The site includes "Coming Soon Features" and updated marketing pages.
 
+### Production Database Admin Tools
+Admin endpoints for troubleshooting production users (works when deployed):
+- `GET /api/admin/production/status` - Connection status
+- `GET /api/admin/production/user/:email` - User lookup with login diagnosis
+- `GET /api/admin/production/users/search?q=` - Search users
+- `GET /api/admin/production/users/recent` - Recent registrations
+- `GET /api/admin/production/waitlist` - Waitlist users
+- `GET /api/admin/production/stats` - User statistics
+
+**Note**: These endpoints use Supabase REST API and only work when deployed to production (mundotango.life). Development environment has network restrictions.
+
 ## External Dependencies
-- **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon
+- **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase (production)
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
 - **AI/ML:** OpenAI, Anthropic, Groq, Google, Luma, ElevenLabs, Bifrost Gateway, LanceDB
 - **Real-time:** Supabase Realtime, WebSocket
