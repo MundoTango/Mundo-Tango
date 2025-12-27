@@ -55,8 +55,101 @@ router.get("/:city/scrapers", async (req: Request, res: Response) => {
 });
 
 /**
+ * Auto-verification helper: Analyzes a submitted URL against approved sources
+ * Returns a confidence score (0-100) and reason
+ */
+async function autoVerifyWebsite(websiteUrl: string): Promise<{ 
+  autoApproved: boolean; 
+  confidence: number; 
+  reason: string;
+}> {
+  try {
+    const url = new URL(websiteUrl);
+    const domain = url.hostname.toLowerCase().replace(/^www\./, '');
+    
+    // Get all approved sources for pattern comparison
+    const approvedWebsites = await db
+      .select({ websiteUrl: cityWebsites.websiteUrl })
+      .from(cityWebsites)
+      .where(eq(cityWebsites.submissionStatus, 'approved'));
+    
+    const approvedScrapers = await db
+      .select({ sourceUrl: eventScrapingSources.sourceUrl })
+      .from(eventScrapingSources)
+      .where(eq(eventScrapingSources.isActive, true));
+    
+    // Extract domains from approved sources
+    const approvedDomains = new Set<string>();
+    [...approvedWebsites, ...approvedScrapers.map(s => ({ websiteUrl: s.sourceUrl }))].forEach(source => {
+      try {
+        const sourceUrl = new URL(source.websiteUrl);
+        const sourceDomain = sourceUrl.hostname.toLowerCase().replace(/^www\./, '');
+        approvedDomains.add(sourceDomain);
+      } catch (e) { /* Skip invalid URLs */ }
+    });
+    
+    // Check 1: Exact domain match (already approved elsewhere)
+    if (approvedDomains.has(domain)) {
+      return { autoApproved: true, confidence: 95, reason: 'Domain already approved for another city' };
+    }
+    
+    // Check 2: Known tango/dance keywords in domain
+    const tangoKeywords = ['tango', 'milonga', 'practica', 'dance', 'baile', 'danza', 'vals', 'abrazo'];
+    const hasTangoKeyword = tangoKeywords.some(kw => domain.includes(kw));
+    
+    // Check 3: Common event platforms (high trust)
+    const trustedPlatforms = ['eventbrite', 'facebook', 'meetup', 'tangofolly', 'hoy-milonga', 'tangomango'];
+    const isTrustedPlatform = trustedPlatforms.some(p => domain.includes(p));
+    
+    // Check 4: Suspicious patterns (reject)
+    const suspiciousPatterns = ['casino', 'gambling', 'adult', 'xxx', 'spam', 'phishing'];
+    const isSuspicious = suspiciousPatterns.some(p => domain.includes(p) || websiteUrl.includes(p));
+    
+    if (isSuspicious) {
+      return { autoApproved: false, confidence: 10, reason: 'Domain contains suspicious patterns' };
+    }
+    
+    if (isTrustedPlatform) {
+      return { autoApproved: true, confidence: 90, reason: 'Recognized event platform' };
+    }
+    
+    if (hasTangoKeyword) {
+      return { autoApproved: true, confidence: 80, reason: 'Domain contains tango-related keywords' };
+    }
+    
+    // Check 5: Domain similarity to approved sources (partial match)
+    for (const approvedDomain of approvedDomains) {
+      // Check if they share a root domain (e.g., tangox.city1 vs tangox.city2)
+      const domainParts = domain.split('.');
+      const approvedParts = approvedDomain.split('.');
+      
+      if (domainParts.length >= 2 && approvedParts.length >= 2) {
+        const domainRoot = domainParts.slice(-2).join('.');
+        const approvedRoot = approvedParts.slice(-2).join('.');
+        if (domainRoot === approvedRoot) {
+          return { autoApproved: true, confidence: 75, reason: `Similar to approved domain: ${approvedDomain}` };
+        }
+      }
+    }
+    
+    // Default: Manual review needed (but low-risk sites can still be auto-approved with moderate confidence)
+    const hasEventsPath = websiteUrl.includes('/events') || websiteUrl.includes('/calendar') || websiteUrl.includes('/agenda');
+    if (hasEventsPath) {
+      return { autoApproved: true, confidence: 65, reason: 'URL contains events/calendar path' };
+    }
+    
+    return { autoApproved: false, confidence: 40, reason: 'Could not auto-verify - manual review suggested' };
+    
+  } catch (error) {
+    console.error('[AutoVerify] Error:', error);
+    return { autoApproved: false, confidence: 0, reason: 'Invalid URL format' };
+  }
+}
+
+/**
  * POST /api/cities/suggest-source
  * User suggests a new event source during onboarding
+ * Auto-verifies by comparing to approved sources
  */
 router.post("/suggest-source", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -67,44 +160,109 @@ router.post("/suggest-source", authenticateToken, async (req: AuthRequest, res: 
       return res.status(400).json({ error: "City and Website URL are required" });
     }
 
-    // Insert as pending review
+    // Validate URL format
+    try {
+      new URL(websiteUrl);
+    } catch (e) {
+      return res.status(400).json({ error: "Invalid URL format" });
+    }
+
+    // Check if this URL is already submitted for this city
+    const existingWebsite = await db
+      .select()
+      .from(cityWebsites)
+      .where(
+        and(
+          ilike(cityWebsites.city, city),
+          eq(cityWebsites.websiteUrl, websiteUrl)
+        )
+      )
+      .limit(1);
+
+    if (existingWebsite.length > 0) {
+      const status = existingWebsite[0].submissionStatus;
+      if (status === 'approved') {
+        return res.json({
+          success: true,
+          message: "Great choice! This source is already being tracked.",
+          suggestion: existingWebsite[0],
+          alreadyExists: true
+        });
+      } else if (status === 'pending_review') {
+        return res.json({
+          success: true,
+          message: "Thanks! This source has already been submitted and is pending review.",
+          suggestion: existingWebsite[0],
+          alreadyExists: true
+        });
+      }
+    }
+
+    // Auto-verify the website
+    const verification = await autoVerifyWebsite(websiteUrl);
+    const submissionStatus = verification.autoApproved ? 'approved' : 'pending_review';
+    
+    console.log(`[SuggestSource] Auto-verification for ${websiteUrl}: ${JSON.stringify(verification)}`);
+
+    // Insert the suggestion
     const [suggestion] = await db.insert(cityWebsites).values({
       city,
       country: country || 'Unknown',
       websiteUrl,
       latitude: latitude?.toString() || "0",
       longitude: longitude?.toString() || "0",
-      submissionStatus: 'pending_review',
+      submissionStatus,
       submittedBy: userId,
     }).returning();
 
-    // Notify admin (scott@boddye.com)
-    try {
-      const admin = await db.query.users.findFirst({
-        where: eq(users.email, 'scott@boddye.com')
-      });
-
-      if (admin) {
-        await storage.createNotification({
-          userId: admin.id,
-          type: 'system',
-          title: 'New Scraper Submission',
-          message: `User suggested a new event source for ${city}: ${websiteUrl}`,
-          link: `/admin/pending-sources`, // Hypothetical admin route
-          read: false,
+    // Only notify admin if not auto-approved
+    if (!verification.autoApproved) {
+      try {
+        const admin = await db.query.users.findFirst({
+          where: eq(users.email, 'scott@boddye.com')
         });
+
+        if (admin) {
+          await storage.createNotification({
+            userId: admin.id,
+            type: 'system',
+            title: 'New Source Needs Review',
+            message: `User suggested ${websiteUrl} for ${city}. Confidence: ${verification.confidence}%. Reason: ${verification.reason}`,
+            link: `/admin/pending-sources`,
+            read: false,
+          });
+        }
+      } catch (notifyError) {
+        console.error("[SuggestSource] Notification failed:", notifyError);
       }
-    } catch (notifyError) {
-      console.error("[SuggestSource] Notification failed:", notifyError);
     }
+
+    const responseMessage = verification.autoApproved 
+      ? `Source added! We'll start tracking events from ${new URL(websiteUrl).hostname}.`
+      : "Thank you! Your suggestion has been submitted for review.";
 
     res.json({
       success: true,
-      message: "Source suggested successfully. It will be reviewed by an admin.",
-      suggestion
+      message: responseMessage,
+      suggestion,
+      verification: {
+        autoApproved: verification.autoApproved,
+        confidence: verification.confidence,
+        reason: verification.reason
+      }
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("[SuggestSource] Error:", error);
+    
+    // Handle unique constraint violation
+    if (error.code === '23505') {
+      return res.json({
+        success: true,
+        message: "This source has already been submitted for this city.",
+        alreadyExists: true
+      });
+    }
+    
     res.status(500).json({ error: "Failed to suggest source" });
   }
 });
