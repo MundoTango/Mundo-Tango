@@ -15437,6 +15437,88 @@ export type InsertUserPrivacySettings = z.infer<
 >;
 export type SelectUserPrivacySettings = typeof userPrivacySettings.$inferSelect;
 
+// Cookie Consents (GDPR Article 7) - Granular consent tracking
+export const cookieConsents = pgTable(
+  "cookie_consents",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+    sessionId: varchar("session_id", { length: 255 }),
+    essential: boolean("essential").default(true).notNull(),
+    analytics: boolean("analytics").default(false).notNull(),
+    marketing: boolean("marketing").default(false).notNull(),
+    functional: boolean("functional").default(false).notNull(),
+    consentVersion: varchar("consent_version", { length: 10 }).notNull(),
+    consentMethod: varchar("consent_method", { length: 50 }).notNull(),
+    consentGiven: timestamp("consent_given").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    withdrawn: boolean("withdrawn").default(false).notNull(),
+    withdrawnAt: timestamp("withdrawn_at"),
+    ipAddress: varchar("ip_address", { length: 45 }),
+    userAgent: text("user_agent"),
+  },
+  (table) => ({
+    userIdx: index("cookie_consents_user_idx").on(table.userId),
+    sessionIdx: index("cookie_consents_session_idx").on(table.sessionId),
+  }),
+);
+
+export const insertCookieConsentSchema = createInsertSchema(cookieConsents).omit({ id: true, consentGiven: true, updatedAt: true });
+export type InsertCookieConsent = z.infer<typeof insertCookieConsentSchema>;
+export type SelectCookieConsent = typeof cookieConsents.$inferSelect;
+
+// Account Deletion Requests (GDPR Article 17) - Right to be forgotten
+export const accountDeletionRequests = pgTable(
+  "account_deletion_requests",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+    requestedAt: timestamp("requested_at").defaultNow().notNull(),
+    scheduledFor: timestamp("scheduled_for").notNull(),
+    processedAt: timestamp("processed_at"),
+    status: varchar("status", { length: 20 }).default("scheduled").notNull(),
+    cancelledAt: timestamp("cancelled_at"),
+    cancellationReason: text("cancellation_reason"),
+    ipAddress: varchar("ip_address", { length: 45 }),
+    userAgent: text("user_agent"),
+  },
+  (table) => ({
+    userIdx: uniqueIndex("account_deletion_requests_user_idx").on(table.userId),
+    statusIdx: index("account_deletion_requests_status_idx").on(table.status),
+    scheduledIdx: index("account_deletion_requests_scheduled_idx").on(table.scheduledFor),
+  }),
+);
+
+export const insertAccountDeletionRequestSchema = createInsertSchema(accountDeletionRequests).omit({ id: true, requestedAt: true });
+export type InsertAccountDeletionRequest = z.infer<typeof insertAccountDeletionRequestSchema>;
+export type SelectAccountDeletionRequest = typeof accountDeletionRequests.$inferSelect;
+
+// Consent Audit Log - Immutable log of consent changes
+export const consentAuditLog = pgTable(
+  "consent_audit_log",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+    consentType: varchar("consent_type", { length: 50 }).notNull(),
+    action: varchar("action", { length: 20 }).notNull(),
+    previousValue: boolean("previous_value"),
+    newValue: boolean("new_value").notNull(),
+    consentVersion: varchar("consent_version", { length: 10 }),
+    timestamp: timestamp("timestamp").defaultNow().notNull(),
+    ipAddress: varchar("ip_address", { length: 45 }),
+    userAgent: text("user_agent"),
+  },
+  (table) => ({
+    userIdx: index("consent_audit_log_user_idx").on(table.userId),
+    typeIdx: index("consent_audit_log_type_idx").on(table.consentType),
+    timestampIdx: index("consent_audit_log_timestamp_idx").on(table.timestamp),
+  }),
+);
+
+export const insertConsentAuditLogSchema = createInsertSchema(consentAuditLog).omit({ id: true, timestamp: true });
+export type InsertConsentAuditLog = z.infer<typeof insertConsentAuditLogSchema>;
+export type SelectConsentAuditLog = typeof consentAuditLog.$inferSelect;
+
 // ============================================================================
 // PHASE 2: WEBAUTHN/PASSKEYS (Enterprise Security)
 // ============================================================================

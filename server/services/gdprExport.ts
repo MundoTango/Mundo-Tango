@@ -10,7 +10,7 @@ import {
   posts, 
   postComments,
   events, 
-  groups, 
+  groupMembers, 
   housingListings,
   housingBookings,
   media,
@@ -23,7 +23,8 @@ import {
 export async function requestDataExport(userId: number): Promise<number> {
   const [request] = await db.insert(dataExportRequests).values({
     userId,
-    status: 'pending'
+    status: 'pending',
+    format: 'json'
   }).returning();
 
   // Start processing asynchronously
@@ -55,17 +56,13 @@ async function processDataExport(requestId: number, userId: number): Promise<voi
 
   // In production: Upload to Cloudinary/S3 and get URL
   // For dev: Store as base64 or JSON
-  const downloadUrl = `data:application/json;base64,${Buffer.from(JSON.stringify(zipData)).toString('base64')}`;
+  const fileUrl = `data:application/json;base64,${Buffer.from(JSON.stringify(zipData)).toString('base64')}`;
 
-  // Update request with download URL
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiry
-
+  // Update request with file URL
   await db.update(dataExportRequests)
     .set({ 
       status: 'completed',
-      downloadUrl,
-      expiresAt,
+      fileUrl,
       completedAt: new Date()
     })
     .where(eq(dataExportRequests.id, requestId));
@@ -97,7 +94,7 @@ async function gatherUserData(userId: number) {
 
   // Fetch group memberships
   const userGroups = await db.query.groupMembers.findMany({
-    where: eq(groups.id, userId)
+    where: eq(groupMembers.userId, userId)
   });
 
   // Fetch housing listings

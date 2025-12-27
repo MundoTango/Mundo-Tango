@@ -1,7 +1,16 @@
 import { Router } from 'express';
-import { storage } from '../storage';
+import { db } from '@shared/db';
+import { eq, and } from 'drizzle-orm';
+import { 
+  userPrivacySettings, 
+  dataExportRequests, 
+  accountDeletionRequests,
+  cookieConsents,
+  consentAuditLog
+} from '@shared/schema';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 import { auditLog } from '../middleware/auditLog';
+import { requestDataExport, getDataExportStatus, getUserDataExports } from '../services/gdprExport';
 
 const router = Router();
 
@@ -9,47 +18,49 @@ const router = Router();
 // GDPR ARTICLE 15: RIGHT TO DATA PORTABILITY
 // ============================================
 
-/**
- * POST /api/gdpr/export
- * Export all user data as JSON
- */
 router.post('/api/gdpr/export', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.userId;
-
-    // Gather all user data
-    const userData = {
-      metadata: {
-        userId,
-        exportedAt: new Date().toISOString(),
-        dataProtectionRights: 'GDPR Article 15 - Right to Data Portability',
-      },
-      
-      // User profile
-      user: await storage.getUser(userId),
-      
-      // TODO: Add more data export logic here
-      // posts: await storage.getUserPosts(userId),
-      // messages: await storage.getUserMessages(userId),
-      // etc.
-    };
-
-    // Log the export
-    await auditLog(userId, 'GDPR_DATA_EXPORT', { success: true });
+    const requestId = await requestDataExport(userId);
+    
+    await auditLog(userId, 'GDPR_DATA_EXPORT', { requestId });
 
     res.json({
       success: true,
-      data: userData,
-      exportedAt: new Date().toISOString(),
-      message: 'Your complete data export is ready',
+      requestId,
+      message: 'Data export request submitted. You will receive a download link when ready.',
     });
-
   } catch (error) {
     console.error('GDPR export error:', error);
-    res.status(500).json({ 
-      error: 'Data export failed',
-      message: 'An error occurred while exporting your data. Please try again.',
-    });
+    res.status(500).json({ error: 'Data export failed' });
+  }
+});
+
+router.get('/api/gdpr/export/:requestId', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.userId;
+    const requestId = parseInt(req.params.requestId);
+    
+    const status = await getDataExportStatus(requestId, userId);
+    if (!status) {
+      return res.status(404).json({ error: 'Export request not found' });
+    }
+
+    res.json({ success: true, export: status });
+  } catch (error) {
+    console.error('GDPR export status error:', error);
+    res.status(500).json({ error: 'Failed to get export status' });
+  }
+});
+
+router.get('/api/gdpr/exports', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.userId;
+    const exports = await getUserDataExports(userId);
+    res.json({ success: true, exports });
+  } catch (error) {
+    console.error('GDPR exports list error:', error);
+    res.status(500).json({ error: 'Failed to list exports' });
   }
 });
 
@@ -57,22 +68,41 @@ router.post('/api/gdpr/export', authenticateToken, async (req: AuthRequest, res)
 // GDPR ARTICLE 17: RIGHT TO BE FORGOTTEN
 // ============================================
 
-/**
- * POST /api/gdpr/delete-account
- * Request account deletion with 30-day grace period
- */
 router.post('/api/gdpr/delete-account', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.userId;
-
-    // Schedule deletion 30 days from now
     const scheduledDate = new Date();
     scheduledDate.setDate(scheduledDate.getDate() + 30);
 
-    // Update user status (this would need to be added to storage interface)
-    // await storage.scheduleAccountDeletion(userId, scheduledDate);
+    const existing = await db.query.accountDeletionRequests.findFirst({
+      where: eq(accountDeletionRequests.userId, userId)
+    });
 
-    // Log the deletion request
+    if (existing && existing.status === 'scheduled') {
+      return res.json({
+        success: true,
+        message: 'Account deletion already scheduled',
+        scheduledDate: existing.scheduledFor,
+        gracePeriodDays: 30,
+      });
+    }
+
+    await db.insert(accountDeletionRequests).values({
+      userId,
+      scheduledFor: scheduledDate,
+      status: 'scheduled',
+      ipAddress: req.ip || undefined,
+      userAgent: req.get('user-agent') || undefined,
+    }).onConflictDoUpdate({
+      target: accountDeletionRequests.userId,
+      set: {
+        scheduledFor: scheduledDate,
+        status: 'scheduled',
+        cancelledAt: null,
+        cancellationReason: null,
+      }
+    });
+
     await auditLog(userId, 'ACCOUNT_DELETION_REQUESTED', { 
       scheduledDate: scheduledDate.toISOString() 
     });
@@ -82,40 +112,55 @@ router.post('/api/gdpr/delete-account', authenticateToken, async (req: AuthReque
       message: 'Account deletion scheduled',
       scheduledDate: scheduledDate.toISOString(),
       gracePeriodDays: 30,
-      note: 'You have 30 days to cancel this request. After that, all your data will be permanently deleted.',
+      note: 'You have 30 days to cancel this request.',
     });
-
   } catch (error) {
     console.error('Account deletion error:', error);
-    res.status(500).json({ 
-      error: 'Deletion request failed',
-      message: 'An error occurred while processing your deletion request.',
-    });
+    res.status(500).json({ error: 'Deletion request failed' });
   }
 });
 
-/**
- * POST /api/gdpr/cancel-deletion
- * Cancel pending account deletion
- */
 router.post('/api/gdpr/cancel-deletion', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.userId;
+    const { reason } = req.body;
 
-    // Cancel deletion (this would need to be added to storage interface)
-    // await storage.cancelAccountDeletion(userId);
+    await db.update(accountDeletionRequests)
+      .set({ 
+        status: 'cancelled', 
+        cancelledAt: new Date(),
+        cancellationReason: reason || 'User cancelled'
+      })
+      .where(and(
+        eq(accountDeletionRequests.userId, userId),
+        eq(accountDeletionRequests.status, 'scheduled')
+      ));
 
-    // Log the cancellation
-    await auditLog(userId, 'ACCOUNT_DELETION_CANCELLED', {});
+    await auditLog(userId, 'ACCOUNT_DELETION_CANCELLED', { reason });
 
-    res.json({ 
-      success: true,
-      message: 'Account deletion cancelled successfully',
-    });
-
+    res.json({ success: true, message: 'Account deletion cancelled' });
   } catch (error) {
     console.error('Deletion cancellation error:', error);
     res.status(500).json({ error: 'Failed to cancel deletion' });
+  }
+});
+
+router.get('/api/gdpr/deletion-status', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.userId;
+    
+    const request = await db.query.accountDeletionRequests.findFirst({
+      where: eq(accountDeletionRequests.userId, userId)
+    });
+
+    res.json({
+      success: true,
+      hasPendingDeletion: request?.status === 'scheduled',
+      deletionRequest: request || null,
+    });
+  } catch (error) {
+    console.error('Deletion status error:', error);
+    res.status(500).json({ error: 'Failed to get deletion status' });
   }
 });
 
@@ -123,62 +168,169 @@ router.post('/api/gdpr/cancel-deletion', authenticateToken, async (req: AuthRequ
 // GDPR ARTICLE 7: CONSENT MANAGEMENT
 // ============================================
 
-/**
- * GET /api/gdpr/consents
- * Get user consent preferences
- */
 router.get('/api/gdpr/consents', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.userId;
 
-    // This would need to be added to storage interface
-    // const consents = await storage.getUserPrivacySettings(userId);
-
-    const consents = {
-      analytics: false,
-      marketing: false,
-      aiTraining: false,
-      thirdParty: false,
-    };
-
-    res.json({
-      success: true,
-      consents,
+    const settings = await db.query.userPrivacySettings.findFirst({
+      where: eq(userPrivacySettings.userId, userId)
     });
 
+    const consents = {
+      analytics: settings?.analytics ?? false,
+      marketing: settings?.marketingEmails ?? false,
+      thirdParty: settings?.thirdPartySharing ?? false,
+    };
+
+    res.json({ success: true, consents });
   } catch (error) {
     console.error('Consent retrieval error:', error);
-    res.status(500).json({ error: 'Failed to retrieve consent preferences' });
+    res.status(500).json({ error: 'Failed to retrieve consents' });
   }
 });
 
-/**
- * PUT /api/gdpr/consents
- * Update consent preferences
- */
 router.put('/api/gdpr/consents', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.userId;
-    const { analytics, marketing, aiTraining, thirdParty } = req.body;
+    const { analytics, marketing, thirdParty } = req.body;
 
-    // This would need to be added to storage interface
-    // await storage.updateUserPrivacySettings(userId, {
-    //   analytics, marketing, aiTraining, thirdParty
-    // });
-
-    // Log consent update
-    await auditLog(userId, 'CONSENT_PREFERENCES_UPDATED', { 
-      analytics, marketing, aiTraining, thirdParty 
+    const existing = await db.query.userPrivacySettings.findFirst({
+      where: eq(userPrivacySettings.userId, userId)
     });
 
-    res.json({ 
-      success: true,
-      message: 'Consent preferences updated successfully',
-    });
+    const updates = {
+      analytics: analytics ?? existing?.analytics ?? false,
+      marketingEmails: marketing ?? existing?.marketingEmails ?? false,
+      thirdPartySharing: thirdParty ?? existing?.thirdPartySharing ?? false,
+      updatedAt: new Date(),
+    };
 
+    if (existing) {
+      await db.update(userPrivacySettings)
+        .set(updates)
+        .where(eq(userPrivacySettings.userId, userId));
+    } else {
+      await db.insert(userPrivacySettings).values({
+        userId,
+        ...updates,
+      });
+    }
+
+    // Log consent changes to audit log
+    const changes = [];
+    if (analytics !== undefined && analytics !== existing?.analytics) {
+      changes.push({ type: 'analytics', prev: existing?.analytics, new: analytics });
+    }
+    if (marketing !== undefined && marketing !== existing?.marketingEmails) {
+      changes.push({ type: 'marketing', prev: existing?.marketingEmails, new: marketing });
+    }
+    if (thirdParty !== undefined && thirdParty !== existing?.thirdPartySharing) {
+      changes.push({ type: 'third_party', prev: existing?.thirdPartySharing, new: thirdParty });
+    }
+
+    for (const change of changes) {
+      await db.insert(consentAuditLog).values({
+        userId,
+        consentType: change.type,
+        action: change.new ? 'granted' : 'withdrawn',
+        previousValue: change.prev ?? null,
+        newValue: change.new,
+        consentVersion: '1.0',
+        ipAddress: req.ip || undefined,
+        userAgent: req.get('user-agent') || undefined,
+      });
+    }
+
+    await auditLog(userId, 'CONSENT_PREFERENCES_UPDATED', { analytics, marketing, thirdParty });
+
+    res.json({ success: true, message: 'Consent preferences updated' });
   } catch (error) {
     console.error('Consent update error:', error);
-    res.status(500).json({ error: 'Failed to update consent preferences' });
+    res.status(500).json({ error: 'Failed to update consents' });
+  }
+});
+
+// ============================================
+// COOKIE CONSENT (Public endpoint)
+// ============================================
+
+router.post('/api/gdpr/cookie-consent', async (req, res) => {
+  try {
+    const { essential, analytics, marketing, functional, sessionId, userId } = req.body;
+
+    await db.insert(cookieConsents).values({
+      userId: userId || null,
+      sessionId: sessionId || null,
+      essential: true, // Always true
+      analytics: analytics ?? false,
+      marketing: marketing ?? false,
+      functional: functional ?? false,
+      consentVersion: '1.0',
+      consentMethod: 'banner',
+      ipAddress: req.ip || undefined,
+      userAgent: req.get('user-agent') || undefined,
+    });
+
+    res.json({ success: true, message: 'Cookie consent recorded' });
+  } catch (error) {
+    console.error('Cookie consent error:', error);
+    res.status(500).json({ error: 'Failed to record cookie consent' });
+  }
+});
+
+// ============================================
+// PRIVACY SETTINGS
+// ============================================
+
+router.get('/api/privacy/settings', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.userId;
+
+    const settings = await db.query.userPrivacySettings.findFirst({
+      where: eq(userPrivacySettings.userId, userId)
+    });
+
+    res.json({
+      success: true,
+      settings: settings || {
+        profileVisibility: 'public',
+        searchable: true,
+        showActivity: true,
+        marketingEmails: true,
+        analytics: true,
+        thirdPartySharing: false,
+      },
+    });
+  } catch (error) {
+    console.error('Privacy settings retrieval error:', error);
+    res.status(500).json({ error: 'Failed to retrieve privacy settings' });
+  }
+});
+
+router.put('/api/privacy/settings', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.userId;
+    const settings = req.body;
+
+    const existing = await db.query.userPrivacySettings.findFirst({
+      where: eq(userPrivacySettings.userId, userId)
+    });
+
+    if (existing) {
+      await db.update(userPrivacySettings)
+        .set({ ...settings, updatedAt: new Date() })
+        .where(eq(userPrivacySettings.userId, userId));
+    } else {
+      await db.insert(userPrivacySettings).values({
+        userId,
+        ...settings,
+      });
+    }
+
+    res.json({ success: true, message: 'Privacy settings updated' });
+  } catch (error) {
+    console.error('Privacy settings update error:', error);
+    res.status(500).json({ error: 'Failed to update privacy settings' });
   }
 });
 
@@ -186,92 +338,31 @@ router.put('/api/gdpr/consents', authenticateToken, async (req: AuthRequest, res
 // SECURITY ENDPOINTS
 // ============================================
 
-/**
- * GET /api/security/audit-logs
- * Get user's security audit logs
- */
 router.get('/api/security/audit-logs', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.userId;
 
-    // This would need to be added to storage interface
-    // const logs = await storage.getUserAuditLogs(userId, 100);
-
-    res.json({
-      success: true,
-      logs: [],
+    const logs = await db.query.consentAuditLog.findMany({
+      where: eq(consentAuditLog.userId, userId),
+      orderBy: (table, { desc }) => [desc(table.timestamp)],
+      limit: 100,
     });
 
+    res.json({ success: true, logs });
   } catch (error) {
     console.error('Audit logs retrieval error:', error);
     res.status(500).json({ error: 'Failed to retrieve audit logs' });
   }
 });
 
-/**
- * GET /api/security/sessions
- * Get user's active sessions
- */
 router.get('/api/security/sessions', authenticateToken, async (req: AuthRequest, res) => {
   try {
-    const userId = req.user!.userId;
-
-    // This would need to be added to storage interface
-    // const sessions = await storage.getUserSessions(userId);
-
-    res.json({
-      success: true,
-      sessions: [],
-    });
-
+    // Sessions would typically come from a session store
+    // For now, return empty array
+    res.json({ success: true, sessions: [] });
   } catch (error) {
     console.error('Sessions retrieval error:', error);
     res.status(500).json({ error: 'Failed to retrieve sessions' });
-  }
-});
-
-/**
- * GET /api/privacy/settings
- * Get user's privacy settings
- */
-router.get('/api/privacy/settings', authenticateToken, async (req: AuthRequest, res) => {
-  try {
-    const userId = req.user!.userId;
-
-    // This would need to be added to storage interface
-    // const settings = await storage.getUserPrivacySettings(userId);
-
-    res.json({
-      success: true,
-      settings: {},
-    });
-
-  } catch (error) {
-    console.error('Privacy settings retrieval error:', error);
-    res.status(500).json({ error: 'Failed to retrieve privacy settings' });
-  }
-});
-
-/**
- * PUT /api/privacy/settings
- * Update user's privacy settings
- */
-router.put('/api/privacy/settings', authenticateToken, async (req: AuthRequest, res) => {
-  try {
-    const userId = req.user!.userId;
-    const settings = req.body;
-
-    // This would need to be added to storage interface
-    // await storage.updateUserPrivacySettings(userId, settings);
-
-    res.json({
-      success: true,
-      message: 'Privacy settings updated successfully',
-    });
-
-  } catch (error) {
-    console.error('Privacy settings update error:', error);
-    res.status(500).json({ error: 'Failed to update privacy settings' });
   }
 });
 
