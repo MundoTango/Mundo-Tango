@@ -49,9 +49,7 @@ async function geocodeScrapedEvents(): Promise<{ geocoded: number; failed: numbe
         country: scrapedEvents.country,
       })
       .from(scrapedEvents)
-      .where(
-        or(isNull(scrapedEvents.latitude), eq(scrapedEvents.latitude, ''))
-      )
+      .where(isNull(scrapedEvents.latitude))
       .limit(200); // Limit batch size for rate limiting
     
     console.log(`[Scraping Scheduler] Found ${eventsToGeocode.length} scraped events to geocode`);
