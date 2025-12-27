@@ -77,6 +77,14 @@ const socialItems = [
     tooltipKey: "sidebar.social.profileTooltip",
     tooltipFallback: "View your profile",
   },
+  {
+    titleKey: "sidebar.social.volunteer",
+    titleFallback: "Volunteer",
+    url: "/talent-match",
+    icon: Handshake,
+    tooltipKey: "sidebar.social.volunteerTooltip",
+    tooltipFallback: "Help create Mundo Tango",
+  },
 ];
 
 const communityItems = [
@@ -275,15 +283,6 @@ const proDiscoveryItems = [
     color: "#F97316",
     tooltipKey: "sidebar.proDiscovery.taxiDancersTooltip",
     tooltipFallback: "Professional taxi dancers",
-  },
-  {
-    titleKey: "sidebar.proDiscovery.talentMatch",
-    titleFallback: "Talent Match",
-    url: "/talent-match",
-    icon: Sparkles,
-    color: "#1E90FF",
-    tooltipKey: "sidebar.proDiscovery.talentMatchTooltip",
-    tooltipFallback: "Find the perfect match",
   },
   {
     titleKey: "sidebar.proDiscovery.marketplace",
