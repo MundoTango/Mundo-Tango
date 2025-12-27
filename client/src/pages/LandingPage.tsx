@@ -1,5 +1,11 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+
+// Type-safe motion components for React 19 compatibility
+// Using 'any' type assertion to bypass React 19 + framer-motion v11 type conflicts
+const MotionDiv = motion.div as any;
+const MotionH2 = motion.h2 as any;
+const MotionP = motion.p as any;
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
@@ -233,33 +239,23 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-black/20" />
 
         <div className="relative z-10 container mx-auto px-4 py-20">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="max-w-5xl mx-auto text-center"
-          >
+          <div className="max-w-5xl mx-auto text-center">
             <div className="glass-card rounded-2xl p-8 md:p-12 space-y-8">
-              <motion.h1
-                variants={fadeInUp}
+              <h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
                 data-testid="text-hero-headline"
               >
                 {t('pages:home.hero.heading', 'Where Tango Meets Community')}
-              </motion.h1>
+              </h1>
 
-              <motion.p
-                variants={fadeInUp}
+              <p
                 className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto"
                 data-testid="text-hero-subheadline"
               >
                 {t('pages:home.hero.paragraph', 'Connect with tango dancers worldwide, discover events, and experience the magic of Argentine tango.')}
-              </motion.p>
+              </p>
 
-              <motion.div
-                variants={fadeInUp}
-                className="space-y-6"
-              >
+              <div className="space-y-6">
                 <div style={{ position: 'relative', boxSizing: 'content-box', maxHeight: '80vh', width: '100%', aspectRatio: '1.83', padding: '40px 0 40px 0' }}>
                   <iframe
                     src="https://app.supademo.com/embed/cmjndbuaj5i483zz2jwg0vsca?embed_v=2&utm_source=embed"
@@ -282,12 +278,11 @@ export default function LandingPage() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-              </motion.div>
+              </div>
             </div>
 
             {stats.length > 0 && (
-              <motion.div
-                variants={fadeInUp}
+              <div
                 className={`grid gap-4 mt-12 ${
                   stats.length === 1
                     ? "grid-cols-1 max-w-xs mx-auto"
@@ -312,16 +307,16 @@ export default function LandingPage() {
                     </div>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             )}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-20 md:py-24" data-testid="section-features">
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -329,24 +324,24 @@ export default function LandingPage() {
             className="space-y-16"
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
-              <motion.h2
+              <MotionH2
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-features-heading"
               >
                 {t('common:featuresTitle', 'Everything You Need for Your Tango Journey')}
-              </motion.h2>
-              <motion.p
+              </MotionH2>
+              <MotionP
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
                 {t('common:featuresSubtitle', 'Powerful features designed to connect dancers, discover events, and grow the global tango community.')}
-              </motion.p>
+              </MotionP>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {features.map((feature, index) => (
-                <motion.div key={index} variants={fadeInUp}>
+                <MotionDiv key={index} variants={fadeInUp}>
                   <Card
                     className="h-full hover-elevate"
                     data-testid={`card-feature-${index}`}
@@ -363,10 +358,10 @@ export default function LandingPage() {
                       </p>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </MotionDiv>
               ))}
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
 
@@ -376,7 +371,7 @@ export default function LandingPage() {
         data-testid="section-how-it-works"
       >
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -384,24 +379,24 @@ export default function LandingPage() {
             className="space-y-16"
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
-              <motion.h2
+              <MotionH2
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-how-it-works-heading"
               >
                 {t('common:howItWorks', 'How It Works')}
-              </motion.h2>
-              <motion.p
+              </MotionH2>
+              <MotionP
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
                 {t('common:howItWorksSubtitle', 'Get started in minutes and join thousands of tango dancers worldwide.')}
-              </motion.p>
+              </MotionP>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {steps.map((step, index) => (
-                <motion.div
+                <MotionDiv
                   key={index}
                   variants={fadeInUp}
                   className="relative"
@@ -422,10 +417,10 @@ export default function LandingPage() {
                   {index < steps.length - 1 && (
                     <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary to-transparent" />
                   )}
-                </motion.div>
+                </MotionDiv>
               ))}
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
 
@@ -435,7 +430,7 @@ export default function LandingPage() {
         data-testid="section-coming-soon"
       >
         <div className="container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -443,24 +438,24 @@ export default function LandingPage() {
             className="space-y-12"
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
-              <motion.h2
+              <MotionH2
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-coming-soon-heading"
               >
                 {t('common:comingSoon', 'Coming Soon')}
-              </motion.h2>
-              <motion.p
+              </MotionH2>
+              <MotionP
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
                 {t('common:comingSoonSubtitle', "We're building incredible features to transform your tango experience. Here's what's on the horizon.")}
-              </motion.p>
+              </MotionP>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {comingSoonFeatures.map((feature, index) => (
-                <motion.div key={index} variants={fadeInUp}>
+                <MotionDiv key={index} variants={fadeInUp}>
                   <Card
                     className="h-full hover-elevate"
                     data-testid={`card-coming-soon-${index}`}
@@ -477,11 +472,11 @@ export default function LandingPage() {
                       </p>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </MotionDiv>
               ))}
             </div>
 
-            <motion.div
+            <MotionDiv
               variants={fadeInUp}
               className="text-center max-w-2xl mx-auto pt-8"
             >
@@ -498,8 +493,8 @@ export default function LandingPage() {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-            </motion.div>
-          </motion.div>
+            </MotionDiv>
+          </MotionDiv>
         </div>
       </section>
 
@@ -512,26 +507,26 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-black/10" />
 
         <div className="relative z-10 container mx-auto px-4">
-          <motion.div
+          <MotionDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
             className="max-w-4xl mx-auto text-center space-y-8"
           >
-            <motion.h2
+            <MotionH2
               variants={fadeInUp}
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-white"
               data-testid="text-cta-heading"
             >
               {t('common:ctaTitle', 'Ready to Join the Global Tango Community?')}
-            </motion.h2>
+            </MotionH2>
 
-            <motion.p variants={fadeInUp} className="text-xl text-white/90">
+            <MotionP variants={fadeInUp} className="text-xl text-white/90">
               {t('common:ctaSubtitle', 'Create your free account and start connecting with dancers worldwide.')}
-            </motion.p>
+            </MotionP>
 
-            <motion.div
+            <MotionDiv
               variants={fadeInUp}
               className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
             >
@@ -550,14 +545,14 @@ export default function LandingPage() {
                   {t('common:joinNow', 'Join Now')}
                 </Button>
               </Link>
-            </motion.div>
+            </MotionDiv>
 
             {publicStats?.dancers && (
-              <motion.p variants={fadeInUp} className="text-white/80 text-sm">
+              <MotionP variants={fadeInUp} className="text-white/80 text-sm">
                 {t('common:joinCommunity', { count: publicStats.dancers })}
-              </motion.p>
+              </MotionP>
             )}
-          </motion.div>
+          </MotionDiv>
         </div>
       </section>
 
