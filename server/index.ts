@@ -24,6 +24,7 @@ import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from 
 import { PolicyMonitoringJobs } from "./jobs/policy-monitoring-jobs";
 import { recursiveContextService } from "./services/intelligence/RecursiveContextService";
 import { facelessContentService } from "./services/content/FacelessContentService";
+import { initCityCoordinateFix } from "./services/startup/cityCoordinateFix";
 // ============================================================================
 // SENTRY DISABLED: CSP VIOLATIONS FIX (MB.MD SUBAGENT 3)
 // Sentry was injecting 'unsafe-dynamic' and 'report-uri' causing 4891 CSP errors
@@ -223,6 +224,15 @@ app.use((req, res, next) => {
     // Server is listening - clear the startup keepalive
     clearStartupKeepalive();
     log(`serving on port ${port}`);
+    
+    // ========================================================================
+    // DATA QUALITY FIXES - Run on every startup (safe and idempotent)
+    // ========================================================================
+    try {
+      await initCityCoordinateFix();
+    } catch (error) {
+      console.error('❌ City coordinate fix failed:', error);
+    }
     
     // ========================================================================
     // BACKGROUND WORKERS - DISABLED IN AUTOSCALE MODE
