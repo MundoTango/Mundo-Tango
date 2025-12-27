@@ -222,11 +222,11 @@ export const queryClient = new QueryClient({
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
-      refetchOnMount: true,
-      staleTime: 1000 * 60 * 5,
-      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false, // Disable - was causing unnecessary refetches
+      refetchOnReconnect: false,   // Disable - data is cached with 5min staleTime
+      refetchOnMount: false,       // Disable - use cached data when navigating
+      staleTime: 1000 * 60 * 5,    // 5 minutes - data is fresh for this long
+      gcTime: 1000 * 60 * 30,      // 30 minutes - keep in cache
       retry: (failureCount, error: any) => {
         if (error?.status === 401) {
           return false;

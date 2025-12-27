@@ -28,7 +28,7 @@ export function PredictiveContextProvider({ children }: { children: ReactNode })
   const pageEnterTimeRef = useRef<number>(Date.now());
   const hasWarmedCacheRef = useRef(false);
 
-  // Track navigation patterns
+  // Track navigation patterns - ASYNC/NON-BLOCKING to avoid slowing page transitions
   useEffect(() => {
     if (!user) return;
 
@@ -36,26 +36,28 @@ export function PredictiveContextProvider({ children }: { children: ReactNode })
     const previousPage = previousPageRef.current;
     const timeOnPage = Date.now() - pageEnterTimeRef.current;
 
-    // Track navigation if we have a previous page
-    if (previousPage && previousPage !== currentPage) {
-      trackNavigation(previousPage, currentPage, timeOnPage);
-    }
-
-    // Record hit/miss if we had predictions
-    if (previousPage && predictions.length > 0) {
-      recordHit(previousPage, currentPage);
-    }
-
-    // Update refs for next navigation
+    // Update refs FIRST for fast page transition
     previousPageRef.current = currentPage;
     pageEnterTimeRef.current = Date.now();
+
+    // Fire-and-forget tracking (don't await, don't block)
+    if (previousPage && previousPage !== currentPage) {
+      // Use setTimeout to ensure this runs after render
+      setTimeout(() => {
+        trackNavigation(previousPage, currentPage, timeOnPage);
+        if (predictions.length > 0) {
+          recordHit(previousPage, currentPage);
+        }
+      }, 0);
+    }
   }, [location, user]);
 
-  // Warm cache on login
+  // Warm cache on login - ASYNC/NON-BLOCKING
   useEffect(() => {
     if (user && !hasWarmedCacheRef.current) {
-      warmCache(location);
       hasWarmedCacheRef.current = true;
+      // Fire-and-forget - don't block page load
+      setTimeout(() => warmCache(location), 100);
     }
   }, [user, location]);
 

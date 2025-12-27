@@ -1,6 +1,36 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
+// Helper to check if JWT is expired
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    // Add 30 second buffer to avoid edge cases
+    return payload.exp * 1000 < Date.now() + 30000;
+  } catch {
+    return true; // Treat malformed tokens as expired
+  }
+}
+
+// Helper to refresh the access token
+async function refreshAccessToken(): Promise<string | null> {
+  try {
+    const res = await fetch('/api/auth/refresh', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (res.ok) {
+      const { accessToken } = await res.json();
+      localStorage.setItem('accessToken', accessToken);
+      console.log('[WS] Token refreshed successfully');
+      return accessToken;
+    }
+  } catch (error) {
+    console.error('[WS] Token refresh failed:', error);
+  }
+  return null;
+}
+
 export interface WebSocketMessage {
   type: string;
   data?: any;
@@ -58,7 +88,7 @@ export function useWebSocket(options: UseWebSocketOptions) {
     }
   }, []);
 
-  const connect = useCallback(() => {
+  const connect = useCallback(async () => {
     if (!user) {
       console.log('[WS] No user authenticated, skipping connection');
       setStatus('disconnected');
@@ -84,11 +114,26 @@ export function useWebSocket(options: UseWebSocketOptions) {
       }
 
       // Get JWT token from localStorage
-      const token = localStorage.getItem('accessToken');
+      let token = localStorage.getItem('accessToken');
       if (!token) {
         console.error('[WS] No access token found - cannot connect');
         setStatus('error');
         return;
+      }
+
+      // Check if token is expired and try to refresh
+      if (isTokenExpired(token)) {
+        console.log('[WS] Token expired, attempting refresh before WebSocket connection...');
+        const newToken = await refreshAccessToken();
+        if (newToken) {
+          token = newToken;
+        } else {
+          console.error('[WS] Token refresh failed - cannot connect with expired token');
+          setStatus('error');
+          // Don't retry if token refresh fails - user needs to re-login
+          isManualClose.current = true;
+          return;
+        }
       }
 
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
