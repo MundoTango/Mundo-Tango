@@ -572,7 +572,7 @@ export default function DanceExperiencePage() {
                         return (
                           <div 
                             key={category.id}
-                            className="group relative h-64 rounded-2xl border bg-card overflow-hidden hover-elevate transition-all cursor-default shadow-sm hover:shadow-xl"
+                            className="group relative h-64 rounded-2xl border bg-card overflow-hidden transition-all cursor-default shadow-sm hover:shadow-xl"
                           >
                             {/* Static content */}
                             <div className="absolute inset-0 p-8 flex flex-col items-center justify-center text-center group-hover:opacity-0 transition-all duration-500 ease-in-out">
@@ -633,14 +633,14 @@ export default function DanceExperiencePage() {
                       })}
                     </div>
 
-                    <AnimatePresence>
-                      {selectedHobbies.length > 0 && (
-                        <motion.div 
-                          className="border-t pt-6"
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                        >
+                            <AnimatePresence>
+                              {selectedHobbies.length > 0 && (
+                                <motion.div 
+                                  className="border-t pt-6"
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                >
                           <p className="text-sm font-medium mb-3">{t('pages:onboarding.hobbies.selectedCount', 'Selected hobbies ({{count}}):', { count: selectedHobbies.length })}</p>
                           <div className="flex flex-wrap gap-2">
                             {getSelectedLabels().map((item) => (

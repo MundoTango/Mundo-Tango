@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Users, Calendar, MapPin, ChevronRight } from "lucide-react";
+import { Sparkles, Users, Calendar, MapPin, ChevronRight, Globe } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout } from "@/components/PageLayout";
@@ -116,8 +116,8 @@ export default function WelcomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.15 }}
-            className="text-center mb-12"
           >
+            <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
               {t('pages:onboarding.welcome.profileTitle', 'Complete Your Profile in Minutes')}
             </h2>
@@ -157,11 +157,11 @@ export default function WelcomePage() {
           </div>
 
           <motion.div 
-            className="text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
           >
+            <div className="text-center">
             <div className="inline-flex items-center gap-3 text-sm text-muted-foreground">
               <Badge variant="outline">{t('pages:onboarding.welcome.stepIndicator', 'Step 1 of 4')}</Badge>
               <span>•</span>
