@@ -314,9 +314,14 @@ You MUST respond in this EXACT JSON format:
 });
 
 // Mr. Blue Chat
-router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Response) => {
+router.post("/chat", optionalAuth, traceRoute("mr-blue-chat"), async (req: AuthRequest, res: Response) => {
     try {
-      const { message, context, conversationHistory, conversationId, userId } = req.body;
+      const { message, context, conversationHistory, conversationId, userId: bodyUserId } = req.body;
+      
+      // Security: Use authenticated user ID from session, fallback to body for backwards compatibility
+      // CRITICAL: For sensitive operations (admin features), ONLY trust authenticated session
+      const authenticatedUserId = req.user?.id;
+      const userId = authenticatedUserId || bodyUserId;
 
       if (!message || !message.trim()) {
         return res.status(400).json({
@@ -348,20 +353,23 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
       console.log('[Mr. Blue] Received context:', JSON.stringify(parsedContext, null, 2));
 
       // ================== MB.MD: PRODUCTION USER LOOKUP FOR ADMINS ==================
-      // Detect if admin is asking about a production user
+      // SECURITY: Only allow production admin features for authenticated users (not body-provided userId)
+      // This prevents privilege escalation via userId spoofing
       const productionUserPattern = /(?:lookup|find|check|troubleshoot|diagnose|search|what(?:'s| is) wrong with|why can'?t|help|debug|production)\s+(?:user|account|login|email)?\s*[:\s]*([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i;
       const productionStatsPattern = /production\s+(?:stats|statistics|status|health|overview)/i;
       const productionMatch = message.match(productionUserPattern);
       
-      if (userId && (productionMatch || productionStatsPattern.test(message))) {
-        const isAdmin = await isGodLevelUser(userId);
+      // CRITICAL: Use ONLY authenticatedUserId (from session) for admin features - NEVER body-provided
+      if (authenticatedUserId && (productionMatch || productionStatsPattern.test(message))) {
+        const isAdmin = await isGodLevelUser(authenticatedUserId);
         
         if (isAdmin) {
+          console.log(`[Mr. Blue] ✅ Authenticated admin user ${authenticatedUserId} accessing production features`);
           if (productionMatch) {
             const email = productionMatch[1];
             console.log(`[Mr. Blue] 🔍 Admin production user lookup for: ${email}`);
             
-            const userInfo = await lookupProductionUser(email, userId);
+            const userInfo = await lookupProductionUser(email, authenticatedUserId);
             const response = formatUserInfoForMrBlue(userInfo);
             
             return res.json({
@@ -374,7 +382,7 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
           } else if (productionStatsPattern.test(message)) {
             console.log('[Mr. Blue] 📊 Admin requesting production stats');
             
-            const stats = await getProductionStats(userId);
+            const stats = await getProductionStats(authenticatedUserId);
             const response = stats.error 
               ? `**Production Stats Error:** ${stats.error}`
               : `**Production Database Stats:**
