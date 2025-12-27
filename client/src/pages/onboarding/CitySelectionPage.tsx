@@ -3,15 +3,17 @@ import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Loader2, ChevronRight } from "lucide-react";
+import { MapPin, Loader2, ChevronRight, Globe, Check } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { extractApiError } from "@/lib/apiErrorHandler";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import heroImage from "@assets/stock_images/global_world_map_con_854a9c2d.jpg";
 
@@ -29,6 +31,9 @@ export default function CitySelectionPage() {
   const [citySearch, setCitySearch] = useState("");
   const [selectedCity, setSelectedCity] = useState<SelectedCity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasEventSite, setHasEventSite] = useState(false);
+  const [eventSiteUrl, setEventSiteUrl] = useState("");
+  const [eventSiteSubmitted, setEventSiteSubmitted] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -83,8 +88,35 @@ export default function CitySelectionPage() {
       });
 
       if (!autoJoinResponse.ok) {
-        // Non-critical error - log but continue with onboarding
         console.warn("[CitySelection] Auto-join failed, continuing with onboarding");
+      }
+
+      // Submit event site URL if provided
+      if (hasEventSite && eventSiteUrl.trim()) {
+        try {
+          const sourceResponse = await fetch("/api/scraping/suggest-source", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+              url: eventSiteUrl.trim(),
+              city: selectedCity.name,
+              country: selectedCity.country,
+            }),
+          });
+          
+          if (sourceResponse.ok) {
+            setEventSiteSubmitted(true);
+            toast({
+              title: t('pages:onboarding.city.eventSite.submitted', 'Event source submitted'),
+              description: t('pages:onboarding.city.eventSite.submittedDesc', 'Thank you! Your event source will help the community.'),
+            });
+          }
+        } catch (err) {
+          console.warn("[CitySelection] Event source submission failed:", err);
+        }
       }
 
       navigate("/onboarding/photo");
@@ -188,6 +220,77 @@ export default function CitySelectionPage() {
                     </motion.div>
                   )}
                 </div>
+
+                {selectedCity && selectedCity.name && (
+                  <motion.div 
+                    className="space-y-4 pt-4 border-t border-border"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-muted">
+                          <Globe className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                        <div>
+                          <Label htmlFor="has-event-site" className="text-base font-medium cursor-pointer">
+                            {t('pages:onboarding.city.eventSite.question', 'Do you use a website to find local tango events?')}
+                          </Label>
+                          <p className="text-sm text-muted-foreground">
+                            {t('pages:onboarding.city.eventSite.help', 'Help us discover events in your city')}
+                          </p>
+                        </div>
+                      </div>
+                      <Switch
+                        id="has-event-site"
+                        checked={hasEventSite}
+                        onCheckedChange={setHasEventSite}
+                        data-testid="switch-has-event-site"
+                      />
+                    </div>
+
+                    <AnimatePresence>
+                      {hasEventSite && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="space-y-2 pt-2">
+                            <Label htmlFor="event-site-url" className="text-sm">
+                              {t('pages:onboarding.city.eventSite.urlLabel', "What's the website URL?")}
+                            </Label>
+                            <Input
+                              id="event-site-url"
+                              type="url"
+                              value={eventSiteUrl}
+                              onChange={(e) => setEventSiteUrl(e.target.value)}
+                              placeholder="https://example.com/tango-events"
+                              className="w-full"
+                              data-testid="input-event-site-url"
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              {t('pages:onboarding.city.eventSite.urlHelp', "We'll add this to our event sources after review")}
+                            </p>
+                            {eventSiteSubmitted && (
+                              <motion.div 
+                                className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                              >
+                                <Check className="h-4 w-4" />
+                                {t('pages:onboarding.city.eventSite.submittedSuccess', 'Submitted for review')}
+                              </motion.div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                )}
               </CardContent>
 
               <CardFooter className="p-8 bg-muted/20 flex justify-between">

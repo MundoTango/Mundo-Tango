@@ -108,57 +108,32 @@ async function geocodeScrapedEvents(): Promise<{ geocoded: number; failed: numbe
 }
 
 /**
- * Run all scrapers (TangoMango, TangoCat, HoyMilonga, etc.)
+ * Run all scrapers using the Master Scraping Orchestrator (Agent #115)
+ * This coordinates all 245+ sources: Facebook, Instagram, websites, RSS, HoyMilonga, TangoCat, TangoFestivals, TangoMango
  */
 async function runAllScrapers(): Promise<ScrapingResult[]> {
   const results: ScrapingResult[] = [];
   
-  console.log('[Scraping Scheduler] Starting daily scraper run...');
+  console.log('[Scraping Scheduler] Starting daily scraper run via Master Orchestrator...');
   
   try {
-    // Import scrapers dynamically to avoid circular dependencies
-    const { TangoMangoScraper } = await import('../agents/scraping/TangoMangoScraper');
-    const { TangoCatScraper } = await import('../agents/scraping/TangoCatScraper');
-    const { HoyMilongaScraper } = await import('../services/scraping/HoyMilongaScraper');
+    // Import the Master Scraping Orchestrator (Agent #115)
+    const { ScrapingOrchestrator } = await import('../agents/scraping/masterOrchestrator');
+    const orchestrator = new ScrapingOrchestrator();
     
-    // Run TangoMango (all cities + regions)
-    try {
-      console.log('[Scraping Scheduler] Running TangoMango scraper...');
-      const tangoMango = new TangoMangoScraper();
-      const count = await tangoMango.scrapeAll();
-      results.push({ source: 'TangoMango', eventsFound: count, success: true });
-    } catch (error: any) {
-      console.error('[Scraping Scheduler] TangoMango failed:', error.message);
-      results.push({ source: 'TangoMango', eventsFound: 0, success: false, error: error.message });
-    }
+    // Run the full orchestration which coordinates:
+    // - Agent #116: AI-Powered Static Scraper (UnifiedEventScraper)
+    // - Agent #117: JS Scraper (dynamic sites)
+    // - Agent #118: Social Scraper (Facebook/Instagram)
+    // - RSS Feed Service
+    // - HoyMilonga, TangoCat, TangoFestivals, TangoMango (Priority Scrapers)
+    // - Agent #119: Deduplication
+    // - Auto-city creation for new locations
+    console.log('[Scraping Scheduler] 🎯 Invoking Agent #115 Master Orchestrator...');
+    await orchestrator.orchestrate();
     
-    // Run TangoCat (get source ID from database)
-    try {
-      console.log('[Scraping Scheduler] Running TangoCat scraper...');
-      const [tangoCatSource] = await db
-        .select({ id: eventScrapingSources.id })
-        .from(eventScrapingSources)
-        .where(eq(eventScrapingSources.platform, 'tangocat'))
-        .limit(1);
-      const sourceId = tangoCatSource?.id || 0;
-      const tangoCat = new TangoCatScraper();
-      const count = await tangoCat.scrapeAllYears(sourceId);
-      results.push({ source: 'TangoCat', eventsFound: count, success: true });
-    } catch (error: any) {
-      console.error('[Scraping Scheduler] TangoCat failed:', error.message);
-      results.push({ source: 'TangoCat', eventsFound: 0, success: false, error: error.message });
-    }
-    
-    // Run HoyMilonga
-    try {
-      console.log('[Scraping Scheduler] Running HoyMilonga scraper...');
-      const hoyMilonga = new HoyMilongaScraper();
-      const result = await hoyMilonga.scrapeAllCities();
-      results.push({ source: 'HoyMilonga', eventsFound: result.totalStored, success: true });
-    } catch (error: any) {
-      console.error('[Scraping Scheduler] HoyMilonga failed:', error.message);
-      results.push({ source: 'HoyMilonga', eventsFound: 0, success: false, error: error.message });
-    }
+    results.push({ source: 'MasterOrchestrator', eventsFound: 0, success: true });
+    console.log('[Scraping Scheduler] ✅ Master Orchestrator completed successfully');
     
     // Run ingestion for approved events
     const ingestionResult = await scrapedEventIngestionService.backfillApproved();
@@ -168,8 +143,9 @@ async function runAllScrapers(): Promise<ScrapingResult[]> {
     const geocodeResult = await geocodeScrapedEvents();
     console.log(`[Scraping Scheduler] Geocoding complete: ${geocodeResult.geocoded} geocoded`);
     
-  } catch (error) {
-    console.error('[Scraping Scheduler] Daily scraping failed:', error);
+  } catch (error: any) {
+    console.error('[Scraping Scheduler] Master Orchestrator failed:', error.message);
+    results.push({ source: 'MasterOrchestrator', eventsFound: 0, success: false, error: error.message });
   }
   
   return results;

@@ -13542,7 +13542,7 @@ export const scrapedEvents = pgTable(
   }),
 );
 
-// 2. Event Scraping Sources - 226+ tango community sources
+// 2. Event Scraping Sources - 245+ tango community sources (user-submitted + curated)
 export const eventScrapingSources = pgTable(
   "event_scraping_sources",
   {
@@ -13562,6 +13562,8 @@ export const eventScrapingSources = pgTable(
     scrapeFrequency: varchar("scrape_frequency", { length: 20 })
       .default("daily")
       .notNull(),
+    submittedByUserId: integer("submitted_by_user_id").references(() => users.id),
+    submissionStatus: varchar("submission_status", { length: 20 }).default("approved"),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
@@ -13573,6 +13575,7 @@ export const eventScrapingSources = pgTable(
       table.city,
       table.country,
     ),
+    submittedByIdx: index("scraping_sources_submitted_by_idx").on(table.submittedByUserId),
   }),
 );
 

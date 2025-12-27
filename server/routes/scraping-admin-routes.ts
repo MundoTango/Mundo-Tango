@@ -1781,4 +1781,158 @@ router.get('/admin/city-audit', authenticateToken, async (req: AuthRequest, res)
   }
 });
 
+/**
+ * POST /api/scraping/suggest-source - User-submitted event source URL
+ * Accessible by authenticated users during onboarding
+ * Stores in event_scraping_sources with pending_review status for admin moderation
+ */
+router.post('/suggest-source', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { url, city, country, name } = req.body;
+
+    if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+
+    // Validate URL format
+    try {
+      new URL(url);
+    } catch {
+      return res.status(400).json({ error: 'Invalid URL format' });
+    }
+
+    // Check if source already exists
+    const existingSource = await db.query.eventScrapingSources.findFirst({
+      where: eq(eventScrapingSources.url, url)
+    });
+
+    if (existingSource) {
+      return res.json({
+        success: true,
+        message: 'This event source is already in our system',
+        alreadyExists: true,
+        sourceId: existingSource.id
+      });
+    }
+
+    // Create new source with pending_review status
+    const sourceName = name || `User-submitted: ${new URL(url).hostname}`;
+    
+    const [newSource] = await db.insert(eventScrapingSources).values({
+      name: sourceName,
+      url: url,
+      platform: 'website',
+      scraperType: 'static',
+      priority: 'normal',
+      city: city || null,
+      country: country || null,
+      isActive: false, // Pending admin approval
+      submittedByUserId: userId,
+      submissionStatus: 'pending_review',
+      scrapeFrequency: 'daily',
+    }).returning();
+
+    console.log(`[User Source Submission] User ${userId} submitted source: ${url} for ${city}, ${country}`);
+
+    res.json({
+      success: true,
+      message: 'Thank you! Your event source has been submitted for review.',
+      sourceId: newSource.id,
+      status: 'pending_review'
+    });
+
+  } catch (error) {
+    console.error('[Suggest Source] Error:', error);
+    res.status(500).json({ error: 'Failed to submit event source' });
+  }
+});
+
+/**
+ * GET /api/admin/pending-sources - Get user-submitted sources pending review
+ */
+router.get('/admin/pending-sources', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const pendingSources = await db
+      .select({
+        id: eventScrapingSources.id,
+        name: eventScrapingSources.name,
+        url: eventScrapingSources.url,
+        city: eventScrapingSources.city,
+        country: eventScrapingSources.country,
+        submittedByUserId: eventScrapingSources.submittedByUserId,
+        createdAt: eventScrapingSources.createdAt,
+      })
+      .from(eventScrapingSources)
+      .where(eq(eventScrapingSources.submissionStatus, 'pending_review'))
+      .orderBy(desc(eventScrapingSources.createdAt));
+
+    res.json({
+      success: true,
+      sources: pendingSources,
+      count: pendingSources.length
+    });
+
+  } catch (error) {
+    console.error('[Pending Sources] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch pending sources' });
+  }
+});
+
+/**
+ * POST /api/admin/approve-source/:id - Approve a user-submitted source
+ */
+router.post('/admin/approve-source/:id', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const sourceId = parseInt(req.params.id);
+    
+    await db.update(eventScrapingSources)
+      .set({ 
+        isActive: true,
+        submissionStatus: 'approved',
+        updatedAt: new Date()
+      })
+      .where(eq(eventScrapingSources.id, sourceId));
+
+    res.json({
+      success: true,
+      message: 'Source approved and activated for scraping'
+    });
+
+  } catch (error) {
+    console.error('[Approve Source] Error:', error);
+    res.status(500).json({ error: 'Failed to approve source' });
+  }
+});
+
 export default router;
