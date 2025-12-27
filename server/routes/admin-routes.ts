@@ -2296,4 +2296,168 @@ router.post("/data-quality/link-event/:id", authenticateToken, requireAdmin, asy
   }
 });
 
+// ============================================================================
+// PRODUCTION DATABASE QUERY TOOLS
+// Securely query the production Supabase database for user troubleshooting
+// ============================================================================
+
+import { productionDb } from "../services/ProductionDatabaseService";
+
+/**
+ * GET /api/admin/production/status
+ * Check production database connection status
+ */
+router.get("/production/status", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const isConnected = productionDb.isConnected();
+    res.json({
+      connected: isConnected,
+      message: isConnected 
+        ? "Production database connected" 
+        : "Production database not available (SUPABASE_DATABASE_URL not configured)",
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/production/stats
+ * Get production database user statistics
+ */
+router.get("/production/stats", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    if (!productionDb.isConnected()) {
+      return res.status(503).json({ 
+        error: "Production database not available",
+        hint: "SUPABASE_DATABASE_URL must be configured"
+      });
+    }
+    
+    const stats = await productionDb.getProductionStats();
+    res.json({
+      database: "production",
+      ...stats,
+    });
+  } catch (error: any) {
+    console.error("[Admin] Production stats error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/production/user/:email
+ * Look up a specific user in production database by email
+ */
+router.get("/production/user/:email", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!productionDb.isConnected()) {
+      return res.status(503).json({ 
+        error: "Production database not available",
+        hint: "SUPABASE_DATABASE_URL must be configured"
+      });
+    }
+    
+    const email = decodeURIComponent(req.params.email);
+    const result = await productionDb.getUserLoginHistory(email);
+    
+    if (!result) {
+      return res.status(404).json({ 
+        error: "User not found in production database",
+        email,
+      });
+    }
+    
+    res.json({
+      database: "production",
+      ...result,
+    });
+  } catch (error: any) {
+    console.error("[Admin] Production user lookup error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/production/users/search
+ * Search users in production database
+ */
+router.get("/production/users/search", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    if (!productionDb.isConnected()) {
+      return res.status(503).json({ 
+        error: "Production database not available",
+        hint: "SUPABASE_DATABASE_URL must be configured"
+      });
+    }
+    
+    const { q = "", limit = "20" } = req.query;
+    const users = await productionDb.searchUsers(q as string, parseInt(limit as string));
+    
+    res.json({
+      database: "production",
+      query: q,
+      count: users.length,
+      users,
+    });
+  } catch (error: any) {
+    console.error("[Admin] Production user search error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/production/users/recent
+ * Get recently registered users from production database
+ */
+router.get("/production/users/recent", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    if (!productionDb.isConnected()) {
+      return res.status(503).json({ 
+        error: "Production database not available",
+        hint: "SUPABASE_DATABASE_URL must be configured"
+      });
+    }
+    
+    const { limit = "50" } = req.query;
+    const users = await productionDb.getRecentUsers(parseInt(limit as string));
+    
+    res.json({
+      database: "production",
+      count: users.length,
+      users,
+    });
+  } catch (error: any) {
+    console.error("[Admin] Production recent users error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/production/waitlist
+ * Get waitlist users from production database
+ */
+router.get("/production/waitlist", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    if (!productionDb.isConnected()) {
+      return res.status(503).json({ 
+        error: "Production database not available",
+        hint: "SUPABASE_DATABASE_URL must be configured"
+      });
+    }
+    
+    const { limit = "100" } = req.query;
+    const users = await productionDb.getWaitlistUsers(parseInt(limit as string));
+    
+    res.json({
+      database: "production",
+      count: users.length,
+      users,
+    });
+  } catch (error: any) {
+    console.error("[Admin] Production waitlist error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
