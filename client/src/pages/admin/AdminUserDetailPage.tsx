@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useLocation } from "wouter";
+import { useParams, useLocation, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -179,7 +179,11 @@ export default function AdminUserDetailPage() {
                     <AvatarImage src={user.profileImage} />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <h2 className="text-2xl font-bold mt-4" data-testid="text-user-name">{user.name}</h2>
+                  <Link href={`/profile/${user.username}`}>
+                    <h2 className="text-2xl font-bold mt-4 cursor-pointer hover:text-primary transition-colors" data-testid="text-user-name">
+                      {user.name}
+                    </h2>
+                  </Link>
                   <p className="text-muted-foreground">@{user.username}</p>
                   
                   <div className="flex gap-2 mt-4">

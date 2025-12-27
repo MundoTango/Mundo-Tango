@@ -22,10 +22,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, UserCog, Ban, Mail, Download, Shield, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Search, UserCog, Ban, Mail, Download, Shield, Users, ChevronLeft, ChevronRight, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, isAfter, subHours } from 'date-fns';
+import { Link } from 'wouter';
 
 interface User {
   id: number;
@@ -64,11 +66,124 @@ export default function UserManagementPage() {
   const total = usersResponse?.total || 0;
   const totalPages = Math.ceil(total / limit);
 
+  const newUsers = users.filter(user => 
+    isAfter(new Date(user.createdAt), subHours(new Date(), 24))
+  );
+
+  const UserTable = ({ data }: { data: User[] }) => (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>User</TableHead>
+          <TableHead>Email</TableHead>
+          <TableHead>Role</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Joined</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {data.map((user) => (
+          <TableRow key={user.id} data-testid={`row-user-${user.id}`}>
+            <TableCell>
+              <Link href={`/profile/${user.username}`}>
+                <div className="flex items-center gap-3 cursor-pointer hover:text-primary transition-colors">
+                  <Avatar>
+                    <AvatarImage src={user.profileImage || undefined} />
+                    <AvatarFallback>{user.name[0]}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="font-medium">{user.name}</div>
+                    <div className="text-sm text-muted-foreground">@{user.username}</div>
+                  </div>
+                </div>
+              </Link>
+            </TableCell>
+            <TableCell>{user.email}</TableCell>
+            <TableCell>
+              <Badge variant={getRoleColor(user.role)} data-testid={`badge-role-${user.id}`}>
+                {user.role}
+              </Badge>
+            </TableCell>
+            <TableCell>{getStatusBadge(user)}</TableCell>
+            <TableCell className="text-sm text-muted-foreground">
+              {formatDistanceToNow(new Date(user.createdAt), { addSuffix: true })}
+            </TableCell>
+            <TableCell>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedUser(user);
+                    setShowEditDialog(true);
+                  }}
+                  data-testid={`button-edit-${user.id}`}
+                >
+                  <UserCog className="h-4 w-4" />
+                </Button>
+                <Link href={`/admin/users/${user.id}`}>
+                  <Button variant="ghost" size="sm">
+                    <Shield className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+
+  const exportToCSV = () => {
+    if (!users) return;
+    
+    const csv = [
+      ['ID', 'Name', 'Email', 'Username', 'Role', 'Status', 'Join Date'].join(','),
+      ...users.map(u => [
+        u.id,
+        u.name,
+        u.email,
+        u.username,
+        u.role,
+        u.suspended ? 'Suspended' : u.isActive ? 'Active' : 'Inactive',
+        new Date(u.createdAt).toLocaleDateString()
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `users-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: number) => {
       const response = await apiRequest('DELETE', `/api/admin/users/${userId}`);
       return response.json();
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({
+        title: 'User Deleted',
+        description: 'The user has been successfully deleted.',
+      });
+      setShowEditDialog(false);
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete user.',
+        variant: 'destructive',
+      });
+    },
+  });
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
       toast({
@@ -203,59 +318,24 @@ export default function UserManagementPage() {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Joined</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users?.map((user) => (
-                  <TableRow key={user.id} data-testid={`row-user-${user.id}`}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src={user.profileImage || undefined} />
-                          <AvatarFallback>{user.name[0]}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium">{user.name}</div>
-                          <div className="text-sm text-muted-foreground">@{user.username}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <Badge variant={getRoleColor(user.role)} data-testid={`badge-role-${user.id}`}>
-                        {user.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{getStatusBadge(user)}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {formatDistanceToNow(new Date(user.createdAt), { addSuffix: true })}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedUser(user);
-                          setShowEditDialog(true);
-                        }}
-                        data-testid={`button-edit-${user.id}`}
-                      >
-                        <UserCog className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <Tabs defaultValue="all" className="w-full">
+              <TabsList className="mb-4">
+                <TabsTrigger value="all">All Users</TabsTrigger>
+                <TabsTrigger value="new">New (24h) {newUsers.length > 0 && <Badge variant="secondary" className="ml-2">{newUsers.length}</Badge>}</TabsTrigger>
+              </TabsList>
+              <TabsContent value="all">
+                <UserTable data={users} />
+              </TabsContent>
+              <TabsContent value="new">
+                {newUsers.length > 0 ? (
+                  <UserTable data={newUsers} />
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No new users in the last 24 hours.
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
           )}
         </CardContent>
       </Card>

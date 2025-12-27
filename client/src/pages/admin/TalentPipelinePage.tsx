@@ -49,6 +49,7 @@ interface PendingVolunteer {
   notes: string | null;
   score: number;
   status: string;
+  createdAt?: string;
 }
 
 const stageConfig: Record<string, { icon: typeof FileText; color: string }> = {
@@ -213,6 +214,11 @@ export default function TalentPipelinePage() {
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h3 className="font-semibold text-lg">{volunteer.name}</h3>
+                          {volunteer.createdAt && (
+                            <p className="text-xs text-muted-foreground mb-1">
+                              Applied: {new Date(volunteer.createdAt).toLocaleDateString()}
+                            </p>
+                          )}
                           <div className="flex flex-wrap gap-1 mt-1 mb-2">
                             {volunteer.roleTags?.map((tag, idx) => (
                               <Badge 
