@@ -27,7 +27,7 @@ interface SelectedCity {
 
 interface CityScrapers {
   websites: Array<{ id: number; websiteUrl: string }>;
-  scrapers: Array<{ id: number; name: string; platform: string }>;
+  scrapers: Array<{ id: number; name: string; platform: string; sourceUrl: string }>;
 }
 
 export default function CitySelectionPage() {
@@ -59,10 +59,18 @@ export default function CitySelectionPage() {
       });
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data, submittedUrl) => {
+      const isAutoApproved = data?.verification?.autoApproved;
+      let hostname = "the site";
+      try {
+        hostname = new URL(submittedUrl).hostname;
+      } catch (e) { /* fallback to generic text */ }
+      
       toast({
-        title: t('pages:onboarding.city.eventSite.submitted', 'Event source submitted'),
-        description: t('pages:onboarding.city.eventSite.submittedDesc', 'Thank you! Your suggestion has been sent for review.'),
+        title: isAutoApproved ? "Source added!" : "Submitted for review",
+        description: isAutoApproved 
+          ? `We'll start tracking events from ${hostname}`
+          : "Thank you! Your suggestion has been sent for review.",
       });
       setNewUrl("");
     },
@@ -258,14 +266,30 @@ export default function CitySelectionPage() {
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {scrapers.scrapers.map((s) => (
-                              <Badge key={`s-${s.id}`} variant="secondary" className="px-3 py-1">
-                                {s.name} ({s.platform})
-                              </Badge>
+                              <a 
+                                key={`s-${s.id}`}
+                                href={s.sourceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                data-testid={`link-scraper-source-${s.id}`}
+                              >
+                                <Globe className="h-3 w-3" />
+                                {new URL(s.sourceUrl).hostname}
+                              </a>
                             ))}
                             {scrapers.websites.map((w) => (
-                              <Badge key={`w-${w.id}`} variant="outline" className="px-3 py-1 truncate max-w-[200px]">
+                              <a 
+                                key={`w-${w.id}`} 
+                                href={w.websiteUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                data-testid={`link-event-source-${w.id}`}
+                              >
+                                <Globe className="h-3 w-3" />
                                 {new URL(w.websiteUrl).hostname}
-                              </Badge>
+                              </a>
                             ))}
                           </div>
                         </div>
