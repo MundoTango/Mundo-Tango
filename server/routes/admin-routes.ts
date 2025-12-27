@@ -10,7 +10,7 @@ import {
   moderationQueue, moderationActions, flaggedContent, postComments
 } from "@shared/schema";
 import { eq, desc, like, or, and, gte, count, sql, inArray } from "drizzle-orm";
-import { authenticateToken, AuthRequest } from "../middleware/auth";
+import { authenticateToken, authenticateInternalOrToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { storage } from "../storage";
 import { AnalyticsService } from "../services/AnalyticsService";
@@ -2309,7 +2309,7 @@ import { productionDb } from "../services/ProductionDatabaseService";
  * In development: Network may be unreachable (Replit sandbox limitation)
  * In production: Should work correctly
  */
-router.get("/production/status", authenticateToken, requireAdmin, async (req, res: Response) => {
+router.get("/production/status", authenticateInternalOrToken, async (req, res: Response) => {
   try {
     const isConfigured = productionDb.isConnected();
     
@@ -2343,7 +2343,7 @@ router.get("/production/status", authenticateToken, requireAdmin, async (req, re
  * GET /api/admin/production/stats
  * Get production database user statistics
  */
-router.get("/production/stats", authenticateToken, requireAdmin, async (req, res: Response) => {
+router.get("/production/stats", authenticateInternalOrToken, async (req, res: Response) => {
   try {
     if (!productionDb.isConnected()) {
       return res.status(503).json({ 
@@ -2367,7 +2367,7 @@ router.get("/production/stats", authenticateToken, requireAdmin, async (req, res
  * GET /api/admin/production/user/:email
  * Look up a specific user in production database by email
  */
-router.get("/production/user/:email", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+router.get("/production/user/:email", authenticateInternalOrToken, async (req: AuthRequest, res: Response) => {
   try {
     if (!productionDb.isConnected()) {
       return res.status(503).json({ 
@@ -2400,7 +2400,7 @@ router.get("/production/user/:email", authenticateToken, requireAdmin, async (re
  * GET /api/admin/production/users/search
  * Search users in production database
  */
-router.get("/production/users/search", authenticateToken, requireAdmin, async (req, res: Response) => {
+router.get("/production/users/search", authenticateInternalOrToken, async (req, res: Response) => {
   try {
     if (!productionDb.isConnected()) {
       return res.status(503).json({ 
@@ -2428,7 +2428,7 @@ router.get("/production/users/search", authenticateToken, requireAdmin, async (r
  * GET /api/admin/production/users/recent
  * Get recently registered users from production database
  */
-router.get("/production/users/recent", authenticateToken, requireAdmin, async (req, res: Response) => {
+router.get("/production/users/recent", authenticateInternalOrToken, async (req, res: Response) => {
   try {
     if (!productionDb.isConnected()) {
       return res.status(503).json({ 
@@ -2455,7 +2455,7 @@ router.get("/production/users/recent", authenticateToken, requireAdmin, async (r
  * GET /api/admin/production/waitlist
  * Get waitlist users from production database
  */
-router.get("/production/waitlist", authenticateToken, requireAdmin, async (req, res: Response) => {
+router.get("/production/waitlist", authenticateInternalOrToken, async (req, res: Response) => {
   try {
     if (!productionDb.isConnected()) {
       return res.status(503).json({ 

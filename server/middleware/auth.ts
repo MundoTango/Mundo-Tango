@@ -22,6 +22,30 @@ export interface JWTPayload {
   role: string;
 }
 
+/**
+ * Internal API key authentication for production admin tools
+ * Allows access with X-Internal-Key header for automated/agent access
+ * Requires INTERNAL_ADMIN_KEY environment secret to be set
+ */
+export const authenticateInternalOrToken = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const internalKey = req.headers["x-internal-key"] as string;
+  const expectedKey = process.env.INTERNAL_ADMIN_KEY;
+  
+  // Check internal API key (for agent/automated access to production tools only)
+  if (internalKey && expectedKey && internalKey === expectedKey) {
+    // Internal key grants read-only access to production admin endpoints
+    // No user context needed - these endpoints only read production data
+    return next();
+  }
+  
+  // Fall back to normal JWT authentication
+  return authenticateToken(req, res, next);
+};
+
 export const authenticateToken = async (
   req: AuthRequest,
   res: Response,

@@ -18,6 +18,7 @@ import { memoryService } from "../services/mrBlue/MemoryService";
 // MB.MD: Lazy-loaded to avoid circular dependencies
 // import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
 import { CostTracker } from "../services/ai/CostTracker";
+import { isGodLevelUser, lookupProductionUser, searchProductionUsers, getProductionStats, formatUserInfoForMrBlue } from "../services/mrBlue/ProductionUserLookup";
 
 // MB.MD Pattern: Lazy-loaded services to break circular dependency chain
 let vibeCodingServiceInstance: any = null;
