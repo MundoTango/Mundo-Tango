@@ -1418,11 +1418,7 @@ export default function CityDetailsPage() {
     );
   }
 
-  useEffect(() => {
-    // Residency detection logic is handled by backend and derived states
-  }, [user, city, isUserResident, membership]);
-
-  const coverImageUrl = getCityImageUrl(city.name, city.country);
+  const coverImageUrl = getCityImageUrl(city?.name || '', city?.country || '');
 
   return (
     <>
