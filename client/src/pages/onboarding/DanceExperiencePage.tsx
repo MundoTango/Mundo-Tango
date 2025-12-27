@@ -517,6 +517,28 @@ export default function DanceExperiencePage() {
                   </CardHeader>
 
                   <CardContent className="p-8 space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-muted-foreground uppercase tracking-widest">Facebook URL (Optional)</label>
+                      <Input
+                        placeholder="https://www.facebook.com/your.profile"
+                        value={user?.facebookUrl || ""}
+                        onChange={async (e) => {
+                          const val = e.target.value;
+                          const accessToken = localStorage.getItem("accessToken");
+                          await fetch("/api/users/me", {
+                            method: "PATCH",
+                            headers: {
+                              "Content-Type": "application/json",
+                              Authorization: `Bearer ${accessToken}`,
+                            },
+                            body: JSON.stringify({ facebookUrl: val }),
+                          });
+                        }}
+                        data-testid="input-facebook-url"
+                      />
+                      <p className="text-xs text-muted-foreground italic">We use this to match you with other dancers you might know.</p>
+                    </div>
+
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />

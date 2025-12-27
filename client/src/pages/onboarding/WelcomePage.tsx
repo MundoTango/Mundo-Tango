@@ -39,6 +39,11 @@ export default function WelcomePage() {
       description: t('pages:onboarding.welcome.features.roles.description', 'Dancer, teacher, DJ, organizer, or all of the above?')
     },
     {
+      icon: Globe,
+      title: "Connect Facebook",
+      description: "Link your Facebook profile to find friends in the community"
+    },
+    {
       icon: Calendar,
       title: t('pages:onboarding.welcome.features.events.title', 'Discover Events'),
       description: t('pages:onboarding.welcome.features.events.description', 'Find milongas, classes, and festivals near you')
