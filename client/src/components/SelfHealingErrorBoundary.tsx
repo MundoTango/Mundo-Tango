@@ -1,13 +1,23 @@
 import { Component, ReactNode } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, RefreshCw, Home, Bug } from "lucide-react";
+import { AlertCircle, RefreshCw, Home, Bug, Wand2 } from "lucide-react";
 import { logger } from "@/lib/logger";
+import { getGodLevelStatusFromStorage } from "@/lib/godLevelDetection";
 
 interface Props {
   children: ReactNode;
   pageName?: string;
   fallbackRoute?: string;
+}
+
+interface MBMDAnalysisResult {
+  mbmdPattern: string;
+  severity: string;
+  filesAffected: string[];
+  rootCause: string;
+  recommendedFix: string;
+  autoFixable: boolean;
 }
 
 interface State {
@@ -16,6 +26,8 @@ interface State {
   errorInfo: React.ErrorInfo | null;
   errorCount: number;
   lastErrorTime: number | null;
+  isGodLevel: boolean;
+  mbmdAnalysis: MBMDAnalysisResult | null;
 }
 
 /**
@@ -43,12 +55,17 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     // CRITICAL FIX: Restore retry count from localStorage to persist across reloads
     this.recoveryAttempts = this.getStoredRecoveryCount();
     
+    // MB.MD Pattern 53: Check god-level status for self-healing
+    const isGodLevel = getGodLevelStatusFromStorage();
+    
     this.state = { 
       hasError: false, 
       error: null,
       errorInfo: null,
       errorCount: 0,
       lastErrorTime: null,
+      isGodLevel,
+      mbmdAnalysis: null,
     };
   }
 
@@ -220,9 +237,55 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
 
   async sendToMrBlueForAnalysis(error: Error, errorInfo: React.ErrorInfo) {
     const { pageName = 'Unknown Page' } = this.props;
+    const isGodLevel = getGodLevelStatusFromStorage();
     
     try {
-      // Match API schema: errorType, errorMessage (required), errorStack, metadata
+      // MB.MD Pattern 53: For god-level users, use enhanced self-heal endpoint
+      if (isGodLevel) {
+        console.log('[Self-Healing] 👑 God-level user detected - activating MB.MD self-heal...');
+        
+        const selfHealRequest = {
+          errorMessage: error.toString(),
+          errorStack: error.stack,
+          page: pageName,
+          componentStack: errorInfo.componentStack,
+          url: window.location.href,
+          userAgent: navigator.userAgent,
+        };
+        
+        const selfHealResponse = await fetch('/api/mrblue/self-heal', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+          body: JSON.stringify(selfHealRequest),
+        });
+        
+        if (selfHealResponse.ok) {
+          const selfHealData = await selfHealResponse.json();
+          console.log('[Self-Healing] 🔧 MB.MD Analysis:', selfHealData.analysis);
+          
+          // Store analysis in state for display
+          this.setState({ mbmdAnalysis: selfHealData.analysis });
+          
+          // Dispatch custom event to trigger Mr. Blue chat auto-open
+          const selfHealEvent = new CustomEvent('mrblue:self-heal', {
+            detail: {
+              errorMessage: error.toString(),
+              page: pageName,
+              componentStack: errorInfo.componentStack,
+              mbmdAnalysis: selfHealData.analysis,
+            }
+          });
+          window.dispatchEvent(selfHealEvent);
+          
+          console.log('[Self-Healing] 📡 Dispatched mrblue:self-heal event for chat auto-open');
+          return;
+        }
+      }
+      
+      // Standard flow for non-god-level users
       const errorReport = {
         errorType: 'runtime',
         errorMessage: error.toString(),
@@ -498,11 +561,49 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
                 </div>
               )}
 
+              {/* MB.MD Analysis for God-Level Users */}
+              {this.state.isGodLevel && this.state.mbmdAnalysis && (
+                <div className="p-4 bg-primary/5 border border-primary/30 rounded-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Wand2 className="h-5 w-5 text-primary" />
+                    <span className="font-semibold text-primary">MB.MD Self-Heal Analysis</span>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex gap-2">
+                      <span className="font-medium">Pattern:</span>
+                      <span className="text-muted-foreground">{this.state.mbmdAnalysis.mbmdPattern}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="font-medium">Severity:</span>
+                      <span className={`px-2 py-0.5 rounded text-xs ${
+                        this.state.mbmdAnalysis.severity === 'critical' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                        this.state.mbmdAnalysis.severity === 'high' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
+                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                      }`}>{this.state.mbmdAnalysis.severity}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium">Root Cause:</span>
+                      <p className="text-muted-foreground mt-1">{this.state.mbmdAnalysis.rootCause}</p>
+                    </div>
+                    <div>
+                      <span className="font-medium">Recommended Fix:</span>
+                      <p className="text-muted-foreground mt-1">{this.state.mbmdAnalysis.recommendedFix}</p>
+                    </div>
+                    {this.state.mbmdAnalysis.filesAffected.length > 0 && (
+                      <div>
+                        <span className="font-medium">Files:</span>
+                        <p className="text-muted-foreground mt-1 font-mono text-xs">{this.state.mbmdAnalysis.filesAffected.join(', ')}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Error Details */}
               {error && (
                 <details className="text-xs text-muted-foreground bg-muted/50 p-4 rounded-md border">
                   <summary className="cursor-pointer font-medium mb-3 text-sm hover:text-foreground transition-colors">
-                    🔍 Technical Details (for debugging)
+                    Technical Details (for debugging)
                   </summary>
                   <div className="space-y-2 mt-2">
                     <div>

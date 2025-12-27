@@ -504,3 +504,112 @@ WAVE 5: Final E2E Testing
 - Wave 4: 0% complete
 - Wave 5: 0% complete
 - **OVERALL: 1%**
+
+---
+
+## 🔧 PATTERN 53: SELF-HEALING SYSTEM FOR GOD-LEVEL USERS - Dec 27, 2025
+
+**Status:** ✅ IMPLEMENTED | **Trigger:** God-level users (admin, god, super_admin, founder)
+
+### Overview
+When god-level users encounter page errors, the system automatically:
+1. Captures the error context (stack trace, page, component)
+2. Activates Mr. Blue AI for analysis
+3. Applies MB.MD diagnostic patterns
+4. Shows analysis results in Mr. Blue chat (auto-opens)
+5. Provides actionable fix recommendations
+
+### God-Level Roles
+```typescript
+const GOD_LEVEL_ROLES = ['super_admin', 'admin', 'god', 'founder'];
+const GOD_LEVEL_EMAILS = ['admin@mundotango.life', 'founder@mundotango.life'];
+```
+
+### Architecture Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    GOD-LEVEL USER SESSION                   │
+├─────────────────────────────────────────────────────────────┤
+│  [Page Load] → [SelfHealingErrorBoundary] → [Error]         │
+│                         │                                    │
+│                         ▼                                    │
+│  ┌──────────────────────────────────────────────────────────┐
+│  │     GodLevelErrorReporter (client-side)                  │
+│  │  • Check: isGodLevelUser(user)                           │
+│  │  • Capture: error, stackTrace, pageContext               │
+│  │  • Auto-open: Mr. Blue chat with context                 │
+│  └──────────────────────────────────────────────────────────┘
+│                         │                                    │
+│                         ▼                                    │
+│  ┌──────────────────────────────────────────────────────────┐
+│  │   POST /api/mrblue/self-heal                             │
+│  │   { error, stackTrace, pageContext, mbmdRequest: true }  │
+│  └──────────────────────────────────────────────────────────┘
+│                         │                                    │
+│                         ▼                                    │
+│  ┌──────────────────────────────────────────────────────────┐
+│  │      Mr. Blue MB.MD Analysis Engine                      │
+│  │  1. Parse error signature                                │
+│  │  2. Search codebase for related files                    │
+│  │  3. Apply MB.MD diagnostic patterns                      │
+│  │  4. Generate fix recommendation                          │
+│  └──────────────────────────────────────────────────────────┘
+│                         │                                    │
+│                         ▼                                    │
+│  ┌──────────────────────────────────────────────────────────┐
+│  │      Mr. Blue Chat (Auto-Opens)                          │
+│  │  "🔧 Self-Healing Analysis                               │
+│  │   Page: /talent-match                                    │
+│  │   Error: PDF parsing failed silently                     │
+│  │   MB.MD Pattern: Defensive UX / Fail-Fast                │
+│  │   Files: TalentMatchExperience.tsx:414                   │
+│  │   Fix: Add parsing validation before status update"      │
+│  └──────────────────────────────────────────────────────────┘
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Components
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| isGodLevelUser() | client/src/lib/godLevelDetection.ts | Check if current user is god-level |
+| GodLevelErrorReporter | client/src/components/GodLevelErrorReporter.tsx | Capture + report errors for god users |
+| Self-Heal API | server/routes/mrblue-self-heal-routes.ts | MB.MD analysis endpoint |
+| Auto-Open Chat | client/src/contexts/MrBlueContext.tsx | Trigger chat with error context |
+
+### API Endpoint
+
+```
+POST /api/mrblue/self-heal
+Authorization: Required (god-level user)
+Body: {
+  errorMessage: string,
+  errorStack: string,
+  page: string,
+  componentStack: string,
+  url: string,
+  userAgent: string
+}
+Response: {
+  success: boolean,
+  analysis: {
+    mbmdPattern: string,
+    severity: 'critical' | 'high' | 'medium' | 'low',
+    filesAffected: string[],
+    rootCause: string,
+    recommendedFix: string,
+    autoFixable: boolean
+  }
+}
+```
+
+### Implementation Checklist
+- [x] Documentation in MB.MD
+- [x] isGodLevelUser() helper function
+- [x] Enhanced SelfHealingErrorBoundary for god users
+- [x] /api/mrblue/self-heal endpoint
+- [x] Mr. Blue chat auto-open with context
+- [ ] GitHub branch creation (future: vibecoding integration)
+
+---

@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import type { SelectUser } from "@shared/client-types";
 import i18n from "@/lib/i18n";
+import { cacheUserForGodDetection } from "@/lib/godLevelDetection";
 
 const API_BASE_URL = "";
 
@@ -177,6 +178,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         i18n.changeLanguage(userData.primaryLanguage);
         localStorage.setItem('i18nextLng', userData.primaryLanguage);
       }
+      
+      // MB.MD Pattern 53: Cache user for god-level detection (self-healing)
+      cacheUserForGodDetection(userData);
 
       const accessToken = localStorage.getItem("accessToken");
       if (accessToken) {
@@ -207,6 +211,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setProfile(null);
       setSession(null);
       localStorage.removeItem("accessToken");
+      cacheUserForGodDetection(null); // MB.MD Pattern 53: Clear god-level cache
       return false;
     }
   };
