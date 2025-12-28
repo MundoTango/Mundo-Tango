@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Send, Loader2, Avatar, AvatarFallback } from "lucide-react";
+import { Send, Loader2, Avatar, AvatarFallback, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,7 +17,11 @@ interface Message {
   timestamp: Date;
 }
 
-export function MrBlueChat() {
+interface MrBlueChatProps {
+  onClose?: () => void;
+}
+
+export function MrBlueChat({ onClose }: MrBlueChatProps) {
   const { ctoWelcome, clearCTOWelcome, selfHealError, clearSelfHealError, openWalkthrough, walkthroughResult, setWalkthroughResult } = useMrBlue();
   
   // Generate welcome message based on context
@@ -307,9 +311,16 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
           <h2 className="font-semibold text-sm text-foreground">Mr. Blue</h2>
           <p className="text-xs text-muted-foreground truncate">Your Tango AI Assistant</p>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs text-muted-foreground">Online</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-xs text-muted-foreground">Online</span>
+          </div>
+          {onClose && (
+            <Button size="icon" variant="ghost" onClick={onClose} data-testid="button-close-chat">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
       

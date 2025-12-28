@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Bot, X, MessageCircle } from "lucide-react";
+import { X, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MrBlueChat } from "./MrBlueChat";
 import { CTOWalkthroughPreview } from "./CTOWalkthroughPreview";
@@ -102,30 +102,9 @@ export function MrBlueFloatingButton() {
             className="fixed right-0 top-0 h-screen w-full md:w-[480px] lg:w-[560px] z-[9999] bg-background border-l shadow-2xl flex flex-col"
             data-testid="chat-side-panel"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b bg-card">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Bot className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h2 className="font-semibold">Mr. Blue</h2>
-                  <p className="text-xs text-muted-foreground">Your AI Assistant</p>
-                </div>
-              </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setIsOpen(false)}
-                data-testid="button-close-chat"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* Simple Chat Interface */}
-            <div className="flex-1 overflow-hidden">
-              <MrBlueChat />
+            {/* Chat Interface with integrated header */}
+            <div className="flex-1 overflow-hidden flex flex-col">
+              <MrBlueChat onClose={() => setIsOpen(false)} />
             </div>
           </motion.div>
         )}
