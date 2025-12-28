@@ -128,29 +128,30 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
             setIsRunning(false);
             eventSourceRef.current?.close();
             
-            // Report completion to Mr. Blue
-            setSteps(prev => {
-              const finalSteps = prev;
-              const successSteps = finalSteps.filter(s => s.status === 'success');
-              const failedSteps = finalSteps.filter(s => s.status === 'failed');
-              
-              reportWalkthroughComplete({
-                success: failedSteps.length === 0,
-                testName: 'Resume Upload Test',
-                totalSteps: WALKTHROUGH_STEPS.length,
-                completedSteps: successSteps.length,
-                duration: elapsedTime,
-                steps: finalSteps.map(s => ({
-                  description: s.description,
-                  status: s.status === 'success' ? 'success' : 'failed',
-                  duration: s.duration,
-                  error: s.error,
-                })),
-                timestamp: Date.now(),
+            // Schedule report completion after render (to avoid setState-during-render warning)
+            setTimeout(() => {
+              setSteps(currentSteps => {
+                const successSteps = currentSteps.filter(s => s.status === 'success');
+                const failedSteps = currentSteps.filter(s => s.status === 'failed');
+                
+                reportWalkthroughComplete({
+                  success: failedSteps.length === 0,
+                  testName: 'Resume Upload Test',
+                  totalSteps: WALKTHROUGH_STEPS.length,
+                  completedSteps: successSteps.length,
+                  duration: elapsedTime,
+                  steps: currentSteps.map(s => ({
+                    description: s.description,
+                    status: s.status === 'success' ? 'success' : 'failed',
+                    duration: s.duration,
+                    error: s.error,
+                  })),
+                  timestamp: Date.now(),
+                });
+                
+                return currentSteps; // Don't modify state, just read it
               });
-              
-              return prev;
-            });
+            }, 0);
           }
         } catch (error) {
           console.error('Failed to parse walkthrough event:', error);
@@ -301,7 +302,7 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
                     data-testid="button-start-walkthrough"
                   >
                     <Play className="w-4 h-4 mr-2" />
-                    {progress > 0 ? 'Restart Walkthrough' : 'Start Walkthrough'}
+                    {errorDetails?.mbmdAnalysis ? 'Continue' : progress > 0 ? 'Restart Walkthrough' : 'Start Walkthrough'}
                   </Button>
                 ) : (
                   <Button
@@ -382,6 +383,19 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
                     <p><strong>Pattern:</strong> {errorDetails.mbmdAnalysis.mbmdPattern}</p>
                     <p><strong>Root Cause:</strong> {errorDetails.mbmdAnalysis.rootCause}</p>
                     <p><strong>Recommended Fix:</strong> {errorDetails.mbmdAnalysis.recommendedFix}</p>
+                    {errorDetails.mbmdAnalysis.fixSteps && (
+                      <div className="mt-3 pt-2 border-t border-destructive/20">
+                        <p className="font-semibold mb-1">Fix Steps:</p>
+                        <ul className="space-y-1 text-muted-foreground">
+                          {errorDetails.mbmdAnalysis.fixSteps.map((step: string, i: number) => (
+                            <li key={i} className="flex items-start gap-1">
+                              <span className="text-primary">{'\u2022'}</span>
+                              <span>{step}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
