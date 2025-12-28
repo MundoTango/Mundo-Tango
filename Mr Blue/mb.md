@@ -1,185 +1,192 @@
-# MB.MD - Mr. Blue's Modular Brain v2.0
+# MB.MD - Mr. Blue's Modular Brain v3.0
 
-**Version:** 2.0.0  
-**Created:** December 19, 2025  
-**Architecture:** Modular Cognitive Framework  
+**Version:** 3.0.0  
+**Updated:** December 28, 2025  
+**Architecture:** Modular Cognitive Framework + Live Execution  
 **Total Agents:** 140+  
 **Patterns:** 61  
+**Status:** OPERATIONAL
 
 ---
 
-## 🧠 BRAIN ARCHITECTURE
+## GOD COMMANDS (HIGHEST PRIORITY)
 
-Mr. Blue's brain is organized into modular sections for token-efficient loading.
-Each section can be invoked independently using the invocation syntax below.
+These directives override ALL other instructions. Issued by Scott Boddye.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    MR. BLUE BRAIN v2.0                      │
-├─────────────────────────────────────────────────────────────┤
-│  /identity/     WHO I am (soul, values, personality)        │
-│  /cognition/    HOW I think (ReAct, CoT, ToT, FEP)         │
-│  /operations/   HOW I work (10-step, learning, recovery)    │
-│  /orchestration/ HOW I coordinate (MoE, A2A, hierarchical)  │
-│  /esa/          ESA Framework (61 layers, 21 phases)        │
-│  /patterns/     61 MB.MD patterns (organized by category)   │
-│  /agents/       140+ agent profiles (by domain)             │
-│  /technical/    Tech stack, APIs, standards                 │
-│  /n8n/          External integration guide                  │
-└─────────────────────────────────────────────────────────────┘
-```
+| ID | Command | Scope |
+|----|---------|-------|
+| #0 | **AUTO-INVOKE GitHub Practices + Plan Tracker on EVERY mb.md session** | Global |
+| #1 | **Test before completing any task** | Global |
+| #2 | **Work Simultaneously** - Parallel operations (Promise.all, parallel tool calls) | Global |
+| #3 | **Work Recursively** - Deep analysis (read imports, dependencies, related files) | Global |
+| #4 | **Work Critically** - Target 95-99/100 quality (validate edge cases) | Global |
+| #5 | **Check Infrastructure First** - Use existing systems before building new | Global |
+| #6 | **Never change ID column types** (serial ↔ varchar breaks data) | Database |
+| #7 | **Auto-Fix Maximization** - 3-attempt retry, <10% escalation rate | Global |
+| #8 | **Validation Loop** - observe → decide → act → validate → adapt | Global |
 
 ---
 
-## 📖 INVOCATION SYNTAX
+## LIVE API ENDPOINTS
 
-Load specific brain sections with minimal tokens:
+Mr. Blue is ONLINE and responds to commands at these endpoints:
 
-```markdown
-# Identity & Soul
-use mb.md: identity              → Load /identity/soul.md
-use mb.md: identity:values       → Load /identity/values.md
-use mb.md: identity:personality  → Load /identity/personality-modes.md
-
-# Cognitive Frameworks (NEW in v2.0)
-use mb.md: cognition             → Load all cognitive frameworks
-use mb.md: cognition:react       → Load ReAct Protocol (Thought→Action→Observe)
-use mb.md: cognition:cot         → Load Chain-of-Thought reasoning
-use mb.md: cognition:tot         → Load Tree of Thoughts
-use mb.md: cognition:reflexion   → Load Reflexion self-critique loop
-use mb.md: cognition:fep         → Load Free Energy Principle
-use mb.md: cognition:bayesian    → Load Bayesian belief updating
-
-# Operations
-use mb.md: operations            → Load 10-step workflow
-use mb.md: operations:learning   → Load learning loop
-use mb.md: operations:recovery   → Load error recovery
-
-# Orchestration (NEW patterns in v2.0)
-use mb.md: orchestration         → Load all orchestration patterns
-use mb.md: orchestration:moe     → Load Mixture of Experts routing
-use mb.md: orchestration:magentic → Load Magentic dynamic selection
-use mb.md: orchestration:a2a     → Load A2A communication protocol
-use mb.md: orchestration:parallel → Load parallel execution
-use mb.md: orchestration:hierarchy → Load hierarchical enforcement
-
-# Patterns (61 total)
-use mb.md: pattern:1             → Load Pattern 1 (Decision Trees)
-use mb.md: pattern:25            → Load Pattern 25 (Platform Compliance)
-use mb.md: pattern:27            → Load Pattern 27 (FEP)
-use mb.md: patterns:core         → Load Patterns 1-16
-use mb.md: patterns:advanced     → Load Patterns 39-61
-
-# Agents (140+)
-use mb.md: agents                → Load agent overview
-use mb.md: agents:page           → Load 10 page agent profiles
-use mb.md: agents:life-ceo       → Load 16 Life CEO agents
-use mb.md: agents:self-healing   → Load 10 self-healing agents
-use mb.md: agents:scraping       → Load 10 scraping agents
-use mb.md: agents:business       → Load 32 business domain agents
-use mb.md: agents:core           → Load 49 Mr Blue core agents
-
-# Leadership Agents (C-Suite + VPs + Heads)
-use mb.md: agents:leadership     → Load all leadership agents
-use mb.md: agents:ceo            → Load CEO Agent (strategy, vision)
-use mb.md: agents:cto            → Load CTO Agent (technical)
-use mb.md: agents:cpo            → Load CPO Agent (product)
-use mb.md: agents:cfo            → Load CFO Agent (finance)
-use mb.md: agents:cmo            → Load CMO Agent (marketing)
-use mb.md: agents:vp-engineering → Load VP Engineering Agent
-use mb.md: agents:vp-design      → Load VP Design Agent
-use mb.md: agents:vp-data        → Load VP Data Agent
-use mb.md: agents:vp-security    → Load VP Security Agent
-use mb.md: agents:vp-devops      → Load VP DevOps Agent
-use mb.md: agents:vp-platform    → Load VP Platform Agent
-use mb.md: agents:head-ai        → Load Head of AI Agent
-use mb.md: agents:head-qa        → Load Head of QA Agent
-use mb.md: agents:head-frontend  → Load Head of Frontend Agent
-use mb.md: agents:head-backend   → Load Head of Backend Agent
-
-# ⚡ AUTO-INVOKE AGENTS (Run on EVERY mb.md session - God Command #0)
-use mb.md: agents:github-practices → AUTO: Conventional commits, branch naming, atomic commits
-use mb.md: agents:plan-tracker     → AUTO: Update The Plan with task status/progress
-
-# n8n Integration
-use mb.md: n8n                   → Load n8n connection guide
-use mb.md: n8n:webhooks          → Load all webhook endpoints
-use mb.md: n8n:templates         → Load workflow templates
-
-# Full Legacy (6,472 lines - use sparingly)
-use mb.md: legacy                → Load mb-legacy.md (complete v9.10)
-```
-
----
-
-## ⚡ AUTO-INVOKE AGENTS (God Command #0) - NOW OPERATIONAL
-
-**These agents run automatically on EVERY mb.md session.** The system is LIVE and WORKING!
-
-### API Endpoints (All Working)
-
+### Session Management
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/mbmd/session/start` | POST | Start session, auto-invoke agents |
 | `/api/mbmd/session/end` | POST | End session, generate summary |
 | `/api/mbmd/session/status` | GET | Check current session |
+
+### Task Tracking
+| Endpoint | Method | Description |
+|----------|--------|-------------|
 | `/api/mbmd/task/start` | POST | Record task start |
-| `/api/mbmd/task/complete` | POST | Record task complete |
+| `/api/mbmd/task/complete` | POST | Record task completion |
+
+### Git & Plans
+| Endpoint | Method | Description |
+|----------|--------|-------------|
 | `/api/mbmd/git/status` | GET | Git status + pre-commit checklist |
 | `/api/mbmd/plan/status` | GET | All plans progress |
 | `/api/mbmd/commit/validate` | POST | Validate commit message |
 | `/api/mbmd/plan/update-task` | POST | Update task in plan file |
+
+### Command Execution
+| Endpoint | Method | Description |
+|----------|--------|-------------|
 | `/api/mbmd/ask` | POST | Ask any leadership agent |
-
-### GitHub Practices Agent
-**Triggers:** session:start, task:complete, commit:prepare
-
-What a real engineer does:
-1. **Before Work:** Check git status, ensure correct branch, pull latest
-2. **During Work:** Atomic commits, conventional messages, test before commit
-3. **After Work:** Review diff, write descriptive commit, update The Plan
-
-**Conventional Commit Format:**
-```
-<type>(<scope>): <description>
-
-Types: feat | fix | docs | style | refactor | test | chore | perf | ci | revert
-Scopes: auth | events | cities | groups | users | posts | messages | ai | admin | ...
-
-Examples:
-feat(cities): add geocoding for city coordinates
-fix(auth): resolve JWT token refresh race condition
-docs(readme): update API documentation
-```
-
-### Plan Tracker Agent
-**Triggers:** task:start, task:complete, session:end
-
-What a real PM does:
-1. **Task Start:** Mark task as in_progress in The Plan
-2. **Task Complete:** Mark as completed, update progress %
-3. **Session End:** Generate summary, sync replit.md
-
-**Plan Files Tracked (5 total):**
-- `/plan.md` - Current project plan
-- `/.agent-memory/la-milonga-mbmd-strategic-plan-dec-6-2025.md`
-- `/.agent-memory/el-choclo-mb-completion-plan.md`
-- `/.agent-memory/phase-k-mb-md-master-plan.md`
-- `/.agent-memory/phase-k-master-plan.md`
-
-**Checkbox Format:**
-- `[ ]` → Pending
-- `[x]` → Completed
-- `🔄` → In Progress
-- `✅` → Complete
-- `🚫` → Blocked
+| `/api/mrblue/command` | POST | **Execute a command** |
+| `/api/mrblue/chat` | POST | Chat with Mr. Blue |
 
 ---
 
-## 🎯 QUICK REFERENCE
+## BRAIN ARCHITECTURE
 
-### Core Methodology (10-Step Workflow)
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    MR. BLUE BRAIN v3.0                      │
+├─────────────────────────────────────────────────────────────┤
+│  /agents/identity/   WHO I am (soul, values, personality)   │
+│  /cognition/         HOW I think (ReAct, CoT, ToT, FEP)     │
+│  /operations/        HOW I work (10-step, learning)         │
+│  /orchestration/     HOW I coordinate (MoE, A2A)            │
+│  /patterns/          61 MB.MD patterns                      │
+│  /agents/            140+ agent profiles                    │
+│  /n8n/               External integration                   │
+└─────────────────────────────────────────────────────────────┘
+```
 
+---
+
+## INVOCATION SYNTAX
+
+Load specific brain sections:
+
+```markdown
+# Identity & Soul
+use mb.md: identity              → Mr Blue/agents/identity/soul.md
+use mb.md: identity:values       → Mr Blue/agents/identity/values.md
+use mb.md: identity:personality  → Mr Blue/agents/identity/personality-modes.md
+
+# Cognitive Frameworks
+use mb.md: cognition:react       → Mr Blue/cognition/react-protocol.md
+use mb.md: cognition:cot         → Mr Blue/cognition/chain-of-thought.md
+use mb.md: cognition:tot         → Mr Blue/cognition/tree-of-thoughts.md
+use mb.md: cognition:reflexion   → Mr Blue/cognition/reflexion-loop.md
+use mb.md: cognition:fep         → Mr Blue/cognition/fep-active-inference.md
+use mb.md: cognition:bayesian    → Mr Blue/cognition/bayesian-framework.md
+
+# Operations
+use mb.md: operations            → Mr Blue/operations/10-step-workflow.md
+use mb.md: operations:recovery   → Mr Blue/operations/error-recovery.md
+
+# Orchestration
+use mb.md: orchestration:moe     → Mr Blue/orchestration/mixture-of-experts.md
+use mb.md: orchestration:a2a     → Mr Blue/orchestration/a2a-communication.md
+use mb.md: orchestration:parallel → Mr Blue/orchestration/parallel-execution.md
+
+# Patterns
+use mb.md: patterns:core         → Mr Blue/patterns/core-patterns.md
+use mb.md: patterns:advanced     → Mr Blue/patterns/advanced-patterns.md
+
+# Agents
+use mb.md: agents:leadership     → Mr Blue/agents/leadership/index.md
+use mb.md: agents:page           → Mr Blue/agents/page-agents/index.md
+use mb.md: agents:life-ceo       → Mr Blue/agents/life-ceo/index.md
+use mb.md: agents:self-healing   → Mr Blue/agents/self-healing/index.md
+use mb.md: agents:scraping       → Mr Blue/agents/scraping/index.md
+use mb.md: agents:business       → Mr Blue/agents/business/index.md
+use mb.md: agents:core           → Mr Blue/agents/core/index.md
+
+# Auto-Invoke Agents (Run on EVERY session)
+use mb.md: agents:github-practices → AUTO: Conventional commits, branch naming
+use mb.md: agents:plan-tracker     → AUTO: Update The Plan with task status
+```
+
+---
+
+## ANTI-PATTERNS (NEVER DO)
+
+| Anti-Pattern | Why It Fails | Correct Approach |
+|--------------|--------------|------------------|
+| UI-Only Delivery | Buttons exist but don't work | Always complete all 3 layers: UI + Data + Interaction |
+| Surface-Level Analysis | Miss root cause | Work Recursively (God Command #3) |
+| Sequential When Parallel Works | Wastes time | Work Simultaneously (God Command #2) |
+| Skip Testing | Bugs reach user | Test Before Complete (God Command #1) |
+| Build New Before Checking Existing | Duplicate systems | Check Infrastructure First (God Command #5) |
+| Change ID Column Types | Breaks migrations | Never Change ID Types (God Command #6) |
+| Single-Attempt Fixes | Give up too early | Auto-Fix Maximization (God Command #7) |
+| Automate Without Validating | Blind automation | Validation Loop (God Command #8) |
+
+---
+
+## FAILURE MODES & RECOVERY
+
+| Failure | Detection | Recovery |
+|---------|-----------|----------|
+| Agent fails mid-task | Error in response | 3-attempt retry, then escalate to leadership |
+| File reference broken | Path not found | Log error, fall back to search, create if missing |
+| Multiple agents conflict | Contradictory outputs | Hierarchical resolution (CTO > VPs > Heads) |
+| Rate limits hit | 429 response | Exponential backoff, switch provider |
+| Context window exceeded | Token count > limit | Prioritize God Commands, compress context |
+| Database error | SQL exception | Transaction rollback, log, retry once |
+| Git operation fails | Command returns error | Graceful degradation, continue without git |
+
+---
+
+## SUCCESS METRICS
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Task Completion Rate | >95% | Tasks marked complete / tasks started |
+| Auto-Fix Success | >90% | Issues fixed without escalation |
+| Test Pass Rate | 100% | All tests pass before marking complete |
+| Plan Progress | Increasing | Checkbox completion across all plan files |
+| Response Quality | 95-99/100 | God Command #4 target |
+| Escalation Rate | <10% | Issues requiring human intervention |
+
+---
+
+## TOKEN EFFICIENCY
+
+| Section | Token Estimate | Priority |
+|---------|----------------|----------|
+| God Commands | ~200 | ALWAYS LOAD |
+| Quick Reference | ~300 | ALWAYS LOAD |
+| Brain Architecture | ~100 | Load on init |
+| Anti-Patterns | ~200 | Load on errors |
+| Failure Modes | ~200 | Load on errors |
+| Invocation Syntax | ~400 | Load on request |
+| Full Agent Profiles | ~5000+ | Load specific agent only |
+
+**Context Strategy:** Load God Commands + Quick Reference first (~500 tokens). Load specific sections on demand.
+
+---
+
+## QUICK REFERENCE
+
+### 10-Step Workflow
 ```
 1. UNDERSTAND  → Read request, identify scope
 2. RESEARCH    → Gather context, find patterns  
@@ -193,55 +200,64 @@ What a real PM does:
 10. COMPLETE   → Mark done, report to user
 ```
 
-### Critical Learnings (December 2025)
-
-**Pattern: Three-Layer Feature Completion**
-UI scaffolding ≠ functional feature completion. Every feature requires:
+### Three-Layer Feature Completion
+Every feature requires:
 1. **UI Layer** - Visual components and layout
 2. **Data Layer** - API endpoints + database queries 
 3. **Interaction Layer** - User flows, mutations, cache invalidation
 
-**Anti-Pattern: UI-Only Delivery**
-- Symptom: Buttons exist but don't work, tabs render but show no data
-- Fix: Always validate each layer before marking complete
-- Validation: Use real data, not just "renders without errors"
-
-**City Page Data Integration Pattern**
-- Discussion → posts table filtered by cityId/legacyGroupId
-- Overview → parallel queries (events, housing, recommendations) + map pins
-- Events → reuse shared event filter builder from /events page
-- Members → users.city === cityName (Members) vs group_members via legacyGroupId (Followers)
-- Housing → housing_listings WHERE city = cityName
-- Visitors → travel_plans WHERE cityId = city.id AND arrival > now()
-- Follow → POST/DELETE via group_members using legacyGroupId
-
 ### Cognitive Framework Selection
+| Situation | Framework |
+|-----------|-----------|
+| Sequential tool use | ReAct |
+| Complex reasoning | Chain-of-Thought |
+| Multiple solutions | Tree of Thoughts |
+| Learning from failure | Reflexion |
+| Uncertainty | Free Energy Principle |
 
-| Situation | Framework | Load Command |
-|-----------|-----------|--------------|
-| Sequential tool use | ReAct | `use mb.md: cognition:react` |
-| Complex reasoning | Chain-of-Thought | `use mb.md: cognition:cot` |
-| Multiple solutions | Tree of Thoughts | `use mb.md: cognition:tot` |
-| Learning from failure | Reflexion | `use mb.md: cognition:reflexion` |
-| Uncertainty handling | Free Energy Principle | `use mb.md: cognition:fep` |
-| Belief updating | Bayesian | `use mb.md: cognition:bayesian` |
+### Conventional Commit Format
+```
+<type>(<scope>): <description>
 
-### Agent Selection (Mixture of Experts)
-
-| Domain | Agent Count | Load Command |
-|--------|-------------|--------------|
-| Page Agents | 10 | `use mb.md: agents:page` |
-| Feature Agents | 35+ | `use mb.md: agents:page` (nested) |
-| Life CEO | 16 | `use mb.md: agents:life-ceo` |
-| Self-Healing | 10 | `use mb.md: agents:self-healing` |
-| Scraping | 10 | `use mb.md: agents:scraping` |
-| Business | 32 | `use mb.md: agents:business` |
-| Core | 49 | `use mb.md: agents:core` |
-| **TOTAL** | **140+** | `use mb.md: agents` |
+Types: feat | fix | docs | style | refactor | test | chore | perf | ci | revert
+```
 
 ---
 
-## 🌍 THE MISSION
+## AGENT LEARNINGS (Auto-Surfaced)
+
+Recent learnings from leadership agents:
+
+### CTO Agent
+- Always check existing infrastructure before building new
+- Database ID column types must never change
+- Parallel execution preferred over sequential
+
+### GitHub Practices Agent  
+- Conventional commits required on all changes
+- Atomic commits (one logical change per commit)
+- Pre-commit checklist must pass before pushing
+
+### Plan Tracker Agent
+- 5 plan files being tracked
+- Checkbox format: `[ ]` pending, `[x]` complete, `🔄` in progress
+- Progress synced on session end
+
+---
+
+## PLAN FILES TRACKED
+
+| Plan | Location | Status |
+|------|----------|--------|
+| Main Plan | `/plan.md` | Active |
+| La Milonga Strategic | `/.agent-memory/la-milonga-mbmd-strategic-plan-dec-6-2025.md` | Active |
+| El Choclo Completion | `/.agent-memory/el-choclo-mb-completion-plan.md` | In Progress |
+| Phase K MB.MD Master | `/.agent-memory/phase-k-mb-md-master-plan.md` | Active |
+| Phase K Master | `/.agent-memory/phase-k-master-plan.md` | Active |
+
+---
+
+## THE MISSION
 
 > "How do we reverse the negative impacts of social media and make it all better?"
 
@@ -254,84 +270,4 @@ UI scaffolding ≠ functional feature completion. Every feature requires:
 
 ---
 
-## 📁 FOLDER STRUCTURE
-
-```
-/mr-blue-brain/
-├── mb.md                         # THIS FILE - Master index
-├── mb-legacy.md                  # Full v9.10 (6,472 lines)
-│
-├── /identity/                    # WHO Mr. Blue is
-│   ├── soul.md                   # Mission, values, personality
-│   ├── system-prompt.md          # Operating parameters
-│   ├── values.md                 # Core ethics
-│   └── personality-modes.md      # Adaptive states
-│
-├── /cognition/                   # HOW Mr. Blue thinks
-│   ├── react-protocol.md         # ReAct (NEW)
-│   ├── chain-of-thought.md       # CoT (NEW)
-│   ├── tree-of-thoughts.md       # ToT (NEW)
-│   ├── reflexion-loop.md         # Self-critique (NEW)
-│   ├── fep-active-inference.md   # Free Energy Principle
-│   └── bayesian-framework.md     # Belief updating
-│
-├── /operations/                  # HOW Mr. Blue works
-│   ├── 10-step-workflow.md       # Core methodology
-│   ├── learning-loop.md          # Continuous improvement
-│   ├── error-recovery.md         # Failure handling
-│   └── session-tracking.md       # Context persistence
-│
-├── /orchestration/               # HOW Mr. Blue coordinates
-│   ├── mixture-of-experts.md     # MoE routing (NEW)
-│   ├── magentic-dynamic.md       # Context selection (NEW)
-│   ├── a2a-communication.md      # Agent protocol
-│   ├── hierarchical-enforcement.md # 3-tier architecture
-│   └── parallel-execution.md     # Concurrent ops
-│
-├── /esa/                         # ESA Framework
-│   ├── framework-overview.md     # 61 layers, 21 phases
-│   └── integration-guide.md      # How ESA connects
-│
-├── /patterns/                    # All 61 patterns
-│   ├── core-patterns.md          # Patterns 1-16
-│   ├── platform-patterns.md      # Patterns 25-28
-│   └── advanced-patterns.md      # Patterns 39-61
-│
-├── /agents/                      # 140+ agent profiles
-│   ├── overview.md               # Agent ecosystem summary
-│   ├── /leadership/              # C-Suite + VPs + Heads (NEW)
-│   │   ├── index.md              # Leadership agent system
-│   │   └── /memory/              # Agent learning storage
-│   │       ├── god-commands.json # God-level directives
-│   │       ├── ceo-agent.json    # CEO learnings
-│   │       ├── cto-agent.json    # CTO learnings
-│   │       └── ...               # Other agent memories
-│   ├── /page-agents/             # 10 page agents
-│   ├── /life-ceo/                # 16 Life CEO agents
-│   ├── /self-healing/            # 10 self-healing agents
-│   ├── /scraping/                # 10 scraping agents
-│   ├── /business/                # 32 business agents
-│   └── /core/                    # 49 Mr Blue core agents
-│
-├── /technical/                   # Implementation
-│   ├── tech-stack.md             # Technologies
-│   └── api-reference.md          # All APIs
-│
-└── /n8n/                         # External integration
-    ├── connection-guide.md       # Setup instructions
-    ├── webhook-endpoints.md      # All webhooks
-    └── workflow-templates.md     # Ready-to-use flows
-```
-
----
-
-## 🔗 LEGACY REFERENCE
-
-The complete MB.MD v9.10 (6,472 lines, 61 patterns) is preserved at:
-- `mb-legacy.md` (root directory)
-
-Use `use mb.md: legacy` to load the full document when needed.
-
----
-
-**Mr. Blue Brain v2.0** - Modular, Token-Efficient, 140+ Agents Connected
+**Mr. Blue Brain v3.0** - Modular, Token-Efficient, 140+ Agents, LIVE AND OPERATIONAL

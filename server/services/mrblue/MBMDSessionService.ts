@@ -361,6 +361,29 @@ Plan Progress: ${this.currentSession.planStatus?.totalProgress || 0}%
         return `Unknown agent: ${agentId}`;
     }
   }
+
+  /**
+   * Get git status via GitHub Practices Agent
+   */
+  async getGitStatus(): Promise<GitPracticesCheck> {
+    return await gitHubPracticesAgent.getGitStatus();
+  }
+
+  /**
+   * Get plan status via Plan Tracker Agent
+   */
+  async getPlanStatus(): Promise<PlanStatus> {
+    const plans = await planTrackerAgent.loadAllPlans();
+    const totalProgress = plans.length > 0
+      ? Math.round(plans.reduce((sum, p) => sum + p.progress, 0) / plans.length)
+      : 0;
+    
+    return {
+      plans,
+      totalProgress,
+      activePlan: plans.find(p => p.status === 'in_progress')?.name || null,
+    };
+  }
 }
 
 // Singleton instance

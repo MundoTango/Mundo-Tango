@@ -9,6 +9,7 @@ import { Router, Request, Response } from 'express';
 import { mbmdSessionService } from '../services/mrblue/MBMDSessionService';
 import { gitHubPracticesAgent } from '../services/mrblue/agents/leadership/GitHubPracticesAgent';
 import { planTrackerAgent } from '../services/mrblue/agents/leadership/PlanTrackerAgent';
+import { mrBlueCommandExecutor } from '../services/mrblue/MrBlueCommandExecutor';
 
 const router = Router();
 
@@ -328,6 +329,75 @@ router.get('/history', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('[MBMD Routes] History error:', error);
     res.status(500).json({ success: false, error: 'Failed to get history' });
+  }
+});
+
+/**
+ * POST /api/mbmd/command
+ * Execute a command with Mr. Blue
+ * This is the main entry point for commanding Mr. Blue to do something
+ */
+router.post('/command', async (req: Request, res: Response) => {
+  try {
+    const { command } = req.body;
+    
+    if (!command) {
+      return res.status(400).json({
+        success: false,
+        error: 'Command is required',
+        usage: 'POST /api/mbmd/command { "command": "your instruction here" }'
+      });
+    }
+
+    const userId = (req as any).user?.id;
+    const result = await mrBlueCommandExecutor.executeCommand(command, userId);
+    
+    res.json({
+      success: result.success,
+      command: result.command,
+      response: result.response,
+      agent: result.agentUsed,
+      executionTime: `${result.executionTime}ms`,
+      learnings: result.learnings || []
+    });
+  } catch (error) {
+    console.error('[MBMD Routes] Command execution error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to execute command',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
+ * GET /api/mbmd/status
+ * Get Mr. Blue operational status
+ */
+router.get('/status', async (req: Request, res: Response) => {
+  try {
+    const status = await mrBlueCommandExecutor.getStatus();
+    const sessionStatus = mbmdSessionService.getSessionStatus();
+    
+    res.json({
+      success: true,
+      mrBlue: status,
+      session: sessionStatus,
+      endpoints: {
+        command: 'POST /api/mbmd/command',
+        session: {
+          start: 'POST /api/mbmd/session/start',
+          end: 'POST /api/mbmd/session/end',
+          status: 'GET /api/mbmd/session/status'
+        },
+        git: 'GET /api/mbmd/git/status',
+        plan: 'GET /api/mbmd/plan/status',
+        ask: 'POST /api/mbmd/ask'
+      }
+    });
+  } catch (error) {
+    console.error('[MBMD Routes] Status error:', error);
+    res.status(500).json({ success: false, error: 'Failed to get status' });
   }
 });
 
