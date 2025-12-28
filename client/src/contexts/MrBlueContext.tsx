@@ -25,6 +25,17 @@ interface CTOWelcomeContext {
   userRole: string;
 }
 
+// CTO walkthrough result for completion reporting
+interface WalkthroughResult {
+  success: boolean;
+  testName: string;
+  totalSteps: number;
+  completedSteps: number;
+  duration: number;
+  steps: { description: string; status: 'success' | 'failed'; duration?: number; error?: string }[];
+  timestamp: number;
+}
+
 interface MrBlueContextType {
   isChatOpen: boolean;
   openChat: () => void;
@@ -60,6 +71,11 @@ interface MrBlueContextType {
   isWalkthroughOpen: boolean;
   openWalkthrough: () => void;
   closeWalkthrough: () => void;
+  
+  // Walkthrough result reporting
+  walkthroughResult: WalkthroughResult | null;
+  setWalkthroughResult: (result: WalkthroughResult | null) => void;
+  reportWalkthroughComplete: (result: WalkthroughResult) => void;
 }
 
 const MrBlueContext = createContext<MrBlueContextType | undefined>(undefined);
@@ -85,6 +101,9 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
   
   // CTO Walkthrough preview state
   const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false);
+  
+  // Walkthrough result state
+  const [walkthroughResult, setWalkthroughResult] = useState<WalkthroughResult | null>(null);
 
   useEffect(() => {
     if (location !== currentPage) {
@@ -202,6 +221,14 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
     console.log('[MrBlue] Closing CTO walkthrough preview');
     setIsWalkthroughOpen(false);
   };
+  
+  // Report walkthrough completion and open chat with results
+  const reportWalkthroughComplete = (result: WalkthroughResult) => {
+    console.log('[MrBlue] Walkthrough complete:', result.success ? 'SUCCESS' : 'FAILED', result.testName);
+    setWalkthroughResult(result);
+    setCurrentExpression(result.success ? 'happy' : 'thinking');
+    setIsChatOpen(true);
+  };
 
   return (
     <MrBlueContext.Provider
@@ -232,6 +259,9 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
         isWalkthroughOpen,
         openWalkthrough,
         closeWalkthrough,
+        walkthroughResult,
+        setWalkthroughResult,
+        reportWalkthroughComplete,
       }}
     >
       {children}

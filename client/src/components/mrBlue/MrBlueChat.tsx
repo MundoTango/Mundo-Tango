@@ -18,10 +18,51 @@ interface Message {
 }
 
 export function MrBlueChat() {
-  const { ctoWelcome, clearCTOWelcome, selfHealError, clearSelfHealError, openWalkthrough } = useMrBlue();
+  const { ctoWelcome, clearCTOWelcome, selfHealError, clearSelfHealError, openWalkthrough, walkthroughResult, setWalkthroughResult } = useMrBlue();
   
   // Generate welcome message based on context
   const getWelcomeMessage = () => {
+    // Walkthrough result takes priority - show the test results
+    if (walkthroughResult) {
+      const successEmoji = walkthroughResult.success ? '✓' : '✗';
+      const statusText = walkthroughResult.success ? 'PASSED' : 'FAILED';
+      const durationSec = (walkthroughResult.duration / 1000).toFixed(1);
+      
+      let stepsReport = walkthroughResult.steps.map((s, i) => {
+        const icon = s.status === 'success' ? '✓' : '✗';
+        const time = s.duration ? ` (${s.duration}ms)` : '';
+        return `${icon} Step ${i + 1}: ${s.description}${time}`;
+      }).join('\n');
+      
+      if (walkthroughResult.success) {
+        return `**${successEmoji} CTO Walkthrough: ${walkthroughResult.testName}**
+
+Status: **${statusText}** in ${durationSec}s
+Steps: ${walkthroughResult.completedSteps}/${walkthroughResult.totalSteps} passed
+
+${stepsReport}
+
+All systems operational! The self-healing infrastructure is functioning correctly.
+
+Would you like to:
+- Run another test scenario
+- Review the platform health dashboard
+- Ask me anything about the codebase`;
+      } else {
+        const failedStep = walkthroughResult.steps.find(s => s.status === 'failed');
+        return `**${successEmoji} CTO Walkthrough: ${walkthroughResult.testName}**
+
+Status: **${statusText}** at ${durationSec}s
+Steps: ${walkthroughResult.completedSteps}/${walkthroughResult.totalSteps} passed
+
+${stepsReport}
+
+**Error detected:** ${failedStep?.error || 'Unknown error'}
+
+I can help you analyze and fix this issue using **MB.MD Pattern 53**. Say "apply fix" to proceed.`;
+      }
+    }
+    
     if (ctoWelcome) {
       return `Welcome back, ${ctoWelcome.userName}! I detected you're a ${ctoWelcome.userRole} user.
 
@@ -63,9 +104,9 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   const [location] = useLocation();
   const { toast } = useToast();
   
-  // Update welcome message when CTO or self-heal context changes
+  // Update welcome message when CTO, self-heal, or walkthrough result context changes
   useEffect(() => {
-    if (ctoWelcome || selfHealError) {
+    if (ctoWelcome || selfHealError || walkthroughResult) {
       setMessages([{
         id: '1',
         role: 'assistant',
@@ -73,7 +114,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         timestamp: new Date()
       }]);
     }
-  }, [ctoWelcome, selfHealError]);
+  }, [ctoWelcome, selfHealError, walkthroughResult]);
   
   const { data: fetchedMessages, refetch: refetchMessages } = useQuery<Message[]>({
     queryKey: [`/api/mrblue/conversations/${currentConversationId}/messages`],

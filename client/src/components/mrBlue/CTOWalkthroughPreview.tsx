@@ -33,7 +33,7 @@ const WALKTHROUGH_STEPS: Omit<WalkthroughStep, 'status'>[] = [
 ];
 
 export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthroughPreviewProps) {
-  const { openChat, setSelfHealError } = useMrBlue();
+  const { openChat, setSelfHealError, reportWalkthroughComplete } = useMrBlue();
   const [steps, setSteps] = useState<WalkthroughStep[]>(
     WALKTHROUGH_STEPS.map(s => ({ ...s, status: 'pending' }))
   );
@@ -127,6 +127,30 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
             setProgress(100);
             setIsRunning(false);
             eventSourceRef.current?.close();
+            
+            // Report completion to Mr. Blue
+            setSteps(prev => {
+              const finalSteps = prev;
+              const successSteps = finalSteps.filter(s => s.status === 'success');
+              const failedSteps = finalSteps.filter(s => s.status === 'failed');
+              
+              reportWalkthroughComplete({
+                success: failedSteps.length === 0,
+                testName: 'Resume Upload Test',
+                totalSteps: WALKTHROUGH_STEPS.length,
+                completedSteps: successSteps.length,
+                duration: elapsedTime,
+                steps: finalSteps.map(s => ({
+                  description: s.description,
+                  status: s.status === 'success' ? 'success' : 'failed',
+                  duration: s.duration,
+                  error: s.error,
+                })),
+                timestamp: Date.now(),
+              });
+              
+              return prev;
+            });
           }
         } catch (error) {
           console.error('Failed to parse walkthrough event:', error);
