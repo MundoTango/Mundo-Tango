@@ -48,6 +48,9 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
   const [errorDetails, setErrorDetails] = useState<any>(null);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
   const [fixStatus, setFixStatus] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isAutoHealing, setIsAutoHealing] = useState(false);
+  const MAX_AUTO_RETRIES = 3;
   const eventSourceRef = useRef<EventSource | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -76,7 +79,7 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
     };
   }, [isRunning]);
 
-  const startWalkthrough = useCallback(() => {
+  const startWalkthrough = useCallback((isAutoRetry = false) => {
     cleanupSSE();
     
     setIsRunning(true);
@@ -86,6 +89,10 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
     setElapsedTime(0);
     setErrorDetails(null);
     setFixStatus(null);
+    // Only reset retry counter for manual starts, not auto-retries
+    if (!isAutoRetry) {
+      setRetryCount(0);
+    }
     setSteps(WALKTHROUGH_STEPS.map(s => ({ ...s, status: 'pending' })));
 
     try {
@@ -115,8 +122,10 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
             setIsRunning(false);
             setFixStatus(null); // Clear any previous fix status
             
-            // Trigger Mr Blue Self-Healing automatically
-            console.log('[Mr Blue] Triggering autonomous self-healing...');
+            // Trigger Mr Blue Self-Healing automatically with auto-retry loop
+            console.log('[Mr Blue] Triggering autonomous self-healing... (Attempt', retryCount + 1, 'of', MAX_AUTO_RETRIES, ')');
+            setIsAutoHealing(true);
+            
             fetch('/api/cto/walkthrough/self-heal', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -124,12 +133,15 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
                 error: data.error,
                 page: '/talent-match',
                 step: WALKTHROUGH_STEPS[data.stepIndex]?.description || 'Unknown step',
-                logs: []
+                logs: [],
+                retryAttempt: retryCount + 1
               })
             })
             .then(res => res.json())
             .then(healResult => {
               console.log('[Mr Blue Self-Healing] Result:', healResult);
+              setIsAutoHealing(false);
+              
               // Update error details with healing analysis
               if (healResult.pattern) {
                 setErrorDetails((prev: any) => ({
@@ -138,12 +150,36 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
                     pattern: healResult.pattern,
                     fixResult: healResult.fixResult,
                     retryRecommended: healResult.retryRecommended,
-                    agents: healResult.agents
+                    agents: healResult.agents,
+                    retryCount: retryCount + 1
                   }
                 }));
               }
+              
+              // MB.MD Pattern 53: Autonomous retry loop
+              // If fix was applied and retry is recommended, auto-restart the test
+              if (healResult.retryRecommended && retryCount < MAX_AUTO_RETRIES - 1) {
+                console.log('[Mr Blue] Auto-retry triggered! Attempt', retryCount + 2, 'of', MAX_AUTO_RETRIES);
+                setRetryCount(prev => prev + 1);
+                
+                // Wait 2 seconds for any fixes to stabilize, then auto-restart
+                setTimeout(() => {
+                  console.log('[Mr Blue] Executing auto-restart...');
+                  startWalkthrough(true); // Pass true for isAutoRetry
+                }, 2000);
+              } else if (retryCount >= MAX_AUTO_RETRIES - 1) {
+                console.log('[Mr Blue] Max retries reached (', MAX_AUTO_RETRIES, '). Manual intervention required.');
+                toast({
+                  title: 'Self-Healing Exhausted',
+                  description: `Tried ${MAX_AUTO_RETRIES} times. Manual review needed.`,
+                  variant: 'destructive'
+                });
+              }
             })
-            .catch(e => console.error('[Mr Blue Self-Healing] Failed:', e));
+            .catch(e => {
+              console.error('[Mr Blue Self-Healing] Failed:', e);
+              setIsAutoHealing(false);
+            });
             
             if (onError) {
               onError({
@@ -482,9 +518,25 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
                     <p className="text-sm text-muted-foreground mb-4">
                       {errorDetails.error}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      Mr. Blue is analyzing the issue...
-                    </p>
+                    {isAutoHealing ? (
+                      <div className="flex items-center justify-center gap-2 text-primary">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <p className="text-xs font-medium">
+                          Mr. Blue is self-healing... Attempt {retryCount + 1} of {MAX_AUTO_RETRIES}
+                        </p>
+                      </div>
+                    ) : retryCount > 0 && retryCount < MAX_AUTO_RETRIES ? (
+                      <div className="flex items-center justify-center gap-2 text-amber-500">
+                        <RotateCcw className="w-4 h-4 animate-spin" />
+                        <p className="text-xs font-medium">
+                          Auto-retrying in 2s... (Attempt {retryCount + 1} of {MAX_AUTO_RETRIES})
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">
+                        Mr. Blue is analyzing the issue...
+                      </p>
+                    )}
                   </div>
                 ) : isRunning ? (
                   <div className="text-center">

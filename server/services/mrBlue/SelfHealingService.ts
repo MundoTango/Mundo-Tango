@@ -63,7 +63,7 @@ export const MBMD_PATTERNS: MBMDPattern[] = [
     name: 'Page Crash / Navigation Error',
     pattern: 'Pattern 99: Page Crash / Navigation Error',
     rootCause: 'Playwright page crashed or navigation failed during test',
-    detection: (e) => /page crashed|page\.reload:.*crash|target closed|context closed|frame detached|browser.*disconnected/i.test(e),
+    detection: (e) => /page crashed|page\.reload:.*crash|target.*closed|context.*closed|browser.*closed|frame detached|browser.*disconnected|navigation failed/i.test(e),
     autoFixSteps: [
       '1. Wait for page to stabilize before interaction',
       '2. Increase navigation timeout',
