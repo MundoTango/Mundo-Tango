@@ -1,6 +1,6 @@
 # MB.MD - Mr. Blue's Brain v2.0
 
-**Version:** 2.0.0 | **Updated:** December 19, 2025 | **Agents:** 140+ | **Patterns:** 61
+**Version:** 2.1.0 | **Updated:** December 28, 2025 | **Agents:** 140+ | **Patterns:** 65
 
 ---
 
@@ -16,7 +16,7 @@ Mr. Blue's brain is now modular for token-efficient loading. See **[Master Index
 │  /cognition/     HOW I think (ReAct, CoT, ToT, FEP)        │
 │  /operations/    HOW I work (10-step, recovery)            │
 │  /orchestration/ HOW I coordinate (MoE, A2A, parallel)     │
-│  /patterns/      61 MB.MD patterns                         │
+│  /patterns/      65 MB.MD patterns                         │
 │  /agents/        140+ agent profiles                       │
 │  /n8n/           External integration guide                │
 └─────────────────────────────────────────────────────────────┘
@@ -426,3 +426,475 @@ STEP 4: FIX (via Supabase Dashboard)
 ---
 
 **Note:** For the full 6,472-line legacy document, use `use mb.md: legacy` or read `mb-legacy.md` directly.
+
+---
+
+## 📱 PATTERN 62: MOBILE UI AUDIT METHODOLOGY
+
+**Problem Solved:** UI tests pass on desktop but fail on mobile. Previous approvals missed mobile-specific issues.
+
+### Mobile Viewport Testing Matrix
+
+| Breakpoint | Name | Width | Device Example | Priority |
+|------------|------|-------|----------------|----------|
+| xs | Mobile S | 320px | iPhone SE | CRITICAL |
+| sm | Mobile M | 375px | iPhone X/12/13 | CRITICAL |
+| md | Mobile L | 425px | Pixel 5 | HIGH |
+| lg | Tablet | 768px | iPad Mini | HIGH |
+| xl | Laptop | 1024px | iPad Pro | MEDIUM |
+| 2xl | Desktop | 1440px | MacBook Pro | LOW |
+
+### Mobile Test Plan Template
+
+```
+1. [New Context] Create browser context with mobile viewport
+2. [Browser] Set viewport: { width: 375, height: 812, isMobile: true }
+3. [Browser] Navigate to /target-page
+4. [Verify] Check for:
+   - Horizontal scroll (FAIL if present)
+   - Touch target sizes (min 44x44px)
+   - Text readability (min 14px)
+   - Element overflow
+   - Fixed position elements
+   - Sidebar collapse
+   - Bottom navigation visibility
+5. [Browser] Repeat for 320px width (smallest breakpoint)
+```
+
+### Mobile-Specific Checks
+
+| Check | PASS Condition | Common Failures |
+|-------|---------------|-----------------|
+| No horizontal scroll | `document.body.scrollWidth <= window.innerWidth` | Fixed-width containers, images |
+| Touch targets | All buttons >= 44x44px | Icon buttons too small |
+| Font size | body text >= 14px | 10-12px text unreadable |
+| Element visibility | Critical UI not cut off | FAB buttons, modals |
+| Sidebar | Collapsed/hidden on mobile | Overlapping content |
+| Input fields | Full width, proper padding | Tiny inputs on forms |
+
+### Invocation
+
+```markdown
+use mb.md: testing:mobile         → Mobile audit methodology
+use mb.md: testing:mobile:320     → iPhone SE test (320px)
+use mb.md: testing:mobile:375     → iPhone X test (375px)
+use mb.md: testing:mobile:matrix  → Full breakpoint matrix
+```
+
+---
+
+## 🎯 PATTERN 63: MR. BLUE SINGLETON PATTERN
+
+**Problem Solved:** Multiple Mr. Blue chat instances opening simultaneously, causing duplicate UI and conversation confusion.
+
+### Root Cause Analysis
+
+```
+SYMPTOM: 2+ chat panels visible at same time
+ROOT CAUSES:
+1. MrBlueFloatingButton rendered multiple times (layout nesting)
+2. No singleton enforcement in MrBlueContext
+3. Race conditions when rapidly clicking FAB
+4. Different components creating independent chat instances
+```
+
+### Singleton Implementation
+
+**1. Context-Level Enforcement (MrBlueContext.tsx)**
+
+```typescript
+// Single source of truth for chat state
+const MrBlueProvider = ({ children }) => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const instanceRef = useRef<string>(crypto.randomUUID());
+  
+  // Prevent multiple opens
+  const openChat = useCallback(() => {
+    if (isChatOpen) return; // Already open
+    setIsChatOpen(true);
+  }, [isChatOpen]);
+  
+  // Global close
+  const closeChat = useCallback(() => {
+    setIsChatOpen(false);
+  }, []);
+  
+  // Toggle with debounce
+  const toggleChat = useMemo(() => 
+    debounce(() => setIsChatOpen(prev => !prev), 100),
+    []
+  );
+  
+  return (
+    <MrBlueContext.Provider value={{ 
+      isChatOpen, openChat, closeChat, toggleChat,
+      instanceId: instanceRef.current 
+    }}>
+      {children}
+    </MrBlueContext.Provider>
+  );
+};
+```
+
+**2. Component-Level Guard (MrBlueFloatingButton.tsx)**
+
+```typescript
+// Only one FAB should exist in the DOM
+const MrBlueFloatingButton = () => {
+  const { isChatOpen, toggleChat, instanceId } = useMrBlue();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    // Check if another instance already exists
+    const existingFab = document.querySelector('[data-mr-blue-fab]');
+    if (existingFab && existingFab.getAttribute('data-instance') !== instanceId) {
+      console.warn('[MrBlue] Duplicate FAB prevented');
+      return;
+    }
+    setMounted(true);
+  }, [instanceId]);
+  
+  if (!mounted) return null;
+  
+  return (
+    <div data-mr-blue-fab data-instance={instanceId}>
+      {/* FAB content */}
+    </div>
+  );
+};
+```
+
+**3. Portal Rendering (Single Mount Point)**
+
+```typescript
+// Always render chat in a single portal
+{isChatOpen && createPortal(
+  <MrBlueChat onClose={closeChat} />,
+  document.getElementById('mr-blue-portal') || document.body
+)}
+```
+
+### Validation Test
+
+```
+1. [Browser] Navigate to /feed
+2. [Browser] Click Mr. Blue FAB rapidly 5 times
+3. [Verify] Only ONE chat panel visible
+4. [Browser] Navigate to /cities/warsaw-tango
+5. [Browser] Click Mr. Blue FAB
+6. [Verify] Same chat instance continues (not new)
+7. [Verify] Count [data-mr-blue-chat] elements === 1
+```
+
+### Invocation
+
+```markdown
+use mb.md: mrblue:singleton       → Singleton pattern
+use mb.md: mrblue:portal          → Portal rendering
+use mb.md: mrblue:dedup           → Deduplication guards
+```
+
+---
+
+## 🔓 PATTERN 64: MR. BLUE USER CONTEXT (FULL DATA ACCESS)
+
+**Problem Solved:** Mr. Blue cannot answer "who are my friends?" because it lacks access to user-specific data, relationships, and personalization.
+
+### Data Access Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    MR. BLUE DATA ACCESS LAYERS                   │
+├─────────────────────────────────────────────────────────────────┤
+│ LAYER 1: PUBLIC (No Auth Required)                               │
+│ - Platform stats (events, cities, users counts)                  │
+│ - Public events and cities                                       │
+│ - Public user profiles                                           │
+├─────────────────────────────────────────────────────────────────┤
+│ LAYER 2: AUTHENTICATED USER (User Session)                       │
+│ - User's own profile data                                        │
+│ - User's friends list                                            │
+│ - User's RSVP history                                            │
+│ - User's followed cities                                         │
+│ - User's group memberships                                       │
+│ - User's conversations/DMs                                       │
+│ - User's notifications                                           │
+├─────────────────────────────────────────────────────────────────┤
+│ LAYER 3: FRIEND DATA (Friendship Relationship)                   │
+│ - Friend's public profile                                        │
+│ - Friend's public posts (visibility='public')                    │
+│ - Friend's friends-only data (visibility='friends')              │
+│ - Mutual friends                                                 │
+│ - Friend's public events                                         │
+├─────────────────────────────────────────────────────────────────┤
+│ LAYER 4: GOD LEVEL (Admin/CTO Role)                              │
+│ - All user data (any user)                                       │
+│ - System-wide analytics                                          │
+│ - Error logs and diagnostics                                     │
+│ - Database queries                                               │
+│ - Agent orchestration                                            │
+│ - Pattern execution                                              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Data Service Extension (mr-blue-data-service.ts)
+
+```typescript
+// NEW: User-specific data methods
+async getUserContext(userId: number): Promise<UserContext> {
+  const [user, friends, rsvps, cities, groups] = await Promise.all([
+    this.getUserProfile(userId),
+    this.getUserFriends(userId),
+    this.getUserRSVPs(userId),
+    this.getFollowedCities(userId),
+    this.getUserGroups(userId)
+  ]);
+  return { user, friends, rsvps, cities, groups };
+}
+
+async getUserFriends(userId: number): Promise<FriendSummary[]> {
+  return db.select({
+    id: users.id,
+    name: users.name,
+    username: users.username,
+    profileImage: users.profileImage,
+    city: users.city,
+    closenessScore: friendships.closenessScore
+  })
+  .from(friendships)
+  .innerJoin(users, eq(friendships.friendId, users.id))
+  .where(eq(friendships.userId, userId));
+}
+
+async getUserRSVPs(userId: number): Promise<EventRSVP[]> {
+  return db.select()
+  .from(eventRsvps)
+  .innerJoin(events, eq(eventRsvps.eventId, events.id))
+  .where(eq(eventRsvps.userId, userId));
+}
+
+// NEW: Build personalized context for AI
+async buildUserContext(userId: number): Promise<string> {
+  const ctx = await this.getUserContext(userId);
+  return `
+USER PROFILE:
+- Name: ${ctx.user.name}
+- City: ${ctx.user.city}
+- Tango Roles: ${ctx.user.tangoRoles?.join(', ') || 'Not specified'}
+
+FRIENDS (${ctx.friends.length}):
+${ctx.friends.slice(0, 10).map(f => `- ${f.name} (${f.city})`).join('\n')}
+
+UPCOMING RSVPS (${ctx.rsvps.length}):
+${ctx.rsvps.slice(0, 5).map(r => `- ${r.event.title} on ${r.event.startDate}`).join('\n')}
+
+FOLLOWED CITIES (${ctx.cities.length}):
+${ctx.cities.map(c => `- ${c.name}, ${c.country}`).join('\n')}
+`;
+}
+```
+
+### Query Examples
+
+| User Query | Data Source | Response Type |
+|------------|-------------|---------------|
+| "Who are my friends?" | friendships table | Friend list with cities |
+| "What events am I going to?" | eventRsvps + events | RSVP calendar |
+| "What cities do I follow?" | cityMembers table | City list |
+| "Show me my profile" | users table | Profile summary |
+| "What do my friends like?" | friends' RSVPs | Friend activity |
+| "Find events my friends are attending" | friends' RSVPs | Social events |
+
+### Invocation
+
+```markdown
+use mb.md: mrblue:user-context    → User data access
+use mb.md: mrblue:friends         → Friend data methods
+use mb.md: mrblue:personalization → Personalized AI context
+```
+
+---
+
+## 👑 PATTERN 65: MR. BLUE GOD POWERS (ADMIN ENHANCEMENT)
+
+**Problem Solved:** God-level admins (CTO, admin@mundotango.life) need Mr. Blue to have full system access like Replit AI Agent.
+
+### God-Level Permission Matrix
+
+| Role | Can Access | Example Queries |
+|------|------------|-----------------|
+| `user` | Own data + friends' visible data | "Who are my friends?" |
+| `organizer` | + Event analytics | "How many RSVPs for my event?" |
+| `moderator` | + Content moderation data | "Show reported posts" |
+| `admin` | + User management | "Find user by email X" |
+| `cto` | + Full database + system | "Run SQL: SELECT * FROM..." |
+| `founder` | + Billing + financial | "Show Stripe subscriptions" |
+
+### God Mode Activation
+
+```typescript
+// Check god-level status
+const isGodLevel = (role: string): boolean => {
+  return ['admin', 'cto', 'founder'].includes(role);
+};
+
+// Enhanced AI system prompt for god users
+const getSystemPrompt = (user: User, isGod: boolean): string => {
+  const basePrompt = `You are Mr. Blue, Mundo Tango's AI assistant...`;
+  
+  if (isGod) {
+    return basePrompt + `
+
+GOD MODE ACTIVATED for ${user.name} (${user.role})
+You have FULL system access including:
+- All database tables (read access)
+- All user data (any user)
+- Error logs and diagnostics
+- System analytics
+- Agent orchestration
+- Pattern library execution
+
+When queried, you can:
+1. Query ANY table in the database
+2. Look up ANY user by email/id
+3. Access admin dashboards
+4. Execute MB.MD patterns
+5. Diagnose system errors
+6. View audit logs
+
+Always prefix sensitive data with [GOD MODE] so user knows
+this data would not be visible to regular users.
+`;
+  }
+  return basePrompt;
+};
+```
+
+### God-Level Queries
+
+```
+[GOD MODE] Examples:
+- "Find all users who registered today"
+- "Show me the scraping queue status"
+- "What errors occurred in the last hour?"
+- "Look up user john@example.com"
+- "Run pattern 53 on this error"
+- "Show me all events missing geocoding"
+- "What's the database connection status?"
+```
+
+### Implementation Steps
+
+```
+1. DETECT  → Check user.role in request
+2. ENHANCE → Add god-level context to AI prompt
+3. EXPAND  → Allow database queries via natural language
+4. LOG     → Audit all god-level queries
+5. PROTECT → Never expose passwords/tokens
+```
+
+### Security Guardrails
+
+| Rule | Implementation |
+|------|----------------|
+| No password exposure | Always redact password fields |
+| No token exposure | Never show JWT/API keys |
+| Audit logging | Log all god-level queries |
+| Rate limiting | Max 100 god queries/hour |
+| Read-only default | No DELETE/UPDATE via natural language |
+
+### Invocation
+
+```markdown
+use mb.md: mrblue:god-mode        → God-level access
+use mb.md: mrblue:god-queries     → Admin query examples
+use mb.md: mrblue:god-security    → Security guardrails
+```
+
+---
+
+## 🎨 PATTERN 66: MR. BLUE CHAT DESIGN SYSTEM
+
+**Problem Solved:** Chat UI needs consistent, accessible, mobile-friendly design.
+
+### Chat Design Tokens
+
+```css
+/* Chat Container */
+--chat-width: min(420px, 100vw - 32px);
+--chat-height: min(600px, 100vh - 100px);
+--chat-radius: 1.5rem;
+--chat-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+/* Header */
+--header-height: 64px;
+--header-bg: rgba(0, 0, 0, 0.8);
+--header-blur: 20px;
+
+/* Messages */
+--msg-user-bg: hsl(var(--primary));
+--msg-bot-bg: hsl(var(--muted));
+--msg-radius: 1rem;
+--msg-padding: 0.75rem 1rem;
+--msg-max-width: 85%;
+
+/* Input */
+--input-height: 56px;
+--input-bg: hsl(var(--card));
+--input-radius: 1.5rem;
+```
+
+### Component Hierarchy
+
+```
+MrBlueChat
+├── ChatHeader (sticky, glassmorphic)
+│   ├── Avatar (40px, rounded-full)
+│   ├── Title + Subtitle
+│   ├── OnlineStatus (pulse animation)
+│   └── CloseButton (X icon)
+├── ChatMessages (flex-1, scroll-y)
+│   └── Message[]
+│       ├── BotMessage (left, muted bg)
+│       ├── UserMessage (right, primary bg)
+│       └── Timestamp (small, muted)
+├── TypingIndicator (animated dots)
+└── ChatInput (sticky bottom)
+    ├── Textarea (auto-resize)
+    └── SendButton (icon)
+```
+
+### Mobile Responsive
+
+```css
+/* Mobile: Full screen takeover */
+@media (max-width: 640px) {
+  .mr-blue-chat {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    z-index: 9999;
+  }
+}
+
+/* Tablet+: Floating panel */
+@media (min-width: 641px) {
+  .mr-blue-chat {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: var(--chat-width);
+    height: var(--chat-height);
+  }
+}
+```
+
+### Invocation
+
+```markdown
+use mb.md: mrblue:design          → Chat design tokens
+use mb.md: mrblue:design:mobile   → Mobile responsive
+use mb.md: mrblue:design:dark     → Dark mode support
+```

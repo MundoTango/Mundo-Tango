@@ -1,20 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { X, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MrBlueChat } from "./MrBlueChat";
 import { CTOWalkthroughPreview } from "./CTOWalkthroughPreview";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMrBlue } from "@/contexts/MrBlueContext";
 import { useLocation } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 const HIDDEN_PAGES = [
   '/mr-blue-chat', 
   '/admin/visual-editor',
-  // Onboarding pages - hide Mr Blue for focused onboarding experience
   '/onboarding',
-  // Marketing pages - hide Mr Blue for clean marketing experience
   '/landing',
   '/lander',
   '/about',
@@ -34,23 +32,45 @@ const HIDDEN_PAGES = [
   '/tango-roles',
 ];
 
-export function MrBlueFloatingButton() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const { user } = useAuth();
-  const { isWalkthroughOpen, closeWalkthrough, isChatOpen } = useMrBlue();
-  const [location] = useLocation();
+// MB.MD Pattern 63: Singleton instance ID to prevent duplicates
+let globalMrBlueInstance: string | null = null;
 
+export function MrBlueFloatingButton() {
+  const [mounted, setMounted] = useState(false);
+  const instanceId = useRef<string>(crypto.randomUUID());
+  const { user } = useAuth();
+  const { isWalkthroughOpen, closeWalkthrough, isChatOpen, openChat, closeChat } = useMrBlue();
+  const [location] = useLocation();
+  const lastToggleTime = useRef<number>(0);
+
+  // MB.MD Pattern 63: Singleton enforcement - prevent duplicate FABs
   useEffect(() => {
+    if (globalMrBlueInstance && globalMrBlueInstance !== instanceId.current) {
+      console.warn('[MrBlue] Duplicate FAB instance blocked:', instanceId.current);
+      return;
+    }
+    globalMrBlueInstance = instanceId.current;
     setMounted(true);
+    
+    return () => {
+      if (globalMrBlueInstance === instanceId.current) {
+        globalMrBlueInstance = null;
+      }
+    };
   }, []);
   
-  // Sync local state with context state (for auto-open on CTO login)
-  useEffect(() => {
-    if (isChatOpen && !isOpen) {
-      setIsOpen(true);
+  // Debounced toggle to prevent rapid clicks causing issues
+  const handleToggle = useCallback(() => {
+    const now = Date.now();
+    if (now - lastToggleTime.current < 200) return; // Debounce 200ms
+    lastToggleTime.current = now;
+    
+    if (isChatOpen) {
+      closeChat();
+    } else {
+      openChat();
     }
-  }, [isChatOpen]);
+  }, [isChatOpen, openChat, closeChat]);
 
   // Hide if URL has hideControls=true (for iframe embedding)
   const urlParams = new URLSearchParams(window.location.search);
@@ -77,12 +97,18 @@ export function MrBlueFloatingButton() {
       />
       
       {/* Floating Button - Uses portal for z-index isolation */}
-      {!isOpen && (
-        <div className="fixed bottom-6 right-6 z-[9999]" data-testid="global-mr-blue">
+      {/* MB.MD Pattern 63: Only render FAB when chat is closed */}
+      {!isChatOpen && (
+        <div 
+          className="fixed bottom-6 right-6 z-[9999]" 
+          data-testid="global-mr-blue"
+          data-mr-blue-fab="true"
+          data-instance={instanceId.current}
+        >
           <Button
             size="lg"
             className="shadow-lg hover:shadow-xl transition-all gap-2"
-            onClick={() => setIsOpen(true)}
+            onClick={handleToggle}
             data-testid="button-ask-mr-blue"
           >
             <MessageCircle className="h-5 w-5" />
@@ -91,27 +117,25 @@ export function MrBlueFloatingButton() {
         </div>
       )}
 
-      {/* Chat Panel - Full-screen slide-in with all features */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 h-screen w-full md:w-[480px] lg:w-[560px] z-[9999] bg-background border-l shadow-2xl flex flex-col"
+      {/* Chat Panel - MB.MD Pattern 66: Full-screen on mobile, side panel on desktop */}
+      <AnimatePresence mode="wait">
+        {isChatOpen && (
+          <div 
+            key="mr-blue-chat-panel"
+            className="fixed right-0 top-0 h-screen w-full sm:w-[420px] md:w-[480px] lg:w-[560px] z-[9999] bg-background border-l shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
             data-testid="chat-side-panel"
+            data-mr-blue-chat="true"
           >
             {/* Chat Interface with integrated header */}
             <div className="flex-1 overflow-hidden flex flex-col">
-              <MrBlueChat onClose={() => setIsOpen(false)} />
+              <MrBlueChat onClose={closeChat} />
             </div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </>
   );
 
-  // Render via portal at document.body level for z-index isolation
+  // MB.MD Pattern 63: Render via portal at document.body level for z-index isolation
   return createPortal(content, document.body);
 }

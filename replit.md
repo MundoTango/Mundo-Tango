@@ -33,6 +33,10 @@ Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized age
 - **Fallback System**: Smart template responses if AI fails
 - **UI**: Glassmorphic design with header, message timestamps, "Thinking..." indicator
 - **Endpoint**: POST /api/mrblue/chat (requires auth)
+- **Singleton Pattern**: MB.MD Pattern 63 - Only one chat instance allowed globally (prevents duplicate panels)
+- **User Context**: MB.MD Pattern 64 - Full user data access (friends, RSVPs, cities, groups)
+- **God Powers**: MB.MD Pattern 65 - Admin/CTO users get full system access like Replit AI Agent
+- **Mobile Design**: MB.MD Pattern 66 - Full-screen takeover on mobile, floating panel on desktop
 
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator (Agent #115), including Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scraped events are stored in a `scraped_events` table and ingested into the main events table. An Admin UI at `/admin/scraping` provides real-time scraper status and a moderation queue.

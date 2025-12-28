@@ -562,10 +562,32 @@ Please contact an administrator if you need access to this feature.`,
     
     // STEP 2: Build context-aware system message with real platform data
     let platformContext = '';
+    let userContext = '';
+    let godModeContext = '';
+    
     try {
       platformContext = await mrBlueDataService.buildPlatformContext();
     } catch (err) {
       console.log('[Mr. Blue] Could not fetch platform context:', err);
+    }
+    
+    // MB.MD Pattern 64: Add user-specific context (friends, RSVPs, cities, groups)
+    try {
+      userContext = await mrBlueDataService.buildUserContextString(userId);
+      console.log('[Mr. Blue] User context loaded for userId:', userId);
+    } catch (err) {
+      console.log('[Mr. Blue] Could not fetch user context:', err);
+    }
+    
+    // MB.MD Pattern 65: Add god mode context for admin/CTO users (roleLevel >= 8)
+    const isGodMode = userRoleLevel >= 8;
+    if (isGodMode) {
+      try {
+        godModeContext = await mrBlueDataService.buildGodModeContext();
+        console.log('[Mr. Blue] God mode activated for admin user');
+      } catch (err) {
+        console.log('[Mr. Blue] Could not fetch god mode context:', err);
+      }
     }
     
     let systemMessage = `You are Mr. Blue, the friendly and knowledgeable AI assistant for Mundo Tango - a global social platform connecting the tango dance community.
@@ -576,7 +598,9 @@ PERSONALITY:
 - Uses relevant tango terminology naturally
 - Can help with events, cities, travel tips, connecting with dancers, and platform navigation
 
-${platformContext}`;
+${platformContext}
+${userContext}
+${godModeContext}`;
     
     if (context) {
       const { currentPage, pageTitle, breadcrumbs, userIntent } = context;
