@@ -2,6 +2,37 @@
 
 **Invocation:** `use mb.md: n8n:webhooks`
 
+## 🎯 N8N WORKFLOW INTEGRATION
+
+### Mr Blue Marketing Plan Generator
+
+**Workflow URL:** https://boddye.app.n8n.cloud/workflow/nf9PeVgKpPwbmNja
+
+**Webhook Endpoint (Test):** 
+```
+https://boddye.app.n8n.cloud/webhook-test/944090e4-a3e5-46b7-a8d0-4609f2ebeabc
+```
+
+**Usage from Mr. Blue UI:**
+1. User submits a task via the Mr. Blue chatbox
+2. Backend sends POST request to n8n webhook with task details
+3. n8n triggers AI model (GPT-4O-MINI) to generate marketing plan
+4. AI output is saved to Notion page: [Marketing Plan](https://www.notion.so/Marketing-Plan-2d48ff6927a58125945adce20eb042f1)
+5. Response returned to user
+
+**Payload Structure:**
+```json
+{
+  "task": "string - The marketing task description from user"
+}
+```
+
+**Security:** 
+- Webhook secret validation is REQUIRED (configured via N8NWEBHOOKSECRET env variable)
+- All requests must include valid signature
+
+---
+
 ---
 
 ## 🔗 ALL MR. BLUE API ENDPOINTS
