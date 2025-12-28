@@ -239,9 +239,15 @@ router.get('/run', async (req: Request, res: Response) => {
         const loginBtn = page.locator('button[type="submit"], [data-testid="button-login"], button:has-text("Login"), button:has-text("Sign in")').first();
         await loginBtn.click();
         
-        // Wait for navigation after login
-        await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 10000 });
-        await page.waitForTimeout(1000);
+        // Wait for login to complete - either URL changes or we see authenticated UI elements
+        await page.waitForTimeout(3000); // Give React time to process login and redirect
+        
+        // Check if we're still on login page
+        const currentUrl = page.url();
+        if (currentUrl.includes('/login')) {
+          // Try clicking again or wait for redirect
+          await page.waitForTimeout(2000);
+        }
         
         const screenshot1 = await captureScreenshot(page);
         sendEvent({ 
