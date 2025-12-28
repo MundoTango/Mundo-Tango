@@ -65,6 +65,8 @@ import ctoWalkthroughRoutes from "./routes/cto-walkthrough-routes";
 import mrBlueSubscriptionRoutes from "./routes/mrblue-subscription-routes";
 import mrBlueLearningRoutes from "./routes/mrblue-learning-routes";
 import mrBlueQAResearchRoutes from "./routes/mrblue-qa-research-routes";
+import mrBlueExecutorRoutes from "./routes/mrblue-executor-routes";
+import qaPlatformRoutes from "./routes/qa-platform-routes";
 import aiCollaborationRoutes from "./routes/ai-collaboration-routes";
 import orchestrationRoutes from "./routes/orchestration";
 import gitRoutes from "./routes/git";
@@ -1196,6 +1198,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/subscription", mrBlueSubscriptionRoutes); // Agent #48: Quota management
   app.use("/api/mrblue/learning", mrBlueLearningRoutes); // Agent #49: 10-pathway learning coordinator
   app.use("/api/mrblue/qa", mrBlueQAResearchRoutes); // Agent #50: Q&A research and test orchestration
+  app.use("/api/mrblue/executor", mrBlueExecutorRoutes); // MB.MD Pattern 67: Task Executor - Mr. Blue builds via playbooks
+  app.use("/api/qa-platform", qaPlatformRoutes); // MB.MD Pattern 67: QA/Customer Test Platform
   app.use("/api/ai-collaboration", aiCollaborationRoutes); // MB.MD v9.3: Replit AI ↔ Mr Blue hierarchical collaboration
   
   app.use("/api/orchestration", orchestrationRoutes); // Production-ready workflow orchestration (Sequential/Parallel/Intelligence Cycle)

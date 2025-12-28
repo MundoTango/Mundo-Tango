@@ -1629,6 +1629,27 @@ export interface IStorage {
   // Location Change Effects helpers
   countUsersByCity(city: string): Promise<number>;
   countVenuesByCity(city: string): Promise<number>;
+  
+  // ============================================================================
+  // QA/CUSTOMER TEST PLATFORM (MB.MD Pattern 67)
+  // ============================================================================
+  
+  // Analytics Consent
+  createAnalyticsConsent(data: any): Promise<any>;
+  getAnalyticsConsent(userId: number): Promise<any | undefined>;
+  updateAnalyticsConsent(userId: number, data: any): Promise<any | undefined>;
+  
+  // User Feedback
+  createUserFeedback(data: any): Promise<any>;
+  getUserFeedback(id: number): Promise<any | undefined>;
+  getUserFeedbackByUser(userId: number): Promise<any[]>;
+  getPendingFeedback(): Promise<any[]>;
+  updateUserFeedback(id: number, data: any): Promise<any | undefined>;
+  deleteUserFeedback(id: number): Promise<void>;
+  
+  // Admin Approvals
+  createAdminApproval(data: any): Promise<any>;
+  getAdminApprovals(feedbackId: number): Promise<any[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -8729,6 +8750,100 @@ export class DbStorage implements IStorage {
   async createNotification(notification: any): Promise<any> {
     const [newNotification] = await db.insert(notifications).values(notification).returning();
     return newNotification;
+  }
+
+  // ============================================================================
+  // QA/CUSTOMER TEST PLATFORM (MB.MD Pattern 67)
+  // ============================================================================
+
+  async createAnalyticsConsent(data: any): Promise<any> {
+    const { analyticsConsent } = await import("@shared/schema");
+    const [result] = await db.insert(analyticsConsent).values(data).returning();
+    return result;
+  }
+
+  async getAnalyticsConsent(userId: number): Promise<any | undefined> {
+    const { analyticsConsent } = await import("@shared/schema");
+    const [result] = await db
+      .select()
+      .from(analyticsConsent)
+      .where(eq(analyticsConsent.userId, userId))
+      .limit(1);
+    return result;
+  }
+
+  async updateAnalyticsConsent(userId: number, data: any): Promise<any | undefined> {
+    const { analyticsConsent } = await import("@shared/schema");
+    const [result] = await db
+      .update(analyticsConsent)
+      .set(data)
+      .where(eq(analyticsConsent.userId, userId))
+      .returning();
+    return result;
+  }
+
+  async createUserFeedback(data: any): Promise<any> {
+    const { userFeedback } = await import("@shared/schema");
+    const [result] = await db.insert(userFeedback).values(data).returning();
+    return result;
+  }
+
+  async getUserFeedback(id: number): Promise<any | undefined> {
+    const { userFeedback } = await import("@shared/schema");
+    const [result] = await db
+      .select()
+      .from(userFeedback)
+      .where(eq(userFeedback.id, id))
+      .limit(1);
+    return result;
+  }
+
+  async getUserFeedbackByUser(userId: number): Promise<any[]> {
+    const { userFeedback } = await import("@shared/schema");
+    return db
+      .select()
+      .from(userFeedback)
+      .where(eq(userFeedback.userId, userId))
+      .orderBy(desc(userFeedback.createdAt));
+  }
+
+  async getPendingFeedback(): Promise<any[]> {
+    const { userFeedback } = await import("@shared/schema");
+    return db
+      .select()
+      .from(userFeedback)
+      .where(eq(userFeedback.status, "pending"))
+      .orderBy(desc(userFeedback.createdAt));
+  }
+
+  async updateUserFeedback(id: number, data: any): Promise<any | undefined> {
+    const { userFeedback } = await import("@shared/schema");
+    const [result] = await db
+      .update(userFeedback)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(userFeedback.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteUserFeedback(id: number): Promise<void> {
+    const { userFeedback } = await import("@shared/schema");
+    await db.delete(userFeedback).where(eq(userFeedback.id, id));
+  }
+
+  async createAdminApproval(data: any): Promise<any> {
+    const { adminApprovals } = await import("@shared/schema");
+    const [result] = await db.insert(adminApprovals).values(data).returning();
+    return result;
+  }
+
+  async getAdminApprovals(feedbackId: number): Promise<any[]> {
+    const { adminApprovals } = await import("@shared/schema");
+    return db
+      .select()
+      .from(adminApprovals)
+      .where(eq(adminApprovals.feedbackId, feedbackId))
+      .orderBy(desc(adminApprovals.createdAt));
   }
 }
 

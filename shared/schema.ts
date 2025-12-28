@@ -19938,6 +19938,111 @@ export type InsertUserExternalLink = z.infer<typeof insertUserExternalLinkSchema
 export type SelectUserExternalLink = typeof userExternalLinks.$inferSelect;
 
 // ============================================================================
+// QA/CUSTOMER TEST PLATFORM SCHEMA (MB.MD Pattern 67)
+// ============================================================================
+
+export const feedbackTypeEnum = pgEnum("feedback_type", [
+  "bug",
+  "feature", 
+  "support",
+  "complaint",
+  "praise",
+]);
+
+export const feedbackStatusEnum = pgEnum("feedback_status", [
+  "pending",
+  "approved",
+  "rejected",
+  "in_progress",
+  "resolved",
+]);
+
+export const feedbackPriorityEnum = pgEnum("feedback_priority", [
+  "low",
+  "medium",
+  "high",
+  "critical",
+]);
+
+export const analyticsConsent = pgTable("analytics_consent", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+  consentGiven: boolean("consent_given").notNull().default(false),
+  consentTimestamp: timestamp("consent_timestamp"),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("analytics_consent_user_idx").on(table.userId),
+}));
+
+export const insertAnalyticsConsentSchema = createInsertSchema(analyticsConsent).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertAnalyticsConsent = z.infer<typeof insertAnalyticsConsentSchema>;
+export type SelectAnalyticsConsent = typeof analyticsConsent.$inferSelect;
+
+export const userFeedback = pgTable("user_feedback", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  sessionId: varchar("session_id", { length: 64 }),
+  feedbackType: feedbackTypeEnum("feedback_type").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  currentPage: varchar("current_page", { length: 500 }),
+  sessionSnapshot: jsonb("session_snapshot"),
+  status: feedbackStatusEnum("status").default("pending"),
+  priority: feedbackPriorityEnum("priority").default("medium"),
+  assignedTo: integer("assigned_to").references(() => users.id),
+  mrBlueResponse: text("mr_blue_response"),
+  adminNotes: text("admin_notes"),
+  resolvedAt: timestamp("resolved_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("user_feedback_user_idx").on(table.userId),
+  statusIdx: index("user_feedback_status_idx").on(table.status),
+  priorityIdx: index("user_feedback_priority_idx").on(table.priority),
+  typeIdx: index("user_feedback_type_idx").on(table.feedbackType),
+}));
+
+export const insertUserFeedbackSchema = createInsertSchema(userFeedback).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  resolvedAt: true,
+});
+export type InsertUserFeedback = z.infer<typeof insertUserFeedbackSchema>;
+export type SelectUserFeedback = typeof userFeedback.$inferSelect;
+
+export const adminApprovalActionEnum = pgEnum("admin_approval_action", [
+  "approve",
+  "reject",
+  "assign",
+]);
+
+export const adminApprovals = pgTable("admin_approvals", {
+  id: serial("id").primaryKey(),
+  feedbackId: integer("feedback_id").references(() => userFeedback.id, { onDelete: "cascade" }),
+  adminId: integer("admin_id").references(() => users.id).notNull(),
+  action: adminApprovalActionEnum("action").notNull(),
+  reason: text("reason"),
+  executionPlan: jsonb("execution_plan"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  feedbackIdx: index("admin_approvals_feedback_idx").on(table.feedbackId),
+  adminIdx: index("admin_approvals_admin_idx").on(table.adminId),
+}));
+
+export const insertAdminApprovalSchema = createInsertSchema(adminApprovals).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertAdminApproval = z.infer<typeof insertAdminApprovalSchema>;
+export type SelectAdminApproval = typeof adminApprovals.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 

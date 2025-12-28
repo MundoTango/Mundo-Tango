@@ -59,6 +59,24 @@ Mr. Blue is ONLINE and responds to commands at these endpoints:
 | `/api/mrblue/command` | POST | **Execute a command** |
 | `/api/mrblue/chat` | POST | Chat with Mr. Blue |
 
+### Task Executor (MB.MD Pattern 67 - Code Executor)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/mrblue/executor/tasks` | GET | List active tasks from playbooks |
+| `/api/mrblue/executor/tasks/:id` | GET | Get task details with phases |
+| `/api/mrblue/executor/preview` | POST | Preview what will be executed |
+| `/api/mrblue/executor/execute` | POST | **Execute playbook phase (God-level only)** |
+| `/api/mrblue/executor/status` | GET | Executor service status |
+
+### QA Platform (MB.MD Pattern 67 - User Feedback)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/qa-platform/consent` | POST/GET | GDPR analytics consent |
+| `/api/qa-platform/feedback` | POST/GET | Submit/view user feedback |
+| `/api/qa-platform/admin/pending` | GET | Admin feedback queue (God-level) |
+| `/api/qa-platform/admin/approve/:id` | POST | Approve feedback (God-level) |
+| `/api/qa-platform/execute` | POST | **VibeCoding execution (God-level)** |
+
 ---
 
 ## BRAIN ARCHITECTURE

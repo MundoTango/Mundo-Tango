@@ -1,0 +1,322 @@
+/**
+ * QA/CUSTOMER TEST PLATFORM ROUTES
+ * MB.MD Pattern 67 - User monitoring, feedback capture, admin approval queue
+ * 
+ * Regular users: Help + feedback → admin queue
+ * God-level admins: Full MB.MD execution rights
+ */
+
+import { Router, Request, Response } from "express";
+import { storage } from "../storage";
+import { z } from "zod";
+
+const router = Router();
+
+// God-level user emails for execution rights
+const GOD_LEVEL_USERS = [
+  "scott@boddye.com",
+  "admin@mundotango.life",
+];
+
+// Check if user is god-level
+function isGodLevel(user: any): boolean {
+  if (!user) return false;
+  return GOD_LEVEL_USERS.includes(user.email) || user.tier === 8;
+}
+
+// ============================================================================
+// ANALYTICS CONSENT
+// ============================================================================
+
+router.post("/consent", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    const { consentGiven } = req.body;
+    
+    // Check if consent exists
+    const existing = await storage.getAnalyticsConsent(user.id);
+    
+    if (existing) {
+      const updated = await storage.updateAnalyticsConsent(user.id, {
+        consentGiven,
+        consentTimestamp: new Date(),
+        ipAddress: req.ip,
+        userAgent: req.headers["user-agent"],
+      });
+      return res.json({ success: true, consent: updated });
+    }
+
+    const consent = await storage.createAnalyticsConsent({
+      userId: user.id,
+      consentGiven,
+      consentTimestamp: new Date(),
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+
+    res.json({ success: true, consent });
+  } catch (error: any) {
+    console.error("[QA Platform] Consent error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/consent", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    const consent = await storage.getAnalyticsConsent(user.id);
+    res.json({ consent: consent || null });
+  } catch (error: any) {
+    console.error("[QA Platform] Get consent error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================================
+// USER FEEDBACK
+// ============================================================================
+
+const feedbackSchema = z.object({
+  feedbackType: z.enum(["bug", "feature", "support", "complaint", "praise"]),
+  title: z.string().min(1).max(255),
+  description: z.string().optional(),
+  currentPage: z.string().optional(),
+  sessionSnapshot: z.any().optional(),
+  priority: z.enum(["low", "medium", "high", "critical"]).optional(),
+});
+
+router.post("/feedback", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    const parsed = feedbackSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: parsed.error.message });
+    }
+
+    const feedback = await storage.createUserFeedback({
+      userId: user.id,
+      sessionId: req.body.sessionId || null,
+      ...parsed.data,
+      status: "pending",
+    });
+
+    res.json({ success: true, feedback });
+  } catch (error: any) {
+    console.error("[QA Platform] Feedback error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/feedback", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    const feedback = await storage.getUserFeedbackByUser(user.id);
+    res.json({ feedback });
+  } catch (error: any) {
+    console.error("[QA Platform] Get feedback error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/feedback/:id", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    const id = parseInt(req.params.id);
+    const feedback = await storage.getUserFeedback(id);
+    
+    if (!feedback) {
+      return res.status(404).json({ error: "Feedback not found" });
+    }
+
+    // Only owner or admin can view
+    if (feedback.userId !== user.id && !isGodLevel(user)) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    res.json({ feedback });
+  } catch (error: any) {
+    console.error("[QA Platform] Get feedback error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================================
+// ADMIN QUEUE (God-level only)
+// ============================================================================
+
+router.get("/admin/pending", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user || !isGodLevel(user)) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const pending = await storage.getPendingFeedback();
+    res.json({ pending, count: pending.length });
+  } catch (error: any) {
+    console.error("[QA Platform] Admin pending error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/admin/approve/:id", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user || !isGodLevel(user)) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const id = parseInt(req.params.id);
+    const { action, reason, executionPlan } = req.body;
+
+    // Create approval record
+    const approval = await storage.createAdminApproval({
+      feedbackId: id,
+      adminId: user.id,
+      action: action || "approve",
+      reason,
+      executionPlan,
+    });
+
+    // Update feedback status
+    const newStatus = action === "reject" ? "rejected" : "in_progress";
+    await storage.updateUserFeedback(id, {
+      status: newStatus,
+      assignedTo: user.id,
+      adminNotes: reason,
+    });
+
+    res.json({ success: true, approval });
+  } catch (error: any) {
+    console.error("[QA Platform] Admin approve error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/admin/resolve/:id", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user || !isGodLevel(user)) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const id = parseInt(req.params.id);
+    const { mrBlueResponse, adminNotes } = req.body;
+
+    await storage.updateUserFeedback(id, {
+      status: "resolved",
+      resolvedAt: new Date(),
+      mrBlueResponse,
+      adminNotes,
+    });
+
+    res.json({ success: true });
+  } catch (error: any) {
+    console.error("[QA Platform] Admin resolve error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================================
+// GOD-LEVEL EXECUTION (VibeCoding Bridge)
+// ============================================================================
+
+router.post("/execute", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user || !isGodLevel(user)) {
+      return res.status(403).json({ 
+        error: "God-level access required for code execution",
+        message: "Only Scott Boddye and Admin can execute code via Mr. Blue"
+      });
+    }
+
+    const { prompt, feedbackId } = req.body;
+    
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is required" });
+    }
+
+    // Forward to VibeCoding service
+    const vibeCodingUrl = `${req.protocol}://${req.get('host')}/api/mrblue/vibecoding/generate-code`;
+    
+    const response = await fetch(vibeCodingUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": req.headers.authorization || "",
+      },
+      body: JSON.stringify({
+        prompt,
+        context: {
+          source: "qa-platform",
+          feedbackId,
+          executedBy: user.email,
+        },
+      }),
+    });
+
+    const result = await response.json();
+
+    // Log execution for audit trail
+    if (feedbackId) {
+      await storage.createAdminApproval({
+        feedbackId,
+        adminId: user.id,
+        action: "approve",
+        reason: `Executed VibeCoding: ${prompt.substring(0, 100)}`,
+        executionPlan: { prompt, result },
+      });
+    }
+
+    res.json({ success: true, result });
+  } catch (error: any) {
+    console.error("[QA Platform] Execute error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================================
+// STATUS & HEALTH
+// ============================================================================
+
+router.get("/status", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    
+    res.json({
+      status: "operational",
+      version: "1.0.0",
+      isGodLevel: user ? isGodLevel(user) : false,
+      features: {
+        feedback: true,
+        analytics: true,
+        vibeCoding: user ? isGodLevel(user) : false,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+export default router;
