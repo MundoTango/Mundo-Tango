@@ -191,6 +191,18 @@ router.get('/run', async (req: Request, res: Response) => {
   res.setHeader('Connection', 'keep-alive');
   res.setHeader('X-Accel-Buffering', 'no');
 
+  // Check if this is an auto-retry (from self-healing) vs a manual start
+  const isAutoRetry = req.query.autoRetry === 'true';
+  
+  // Only reset backend retry counter for manual starts, not auto-retries
+  // This keeps frontend and backend retry counts in sync (MB.MD Pattern 53)
+  if (!isAutoRetry) {
+    selfHealingService.resetRetryCount();
+    console.log('[CTO Walkthrough] Starting new manual run, reset self-healing retry counter');
+  } else {
+    console.log('[CTO Walkthrough] Auto-retry, preserving self-healing retry counter');
+  }
+
   const sendEvent = (data: any) => {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
@@ -608,13 +620,13 @@ router.get('/status', async (_req: Request, res: Response) => {
 // Mr Blue Self-Healing Endpoint
 // This is called when an error occurs - Mr Blue autonomously analyzes and attempts to fix
 router.post('/self-heal', async (req: Request, res: Response) => {
-  const { error, page, step, logs } = req.body;
+  const { error, page, step, logs, retryAttempt } = req.body;
   
-  console.log('[Mr Blue Self-Healing] Received healing request...');
+  console.log(`[Mr Blue Self-Healing] Received healing request (attempt ${retryAttempt || 1})...`);
   
   try {
-    // Reset for new healing cycle
-    selfHealingService.resetRetryCount();
+    // NOTE: Do NOT reset retry counter here - it's reset at the start of each walkthrough run
+    // This allows tracking retries across multiple healing attempts
     
     // Run the healing cycle
     const result = await selfHealingService.heal(error, {

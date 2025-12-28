@@ -96,7 +96,11 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
     setSteps(WALKTHROUGH_STEPS.map(s => ({ ...s, status: 'pending' })));
 
     try {
-      eventSourceRef.current = new EventSource('/api/cto/walkthrough/run');
+      // Pass autoRetry flag to backend so it knows not to reset its retry counter
+      const runUrl = isAutoRetry 
+        ? '/api/cto/walkthrough/run?autoRetry=true' 
+        : '/api/cto/walkthrough/run';
+      eventSourceRef.current = new EventSource(runUrl);
 
       eventSourceRef.current.onmessage = (event) => {
         try {
