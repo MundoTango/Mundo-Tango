@@ -205,6 +205,15 @@ function UnifiedTopBar({
 
   const messageCount = messageData?.count || 0;
 
+  // Fetch pending friend request count (separate from notifications - shows even if notifs are read)
+  const { data: friendRequestsData = [] } = useQuery<any[]>({
+    queryKey: ['/api/friends/requests/received'],
+    refetchInterval: 60000, // Refresh every 60 seconds
+    enabled: !!user,
+  });
+  
+  const pendingFriendRequestCount = friendRequestsData?.filter(req => req.status === 'pending')?.length || 0;
+
   // Global search
   const { data: searchResults, isLoading: searchLoading } = useQuery({
     queryKey: ['/api/user/global-search', searchQuery],
@@ -345,6 +354,24 @@ function UnifiedTopBar({
           <Link href="/favorites" className="hidden md:block">
             <Button variant="ghost" size="icon" data-testid="button-favorites">
               <Heart className="h-5 w-5" />
+            </Button>
+          </Link>
+
+          {/* Friend Requests - MT Ocean Badge */}
+          <Link href="/friend-requests">
+            <Button variant="ghost" size="icon" className="relative transition-all duration-200" data-testid="button-friend-requests">
+              <UserPlus className="h-5 w-5 transition-colors duration-200" style={{ color: pendingFriendRequestCount > 0 ? '#40E0D0' : 'currentColor' }} />
+              {pendingFriendRequestCount > 0 && (
+                <span 
+                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg animate-pulse"
+                  style={{
+                    background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
+                    boxShadow: '0 2px 8px rgba(255, 107, 107, 0.4)',
+                  }}
+                >
+                  {pendingFriendRequestCount > 9 ? '9+' : pendingFriendRequestCount}
+                </span>
+              )}
             </Button>
           </Link>
 
