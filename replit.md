@@ -33,7 +33,7 @@ Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized age
 - **Auto-Invoke Agents (God Command #0)**:
   - **GitHub Practices Agent**: Enforces conventional commits, atomic commits, branch naming (triggers: session:start, task:complete, commit:prepare)
   - **Plan Tracker Agent**: Updates The Plan with task status/progress (triggers: task:start, task:complete, session:end)
-- **God Commands**: 9 active directives including "test before complete", "work simultaneously", "work recursively"
+- **God Commands**: 12 active directives including "test before complete", "work simultaneously", "work recursively", "feature branches required", "admin approval required"
 
 **Mr. Blue AI Assistant (Enhanced Dec 2025)**:
 - **Database Integration**: Real-time access to platform data via `MrBlueDataService` (events, cities, users, groups)
@@ -46,6 +46,11 @@ Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized age
 - **User Context**: MB.MD Pattern 64 - Full user data access (friends, RSVPs, cities, groups)
 - **God Powers**: MB.MD Pattern 65 - Admin/CTO users get full system access like Replit AI Agent
 - **Mobile Design**: MB.MD Pattern 66 - Full-screen takeover on mobile, floating panel on desktop
+- **QA/Customer Test Platform** (MB.MD Pattern 67): User monitoring, feedback capture, admin approval queue
+  - Regular users: Help + feedback → admin queue
+  - God-level admins: Full MB.MD execution rights
+  - Playbook: `Mr Blue/playbooks/qa-customer-platform.md`
+  - God Commands: gc-011 (Admin Approval), gc-012 (God-Level Execution)
 
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator (Agent #115), including Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scraped events are stored in a `scraped_events` table and ingested into the main events table. An Admin UI at `/admin/scraping` provides real-time scraper status and a moderation queue.

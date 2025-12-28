@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-28T23:30:00Z",
+  "activeTasks": [
+    {
+      "id": "task-001",
+      "title": "QA/Customer Test Platform Implementation",
+      "priority": "high",
+      "status": "pending",
+      "assignedBy": "Scott Boddye (via Replit AI)",
+      "assignedAt": "2025-12-28T23:30:00Z",
+      "playbook": "Mr Blue/playbooks/qa-customer-platform.md",
+      "invocation": "use mb.md: playbooks:qa-customer-platform",
+      "briefSummary": "Build a QA platform that monitors user activity, captures feedback, routes to admin approval queue, and enables god-level admins to instruct you to fix issues using MB.MD methodology.",
+      "phases": [
+        { "phase": 0, "name": "Database Schema", "status": "pending" },
+        { "phase": 1, "name": "Frontend Session Capture SDK", "status": "pending" },
+        { "phase": 2, "name": "GDPR Consent Component", "status": "pending" },
+        { "phase": 3, "name": "Mr. Blue Context Injection", "status": "pending" },
+        { "phase": 4, "name": "Feedback Submission Flow", "status": "pending" },
+        { "phase": 5, "name": "Admin Approval Queue UI", "status": "pending" },
+        { "phase": 6, "name": "God-Level Execution Integration", "status": "pending" }
+      ],
+      "godCommandsApplicable": ["gc-001", "gc-002", "gc-003", "gc-009", "gc-010", "gc-011", "gc-012"],
+      "notes": "Storage logic: Ephemeral during session, persist only when issue reported. Auto-purge when issue resolved."
+    }
+  ],
+  "completedTasks": []
+}

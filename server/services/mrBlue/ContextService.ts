@@ -123,6 +123,32 @@ export class ContextService {
       path: 'docs/handoff/ULTIMATE_ZERO_TO_DEPLOY_PART_10.md',
       type: 'part-10',
       priority: 3
+    },
+    // Mr Blue Agent System
+    {
+      path: 'Mr Blue/agents/identity/system-prompt.md',
+      type: 'mr-blue-identity',
+      priority: 1
+    },
+    {
+      path: 'Mr Blue/operations/10-step-workflow.md',
+      type: 'mr-blue-workflow',
+      priority: 1
+    },
+    {
+      path: 'Mr Blue/playbooks/qa-customer-platform.md',
+      type: 'mr-blue-task-qa-platform',
+      priority: 1  // High priority - active task
+    },
+    {
+      path: 'Mr Blue/agents/leadership/memory/god-commands.json',
+      type: 'god-commands',
+      priority: 1
+    },
+    {
+      path: 'Mr Blue/agents/leadership/memory/active-tasks.json',
+      type: 'active-tasks',
+      priority: 1  // Highest priority - check first
     }
   ];
 
