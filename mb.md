@@ -257,6 +257,39 @@ Recent learnings from leadership agents:
 
 ---
 
+## OPERATIONAL PATTERNS
+
+### Pattern: User Database Cleanup (Dec 2025)
+
+**Problem:** Production/Dev databases accumulate test users, breaking analytics and friend suggestions.
+
+**Solution:**
+```sql
+-- 1. Identify user categories
+SELECT 
+  COUNT(*) FILTER (WHERE email LIKE '%@discovered.mundotango.app') as scraped,
+  COUNT(*) FILTER (WHERE email LIKE '%@test.com' OR email LIKE 'scott+%') as test,
+  COUNT(*) FILTER (WHERE id IN (2, 8, 11, 12, 62)) as protected
+FROM users;
+
+-- 2. Delete test users (protect system users)
+DELETE FROM users 
+WHERE (email LIKE 'scott+%@boddye.com' OR email LIKE '%@test.com')
+  AND id NOT IN (2, 8, 11, 12, 62);  -- Protected IDs
+
+-- 3. Verify cleanup
+SELECT COUNT(*) FROM users WHERE email NOT LIKE '%@discovered%';
+```
+
+**Protected User IDs:**
+- `2` - admin@mundotango.life (system admin)
+- `8, 11, 12` - Seed users (maria, diego, luna @mundotango.life)
+- `62` - scraper@mundotango.app (events bot)
+
+**Execution Dec 28, 2025:** 58 test users deleted, 890 scraped profiles already deactivated, 28 non-scraped users remaining.
+
+---
+
 ## THE MISSION
 
 > "How do we reverse the negative impacts of social media and make it all better?"
