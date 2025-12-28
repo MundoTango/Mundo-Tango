@@ -56,13 +56,60 @@ export const SELF_HEALING_AGENTS = {
 };
 
 // MB.MD Pattern Library with Auto-Fix Functions
+// IMPORTANT: Order matters - more specific patterns should come before general ones
 export const MBMD_PATTERNS: MBMDPattern[] = [
+  {
+    id: 99,
+    name: 'Page Crash / Navigation Error',
+    pattern: 'Pattern 99: Page Crash / Navigation Error',
+    rootCause: 'Playwright page crashed or navigation failed during test',
+    detection: (e) => /page crashed|page\.reload:.*crash|target closed|context closed|frame detached|browser.*disconnected/i.test(e),
+    autoFixSteps: [
+      '1. Wait for page to stabilize before interaction',
+      '2. Increase navigation timeout',
+      '3. Check for memory issues causing crash',
+      '4. Retry the test'
+    ],
+    autoFixFunction: async (ctx) => {
+      console.log('[SH-010] Pattern 99: Page crash detected, recommending retry...');
+      return {
+        success: true,
+        action: 'RETRY_AFTER_CRASH',
+        details: 'Page crashed - will retry with fresh browser context',
+        requiresRetest: true
+      };
+    },
+    severity: 'high'
+  },
+  {
+    id: 10,
+    name: 'Login/Authentication Failure',
+    pattern: 'Pattern 10: Login/Authentication Failure',
+    rootCause: 'Login step failed - credentials or form submission issue',
+    detection: (e) => /login failed|login error|authentication failed|credentials invalid|wrong password|incorrect.*credentials/i.test(e),
+    autoFixSteps: [
+      '1. Verify admin credentials are correct',
+      '2. Check if login form selectors match',
+      '3. Ensure CSRF token is present',
+      '4. Retry login with correct credentials'
+    ],
+    autoFixFunction: async (ctx) => {
+      console.log('[SH-009] Pattern 10: Login failure detected, will retry with fresh session...');
+      return {
+        success: true,
+        action: 'RETRY_LOGIN',
+        details: 'Login failed - retrying with fresh browser context',
+        requiresRetest: true
+      };
+    },
+    severity: 'high'
+  },
   {
     id: 8,
     name: 'DOM Element Selection',
     pattern: 'Pattern 8: DOM Element Selection',
     rootCause: 'Target element not found - selector may have changed or element not rendered',
-    detection: (e) => /element|selector|not found|locator|timeout.*waiting for/.test(e.toLowerCase()),
+    detection: (e) => /element.*not found|selector.*not found|locator.*not found|timeout.*waiting for selector/i.test(e),
     autoFixSteps: [
       '1. Inspect page to find correct element selector',
       '2. Add data-testid attribute to target element',
@@ -70,7 +117,6 @@ export const MBMD_PATTERNS: MBMDPattern[] = [
       '4. Re-run test'
     ],
     autoFixFunction: async (ctx) => {
-      // Auto-add data-testid if missing
       console.log('[SH-001] Pattern 8: Attempting to find alternative selector...');
       return {
         success: false,
@@ -179,7 +225,7 @@ export const MBMD_PATTERNS: MBMDPattern[] = [
     name: 'AI Resume Parsing',
     pattern: 'Pattern 41: AI Resume Parsing',
     rootCause: 'OpenAI API call failed or response parsing error',
-    detection: (e) => /parse|openai|ai|api.*key|resume.*fail/.test(e.toLowerCase()),
+    detection: (e) => /openai|gpt|resume.*pars|pdf.*pars|ai.*pars|api.*key.*invalid|rate.*limit.*exceed/i.test(e),
     autoFixSteps: [
       '1. Verify OPENAI_API_KEY is set in environment',
       '2. Check API rate limits and quota',
