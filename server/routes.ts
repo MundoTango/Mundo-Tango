@@ -60,6 +60,7 @@ import mrBlueDependenciesRoutes from "./routes/mrblue-dependencies-routes";
 import mrBlueRoleAdapterRoutes from "./routes/mrblue-role-adapter-routes";
 import mrBlueSelfHealRoutes from "./routes/mrblue-self-heal-routes";
 import mrBlueLeadershipRoutes from "./routes/mrblue-leadership-routes";
+import mbmdSessionRoutes from "./routes/mbmd-session-routes";
 import ctoWalkthroughRoutes from "./routes/cto-walkthrough-routes";
 import mrBlueSubscriptionRoutes from "./routes/mrblue-subscription-routes";
 import mrBlueLearningRoutes from "./routes/mrblue-learning-routes";
@@ -1170,6 +1171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/autonomous", mrBlueAutonomousRoutes); // System 7: Autonomous Coding Engine
   app.use("/api/mrblue/memory", mrBlueMemoryRoutes); // System 8: Advanced Memory System
   app.use("/api/mrblue/leadership", mrBlueLeadershipRoutes); // Leadership Agents (CTO, CEO, VPs, Heads) with continuous learning
+  app.use("/api/mbmd", mbmdSessionRoutes); // MB.MD Session Service - Auto-invoke agents (God Command #0)
   app.use("/api/mrblue/plan", mrBluePlanRoutes); // Plan Roadmap Tracker (47-page validation system)
   app.use("/api/mr-blue", mrBluePageGeneratorRoutes); // AI Page Generator (1,218 agents + 4 archetypes)
   app.use("/api/page-audit", pageAuditRoutes); // Page Audit System (12 categories + self-healing)

@@ -112,9 +112,24 @@ use mb.md: legacy                → Load mb-legacy.md (complete v9.10)
 
 ---
 
-## ⚡ AUTO-INVOKE AGENTS (God Command #0)
+## ⚡ AUTO-INVOKE AGENTS (God Command #0) - NOW OPERATIONAL
 
-**These agents run automatically on EVERY mb.md session.** No manual invocation needed.
+**These agents run automatically on EVERY mb.md session.** The system is LIVE and WORKING!
+
+### API Endpoints (All Working)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/mbmd/session/start` | POST | Start session, auto-invoke agents |
+| `/api/mbmd/session/end` | POST | End session, generate summary |
+| `/api/mbmd/session/status` | GET | Check current session |
+| `/api/mbmd/task/start` | POST | Record task start |
+| `/api/mbmd/task/complete` | POST | Record task complete |
+| `/api/mbmd/git/status` | GET | Git status + pre-commit checklist |
+| `/api/mbmd/plan/status` | GET | All plans progress |
+| `/api/mbmd/commit/validate` | POST | Validate commit message |
+| `/api/mbmd/plan/update-task` | POST | Update task in plan file |
+| `/api/mbmd/ask` | POST | Ask any leadership agent |
 
 ### GitHub Practices Agent
 **Triggers:** session:start, task:complete, commit:prepare
@@ -145,9 +160,12 @@ What a real PM does:
 2. **Task Complete:** Mark as completed, update progress %
 3. **Session End:** Generate summary, sync replit.md
 
-**Plan File Locations:**
+**Plan Files Tracked (5 total):**
 - `/plan.md` - Current project plan
-- `/.agent-memory/*.md` - Strategic plans and project files
+- `/.agent-memory/la-milonga-mbmd-strategic-plan-dec-6-2025.md`
+- `/.agent-memory/el-choclo-mb-completion-plan.md`
+- `/.agent-memory/phase-k-mb-md-master-plan.md`
+- `/.agent-memory/phase-k-master-plan.md`
 
 **Checkbox Format:**
 - `[ ]` → Pending
