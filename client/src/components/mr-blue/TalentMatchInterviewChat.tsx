@@ -76,10 +76,21 @@ export function TalentMatchInterviewChat({
   useTextarea = false
 }: TalentMatchInterviewChatProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Immediate scroll on message/loading change
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }, [messages, isLoading]);
+
+  // Keep focus on input after sending or loading state change
+  useEffect(() => {
+    if (!isLoading && !isComplete) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading, isComplete]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -242,6 +253,7 @@ export function TalentMatchInterviewChat({
             <form onSubmit={handleSubmit} className="flex gap-2">
               {useTextarea ? (
                 <textarea
+                  ref={inputRef as React.RefObject<HTMLTextAreaElement>}
                   placeholder={inputPlaceholder}
                   value={input}
                   onChange={(e) => onInputChange(e.target.value)}
@@ -252,6 +264,7 @@ export function TalentMatchInterviewChat({
                 />
               ) : (
                 <Input
+                  ref={inputRef as React.RefObject<HTMLInputElement>}
                   value={input}
                   onChange={(e) => onInputChange(e.target.value)}
                   placeholder={inputPlaceholder}
