@@ -102,7 +102,7 @@ function UserProfileCard({ user, side }: { user: UserProfile | undefined; side: 
       transition={{ duration: 0.6, delay: 0.2 }}
       className={`absolute ${side === 'left' ? 'left-4 md:left-6' : 'right-4 md:right-6'} top-16 md:top-20 z-20`}
     >
-      <Card className="p-4 md:p-5 w-[280px] md:w-[320px] bg-background/95 backdrop-blur-md border-white/20">
+      <Card className="p-4 md:p-5 w-full max-w-[280px] md:max-w-[320px] bg-background/95 backdrop-blur-md border-white/20">
         <div className="flex gap-4">
           <div className="flex-shrink-0">
             <Link href={`/profile/${user.username || user.id}`}>

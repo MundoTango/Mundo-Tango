@@ -196,7 +196,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
                 />
               </div>
               <Select value={cityFilter} onValueChange={setCityFilter}>
-                <SelectTrigger className="w-[180px] bg-background/50 border-white/10" data-testid="select-city-filter">
+                <SelectTrigger className="w-full sm:w-[180px] bg-background/50 border-white/10" data-testid="select-city-filter">
                   <SelectValue placeholder="All Cities" />
                 </SelectTrigger>
                 <SelectContent>
@@ -207,7 +207,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
                 </SelectContent>
               </Select>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[180px] bg-background/50 border-white/10" data-testid="select-sort-by">
+                <SelectTrigger className="w-full sm:w-[180px] bg-background/50 border-white/10" data-testid="select-sort-by">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -748,7 +748,7 @@ export function DancersPage() {
                 />
               </div>
               <Select value={cityFilter} onValueChange={setCityFilter}>
-                <SelectTrigger className="w-[180px] bg-background/50 border-white/10" data-testid="select-city-filter">
+                <SelectTrigger className="w-full sm:w-[180px] bg-background/50 border-white/10" data-testid="select-city-filter">
                   <SelectValue placeholder="All Cities" />
                 </SelectTrigger>
                 <SelectContent>
@@ -759,7 +759,7 @@ export function DancersPage() {
                 </SelectContent>
               </Select>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[180px] bg-background/50 border-white/10" data-testid="select-sort-by">
+                <SelectTrigger className="w-full sm:w-[180px] bg-background/50 border-white/10" data-testid="select-sort-by">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>

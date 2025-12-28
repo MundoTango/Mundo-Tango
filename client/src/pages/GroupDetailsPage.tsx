@@ -1493,7 +1493,7 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
             {(activeLayer === 'all' || activeLayer === 'events') && (
               <>
                 <Select value={eventTypeFilter || 'all'} onValueChange={(val) => setEventTypeFilter(val === 'all' ? '' : val)}>
-                  <SelectTrigger className="w-[140px]" data-testid="select-event-type">
+                  <SelectTrigger className="w-full sm:w-[140px]" data-testid="select-event-type">
                     <SelectValue placeholder="Event Type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1508,7 +1508,7 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
                 </Select>
 
                 <Select value={danceStyleFilter || 'all'} onValueChange={(val) => setDanceStyleFilter(val === 'all' ? '' : val)}>
-                  <SelectTrigger className="w-[140px]" data-testid="select-dance-style">
+                  <SelectTrigger className="w-full sm:w-[140px]" data-testid="select-dance-style">
                     <SelectValue placeholder="Dance Style" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1521,7 +1521,7 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
 
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-[140px] justify-start" data-testid="button-date-range">
+                    <Button variant="outline" className="w-full sm:w-[140px] justify-start" data-testid="button-date-range">
                       <Calendar className="h-4 w-4 mr-2" />
                       {dateFromFilter ? format(dateFromFilter, "MMM d") : "Dates"}
                     </Button>
@@ -1556,7 +1556,7 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
             {(activeLayer === 'all' || activeLayer === 'housing') && (
               <>
                 <Select value={propertyTypeFilter || 'all'} onValueChange={(val) => setPropertyTypeFilter(val === 'all' ? '' : val)}>
-                  <SelectTrigger className="w-[150px]" data-testid="select-property-type">
+                  <SelectTrigger className="w-full sm:w-[150px]" data-testid="select-property-type">
                     <SelectValue placeholder="Property Type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1569,7 +1569,7 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
 
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-[160px] justify-start" data-testid="button-price-range">
+                    <Button variant="outline" className="w-full sm:w-[160px] justify-start" data-testid="button-price-range">
                       ${priceMin} - ${priceMax}
                     </Button>
                   </PopoverTrigger>
