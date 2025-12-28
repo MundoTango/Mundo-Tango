@@ -25,8 +25,8 @@ interface CTOWalkthroughPreviewProps {
 }
 
 const WALKTHROUGH_STEPS: Omit<WalkthroughStep, 'status'>[] = [
-  { id: '1', action: 'navigate', description: 'Navigate to mundotango.life/onboarding/waitlist' },
-  { id: '2', action: 'wait', description: 'Wait for page to load completely' },
+  { id: '1', action: 'login', description: 'Login with admin credentials' },
+  { id: '2', action: 'navigate', description: 'Navigate to Talent Match page' },
   { id: '3', action: 'scroll', description: 'Scroll to resume upload section' },
   { id: '4', action: 'upload', description: 'Upload test resume (PDF)' },
   { id: '5', action: 'submit', description: 'Submit resume for parsing' },
@@ -126,7 +126,7 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
             // Store error context but DON'T open chat - keep in walkthrough panel
             setSelfHealError({
               errorMessage: data.error,
-              page: '/onboarding/waitlist',
+              page: '/talent-match',
               mbmdAnalysis: data.mbmdAnalysis
             });
             // Removed: openChat() - errors stay in walkthrough panel

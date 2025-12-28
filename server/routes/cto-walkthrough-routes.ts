@@ -13,8 +13,8 @@ interface WalkthroughStep {
 }
 
 const WALKTHROUGH_STEPS: WalkthroughStep[] = [
-  { id: '1', action: 'navigate', description: 'Navigate to mundotango.life/onboarding/waitlist' },
-  { id: '2', action: 'wait', description: 'Wait for page to load completely' },
+  { id: '1', action: 'login', description: 'Login with admin credentials' },
+  { id: '2', action: 'navigate', description: 'Navigate to Talent Match page' },
   { id: '3', action: 'scroll', description: 'Scroll to resume upload section' },
   { id: '4', action: 'upload', description: 'Upload test resume (PDF)' },
   { id: '5', action: 'submit', description: 'Submit resume for parsing' },
@@ -217,15 +217,32 @@ router.get('/run', async (req: Request, res: Response) => {
       
       page = await context.newPage();
       
-      // Step 1: Navigate
+      // Step 1: Login with admin credentials
       const step1Start = Date.now();
       sendEvent({ type: 'step_start', stepIndex: 0, step: WALKTHROUGH_STEPS[0] });
       
       try {
-        await page.goto(`${baseUrl}/onboarding/waitlist`, { 
-          waitUntil: 'networkidle',
-          timeout: 30000 
+        await page.goto(`${baseUrl}/login`, { 
+          waitUntil: 'load',
+          timeout: 15000 
         });
+        await page.waitForTimeout(1000); // Wait for React hydration
+        
+        // Fill login form
+        const emailInput = page.locator('input[type="email"], input[name="email"], [data-testid="input-email"]').first();
+        const passwordInput = page.locator('input[type="password"], input[name="password"], [data-testid="input-password"]').first();
+        
+        await emailInput.fill('admin@mundotango.life');
+        await passwordInput.fill('admin123!');
+        
+        // Click login button
+        const loginBtn = page.locator('button[type="submit"], [data-testid="button-login"], button:has-text("Login"), button:has-text("Sign in")').first();
+        await loginBtn.click();
+        
+        // Wait for navigation after login
+        await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 10000 });
+        await page.waitForTimeout(1000);
+        
         const screenshot1 = await captureScreenshot(page);
         sendEvent({ 
           type: 'step_complete', 
@@ -236,13 +253,13 @@ router.get('/run', async (req: Request, res: Response) => {
         if (screenshot1) {
           sendEvent({ type: 'screenshot', image: screenshot1 });
         }
-      } catch (navError: any) {
-        const mbmd = detectErrorPattern(navError.message);
+      } catch (loginError: any) {
+        const mbmd = detectErrorPattern(loginError.message);
         sendEvent({
           type: 'step_failed',
           stepIndex: 0,
           step: WALKTHROUGH_STEPS[0],
-          error: `Navigation failed: ${navError.message}`,
+          error: `Login failed: ${loginError.message}`,
           mbmdAnalysis: {
             mbmdPattern: mbmd.pattern,
             rootCause: mbmd.rootCause,
@@ -255,14 +272,16 @@ router.get('/run', async (req: Request, res: Response) => {
         return;
       }
 
-      // Step 2: Wait for page load
+      // Step 2: Navigate to Talent Match page
       const step2Start = Date.now();
       sendEvent({ type: 'step_start', stepIndex: 1, step: WALKTHROUGH_STEPS[1] });
       
       try {
-        // Wait for the page to be fully interactive
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(1000); // Give React time to hydrate
+        await page.goto(`${baseUrl}/talent-match`, { 
+          waitUntil: 'load',
+          timeout: 15000 
+        });
+        await page.waitForTimeout(1500); // Give React time to hydrate
         
         const screenshot2 = await captureScreenshot(page);
         sendEvent({ 
@@ -274,13 +293,13 @@ router.get('/run', async (req: Request, res: Response) => {
         if (screenshot2) {
           sendEvent({ type: 'screenshot', image: screenshot2 });
         }
-      } catch (loadError: any) {
-        const mbmd = detectErrorPattern(loadError.message);
+      } catch (navError: any) {
+        const mbmd = detectErrorPattern(navError.message);
         sendEvent({
           type: 'step_failed',
           stepIndex: 1,
           step: WALKTHROUGH_STEPS[1],
-          error: `Page load failed: ${loadError.message}`,
+          error: `Navigation failed: ${navError.message}`,
           mbmdAnalysis: {
             mbmdPattern: mbmd.pattern,
             rootCause: mbmd.rootCause,
