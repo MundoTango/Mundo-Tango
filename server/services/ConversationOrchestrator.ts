@@ -22,6 +22,9 @@ import { contextService } from './mrBlue/ContextService';
 import { AgentActivationService } from './self-healing/AgentActivationService';
 import { PageAuditService } from './self-healing/PageAuditService';
 import { SelfHealingService } from './self-healing/SelfHealingService';
+import { db } from '../db';
+import { events } from '@shared/schema';
+import { gte, and, ilike, asc } from 'drizzle-orm';
 
 // Lazy-loaded VibeCodingService
 let vibeCodingServiceInstance: any = null;
@@ -267,8 +270,164 @@ export class ConversationOrchestrator {
   }
 
   /**
+   * MB.MD v9.3: Detect if message is asking about events
+   */
+  private isEventsQuestion(message: string): boolean {
+    const msg = message.toLowerCase();
+    const eventKeywords = [
+      'event', 'milonga', 'practica', 'festival', 'workshop', 'class',
+      'tango', 'dance', 'happening', 'going on', 'schedule', 'calendar',
+      'upcoming', 'this week', 'this month', 'tonight', 'tomorrow',
+      'where can i dance', 'where to dance', 'places to dance'
+    ];
+    return eventKeywords.some(kw => msg.includes(kw));
+  }
+
+  /**
+   * MB.MD v9.3: Detect if message is about travel planning
+   */
+  private isTravelPlanningRequest(message: string): boolean {
+    const msg = message.toLowerCase();
+    const travelKeywords = [
+      'travel', 'trip', 'visit', 'going to', 'plan', 'interested',
+      'want to go', 'i\'d like to go', 'add to', 'mark as interested',
+      'create travel plan', 'book', 'attend'
+    ];
+    return travelKeywords.some(kw => msg.includes(kw));
+  }
+
+  /**
+   * MB.MD v9.3: Query events from database
+   * Retrieves upcoming events with optional city filter
+   */
+  private async getEventsContext(message: string, limit: number = 10): Promise<string> {
+    try {
+      const msg = message.toLowerCase();
+      
+      // Extract city name if mentioned
+      let cityFilter: string | null = null;
+      const cityMatch = msg.match(/in\s+([a-z\s]+?)(?:\s+this|\s+next|\s+upcoming|$|\?)/i);
+      if (cityMatch) {
+        cityFilter = cityMatch[1].trim();
+      }
+
+      // Build query for upcoming events
+      const now = new Date();
+      
+      // Apply city filter if specified, otherwise get general upcoming events
+      const whereConditions = cityFilter
+        ? and(gte(events.startDate, now), ilike(events.city, `%${cityFilter}%`))
+        : gte(events.startDate, now);
+
+      const upcomingEvents = await db.select({
+        id: events.id,
+        title: events.title,
+        eventType: events.eventType,
+        startDate: events.startDate,
+        city: events.city,
+        country: events.country,
+        venue: events.venue,
+        interestedCount: events.interestedCount,
+        goingCount: events.goingCount,
+      })
+      .from(events)
+      .where(whereConditions)
+      .orderBy(asc(events.startDate))
+      .limit(Math.min(limit, 15));
+
+      if (upcomingEvents.length === 0) {
+        const noEventsMsg = cityFilter 
+          ? `No upcoming events found in ${cityFilter}. Try asking about events in a different city.`
+          : 'No upcoming events found in the database.';
+        return noEventsMsg;
+      }
+
+      console.log(`[Orchestrator] 📅 Found ${upcomingEvents.length} events${cityFilter ? ` in ${cityFilter}` : ''}`);
+
+      // Format events for context
+      const eventsSummary = upcomingEvents.map((evt, i) => {
+        const startDate = evt.startDate ? new Date(evt.startDate).toLocaleDateString('en-US', { 
+          weekday: 'short', month: 'short', day: 'numeric' 
+        }) : 'TBD';
+        return `${i + 1}. **${evt.title}** (ID: ${evt.id})
+   - Type: ${evt.eventType || 'Event'}
+   - Date: ${startDate}
+   - Location: ${evt.venue || ''}, ${evt.city || ''}, ${evt.country || ''}
+   - Interested: ${evt.interestedCount || 0} | Going: ${evt.goingCount || 0}`;
+      }).join('\n\n');
+
+      const headerText = cityFilter
+        ? `MUNDO TANGO EVENTS IN ${cityFilter.toUpperCase()} (${upcomingEvents.length} events):`
+        : `MUNDO TANGO EVENTS DATABASE (${upcomingEvents.length} upcoming events):`;
+
+      return `${headerText}
+${eventsSummary}
+
+To help users attend events, you can:
+1. Suggest they mark as "Interested" by saying "I want to go to [Event Name]"
+2. Help them create a travel plan by asking about their dates and preferences
+3. Show them related events in the same city`;
+    } catch (error) {
+      console.error('[Orchestrator] ❌ Events query failed:', error);
+      return 'Unable to fetch events data at this time.';
+    }
+  }
+
+  /**
+   * MB.MD v9.3: Handle travel planning requests
+   * Mark user as interested in event and create travel plan
+   */
+  async handleTravelPlanning(
+    message: string,
+    userId?: number
+  ): Promise<{ action: string; eventId?: number; success: boolean; message: string }> {
+    try {
+      // Extract event reference from message
+      const eventMatch = message.match(/(?:event|id)\s*[:#]?\s*(\d+)/i) ||
+                        message.match(/go to\s+(.+?)(?:\s+event)?(?:\.|$)/i);
+      
+      if (!eventMatch) {
+        return {
+          action: 'clarify',
+          success: false,
+          message: 'Which event would you like to attend? Please specify the event name or ID.'
+        };
+      }
+
+      // If user is not logged in
+      if (!userId) {
+        return {
+          action: 'login_required',
+          success: false,
+          message: 'To mark events as interested or create travel plans, please log in first. Would you like me to guide you to the login page?'
+        };
+      }
+
+      // For now, return guidance (actual RSVP creation would need event ID lookup)
+      return {
+        action: 'guide',
+        success: true,
+        message: `Great choice! To add this to your travel plans:
+1. Visit the event page and click "Interested" or "Going"
+2. You can then add travel dates from your profile
+3. I can help you find housing and other events in that city!
+
+Would you like me to show you more events in the same location?`
+      };
+    } catch (error) {
+      console.error('[Orchestrator] ❌ Travel planning failed:', error);
+      return {
+        action: 'error',
+        success: false,
+        message: 'Unable to process travel planning request at this time.'
+      };
+    }
+  }
+
+  /**
    * Handle question intent - Use GROQ to generate answer (NO code)
    * MB.MD v9.2: Now CONTEXT-AWARE of current page, DOM elements, user intent
+   * MB.MD v9.3: Now includes EVENTS DATABASE context for tango-related queries
    * Target: <2000ms
    */
   async handleQuestion(
@@ -285,6 +444,13 @@ export class ConversationOrchestrator {
         contextText = enrichedContext.contextChunks
           .map((chunk, i) => `[Context ${i + 1}] ${chunk.content.substring(0, 500)}`)
           .join('\n\n');
+      }
+
+      // MB.MD v9.3: Add events context if this is an events-related question
+      let eventsContextText = '';
+      if (this.isEventsQuestion(message)) {
+        console.log('[Orchestrator] 📅 Detected events question - fetching events context');
+        eventsContextText = await this.getEventsContext(message);
       }
 
       // MB.MD v9.2 FIX: Build page awareness context
@@ -334,18 +500,24 @@ CAPABILITIES:
 ✅ I can SEE form fields, buttons, and errors
 ✅ I can VIBE CODE (generate/modify code with "can you vibe code?")
 ✅ I provide context-aware answers based on where you are
+✅ I have ACCESS to the Mundo Tango events database
+✅ I can HELP with travel planning for tango events
 
 IMPORTANT: You are in QUESTION mode. Answer the user's question conversationally. DO NOT generate code unless explicitly asked.
 
 ${contextText ? `RELEVANT DOCUMENTATION:\n${contextText}\n\n` : ''}
+${eventsContextText ? `\n${eventsContextText}\n\n` : ''}
 
 GUIDELINES:
-1. **ALWAYS acknowledge the current page** in your response
+1. **ALWAYS acknowledge the current page** in your response if page context is available
 2. If asking about a specific field/button, reference what you see on the page
 3. Answer questions clearly and concisely
 4. If you don't know, say so - don't make things up
 5. Keep responses conversational and helpful
-6. If they ask about my abilities, mention vibecoding!`;
+6. If they ask about my abilities, mention vibecoding!
+7. When discussing events, be specific about dates, locations, and event types
+8. Encourage users to mark events as "Interested" or create travel plans
+9. Offer to help with travel planning if they show interest in an event`;
 
       const response = await groq.chat.completions.create({
         model: 'llama-3.3-70b-versatile',
