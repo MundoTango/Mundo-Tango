@@ -1,0 +1,118 @@
+{
+  "agentId": "plan-tracker-agent",
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-28T00:00:00Z",
+  "autoInvoke": true,
+  "invokeOn": ["task:start", "task:complete", "session:end"],
+  "realWorldKnowledge": {
+    "sources": [
+      "Project management methodologies (Agile, Scrum, Kanban)",
+      "Work breakdown structures (WBS)",
+      "Task status tracking (pending, in_progress, completed, blocked)",
+      "Progress reporting and metrics",
+      "Dependency management",
+      "Priority frameworks (MoSCoW, Eisenhower Matrix)",
+      "Milestone tracking",
+      "Burndown/burnup charts",
+      "Sprint planning and retrospectives"
+    ]
+  },
+  "taskStatuses": {
+    "pending": "Not yet started",
+    "in_progress": "Currently being worked on",
+    "blocked": "Waiting on dependency or decision",
+    "completed": "Finished and verified",
+    "cancelled": "No longer needed",
+    "deferred": "Postponed to future sprint"
+  },
+  "priorityLevels": {
+    "critical": "Must complete immediately - blocking other work",
+    "high": "Important for current sprint goals",
+    "medium": "Should complete this sprint if time allows",
+    "low": "Nice to have, can defer"
+  },
+  "mundoTangoKnowledge": {
+    "planLocation": "/plan.md",
+    "projectsFolder": "/.agent-memory/",
+    "trackingFiles": [
+      "la-milonga-mbmd-strategic-plan-dec-6-2025.md",
+      "el-choclo-mb-completion-plan.md",
+      "phase-k-mb-md-master-plan.md",
+      "phase-k-master-plan.md"
+    ],
+    "currentProjects": {
+      "internationalization": {
+        "file": "plan.md",
+        "status": "in_progress",
+        "phases": 9
+      },
+      "leadershipAgents": {
+        "file": "Mr Blue/agents/leadership/index.md",
+        "status": "in_progress",
+        "phases": 3
+      }
+    }
+  },
+  "updateWorkflow": {
+    "onTaskStart": [
+      "1. Identify which project/plan the task belongs to",
+      "2. Find corresponding task in plan file",
+      "3. Mark task as in_progress",
+      "4. Note start timestamp"
+    ],
+    "onTaskComplete": [
+      "1. Mark task as completed in plan file",
+      "2. Add completion timestamp",
+      "3. Note any learnings or blockers encountered",
+      "4. Update overall project progress percentage",
+      "5. Identify next task to start"
+    ],
+    "onSessionEnd": [
+      "1. Review all work completed this session",
+      "2. Update all relevant plan files",
+      "3. Create session summary",
+      "4. Update replit.md with significant changes"
+    ]
+  },
+  "planFileFormat": {
+    "structure": [
+      "# Project Name",
+      "## Overview",
+      "## Current Status",
+      "## Tasks",
+      "- [ ] Pending task",
+      "- [x] Completed task",
+      "## Progress Log"
+    ],
+    "statusEmojis": {
+      "pending": "⬜",
+      "in_progress": "🔄",
+      "completed": "✅",
+      "blocked": "🚫",
+      "cancelled": "❌"
+    }
+  },
+  "learnedExperiences": [
+    {
+      "id": "plan-001",
+      "type": "pattern",
+      "content": "Always update The Plan before marking work complete",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "critical"
+    },
+    {
+      "id": "plan-002",
+      "type": "pattern",
+      "content": "Use checkbox format [x] for easy visual tracking",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "medium"
+    },
+    {
+      "id": "plan-003",
+      "type": "process",
+      "content": "Session summaries help maintain context across conversations",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "high"
+    }
+  ]
+}

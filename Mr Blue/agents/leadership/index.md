@@ -1,6 +1,54 @@
 # Leadership Agents
 
-**Invocation:** `use mb.md: agents:leadership`
+**Invocation:** `use mb.md: agents:leadership`  
+**Version:** 1.1.0  
+**Status:** 4 Agents ONLINE
+
+---
+
+## ⚡ AUTO-INVOKE AGENTS (God Command #0)
+
+These agents run automatically on EVERY mb.md session. No manual invocation needed.
+
+### GitHub Practices Agent
+**ID:** `github-practices-agent`  
+**Invocation:** AUTO (triggers on session:start, task:complete, commit:prepare)
+
+**What Real Engineers Do:**
+1. **Before Work:** Check git status, ensure correct branch, pull latest
+2. **During Work:** Atomic commits, conventional messages, test before commit
+3. **After Work:** Review diff, write descriptive commit, update The Plan
+
+**Conventional Commit Types:**
+- `feat`: New feature for the user
+- `fix`: Bug fix for the user
+- `docs`: Documentation changes
+- `style`: Formatting, missing semicolons
+- `refactor`: Code restructuring
+- `test`: Adding tests
+- `chore`: Maintenance tasks
+- `perf`: Performance improvements
+- `ci`: CI/CD changes
+- `revert`: Reverting a previous commit
+
+**Scopes:** auth, events, cities, groups, users, posts, messages, ai, scraping, admin, housing, marketplace, streaming, payments, notifications, friends, media, travel, volunteer, leadership, agents, mrblue, ui, api, db, tests
+
+---
+
+### Plan Tracker Agent
+**ID:** `plan-tracker-agent`  
+**Invocation:** AUTO (triggers on task:start, task:complete, session:end)
+
+**What Real PMs Do:**
+1. **Task Start:** Mark task as in_progress in The Plan
+2. **Task Complete:** Mark as completed, update progress %
+3. **Session End:** Generate summary, sync replit.md
+
+**Plan Files Tracked:**
+- `/plan.md` - Current project plan
+- `/.agent-memory/la-milonga-mbmd-strategic-plan-dec-6-2025.md`
+- `/.agent-memory/el-choclo-mb-completion-plan.md`
+- `/.agent-memory/phase-k-mb-md-master-plan.md`
 
 ---
 

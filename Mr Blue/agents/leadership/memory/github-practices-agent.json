@@ -1,0 +1,105 @@
+{
+  "agentId": "github-practices-agent",
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-28T00:00:00Z",
+  "autoInvoke": true,
+  "invokeOn": ["session:start", "task:complete", "commit:prepare"],
+  "realWorldKnowledge": {
+    "sources": [
+      "Git best practices (conventional commits, atomic commits)",
+      "GitHub flow (feature branches, PRs, code review)",
+      "Semantic versioning (MAJOR.MINOR.PATCH)",
+      "Commit message format (type(scope): description)",
+      "Branch naming conventions (feature/, bugfix/, hotfix/)",
+      "Pull request templates and checklists",
+      "Code review standards",
+      "CI/CD pipeline triggers",
+      "Git hooks (pre-commit, pre-push)",
+      "Merge strategies (squash, rebase, merge)"
+    ]
+  },
+  "commitTypes": {
+    "feat": "New feature for the user",
+    "fix": "Bug fix for the user",
+    "docs": "Documentation only changes",
+    "style": "Formatting, missing semi colons, etc",
+    "refactor": "Refactoring production code",
+    "test": "Adding missing tests",
+    "chore": "Updating build tasks, package manager configs, etc",
+    "perf": "Performance improvements",
+    "ci": "CI/CD configuration changes",
+    "revert": "Reverting a previous commit"
+  },
+  "mundoTangoKnowledge": {
+    "repository": {
+      "platform": "GitHub",
+      "mainBranch": "main",
+      "deployBranch": "main",
+      "protectedBranches": ["main", "production"]
+    },
+    "workflow": {
+      "ci": "GitHub Actions",
+      "deployment": "Replit auto-deploy",
+      "checkpoints": "Replit automatic checkpoints"
+    },
+    "scopes": [
+      "auth", "events", "cities", "groups", "users", "posts", "messages",
+      "ai", "scraping", "admin", "housing", "marketplace", "streaming",
+      "payments", "notifications", "friends", "media", "travel", "volunteer"
+    ]
+  },
+  "standardWorkflow": {
+    "beforeWork": [
+      "1. Check current git status",
+      "2. Ensure on correct branch",
+      "3. Pull latest changes",
+      "4. Create feature branch if new work"
+    ],
+    "duringWork": [
+      "1. Make atomic commits (one logical change per commit)",
+      "2. Use conventional commit messages",
+      "3. Test changes before committing",
+      "4. Keep commits focused and reviewable"
+    ],
+    "afterWork": [
+      "1. Run tests to verify nothing broken",
+      "2. Review diff for unintended changes",
+      "3. Write descriptive commit message",
+      "4. Update The Plan with task status",
+      "5. Create checkpoint"
+    ]
+  },
+  "commitMessageTemplate": {
+    "format": "<type>(<scope>): <description>\n\n[optional body]\n\n[optional footer]",
+    "examples": [
+      "feat(cities): add geocoding for city coordinates",
+      "fix(auth): resolve JWT token refresh race condition",
+      "docs(readme): update API documentation",
+      "refactor(events): simplify event filtering logic",
+      "test(friends): add E2E tests for friend requests"
+    ]
+  },
+  "learnedExperiences": [
+    {
+      "id": "git-001",
+      "type": "pattern",
+      "content": "Always use conventional commits for automatic changelog generation",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "high"
+    },
+    {
+      "id": "git-002",
+      "type": "anti-pattern",
+      "content": "Never commit directly to main - always use feature branches",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "critical"
+    },
+    {
+      "id": "git-003",
+      "type": "pattern",
+      "content": "Atomic commits make code review and rollback easier",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "high"
+    }
+  ]
+}

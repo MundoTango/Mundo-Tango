@@ -26,6 +26,15 @@ The backend is developed with Express and TypeScript, leveraging PostgreSQL (Neo
 ### AI Systems
 Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized agents, including self-healing infrastructure, a production-ready validation loop, and a Visual Validation Framework. A Bifrost AI Gateway enables multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization. The AI brain is structured into a modular `/mr-blue-brain/` system encompassing Identity, Cognition (e.g., ReAct Protocol, Chain-of-Thought), Operations, Orchestration (e.g., Mixture of Experts Router), Patterns, and specialized Agents.
 
+**Leadership Agent System (Dec 2025)**:
+- **4 Agents ONLINE**: CEO, CTO, GitHub Practices, Plan Tracker
+- **4-Layer Knowledge**: God Commands, Learned Experiences, Mundo Tango Knowledge, Real-World Knowledge
+- **API Routes**: `/api/mrblue/leadership/*` for agent queries and task routing
+- **Auto-Invoke Agents (God Command #0)**:
+  - **GitHub Practices Agent**: Enforces conventional commits, atomic commits, branch naming (triggers: session:start, task:complete, commit:prepare)
+  - **Plan Tracker Agent**: Updates The Plan with task status/progress (triggers: task:start, task:complete, session:end)
+- **God Commands**: 9 active directives including "test before complete", "work simultaneously", "work recursively"
+
 **Mr. Blue AI Assistant (Enhanced Dec 2025)**:
 - **Database Integration**: Real-time access to platform data via `MrBlueDataService` (events, cities, users, groups)
 - **AI Engine**: Groq llama-3.3-70b-versatile model with platform context injection

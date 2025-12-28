@@ -8,6 +8,8 @@
 import { BaseLeadershipAgent } from './BaseLeadershipAgent';
 import { ctoAgent, CTOAgent } from './CTOAgent';
 import { ceoAgent, CEOAgent } from './CEOAgent';
+import { gitHubPracticesAgent, GitHubPracticesAgent } from './GitHubPracticesAgent';
+import { planTrackerAgent, PlanTrackerAgent } from './PlanTrackerAgent';
 
 // Export base class
 export { BaseLeadershipAgent } from './BaseLeadershipAgent';
@@ -22,6 +24,8 @@ export type {
 // Export agent classes
 export { CTOAgent, ctoAgent };
 export { CEOAgent, ceoAgent };
+export { GitHubPracticesAgent, gitHubPracticesAgent };
+export { PlanTrackerAgent, planTrackerAgent };
 
 // Leadership agent registry
 const leadershipAgents: Map<string, BaseLeadershipAgent> = new Map();
@@ -29,6 +33,8 @@ const leadershipAgents: Map<string, BaseLeadershipAgent> = new Map();
 // Register all leadership agents
 leadershipAgents.set('cto-agent', ctoAgent);
 leadershipAgents.set('ceo-agent', ceoAgent);
+leadershipAgents.set('github-practices-agent', gitHubPracticesAgent);
+leadershipAgents.set('plan-tracker-agent', planTrackerAgent);
 
 /**
  * Get a leadership agent by ID

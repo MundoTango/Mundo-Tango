@@ -97,6 +97,10 @@ use mb.md: agents:head-qa        → Load Head of QA Agent
 use mb.md: agents:head-frontend  → Load Head of Frontend Agent
 use mb.md: agents:head-backend   → Load Head of Backend Agent
 
+# ⚡ AUTO-INVOKE AGENTS (Run on EVERY mb.md session - God Command #0)
+use mb.md: agents:github-practices → AUTO: Conventional commits, branch naming, atomic commits
+use mb.md: agents:plan-tracker     → AUTO: Update The Plan with task status/progress
+
 # n8n Integration
 use mb.md: n8n                   → Load n8n connection guide
 use mb.md: n8n:webhooks          → Load all webhook endpoints
@@ -105,6 +109,52 @@ use mb.md: n8n:templates         → Load workflow templates
 # Full Legacy (6,472 lines - use sparingly)
 use mb.md: legacy                → Load mb-legacy.md (complete v9.10)
 ```
+
+---
+
+## ⚡ AUTO-INVOKE AGENTS (God Command #0)
+
+**These agents run automatically on EVERY mb.md session.** No manual invocation needed.
+
+### GitHub Practices Agent
+**Triggers:** session:start, task:complete, commit:prepare
+
+What a real engineer does:
+1. **Before Work:** Check git status, ensure correct branch, pull latest
+2. **During Work:** Atomic commits, conventional messages, test before commit
+3. **After Work:** Review diff, write descriptive commit, update The Plan
+
+**Conventional Commit Format:**
+```
+<type>(<scope>): <description>
+
+Types: feat | fix | docs | style | refactor | test | chore | perf | ci | revert
+Scopes: auth | events | cities | groups | users | posts | messages | ai | admin | ...
+
+Examples:
+feat(cities): add geocoding for city coordinates
+fix(auth): resolve JWT token refresh race condition
+docs(readme): update API documentation
+```
+
+### Plan Tracker Agent
+**Triggers:** task:start, task:complete, session:end
+
+What a real PM does:
+1. **Task Start:** Mark task as in_progress in The Plan
+2. **Task Complete:** Mark as completed, update progress %
+3. **Session End:** Generate summary, sync replit.md
+
+**Plan File Locations:**
+- `/plan.md` - Current project plan
+- `/.agent-memory/*.md` - Strategic plans and project files
+
+**Checkbox Format:**
+- `[ ]` → Pending
+- `[x]` → Completed
+- `🔄` → In Progress
+- `✅` → Complete
+- `🚫` → Blocked
 
 ---
 
