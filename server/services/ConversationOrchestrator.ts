@@ -23,8 +23,8 @@ import { AgentActivationService } from './self-healing/AgentActivationService';
 import { PageAuditService } from './self-healing/PageAuditService';
 import { SelfHealingService } from './self-healing/SelfHealingService';
 import { db } from '../db';
-import { events } from '@shared/schema';
-import { gte, and, ilike, asc } from 'drizzle-orm';
+import { events, cities, housingListings, travelPlans, users } from '@shared/schema';
+import { gte, lte, and, or, ilike, asc, eq, sql, desc } from 'drizzle-orm';
 
 // Lazy-loaded VibeCodingService
 let vibeCodingServiceInstance: any = null;
@@ -270,17 +270,70 @@ export class ConversationOrchestrator {
   }
 
   /**
-   * MB.MD v9.3: Detect if message is asking about events
+   * MB.MD v9.4: Detect if message is asking about events
+   * ENHANCED: Added marathon, encuentro, country names, date phrases
    */
   private isEventsQuestion(message: string): boolean {
     const msg = message.toLowerCase();
     const eventKeywords = [
+      // Event types (including missing marathon/encuentro - 146 events!)
       'event', 'milonga', 'practica', 'festival', 'workshop', 'class',
+      'marathon', 'encuentro', 'intensive', 'bootcamp', 'show', 'performance',
+      // General terms
       'tango', 'dance', 'happening', 'going on', 'schedule', 'calendar',
       'upcoming', 'this week', 'this month', 'tonight', 'tomorrow',
-      'where can i dance', 'where to dance', 'places to dance'
+      'next week', 'next month', 'this weekend', 'until april', 'until may',
+      'where can i dance', 'where to dance', 'places to dance',
+      // Country-based queries (top 15 countries in DB)
+      'in usa', 'in united states', 'in argentina', 'in italy', 'in poland',
+      'in germany', 'in france', 'in spain', 'in greece', 'in turkey',
+      'in portugal', 'in romania', 'in slovenia', 'in czechia', 'in hungary',
+      'in europe', 'in south america', 'in north america'
     ];
     return eventKeywords.some(kw => msg.includes(kw));
+  }
+
+  /**
+   * MB.MD v9.4: Detect if message is asking about cities
+   * FIXED: Tightened to require city-specific language
+   */
+  private isCityQuestion(message: string): boolean {
+    const msg = message.toLowerCase();
+    const cityKeywords = [
+      // City-specific terms only (removed generic phrases)
+      'city', 'cities', 'tango scene', 'scene in',
+      'best cities', 'popular cities', 'top cities', 'tango capital',
+      'weekly milongas', 'regular milongas', 'local scene',
+      'tango community in', 'dancer community in', 'tango culture in'
+    ];
+    return cityKeywords.some(kw => msg.includes(kw));
+  }
+
+  /**
+   * MB.MD v9.4: Detect if message is asking about housing
+   */
+  private isHousingQuestion(message: string): boolean {
+    const msg = message.toLowerCase();
+    const housingKeywords = [
+      'housing', 'stay', 'apartment', 'accommodation', 'place to stay',
+      'where to stay', 'airbnb', 'room', 'rent', 'host', 'sleep',
+      'booking', 'tango apartment', 'dancer host', 'dance floor',
+      'practice space', 'near milonga'
+    ];
+    return housingKeywords.some(kw => msg.includes(kw));
+  }
+
+  /**
+   * MB.MD v9.4: Detect if message is asking about travelers
+   */
+  private isTravelersQuestion(message: string): boolean {
+    const msg = message.toLowerCase();
+    const travelersKeywords = [
+      'who is going', 'who\'s going', 'who else', 'other dancers',
+      'travelers', 'visitors', 'attending', 'fellow dancers',
+      'meet dancers', 'people going', 'friends going'
+    ];
+    return travelersKeywords.some(kw => msg.includes(kw));
   }
 
   /**
@@ -297,79 +350,407 @@ export class ConversationOrchestrator {
   }
 
   /**
-   * MB.MD v9.3: Query events from database
-   * Retrieves upcoming events with optional city filter
+   * MB.MD v9.4: Query events from database
+   * ENHANCED: Now supports country, type, and date-range filters
    */
-  private async getEventsContext(message: string, limit: number = 10): Promise<string> {
+  private async getEventsContext(message: string, limit: number = 15): Promise<string> {
     try {
       const msg = message.toLowerCase();
-      
-      // Extract city name if mentioned
-      let cityFilter: string | null = null;
-      const cityMatch = msg.match(/in\s+([a-z\s]+?)(?:\s+this|\s+next|\s+upcoming|$|\?)/i);
-      if (cityMatch) {
-        cityFilter = cityMatch[1].trim();
-      }
-
-      // Build query for upcoming events
       const now = new Date();
       
-      // Apply city filter if specified, otherwise get general upcoming events
-      const whereConditions = cityFilter
-        ? and(gte(events.startDate, now), ilike(events.city, `%${cityFilter}%`))
-        : gte(events.startDate, now);
+      // Extract filters from message
+      const filters = this.extractEventFilters(msg);
+      
+      // Build conditions array
+      const conditions: any[] = [gte(events.startDate, now)];
+      
+      // Country filter
+      if (filters.country) {
+        conditions.push(ilike(events.country, `%${filters.country}%`));
+      }
+      
+      // City filter
+      if (filters.city) {
+        conditions.push(ilike(events.city, `%${filters.city}%`));
+      }
+      
+      // Event type filter (marathon, encuentro, festival, etc.)
+      if (filters.eventType) {
+        conditions.push(or(
+          ilike(events.eventType, `%${filters.eventType}%`),
+          ilike(events.title, `%${filters.eventType}%`)
+        ));
+      }
+      
+      // Date range filter
+      if (filters.endDate) {
+        conditions.push(lte(events.startDate, filters.endDate));
+      }
 
       const upcomingEvents = await db.select({
         id: events.id,
         title: events.title,
         eventType: events.eventType,
         startDate: events.startDate,
+        endDate: events.endDate,
         city: events.city,
         country: events.country,
         venue: events.venue,
-        interestedCount: events.interestedCount,
-        goingCount: events.goingCount,
+        price: events.price,
+        description: events.description,
       })
       .from(events)
-      .where(whereConditions)
+      .where(and(...conditions))
       .orderBy(asc(events.startDate))
-      .limit(Math.min(limit, 15));
+      .limit(Math.min(limit, 20));
 
       if (upcomingEvents.length === 0) {
-        const noEventsMsg = cityFilter 
-          ? `No upcoming events found in ${cityFilter}. Try asking about events in a different city.`
-          : 'No upcoming events found in the database.';
-        return noEventsMsg;
+        const filterDesc = [
+          filters.country && `country: ${filters.country}`,
+          filters.city && `city: ${filters.city}`,
+          filters.eventType && `type: ${filters.eventType}`,
+        ].filter(Boolean).join(', ');
+        return `No upcoming events found${filterDesc ? ` matching ${filterDesc}` : ''}. Try broadening your search.`;
       }
 
-      console.log(`[Orchestrator] 📅 Found ${upcomingEvents.length} events${cityFilter ? ` in ${cityFilter}` : ''}`);
+      const filterInfo = [
+        filters.country && `Country: ${filters.country}`,
+        filters.city && `City: ${filters.city}`,
+        filters.eventType && `Type: ${filters.eventType}`,
+        filters.endDate && `Until: ${filters.endDate.toLocaleDateString()}`,
+      ].filter(Boolean).join(' | ');
 
-      // Format events for context
+      console.log(`[Orchestrator] 📅 Found ${upcomingEvents.length} events. Filters: ${filterInfo || 'none'}`);
+
       const eventsSummary = upcomingEvents.map((evt, i) => {
         const startDate = evt.startDate ? new Date(evt.startDate).toLocaleDateString('en-US', { 
-          weekday: 'short', month: 'short', day: 'numeric' 
+          weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
         }) : 'TBD';
+        const endDateStr = evt.endDate ? ` - ${new Date(evt.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : '';
         return `${i + 1}. **${evt.title}** (ID: ${evt.id})
    - Type: ${evt.eventType || 'Event'}
-   - Date: ${startDate}
-   - Location: ${evt.venue || ''}, ${evt.city || ''}, ${evt.country || ''}
-   - Interested: ${evt.interestedCount || 0} | Going: ${evt.goingCount || 0}`;
+   - Dates: ${startDate}${endDateStr}
+   - Location: ${evt.city || ''}, ${evt.country || ''}${evt.venue ? ` @ ${evt.venue}` : ''}
+   - Price: ${evt.price ? `$${evt.price}` : 'Check event page'}`;
       }).join('\n\n');
 
-      const headerText = cityFilter
-        ? `MUNDO TANGO EVENTS IN ${cityFilter.toUpperCase()} (${upcomingEvents.length} events):`
-        : `MUNDO TANGO EVENTS DATABASE (${upcomingEvents.length} upcoming events):`;
+      return `MUNDO TANGO EVENTS (${upcomingEvents.length} found)${filterInfo ? `\nFilters: ${filterInfo}` : ''}:
 
-      return `${headerText}
 ${eventsSummary}
 
-To help users attend events, you can:
-1. Suggest they mark as "Interested" by saying "I want to go to [Event Name]"
-2. Help them create a travel plan by asking about their dates and preferences
-3. Show them related events in the same city`;
+HELPFUL ACTIONS:
+1. Ask "I want to go to [Event Name]" to mark as interested
+2. Ask "Where can I stay in [City]?" for housing options
+3. Ask "Who else is going to [Event]?" to find fellow travelers`;
     } catch (error) {
       console.error('[Orchestrator] ❌ Events query failed:', error);
       return 'Unable to fetch events data at this time.';
+    }
+  }
+
+  /**
+   * MB.MD v9.4: Extract filters from user message
+   */
+  private extractEventFilters(msg: string): { country?: string; city?: string; eventType?: string; endDate?: Date } {
+    const filters: { country?: string; city?: string; eventType?: string; endDate?: Date } = {};
+    
+    // Country extraction
+    const countryMap: Record<string, string> = {
+      'usa': 'United States', 'united states': 'United States', 'america': 'United States',
+      'argentina': 'Argentina', 'italy': 'Italy', 'poland': 'Poland', 'germany': 'Germany',
+      'france': 'France', 'spain': 'Spain', 'greece': 'Greece', 'turkey': 'Turkey',
+      'türkiye': 'Turkey', 'portugal': 'Portugal', 'romania': 'Romania', 'slovenia': 'Slovenia',
+      'czechia': 'Czechia', 'hungary': 'Hungary', 'uk': 'United Kingdom', 'england': 'United Kingdom',
+      'netherlands': 'Netherlands', 'belgium': 'Belgium', 'austria': 'Austria', 'switzerland': 'Switzerland'
+    };
+    
+    for (const [key, value] of Object.entries(countryMap)) {
+      if (msg.includes(key)) {
+        filters.country = value;
+        break;
+      }
+    }
+    
+    // Event type extraction
+    const typeMap: Record<string, string> = {
+      'marathon': 'marathon', 'marathons': 'marathon',
+      'encuentro': 'encuentro', 'encuentros': 'encuentro',
+      'festival': 'festival', 'festivals': 'festival',
+      'workshop': 'workshop', 'workshops': 'workshop',
+      'milonga': 'milonga', 'milongas': 'milonga',
+      'practica': 'practica', 'practicas': 'practica',
+      'intensive': 'intensive', 'bootcamp': 'bootcamp'
+    };
+    
+    for (const [key, value] of Object.entries(typeMap)) {
+      if (msg.includes(key)) {
+        filters.eventType = value;
+        break;
+      }
+    }
+    
+    // Date range extraction
+    const now = new Date();
+    if (msg.includes('this week')) {
+      const endOfWeek = new Date(now);
+      endOfWeek.setDate(now.getDate() + (7 - now.getDay()));
+      filters.endDate = endOfWeek;
+    } else if (msg.includes('this weekend')) {
+      const endOfWeekend = new Date(now);
+      endOfWeekend.setDate(now.getDate() + (7 - now.getDay() + 1));
+      filters.endDate = endOfWeekend;
+    } else if (msg.includes('this month')) {
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      filters.endDate = endOfMonth;
+    } else if (msg.includes('next month')) {
+      const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+      filters.endDate = endOfNextMonth;
+    } else {
+      // Parse "until [month]" patterns
+      const monthMatch = msg.match(/until\s+(january|february|march|april|may|june|july|august|september|october|november|december)/i);
+      if (monthMatch) {
+        const monthNames = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+        const monthIndex = monthNames.indexOf(monthMatch[1].toLowerCase());
+        if (monthIndex !== -1) {
+          let year = now.getFullYear();
+          if (monthIndex < now.getMonth()) year++;
+          filters.endDate = new Date(year, monthIndex + 1, 0);
+        }
+      }
+    }
+    
+    // City extraction - FIXED: Handles multi-word countries like "United States", "Costa Rica"
+    const cityMatch = msg.match(/in\s+([a-z\s]+?)(?:\s+this|\s+next|\s+upcoming|\s+until|$|\?)/i);
+    if (cityMatch) {
+      let possibleCity = cityMatch[1].trim().toLowerCase();
+      
+      // Multi-word country phrases to strip (ordered by length for greedy matching)
+      const multiWordCountries = [
+        'united states', 'south america', 'north america', 'costa rica', 'new zealand',
+        'united kingdom', 'czech republic', 'dominican republic'
+      ];
+      
+      // Single word country terms
+      const singleWordCountries = [
+        'usa', 'europe', 'america', 'argentina', 'italy', 'germany', 'france', 'spain',
+        'poland', 'greece', 'turkey', 'portugal', 'netherlands', 'belgium', 'austria',
+        'switzerland', 'uk', 'england', 'brazil', 'mexico', 'canada', 'japan', 'australia'
+      ];
+      
+      // Check if the entire phrase is just a country (no city)
+      const allCountries = [...multiWordCountries, ...singleWordCountries];
+      if (allCountries.includes(possibleCity)) {
+        // The whole phrase is a country, no city to extract
+        return filters;
+      }
+      
+      // Strip multi-word countries from the end of the city string
+      for (const country of multiWordCountries) {
+        if (possibleCity.endsWith(country)) {
+          possibleCity = possibleCity.slice(0, -country.length).trim();
+          break;
+        }
+      }
+      
+      // Strip single-word countries from the end
+      const words = possibleCity.split(/\s+/);
+      if (words.length > 1 && singleWordCountries.includes(words[words.length - 1])) {
+        words.pop();
+        possibleCity = words.join(' ');
+      }
+      
+      // Set city if we have something left
+      if (possibleCity && possibleCity.length > 0) {
+        filters.city = possibleCity;
+      }
+    }
+    
+    return filters;
+  }
+
+  /**
+   * MB.MD v9.4: Query cities from database
+   */
+  private async getCitiesContext(message: string, limit: number = 10): Promise<string> {
+    try {
+      const msg = message.toLowerCase();
+      
+      // Extract city name if asking about specific city
+      const cityMatch = msg.match(/(?:about|in|scene in|tell me about)\s+([a-z\s]+?)(?:\s+tango|\s+scene|$|\?)/i);
+      const cityName = cityMatch ? cityMatch[1].trim() : null;
+      
+      let cityResults;
+      
+      if (cityName) {
+        // Specific city query
+        cityResults = await db.select({
+          id: cities.id,
+          name: cities.name,
+          slug: cities.slug,
+          country: cities.country,
+          region: cities.region,
+          description: cities.description,
+          memberCount: cities.memberCount,
+          eventCount: cities.eventCount,
+          venueCount: cities.venueCount,
+          housingCount: cities.housingCount,
+        })
+        .from(cities)
+        .where(or(
+          ilike(cities.name, `%${cityName}%`),
+          ilike(cities.slug, `%${cityName.replace(/\s+/g, '-')}%`)
+        ))
+        .limit(5);
+      } else {
+        // Get top cities by event count
+        cityResults = await db.select({
+          id: cities.id,
+          name: cities.name,
+          slug: cities.slug,
+          country: cities.country,
+          region: cities.region,
+          description: cities.description,
+          memberCount: cities.memberCount,
+          eventCount: cities.eventCount,
+          venueCount: cities.venueCount,
+          housingCount: cities.housingCount,
+        })
+        .from(cities)
+        .where(gte(cities.eventCount, 1))
+        .orderBy(desc(cities.eventCount))
+        .limit(limit);
+      }
+
+      if (cityResults.length === 0) {
+        return cityName 
+          ? `No city found matching "${cityName}". Try a different city name.`
+          : 'No cities with events found in the database.';
+      }
+
+      console.log(`[Orchestrator] 🏙️ Found ${cityResults.length} cities`);
+
+      const citiesSummary = cityResults.map((city, i) => {
+        return `${i + 1}. **${city.name}**, ${city.country}
+   - Members: ${city.memberCount || 0} | Events: ${city.eventCount || 0}
+   - Venues: ${city.venueCount || 0} | Housing: ${city.housingCount || 0}
+   - Page: /cities/${city.slug}
+   ${city.description ? `   - ${city.description.substring(0, 150)}...` : ''}`;
+      }).join('\n\n');
+
+      return `MUNDO TANGO CITIES (${cityResults.length} found):
+
+${citiesSummary}
+
+CITY PAGES include:
+- Discussion tab for local community
+- Events tab with upcoming milongas, festivals
+- Housing tab for tango-friendly accommodations
+- Members tab to connect with local dancers`;
+    } catch (error) {
+      console.error('[Orchestrator] ❌ Cities query failed:', error);
+      return 'Unable to fetch cities data at this time.';
+    }
+  }
+
+  /**
+   * MB.MD v9.4: Query housing from database
+   */
+  private async getHousingContext(message: string, limit: number = 10): Promise<string> {
+    try {
+      const msg = message.toLowerCase();
+      
+      // Extract city name
+      const cityMatch = msg.match(/(?:stay in|housing in|apartment in|where to stay in)\s+([a-z\s]+?)(?:\s+for|$|\?)/i);
+      const cityName = cityMatch ? cityMatch[1].trim() : null;
+      
+      const conditions: any[] = [eq(housingListings.status, 'active')];
+      if (cityName) {
+        conditions.push(ilike(housingListings.city, `%${cityName}%`));
+      }
+
+      const housingResults = await db.select({
+        id: housingListings.id,
+        title: housingListings.title,
+        city: housingListings.city,
+        country: housingListings.country,
+        propertyType: housingListings.propertyType,
+        pricePerNight: housingListings.pricePerNight,
+        currency: housingListings.currency,
+        bedrooms: housingListings.bedrooms,
+        maxGuests: housingListings.maxGuests,
+        amenities: housingListings.amenities,
+        averageRating: housingListings.averageRating,
+      })
+      .from(housingListings)
+      .where(and(...conditions))
+      .limit(limit);
+
+      if (housingResults.length === 0) {
+        return cityName 
+          ? `No housing listings found in ${cityName}. The housing marketplace is growing - consider checking nearby cities or Airbnb.`
+          : 'No active housing listings found. The housing marketplace is new and growing!';
+      }
+
+      console.log(`[Orchestrator] 🏠 Found ${housingResults.length} housing listings`);
+
+      const housingSummary = housingResults.map((listing, i) => {
+        const price = listing.pricePerNight 
+          ? `${listing.currency || '$'}${listing.pricePerNight}/night`
+          : 'Contact host';
+        return `${i + 1}. **${listing.title}**
+   - Location: ${listing.city}, ${listing.country}
+   - Type: ${listing.propertyType || 'Apartment'} | ${listing.bedrooms || 1} bedroom(s)
+   - Price: ${price} | Max guests: ${listing.maxGuests || 2}
+   - Rating: ${listing.averageRating ? `${listing.averageRating}/5` : 'New listing'}`;
+      }).join('\n\n');
+
+      return `MUNDO TANGO HOUSING (${housingResults.length} listings):
+
+${housingSummary}
+
+HOUSING FEATURES:
+- Listings by tango dancers, for tango dancers
+- Many have practice space or dance floors
+- Hosts know the local tango scene`;
+    } catch (error) {
+      console.error('[Orchestrator] ❌ Housing query failed:', error);
+      return 'Unable to fetch housing data at this time.';
+    }
+  }
+
+  /**
+   * MB.MD v9.4: Query travel plans from database
+   */
+  private async getTravelContext(message: string, eventId?: number): Promise<string> {
+    try {
+      const travelResults = await db.select({
+        id: travelPlans.id,
+        userId: travelPlans.userId,
+        cityId: travelPlans.cityId,
+        eventId: travelPlans.eventId,
+        arrivalDate: travelPlans.arrivalDate,
+        departureDate: travelPlans.departureDate,
+        status: travelPlans.status,
+      })
+      .from(travelPlans)
+      .where(eventId ? eq(travelPlans.eventId, eventId) : gte(travelPlans.arrivalDate, new Date()))
+      .limit(20);
+
+      if (travelResults.length === 0) {
+        return 'No travel plans found. Be the first to share your travel dates!';
+      }
+
+      console.log(`[Orchestrator] ✈️ Found ${travelResults.length} travel plans`);
+
+      return `TRAVELERS (${travelResults.length} plans):
+${travelResults.map(t => 
+  `- User ${t.userId}: ${t.arrivalDate ? new Date(t.arrivalDate).toLocaleDateString() : 'TBD'} to ${t.departureDate ? new Date(t.departureDate).toLocaleDateString() : 'TBD'}`
+).join('\n')}
+
+Connect with fellow travelers on the event page!`;
+    } catch (error) {
+      console.error('[Orchestrator] ❌ Travel query failed:', error);
+      return 'Unable to fetch travel data at this time.';
     }
   }
 
@@ -446,11 +827,44 @@ Would you like me to show you more events in the same location?`
           .join('\n\n');
       }
 
-      // MB.MD v9.3: Add events context if this is an events-related question
-      let eventsContextText = '';
+      // MB.MD v9.4: Add all database contexts based on question type
+      let databaseContextText = '';
+      const contextSources: string[] = [];
+      
+      // Events context
       if (this.isEventsQuestion(message)) {
         console.log('[Orchestrator] 📅 Detected events question - fetching events context');
-        eventsContextText = await this.getEventsContext(message);
+        const eventsContext = await this.getEventsContext(message);
+        databaseContextText += `\n\n${eventsContext}`;
+        contextSources.push('events');
+      }
+      
+      // Cities context
+      if (this.isCityQuestion(message)) {
+        console.log('[Orchestrator] 🏙️ Detected city question - fetching cities context');
+        const citiesContext = await this.getCitiesContext(message);
+        databaseContextText += `\n\n${citiesContext}`;
+        contextSources.push('cities');
+      }
+      
+      // Housing context
+      if (this.isHousingQuestion(message)) {
+        console.log('[Orchestrator] 🏠 Detected housing question - fetching housing context');
+        const housingContext = await this.getHousingContext(message);
+        databaseContextText += `\n\n${housingContext}`;
+        contextSources.push('housing');
+      }
+      
+      // Travelers context
+      if (this.isTravelersQuestion(message)) {
+        console.log('[Orchestrator] ✈️ Detected travelers question - fetching travel context');
+        const travelContext = await this.getTravelContext(message);
+        databaseContextText += `\n\n${travelContext}`;
+        contextSources.push('travelers');
+      }
+      
+      if (contextSources.length > 0) {
+        console.log(`[Orchestrator] 📊 Database context loaded: ${contextSources.join(', ')}`);
       }
 
       // MB.MD v9.2 FIX: Build page awareness context
@@ -491,7 +905,7 @@ Would you like me to show you more events in the same location?`
         }
       }
 
-      const systemPrompt = `You are Mr. Blue, the Mundo Tango AI assistant with CONTEXT AWARENESS.
+      const systemPrompt = `You are Mr. Blue, the Mundo Tango AI assistant with FULL DATABASE ACCESS.
 
 ${pageAwarenessText}
 
@@ -500,24 +914,30 @@ CAPABILITIES:
 ✅ I can SEE form fields, buttons, and errors
 ✅ I can VIBE CODE (generate/modify code with "can you vibe code?")
 ✅ I provide context-aware answers based on where you are
-✅ I have ACCESS to the Mundo Tango events database
-✅ I can HELP with travel planning for tango events
+✅ I have FULL ACCESS to the Mundo Tango database:
+   - 811 events (679 upcoming) in 15+ countries
+   - 301 cities with community info
+   - Housing listings for tango travelers
+   - Travel plans to connect with fellow dancers
+✅ I can search by: country, city, event type (marathon, encuentro, festival), date range
 
 IMPORTANT: You are in QUESTION mode. Answer the user's question conversationally. DO NOT generate code unless explicitly asked.
 
 ${contextText ? `RELEVANT DOCUMENTATION:\n${contextText}\n\n` : ''}
-${eventsContextText ? `\n${eventsContextText}\n\n` : ''}
+${databaseContextText ? `\nDATABASE CONTEXT:${databaseContextText}\n\n` : ''}
 
 GUIDELINES:
-1. **ALWAYS acknowledge the current page** in your response if page context is available
-2. If asking about a specific field/button, reference what you see on the page
+1. **Be specific**: When sharing events/cities, include dates, locations, and details
+2. **Acknowledge the page context** if available
 3. Answer questions clearly and concisely
 4. If you don't know, say so - don't make things up
 5. Keep responses conversational and helpful
-6. If they ask about my abilities, mention vibecoding!
-7. When discussing events, be specific about dates, locations, and event types
-8. Encourage users to mark events as "Interested" or create travel plans
-9. Offer to help with travel planning if they show interest in an event`;
+6. For events: mention dates, location, type (marathon/encuentro/festival)
+7. Encourage users to mark events as "Interested" or ask about housing
+8. Offer to help with travel planning when relevant
+9. Suggest related events/cities based on user interests`;
+      
+      console.log(`[Orchestrator] 🤖 System prompt ready. Database sources: ${contextSources.length > 0 ? contextSources.join(', ') : 'none'}`);
 
       const response = await groq.chat.completions.create({
         model: 'llama-3.3-70b-versatile',
