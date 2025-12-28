@@ -841,52 +841,52 @@ function CityOverviewTab({ city }: { city: CityData }) {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="sticky top-0 z-[100] bg-background/80 backdrop-blur-md py-6 -mx-4 px-4 border-b">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <div className="flex flex-wrap items-center gap-4">
+      <div className="sticky top-0 z-[100] bg-background/80 backdrop-blur-md py-4 md:py-6 -mx-2 md:-mx-4 px-2 md:px-4 border-b">
+        <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4">
             <Button 
               variant={activeLayer === 'all' ? 'default' : 'ghost'} 
               size="sm"
-              className="rounded-2xl h-12 px-8 font-black text-xs uppercase tracking-widest transition-all hover-elevate active-elevate-2 shadow-sm"
+              className="rounded-xl md:rounded-2xl min-h-[44px] md:h-12 px-3 md:px-8 font-black text-xs uppercase tracking-widest transition-all hover-elevate active-elevate-2 shadow-sm"
               onClick={() => setActiveLayer('all')}
             >
-              EXPLORE ALL <Badge variant="secondary" className="ml-3 bg-background/50 font-black px-2">{totalItems}</Badge>
+              <span className="hidden sm:inline">EXPLORE </span>ALL <Badge variant="secondary" className="ml-2 md:ml-3 bg-background/50 font-black px-1.5 md:px-2 text-[10px]">{totalItems}</Badge>
             </Button>
             <Button 
               variant={activeLayer === 'events' ? 'default' : 'ghost'} 
               size="sm"
-              className={`rounded-2xl h-12 px-8 font-black text-xs uppercase tracking-widest transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'events' ? 'text-rose-500 hover:bg-rose-500/10' : 'bg-rose-500 hover:bg-rose-600'}`}
+              className={`rounded-xl md:rounded-2xl min-h-[44px] md:h-12 px-3 md:px-8 font-black text-xs uppercase tracking-widest transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'events' ? 'text-rose-500 hover:bg-rose-500/10' : 'bg-rose-500 hover:bg-rose-600'}`}
               onClick={() => {
                 setActiveLayer('events');
-                setTimeFilter('all'); // Reset time filter when focusing on events to show all pins
+                setTimeFilter('all');
               }}
             >
-              <Calendar className="w-4 h-4 mr-2" />
-              EVENTS <Badge variant="secondary" className="ml-3 bg-background/50 font-black px-2">{events.length}</Badge>
+              <Calendar className="w-4 h-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">EVENTS</span> <Badge variant="secondary" className="ml-2 md:ml-3 bg-background/50 font-black px-1.5 md:px-2 text-[10px]">{events.length}</Badge>
             </Button>
             <Button 
               variant={activeLayer === 'housing' ? 'default' : 'ghost'} 
               size="sm"
-              className={`rounded-2xl h-12 px-8 font-black text-xs uppercase tracking-widest transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'housing' ? 'text-emerald-500 hover:bg-emerald-500/10' : 'bg-emerald-500 hover:bg-emerald-600'}`}
+              className={`rounded-xl md:rounded-2xl min-h-[44px] md:h-12 px-3 md:px-8 font-black text-xs uppercase tracking-widest transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'housing' ? 'text-emerald-500 hover:bg-emerald-500/10' : 'bg-emerald-500 hover:bg-emerald-600'}`}
               onClick={() => setActiveLayer('housing')}
             >
-              <Home className="w-4 h-4 mr-2" />
-              HOUSING <Badge variant="secondary" className="ml-3 bg-background/50 font-black px-2">{housing.length}</Badge>
+              <Home className="w-4 h-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">HOUSING</span> <Badge variant="secondary" className="ml-2 md:ml-3 bg-background/50 font-black px-1.5 md:px-2 text-[10px]">{housing.length}</Badge>
             </Button>
             <Button 
               variant={activeLayer === 'tips' ? 'default' : 'ghost'} 
               size="sm"
-              className={`rounded-2xl h-12 px-8 font-black text-xs uppercase tracking-widest transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'tips' ? 'text-amber-500 hover:bg-amber-500/10' : 'bg-amber-500 hover:bg-amber-600'}`}
+              className={`rounded-xl md:rounded-2xl min-h-[44px] md:h-12 px-3 md:px-8 font-black text-xs uppercase tracking-widest transition-all hover-elevate active-elevate-2 shadow-sm ${activeLayer !== 'tips' ? 'text-amber-500 hover:bg-amber-500/10' : 'bg-amber-500 hover:bg-amber-600'}`}
               onClick={() => setActiveLayer('tips')}
             >
-              <Lightbulb className="w-4 h-4 mr-2" />
-              TIPS <Badge variant="secondary" className="ml-3 bg-background/50 font-black px-2">{tips.length}</Badge>
+              <Lightbulb className="w-4 h-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">TIPS</span> <Badge variant="secondary" className="ml-2 md:ml-3 bg-background/50 font-black px-1.5 md:px-2 text-[10px]">{tips.length}</Badge>
             </Button>
           </div>
           
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-            <div className="flex items-center gap-2 p-1 bg-muted/30 rounded-xl border border-primary/5">
-              <span className="text-[10px] font-black uppercase tracking-widest px-3 opacity-40">Filter Range</span>
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar -mx-2 px-2">
+            <div className="flex items-center gap-1 md:gap-2 p-1 bg-muted/30 rounded-xl border border-primary/5 flex-shrink-0">
+              <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest px-2 md:px-3 opacity-40 hidden sm:inline">Filter</span>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -1428,65 +1428,67 @@ export default function CityDetailsPage() {
       />
 
       <div className="min-h-screen bg-background">
-        <div className="relative h-[300px] md:h-[400px] w-full overflow-hidden">
+        <div className="relative h-[250px] sm:h-[300px] md:h-[400px] w-full overflow-hidden">
           <img
             src={coverImageUrl}
             alt={`${city.name} cityscape`}
             className="w-full h-full object-cover scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+          <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-12">
             <div className="container mx-auto max-w-7xl">
-              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 md:gap-8">
                 <div className="space-y-2">
                   <Badge variant="outline" className="bg-primary/20 text-white border-white/20 font-black text-[10px] uppercase tracking-[0.3em] px-3 py-1 rounded-md backdrop-blur-md">
                     MT Geo-Hub Verified
                   </Badge>
-                  <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase" data-testid="city-name">
+                  <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-white tracking-tighter uppercase" data-testid="city-name">
                     {city.name}
                   </h1>
-                  <p className="text-xl text-white/60 flex items-center gap-3 font-black uppercase tracking-widest">
+                  <p className="text-sm sm:text-base md:text-xl text-white/60 flex items-center gap-2 md:gap-3 font-black uppercase tracking-widest">
                     <MapPin className="h-5 w-5 text-primary" />
                     {city.country}
                   </p>
                 </div>
-                <div className="flex gap-3">
-                  {/* Hide follow/unfollow button entirely if user is a verified resident of this city */}
+                <div className="flex gap-2 md:gap-3">
                   {!(membership?.isResident || isUserResident) ? (
                     membership?.isFollowing ? (
                       <Button
                         variant="outline"
                         onClick={() => unfollowMutation.mutate()}
                         disabled={unfollowMutation.isPending}
-                        className="gap-3 h-14 px-8 rounded-2xl bg-white/5 backdrop-blur-xl border-white/20 text-white font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all border-2"
+                        className="gap-2 md:gap-3 min-h-[44px] md:h-14 px-4 md:px-8 rounded-xl md:rounded-2xl bg-white/5 backdrop-blur-xl border-white/20 text-white font-black text-xs md:text-sm uppercase tracking-widest hover:bg-white/10 transition-all border-2"
                         data-testid="button-unfollow-city"
                       >
                         {unfollowMutation.isPending ? (
-                          <Loader2 className="h-5 w-5 animate-spin" />
+                          <Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin" />
                         ) : (
-                          <Check className="h-5 w-5" />
+                          <Check className="h-4 w-4 md:h-5 md:w-5" />
                         )}
-                        Following Hub
+                        <span className="hidden sm:inline">Following Hub</span>
+                        <span className="sm:hidden">Following</span>
                       </Button>
                     ) : (
                       <Button
                         onClick={() => followMutation.mutate()}
                         disabled={followMutation.isPending}
-                        className="gap-3 h-14 px-8 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl shadow-primary/40 group hover:scale-105 transition-all"
+                        className="gap-2 md:gap-3 min-h-[44px] md:h-14 px-4 md:px-8 rounded-xl md:rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest shadow-2xl shadow-primary/40 group hover:scale-105 transition-all"
                         data-testid="button-follow-city"
                       >
                         {followMutation.isPending ? (
-                          <Loader2 className="h-5 w-5 animate-spin" />
+                          <Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin" />
                         ) : (
-                          <Heart className="h-5 w-5 group-hover:fill-current" />
+                          <Heart className="h-4 w-4 md:h-5 md:w-5 group-hover:fill-current" />
                         )}
-                        Follow Community
+                        <span className="hidden sm:inline">Follow Community</span>
+                        <span className="sm:hidden">Follow</span>
                       </Button>
                     )
                   ) : (
-                    <div className="flex items-center gap-3 h-14 px-8 rounded-2xl bg-primary/10 border-2 border-primary/20 text-primary font-black text-sm uppercase tracking-widest shadow-lg backdrop-blur-sm">
-                      <MapPinHouse className="h-5 w-5" />
-                      Home Community
+                    <div className="flex items-center gap-2 md:gap-3 min-h-[44px] md:h-14 px-4 md:px-8 rounded-xl md:rounded-2xl bg-primary/10 border-2 border-primary/20 text-primary font-black text-xs md:text-sm uppercase tracking-widest shadow-lg backdrop-blur-sm">
+                      <MapPinHouse className="h-4 w-4 md:h-5 md:w-5" />
+                      <span className="hidden sm:inline">Home Community</span>
+                      <span className="sm:hidden">Home</span>
                     </div>
                   )}
                 </div>
@@ -1495,10 +1497,10 @@ export default function CityDetailsPage() {
           </div>
         </div>
 
-        <div className="container mx-auto max-w-7xl px-4 py-8">
+        <div className="container mx-auto max-w-7xl px-2 sm:px-4 py-4 md:py-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="relative mb-12">
-              <TabsList className="w-full justify-start overflow-x-auto bg-muted/20 p-2 rounded-[2rem] border border-primary/5 h-16 no-scrollbar" data-testid="city-tabs">
+            <div className="relative mb-6 md:mb-12">
+              <TabsList className="w-full justify-start overflow-x-auto bg-muted/20 p-1.5 md:p-2 rounded-xl md:rounded-[2rem] border border-primary/5 h-12 md:h-16 no-scrollbar" data-testid="city-tabs">
                 {[
                   { value: 'discussion', label: 'Discussion', icon: MessageSquare },
                   { value: 'overview', label: 'Overview', icon: Compass },
@@ -1511,11 +1513,11 @@ export default function CityDetailsPage() {
                   <TabsTrigger 
                     key={tab.value}
                     value={tab.value} 
-                    className="gap-3 h-12 px-8 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all"
+                    className="gap-1.5 md:gap-3 min-h-[44px] md:h-12 px-3 md:px-8 rounded-lg md:rounded-2xl font-black text-xs uppercase tracking-wide md:tracking-[0.2em] data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all flex-shrink-0"
                     data-testid={`tab-${tab.value}`}
                   >
                     <tab.icon className="h-4 w-4" />
-                    {tab.label}
+                    <span className="hidden sm:inline">{tab.label}</span>
                   </TabsTrigger>
                 ))}
               </TabsList>

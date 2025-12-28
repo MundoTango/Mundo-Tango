@@ -434,14 +434,14 @@ export default function FeedPage() {
       />
       
       {/* Editorial Hero Section - Quote Carousel */}
-      <div className="relative h-[25vh] md:h-[30vh] w-full overflow-hidden">
+      <div className="relative h-[20vh] sm:h-[25vh] md:h-[30vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{
           backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop')`
         }}>
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         </div>
         
-        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 sm:px-6 md:px-8 text-center">
           <motion.div
             key={currentQuoteIndex}
             initial={{ opacity: 0, y: 20 }}
@@ -449,10 +449,10 @@ export default function FeedPage() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <p className="text-2xl md:text-3xl lg:text-4xl font-serif text-white font-bold leading-tight mb-2 italic" data-testid="text-page-quote">
+            <p className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-serif text-white font-bold leading-tight mb-1 sm:mb-2 italic" data-testid="text-page-quote">
               "{TANGO_QUOTES[currentQuoteIndex].quote}"
             </p>
-            <p className="text-sm md:text-base text-white/70">
+            <p className="text-xs sm:text-sm md:text-base text-white/70">
               — {TANGO_QUOTES[currentQuoteIndex].author}
             </p>
           </motion.div>
@@ -460,9 +460,9 @@ export default function FeedPage() {
       </div>
 
       {/* 2-Column Grid Layout */}
-      <div className="grid grid-cols-12 gap-6 px-6 py-12 max-w-7xl mx-auto">
+      <div className="grid grid-cols-12 gap-4 md:gap-6 px-3 sm:px-4 md:px-6 py-6 md:py-12 max-w-7xl mx-auto">
         {/* Main Feed Column */}
-        <main className="col-span-12 lg:col-span-9 space-y-6">
+        <main className="col-span-12 lg:col-span-9 space-y-4 md:space-y-6">
           {/* Instagram-style Stories Carousel - Lazy loaded */}
           <Suspense fallback={<Card className="p-4 h-24 bg-muted animate-pulse" />}>
             <StoriesCarousel />
