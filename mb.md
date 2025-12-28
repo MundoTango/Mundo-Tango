@@ -1,6 +1,6 @@
 # MB.MD - Mr. Blue's Brain v2.0
 
-**Version:** 2.1.0 | **Updated:** December 28, 2025 | **Agents:** 140+ | **Patterns:** 65
+**Version:** 2.2.0 | **Updated:** December 28, 2025 | **Agents:** 140+ | **Patterns:** 67
 
 ---
 
@@ -897,4 +897,135 @@ MrBlueChat
 use mb.md: mrblue:design          → Chat design tokens
 use mb.md: mrblue:design:mobile   → Mobile responsive
 use mb.md: mrblue:design:dark     → Dark mode support
+```
+
+---
+
+## 📱 PATTERN 67: RESPONSIVE UI VALIDATION METHODOLOGY
+
+**Problem Solved:** UI changes must be validated across all viewport sizes to prevent mobile/tablet/desktop breakage.
+
+### Viewport Breakpoints (Tailwind)
+
+| Breakpoint | Width | Common Devices |
+|------------|-------|----------------|
+| `xs` | < 475px | Small phones (iPhone SE, Galaxy S8) |
+| `sm` | 640px | Large phones (iPhone 14 Pro, Pixel 7) |
+| `md` | 768px | Tablets portrait (iPad Mini, iPad) |
+| `lg` | 1024px | Tablets landscape, small laptops |
+| `xl` | 1280px | Laptops, desktops |
+| `2xl` | 1536px | Large monitors, 4K displays |
+
+### Mandatory UI Check Protocol
+
+Every UI change MUST be validated at these viewports before completion:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│           RESPONSIVE UI VALIDATION CHECKLIST            │
+├─────────────────────────────────────────────────────────┤
+│ ✓ Mobile (375px)    → Full functionality, touch-friendly │
+│ ✓ Tablet (768px)    → Proper layout, no overflow         │
+│ ✓ Desktop (1280px)  → Optimal spacing, full features     │
+│ ✓ Wide (1920px)     → No content stretching              │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Test Plan Template (Responsive)
+
+```
+1. [New Context] Create browser context with viewport (375, 667) - Mobile
+2. [Browser] Navigate to the page being modified
+3. [Verify] Check layout, touch targets (min 44px), no horizontal scroll
+4. [Verify] Check text readability, button sizing, spacing
+
+5. [Browser] Resize viewport to (768, 1024) - Tablet
+6. [Verify] Check layout transitions, grid adjustments
+7. [Verify] Check no overflow, proper sidebar behavior
+
+8. [Browser] Resize viewport to (1280, 800) - Desktop
+9. [Verify] Check full feature display, optimal spacing
+10. [Verify] Check hover states work (not just touch)
+
+11. [Browser] Resize viewport to (1920, 1080) - Wide
+12. [Verify] Check content doesn't stretch excessively
+13. [Verify] Check max-width constraints applied
+```
+
+### Common Responsive Issues to Check
+
+| Issue | Check For | Fix Pattern |
+|-------|-----------|-------------|
+| Horizontal scroll | Content wider than viewport | `max-w-full`, `overflow-x-hidden` |
+| Touch targets too small | Buttons < 44px | `min-h-11 min-w-11` or `p-3` |
+| Text overflow | Long text breaking layout | `truncate`, `line-clamp-*` |
+| Collapsed sidebars | Sidebar overlapping content | `fixed` on mobile, `sticky` on desktop |
+| Images too large | Images overflowing container | `max-w-full h-auto` |
+| Fixed widths | Elements breaking on small screens | Use `w-full` + `max-w-*` |
+| Z-index stacking | Overlapping modals/drawers | Consistent z-index scale |
+
+### Tailwind Responsive Patterns
+
+```typescript
+// Mobile-first approach (recommended)
+className="w-full sm:w-80 md:w-96 lg:w-[420px]"
+
+// Full screen on mobile, panel on desktop
+className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[420px]"
+
+// Hide on mobile, show on desktop
+className="hidden md:block"
+
+// Show on mobile, hide on desktop
+className="block md:hidden"
+
+// Responsive grid
+className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+
+// Responsive text
+className="text-sm sm:text-base lg:text-lg"
+
+// Responsive padding
+className="p-4 sm:p-6 lg:p-8"
+```
+
+### When to Apply This Pattern
+
+```
+ALWAYS check responsive when:
+✓ Adding new components
+✓ Modifying layout/positioning
+✓ Changing font sizes
+✓ Adding/removing elements
+✓ Changing flexbox/grid
+✓ Adding modals/drawers/panels
+✓ Modifying navigation
+
+CAN skip responsive check when:
+✗ Backend-only changes
+✗ Documentation updates
+✗ Schema changes
+✗ API route changes
+✗ Test file updates
+```
+
+### Implementation Steps
+
+```
+1. IDENTIFY  → What viewports does this change affect?
+2. PREVIEW   → Check design at each breakpoint (DevTools)
+3. CODE      → Use mobile-first Tailwind classes
+4. TEST      → Run Playwright at multiple viewports
+5. ITERATE   → Fix issues found at any viewport
+6. DOCUMENT  → Note any responsive considerations
+```
+
+### Invocation
+
+```markdown
+use mb.md: responsive                → Viewport breakpoints
+use mb.md: responsive:check          → Validation checklist
+use mb.md: responsive:patterns       → Tailwind patterns
+use mb.md: responsive:issues         → Common issues table
+use mb.md: responsive:test           → Multi-viewport test plan
 ```
