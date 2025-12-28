@@ -117,8 +117,9 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   }, [ctoWelcome, selfHealError, walkthroughResult]);
   
   const { data: fetchedMessages, refetch: refetchMessages } = useQuery<Message[]>({
-    queryKey: [`/api/mrblue/conversations/${currentConversationId}/messages`],
-    enabled: !!currentConversationId,
+    queryKey: ['/api/mrblue/conversations', currentConversationId, 'messages'],
+    enabled: !!currentConversationId && currentConversationId > 0,
+    retry: false,
   });
   
   const { data: recentConversations } = useQuery<any[]>({
@@ -270,7 +271,11 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-      await refetchMessages();
+      
+      // Update conversation ID if returned from backend
+      if (data.conversationId && !currentConversationId) {
+        setCurrentConversationId(data.conversationId);
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -290,44 +295,73 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   };
 
   return (
-    <main className="flex flex-col h-full bg-background">
-      <ScrollArea className="flex-1 px-4 py-6">
-        <div className="space-y-6">
+    <main className="flex flex-col h-full bg-gradient-to-b from-background via-background to-muted/30">
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b bg-background/80 backdrop-blur-sm">
+        <ShadcnAvatar className="h-10 w-10 border-2 border-primary/20 shadow-sm">
+          <ShadcnAvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary font-semibold">
+            MB
+          </ShadcnAvatarFallback>
+        </ShadcnAvatar>
+        <div className="flex-1 min-w-0">
+          <h2 className="font-semibold text-sm text-foreground">Mr. Blue</h2>
+          <p className="text-xs text-muted-foreground truncate">Your Tango AI Assistant</p>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-xs text-muted-foreground">Online</span>
+        </div>
+      </div>
+      
+      {/* Messages */}
+      <ScrollArea className="flex-1 px-4 py-4" data-testid="scrollarea-chat-messages">
+        <div className="space-y-4 max-w-2xl mx-auto">
           {messages.map((message) => (
             <div
               key={message.id}
+              data-testid={`message-${message.role}-${message.id}`}
               className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {message.role === 'assistant' && (
-                <ShadcnAvatar className="h-8 w-8 border">
-                  <ShadcnAvatarFallback className="bg-primary/10 text-primary">MB</ShadcnAvatarFallback>
+                <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
+                  <ShadcnAvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary text-xs font-medium">
+                    MB
+                  </ShadcnAvatarFallback>
                 </ShadcnAvatar>
               )}
               
-              <div className={`max-w-[85%] ${message.role === 'user' ? 'order-first' : ''}`}>
-                <div className={`rounded-2xl px-4 py-2 text-sm shadow-sm ${
+              <div className={`max-w-[80%] sm:max-w-[75%] ${message.role === 'user' ? 'order-first' : ''}`}>
+                <div className={`rounded-2xl px-4 py-3 text-sm shadow-sm ${
                   message.role === 'user' 
-                    ? 'bg-primary text-primary-foreground rounded-tr-none' 
-                    : 'bg-muted rounded-tl-none'
+                    ? 'bg-primary text-primary-foreground rounded-br-md' 
+                    : 'bg-card border border-border/50 rounded-bl-md backdrop-blur-sm'
                 }`}>
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
                 </div>
+                <p className={`text-[10px] text-muted-foreground mt-1 ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
+                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
               </div>
 
               {message.role === 'user' && (
-                <ShadcnAvatar className="h-8 w-8 border">
-                  <ShadcnAvatarFallback className="bg-accent/10 text-accent">U</ShadcnAvatarFallback>
+                <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
+                  <ShadcnAvatarFallback className="bg-accent/10 text-accent text-xs font-medium">You</ShadcnAvatarFallback>
                 </ShadcnAvatar>
               )}
             </div>
           ))}
           {isLoading && (
             <div className="flex gap-3 justify-start">
-              <ShadcnAvatar className="h-8 w-8 border">
-                <ShadcnAvatarFallback className="bg-primary/10 text-primary">MB</ShadcnAvatarFallback>
+              <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
+                <ShadcnAvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary text-xs font-medium">
+                  MB
+                </ShadcnAvatarFallback>
               </ShadcnAvatar>
-              <div className="bg-muted rounded-2xl rounded-tl-none px-4 py-3">
-                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <div className="bg-card border border-border/50 rounded-2xl rounded-bl-md px-4 py-3 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <span className="text-xs text-muted-foreground">Thinking...</span>
+                </div>
               </div>
             </div>
           )}
@@ -335,25 +369,31 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         </div>
       </ScrollArea>
 
-      <div className="p-4 border-t bg-background">
-        <div className="relative flex items-end gap-2">
+      {/* Input Area */}
+      <div className="p-4 border-t bg-background/80 backdrop-blur-sm">
+        <div className="relative flex items-end gap-2 max-w-2xl mx-auto">
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
-            placeholder="Ask Mr. Blue anything..."
-            className="min-h-[44px] max-h-32 resize-none rounded-2xl pr-12"
+            placeholder="Ask about events, cities, tango tips..."
+            className="min-h-[48px] max-h-32 resize-none rounded-2xl pr-14 border-muted-foreground/20 focus:border-primary/50 transition-colors"
             disabled={isLoading}
+            data-testid="input-chat-message"
           />
           <Button 
             size="icon" 
-            className="absolute right-1.5 bottom-1.5 h-8 w-8 rounded-full"
+            className="absolute right-2 bottom-2 h-9 w-9 rounded-full shadow-sm"
             disabled={!input.trim() || isLoading}
             onClick={sendMessage}
+            data-testid="button-send-message"
           >
             {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
         </div>
+        <p className="text-center text-[10px] text-muted-foreground mt-2 max-w-2xl mx-auto">
+          Mr. Blue has access to real platform data including events, cities, and community info
+        </p>
       </div>
     </main>
   );

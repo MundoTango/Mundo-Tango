@@ -26,6 +26,14 @@ The backend is developed with Express and TypeScript, leveraging PostgreSQL (Neo
 ### AI Systems
 Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized agents, including self-healing infrastructure, a production-ready validation loop, and a Visual Validation Framework. A Bifrost AI Gateway enables multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization. The AI brain is structured into a modular `/mr-blue-brain/` system encompassing Identity, Cognition (e.g., ReAct Protocol, Chain-of-Thought), Operations, Orchestration (e.g., Mixture of Experts Router), Patterns, and specialized Agents.
 
+**Mr. Blue AI Assistant (Enhanced Dec 2025)**:
+- **Database Integration**: Real-time access to platform data via `MrBlueDataService` (events, cities, users, groups)
+- **AI Engine**: Groq llama-3.3-70b-versatile model with platform context injection
+- **Query Intent Detection**: Automatically routes event/city/help queries with location extraction
+- **Fallback System**: Smart template responses if AI fails
+- **UI**: Glassmorphic design with header, message timestamps, "Thinking..." indicator
+- **Endpoint**: POST /api/mrblue/chat (requires auth)
+
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator (Agent #115), including Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scraped events are stored in a `scraped_events` table and ingested into the main events table. An Admin UI at `/admin/scraping` provides real-time scraper status and a moderation queue.
 

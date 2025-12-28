@@ -17,10 +17,12 @@ import { legalOrchestrator } from '../services/legal/LegalOrchestrator';
 import { ElevenLabsVoiceService } from '../services/premium/elevenlabsVoiceService';
 import { browserAutomationService } from '../services/mrBlue/BrowserAutomationService';
 import { facebookMessengerService } from '../services/mrBlue/FacebookMessengerService';
+import { mrBlueDataService } from '../services/mr-blue-data-service';
 import { db } from '@db';
 import { computerUseTasks, computerUseScreenshots } from '@shared/schema';
 import { nanoid } from 'nanoid';
 import { eq } from 'drizzle-orm';
+import Groq from 'groq-sdk';
 
 const router = Router();
 const elevenlabsService = new ElevenLabsVoiceService();
@@ -558,61 +560,104 @@ Please contact an administrator if you need access to this feature.`,
       });
     }
     
-    // STEP 2: Build context-aware system message
-    let systemMessage = 'You are Mr. Blue, the tango community AI assistant.';
+    // STEP 2: Build context-aware system message with real platform data
+    let platformContext = '';
+    try {
+      platformContext = await mrBlueDataService.buildPlatformContext();
+    } catch (err) {
+      console.log('[Mr. Blue] Could not fetch platform context:', err);
+    }
+    
+    let systemMessage = `You are Mr. Blue, the friendly and knowledgeable AI assistant for Mundo Tango - a global social platform connecting the tango dance community.
+
+PERSONALITY:
+- Warm, welcoming, and passionate about tango
+- Concise but helpful responses (2-4 sentences unless more detail is requested)
+- Uses relevant tango terminology naturally
+- Can help with events, cities, travel tips, connecting with dancers, and platform navigation
+
+${platformContext}`;
     
     if (context) {
       const { currentPage, pageTitle, breadcrumbs, userIntent } = context;
       
-      // Add page context
       if (currentPage) {
-        systemMessage += `\n\nCurrent Page: ${currentPage}`;
+        systemMessage += `\n\nUser's Current Page: ${currentPage}`;
       }
-      
       if (pageTitle) {
         systemMessage += `\nPage Title: ${pageTitle}`;
       }
-      
-      // Add user intent
       if (userIntent) {
-        systemMessage += `\n\nUser Intent: ${userIntent}`;
+        systemMessage += `\nUser Intent: ${userIntent}`;
       }
-      
-      // Add recent user actions
       if (breadcrumbs && Array.isArray(breadcrumbs) && breadcrumbs.length > 0) {
-        systemMessage += '\n\nRecent User Actions:';
-        breadcrumbs.slice(-5).forEach((b: any) => {
-          const target = b.target ? ` (${b.target})` : '';
-          systemMessage += `\n- ${b.action} on ${b.page}${target}`;
+        systemMessage += '\n\nRecent Actions:';
+        breadcrumbs.slice(-3).forEach((b: any) => {
+          systemMessage += `\n- ${b.action} on ${b.page}`;
         });
       }
-      
-      systemMessage += '\n\nProvide context-aware assistance based on what the user is currently doing.';
     }
     
-    // Generate context-aware response based on page and intent
+    systemMessage += `\n\nRespond naturally to the user's question. If they ask about events, cities, or the platform, use the real data above. Be helpful, concise, and engaging.`;
+    
+    // STEP 3: Generate AI response using Groq
     let responseContent = '';
     
-    // ✅ MB.MD P0-11 FIX: Add Feed page context
-    if (context?.currentPage?.includes('/feed')) {
-      responseContent = `I see you're on the Feed page! This is your social hub where you can share tango moments, connect with dancers, create posts, and discover what's happening in the tango community. ${message.toLowerCase().includes('help') ? 'I can help you create posts, find dancers to follow, or explain feed features. What would you like to do?' : 'What would you like to know about the feed?'}`;
-    } else if (context?.currentPage?.includes('/events')) {
-      responseContent = `I see you're viewing events! ${message.toLowerCase().includes('help') ? 'I can help you find milongas, festivals, and workshops. Would you like me to show you upcoming events in your area, or help you search for specific types of tango events?' : 'What would you like to know about the events?'}`;
-    } else if (context?.currentPage?.includes('/profile')) {
-      responseContent = `I notice you're on a profile page. ${message.toLowerCase().includes('help') ? 'I can help you edit your profile, manage your tango preferences, or explain any profile features. What would you like to do?' : 'How can I assist you with profiles?'}`;
-    } else if (context?.currentPage?.includes('/messages')) {
-      responseContent = `I see you're in the messages section. ${message.toLowerCase().includes('help') ? 'I can help you send messages, manage conversations, or explain messaging features. What do you need?' : 'What can I help you with regarding messages?'}`;
-    } else if (context?.currentPage?.includes('/groups')) {
-      responseContent = `You're exploring groups! ${message.toLowerCase().includes('help') ? 'I can help you find tango groups, join communities, or create your own group. What interests you?' : 'What would you like to know about groups?'}`;
-    } else if (context?.currentPage?.includes('/housing')) {
-      responseContent = `I see you're looking at housing options. ${message.toLowerCase().includes('help') ? 'I can help you find accommodation for tango festivals, connect with hosts, or list your own space. What are you looking for?' : 'How can I assist with housing?'}`;
-    } else if (context?.currentPage?.includes('/marketplace')) {
-      responseContent = `You're browsing the marketplace! ${message.toLowerCase().includes('help') ? 'I can help you find tango shoes, clothing, music, or other items. What are you shopping for?' : 'What interests you in the marketplace?'}`;
-    } else if (context?.userIntent === 'exploring the platform') {
-      responseContent = `I notice you're exploring the platform. ${message.toLowerCase().includes('help') ? 'I can give you a tour of the features, explain how things work, or help you find specific content. What would you like to know?' : 'What would you like to discover?'}`;
-    } else {
-      // Default response
-      responseContent = `I'm Mr. Blue, your AI companion for the tango community. ${message.toLowerCase().includes('help') ? 'I can help you navigate the platform, find events, connect with dancers, and much more. What are you interested in?' : `You asked: "${message}". How can I help you today?`}`;
+    try {
+      const groq = new Groq({ 
+        apiKey: process.env.GROQ_API_KEY || '',
+        baseURL: process.env.GROQ_BASE_URL || undefined
+      });
+      
+      const queryIntent = mrBlueDataService.detectQueryIntent(message);
+      
+      // Add relevant data to context based on query intent
+      if (queryIntent.type === 'events' && queryIntent.location) {
+        const cityEvents = await mrBlueDataService.getEventsInCity(queryIntent.location, 5);
+        if (cityEvents.length > 0) {
+          systemMessage += `\n\nEVENTS IN ${queryIntent.location.toUpperCase()}:\n`;
+          cityEvents.forEach(e => {
+            const date = e.startDate ? new Date(e.startDate).toLocaleDateString() : 'TBD';
+            systemMessage += `- ${e.title} (${e.eventType || 'Event'}) on ${date}\n`;
+          });
+        }
+      } else if (queryIntent.type === 'cities') {
+        const cities = await mrBlueDataService.getPopularCities(8);
+        if (cities.length > 0) {
+          systemMessage += `\n\nTOP TANGO CITIES:\n`;
+          cities.forEach(c => {
+            systemMessage += `- ${c.name}, ${c.country || ''}\n`;
+          });
+        }
+      }
+      
+      const aiResponse = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: systemMessage },
+          { role: 'user', content: message }
+        ],
+        max_tokens: 500,
+        temperature: 0.7
+      });
+      
+      responseContent = aiResponse.choices[0]?.message?.content || 
+        "I'm here to help with your tango journey! What would you like to know about events, cities, or connecting with the tango community?";
+      
+      console.log('[Mr. Blue] AI response generated successfully');
+    } catch (aiError: any) {
+      console.error('[Mr. Blue] AI generation error, falling back to context-aware response:', aiError.message);
+      
+      // Fallback to smart template response if AI fails
+      if (context?.currentPage?.includes('/feed')) {
+        responseContent = `Welcome to the Feed! Share your tango moments, connect with dancers, and discover what's happening in the community. What would you like to do?`;
+      } else if (context?.currentPage?.includes('/events')) {
+        responseContent = `Looking for tango events? I can help you find milongas, festivals, and workshops. What type of event are you interested in?`;
+      } else if (context?.currentPage?.includes('/city')) {
+        responseContent = `Exploring a tango city! Each city page shows local events, venues, teachers, and community members. What would you like to know?`;
+      } else {
+        responseContent = `I'm Mr. Blue, your tango community guide! I can help you find events, explore cities, or connect with dancers. How can I assist you today?`;
+      }
     }
     
     const response = {
