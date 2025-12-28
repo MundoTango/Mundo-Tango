@@ -288,6 +288,38 @@ SELECT COUNT(*) FROM users WHERE email NOT LIKE '%@discovered%';
 
 **Execution Dec 28, 2025:** 58 test users deleted, 890 scraped profiles already deactivated, 28 non-scraped users remaining.
 
+### Pattern: Friendship System Cleanup (Dec 2025)
+
+**Problem:** Friendships/requests reference deleted/inactive users, causing UI errors.
+
+**Solution:**
+```sql
+-- 1. Delete orphaned friendships (where either user is inactive)
+DELETE FROM friendships 
+WHERE id IN (
+  SELECT f.id FROM friendships f
+  LEFT JOIN users u1 ON f.user_id = u1.id
+  LEFT JOIN users u2 ON f.friend_id = u2.id
+  WHERE u1.is_active = false OR u2.is_active = false
+);
+
+-- 2. Delete orphaned friend requests
+DELETE FROM friend_requests 
+WHERE id IN (
+  SELECT fr.id FROM friend_requests fr
+  LEFT JOIN users u1 ON fr.sender_id = u1.id
+  LEFT JOIN users u2 ON fr.receiver_id = u2.id
+  WHERE u1.is_active = false OR u2.is_active = false
+);
+```
+
+**Code Fixes Applied:**
+- `getUserFriends()` now filters `users.isActive = true`
+- Added `cancelFriendRequest()` endpoint: `DELETE /api/friends/requests/:id`
+- Schema has `ON DELETE CASCADE` but we soft-delete users, so manual cleanup needed
+
+**Execution Dec 28, 2025:** 6 orphaned friendships deleted, 6 orphaned requests deleted. Final: 2 valid friendships, 2 valid requests.
+
 ---
 
 ## THE MISSION

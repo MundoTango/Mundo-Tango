@@ -308,6 +308,7 @@ export interface IStorage {
   getMutualFriends(userId1: number, userId2: number): Promise<SelectUser[]>;
   getConnectionDegree(userId1: number, userId2: number): Promise<number | null>;
   snoozeFriendRequest(requestId: number, days: number): Promise<void>;
+  cancelFriendRequest(requestId: number, senderId: number): Promise<void>;
   removeFriend(userId: number, friendId: number): Promise<void>;
   getFriendshipStats(userId: number, friendId: number): Promise<{
     daysSinceFriendship: number;
@@ -2149,7 +2150,10 @@ export class DbStorage implements IStorage {
       })
       .from(friendships)
       .leftJoin(users, eq(friendships.friendId, users.id))
-      .where(eq(friendships.userId, userId));
+      .where(and(
+        eq(friendships.userId, userId),
+        eq(users.isActive, true)
+      ));
     
     return friendshipsData;
   }
@@ -2398,6 +2402,23 @@ export class DbStorage implements IStorage {
         snoozedUntil,
       })
       .where(eq(friendRequests.id, requestId));
+  }
+
+  async cancelFriendRequest(requestId: number, senderId: number): Promise<void> {
+    const request = await db.select({ id: friendRequests.id, senderId: friendRequests.senderId })
+      .from(friendRequests)
+      .where(and(
+        eq(friendRequests.id, requestId),
+        eq(friendRequests.senderId, senderId),
+        eq(friendRequests.status, 'pending')
+      ))
+      .limit(1);
+    
+    if (!request[0]) {
+      throw new Error('Request not found or not owned by user');
+    }
+    
+    await db.delete(friendRequests).where(eq(friendRequests.id, requestId));
   }
 
   async getMutualFriends(userId1: number, userId2: number): Promise<any[]> {

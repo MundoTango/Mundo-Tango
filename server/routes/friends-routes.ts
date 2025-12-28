@@ -171,6 +171,20 @@ export function createFriendsRoutes(storage: IStorage) {
     }
   });
 
+  router.delete("/friends/requests/:requestId", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const requestId = parseInt(req.params.requestId);
+      const senderId = req.userId!;
+      await storage.cancelFriendRequest(requestId, senderId);
+      res.json({ success: true });
+    } catch (error: any) {
+      if (error.message === 'Request not found or not owned by user') {
+        return res.status(404).json({ error: error.message });
+      }
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   router.delete("/friends/:friendId", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.userId!;
