@@ -133,6 +133,7 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
   }, []);
   
   // CTO Welcome: Check for pending welcome on mount (survives navigation)
+  // Opens walkthrough panel DIRECTLY instead of Mr. Blue chat asking to start
   useEffect(() => {
     const checkPendingCTOWelcome = () => {
       const pendingWelcome = localStorage.getItem('mrblue:pending-cto-welcome');
@@ -141,10 +142,11 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
           const data = JSON.parse(pendingWelcome);
           // Only use if less than 30 seconds old (avoid stale data)
           if (Date.now() - data.timestamp < 30000) {
-            console.log('[MrBlue] Processing pending CTO welcome:', data.userEmail, data.userRole);
+            console.log('[MrBlue] Processing pending CTO welcome - opening walkthrough directly:', data.userEmail, data.userRole);
             setCTOWelcome({ userName: data.userName, userEmail: data.userEmail, userRole: data.userRole });
             setCurrentExpression('excited');
-            setIsChatOpen(true);
+            // Open walkthrough panel DIRECTLY instead of chat
+            setIsWalkthroughOpen(true);
           }
         } catch (e) {
           console.error('[MrBlue] Failed to parse pending CTO welcome:', e);
@@ -160,15 +162,17 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
   }, []);
   
   // CTO Welcome: Also listen for direct events (for in-page actions)
+  // Opens walkthrough panel DIRECTLY instead of Mr. Blue chat asking to start
   useEffect(() => {
     const handleCTOLoginEvent = (event: CustomEvent) => {
       const { userName, userEmail, userRole } = event.detail;
-      console.log('[MrBlue] CTO login event received:', userEmail, userRole);
+      console.log('[MrBlue] CTO login event received - opening walkthrough directly:', userEmail, userRole);
       
-      // Set CTO welcome context and open chat
+      // Set CTO welcome context and open walkthrough panel DIRECTLY
       setCTOWelcome({ userName, userEmail, userRole });
       setCurrentExpression('excited');
-      setIsChatOpen(true);
+      // Open walkthrough panel DIRECTLY instead of chat
+      setIsWalkthroughOpen(true);
     };
     
     window.addEventListener('mrblue:cto-login', handleCTOLoginEvent as EventListener);

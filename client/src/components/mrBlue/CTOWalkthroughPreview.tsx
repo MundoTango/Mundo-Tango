@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { X, Play, RotateCcw, CheckCircle2, XCircle, Loader2, Monitor, AlertTriangle } from 'lucide-react';
+import { X, Play, RotateCcw, CheckCircle2, XCircle, Loader2, Monitor, AlertTriangle, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMrBlue } from '@/contexts/MrBlueContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface WalkthroughStep {
   id: string;
@@ -33,17 +34,20 @@ const WALKTHROUGH_STEPS: Omit<WalkthroughStep, 'status'>[] = [
 ];
 
 export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthroughPreviewProps) {
-  const { openChat, setSelfHealError, reportWalkthroughComplete } = useMrBlue();
+  const { setSelfHealError, reportWalkthroughComplete } = useMrBlue();
+  const { toast } = useToast();
   const [steps, setSteps] = useState<WalkthroughStep[]>(
     WALKTHROUGH_STEPS.map(s => ({ ...s, status: 'pending' }))
   );
   const [isRunning, setIsRunning] = useState(false);
+  const [isApplyingFix, setIsApplyingFix] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [screenshot, setScreenshot] = useState<string | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [errorDetails, setErrorDetails] = useState<any>(null);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
+  const [fixStatus, setFixStatus] = useState<string | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -76,10 +80,12 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
     cleanupSSE();
     
     setIsRunning(true);
+    setIsApplyingFix(false);
     setCurrentStep(0);
     setProgress(0);
     setElapsedTime(0);
     setErrorDetails(null);
+    setFixStatus(null);
     setSteps(WALKTHROUGH_STEPS.map(s => ({ ...s, status: 'pending' })));
 
     try {
@@ -91,6 +97,8 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
 
           if (data.type === 'step_start') {
             setCurrentStep(data.stepIndex);
+            // Update progress on step_start (show incremental progress)
+            setProgress((data.stepIndex / WALKTHROUGH_STEPS.length) * 100);
             setSteps(prev => prev.map((s, i) => 
               i === data.stepIndex ? { ...s, status: 'running' } : s
             ));
@@ -105,6 +113,7 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
             ));
             setErrorDetails(data);
             setIsRunning(false);
+            setFixStatus(null); // Clear any previous fix status
             
             if (onError) {
               onError({
@@ -114,12 +123,13 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
               });
             }
             
+            // Store error context but DON'T open chat - keep in walkthrough panel
             setSelfHealError({
               errorMessage: data.error,
               page: '/onboarding/waitlist',
               mbmdAnalysis: data.mbmdAnalysis
             });
-            openChat();
+            // Removed: openChat() - errors stay in walkthrough panel
             
           } else if (data.type === 'screenshot') {
             setScreenshot(data.image);
@@ -168,7 +178,7 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
       console.error('Failed to start walkthrough:', error);
       setIsRunning(false);
     }
-  }, [cleanupSSE, onError, openChat, setSelfHealError]);
+  }, [cleanupSSE, onError, setSelfHealError]);
 
   useEffect(() => {
     if (isOpen && !hasAutoStarted && !isRunning) {
@@ -198,8 +208,65 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
     setElapsedTime(0);
     setErrorDetails(null);
     setScreenshot(null);
+    setFixStatus(null);
     setSteps(WALKTHROUGH_STEPS.map(s => ({ ...s, status: 'pending' })));
   }, [cleanupSSE]);
+
+  // Apply fix automatically and re-run the test
+  const applyFixAndRerun = useCallback(async () => {
+    if (!errorDetails?.mbmdAnalysis) {
+      startWalkthrough();
+      return;
+    }
+
+    setIsApplyingFix(true);
+    setFixStatus('Applying fix...');
+    
+    try {
+      const response = await fetch('/api/cto/walkthrough/apply-fix', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pattern: errorDetails.mbmdAnalysis.mbmdPattern,
+          error: errorDetails.error,
+          rootCause: errorDetails.mbmdAnalysis.rootCause,
+          recommendedFix: errorDetails.mbmdAnalysis.recommendedFix
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setFixStatus(`Fix applied: ${data.message}`);
+        toast({
+          title: "Fix Applied",
+          description: data.message || "Attempting to fix the issue...",
+        });
+        
+        // Wait a moment for server changes to take effect, then re-run
+        setTimeout(() => {
+          setFixStatus('Re-running test...');
+          startWalkthrough();
+        }, 1500);
+      } else {
+        setFixStatus(`Fix failed: ${data.error || 'Unknown error'}`);
+        toast({
+          title: "Fix Failed",
+          description: data.error || "Could not apply fix automatically",
+          variant: "destructive"
+        });
+        setIsApplyingFix(false);
+      }
+    } catch (error: any) {
+      setFixStatus(`Fix error: ${error.message}`);
+      toast({
+        title: "Fix Error",
+        description: error.message || "Network error while applying fix",
+        variant: "destructive"
+      });
+      setIsApplyingFix(false);
+    }
+  }, [errorDetails, startWalkthrough, toast]);
 
   const handleClose = useCallback(() => {
     cleanupSSE();
@@ -294,15 +361,51 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
                 </div>
               </ScrollArea>
 
+              {/* Fix status display */}
+              {fixStatus && (
+                <div className="mt-3 p-2 rounded bg-muted/50 border">
+                  <div className="flex items-center gap-2 text-sm">
+                    {isApplyingFix && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
+                    {!isApplyingFix && fixStatus.includes('applied') && <CheckCircle2 className="w-4 h-4 text-green-500" />}
+                    {!isApplyingFix && fixStatus.includes('failed') && <XCircle className="w-4 h-4 text-destructive" />}
+                    <span className="text-muted-foreground">{fixStatus}</span>
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center gap-2 mt-4 pt-4 border-t">
-                {!isRunning ? (
+                {!isRunning && !isApplyingFix ? (
                   <Button 
-                    onClick={startWalkthrough} 
+                    onClick={errorDetails?.mbmdAnalysis ? applyFixAndRerun : startWalkthrough} 
                     className="flex-1"
                     data-testid="button-start-walkthrough"
                   >
-                    <Play className="w-4 h-4 mr-2" />
-                    {errorDetails?.mbmdAnalysis ? 'Continue' : progress > 0 ? 'Restart Walkthrough' : 'Start Walkthrough'}
+                    {errorDetails?.mbmdAnalysis ? (
+                      <>
+                        <Wrench className="w-4 h-4 mr-2" />
+                        Apply Fix & Re-run
+                      </>
+                    ) : progress > 0 ? (
+                      <>
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Restart Walkthrough
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-4 h-4 mr-2" />
+                        Start Walkthrough
+                      </>
+                    )}
+                  </Button>
+                ) : isApplyingFix ? (
+                  <Button
+                    variant="outline"
+                    disabled
+                    className="flex-1"
+                    data-testid="button-applying-fix"
+                  >
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Applying Fix...
                   </Button>
                 ) : (
                   <Button
