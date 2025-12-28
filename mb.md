@@ -1029,3 +1029,165 @@ use mb.md: responsive:patterns       → Tailwind patterns
 use mb.md: responsive:issues         → Common issues table
 use mb.md: responsive:test           → Multi-viewport test plan
 ```
+
+---
+
+## 👥 FRIENDSHIP/CONNECTION SYSTEM ARCHITECTURE
+
+**Overview:** Complete social connection system with closeness scoring, multi-degree networking, and privacy controls.
+
+### Database Tables
+
+| Table | Purpose |
+|-------|---------|
+| `friend_requests` | Pending/declined friend requests |
+| `friendships` | Accepted connections with closeness scores |
+| `friendship_activities` | Interaction tracking (affects closeness) |
+| `friendship_media` | Photos/videos shared in friendships |
+| `friend_invitations` | Off-platform invites (email/Facebook) |
+| `friend_closeness` | Detailed closeness analytics per friend |
+
+### Friend Request Flow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    FRIEND REQUEST FLOW                       │
+├─────────────────────────────────────────────────────────────┤
+│  1. SEND REQUEST                                            │
+│     └─ POST /api/friends/request/:userId                    │
+│     └─ Creates friend_request (status: 'pending')           │
+│     └─ Creates notification (type: 'friend_request')        │
+│                                                             │
+│  2. RECEIVE REQUEST                                         │
+│     └─ GET /api/friends/requests/received                   │
+│     └─ Notification bell shows count                        │
+│     └─ /friend-requests page lists all pending              │
+│                                                             │
+│  3. REVIEW & RESPOND                                        │
+│     └─ FriendRequestReviewModal shows questionnaire         │
+│     └─ Accept: POST /api/friends/requests/:id/accept        │
+│     └─ Reject: POST /api/friends/requests/:id/reject        │
+│     └─ Snooze: POST /api/friends/requests/:id/snooze        │
+│                                                             │
+│  4. FRIENDSHIP CREATED                                      │
+│     └─ Creates row in friendships table                     │
+│     └─ closenessScore starts at 75                          │
+│     └─ connectionDegree = 1 (direct friend)                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Closeness System
+
+| Score Range | Tier | Visibility Level |
+|-------------|------|------------------|
+| 90-100 | Best Friend | `close_friend` |
+| 71-89 | Close Friend | `close_friend` |
+| 50-70 | Good Friend | `friends_1st` |
+| 25-49 | Acquaintance | `friends_2nd` |
+| 0-24 | Distant | `friends_3rd` |
+
+### Connection Degrees
+
+| Degree | Relationship | Can See |
+|--------|--------------|---------|
+| 1 | Direct friend | `friends_1st` content |
+| 2 | Friend of friend | `friends_2nd` content |
+| 3 | Extended network | `friends_3rd` content |
+
+### API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/friends` | GET | List user's friends |
+| `/api/friends/requests` | GET | All pending requests |
+| `/api/friends/requests/received` | GET | Received requests |
+| `/api/friends/requests/sent` | GET | Sent requests |
+| `/api/friends/request/:userId` | POST | Send friend request |
+| `/api/friends/requests/:id/accept` | POST | Accept request |
+| `/api/friends/requests/:id/reject` | POST | Reject request |
+| `/api/friends/requests/:id/snooze` | POST | Snooze for N days |
+| `/api/friends/status/:userId` | GET | Check friendship status |
+| `/api/friends/mutual/:userId` | GET | Get mutual friends |
+| `/api/friends/suggestions` | GET | Friend suggestions |
+| `/api/friends/:friendId` | DELETE | Remove friend |
+
+### Frontend Components
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `FriendRequestsPage` | `/friend-requests` | List all pending requests |
+| `FriendsListPage` | `/friends` | List all friends |
+| `FriendDetailPage` | `/friends/:id` | View friend details |
+| `FriendshipPage` | `/friendship` | Friendship analytics |
+| `FriendRequestModal` | Component | Send request with message |
+| `FriendRequestReviewModal` | Component | Review & respond to request |
+| `FriendshipQuestionnaire` | Component | Closeness questionnaire |
+
+### Friend Request Schema Fields
+
+```typescript
+{
+  id: serial,
+  senderId: integer,           // Who sent
+  receiverId: integer,         // Who receives
+  status: 'pending' | 'accepted' | 'declined' | 'blocked',
+  senderMessage: text,         // Personal message
+  receiverMessage: text,       // Response message
+  senderPrivateNote: text,     // Private note (sender only)
+  receiverPrivateNote: text,   // Private note (receiver only)
+  didWeDance: boolean,         // Did they dance together?
+  danceLocation: varchar,      // Where they danced
+  danceStory: text,            // Story about the dance
+  danceEventId: integer,       // Event where they met
+  mediaUrls: text[],           // Photos/videos
+  snoozedUntil: timestamp,     // Snooze until date
+  respondedAt: timestamp,      // When responded
+  createdAt: timestamp,
+}
+```
+
+### Friendship Schema Fields
+
+```typescript
+{
+  id: serial,
+  userId: integer,             // User A
+  friendId: integer,           // User B
+  status: 'active' | 'muted' | 'blocked',
+  closenessScore: integer,     // 0-100 (starts at 75)
+  connectionDegree: integer,   // Always 1 for direct friends
+  createdAt: timestamp,
+}
+```
+
+### Visibility Privacy Levels
+
+```typescript
+type ClosenessVisibility = 
+  | 'public'        // Anyone can see
+  | 'close_friend'  // closenessScore 71+
+  | 'friends_1st'   // Direct friends only
+  | 'friends_2nd'   // Up to 2nd degree
+  | 'friends_3rd';  // Up to 3rd degree
+```
+
+### Where Visibility is Applied
+
+| Content Type | Field | Default |
+|--------------|-------|---------|
+| Events | `attendeeCloseness` | 'all' |
+| Groups | `membershipCloseness` | 'all' |
+| Posts | `audienceCloseness` | 'all' |
+| Profile sections | Various | Per user setting |
+
+### Invocation
+
+```markdown
+use mb.md: friends                    → Full friendship architecture
+use mb.md: friends:request            → Request flow
+use mb.md: friends:closeness          → Closeness scoring
+use mb.md: friends:api                → API endpoints
+use mb.md: friends:components         → UI components
+use mb.md: friends:schema             → Database schema
+use mb.md: friends:visibility         → Privacy levels
+```
