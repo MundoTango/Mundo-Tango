@@ -4,6 +4,113 @@
 
 ---
 
+## 🏢 AGENT ORGANIZATIONAL HIERARCHY
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    MUNDO TANGO AGENT ORG CHART                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌───────────────────────────────────────────────────────────────────┐ │
+│  │                         EXECUTIVE LAYER                           │ │
+│  ├───────────────────────────────────────────────────────────────────┤ │
+│  │                                                                   │ │
+│  │   ┌─────────────────┐           ┌─────────────────┐              │ │
+│  │   │    CTO AGENT    │           │    CEO AGENT    │              │ │
+│  │   │   (Technical)   │           │   (Strategic)   │              │ │
+│  │   │                 │           │                 │              │ │
+│  │   │ • Architecture  │           │ • Vision        │              │ │
+│  │   │ • Code Quality  │           │ • Priorities    │              │ │
+│  │   │ • Tech Debt     │           │ • User Focus    │              │ │
+│  │   │ • Security      │           │ • Growth        │              │ │
+│  │   └────────┬────────┘           └────────┬────────┘              │ │
+│  │            │                             │                        │ │
+│  └────────────┼─────────────────────────────┼────────────────────────┘ │
+│               │                             │                          │
+│               └──────────────┬──────────────┘                          │
+│                              ▼                                          │
+│  ┌───────────────────────────────────────────────────────────────────┐ │
+│  │                      ORCHESTRATION LAYER                          │ │
+│  ├───────────────────────────────────────────────────────────────────┤ │
+│  │                                                                   │ │
+│  │                    ┌─────────────────┐                            │ │
+│  │                    │    MR. BLUE     │                            │ │
+│  │                    │  (Coordinator)  │                            │ │
+│  │                    │                 │                            │ │
+│  │                    │ • Task Routing  │                            │ │
+│  │                    │ • Agent Select  │                            │ │
+│  │                    │ • A2A Comms     │                            │ │
+│  │                    │ • User-Facing   │                            │ │
+│  │                    └────────┬────────┘                            │ │
+│  │                             │                                     │ │
+│  └─────────────────────────────┼─────────────────────────────────────┘ │
+│                                │                                        │
+│    ┌───────────────────────────┼───────────────────────────┐           │
+│    │           │               │               │           │           │
+│    ▼           ▼               ▼               ▼           ▼           │
+│  ┌───────────────────────────────────────────────────────────────────┐ │
+│  │                       MANAGER LAYER                               │ │
+│  ├───────────────────────────────────────────────────────────────────┤ │
+│  │                                                                   │ │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐ │ │
+│  │  │   Page   │ │LifeCEO   │ │SelfHeal  │ │ Scraping │ │Business │ │ │
+│  │  │ Manager  │ │ Manager  │ │ Manager  │ │ Manager  │ │ Manager │ │ │
+│  │  │          │ │          │ │          │ │          │ │         │ │ │
+│  │  │ 10 pages │ │16 domains│ │10 services│ │10 scrapers│ │32 agents│ │ │
+│  │  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬────┘ │ │
+│  │       │            │            │            │            │      │ │
+│  └───────┼────────────┼────────────┼────────────┼────────────┼──────┘ │
+│          │            │            │            │            │        │
+│          ▼            ▼            ▼            ▼            ▼        │
+│  ┌───────────────────────────────────────────────────────────────────┐ │
+│  │                   INDIVIDUAL CONTRIBUTOR (IC) LAYER               │ │
+│  ├───────────────────────────────────────────────────────────────────┤ │
+│  │                                                                   │ │
+│  │  Page ICs:        LifeCEO ICs:      SelfHeal ICs:                │ │
+│  │  • LandingPage    • CareerCoach     • PageAuditService           │ │
+│  │  • FeedPage       • HealthAdvisor   • SelfHealingService         │ │
+│  │  • ProfilePage    • FinancePlanner  • ErrorAnalysisAgent         │ │
+│  │  • EventsPage     • RelationshipCo  • UXValidationService        │ │
+│  │  • HousingPage    • LearningTutor   • PerformanceMonitor         │ │
+│  │  • GroupsPage     • ...             • ...                        │ │
+│  │  • MessagesPage                                                   │ │
+│  │  • AdminPage      Scraping ICs:     Business ICs:                │ │
+│  │  • FinancialPage  • MasterOrch      • DynamicPricing             │ │
+│  │  • MrBluePage     • HoyMilonga      • PaymentProcessor           │ │
+│  │                   • TangoCat        • ContentGenerator           │ │
+│  │                   • Unified         • CampaignOptimizer          │ │
+│  │                   • ...             • ...                        │ │
+│  │                                                                   │ │
+│  └───────────────────────────────────────────────────────────────────┘ │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Hierarchy Levels Explained
+
+| Level | Role | Responsibility | Count |
+|-------|------|----------------|-------|
+| **Executive** | CTO + CEO Agents | Strategic vision, architecture decisions, priorities | 2 |
+| **Orchestration** | Mr. Blue | Task routing, agent selection, user communication | 1 |
+| **Manager** | Domain Managers | Coordinate IC agents within their domain | 5 |
+| **IC** | Individual Contributors | Execute specific tasks (pages, features, scrapers) | 140+ |
+
+### Executive Agent Profiles
+
+**CTO Agent**
+- Reports to: Human developers
+- Responsibilities: Technical architecture, code quality, security, performance
+- Decisions: Technology stack, refactoring priorities, technical debt
+- Invoke: `use mb.md: agents:cto`
+
+**CEO Agent**
+- Reports to: Human stakeholders
+- Responsibilities: Product vision, user priorities, growth strategy, resource allocation
+- Decisions: Feature prioritization, user experience direction, business goals
+- Invoke: `use mb.md: agents:ceo`
+
+---
+
 ## 🤖 140+ AGENTS ACROSS 7 DOMAINS
 
 ```

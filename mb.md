@@ -83,7 +83,9 @@ use mb.md: legacy                → mb-legacy.md (complete v9.10)
 7. DOCUMENT    → Update docs and memory
 8. REVIEW      → Self-critique (Reflexion)
 9. ITERATE     → Fix issues found
-10. COMPLETE   → Mark done, report to user
+10. FINAL REVIEW → Review entire page (s) as a the experts of our agents (ex)
+11. LEARN      → What will the mb.md brain learn. 
+12. COMPLETE   → Mark done, report to user
 ```
 
 ---
