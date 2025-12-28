@@ -302,9 +302,25 @@ export default function CreateListingPage() {
           </div>
         </div>
 
-        {/* Step Progress Indicator */}
-        <div className="mb-8 overflow-x-auto pb-2">
-          <div className="flex items-center justify-between min-w-[600px]">
+        {/* Step Progress Indicator - Mobile: dots only, Desktop: full stepper */}
+        <div className="mb-8">
+          {/* Mobile: Compact dot indicator */}
+          <div className="flex sm:hidden items-center justify-center gap-2 py-2">
+            {STEPS.map((step) => (
+              <div
+                key={step.id}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  displayStep >= step.id ? "bg-primary" : "bg-muted"
+                } ${displayStep === step.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
+              />
+            ))}
+            <span className="ml-2 text-sm text-muted-foreground">
+              Step {displayStep} of {STEPS.length}
+            </span>
+          </div>
+          
+          {/* Desktop: Full stepper */}
+          <div className="hidden sm:flex items-center justify-between">
             {STEPS.map((step, index) => (
               <div key={step.id} className="flex items-center flex-1">
                 <div className="flex flex-col items-center">

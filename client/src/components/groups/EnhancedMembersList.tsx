@@ -262,7 +262,7 @@ export function EnhancedMembersList({ groupId, canModerate = false, currentUserI
       <Card className="overflow-hidden">
         <CardHeader className="border-b py-3">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex-1 min-w-[200px] relative">
+            <div className="flex-1 min-w-0 sm:min-w-[200px] relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search members..."
@@ -273,7 +273,7 @@ export function EnhancedMembersList({ groupId, canModerate = false, currentUserI
               />
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-[140px]" data-testid="select-role-filter">
+              <SelectTrigger className="w-full sm:w-[140px]" data-testid="select-role-filter">
                 <SelectValue placeholder="Role" />
               </SelectTrigger>
               <SelectContent>
@@ -285,7 +285,7 @@ export function EnhancedMembersList({ groupId, canModerate = false, currentUserI
               </SelectContent>
             </Select>
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[140px]" data-testid="select-sort">
+              <SelectTrigger className="w-full sm:w-[140px]" data-testid="select-sort">
                 <SelectValue placeholder="Sort" />
               </SelectTrigger>
               <SelectContent>

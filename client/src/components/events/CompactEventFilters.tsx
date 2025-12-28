@@ -101,7 +101,7 @@ export function CompactEventFilters({
     <div className="space-y-4 p-4 bg-muted/30 rounded-xl border" data-testid="compact-event-filters">
       {/* Primary Row - Search + Type */}
       <div className="flex flex-wrap gap-3 items-center">
-        <div className="flex-1 min-w-[200px] relative">
+        <div className="flex-1 min-w-0 sm:min-w-[200px] relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search events..."
@@ -116,7 +116,7 @@ export function CompactEventFilters({
           value={filters.type || "all"}
           onValueChange={(value) => updateFilters({ type: value === "all" ? undefined : value })}
         >
-          <SelectTrigger className="w-[160px]" data-testid="select-event-type">
+          <SelectTrigger className="w-full sm:w-[160px]" data-testid="select-event-type">
             <SelectValue placeholder="Event Type" />
           </SelectTrigger>
           <SelectContent>
@@ -193,7 +193,7 @@ export function CompactEventFilters({
               value={filters.danceStyle || "all"}
               onValueChange={(value) => updateFilters({ danceStyle: value === "all" ? undefined : value })}
             >
-              <SelectTrigger className="w-[140px]" data-testid="select-dance-style">
+              <SelectTrigger className="w-full sm:w-[140px]" data-testid="select-dance-style">
                 <Music className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Style" />
               </SelectTrigger>
@@ -211,7 +211,7 @@ export function CompactEventFilters({
               value={filters.priceMax?.toString() || "any"}
               onValueChange={(value) => updateFilters({ priceMax: value === "any" ? undefined : parseInt(value) })}
             >
-              <SelectTrigger className="w-[140px]" data-testid="select-price">
+              <SelectTrigger className="w-full sm:w-[140px]" data-testid="select-price">
                 <DollarSign className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Price" />
               </SelectTrigger>

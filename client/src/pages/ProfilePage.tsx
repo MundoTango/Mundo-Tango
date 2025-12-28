@@ -500,7 +500,7 @@ export default function ProfilePage() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="absolute left-6 top-20 z-20"
         >
-          <Card className="p-6 w-[500px] bg-background/95 backdrop-blur-md border-white/20">
+          <Card className="p-4 sm:p-6 w-full max-w-[500px] bg-background/95 backdrop-blur-md border-white/20">
           {/* Profile Photo + Content Layout */}
           <div className="flex gap-6">
             {/* Left: Profile Photo Circle with Edit Button */}

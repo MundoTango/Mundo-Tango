@@ -228,7 +228,7 @@ export function UnifiedFilterBar<T extends BaseFilterValues>({
   return (
     <div className={cn("space-y-3", className)} data-testid="unified-filter-bar">
       <div className="flex flex-wrap items-center gap-2">
-        <div className="relative flex-1 min-w-[200px] max-w-md">
+        <div className="relative flex-1 min-w-0 sm:min-w-[200px] max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder={getPlaceholder()}
@@ -241,7 +241,7 @@ export function UnifiedFilterBar<T extends BaseFilterValues>({
 
         {getTypeOptions().length > 0 && (
           <Select value={getTypeValue() || "all"} onValueChange={setTypeValue}>
-            <SelectTrigger className="w-[150px]" data-testid="select-filter-type">
+            <SelectTrigger className="w-full sm:w-[150px]" data-testid="select-filter-type">
               <SelectValue placeholder="All Types" />
             </SelectTrigger>
             <SelectContent>
