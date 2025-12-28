@@ -2287,7 +2287,14 @@ export class DbStorage implements IStorage {
     const friendIds = myFriends.map(f => f.friendId);
     
     if (friendIds.length === 0) {
-      const rawUsers = await db.select().from(users).where(ne(users.id, userId)).limit(10);
+      // Only show active, non-suspended, non-discovered users
+      const rawUsers = await db.select().from(users).where(
+        and(
+          ne(users.id, userId),
+          eq(users.isActive, true),
+          eq(users.suspended, false)
+        )
+      ).limit(10);
       
       const suggestions = rawUsers.map((u: any) => ({
         id: u.id,
@@ -2301,12 +2308,15 @@ export class DbStorage implements IStorage {
       return suggestions;
     }
     
+    // Only show active, non-suspended, non-discovered users
     const rawSuggestions = await db.select()
       .from(users)
       .where(
         and(
           notInArray(users.id, friendIds),
-          ne(users.id, userId)
+          ne(users.id, userId),
+          eq(users.isActive, true),
+          eq(users.suspended, false)
         )
       )
       .limit(10);
@@ -4408,10 +4418,14 @@ export class DbStorage implements IStorage {
     })
     .from(users)
     .where(
-      or(
-        ilike(users.username, lowerQuery),
-        ilike(users.name, lowerQuery),
-        ilike(users.email, lowerQuery)
+      and(
+        eq(users.isActive, true),
+        eq(users.suspended, false),
+        or(
+          ilike(users.username, lowerQuery),
+          ilike(users.name, lowerQuery),
+          ilike(users.email, lowerQuery)
+        )
       )
     )
     .limit(limit);
