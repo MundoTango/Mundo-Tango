@@ -143,90 +143,71 @@ function detectComputerUseIntent(message: string): {
 /**
  * MB.MD Pattern 67: Feedback Intent Detection
  * Detects when user is reporting a bug, feature request, or support issue
+ * Uses aggregated scoring - multiple matches BOOST confidence to handle mixed phrases
  */
 function detectFeedbackIntent(message: string): {
   isFeedback: boolean;
   type: 'bug' | 'feature' | 'support' | 'complaint' | null;
   confidence: number;
 } {
-  const msg = message.toLowerCase();
+  const scores: { type: 'bug' | 'feature' | 'support' | 'complaint'; confidence: number }[] = [];
   
-  // Bug report patterns
+  // Bug patterns - each match adds to score (aggregation, not max)
   const bugPatterns = [
-    /\bbug\b/i,
-    /broken/i,
-    /doesn'?t work/i,
-    /not working/i,
-    /error/i,
-    /crash/i,
-    /issue/i,
-    /problem/i,
-    /wrong/i,
-    /failed/i,
-    /can'?t.*do/i,
-    /unable to/i,
+    /\bbug\b/i, /broken/i, /doesn'?t work/i, /not working/i, /error/i,
+    /crash/i, /issue/i, /problem/i, /wrong/i, /failed/i, /can'?t.*do/i, /unable to/i
   ];
-  
-  for (const pattern of bugPatterns) {
-    if (pattern.test(message)) {
-      return { isFeedback: true, type: 'bug', confidence: 0.8 };
-    }
+  let bugMatches = bugPatterns.filter(p => p.test(message)).length;
+  if (bugMatches > 0) {
+    // Base 0.7 + 0.1 per match, capped at 0.95
+    scores.push({ type: 'bug', confidence: Math.min(0.95, 0.7 + bugMatches * 0.1) });
   }
   
-  // Feature request patterns
+  // Feature patterns
   const featurePatterns = [
-    /feature request/i,
-    /would be nice/i,
-    /could you add/i,
-    /can you add/i,
-    /i wish/i,
-    /please add/i,
-    /suggestion/i,
-    /idea for/i,
-    /it would help/i,
+    /feature request/i, /would be nice/i, /could you add/i, /can you add/i,
+    /i wish/i, /please add/i, /suggestion/i, /idea for/i, /it would help/i,
+    /new feature/i, /want to see/i
   ];
-  
-  for (const pattern of featurePatterns) {
-    if (pattern.test(message)) {
-      return { isFeedback: true, type: 'feature', confidence: 0.85 };
-    }
+  let featureMatches = featurePatterns.filter(p => p.test(message)).length;
+  if (featureMatches > 0) {
+    scores.push({ type: 'feature', confidence: Math.min(0.95, 0.75 + featureMatches * 0.1) });
   }
   
   // Support patterns
   const supportPatterns = [
-    /help me/i,
-    /need help/i,
-    /how do i/i,
-    /how can i/i,
-    /can you help/i,
-    /stuck/i,
-    /confused/i,
+    /help me/i, /need help/i, /how do i/i, /how can i/i, /can you help/i,
+    /stuck/i, /confused/i, /where is/i, /can'?t find/i, /show me how/i
   ];
-  
-  for (const pattern of supportPatterns) {
-    if (pattern.test(message)) {
-      return { isFeedback: true, type: 'support', confidence: 0.7 };
-    }
+  let supportMatches = supportPatterns.filter(p => p.test(message)).length;
+  if (supportMatches > 0) {
+    scores.push({ type: 'support', confidence: Math.min(0.95, 0.7 + supportMatches * 0.1) });
   }
   
   // Complaint patterns
   const complaintPatterns = [
-    /frustrated/i,
-    /annoying/i,
-    /terrible/i,
-    /awful/i,
-    /hate/i,
-    /disappointed/i,
-    /unacceptable/i,
+    /frustrated/i, /annoying/i, /terrible/i, /awful/i, /hate/i,
+    /disappointed/i, /unacceptable/i, /worst/i, /useless/i
   ];
-  
-  for (const pattern of complaintPatterns) {
-    if (pattern.test(message)) {
-      return { isFeedback: true, type: 'complaint', confidence: 0.75 };
-    }
+  let complaintMatches = complaintPatterns.filter(p => p.test(message)).length;
+  if (complaintMatches > 0) {
+    scores.push({ type: 'complaint', confidence: Math.min(0.95, 0.75 + complaintMatches * 0.1) });
   }
   
-  return { isFeedback: false, type: null, confidence: 0 };
+  // Return highest confidence match; if multiple categories, add bonus for blended
+  if (scores.length === 0) {
+    return { isFeedback: false, type: null, confidence: 0 };
+  }
+  
+  // If multiple categories match, boost highest by 0.05 (clear feedback intent)
+  const hasMultipleCategories = scores.length >= 2;
+  scores.sort((a, b) => b.confidence - a.confidence);
+  const best = scores[0];
+  const finalConfidence = hasMultipleCategories 
+    ? Math.min(0.95, best.confidence + 0.05) 
+    : best.confidence;
+  
+  return { isFeedback: true, type: best.type, confidence: finalConfidence };
 }
 
 /**
@@ -337,7 +318,7 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
     
     // MB.MD Pattern 67: Check for feedback intent and save to queue
     const feedbackIntent = detectFeedbackIntent(message);
-    if (feedbackIntent.isFeedback && feedbackIntent.type && feedbackIntent.confidence >= 0.7) {
+    if (feedbackIntent.isFeedback && feedbackIntent.type && feedbackIntent.confidence >= 0.6) {
       try {
         // Create feedback record
         const feedbackId = await storage.createUserFeedback({
