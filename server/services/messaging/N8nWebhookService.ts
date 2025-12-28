@@ -176,7 +176,10 @@ Respond naturally and helpfully:`,
   }
 
   verifyWebhookSignature(signature: string, payload: string): boolean {
-    if (!this.webhookSecret) return true;
+    if (!this.webhookSecret) {
+      console.error('[N8n] SECURITY ERROR: N8N_WEBHOOK_SECRET not configured - rejecting request');
+      return false; // ✅ Reject requests without secret
+    }
     
     const crypto = require('crypto');
     const expectedSignature = crypto
