@@ -113,11 +113,38 @@ export function MrBlueProvider({ children }: { children: ReactNode }) {
     };
   }, []);
   
-  // CTO Welcome: Listen for god-level login events
+  // CTO Welcome: Check for pending welcome on mount (survives navigation)
+  useEffect(() => {
+    const checkPendingCTOWelcome = () => {
+      const pendingWelcome = localStorage.getItem('mrblue:pending-cto-welcome');
+      if (pendingWelcome) {
+        try {
+          const data = JSON.parse(pendingWelcome);
+          // Only use if less than 30 seconds old (avoid stale data)
+          if (Date.now() - data.timestamp < 30000) {
+            console.log('[MrBlue] Processing pending CTO welcome:', data.userEmail, data.userRole);
+            setCTOWelcome({ userName: data.userName, userEmail: data.userEmail, userRole: data.userRole });
+            setCurrentExpression('excited');
+            setIsChatOpen(true);
+          }
+        } catch (e) {
+          console.error('[MrBlue] Failed to parse pending CTO welcome:', e);
+        }
+        // Clear the pending welcome after processing
+        localStorage.removeItem('mrblue:pending-cto-welcome');
+      }
+    };
+    
+    // Small delay to ensure page is fully loaded and user state is ready
+    const timer = setTimeout(checkPendingCTOWelcome, 500);
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // CTO Welcome: Also listen for direct events (for in-page actions)
   useEffect(() => {
     const handleCTOLoginEvent = (event: CustomEvent) => {
       const { userName, userEmail, userRole } = event.detail;
-      console.log('[MrBlue] CTO login detected:', userEmail, userRole);
+      console.log('[MrBlue] CTO login event received:', userEmail, userRole);
       
       // Set CTO welcome context and open chat
       setCTOWelcome({ userName, userEmail, userRole });
