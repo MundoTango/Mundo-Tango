@@ -1,78 +1,192 @@
-# MB.MD - Mr. Blue's Brain v2.0
+# MB.MD - Mr. Blue's Modular Brain v3.0
 
-**Version:** 2.2.0 | **Updated:** December 28, 2025 | **Agents:** 140+ | **Patterns:** 67
+**Version:** 3.0.0  
+**Updated:** December 28, 2025  
+**Architecture:** Modular Cognitive Framework + Live Execution  
+**Total Agents:** 140+  
+**Patterns:** 61  
+**Status:** OPERATIONAL
 
 ---
 
-## 🧠 MODULAR BRAIN ARCHITECTURE
+## GOD COMMANDS (HIGHEST PRIORITY)
 
-Mr. Blue's brain is now modular for token-efficient loading. See **[Master Index](mr-blue-brain/mb.md)** for full navigation.
+These directives override ALL other instructions. Issued by Scott Boddye.
+
+| ID | Command | Scope |
+|----|---------|-------|
+| #0 | **AUTO-INVOKE GitHub Practices + Plan Tracker on EVERY mb.md session** | Global |
+| #1 | **Test before completing any task** | Global |
+| #2 | **Work Simultaneously** - Parallel operations (Promise.all, parallel tool calls) | Global |
+| #3 | **Work Recursively** - Deep analysis (read imports, dependencies, related files) | Global |
+| #4 | **Work Critically** - Target 95-99/100 quality (validate edge cases) | Global |
+| #5 | **Check Infrastructure First** - Use existing systems before building new | Global |
+| #6 | **Never change ID column types** (serial ↔ varchar breaks data) | Database |
+| #7 | **Auto-Fix Maximization** - 3-attempt retry, <10% escalation rate | Global |
+| #8 | **Validation Loop** - observe → decide → act → validate → adapt | Global |
+
+---
+
+## LIVE API ENDPOINTS
+
+Mr. Blue is ONLINE and responds to commands at these endpoints:
+
+### Session Management
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/mbmd/session/start` | POST | Start session, auto-invoke agents |
+| `/api/mbmd/session/end` | POST | End session, generate summary |
+| `/api/mbmd/session/status` | GET | Check current session |
+
+### Task Tracking
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/mbmd/task/start` | POST | Record task start |
+| `/api/mbmd/task/complete` | POST | Record task completion |
+
+### Git & Plans
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/mbmd/git/status` | GET | Git status + pre-commit checklist |
+| `/api/mbmd/plan/status` | GET | All plans progress |
+| `/api/mbmd/commit/validate` | POST | Validate commit message |
+| `/api/mbmd/plan/update-task` | POST | Update task in plan file |
+
+### Command Execution
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/mbmd/ask` | POST | Ask any leadership agent |
+| `/api/mrblue/command` | POST | **Execute a command** |
+| `/api/mrblue/chat` | POST | Chat with Mr. Blue |
+
+---
+
+## BRAIN ARCHITECTURE
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    MR. BLUE BRAIN v2.0                      │
+│                    MR. BLUE BRAIN v3.0                      │
 ├─────────────────────────────────────────────────────────────┤
-│  /identity/      WHO I am (soul, values, personality)       │
-│  /cognition/     HOW I think (ReAct, CoT, ToT, FEP)        │
-│  /operations/    HOW I work (10-step, recovery)            │
-│  /orchestration/ HOW I coordinate (MoE, A2A, parallel)     │
-│  /patterns/      65 MB.MD patterns                         │
-│  /agents/        140+ agent profiles                       │
-│  /n8n/           External integration guide                │
+│  /agents/identity/   WHO I am (soul, values, personality)   │
+│  /cognition/         HOW I think (ReAct, CoT, ToT, FEP)     │
+│  /operations/        HOW I work (10-step, learning)         │
+│  /orchestration/     HOW I coordinate (MoE, A2A)            │
+│  /patterns/          61 MB.MD patterns                      │
+│  /agents/            140+ agent profiles                    │
+│  /n8n/               External integration                   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📖 QUICK INVOCATION SYNTAX
+## INVOCATION SYNTAX
+
+Load specific brain sections:
 
 ```markdown
-# Core Identity
-use mb.md: identity              → /identity/soul.md
-use mb.md: identity:values       → /identity/values.md
+# Identity & Soul
+use mb.md: identity              → Mr Blue/agents/identity/soul.md
+use mb.md: identity:values       → Mr Blue/agents/identity/values.md
+use mb.md: identity:personality  → Mr Blue/agents/identity/personality-modes.md
 
 # Cognitive Frameworks
-use mb.md: cognition:react       → ReAct Protocol (Thought→Action→Observe)
-use mb.md: cognition:cot         → Chain-of-Thought reasoning
-use mb.md: cognition:tot         → Tree of Thoughts
-use mb.md: cognition:reflexion   → Self-critique loop
-use mb.md: cognition:fep         → Free Energy Principle
-use mb.md: cognition:bayesian    → Bayesian belief updating
+use mb.md: cognition:react       → Mr Blue/cognition/react-protocol.md
+use mb.md: cognition:cot         → Mr Blue/cognition/chain-of-thought.md
+use mb.md: cognition:tot         → Mr Blue/cognition/tree-of-thoughts.md
+use mb.md: cognition:reflexion   → Mr Blue/cognition/reflexion-loop.md
+use mb.md: cognition:fep         → Mr Blue/cognition/fep-active-inference.md
+use mb.md: cognition:bayesian    → Mr Blue/cognition/bayesian-framework.md
 
 # Operations
-use mb.md: operations            → 10-step workflow
-use mb.md: operations:recovery   → Error recovery
+use mb.md: operations            → Mr Blue/operations/10-step-workflow.md
+use mb.md: operations:recovery   → Mr Blue/operations/error-recovery.md
 
 # Orchestration
-use mb.md: orchestration:moe     → Mixture of Experts routing
-use mb.md: orchestration:magentic → Dynamic agent selection
-use mb.md: orchestration:a2a     → A2A communication
-use mb.md: orchestration:parallel → Parallel execution
-
-# Agents (140+)
-use mb.md: agents:page           → 10 page agents
-use mb.md: agents:life-ceo       → 16 Life CEO agents
-use mb.md: agents:self-healing   → 10 self-healing agents
-use mb.md: agents:scraping       → 10 scraping agents
-use mb.md: agents:business       → 32 business agents
-use mb.md: agents:core           → 49 core agents
+use mb.md: orchestration:moe     → Mr Blue/orchestration/mixture-of-experts.md
+use mb.md: orchestration:a2a     → Mr Blue/orchestration/a2a-communication.md
+use mb.md: orchestration:parallel → Mr Blue/orchestration/parallel-execution.md
 
 # Patterns
-use mb.md: patterns:core         → Patterns 1-16
-use mb.md: patterns:advanced     → Patterns 39-61
+use mb.md: patterns:core         → Mr Blue/patterns/core-patterns.md
+use mb.md: patterns:advanced     → Mr Blue/patterns/advanced-patterns.md
 
-# n8n Integration
-use mb.md: n8n                   → Connection guide
-use mb.md: n8n:webhooks          → Webhook endpoints
+# Agents
+use mb.md: agents:leadership     → Mr Blue/agents/leadership/index.md
+use mb.md: agents:page           → Mr Blue/agents/page-agents/index.md
+use mb.md: agents:life-ceo       → Mr Blue/agents/life-ceo/index.md
+use mb.md: agents:self-healing   → Mr Blue/agents/self-healing/index.md
+use mb.md: agents:scraping       → Mr Blue/agents/scraping/index.md
+use mb.md: agents:business       → Mr Blue/agents/business/index.md
+use mb.md: agents:core           → Mr Blue/agents/core/index.md
 
-# Full Legacy (6,472 lines)
-use mb.md: legacy                → mb-legacy.md (complete v9.10)
+# Auto-Invoke Agents (Run on EVERY session)
+use mb.md: agents:github-practices → AUTO: Conventional commits, branch naming
+use mb.md: agents:plan-tracker     → AUTO: Update The Plan with task status
 ```
 
 ---
 
-## 🎯 10-STEP WORKFLOW (CORE METHODOLOGY)
+## ANTI-PATTERNS (NEVER DO)
 
+| Anti-Pattern | Why It Fails | Correct Approach |
+|--------------|--------------|------------------|
+| UI-Only Delivery | Buttons exist but don't work | Always complete all 3 layers: UI + Data + Interaction |
+| Surface-Level Analysis | Miss root cause | Work Recursively (God Command #3) |
+| Sequential When Parallel Works | Wastes time | Work Simultaneously (God Command #2) |
+| Skip Testing | Bugs reach user | Test Before Complete (God Command #1) |
+| Build New Before Checking Existing | Duplicate systems | Check Infrastructure First (God Command #5) |
+| Change ID Column Types | Breaks migrations | Never Change ID Types (God Command #6) |
+| Single-Attempt Fixes | Give up too early | Auto-Fix Maximization (God Command #7) |
+| Automate Without Validating | Blind automation | Validation Loop (God Command #8) |
+
+---
+
+## FAILURE MODES & RECOVERY
+
+| Failure | Detection | Recovery |
+|---------|-----------|----------|
+| Agent fails mid-task | Error in response | 3-attempt retry, then escalate to leadership |
+| File reference broken | Path not found | Log error, fall back to search, create if missing |
+| Multiple agents conflict | Contradictory outputs | Hierarchical resolution (CTO > VPs > Heads) |
+| Rate limits hit | 429 response | Exponential backoff, switch provider |
+| Context window exceeded | Token count > limit | Prioritize God Commands, compress context |
+| Database error | SQL exception | Transaction rollback, log, retry once |
+| Git operation fails | Command returns error | Graceful degradation, continue without git |
+
+---
+
+## SUCCESS METRICS
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Task Completion Rate | >95% | Tasks marked complete / tasks started |
+| Auto-Fix Success | >90% | Issues fixed without escalation |
+| Test Pass Rate | 100% | All tests pass before marking complete |
+| Plan Progress | Increasing | Checkbox completion across all plan files |
+| Response Quality | 95-99/100 | God Command #4 target |
+| Escalation Rate | <10% | Issues requiring human intervention |
+
+---
+
+## TOKEN EFFICIENCY
+
+| Section | Token Estimate | Priority |
+|---------|----------------|----------|
+| God Commands | ~200 | ALWAYS LOAD |
+| Quick Reference | ~300 | ALWAYS LOAD |
+| Brain Architecture | ~100 | Load on init |
+| Anti-Patterns | ~200 | Load on errors |
+| Failure Modes | ~200 | Load on errors |
+| Invocation Syntax | ~400 | Load on request |
+| Full Agent Profiles | ~5000+ | Load specific agent only |
+
+**Context Strategy:** Load God Commands + Quick Reference first (~500 tokens). Load specific sections on demand.
+
+---
+
+## QUICK REFERENCE
+
+### 10-Step Workflow
 ```
 1. UNDERSTAND  → Read request, identify scope
 2. RESEARCH    → Gather context, find patterns  
@@ -83,1113 +197,77 @@ use mb.md: legacy                → mb-legacy.md (complete v9.10)
 7. DOCUMENT    → Update docs and memory
 8. REVIEW      → Self-critique (Reflexion)
 9. ITERATE     → Fix issues found
-10. FINAL REVIEW → Review entire page (s) as a the experts of our agents (ex)
-11. LEARN      → What will the mb.md brain learn. 
-12. COMPLETE   → Mark done, report to user
+10. COMPLETE   → Mark done, report to user
+```
+
+### Three-Layer Feature Completion
+Every feature requires:
+1. **UI Layer** - Visual components and layout
+2. **Data Layer** - API endpoints + database queries 
+3. **Interaction Layer** - User flows, mutations, cache invalidation
+
+### Cognitive Framework Selection
+| Situation | Framework |
+|-----------|-----------|
+| Sequential tool use | ReAct |
+| Complex reasoning | Chain-of-Thought |
+| Multiple solutions | Tree of Thoughts |
+| Learning from failure | Reflexion |
+| Uncertainty | Free Energy Principle |
+
+### Conventional Commit Format
+```
+<type>(<scope>): <description>
+
+Types: feat | fix | docs | style | refactor | test | chore | perf | ci | revert
 ```
 
 ---
 
-## 🔀 COGNITIVE FRAMEWORK SELECTION
+## AGENT LEARNINGS (Auto-Surfaced)
 
-| Situation | Framework | Command |
-|-----------|-----------|---------|
-| Sequential tool use | ReAct | `use mb.md: cognition:react` |
-| Complex reasoning | Chain-of-Thought | `use mb.md: cognition:cot` |
-| Multiple solutions | Tree of Thoughts | `use mb.md: cognition:tot` |
-| Learning from failure | Reflexion | `use mb.md: cognition:reflexion` |
-| Uncertainty handling | FEP | `use mb.md: cognition:fep` |
+Recent learnings from leadership agents:
 
----
+### CTO Agent
+- Always check existing infrastructure before building new
+- Database ID column types must never change
+- Parallel execution preferred over sequential
 
-## 📂 FILE LOCATIONS
+### GitHub Practices Agent  
+- Conventional commits required on all changes
+- Atomic commits (one logical change per commit)
+- Pre-commit checklist must pass before pushing
 
-| Resource | Path |
-|----------|------|
-| Master Index | `mr-blue-brain/mb.md` |
-| Identity | `mr-blue-brain/identity/` |
-| Cognition | `mr-blue-brain/cognition/` |
-| Operations | `mr-blue-brain/operations/` |
-| Orchestration | `mr-blue-brain/orchestration/` |
-| Patterns | `mr-blue-brain/patterns/` |
-| Agents | `mr-blue-brain/agents/` |
-| **Pages** | `mr-blue-brain/pages/` |
-| n8n | `mr-blue-brain/n8n/` |
-| Legacy Backup | `mb-legacy.md` |
+### Plan Tracker Agent
+- 5 plan files being tracked
+- Checkbox format: `[ ]` pending, `[x]` complete, `🔄` in progress
+- Progress synced on session end
 
 ---
 
-## 📄 PAGE DESIGN DOCUMENTATION METHODOLOGY
+## PLAN FILES TRACKED
 
-Every visible UI page must have a comprehensive design document following the 17-section template.
-
-### Invocation Syntax
-
-```markdown
-# Page Design Docs
-use mb.md: pages                    → Page design index
-use mb.md: pages:city               → City page spec
-use mb.md: pages:events             → Events page spec
-use mb.md: pages:housing            → Housing page spec
-use mb.md: pages:scraping           → Scraping control center
-use mb.md: pages:scraped-events     → Scraped events management
-use mb.md: pages:sources            → Scraper source registry
-use mb.md: pages:tangomango         → TangoMango scraper spec
-```
-
-### 17-Section Template
-
-| # | Section | Purpose |
-|---|---------|---------|
-| 1 | Overview | Page purpose, owner agent, MB.MD references |
-| 2 | Data Architecture | Database tables, relationships |
-| 3 | URL Routing | Routes, params, query strings |
-| 4 | Page Structure | Header, tabs, layout diagrams |
-| 5 | Tab Specifications | Each tab's detailed spec |
-| 6 | Filters | All filter controls and options |
-| 7 | Interactive Elements | Maps, modals, popovers |
-| 8 | API Endpoints | All API calls with methods |
-| 9 | Data Sources | Where data comes from |
-| 10 | Permissions Matrix | Public/Member/Admin access |
-| 11 | Mobile Responsiveness | Breakpoints, sizing |
-| 12 | Internationalization | Languages, localization |
-| 13 | Analytics Tracking | Events to track |
-| 14 | Related Pages | Connected pages |
-| 15 | Component Files | Source code locations |
-| 16 | Test Scenarios | E2E test cases |
-| 17 | Future Enhancements | Roadmap items |
-
-### Document Lifecycle
-
-```
-1. CREATE   → New page added → Create design doc using template
-2. UPDATE   → Page changed → Update doc with changes
-3. REVIEW   → Monthly → Audit doc against live page
-4. ARCHIVE  → Page removed → Move doc to /archived/
-```
-
-### Agent Ownership
-
-Each page agent (from `use mb.md: agents:page`) owns their respective design document and is responsible for keeping it current
+| Plan | Location | Status |
+|------|----------|--------|
+| Main Plan | `/plan.md` | Active |
+| La Milonga Strategic | `/.agent-memory/la-milonga-mbmd-strategic-plan-dec-6-2025.md` | Active |
+| El Choclo Completion | `/.agent-memory/el-choclo-mb-completion-plan.md` | In Progress |
+| Phase K MB.MD Master | `/.agent-memory/phase-k-mb-md-master-plan.md` | Active |
+| Phase K Master | `/.agent-memory/phase-k-master-plan.md` | Active |
 
 ---
 
-## 🧪 UI TESTING METHODOLOGY (PLAYWRIGHT-FIRST)
+## THE MISSION
 
-For UI tasks, run Playwright FIRST to understand the issue before coding:
+> "How do we reverse the negative impacts of social media and make it all better?"
 
-### Pre-Development Testing (UNDERSTAND phase)
-```
-1. OBSERVE    → Run Playwright to see current state
-2. NAVIGATE   → Go directly to the page with the issue
-3. CAPTURE    → Screenshot/record the problem
-4. ANALYZE    → Identify root cause from real behavior
-```
+**Mundo Tango = The Anti-Facebook**
+- Instead of silos → authentic global connections
+- Instead of division → community empowerment
+- Instead of algorithms for ad revenue → algorithms for human flourishing
 
-### Credentials Strategy
-| Scenario | Credentials | Login Required |
-|----------|-------------|----------------|
-| Public pages (landing, login, register) | None | No - skip login |
-| Admin features, existing data | admin@mundotango.life / admin123 | Yes |
-| New user flows, onboarding | Create fresh user with nanoid suffix | Yes |
-
-### Test Plan Template (Public Page - No Login)
-```
-1. [New Context] Create browser context
-2. [Browser] Navigate directly to /target-page
-3. [Verify] Observe and document current behavior
-4. [Capture] Screenshot the issue
-```
-
-### Test Plan Template (Authenticated Page)
-```
-1. [New Context] Create browser context
-2. [Browser] Navigate to /login
-3. [Browser] Login with admin@mundotango.life / admin123
-4. [Browser] Navigate to /target-page
-5. [Verify] Observe and document current behavior
-```
-
-### Post-Development Testing (TEST phase)
-After implementing fix, run same navigation path to verify:
-```
-1. [Browser] Navigate to fixed page (login if needed)
-2. [Verify] Assert fix is working
-3. [Verify] Assert no regressions
-```
-
-### Invocation
-```markdown
-use mb.md: testing:playwright    → Playwright-first methodology
-use mb.md: testing:credentials   → Admin/test user strategy
-use mb.md: testing:public        → No-login test template
-use mb.md: testing:auth          → Authenticated test template
-```
+**Scott is betting everything on this. We will not fail.**
 
 ---
 
-## 🔄 BULK UPDATE METHODOLOGY (TEMPLATE DISTRIBUTION)
-
-For distributing template changes across all cities, events, or other entity types:
-
-### Invocation Syntax
-
-```markdown
-use mb.md: bulk:images          → City image distribution
-use mb.md: bulk:template        → Template change propagation
-use mb.md: bulk:data-migration  → Database data updates
-```
-
-### City Image Distribution Pattern
-
-When adding or updating cityscape images for all cities:
-
-```
-PHASE 1: AUDIT
-1. Query database for all cities: SELECT name, country FROM groups WHERE name LIKE '%Tango Community%'
-2. Cross-reference against CITY_IMAGE_MAP in client/src/lib/cityImageMap.ts
-3. Identify cities missing from map (using country flag fallback)
-4. Prioritize by: event_count DESC (high-traffic cities first)
-
-PHASE 2: ACQUIRE
-1. Use stock_image_tool to download cityscape images
-2. Naming: {city_name}_{country}_cityscape
-3. Store in: attached_assets/stock_images/
-4. Prefer: skyline, landmarks, architecture (NO people, NO generic)
-
-PHASE 3: INTEGRATE
-1. Add import statement to cityImageMap.ts
-2. Add entry to CITY_IMAGE_MAP object
-3. Add entry to CITY_COUNTRY_MAP if country not present
-4. Support variations (diacritics, hyphens): "São Paulo", "Sao Paulo"
-
-PHASE 4: VERIFY
-1. Restart workflow to pick up new assets
-2. Test getCityImageUrl() returns correct image
-3. Visual verification on city page
-```
-
-### Key Files
-
-| File | Purpose |
-|------|---------|
-| `client/src/lib/cityImageMap.ts` | CITY_IMAGE_MAP, CITY_COUNTRY_MAP, getCityImageUrl() |
-| `attached_assets/stock_images/` | Stored cityscape images |
-| `client/src/pages/CityDetailsPage.tsx` | Uses getCityImageUrl() for cover |
-
-### Fallback Chain
-
-```
-getCityImageUrl(city, country):
-1. Direct lookup in CITY_IMAGE_MAP
-2. Normalized variations (diacritics, slug, titlecase)
-3. Partial matching for multi-word cities
-4. Country flag from CITY_COUNTRY_MAP
-5. Country flag from provided country param
-6. Default: New York City skyline
-```
-
-### Batch Processing Guidelines
-
-For large updates (50+ cities):
-- Process in batches of 10-15 cities
-- Download images in parallel where possible
-- Update imports and map entries together
-- Restart workflow after each batch to verify
-- Document progress in task list
-
-### Template Change Propagation Pattern
-
-When a design template changes that affects all instances:
-
-```
-1. IDENTIFY → Find all files using the template pattern
-2. ANALYZE  → Understand what needs to change per instance
-3. SCRIPT   → Create transformation logic (if complex)
-4. APPLY    → Apply changes to all instances
-5. VERIFY   → Test representative samples
-6. DOCUMENT → Update replit.md with change log
-```
-
----
-
-## 🔧 PRODUCTION DATABASE ADMIN TOOLS
-
-For troubleshooting production users without direct database access. Uses Supabase REST API.
-
-### Invocation Syntax
-
-```markdown
-use mb.md: admin:production        → Production admin tools overview
-use mb.md: admin:user-lookup       → Diagnose specific user
-use mb.md: admin:user-search       → Search users by name/email
-use mb.md: admin:stats             → Production statistics
-```
-
-### Available Endpoints (Authenticated Admin Only)
-
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /api/admin/production/status` | Check Supabase connection status |
-| `GET /api/admin/production/user/:email` | Lookup user + login diagnosis |
-| `GET /api/admin/production/users/search?q=term` | Search users by name/email |
-| `GET /api/admin/production/users/recent` | List recent registrations |
-| `GET /api/admin/production/waitlist` | List waitlist users |
-| `GET /api/admin/production/stats` | Total users, active, suspended |
-
-### User Lookup Response Format
-
-```json
-{
-  "success": true,
-  "user": {
-    "id": 123,
-    "email": "user@example.com",
-    "displayName": "User Name",
-    "role": "user",
-    "isActive": true,
-    "isVerified": true,
-    "isSuspended": false,
-    "createdAt": "2025-01-15T..."
-  },
-  "loginDiagnosis": {
-    "canLogin": true,
-    "issues": [],
-    "recommendation": "User can login normally"
-  }
-}
-```
-
-### Login Diagnosis Checks
-
-| Check | Issue Code | Fix |
-|-------|------------|-----|
-| `isActive = false` | `INACTIVE` | Activate account |
-| `isSuspended = true` | `SUSPENDED` | Unsuspend account |
-| `isVerified = false` | `UNVERIFIED` | Resend verification email |
-| `onWaitlist = true` | `WAITLISTED` | Approve from waitlist |
-
-### Troubleshooting Workflow
-
-```
-STEP 1: GET STATUS
-curl https://mundotango.life/api/admin/production/status
-→ Verify Supabase connection is active
-
-STEP 2: LOOKUP USER
-curl https://mundotango.life/api/admin/production/user/{email}
-→ Get user details and login diagnosis
-
-STEP 3: DIAGNOSE
-Check loginDiagnosis.issues array:
-- INACTIVE → User needs account activation
-- SUSPENDED → Admin suspended, needs review
-- UNVERIFIED → Email not verified
-- WAITLISTED → Still on waitlist
-
-STEP 4: FIX (via Supabase Dashboard)
-1. Go to Supabase → Table Editor → users
-2. Find user by email
-3. Update: is_active=true, is_verified=true, is_suspended=false
-4. Remove from waitlist if present
-```
-
-### Key Files
-
-| File | Purpose |
-|------|---------|
-| `server/services/ProductionDatabaseService.ts` | Supabase REST API client |
-| `server/routes/admin-routes.ts` | Admin endpoint handlers |
-
-### Environment Requirements
-
-- `SUPABASE_URL` - Production Supabase URL
-- `SUPABASE_ANON_KEY` - Supabase anonymous key
-
-**Note:** These endpoints only work when deployed to production (mundotango.life). Development environment has network restrictions preventing Supabase access.
-
----
-
-## 🛡️ DEPLOYMENT PROTECTION
-
-**CRITICAL:** These files are protected and must NEVER be deleted:
-
-| Protected File/Dir | Reason |
-|-------------------|--------|
-| `mb.md` | Core methodology (this file) |
-| `mb-legacy.md` | Legacy backup (6,472 lines) |
-| `replit.md` | Project documentation |
-| `mr-blue-brain/` | Modular AI brain (30+ files) |
-| `attached_assets/optimized/` | Used by 7 React pages |
-| `attached_assets/stock_images/` | Used by 20+ React pages |
-
-**Protection mechanism:** `scripts/prebuild-cleanup.sh` has explicit exclusions. See `replit.md` → "Critical Files Protection" for full documentation.
-
----
-
-**Note:** For the full 6,472-line legacy document, use `use mb.md: legacy` or read `mb-legacy.md` directly.
-
----
-
-## 📱 PATTERN 62: MOBILE UI AUDIT METHODOLOGY
-
-**Problem Solved:** UI tests pass on desktop but fail on mobile. Previous approvals missed mobile-specific issues.
-
-### Mobile Viewport Testing Matrix
-
-| Breakpoint | Name | Width | Device Example | Priority |
-|------------|------|-------|----------------|----------|
-| xs | Mobile S | 320px | iPhone SE | CRITICAL |
-| sm | Mobile M | 375px | iPhone X/12/13 | CRITICAL |
-| md | Mobile L | 425px | Pixel 5 | HIGH |
-| lg | Tablet | 768px | iPad Mini | HIGH |
-| xl | Laptop | 1024px | iPad Pro | MEDIUM |
-| 2xl | Desktop | 1440px | MacBook Pro | LOW |
-
-### Mobile Test Plan Template
-
-```
-1. [New Context] Create browser context with mobile viewport
-2. [Browser] Set viewport: { width: 375, height: 812, isMobile: true }
-3. [Browser] Navigate to /target-page
-4. [Verify] Check for:
-   - Horizontal scroll (FAIL if present)
-   - Touch target sizes (min 44x44px)
-   - Text readability (min 14px)
-   - Element overflow
-   - Fixed position elements
-   - Sidebar collapse
-   - Bottom navigation visibility
-5. [Browser] Repeat for 320px width (smallest breakpoint)
-```
-
-### Mobile-Specific Checks
-
-| Check | PASS Condition | Common Failures |
-|-------|---------------|-----------------|
-| No horizontal scroll | `document.body.scrollWidth <= window.innerWidth` | Fixed-width containers, images |
-| Touch targets | All buttons >= 44x44px | Icon buttons too small |
-| Font size | body text >= 14px | 10-12px text unreadable |
-| Element visibility | Critical UI not cut off | FAB buttons, modals |
-| Sidebar | Collapsed/hidden on mobile | Overlapping content |
-| Input fields | Full width, proper padding | Tiny inputs on forms |
-
-### Invocation
-
-```markdown
-use mb.md: testing:mobile         → Mobile audit methodology
-use mb.md: testing:mobile:320     → iPhone SE test (320px)
-use mb.md: testing:mobile:375     → iPhone X test (375px)
-use mb.md: testing:mobile:matrix  → Full breakpoint matrix
-```
-
----
-
-## 🎯 PATTERN 63: MR. BLUE SINGLETON PATTERN
-
-**Problem Solved:** Multiple Mr. Blue chat instances opening simultaneously, causing duplicate UI and conversation confusion.
-
-### Root Cause Analysis
-
-```
-SYMPTOM: 2+ chat panels visible at same time
-ROOT CAUSES:
-1. MrBlueFloatingButton rendered multiple times (layout nesting)
-2. No singleton enforcement in MrBlueContext
-3. Race conditions when rapidly clicking FAB
-4. Different components creating independent chat instances
-```
-
-### Singleton Implementation
-
-**1. Context-Level Enforcement (MrBlueContext.tsx)**
-
-```typescript
-// Single source of truth for chat state
-const MrBlueProvider = ({ children }) => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const instanceRef = useRef<string>(crypto.randomUUID());
-  
-  // Prevent multiple opens
-  const openChat = useCallback(() => {
-    if (isChatOpen) return; // Already open
-    setIsChatOpen(true);
-  }, [isChatOpen]);
-  
-  // Global close
-  const closeChat = useCallback(() => {
-    setIsChatOpen(false);
-  }, []);
-  
-  // Toggle with debounce
-  const toggleChat = useMemo(() => 
-    debounce(() => setIsChatOpen(prev => !prev), 100),
-    []
-  );
-  
-  return (
-    <MrBlueContext.Provider value={{ 
-      isChatOpen, openChat, closeChat, toggleChat,
-      instanceId: instanceRef.current 
-    }}>
-      {children}
-    </MrBlueContext.Provider>
-  );
-};
-```
-
-**2. Component-Level Guard (MrBlueFloatingButton.tsx)**
-
-```typescript
-// Only one FAB should exist in the DOM
-const MrBlueFloatingButton = () => {
-  const { isChatOpen, toggleChat, instanceId } = useMrBlue();
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    // Check if another instance already exists
-    const existingFab = document.querySelector('[data-mr-blue-fab]');
-    if (existingFab && existingFab.getAttribute('data-instance') !== instanceId) {
-      console.warn('[MrBlue] Duplicate FAB prevented');
-      return;
-    }
-    setMounted(true);
-  }, [instanceId]);
-  
-  if (!mounted) return null;
-  
-  return (
-    <div data-mr-blue-fab data-instance={instanceId}>
-      {/* FAB content */}
-    </div>
-  );
-};
-```
-
-**3. Portal Rendering (Single Mount Point)**
-
-```typescript
-// Always render chat in a single portal
-{isChatOpen && createPortal(
-  <MrBlueChat onClose={closeChat} />,
-  document.getElementById('mr-blue-portal') || document.body
-)}
-```
-
-### Validation Test
-
-```
-1. [Browser] Navigate to /feed
-2. [Browser] Click Mr. Blue FAB rapidly 5 times
-3. [Verify] Only ONE chat panel visible
-4. [Browser] Navigate to /cities/warsaw-tango
-5. [Browser] Click Mr. Blue FAB
-6. [Verify] Same chat instance continues (not new)
-7. [Verify] Count [data-mr-blue-chat] elements === 1
-```
-
-### Invocation
-
-```markdown
-use mb.md: mrblue:singleton       → Singleton pattern
-use mb.md: mrblue:portal          → Portal rendering
-use mb.md: mrblue:dedup           → Deduplication guards
-```
-
----
-
-## 🔓 PATTERN 64: MR. BLUE USER CONTEXT (FULL DATA ACCESS)
-
-**Problem Solved:** Mr. Blue cannot answer "who are my friends?" because it lacks access to user-specific data, relationships, and personalization.
-
-### Data Access Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    MR. BLUE DATA ACCESS LAYERS                   │
-├─────────────────────────────────────────────────────────────────┤
-│ LAYER 1: PUBLIC (No Auth Required)                               │
-│ - Platform stats (events, cities, users counts)                  │
-│ - Public events and cities                                       │
-│ - Public user profiles                                           │
-├─────────────────────────────────────────────────────────────────┤
-│ LAYER 2: AUTHENTICATED USER (User Session)                       │
-│ - User's own profile data                                        │
-│ - User's friends list                                            │
-│ - User's RSVP history                                            │
-│ - User's followed cities                                         │
-│ - User's group memberships                                       │
-│ - User's conversations/DMs                                       │
-│ - User's notifications                                           │
-├─────────────────────────────────────────────────────────────────┤
-│ LAYER 3: FRIEND DATA (Friendship Relationship)                   │
-│ - Friend's public profile                                        │
-│ - Friend's public posts (visibility='public')                    │
-│ - Friend's friends-only data (visibility='friends')              │
-│ - Mutual friends                                                 │
-│ - Friend's public events                                         │
-├─────────────────────────────────────────────────────────────────┤
-│ LAYER 4: GOD LEVEL (Admin/CTO Role)                              │
-│ - All user data (any user)                                       │
-│ - System-wide analytics                                          │
-│ - Error logs and diagnostics                                     │
-│ - Database queries                                               │
-│ - Agent orchestration                                            │
-│ - Pattern execution                                              │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Data Service Extension (mr-blue-data-service.ts)
-
-```typescript
-// NEW: User-specific data methods
-async getUserContext(userId: number): Promise<UserContext> {
-  const [user, friends, rsvps, cities, groups] = await Promise.all([
-    this.getUserProfile(userId),
-    this.getUserFriends(userId),
-    this.getUserRSVPs(userId),
-    this.getFollowedCities(userId),
-    this.getUserGroups(userId)
-  ]);
-  return { user, friends, rsvps, cities, groups };
-}
-
-async getUserFriends(userId: number): Promise<FriendSummary[]> {
-  return db.select({
-    id: users.id,
-    name: users.name,
-    username: users.username,
-    profileImage: users.profileImage,
-    city: users.city,
-    closenessScore: friendships.closenessScore
-  })
-  .from(friendships)
-  .innerJoin(users, eq(friendships.friendId, users.id))
-  .where(eq(friendships.userId, userId));
-}
-
-async getUserRSVPs(userId: number): Promise<EventRSVP[]> {
-  return db.select()
-  .from(eventRsvps)
-  .innerJoin(events, eq(eventRsvps.eventId, events.id))
-  .where(eq(eventRsvps.userId, userId));
-}
-
-// NEW: Build personalized context for AI
-async buildUserContext(userId: number): Promise<string> {
-  const ctx = await this.getUserContext(userId);
-  return `
-USER PROFILE:
-- Name: ${ctx.user.name}
-- City: ${ctx.user.city}
-- Tango Roles: ${ctx.user.tangoRoles?.join(', ') || 'Not specified'}
-
-FRIENDS (${ctx.friends.length}):
-${ctx.friends.slice(0, 10).map(f => `- ${f.name} (${f.city})`).join('\n')}
-
-UPCOMING RSVPS (${ctx.rsvps.length}):
-${ctx.rsvps.slice(0, 5).map(r => `- ${r.event.title} on ${r.event.startDate}`).join('\n')}
-
-FOLLOWED CITIES (${ctx.cities.length}):
-${ctx.cities.map(c => `- ${c.name}, ${c.country}`).join('\n')}
-`;
-}
-```
-
-### Query Examples
-
-| User Query | Data Source | Response Type |
-|------------|-------------|---------------|
-| "Who are my friends?" | friendships table | Friend list with cities |
-| "What events am I going to?" | eventRsvps + events | RSVP calendar |
-| "What cities do I follow?" | cityMembers table | City list |
-| "Show me my profile" | users table | Profile summary |
-| "What do my friends like?" | friends' RSVPs | Friend activity |
-| "Find events my friends are attending" | friends' RSVPs | Social events |
-
-### Invocation
-
-```markdown
-use mb.md: mrblue:user-context    → User data access
-use mb.md: mrblue:friends         → Friend data methods
-use mb.md: mrblue:personalization → Personalized AI context
-```
-
----
-
-## 👑 PATTERN 65: MR. BLUE GOD POWERS (ADMIN ENHANCEMENT)
-
-**Problem Solved:** God-level admins (CTO, admin@mundotango.life) need Mr. Blue to have full system access like Replit AI Agent.
-
-### God-Level Permission Matrix
-
-| Role | Can Access | Example Queries |
-|------|------------|-----------------|
-| `user` | Own data + friends' visible data | "Who are my friends?" |
-| `organizer` | + Event analytics | "How many RSVPs for my event?" |
-| `moderator` | + Content moderation data | "Show reported posts" |
-| `admin` | + User management | "Find user by email X" |
-| `cto` | + Full database + system | "Run SQL: SELECT * FROM..." |
-| `founder` | + Billing + financial | "Show Stripe subscriptions" |
-
-### God Mode Activation
-
-```typescript
-// Check god-level status
-const isGodLevel = (role: string): boolean => {
-  return ['admin', 'cto', 'founder'].includes(role);
-};
-
-// Enhanced AI system prompt for god users
-const getSystemPrompt = (user: User, isGod: boolean): string => {
-  const basePrompt = `You are Mr. Blue, Mundo Tango's AI assistant...`;
-  
-  if (isGod) {
-    return basePrompt + `
-
-GOD MODE ACTIVATED for ${user.name} (${user.role})
-You have FULL system access including:
-- All database tables (read access)
-- All user data (any user)
-- Error logs and diagnostics
-- System analytics
-- Agent orchestration
-- Pattern library execution
-
-When queried, you can:
-1. Query ANY table in the database
-2. Look up ANY user by email/id
-3. Access admin dashboards
-4. Execute MB.MD patterns
-5. Diagnose system errors
-6. View audit logs
-
-Always prefix sensitive data with [GOD MODE] so user knows
-this data would not be visible to regular users.
-`;
-  }
-  return basePrompt;
-};
-```
-
-### God-Level Queries
-
-```
-[GOD MODE] Examples:
-- "Find all users who registered today"
-- "Show me the scraping queue status"
-- "What errors occurred in the last hour?"
-- "Look up user john@example.com"
-- "Run pattern 53 on this error"
-- "Show me all events missing geocoding"
-- "What's the database connection status?"
-```
-
-### Implementation Steps
-
-```
-1. DETECT  → Check user.role in request
-2. ENHANCE → Add god-level context to AI prompt
-3. EXPAND  → Allow database queries via natural language
-4. LOG     → Audit all god-level queries
-5. PROTECT → Never expose passwords/tokens
-```
-
-### Security Guardrails
-
-| Rule | Implementation |
-|------|----------------|
-| No password exposure | Always redact password fields |
-| No token exposure | Never show JWT/API keys |
-| Audit logging | Log all god-level queries |
-| Rate limiting | Max 100 god queries/hour |
-| Read-only default | No DELETE/UPDATE via natural language |
-
-### Invocation
-
-```markdown
-use mb.md: mrblue:god-mode        → God-level access
-use mb.md: mrblue:god-queries     → Admin query examples
-use mb.md: mrblue:god-security    → Security guardrails
-```
-
----
-
-## 🎨 PATTERN 66: MR. BLUE CHAT DESIGN SYSTEM
-
-**Problem Solved:** Chat UI needs consistent, accessible, mobile-friendly design.
-
-### Chat Design Tokens
-
-```css
-/* Chat Container */
---chat-width: min(420px, 100vw - 32px);
---chat-height: min(600px, 100vh - 100px);
---chat-radius: 1.5rem;
---chat-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-
-/* Header */
---header-height: 64px;
---header-bg: rgba(0, 0, 0, 0.8);
---header-blur: 20px;
-
-/* Messages */
---msg-user-bg: hsl(var(--primary));
---msg-bot-bg: hsl(var(--muted));
---msg-radius: 1rem;
---msg-padding: 0.75rem 1rem;
---msg-max-width: 85%;
-
-/* Input */
---input-height: 56px;
---input-bg: hsl(var(--card));
---input-radius: 1.5rem;
-```
-
-### Component Hierarchy
-
-```
-MrBlueChat
-├── ChatHeader (sticky, glassmorphic)
-│   ├── Avatar (40px, rounded-full)
-│   ├── Title + Subtitle
-│   ├── OnlineStatus (pulse animation)
-│   └── CloseButton (X icon)
-├── ChatMessages (flex-1, scroll-y)
-│   └── Message[]
-│       ├── BotMessage (left, muted bg)
-│       ├── UserMessage (right, primary bg)
-│       └── Timestamp (small, muted)
-├── TypingIndicator (animated dots)
-└── ChatInput (sticky bottom)
-    ├── Textarea (auto-resize)
-    └── SendButton (icon)
-```
-
-### Mobile Responsive
-
-```css
-/* Mobile: Full screen takeover */
-@media (max-width: 640px) {
-  .mr-blue-chat {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
-    z-index: 9999;
-  }
-}
-
-/* Tablet+: Floating panel */
-@media (min-width: 641px) {
-  .mr-blue-chat {
-    position: fixed;
-    bottom: 100px;
-    right: 24px;
-    width: var(--chat-width);
-    height: var(--chat-height);
-  }
-}
-```
-
-### Invocation
-
-```markdown
-use mb.md: mrblue:design          → Chat design tokens
-use mb.md: mrblue:design:mobile   → Mobile responsive
-use mb.md: mrblue:design:dark     → Dark mode support
-```
-
----
-
-## 📱 PATTERN 67: RESPONSIVE UI VALIDATION METHODOLOGY
-
-**Problem Solved:** UI changes must be validated across all viewport sizes to prevent mobile/tablet/desktop breakage.
-
-### Viewport Breakpoints (Tailwind)
-
-| Breakpoint | Width | Common Devices |
-|------------|-------|----------------|
-| `xs` | < 475px | Small phones (iPhone SE, Galaxy S8) |
-| `sm` | 640px | Large phones (iPhone 14 Pro, Pixel 7) |
-| `md` | 768px | Tablets portrait (iPad Mini, iPad) |
-| `lg` | 1024px | Tablets landscape, small laptops |
-| `xl` | 1280px | Laptops, desktops |
-| `2xl` | 1536px | Large monitors, 4K displays |
-
-### Mandatory UI Check Protocol
-
-Every UI change MUST be validated at these viewports before completion:
-
-```
-┌─────────────────────────────────────────────────────────┐
-│           RESPONSIVE UI VALIDATION CHECKLIST            │
-├─────────────────────────────────────────────────────────┤
-│ ✓ Mobile (375px)    → Full functionality, touch-friendly │
-│ ✓ Tablet (768px)    → Proper layout, no overflow         │
-│ ✓ Desktop (1280px)  → Optimal spacing, full features     │
-│ ✓ Wide (1920px)     → No content stretching              │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Test Plan Template (Responsive)
-
-```
-1. [New Context] Create browser context with viewport (375, 667) - Mobile
-2. [Browser] Navigate to the page being modified
-3. [Verify] Check layout, touch targets (min 44px), no horizontal scroll
-4. [Verify] Check text readability, button sizing, spacing
-
-5. [Browser] Resize viewport to (768, 1024) - Tablet
-6. [Verify] Check layout transitions, grid adjustments
-7. [Verify] Check no overflow, proper sidebar behavior
-
-8. [Browser] Resize viewport to (1280, 800) - Desktop
-9. [Verify] Check full feature display, optimal spacing
-10. [Verify] Check hover states work (not just touch)
-
-11. [Browser] Resize viewport to (1920, 1080) - Wide
-12. [Verify] Check content doesn't stretch excessively
-13. [Verify] Check max-width constraints applied
-```
-
-### Common Responsive Issues to Check
-
-| Issue | Check For | Fix Pattern |
-|-------|-----------|-------------|
-| Horizontal scroll | Content wider than viewport | `max-w-full`, `overflow-x-hidden` |
-| Touch targets too small | Buttons < 44px | `min-h-11 min-w-11` or `p-3` |
-| Text overflow | Long text breaking layout | `truncate`, `line-clamp-*` |
-| Collapsed sidebars | Sidebar overlapping content | `fixed` on mobile, `sticky` on desktop |
-| Images too large | Images overflowing container | `max-w-full h-auto` |
-| Fixed widths | Elements breaking on small screens | Use `w-full` + `max-w-*` |
-| Z-index stacking | Overlapping modals/drawers | Consistent z-index scale |
-
-### Tailwind Responsive Patterns
-
-```typescript
-// Mobile-first approach (recommended)
-className="w-full sm:w-80 md:w-96 lg:w-[420px]"
-
-// Full screen on mobile, panel on desktop
-className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[420px]"
-
-// Hide on mobile, show on desktop
-className="hidden md:block"
-
-// Show on mobile, hide on desktop
-className="block md:hidden"
-
-// Responsive grid
-className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-
-// Responsive text
-className="text-sm sm:text-base lg:text-lg"
-
-// Responsive padding
-className="p-4 sm:p-6 lg:p-8"
-```
-
-### When to Apply This Pattern
-
-```
-ALWAYS check responsive when:
-✓ Adding new components
-✓ Modifying layout/positioning
-✓ Changing font sizes
-✓ Adding/removing elements
-✓ Changing flexbox/grid
-✓ Adding modals/drawers/panels
-✓ Modifying navigation
-
-CAN skip responsive check when:
-✗ Backend-only changes
-✗ Documentation updates
-✗ Schema changes
-✗ API route changes
-✗ Test file updates
-```
-
-### Implementation Steps
-
-```
-1. IDENTIFY  → What viewports does this change affect?
-2. PREVIEW   → Check design at each breakpoint (DevTools)
-3. CODE      → Use mobile-first Tailwind classes
-4. TEST      → Run Playwright at multiple viewports
-5. ITERATE   → Fix issues found at any viewport
-6. DOCUMENT  → Note any responsive considerations
-```
-
-### Invocation
-
-```markdown
-use mb.md: responsive                → Viewport breakpoints
-use mb.md: responsive:check          → Validation checklist
-use mb.md: responsive:patterns       → Tailwind patterns
-use mb.md: responsive:issues         → Common issues table
-use mb.md: responsive:test           → Multi-viewport test plan
-```
-
----
-
-## 👥 FRIENDSHIP/CONNECTION SYSTEM ARCHITECTURE
-
-**Overview:** Complete social connection system with closeness scoring, multi-degree networking, and privacy controls.
-
-### Database Tables
-
-| Table | Purpose |
-|-------|---------|
-| `friend_requests` | Pending/declined friend requests |
-| `friendships` | Accepted connections with closeness scores |
-| `friendship_activities` | Interaction tracking (affects closeness) |
-| `friendship_media` | Photos/videos shared in friendships |
-| `friend_invitations` | Off-platform invites (email/Facebook) |
-| `friend_closeness` | Detailed closeness analytics per friend |
-
-### Friend Request Flow
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    FRIEND REQUEST FLOW                       │
-├─────────────────────────────────────────────────────────────┤
-│  1. SEND REQUEST                                            │
-│     └─ POST /api/friends/request/:userId                    │
-│     └─ Creates friend_request (status: 'pending')           │
-│     └─ Creates notification (type: 'friend_request')        │
-│                                                             │
-│  2. RECEIVE REQUEST                                         │
-│     └─ GET /api/friends/requests/received                   │
-│     └─ Notification bell shows count                        │
-│     └─ /friend-requests page lists all pending              │
-│                                                             │
-│  3. REVIEW & RESPOND                                        │
-│     └─ FriendRequestReviewModal shows questionnaire         │
-│     └─ Accept: POST /api/friends/requests/:id/accept        │
-│     └─ Reject: POST /api/friends/requests/:id/reject        │
-│     └─ Snooze: POST /api/friends/requests/:id/snooze        │
-│                                                             │
-│  4. FRIENDSHIP CREATED                                      │
-│     └─ Creates row in friendships table                     │
-│     └─ closenessScore starts at 75                          │
-│     └─ connectionDegree = 1 (direct friend)                 │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Closeness System
-
-| Score Range | Tier | Visibility Level |
-|-------------|------|------------------|
-| 90-100 | Best Friend | `close_friend` |
-| 71-89 | Close Friend | `close_friend` |
-| 50-70 | Good Friend | `friends_1st` |
-| 25-49 | Acquaintance | `friends_2nd` |
-| 0-24 | Distant | `friends_3rd` |
-
-### Connection Degrees
-
-| Degree | Relationship | Can See |
-|--------|--------------|---------|
-| 1 | Direct friend | `friends_1st` content |
-| 2 | Friend of friend | `friends_2nd` content |
-| 3 | Extended network | `friends_3rd` content |
-
-### API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/friends` | GET | List user's friends |
-| `/api/friends/requests` | GET | All pending requests |
-| `/api/friends/requests/received` | GET | Received requests |
-| `/api/friends/requests/sent` | GET | Sent requests |
-| `/api/friends/request/:userId` | POST | Send friend request |
-| `/api/friends/requests/:id/accept` | POST | Accept request |
-| `/api/friends/requests/:id/reject` | POST | Reject request |
-| `/api/friends/requests/:id/snooze` | POST | Snooze for N days |
-| `/api/friends/status/:userId` | GET | Check friendship status |
-| `/api/friends/mutual/:userId` | GET | Get mutual friends |
-| `/api/friends/suggestions` | GET | Friend suggestions |
-| `/api/friends/:friendId` | DELETE | Remove friend |
-
-### Frontend Components
-
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| `FriendRequestsPage` | `/friend-requests` | List all pending requests |
-| `FriendsListPage` | `/friends` | List all friends |
-| `FriendDetailPage` | `/friends/:id` | View friend details |
-| `FriendshipPage` | `/friendship` | Friendship analytics |
-| `FriendRequestModal` | Component | Send request with message |
-| `FriendRequestReviewModal` | Component | Review & respond to request |
-| `FriendshipQuestionnaire` | Component | Closeness questionnaire |
-
-### Friend Request Schema Fields
-
-```typescript
-{
-  id: serial,
-  senderId: integer,           // Who sent
-  receiverId: integer,         // Who receives
-  status: 'pending' | 'accepted' | 'declined' | 'blocked',
-  senderMessage: text,         // Personal message
-  receiverMessage: text,       // Response message
-  senderPrivateNote: text,     // Private note (sender only)
-  receiverPrivateNote: text,   // Private note (receiver only)
-  didWeDance: boolean,         // Did they dance together?
-  danceLocation: varchar,      // Where they danced
-  danceStory: text,            // Story about the dance
-  danceEventId: integer,       // Event where they met
-  mediaUrls: text[],           // Photos/videos
-  snoozedUntil: timestamp,     // Snooze until date
-  respondedAt: timestamp,      // When responded
-  createdAt: timestamp,
-}
-```
-
-### Friendship Schema Fields
-
-```typescript
-{
-  id: serial,
-  userId: integer,             // User A
-  friendId: integer,           // User B
-  status: 'active' | 'muted' | 'blocked',
-  closenessScore: integer,     // 0-100 (starts at 75)
-  connectionDegree: integer,   // Always 1 for direct friends
-  createdAt: timestamp,
-}
-```
-
-### Visibility Privacy Levels
-
-```typescript
-type ClosenessVisibility = 
-  | 'public'        // Anyone can see
-  | 'close_friend'  // closenessScore 71+
-  | 'friends_1st'   // Direct friends only
-  | 'friends_2nd'   // Up to 2nd degree
-  | 'friends_3rd';  // Up to 3rd degree
-```
-
-### Where Visibility is Applied
-
-| Content Type | Field | Default |
-|--------------|-------|---------|
-| Events | `attendeeCloseness` | 'all' |
-| Groups | `membershipCloseness` | 'all' |
-| Posts | `audienceCloseness` | 'all' |
-| Profile sections | Various | Per user setting |
-
-### Invocation
-
-```markdown
-use mb.md: friends                    → Full friendship architecture
-use mb.md: friends:request            → Request flow
-use mb.md: friends:closeness          → Closeness scoring
-use mb.md: friends:api                → API endpoints
-use mb.md: friends:components         → UI components
-use mb.md: friends:schema             → Database schema
-use mb.md: friends:visibility         → Privacy levels
-```
+**Mr. Blue Brain v3.0** - Modular, Token-Efficient, 140+ Agents, LIVE AND OPERATIONAL
