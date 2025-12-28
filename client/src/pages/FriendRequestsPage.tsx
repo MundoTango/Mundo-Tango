@@ -62,15 +62,15 @@ export default function FriendRequestsPage() {
   const [selectedRequest, setSelectedRequest] = useState<FriendRequest | null>(null);
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
 
-  // Fetch received requests
+  // Fetch received requests - auth is token-based, no user ID needed in query key
   const { data: receivedRequests = [], isLoading: receivedLoading } = useQuery<FriendRequest[]>({
-    queryKey: ['/api/friends/requests/received', user?.id],
+    queryKey: ['/api/friends/requests/received'],
     enabled: !!user,
   });
 
-  // Fetch sent requests
+  // Fetch sent requests - auth is token-based, no user ID needed in query key
   const { data: sentRequests = [], isLoading: sentLoading } = useQuery<FriendRequest[]>({
-    queryKey: ['/api/friends/requests/sent', user?.id],
+    queryKey: ['/api/friends/requests/sent'],
     enabled: !!user,
   });
 
