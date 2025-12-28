@@ -237,3 +237,26 @@ If issues found:
 - [ ] Create feature branch for any new work
 - [ ] Add frontend "Cancel Request" button integration
 - [ ] Implement closeness score recalculation service
+
+---
+
+### Session: December 28, 2025 - Mr. Blue QA Platform Handoff
+
+**Branch:** `main` (handoff plan only - no code changes)
+
+**Strategic Work (Replit AI → Mr. Blue):**
+- [x] Created handoff playbook: `Mr Blue/playbooks/qa-customer-platform.md`
+- [x] Updated Mr. Blue system prompt with QA monitoring responsibilities
+- [x] Added God Commands gc-011 (Admin Approval Required) and gc-012 (God-Level Execution)
+- [x] Documented RBAC execution rights (regular users vs god-level admins)
+
+**Mr. Blue Should Now Execute:**
+- [ ] Phase 0: Database schema (analyticsConsent, userFeedback, adminApprovals tables)
+- [ ] Phase 1: Frontend session capture SDK
+- [ ] Phase 2: GDPR consent component
+- [ ] Phase 3: Mr. Blue context injection
+- [ ] Phase 4: Feedback submission flow
+- [ ] Phase 5: Admin approval queue UI
+- [ ] Phase 6: God-level execution integration
+
+**Invocation:** `use mb.md: playbooks:qa-customer-platform`

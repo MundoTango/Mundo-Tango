@@ -1,6 +1,6 @@
 {
-  "version": "1.2.0",
-  "lastUpdated": "2025-12-28T22:30:00Z",
+  "version": "1.3.0",
+  "lastUpdated": "2025-12-28T23:00:00Z",
   "commands": [
     {
       "id": "gc-000",
@@ -119,6 +119,28 @@
       "timestamp": "2025-12-28T22:30:00Z",
       "scope": "global",
       "targetAgents": ["*", "plan-tracker-agent"],
+      "priority": "override",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-011",
+      "command": "Admin Approval Required - User feedback/issues MUST go through admin approval queue before Mr. Blue executes fixes. No direct code execution for non-god-level users.",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T23:00:00Z",
+      "scope": "global",
+      "targetAgents": ["mr-blue", "*"],
+      "priority": "override",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-012",
+      "command": "God-Level Execution - Only god-level admins (Scott Boddye, Admin) can authorize Mr. Blue to execute MB.MD code changes in production.",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T23:00:00Z",
+      "scope": "global",
+      "targetAgents": ["mr-blue"],
       "priority": "override",
       "expiresAt": null,
       "active": true
