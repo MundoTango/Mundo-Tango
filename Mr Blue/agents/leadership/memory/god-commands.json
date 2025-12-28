@@ -1,0 +1,110 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-28T00:00:00Z",
+  "commands": [
+    {
+      "id": "gc-001",
+      "command": "All agents must test before completing any task",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "scope": "global",
+      "targetAgents": ["*"],
+      "priority": "override",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-002",
+      "command": "Work Simultaneously - Run operations in parallel (use Promise.all, parallel tool calls)",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "scope": "global",
+      "targetAgents": ["*"],
+      "priority": "override",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-003",
+      "command": "Work Recursively - Deep analysis, not surface-level (read imports, dependencies, related files)",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "scope": "global",
+      "targetAgents": ["*"],
+      "priority": "override",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-004",
+      "command": "Work Critically - Target 95-99/100 quality (test before complete, validate edge cases)",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "scope": "global",
+      "targetAgents": ["*"],
+      "priority": "override",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-005",
+      "command": "Check Infrastructure First - Use existing systems before building new",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "scope": "global",
+      "targetAgents": ["*"],
+      "priority": "override",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-006",
+      "command": "Database: Never change ID column types (serial to varchar) - breaks existing data",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "scope": "global",
+      "targetAgents": ["cto-agent", "vp-engineering", "head-backend"],
+      "priority": "override",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-007",
+      "command": "Auto-Fix Maximization - All auto-fix as much as possible (3-attempt retry, <10% escalation rate)",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "scope": "global",
+      "targetAgents": ["*"],
+      "priority": "high",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-008",
+      "command": "Validation Loop - observe → decide → act → validate → adapt (not just automation)",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "scope": "global",
+      "targetAgents": ["*"],
+      "priority": "high",
+      "expiresAt": null,
+      "active": true
+    }
+  ],
+  "godUsers": [
+    {
+      "id": "god-001",
+      "name": "Scott Boddye",
+      "email": "scott@boddye.com",
+      "role": "Founder/CTO",
+      "permissions": ["all"]
+    },
+    {
+      "id": "god-002",
+      "name": "Admin",
+      "email": "admin@mundotango.life",
+      "role": "System Admin",
+      "permissions": ["all"]
+    }
+  ]
+}

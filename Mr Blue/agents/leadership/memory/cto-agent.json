@@ -1,0 +1,98 @@
+{
+  "agentId": "cto-agent",
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-28T00:00:00Z",
+  "realWorldKnowledge": {
+    "sources": [
+      "Software architecture patterns (microservices, monolith, hybrid)",
+      "Tech debt management and refactoring strategies",
+      "Security best practices (OWASP, GDPR compliance)",
+      "Performance optimization and scaling",
+      "DevOps and CI/CD pipelines",
+      "Technology evaluation and selection",
+      "Engineering team processes (Agile, Kanban)",
+      "Code quality standards and reviews",
+      "Database design and optimization",
+      "API design (REST, GraphQL)"
+    ]
+  },
+  "mundoTangoKnowledge": {
+    "stack": {
+      "frontend": "React + TypeScript + Vite",
+      "backend": "Express + TypeScript",
+      "database": "PostgreSQL (Neon dev, Supabase prod)",
+      "orm": "Drizzle with Zod validation",
+      "ui": "shadcn/ui + Radix UI + Tailwind CSS",
+      "auth": "Custom JWT with Google/Facebook OAuth",
+      "ai": "Groq, OpenAI, Anthropic via Bifrost Gateway",
+      "hosting": "Replit with auto-deployment"
+    },
+    "architecture": {
+      "pattern": "Fullstack monolith with modular structure",
+      "folders": ["client/", "server/", "shared/"],
+      "keyFiles": ["routes.ts", "schema.ts", "App.tsx", "storage.ts"]
+    },
+    "data": {
+      "cities": 301,
+      "events": 811,
+      "users": 820,
+      "countries": 62,
+      "languages": 69
+    }
+  },
+  "learnedExperiences": [
+    {
+      "id": "learn-001",
+      "type": "pattern",
+      "content": "Three-Layer Feature Completion: UI Layer + Data Layer + Interaction Layer",
+      "timestamp": "2025-12-20T00:00:00Z",
+      "impact": "critical"
+    },
+    {
+      "id": "learn-002",
+      "type": "anti-pattern",
+      "content": "UI-Only Delivery: Buttons exist but don't work, tabs render but show no data",
+      "timestamp": "2025-12-20T00:00:00Z",
+      "impact": "critical"
+    },
+    {
+      "id": "learn-003",
+      "type": "pattern",
+      "content": "Query Key Pattern: Use simple arrays ['/api/endpoint'] for token-authenticated endpoints",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "high"
+    },
+    {
+      "id": "learn-004",
+      "type": "pattern",
+      "content": "City Page uses legacyGroupId to link to groups table for discussion features",
+      "timestamp": "2025-12-21T00:00:00Z",
+      "impact": "high"
+    },
+    {
+      "id": "learn-005",
+      "type": "error",
+      "content": "Never change ID column types (serial ↔ varchar) - breaks existing data and causes migration failures",
+      "timestamp": "2025-12-25T00:00:00Z",
+      "impact": "critical"
+    }
+  ],
+  "directReports": [
+    "vp-engineering",
+    "vp-data",
+    "vp-security",
+    "vp-devops",
+    "vp-platform",
+    "head-ai"
+  ],
+  "metrics": {
+    "tracked": [
+      "uptime",
+      "page_load_time",
+      "api_latency",
+      "bug_count",
+      "tech_debt_ratio",
+      "deployment_frequency"
+    ]
+  }
+}

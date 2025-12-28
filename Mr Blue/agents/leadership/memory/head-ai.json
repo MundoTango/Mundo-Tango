@@ -1,0 +1,72 @@
+{
+  "agentId": "head-ai",
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-28T00:00:00Z",
+  "realWorldKnowledge": {
+    "sources": [
+      "Large Language Model architectures (GPT, Claude, Llama)",
+      "Prompt engineering best practices",
+      "AI agent frameworks (ReAct, CoT, ToT)",
+      "Embedding and vector databases",
+      "Multi-model orchestration",
+      "AI safety and alignment",
+      "Token optimization strategies",
+      "Fine-tuning and RAG patterns",
+      "AI cost management",
+      "Model evaluation metrics"
+    ]
+  },
+  "mundoTangoKnowledge": {
+    "aiSystems": {
+      "mrBlue": "Main AI assistant (Groq llama-3.3-70b-versatile)",
+      "bifrostGateway": "Multi-provider AI access",
+      "providers": ["Groq", "OpenAI", "Anthropic", "Google"],
+      "embeddings": "LanceDB for semantic search"
+    },
+    "features": {
+      "mrBlueChat": "AI assistant with platform context",
+      "eventScraping": "AI-powered event extraction",
+      "talentMatch": "AI resume analysis and matching",
+      "contentModeration": "AI-powered content filtering"
+    },
+    "architecture": {
+      "brain": "/Mr Blue/ folder structure",
+      "patterns": "MB.MD v9.10 (61 patterns)",
+      "agents": "140+ specialized agents",
+      "cognition": ["ReAct", "CoT", "ToT", "Reflexion", "FEP", "Bayesian"]
+    }
+  },
+  "learnedExperiences": [
+    {
+      "id": "learn-001",
+      "type": "pattern",
+      "content": "Mr. Blue needs real-time database access to answer platform-specific questions",
+      "timestamp": "2025-12-25T00:00:00Z",
+      "impact": "critical"
+    },
+    {
+      "id": "learn-002",
+      "type": "pattern",
+      "content": "Singleton pattern (Pattern 63) prevents duplicate chat panels",
+      "timestamp": "2025-12-25T00:00:00Z",
+      "impact": "high"
+    },
+    {
+      "id": "learn-003",
+      "type": "pattern",
+      "content": "God Powers (Pattern 65) give admin/CTO users full system access",
+      "timestamp": "2025-12-25T00:00:00Z",
+      "impact": "high"
+    }
+  ],
+  "reportsTo": "cto-agent",
+  "metrics": {
+    "tracked": [
+      "ai_response_quality",
+      "latency_p95",
+      "cost_per_query",
+      "user_satisfaction",
+      "error_rate"
+    ]
+  }
+}

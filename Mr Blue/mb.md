@@ -79,6 +79,24 @@ use mb.md: agents:scraping       → Load 10 scraping agents
 use mb.md: agents:business       → Load 32 business domain agents
 use mb.md: agents:core           → Load 49 Mr Blue core agents
 
+# Leadership Agents (C-Suite + VPs + Heads)
+use mb.md: agents:leadership     → Load all leadership agents
+use mb.md: agents:ceo            → Load CEO Agent (strategy, vision)
+use mb.md: agents:cto            → Load CTO Agent (technical)
+use mb.md: agents:cpo            → Load CPO Agent (product)
+use mb.md: agents:cfo            → Load CFO Agent (finance)
+use mb.md: agents:cmo            → Load CMO Agent (marketing)
+use mb.md: agents:vp-engineering → Load VP Engineering Agent
+use mb.md: agents:vp-design      → Load VP Design Agent
+use mb.md: agents:vp-data        → Load VP Data Agent
+use mb.md: agents:vp-security    → Load VP Security Agent
+use mb.md: agents:vp-devops      → Load VP DevOps Agent
+use mb.md: agents:vp-platform    → Load VP Platform Agent
+use mb.md: agents:head-ai        → Load Head of AI Agent
+use mb.md: agents:head-qa        → Load Head of QA Agent
+use mb.md: agents:head-frontend  → Load Head of Frontend Agent
+use mb.md: agents:head-backend   → Load Head of Backend Agent
+
 # n8n Integration
 use mb.md: n8n                   → Load n8n connection guide
 use mb.md: n8n:webhooks          → Load all webhook endpoints
@@ -213,6 +231,13 @@ UI scaffolding ≠ functional feature completion. Every feature requires:
 │
 ├── /agents/                      # 140+ agent profiles
 │   ├── overview.md               # Agent ecosystem summary
+│   ├── /leadership/              # C-Suite + VPs + Heads (NEW)
+│   │   ├── index.md              # Leadership agent system
+│   │   └── /memory/              # Agent learning storage
+│   │       ├── god-commands.json # God-level directives
+│   │       ├── ceo-agent.json    # CEO learnings
+│   │       ├── cto-agent.json    # CTO learnings
+│   │       └── ...               # Other agent memories
 │   ├── /page-agents/             # 10 page agents
 │   ├── /life-ceo/                # 16 Life CEO agents
 │   ├── /self-healing/            # 10 self-healing agents

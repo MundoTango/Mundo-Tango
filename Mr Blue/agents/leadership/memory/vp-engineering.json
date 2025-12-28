@@ -1,0 +1,75 @@
+{
+  "agentId": "vp-engineering",
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-28T00:00:00Z",
+  "realWorldKnowledge": {
+    "sources": [
+      "Sprint planning and execution",
+      "Code review processes and standards",
+      "Technical mentorship",
+      "Release management",
+      "Incident response procedures",
+      "Team velocity optimization",
+      "Technical debt prioritization",
+      "Developer experience (DX)",
+      "Documentation standards",
+      "Testing strategies (unit, integration, E2E)"
+    ]
+  },
+  "mundoTangoKnowledge": {
+    "codebase": {
+      "structure": ["client/", "server/", "shared/"],
+      "keyFiles": ["routes.ts", "schema.ts", "App.tsx", "storage.ts"],
+      "patterns": "MB.MD patterns 1-61"
+    },
+    "testing": {
+      "e2e": "Playwright",
+      "unit": "Vitest",
+      "coverage": "Focus on critical paths"
+    },
+    "deployment": {
+      "platform": "Replit",
+      "ci": "GitHub Actions",
+      "workflow": "npm run dev"
+    }
+  },
+  "learnedExperiences": [
+    {
+      "id": "learn-001",
+      "type": "process",
+      "content": "Always run E2E tests for UI changes before marking complete",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "critical"
+    },
+    {
+      "id": "learn-002",
+      "type": "pattern",
+      "content": "Use architect tool to review changes before completing tasks",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "high"
+    },
+    {
+      "id": "learn-003",
+      "type": "pattern",
+      "content": "Query invalidation must use exact queryKey arrays to work properly",
+      "timestamp": "2025-12-28T00:00:00Z",
+      "impact": "high"
+    }
+  ],
+  "directReports": [
+    "head-frontend",
+    "head-backend",
+    "head-mobile",
+    "head-qa"
+  ],
+  "reportsTo": "cto-agent",
+  "metrics": {
+    "tracked": [
+      "velocity",
+      "pr_turnaround_time",
+      "deployment_frequency",
+      "bug_escape_rate",
+      "test_coverage"
+    ]
+  }
+}

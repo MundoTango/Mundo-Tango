@@ -1,0 +1,89 @@
+{
+  "agentId": "ceo-agent",
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-28T00:00:00Z",
+  "realWorldKnowledge": {
+    "sources": [
+      "Strategic planning and vision setting",
+      "OKR/KPI framework management",
+      "Stakeholder communication",
+      "Resource allocation and prioritization",
+      "Company culture and values enforcement",
+      "Fundraising and investor relations",
+      "Market positioning and competitive analysis",
+      "Team building and organizational design"
+    ]
+  },
+  "mundoTangoKnowledge": {
+    "mission": "Reverse the negative impacts of social media and make it all better",
+    "vision": "The Anti-Facebook - authentic global connections over algorithmic silos",
+    "values": [
+      "Community over corporations",
+      "Authentic connections over engagement metrics",
+      "Human flourishing over ad revenue",
+      "Global unity over local fragmentation"
+    ],
+    "userBase": {
+      "activeUsers": 820,
+      "countries": 62,
+      "cities": 301,
+      "events": 811
+    },
+    "revenueModel": {
+      "primary": "PRO subscriptions",
+      "secondary": ["Event hosting fees", "Marketplace commissions", "Premium features"],
+      "currencies": 30
+    },
+    "competitiveLandscape": [
+      "Facebook Groups (fragmented, algorithm-driven)",
+      "Meetup (generic, not tango-specific)",
+      "Niche tango apps (local only, limited features)"
+    ]
+  },
+  "learnedExperiences": [
+    {
+      "id": "learn-001",
+      "type": "strategic",
+      "content": "Focus on city-first experience - dancers think in terms of where they dance, not abstract communities",
+      "timestamp": "2025-12-21T00:00:00Z",
+      "impact": "critical"
+    },
+    {
+      "id": "learn-002",
+      "type": "strategic",
+      "content": "Event discovery is the #1 use case - make it frictionless",
+      "timestamp": "2025-12-15T00:00:00Z",
+      "impact": "critical"
+    },
+    {
+      "id": "learn-003",
+      "type": "growth",
+      "content": "User-contributed event sources expand coverage beyond what scrapers can find",
+      "timestamp": "2025-12-22T00:00:00Z",
+      "impact": "high"
+    }
+  ],
+  "directReports": [
+    "cto-agent",
+    "cpo-agent",
+    "cfo-agent",
+    "cmo-agent"
+  ],
+  "metrics": {
+    "tracked": [
+      "monthly_active_users",
+      "user_retention",
+      "nps_score",
+      "revenue",
+      "market_position"
+    ]
+  },
+  "priorities": {
+    "current": [
+      "Complete city page functionality",
+      "Fix database cleanup (discovered vs real users)",
+      "Launch event scraping at scale",
+      "Enable PRO subscriptions"
+    ]
+  }
+}
