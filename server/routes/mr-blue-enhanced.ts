@@ -19,10 +19,11 @@ import { browserAutomationService } from '../services/mrBlue/BrowserAutomationSe
 import { facebookMessengerService } from '../services/mrBlue/FacebookMessengerService';
 import { mrBlueDataService } from '../services/mr-blue-data-service';
 import { db } from '@db';
-import { computerUseTasks, computerUseScreenshots } from '@shared/schema';
+import { computerUseTasks, computerUseScreenshots, userFeedback } from '@shared/schema';
 import { nanoid } from 'nanoid';
 import { eq } from 'drizzle-orm';
 import Groq from 'groq-sdk';
+import { storage } from '../storage';
 
 const router = Router();
 const elevenlabsService = new ElevenLabsVoiceService();
@@ -37,6 +38,14 @@ const enhancedChatSchema = z.object({
     serverLogs: z.array(z.string()).optional(),
   }).optional(),
   currentPage: z.string().optional(),
+  // MB.MD Pattern 67: Session context injection
+  sessionContext: z.object({
+    currentPage: z.string().optional(),
+    recentActions: z.array(z.string()).optional(),
+    navigationPath: z.array(z.string()).optional(),
+    lastError: z.string().optional(),
+    sessionId: z.string().optional(),
+  }).optional(),
 });
 
 /**
@@ -132,6 +141,95 @@ function detectComputerUseIntent(message: string): {
 }
 
 /**
+ * MB.MD Pattern 67: Feedback Intent Detection
+ * Detects when user is reporting a bug, feature request, or support issue
+ */
+function detectFeedbackIntent(message: string): {
+  isFeedback: boolean;
+  type: 'bug' | 'feature' | 'support' | 'complaint' | null;
+  confidence: number;
+} {
+  const msg = message.toLowerCase();
+  
+  // Bug report patterns
+  const bugPatterns = [
+    /\bbug\b/i,
+    /broken/i,
+    /doesn'?t work/i,
+    /not working/i,
+    /error/i,
+    /crash/i,
+    /issue/i,
+    /problem/i,
+    /wrong/i,
+    /failed/i,
+    /can'?t.*do/i,
+    /unable to/i,
+  ];
+  
+  for (const pattern of bugPatterns) {
+    if (pattern.test(message)) {
+      return { isFeedback: true, type: 'bug', confidence: 0.8 };
+    }
+  }
+  
+  // Feature request patterns
+  const featurePatterns = [
+    /feature request/i,
+    /would be nice/i,
+    /could you add/i,
+    /can you add/i,
+    /i wish/i,
+    /please add/i,
+    /suggestion/i,
+    /idea for/i,
+    /it would help/i,
+  ];
+  
+  for (const pattern of featurePatterns) {
+    if (pattern.test(message)) {
+      return { isFeedback: true, type: 'feature', confidence: 0.85 };
+    }
+  }
+  
+  // Support patterns
+  const supportPatterns = [
+    /help me/i,
+    /need help/i,
+    /how do i/i,
+    /how can i/i,
+    /can you help/i,
+    /stuck/i,
+    /confused/i,
+  ];
+  
+  for (const pattern of supportPatterns) {
+    if (pattern.test(message)) {
+      return { isFeedback: true, type: 'support', confidence: 0.7 };
+    }
+  }
+  
+  // Complaint patterns
+  const complaintPatterns = [
+    /frustrated/i,
+    /annoying/i,
+    /terrible/i,
+    /awful/i,
+    /hate/i,
+    /disappointed/i,
+    /unacceptable/i,
+  ];
+  
+  for (const pattern of complaintPatterns) {
+    if (pattern.test(message)) {
+      return { isFeedback: true, type: 'complaint', confidence: 0.75 };
+    }
+  }
+  
+  return { isFeedback: false, type: null, confidence: 0 };
+}
+
+/**
  * Context-aware chat endpoint for Mr. Blue interactions
  * Now supports:
  * - Computer Use automation triggers
@@ -140,10 +238,31 @@ function detectComputerUseIntent(message: string): {
  */
 router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
   try {
-    const { message, context, voiceEnabled, selectedVoiceId, systemPrompt: customSystemPrompt, conversationHistory } = req.body;
+    const { message, context, voiceEnabled, selectedVoiceId, systemPrompt: customSystemPrompt, conversationHistory, sessionContext } = req.body;
     
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message is required' });
+    }
+    
+    // MB.MD Pattern 67: Build session context string for AI injection
+    let sessionContextStr = '';
+    if (sessionContext) {
+      const parts: string[] = [];
+      if (sessionContext.currentPage) {
+        parts.push(`User is on page: ${sessionContext.currentPage}`);
+      }
+      if (sessionContext.recentActions?.length) {
+        parts.push(`Recent actions: ${sessionContext.recentActions.slice(0, 5).join(', ')}`);
+      }
+      if (sessionContext.navigationPath?.length) {
+        parts.push(`Navigation path: ${sessionContext.navigationPath.join(' → ')}`);
+      }
+      if (sessionContext.lastError) {
+        parts.push(`Last error seen: ${sessionContext.lastError}`);
+      }
+      if (parts.length > 0) {
+        sessionContextStr = `\n\n[User Session Context]\n${parts.join('\n')}`;
+      }
     }
     
     // MB.MD Fix: If custom systemPrompt provided (e.g., from Talent Match interview), use Groq AI
@@ -214,6 +333,44 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
     
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    // MB.MD Pattern 67: Check for feedback intent and save to queue
+    const feedbackIntent = detectFeedbackIntent(message);
+    if (feedbackIntent.isFeedback && feedbackIntent.type && feedbackIntent.confidence >= 0.7) {
+      try {
+        // Create feedback record
+        const feedbackId = await storage.createUserFeedback({
+          userId,
+          sessionId: sessionContext?.sessionId || `sess_${Date.now()}`,
+          feedbackType: feedbackIntent.type,
+          title: message.substring(0, 100),
+          description: message,
+          currentPage: sessionContext?.currentPage || context?.currentPage || '',
+          sessionSnapshot: sessionContext || null,
+          status: 'pending',
+          priority: feedbackIntent.type === 'bug' ? 'high' : 'medium',
+          mrBlueResponse: null,
+          adminNotes: null,
+        });
+        
+        console.log(`[Mr. Blue] Feedback captured: ${feedbackIntent.type} (ID: ${feedbackId})`);
+        
+        // For high-priority bugs, return acknowledgment
+        if (feedbackIntent.type === 'bug' || feedbackIntent.type === 'complaint') {
+          return res.json({
+            role: 'assistant',
+            content: `I've logged your ${feedbackIntent.type === 'bug' ? 'bug report' : 'feedback'} and sent it to our team for review. A member of our team will look into this shortly. Is there anything else I can help you with in the meantime?`,
+            timestamp: new Date().toISOString(),
+            feedbackCaptured: true,
+            feedbackId,
+            feedbackType: feedbackIntent.type,
+          });
+        }
+      } catch (feedbackError) {
+        console.error('[Mr. Blue] Error capturing feedback:', feedbackError);
+        // Continue with normal response even if feedback capture fails
+      }
     }
     
     // STEP 1: Check for Computer Use automation intent
@@ -600,7 +757,8 @@ PERSONALITY:
 
 ${platformContext}
 ${userContext}
-${godModeContext}`;
+${godModeContext}
+${sessionContextStr}`;
     
     if (context) {
       const { currentPage, pageTitle, breadcrumbs, userIntent } = context;
