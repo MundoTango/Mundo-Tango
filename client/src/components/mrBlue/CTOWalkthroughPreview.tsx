@@ -29,8 +29,8 @@ const WALKTHROUGH_STEPS: Omit<WalkthroughStep, 'status'>[] = [
   { id: '2', action: 'navigate', description: 'Navigate to Talent Match page' },
   { id: '3', action: 'scroll', description: 'Scroll to resume upload section' },
   { id: '4', action: 'upload', description: 'Upload test resume (PDF)' },
-  { id: '5', action: 'submit', description: 'Submit resume for parsing' },
-  { id: '6', action: 'verify', description: 'Verify parsed data appears correctly' },
+  { id: '5', action: 'begin_interview', description: 'Click Begin AI Interview button' },
+  { id: '6', action: 'verify', description: 'Verify AI parsing triggers correctly' },
 ];
 
 export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthroughPreviewProps) {
@@ -114,6 +114,36 @@ export function CTOWalkthroughPreview({ isOpen, onClose, onError }: CTOWalkthrou
             setErrorDetails(data);
             setIsRunning(false);
             setFixStatus(null); // Clear any previous fix status
+            
+            // Trigger Mr Blue Self-Healing automatically
+            console.log('[Mr Blue] Triggering autonomous self-healing...');
+            fetch('/api/cto/walkthrough/self-heal', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                error: data.error,
+                page: '/talent-match',
+                step: WALKTHROUGH_STEPS[data.stepIndex]?.description || 'Unknown step',
+                logs: []
+              })
+            })
+            .then(res => res.json())
+            .then(healResult => {
+              console.log('[Mr Blue Self-Healing] Result:', healResult);
+              // Update error details with healing analysis
+              if (healResult.pattern) {
+                setErrorDetails((prev: any) => ({
+                  ...prev,
+                  mrBlueAnalysis: {
+                    pattern: healResult.pattern,
+                    fixResult: healResult.fixResult,
+                    retryRecommended: healResult.retryRecommended,
+                    agents: healResult.agents
+                  }
+                }));
+              }
+            })
+            .catch(e => console.error('[Mr Blue Self-Healing] Failed:', e));
             
             if (onError) {
               onError({

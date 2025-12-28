@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { chromium, Browser, Page } from 'playwright';
 import path from 'path';
 import fs from 'fs';
+import { selfHealingService, MBMD_PATTERNS as SH_PATTERNS } from '../services/mrBlue/SelfHealingService';
 
 const router = Router();
 
@@ -17,8 +18,8 @@ const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   { id: '2', action: 'navigate', description: 'Navigate to Talent Match page' },
   { id: '3', action: 'scroll', description: 'Scroll to resume upload section' },
   { id: '4', action: 'upload', description: 'Upload test resume (PDF)' },
-  { id: '5', action: 'submit', description: 'Submit resume for parsing' },
-  { id: '6', action: 'verify', description: 'Verify parsed data appears correctly' },
+  { id: '5', action: 'begin_interview', description: 'Click Begin AI Interview button' },
+  { id: '6', action: 'verify', description: 'Verify AI parsing triggers correctly' },
 ];
 
 const MBMD_PATTERNS: Record<string, { pattern: string; rootCause: string; recommendedFix: string; fixSteps: string[] }> = {
@@ -217,37 +218,49 @@ router.get('/run', async (req: Request, res: Response) => {
       
       page = await context.newPage();
       
-      // Step 1: Login with admin credentials
+      // Step 1: Login with admin credentials via API and set tokens
       const step1Start = Date.now();
       sendEvent({ type: 'step_start', stepIndex: 0, step: WALKTHROUGH_STEPS[0] });
       
       try {
-        await page.goto(`${baseUrl}/login`, { 
+        // First, login via API to get tokens
+        const loginResponse = await fetch(`${baseUrl}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'admin@mundotango.life', password: 'admin123!' })
+        });
+        
+        if (!loginResponse.ok) {
+          throw new Error(`Login API failed: ${loginResponse.status}`);
+        }
+        
+        const loginData = await loginResponse.json();
+        const accessToken = loginData.accessToken;
+        const refreshToken = loginData.refreshToken;
+        
+        if (!accessToken) {
+          throw new Error('No access token received from login');
+        }
+        
+        // Navigate to app and inject tokens into localStorage
+        await page.goto(`${baseUrl}/`, { 
           waitUntil: 'load',
           timeout: 15000 
         });
-        await page.waitForTimeout(1000); // Wait for React hydration
+        await page.waitForTimeout(500);
         
-        // Fill login form
-        const emailInput = page.locator('input[type="email"], input[name="email"], [data-testid="input-email"]').first();
-        const passwordInput = page.locator('input[type="password"], input[name="password"], [data-testid="input-password"]').first();
+        // Set tokens in localStorage (this is how the React app stores auth)
+        await page.evaluate((tokens) => {
+          localStorage.setItem('accessToken', tokens.accessToken);
+          if (tokens.refreshToken) {
+            localStorage.setItem('refreshToken', tokens.refreshToken);
+          }
+          localStorage.setItem('user', JSON.stringify(tokens.user));
+        }, { accessToken, refreshToken, user: loginData.user });
         
-        await emailInput.fill('admin@mundotango.life');
-        await passwordInput.fill('admin123!');
-        
-        // Click login button
-        const loginBtn = page.locator('button[type="submit"], [data-testid="button-login"], button:has-text("Login"), button:has-text("Sign in")').first();
-        await loginBtn.click();
-        
-        // Wait for login to complete - either URL changes or we see authenticated UI elements
-        await page.waitForTimeout(3000); // Give React time to process login and redirect
-        
-        // Check if we're still on login page
-        const currentUrl = page.url();
-        if (currentUrl.includes('/login')) {
-          // Try clicking again or wait for redirect
-          await page.waitForTimeout(2000);
-        }
+        // Reload to pick up the auth state
+        await page.reload({ waitUntil: 'load' });
+        await page.waitForTimeout(1500);
         
         const screenshot1 = await captureScreenshot(page);
         sendEvent({ 
@@ -410,20 +423,20 @@ router.get('/run', async (req: Request, res: Response) => {
         return;
       }
 
-      // Step 5: Submit resume
+      // Step 5: Click Begin AI Interview button
       const step5Start = Date.now();
       sendEvent({ type: 'step_start', stepIndex: 4, step: WALKTHROUGH_STEPS[4] });
       
       try {
-        // Look for submit button
-        const submitBtn = page.locator('[data-testid="submit-resume"], button:has-text("Submit"), button:has-text("Parse"), button:has-text("Upload")').first();
+        // Look for "Begin AI Interview" button - this triggers the PDF parsing
+        const beginBtn = page.locator('button:has-text("Begin AI Interview"), button:has-text("Begin Interview"), [data-testid="begin-interview"]').first();
         
-        if (await submitBtn.count() > 0) {
-          await submitBtn.click();
-          await page.waitForTimeout(2000); // Wait for processing
+        if (await beginBtn.count() > 0) {
+          await beginBtn.click();
+          // Wait for the AI parsing to trigger
+          await page.waitForTimeout(5000);
         } else {
-          // Just wait as file might auto-process
-          await page.waitForTimeout(1500);
+          throw new Error('Begin AI Interview button not found - check if resume upload completed');
         }
         
         const screenshot5 = await captureScreenshot(page);
@@ -436,13 +449,13 @@ router.get('/run', async (req: Request, res: Response) => {
         if (screenshot5) {
           sendEvent({ type: 'screenshot', image: screenshot5 });
         }
-      } catch (submitError: any) {
-        const mbmd = detectErrorPattern(submitError.message);
+      } catch (beginError: any) {
+        const mbmd = detectErrorPattern(beginError.message);
         sendEvent({
           type: 'step_failed',
           stepIndex: 4,
           step: WALKTHROUGH_STEPS[4],
-          error: `Submit failed: ${submitError.message}`,
+          error: `Begin Interview failed: ${beginError.message}`,
           mbmdAnalysis: {
             mbmdPattern: mbmd.pattern,
             rootCause: mbmd.rootCause,
@@ -589,6 +602,67 @@ router.get('/status', async (_req: Request, res: Response) => {
     patterns: Object.keys(MBMD_PATTERNS),
     version: '2.0.0',
     mode: 'playwright-real'
+  });
+});
+
+// Mr Blue Self-Healing Endpoint
+// This is called when an error occurs - Mr Blue autonomously analyzes and attempts to fix
+router.post('/self-heal', async (req: Request, res: Response) => {
+  const { error, page, step, logs } = req.body;
+  
+  console.log('[Mr Blue Self-Healing] Received healing request...');
+  
+  try {
+    // Reset for new healing cycle
+    selfHealingService.resetRetryCount();
+    
+    // Run the healing cycle
+    const result = await selfHealingService.heal(error, {
+      error,
+      page: page || '/talent-match',
+      step: step || 'unknown',
+      logs: logs || []
+    });
+    
+    // Return detailed healing result
+    res.json({
+      success: result.healed,
+      pattern: result.pattern ? {
+        id: result.pattern.id,
+        name: result.pattern.name,
+        pattern: result.pattern.pattern,
+        rootCause: result.pattern.rootCause,
+        autoFixSteps: result.pattern.autoFixSteps,
+        severity: result.pattern.severity
+      } : null,
+      fixResult: result.fixResult,
+      retryRecommended: result.retryRecommended,
+      healingLog: result.healingLog,
+      agents: {
+        active: Object.keys(selfHealingService.getStatus().agentsActive),
+        status: selfHealingService.getStatus()
+      }
+    });
+  } catch (e: any) {
+    console.error('[Mr Blue Self-Healing] Error:', e);
+    res.status(500).json({
+      success: false,
+      error: e.message,
+      healingLog: selfHealingService.getStatus().log
+    });
+  }
+});
+
+// Get Self-Healing Status
+router.get('/self-heal/status', async (_req: Request, res: Response) => {
+  const status = selfHealingService.getStatus();
+  res.json({
+    available: true,
+    agents: status.agentsActive.length,
+    issuesFound: status.issuesFound,
+    issuesFixed: status.issuesFixed,
+    retryCount: status.retryCount,
+    recentLog: status.log.slice(-10) // Last 10 actions
   });
 });
 
