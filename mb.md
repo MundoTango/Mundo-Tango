@@ -237,11 +237,20 @@ Recent learnings from leadership agents:
 - Conventional commits required on all changes
 - Atomic commits (one logical change per commit)
 - Pre-commit checklist must pass before pushing
+- **FEATURE BRANCHES REQUIRED** (God Command #9):
+  - All non-trivial work → `feat/*`, `fix/*`, `refactor/*` branches
+  - Direct `main` commits → ONLY for hotfixes or typos
+  - PR review before merge to main
+  - Branch naming: `{type}/{short-description}` (e.g., `fix/friendship-system-cleanup`)
 
 ### Plan Tracker Agent
 - 5 plan files being tracked
 - Checkbox format: `[ ]` pending, `[x]` complete, `🔄` in progress
 - Progress synced on session end
+- **ALL WORK MUST BE LOGGED** (God Command #10):
+  - Every session must update relevant plan.md section
+  - Unplanned work → add to "MB.MD Maintenance Log" section
+  - Plan Tracker Agent auto-invokes at session start/end
 
 ---
 

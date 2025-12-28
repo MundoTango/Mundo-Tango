@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
-  "lastUpdated": "2025-12-28T21:15:00Z",
+  "version": "1.2.0",
+  "lastUpdated": "2025-12-28T22:30:00Z",
   "commands": [
     {
       "id": "gc-000",
@@ -98,6 +98,28 @@
       "scope": "global",
       "targetAgents": ["*"],
       "priority": "high",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-009",
+      "command": "Feature Branches Required - All non-trivial work must use feature branches (fix/*, feat/*, refactor/*). Direct main commits only for hotfixes or typos. PR review before merge.",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T22:30:00Z",
+      "scope": "global",
+      "targetAgents": ["*", "github-practices-agent"],
+      "priority": "override",
+      "expiresAt": null,
+      "active": true
+    },
+    {
+      "id": "gc-010",
+      "command": "Plan Tracker Updates - ALL work must be logged in plan.md (or relevant plan file). Plan Tracker Agent must update at session start and end.",
+      "issuedBy": "Scott Boddye",
+      "timestamp": "2025-12-28T22:30:00Z",
+      "scope": "global",
+      "targetAgents": ["*", "plan-tracker-agent"],
+      "priority": "override",
       "expiresAt": null,
       "active": true
     }

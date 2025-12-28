@@ -205,3 +205,35 @@ If issues found:
 4. **VERIFY:** E2E test suite
 
 **Command to start:** Execute Phase 5 immediately
+
+---
+
+## 📋 MB.MD MAINTENANCE LOG
+
+*Per God Command #10: All work must be logged here.*
+
+### Session: December 28, 2025 - Friendship System Cleanup
+
+**Branch:** `main` (should have been `fix/friendship-system-cleanup` - policy now enforced)
+
+**Tasks Completed:**
+- [x] Deleted 58 test users from dev database
+- [x] Cleaned 6 orphaned friendships (references to inactive users)
+- [x] Cleaned 6 orphaned friend requests (references to inactive users)
+- [x] Added `cancelFriendRequest()` storage method
+- [x] Added `DELETE /api/friends/requests/:id` endpoint
+- [x] Updated `getUserFriends()` to filter inactive users
+- [x] Documented patterns in mb.md OPERATIONAL PATTERNS section
+
+**God Commands Added:**
+- [x] gc-009: Feature Branches Required
+- [x] gc-010: Plan Tracker Updates Required
+
+**Commits:**
+- `ed93904` - Add cancel friend requests + filter inactive users
+- `d468861` - Add user cleanup operational patterns to mb.md
+
+**Next Session Should:**
+- [ ] Create feature branch for any new work
+- [ ] Add frontend "Cancel Request" button integration
+- [ ] Implement closeness score recalculation service
