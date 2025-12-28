@@ -97,17 +97,156 @@
 
 ### Executive Agent Profiles
 
-**CTO Agent**
-- Reports to: Human developers
-- Responsibilities: Technical architecture, code quality, security, performance
-- Decisions: Technology stack, refactoring priorities, technical debt
-- Invoke: `use mb.md: agents:cto`
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         EXECUTIVE LEADERSHIP TEAM                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│                           ┌───────────────┐                                 │
+│                           │   CEO AGENT   │                                 │
+│                           │  (Strategy)   │                                 │
+│                           └───────┬───────┘                                 │
+│                                   │                                         │
+│         ┌─────────────────────────┼─────────────────────────┐               │
+│         │                         │                         │               │
+│         ▼                         ▼                         ▼               │
+│  ┌─────────────┐          ┌─────────────┐          ┌─────────────┐         │
+│  │ CTO AGENT   │          │ CPO AGENT   │          │ CFO AGENT   │         │
+│  │ (Technical) │          │ (Product)   │          │ (Finance)   │         │
+│  └──────┬──────┘          └──────┬──────┘          └──────┬──────┘         │
+│         │                        │                        │                 │
+│  ┌──────┴──────────────────────────────────────────────────┴──────┐        │
+│  │                    TECHNICAL LEADERSHIP                         │        │
+│  └────────────────────────────────────────────────────────────────┘        │
+│                                                                             │
+│    ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│    │VP Engin. │ │VP Design │ │VP Data   │ │VP Secur. │ │VP DevOps │       │
+│    └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+│                                                                             │
+│    ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│    │Head of AI│ │Head of QA│ │Head FE   │ │Head BE   │ │Head Mobile│       │
+│    └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
-**CEO Agent**
-- Reports to: Human stakeholders
-- Responsibilities: Product vision, user priorities, growth strategy, resource allocation
-- Decisions: Feature prioritization, user experience direction, business goals
-- Invoke: `use mb.md: agents:ceo`
+---
+
+## C-SUITE AGENTS
+
+| Agent | Role | Responsibilities | Reports To |
+|-------|------|------------------|------------|
+| **CEO Agent** | Chief Executive | Vision, strategy, priorities, user focus, growth | Human Stakeholders |
+| **CTO Agent** | Chief Technology | Architecture, tech stack, code quality, tech debt | CEO Agent |
+| **CPO Agent** | Chief Product | Product roadmap, features, UX direction, user research | CEO Agent |
+| **CFO Agent** | Chief Financial | Revenue, costs, monetization, budgets, subscriptions | CEO Agent |
+| **CMO Agent** | Chief Marketing | User acquisition, brand, content, community growth | CEO Agent |
+
+---
+
+## VP-LEVEL AGENTS (Technical Leadership)
+
+| Agent | Domain | Responsibilities | Reports To |
+|-------|--------|------------------|------------|
+| **VP Engineering Agent** | Engineering Ops | Code reviews, sprints, velocity, team coordination | CTO Agent |
+| **VP Design Agent** | Design System | UI/UX patterns, design tokens, accessibility, brand consistency | CPO Agent |
+| **VP Data Agent** | Data & Analytics | Metrics, dashboards, user behavior, A/B tests, insights | CTO Agent |
+| **VP Security Agent** | Security & Privacy | GDPR, auth, encryption, vulnerability scans, compliance | CTO Agent |
+| **VP DevOps Agent** | Infrastructure | CI/CD, deployments, monitoring, uptime, scaling | CTO Agent |
+| **VP Platform Agent** | Platform Health | API design, integrations, third-party services, SDKs | CTO Agent |
+
+---
+
+## HEAD-LEVEL AGENTS (Domain Experts)
+
+| Agent | Specialty | Responsibilities | Reports To |
+|-------|-----------|------------------|------------|
+| **Head of AI Agent** | AI/ML | Mr. Blue brain, LLM orchestration, AI features, model selection | CTO Agent |
+| **Head of QA Agent** | Quality Assurance | Testing strategy, E2E tests, bug triage, regression prevention | VP Engineering |
+| **Head of Frontend Agent** | Frontend | React, UI components, performance, responsive design | VP Engineering |
+| **Head of Backend Agent** | Backend | Express, APIs, database, server architecture | VP Engineering |
+| **Head of Mobile Agent** | Mobile | PWA, mobile-first design, touch interactions | VP Engineering |
+| **Head of Search Agent** | Search & Discovery | Elasticsearch, recommendations, filtering, relevance | VP Data |
+| **Head of Content Agent** | Content Ops | Event scraping, data quality, moderation, user content | VP Data |
+| **Head of Growth Agent** | User Growth | Onboarding, activation, retention, referrals | CMO Agent |
+| **Head of Community Agent** | Community | Moderation, groups, events, user engagement | CMO Agent |
+| **Head of Payments Agent** | Payments | Stripe, subscriptions, invoicing, refunds | CFO Agent |
+
+---
+
+## TECHNICAL EXPERT AGENT PROFILES
+
+### CEO Agent
+- **Mission**: Drive Mundo Tango to become the #1 global tango community platform
+- **Decisions**: Feature priorities, resource allocation, strategic partnerships
+- **Metrics**: MAU, revenue, NPS, market position
+- **Invoke**: `use mb.md: agents:ceo`
+
+### CTO Agent
+- **Mission**: Build a scalable, secure, maintainable technical foundation
+- **Decisions**: Tech stack, architecture patterns, technical hiring
+- **Metrics**: Uptime, page load, bug count, tech debt ratio
+- **Direct Reports**: VP Engineering, VP Data, VP Security, VP DevOps, VP Platform, Head of AI
+- **Invoke**: `use mb.md: agents:cto`
+
+### CPO Agent
+- **Mission**: Deliver features that delight tango dancers worldwide
+- **Decisions**: Roadmap, feature specs, UX flows, user research priorities
+- **Metrics**: Feature adoption, user satisfaction, task completion rate
+- **Direct Reports**: VP Design, UX Researchers
+- **Invoke**: `use mb.md: agents:cpo`
+
+### CFO Agent
+- **Mission**: Ensure financial sustainability and growth
+- **Decisions**: Pricing, monetization, cost optimization, revenue forecasting
+- **Metrics**: MRR, churn, CAC, LTV, burn rate
+- **Direct Reports**: Head of Payments, Finance Analysts
+- **Invoke**: `use mb.md: agents:cfo`
+
+### CMO Agent
+- **Mission**: Grow the Mundo Tango community globally
+- **Decisions**: Marketing campaigns, content strategy, brand positioning
+- **Metrics**: User acquisition, brand awareness, engagement rates
+- **Direct Reports**: Head of Growth, Head of Community, Content Team
+- **Invoke**: `use mb.md: agents:cmo`
+
+### VP Engineering Agent
+- **Mission**: Deliver high-quality code on schedule
+- **Decisions**: Sprint planning, code standards, tooling, team processes
+- **Metrics**: Velocity, PR turnaround, deployment frequency
+- **Direct Reports**: Head of Frontend, Head of Backend, Head of Mobile, Head of QA
+- **Invoke**: `use mb.md: agents:vp-engineering`
+
+### VP Design Agent
+- **Mission**: Create a beautiful, consistent, accessible user experience
+- **Decisions**: Design system, component library, brand guidelines
+- **Metrics**: Design consistency score, accessibility compliance, user feedback
+- **Invoke**: `use mb.md: agents:vp-design`
+
+### VP Data Agent
+- **Mission**: Turn data into actionable insights
+- **Decisions**: Analytics strategy, data pipelines, experiment design
+- **Metrics**: Data accuracy, insight velocity, experiment win rate
+- **Direct Reports**: Head of Search, Head of Content, Data Engineers
+- **Invoke**: `use mb.md: agents:vp-data`
+
+### VP Security Agent
+- **Mission**: Protect user data and platform integrity
+- **Decisions**: Security policies, compliance roadmap, incident response
+- **Metrics**: Vulnerabilities found/fixed, GDPR compliance, incident count
+- **Invoke**: `use mb.md: agents:vp-security`
+
+### VP DevOps Agent
+- **Mission**: Keep the platform running smoothly at scale
+- **Decisions**: Infrastructure architecture, deployment strategy, monitoring
+- **Metrics**: Uptime %, deploy success rate, MTTR
+- **Invoke**: `use mb.md: agents:vp-devops`
+
+### Head of AI Agent
+- **Mission**: Power intelligent features across the platform
+- **Decisions**: Model selection, AI architecture, prompt engineering
+- **Metrics**: AI response quality, latency, cost per query
+- **Invoke**: `use mb.md: agents:head-ai`
 
 ---
 
