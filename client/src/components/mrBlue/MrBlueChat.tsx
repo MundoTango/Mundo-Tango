@@ -139,7 +139,12 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         content: getWelcomeMessage(),
         timestamp: new Date()
       };
-      setMessages([welcomeMessage, ...fetchedMessages]);
+      // Fix: Convert API timestamps (strings) to Date objects
+      const parsedMessages = fetchedMessages.map(msg => ({
+        ...msg,
+        timestamp: msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp)
+      }));
+      setMessages([welcomeMessage, ...parsedMessages]);
     }
   }, [fetchedMessages, ctoWelcome, selfHealError]);
   
@@ -352,7 +357,11 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
                   <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
                 </div>
                 <p className={`text-[10px] text-muted-foreground mt-1 ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {message.timestamp instanceof Date 
+                    ? message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    : message.timestamp 
+                      ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      : ''}
                 </p>
               </div>
 
