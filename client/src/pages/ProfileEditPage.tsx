@@ -21,6 +21,7 @@ import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/Un
 import { useLocationChange } from "@/hooks/useLocationChange";
 import { LocationChangeWelcome } from "@/components/location/LocationChangeWelcome";
 import type { LocationChangeEffects } from "@/lib/locationChangeEffects";
+import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 
 interface UserData {
   id: number;
@@ -93,6 +94,7 @@ export default function ProfileEditPage() {
   // Location change welcome dialog state
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [locationEffects, setLocationEffects] = useState<LocationChangeEffects | null>(null);
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   
   // Location change hook for auto-join/auto-create city groups
   const { checkAndTriggerEffects, updatePreviousLocation, isProcessing: isLocationProcessing } = useLocationChange({
@@ -153,6 +155,29 @@ export default function ProfileEditPage() {
         variant: "destructive",
         title: "Failed to update profile",
         description: error.message || "Something went wrong",
+      });
+    },
+  });
+
+  // Avatar upload mutation
+  const uploadAvatarMutation = useMutation({
+    mutationFn: async (photoData: string) => {
+      return await apiRequest('POST', '/api/profile/photo', { photoData });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${currentUser?.id}`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      toast({
+        title: "Success",
+        description: "Profile photo updated successfully.",
+      });
+      setShowPhotoUpload(false);
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to upload profile photo",
       });
     },
   });
@@ -255,7 +280,12 @@ export default function ProfileEditPage() {
                           {user.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                         </AvatarFallback>
                       </Avatar>
-                      <Button variant="outline" className="gap-2" data-testid="button-change-photo">
+                      <Button 
+                        variant="outline" 
+                        className="gap-2" 
+                        data-testid="button-change-photo"
+                        onClick={() => setShowPhotoUpload(true)}
+                      >
                         <Camera className="h-4 w-4" />
                         Change Photo
                       </Button>
@@ -263,6 +293,14 @@ export default function ProfileEditPage() {
                   </CardContent>
                 </Card>
               </motion.div>
+
+              <PhotoUploadDialog
+                open={showPhotoUpload}
+                onOpenChange={setShowPhotoUpload}
+                type="profile"
+                onUpload={(photoData) => uploadAvatarMutation.mutate(photoData)}
+                isUploading={uploadAvatarMutation.isPending}
+              />
 
               {/* Basic Information */}
               <motion.div

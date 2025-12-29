@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,14 +18,18 @@ import {
   Video,
   Home,
   Shield,
-  Zap
+  Zap,
+  Loader2
 } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import { useAuth } from "@/contexts/AuthContext";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const features = [
   { icon: Globe, text: "Access to global tango community" },
@@ -69,6 +75,40 @@ const faqs = [
 
 export default function PricingPage() {
   const { t } = useTranslation(["pages", "common"]);
+  const { user, isAuthenticated } = useAuth();
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest('POST', '/api/pricing/checkout-session', {
+        planId: 'pro_monthly',
+        billingInterval: 'monthly',
+        trialDays: 7
+      });
+      return res.json();
+    },
+    onSuccess: (data: any) => {
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Checkout Error',
+        description: error.message || 'Failed to create checkout session. Please try again.',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleStartTrial = () => {
+    if (isAuthenticated) {
+      checkoutMutation.mutate();
+    } else {
+      setLocation('/register?from=pricing&plan=pro');
+    }
+  };
   
   return (
     <SelfHealingErrorBoundary pageName="Pricing" fallbackRoute="/">
@@ -144,15 +184,22 @@ export default function PricingPage() {
                         </p>
                       </div>
 
-                      <Link href="/register">
-                        <Button 
-                          size="lg" 
-                          className="w-full text-lg py-6 mb-4"
-                          data-testid="button-start-trial"
-                        >
-                          Start Free Trial
-                        </Button>
-                      </Link>
+                      <Button 
+                        size="lg" 
+                        className="w-full text-lg py-6 mb-4"
+                        data-testid="button-start-trial"
+                        onClick={handleStartTrial}
+                        disabled={checkoutMutation.isPending}
+                      >
+                        {checkoutMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                            Starting...
+                          </>
+                        ) : (
+                          isAuthenticated ? 'Start Pro Membership' : 'Start Free Trial'
+                        )}
+                      </Button>
 
                       <p className="text-sm text-muted-foreground">
                         Cancel anytime. 30-day money-back guarantee.
@@ -242,11 +289,22 @@ export default function PricingPage() {
                   <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
                     Start your 7-day free trial today and become part of the world's largest tango community.
                   </p>
-                  <Link href="/register">
-                    <Button size="lg" className="text-lg px-8" data-testid="button-cta-register">
-                      Start Your Free Trial
-                    </Button>
-                  </Link>
+                  <Button 
+                    size="lg" 
+                    className="text-lg px-8" 
+                    data-testid="button-cta-register"
+                    onClick={handleStartTrial}
+                    disabled={checkoutMutation.isPending}
+                  >
+                    {checkoutMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Starting...
+                      </>
+                    ) : (
+                      isAuthenticated ? 'Start Pro Membership' : 'Start Your Free Trial'
+                    )}
+                  </Button>
                 </motion.div>
               </div>
             </section>

@@ -92,16 +92,12 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
 
     const connect = () => {
       try {
-        ws = new WebSocket(`${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/notifications`);
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/notifications?token=${encodeURIComponent(accessToken)}`;
+        ws = new WebSocket(wsUrl);
         
         ws.onopen = () => {
           console.log('[WS] Connected to notification service');
-          if (ws && accessToken) {
-            ws.send(JSON.stringify({
-              type: 'auth',
-              token: accessToken
-            }));
-          }
         };
 
         ws.onmessage = (event) => {
