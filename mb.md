@@ -79,6 +79,50 @@ Mr. Blue is ONLINE and responds to commands at these endpoints:
 
 ---
 
+## VIBECODING TOOLS (MB.MD Pattern 65)
+
+Mr. Blue is a TRUE VibeCoding agent with real tool execution powers. When god-level users chat with Mr. Blue, he can DO things, not just TALK about them.
+
+### Available Tools
+
+| Tool | Description | Example Trigger |
+|------|-------------|-----------------|
+| `getGitHubInfo` | Query connected GitHub account & repos | "look at github", "show my repos" |
+| `getGitHubRepo` | Get specific repo details | "check owner/repo-name" |
+| `getGitStatus` | Local git branch & recent commits | "git status", "what branch am I on" |
+| `getProjectStructure` | Overview of project files | "show project structure", "what files are there" |
+| `readFile` | Read any project file | "read server/routes.ts" |
+| `writeFile` | Create/update project files | (via VibeCoding code generation) |
+| `listDirectory` | List directory contents | "what's in client/src" |
+| `searchFiles` | Find files by pattern | "find *.tsx files" |
+| `grepFiles` | Search file contents | "search for useAuth" |
+| `executeCommand` | Run safe shell commands | (ls, cat, git, npm, node) |
+
+### Tool Flow
+
+```
+User: "look at github and tell me about it"
+    ↓
+Tool Detection (confidence >= 0.7)
+    ↓
+getGitHubInfo() executed → real data returned
+    ↓
+AI formats result conversationally
+    ↓
+Response: "You have 15 repos, most recently updated is mundo-tango-app..."
+```
+
+### God-Level Authorization
+
+Tools are ONLY available to god-level users:
+- Users with `roleLevel >= 8`
+- `scott@boddye.com`
+- `admin@mundotango.life`
+
+Regular users get normal chat responses.
+
+---
+
 ## BRAIN ARCHITECTURE
 
 ```

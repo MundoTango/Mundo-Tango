@@ -25,6 +25,7 @@ import { eq } from 'drizzle-orm';
 import Groq from 'groq-sdk';
 import { storage } from '../storage';
 import { taskExecutorService, isGodLevelUser } from '../services/mrBlue/TaskExecutorService';
+import * as VibeCodingTools from '../services/mrBlue/VibeCodingToolService';
 
 const router = Router();
 const elevenlabsService = new ElevenLabsVoiceService();
@@ -254,6 +255,95 @@ function detectVibeCodingIntent(message: string): {
 }
 
 /**
+ * MB.MD Pattern 65: Tool Intent Detection
+ * Detects when a god-level user wants to USE a tool (not just chat)
+ * This is what makes Mr. Blue a TRUE VibeCoding agent - the ability to DO things
+ */
+function detectToolIntent(message: string): {
+  hasTool: boolean;
+  tool: string | null;
+  args: Record<string, string>;
+  confidence: number;
+} {
+  const msg = message.toLowerCase();
+  
+  // GitHub tool patterns
+  if (/\b(github|repo|repository|repos|commits?|issues?)\b/i.test(msg)) {
+    // Specific repo pattern: "look at owner/repo"
+    const repoMatch = msg.match(/(?:look at|check|show|get)\s+(?:the\s+)?(?:github\s+)?(?:repo(?:sitory)?\s+)?([a-z0-9_-]+)\/([a-z0-9_-]+)/i);
+    if (repoMatch) {
+      return {
+        hasTool: true,
+        tool: 'getGitHubRepo',
+        args: { owner: repoMatch[1], repo: repoMatch[2] },
+        confidence: 0.95
+      };
+    }
+    // General GitHub info
+    return { hasTool: true, tool: 'getGitHubInfo', args: {}, confidence: 0.85 };
+  }
+  
+  // Git status patterns
+  if (/\b(git\s+status|current\s+branch|recent\s+commits?|uncommitted)\b/i.test(msg)) {
+    return { hasTool: true, tool: 'getGitStatus', args: {}, confidence: 0.9 };
+  }
+  
+  // Project structure patterns
+  if (/\b(project\s+structure|codebase|file\s+structure|what\s+files|overview)\b/i.test(msg)) {
+    return { hasTool: true, tool: 'getProjectStructure', args: {}, confidence: 0.85 };
+  }
+  
+  // File read patterns
+  const readMatch = msg.match(/(?:read|show|open|view|look at|check)\s+(?:the\s+)?(?:file\s+)?([a-z0-9_\-./]+\.[a-z]+)/i);
+  if (readMatch) {
+    return { hasTool: true, tool: 'readFile', args: { filePath: readMatch[1] }, confidence: 0.9 };
+  }
+  
+  // Directory list patterns
+  const dirMatch = msg.match(/(?:list|show|what'?s?\s+in)\s+(?:the\s+)?(?:directory\s+|folder\s+)?([a-z0-9_\-./]+)/i);
+  if (dirMatch && !dirMatch[1].includes('.')) {
+    return { hasTool: true, tool: 'listDirectory', args: { dirPath: dirMatch[1] }, confidence: 0.8 };
+  }
+  
+  // Search patterns
+  const searchMatch = msg.match(/(?:search|find|grep|look for)\s+(?:files?\s+)?(?:containing\s+|with\s+|for\s+)?["']?([^"']+)["']?/i);
+  if (searchMatch) {
+    return { hasTool: true, tool: 'grepFiles', args: { searchTerm: searchMatch[1].trim() }, confidence: 0.8 };
+  }
+  
+  return { hasTool: false, tool: null, args: {}, confidence: 0 };
+}
+
+/**
+ * Execute a VibeCoding tool and return formatted result
+ */
+async function executeToolWithContext(
+  tool: string,
+  args: Record<string, string>
+): Promise<VibeCodingTools.ToolResult> {
+  switch (tool) {
+    case 'getGitHubInfo':
+      return await VibeCodingTools.getGitHubInfo();
+    case 'getGitHubRepo':
+      return await VibeCodingTools.getGitHubRepo(args.owner, args.repo);
+    case 'getGitStatus':
+      return await VibeCodingTools.getGitStatus();
+    case 'getProjectStructure':
+      return await VibeCodingTools.getProjectStructure();
+    case 'readFile':
+      return await VibeCodingTools.readFile(args.filePath);
+    case 'listDirectory':
+      return await VibeCodingTools.listDirectory(args.dirPath || '.');
+    case 'grepFiles':
+      return await VibeCodingTools.grepFiles(args.searchTerm);
+    case 'searchFiles':
+      return await VibeCodingTools.searchFiles(args.pattern);
+    default:
+      return { success: false, tool, data: null, error: 'Unknown tool' };
+  }
+}
+
+/**
  * Context-aware chat endpoint for Mr. Blue interactions
  * Now supports:
  * - Computer Use automation triggers
@@ -360,9 +450,73 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     
-    // MB.MD Pattern 65: VibeCoding Execution for God-Level Users
-    // Check if user is god-level and wants to make code changes
+    // Check if user is god-level (used for all god-level features)
     const isGodLevel = isGodLevelUser(userRoleLevel) || isGodLevelUser(userEmail);
+    
+    // MB.MD Pattern 65: TOOL EXECUTION for God-Level Users
+    // This is what makes Mr. Blue a TRUE VibeCoding agent - the ability to DO things
+    const toolIntent = detectToolIntent(message);
+    
+    if (isGodLevel && toolIntent.hasTool && toolIntent.tool && toolIntent.confidence >= 0.7) {
+      console.log(`[Mr. Blue] Tool execution request from god-level user: ${toolIntent.tool}`);
+      
+      try {
+        const toolResult = await executeToolWithContext(toolIntent.tool, toolIntent.args);
+        
+        if (toolResult.success) {
+          // Use AI to format the tool result conversationally
+          const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+          const formatResponse = await groq.chat.completions.create({
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+              {
+                role: 'system',
+                content: `You are Mr. Blue, a VibeCoding agent with god-level powers. You just executed a tool and got real data. Format this data conversationally for the user. Be helpful and informative. Do not use emojis.`
+              },
+              {
+                role: 'user',
+                content: `User asked: "${message}"\n\nTool executed: ${toolResult.tool}\n\nResult data:\n${JSON.stringify(toolResult.data, null, 2)}`
+              }
+            ],
+            max_tokens: 500,
+            temperature: 0.7
+          });
+          
+          const formattedResponse = formatResponse.choices[0]?.message?.content || JSON.stringify(toolResult.data, null, 2);
+          
+          return res.json({
+            role: 'assistant',
+            content: formattedResponse,
+            timestamp: new Date().toISOString(),
+            toolExecuted: toolResult.tool,
+            toolSuccess: true,
+            godLevelExecution: true,
+            rawData: toolResult.data,
+          });
+        } else {
+          return res.json({
+            role: 'assistant',
+            content: `I tried to execute ${toolResult.tool} but encountered an error: ${toolResult.error}. Please check that the required integrations are connected.`,
+            timestamp: new Date().toISOString(),
+            toolExecuted: toolResult.tool,
+            toolSuccess: false,
+            godLevelExecution: true,
+            error: toolResult.error,
+          });
+        }
+      } catch (toolError: any) {
+        console.error('[Mr. Blue] Tool execution error:', toolError);
+        return res.json({
+          role: 'assistant',
+          content: `I encountered an error while trying to help: ${toolError.message}`,
+          timestamp: new Date().toISOString(),
+          godLevelExecution: true,
+          error: toolError.message,
+        });
+      }
+    }
+    
+    // MB.MD Pattern 65: VibeCoding Code Generation for God-Level Users
     const vibeCodingIntent = detectVibeCodingIntent(message);
     
     if (isGodLevel && vibeCodingIntent.isVibeCoding && vibeCodingIntent.confidence >= 0.7) {
