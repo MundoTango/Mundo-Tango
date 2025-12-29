@@ -90,11 +90,11 @@ export function MrBlueFloatingButton() {
 
   const content = (
     <>
-      {/* CTO Walkthrough Preview Modal */}
-      <CTOWalkthroughPreview 
+      {/* CTO Walkthrough disabled - Pattern 99 Multi-Agent Audit is active */}
+      {/* <CTOWalkthroughPreview 
         isOpen={isWalkthroughOpen} 
         onClose={closeWalkthrough}
-      />
+      /> */}
       
       {/* Floating Button - Uses portal for z-index isolation */}
       {/* MB.MD Pattern 63: Only render FAB when chat is closed */}

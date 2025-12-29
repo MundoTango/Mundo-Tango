@@ -1,0 +1,130 @@
+{
+  "auditDate": "2025-12-29",
+  "component": "client/src/components/universal/PostCreator.tsx",
+  "login": "admin@mundotango.life",
+  "summary": {
+    "totalFeatures": 12,
+    "works": 11,
+    "partial": 1,
+    "fails": 0,
+    "completionStrict": 92,
+    "completionIncludingPartial": 96
+  },
+  "features": [
+    {
+      "id": 1,
+      "name": "Text Content",
+      "status": "WORKS",
+      "details": "SimpleMentionsInput contentEditable div accepts and displays text input",
+      "testId": "input-mentions-content",
+      "dataConnection": "N/A - Local state"
+    },
+    {
+      "id": 2,
+      "name": "@Mentions",
+      "status": "WORKS",
+      "details": "Dropdown appears on @, supports 4 entity types (user/event/group/city), colored pills inserted",
+      "testId": "mentions-dropdown, mention-suggestion-{index}",
+      "dataConnection": "/api/mentions/{type}/search - Requires API data"
+    },
+    {
+      "id": 3,
+      "name": "Location Tagging",
+      "status": "WORKS",
+      "details": "Opens recommendation panel with UnifiedLocationPicker, 3-tier search (City Groups > Popular > Nominatim)",
+      "testId": "button-toggle-recommendations, input-recommendation-location",
+      "dataConnection": "/api/cities/search, Nominatim API"
+    },
+    {
+      "id": 4,
+      "name": "Visibility Options",
+      "status": "WORKS",
+      "details": "Three options: public/friends/private, friends includes closeness filter, context-aware defaults",
+      "testId": "button-toggle-visibility, button-visibility-{public|friends|private}",
+      "dataConnection": "N/A - Local state, saved with post"
+    },
+    {
+      "id": 5,
+      "name": "Memory Tags",
+      "status": "WORKS",
+      "details": "15 predefined tags with Lucide icons: Travel, Food, Culture, Adventure, Nightlife, Nature, Art, Music, Sports, Photography, Family, Friends, Work, Milestone, Celebration",
+      "testId": "button-toggle-tags, button-tag-{tagId}",
+      "dataConnection": "N/A - Predefined constants"
+    },
+    {
+      "id": 6,
+      "name": "Recommendations",
+      "status": "WORKS",
+      "details": "6 categories (Restaurant, Café, Hotel, Tango Venue, Activity, Bar) + 4 price ranges ($, $$, $$$, $$$$)",
+      "testId": "select-recommendation-category, button-price-{$|$$|$$$|$$$$}",
+      "dataConnection": "N/A - Saved with post"
+    },
+    {
+      "id": 7,
+      "name": "Media Upload",
+      "status": "WORKS",
+      "details": "Accepts images and videos, max 30 files, smart compression based on file size, video server-side compression",
+      "testId": "button-upload-media, input-media-files",
+      "dataConnection": "/api/upload/video/compress for videos"
+    },
+    {
+      "id": 8,
+      "name": "AI Enhancement",
+      "status": "PARTIAL",
+      "details": "Button visible but disabled when no content. When enabled, calls AI API for content enhancement. Shows enhanced version panel.",
+      "testId": "button-ai-enhance",
+      "dataConnection": "/api/ai/enhance-content - Requires AI integration",
+      "notes": "Requires text content to enable button"
+    },
+    {
+      "id": 9,
+      "name": "Cross-posting",
+      "status": "WORKS",
+      "details": "Facebook and Instagram toggle switches visible, status indicators for pending/success/error",
+      "testId": "button-toggle-crosspost, switch-crosspost-facebook, switch-crosspost-instagram",
+      "dataConnection": "/api/social/cross-post"
+    },
+    {
+      "id": 10,
+      "name": "Submit Post",
+      "status": "WORKS",
+      "details": "Share Memory button visible, disabled when no content, creates post on API, invalidates caches",
+      "testId": "button-share-memory",
+      "dataConnection": "/api/posts (POST for create, PATCH for edit)"
+    },
+    {
+      "id": 11,
+      "name": "Edit Mode",
+      "status": "WORKS",
+      "details": "Component accepts editMode and existingPost props, populates all fields, uses PATCH for updates",
+      "testId": "N/A - Uses same UI with different behavior",
+      "dataConnection": "/api/posts/:id (PATCH)"
+    },
+    {
+      "id": 12,
+      "name": "Context Types",
+      "status": "WORKS",
+      "details": "Supports feed, event, group, city, memory contexts. Context-aware visibility defaults and auto-mentions",
+      "testId": "N/A - Prop-based behavior",
+      "dataConnection": "Varies by context"
+    }
+  ],
+  "issues": [
+    {
+      "severity": "minor",
+      "description": "Test ID not forwarded from PostCreator to SimpleMentionsInput",
+      "details": "PostCreator passes data-testid='input-post-content' but SimpleMentionsInput uses data-testid='input-mentions-content'"
+    }
+  ],
+  "apiEndpoints": [
+    "/api/posts",
+    "/api/posts/:id",
+    "/api/ai/enhance-content",
+    "/api/upload/video/compress",
+    "/api/social/cross-post",
+    "/api/mentions/users/search",
+    "/api/mentions/events/search",
+    "/api/mentions/groups/search",
+    "/api/mentions/cities/search"
+  ]
+}
