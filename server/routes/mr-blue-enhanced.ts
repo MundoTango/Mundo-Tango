@@ -24,6 +24,7 @@ import { nanoid } from 'nanoid';
 import { eq } from 'drizzle-orm';
 import Groq from 'groq-sdk';
 import { storage } from '../storage';
+import { taskExecutorService, isGodLevelUser } from '../services/mrBlue/TaskExecutorService';
 
 const router = Router();
 const elevenlabsService = new ElevenLabsVoiceService();
@@ -211,6 +212,48 @@ function detectFeedbackIntent(message: string): {
 }
 
 /**
+ * MB.MD Pattern 65: VibeCoding Intent Detection
+ * Detects when a god-level user wants to make code changes via Mr. Blue
+ */
+function detectVibeCodingIntent(message: string): {
+  isVibeCoding: boolean;
+  confidence: number;
+} {
+  const msg = message.toLowerCase();
+  
+  // VibeCoding patterns - actions that require code changes
+  const vibeCodingPatterns = [
+    /\b(add|create|build|implement|make)\s+(a|an|the)?\s*\w+/i,
+    /\b(fix|repair|correct|patch)\s+(this|the|a|an)?\s*\w+/i,
+    /\b(change|update|modify|edit|adjust)\s+(this|the|a|an)?\s*\w+/i,
+    /\b(remove|delete|hide)\s+(this|the|a|an)?\s*\w+/i,
+    /\brefactor\b/i,
+    /\bstyle\s+(this|the)\b/i,
+    /\bupdate\s+the\s+(css|styling|design|layout)\b/i,
+    /\badd\s+(a|an)?\s*button\b/i,
+    /\badd\s+(a|an)?\s*feature\b/i,
+    /\bfix\s+(the|this)?\s*(bug|issue|error|problem)\b/i,
+    /\bmake\s+(this|the|it)\s+(work|better|faster|prettier)\b/i,
+    /\bwrite\s+(the|some)?\s*code\b/i,
+    /\bgenerate\s+(the|a|some)?\s*code\b/i,
+    /\bimplement\s+(this|the)\b/i,
+    /\bcan you (add|fix|create|change|update|build|implement)/i,
+    /\bplease (add|fix|create|change|update|build|implement)/i,
+  ];
+  
+  // Check for matches
+  const matchCount = vibeCodingPatterns.filter(p => p.test(msg)).length;
+  
+  if (matchCount === 0) {
+    return { isVibeCoding: false, confidence: 0 };
+  }
+  
+  // Base 0.7 + 0.1 per match, capped at 0.95
+  const confidence = Math.min(0.95, 0.7 + matchCount * 0.1);
+  return { isVibeCoding: true, confidence };
+}
+
+/**
  * Context-aware chat endpoint for Mr. Blue interactions
  * Now supports:
  * - Computer Use automation triggers
@@ -311,9 +354,51 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
     
     const userId = (req as any).user?.id;
     const userRoleLevel = (req as any).user?.roleLevel || 0;
+    const userEmail = (req as any).user?.email || '';
     
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    // MB.MD Pattern 65: VibeCoding Execution for God-Level Users
+    // Check if user is god-level and wants to make code changes
+    const isGodLevel = isGodLevelUser(userRoleLevel) || isGodLevelUser(userEmail);
+    const vibeCodingIntent = detectVibeCodingIntent(message);
+    
+    if (isGodLevel && vibeCodingIntent.isVibeCoding && vibeCodingIntent.confidence >= 0.7) {
+      console.log(`[Mr. Blue] VibeCoding request from god-level user (${userEmail}): "${message.substring(0, 50)}..."`);
+      
+      try {
+        const result = await taskExecutorService.executeVibeCoding(
+          message,
+          userEmail || userRoleLevel,
+          {
+            currentPage: sessionContext?.currentPage || context?.currentPage,
+            relevantFiles: sessionContext?.recentActions?.filter((a: string) => a.includes('.ts') || a.includes('.tsx')),
+            sessionContext,
+          }
+        );
+        
+        return res.json({
+          role: 'assistant',
+          content: result.response,
+          timestamp: new Date().toISOString(),
+          vibeCoding: true,
+          success: result.success,
+          filesModified: result.filesModified,
+          godLevelExecution: true,
+        });
+      } catch (vibeError: any) {
+        console.error('[Mr. Blue] VibeCoding error:', vibeError);
+        return res.json({
+          role: 'assistant',
+          content: `I encountered an issue executing your request: ${vibeError.message}. Please try again with more specific instructions.`,
+          timestamp: new Date().toISOString(),
+          vibeCoding: true,
+          success: false,
+          error: vibeError.message,
+        });
+      }
     }
     
     // MB.MD Pattern 67: Check for feedback intent and save to queue

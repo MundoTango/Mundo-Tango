@@ -400,6 +400,135 @@ Use this format for each file:
     
     return { task, phase, prompt };
   }
+
+  /**
+   * MB.MD Pattern 65: Direct VibeCoding Execution
+   * God-level users can give natural language instructions to generate and apply code
+   * This is the "Replit AI Agent" capability for Mr. Blue
+   */
+  async executeVibeCoding(
+    instruction: string,
+    executorEmailOrTier: string | number,
+    context?: {
+      currentPage?: string;
+      relevantFiles?: string[];
+      sessionContext?: any;
+    }
+  ): Promise<{
+    success: boolean;
+    response: string;
+    filesModified: string[];
+    codeGenerated?: string;
+    error?: string;
+  }> {
+    // Verify god-level access
+    if (!isGodLevelUser(executorEmailOrTier)) {
+      return {
+        success: false,
+        response: "VibeCoding execution requires god-level access (tier 8 or authorized email).",
+        filesModified: [],
+        error: "Unauthorized",
+      };
+    }
+
+    console.log(`[TaskExecutor] VibeCoding request from god-level user: "${instruction.substring(0, 100)}..."`);
+
+    try {
+      // Build context-aware prompt
+      const contextInfo = context?.currentPage 
+        ? `\nUser is currently on page: ${context.currentPage}` 
+        : '';
+      const filesInfo = context?.relevantFiles?.length 
+        ? `\nRelevant files to consider: ${context.relevantFiles.join(', ')}` 
+        : '';
+
+      const response = await GroqService.querySimple({
+        prompt: `${instruction}${contextInfo}${filesInfo}`,
+        systemPrompt: `You are Mr. Blue with GOD-LEVEL EXECUTION RIGHTS.
+
+The user is a god-level admin who has authorized you to make code changes to the Mundo Tango platform.
+
+CRITICAL RULES:
+1. Generate COMPLETE, production-ready code
+2. Follow existing project patterns (TypeScript, React, Express, Drizzle ORM)
+3. Include all necessary imports
+4. Use proper formatting
+
+OUTPUT FORMAT for file changes:
+When you need to create or modify files, use this EXACT format:
+--- FILE: path/to/file.ts ---
+[complete file content]
+--- END FILE ---
+
+If no file changes are needed, just provide a helpful response.
+
+AVAILABLE ACTIONS:
+- Create new files
+- Modify existing files
+- Fix bugs
+- Add features
+- Update styling
+- Refactor code
+
+Be precise and confident. You have full execution rights.`,
+        model: GROQ_MODELS.LLAMA_70B,
+        temperature: 0.3,
+      });
+
+      if (!response.success || !response.content) {
+        return {
+          success: false,
+          response: "Failed to generate code. Please try again with more specific instructions.",
+          filesModified: [],
+          error: "AI generation failed",
+        };
+      }
+
+      // Parse and apply any file changes
+      const generatedFiles = this.parseGeneratedFiles(response.content);
+      const appliedFiles: string[] = [];
+      const errors: string[] = [];
+
+      for (const file of generatedFiles) {
+        try {
+          const fullPath = path.join(this.basePath, file.path);
+          const dir = path.dirname(fullPath);
+          await fs.mkdir(dir, { recursive: true });
+          await fs.writeFile(fullPath, file.content, 'utf-8');
+          appliedFiles.push(file.path);
+          console.log(`[TaskExecutor] VibeCoding ✅ Applied: ${file.path}`);
+        } catch (writeError: any) {
+          errors.push(`Failed to write ${file.path}: ${writeError.message}`);
+          console.error(`[TaskExecutor] VibeCoding ❌ Failed: ${file.path}`, writeError);
+        }
+      }
+
+      // Build response message
+      let responseMessage = response.content;
+      if (appliedFiles.length > 0) {
+        responseMessage = `**VibeCoding Executed Successfully!**\n\n**Files Modified:**\n${appliedFiles.map(f => `- ${f}`).join('\n')}\n\n${response.content}`;
+      }
+      if (errors.length > 0) {
+        responseMessage += `\n\n**Errors:**\n${errors.join('\n')}`;
+      }
+
+      return {
+        success: errors.length === 0,
+        response: responseMessage,
+        filesModified: appliedFiles,
+        codeGenerated: response.content,
+        error: errors.length > 0 ? errors.join('; ') : undefined,
+      };
+    } catch (error: any) {
+      console.error('[TaskExecutor] VibeCoding error:', error);
+      return {
+        success: false,
+        response: `VibeCoding execution failed: ${error.message}`,
+        filesModified: [],
+        error: error.message,
+      };
+    }
+  }
 }
 
 // Singleton instance
