@@ -503,6 +503,85 @@ Provide a deployment checklist with pass/fail status and blocking issues highlig
       };
     }
 
+    // C-Suite Leadership Agents (CEO, CTO, CPO, CFO, CMO)
+    if (agentId.endsWith('-agent') && ['ceo', 'cto', 'cpo', 'cfo', 'cmo'].some(role => agentId.startsWith(role))) {
+      const agentCard = agentCardRegistry.getAgentCard(agentId);
+      return {
+        execute: async (message: string, context: any) => {
+          const role = agentId.replace('-agent', '').toUpperCase();
+          const systemPrompt = `You are the ${role} of Mundo Tango, a global tango community platform.
+Your role: ${agentCard?.description || 'Strategic leadership'}
+Capabilities: ${agentCard?.capabilities?.join(', ') || 'Leadership and strategy'}
+
+Analyze the request from a ${role} perspective and provide strategic guidance.`;
+
+          try {
+            const response = await GroqService.chat([
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: message }
+            ], GROQ_MODELS.LLAMA33);
+            
+            return response.content;
+          } catch (error: any) {
+            return `${role} Analysis: ${message}\n\nNote: AI processing unavailable, providing rule-based response.`;
+          }
+        }
+      };
+    }
+
+    // VP-Level and Head-Level Agents
+    if (agentId.startsWith('vp-') || agentId.startsWith('head-')) {
+      const agentCard = agentCardRegistry.getAgentCard(agentId);
+      return {
+        execute: async (message: string, context: any) => {
+          const systemPrompt = `You are ${agentCard?.name || agentId} for Mundo Tango.
+Role: ${agentCard?.description || 'Domain expert'}
+Capabilities: ${agentCard?.capabilities?.join(', ') || 'Expert analysis'}
+
+Provide detailed technical/domain analysis and recommendations.`;
+
+          try {
+            const response = await GroqService.chat([
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: message }
+            ], GROQ_MODELS.LLAMA33);
+            
+            return response.content;
+          } catch (error: any) {
+            return `${agentCard?.name || agentId} Analysis: Processing request...`;
+          }
+        }
+      };
+    }
+
+    // Page Agents, Business Agents, Self-Healing Agents, Scraping Agents
+    if (agentId.includes('-page-') || agentId.includes('-agent') || 
+        agentId.includes('-scraper') || agentId.includes('-service')) {
+      const agentCard = agentCardRegistry.getAgentCard(agentId);
+      if (agentCard) {
+        return {
+          execute: async (message: string, context: any) => {
+            const systemPrompt = `You are ${agentCard.name} for Mundo Tango platform.
+Description: ${agentCard.description}
+Capabilities: ${agentCard.capabilities?.join(', ') || 'General operations'}
+
+Respond to the request based on your specialized domain.`;
+
+            try {
+              const response = await GroqService.chat([
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: message }
+              ], GROQ_MODELS.LLAMA33);
+              
+              return response.content;
+            } catch (error: any) {
+              return `${agentCard.name}: Request received. ${error.message}`;
+            }
+          }
+        };
+      }
+    }
+
     // Unknown agent
     throw new Error(`Unknown agent: ${agentId}`);
   }

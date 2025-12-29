@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform connecting the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts and an extensive AI ecosystem for strategic oversight and execution.
+Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts. Its extensive AI ecosystem provides strategic oversight and execution capabilities, positioning Mundo Tango as a comprehensive solution for the global tango market.
 
 ## User Preferences
 - Work Simultaneously - Run operations in parallel (use Promise.all, parallel tool calls)
@@ -18,127 +18,31 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 ## System Architecture
 
 ### UI/UX
-The platform uses an "MT Ocean Theme" with dark mode, built with Tailwind CSS, shadcn/ui, and Radix UI. It supports 68 languages via `i18next` and uses Wouter for routing. Key UI components include a Visual Editor, Unified Sidebar, PublicProfileView, and PerRoleExperience, with a strict z-index hierarchy. Icons are sourced from Lucide React and React Icons.
+The platform employs an "MT Ocean Theme" with dark mode, built using Tailwind CSS, shadcn/ui, and Radix UI. It supports 68 languages via `i18next` and uses Wouter for routing. Key UI components include a Visual Editor, Unified Sidebar, PublicProfileView, and PerRoleExperience, with a strict z-index hierarchy. Icons are sourced from Lucide React and React Icons. City pages follow a "City-First Branding" with 7 tabs including Discussion, Overview, Events, Members, Housing, Visitors, and Tips, adhering to the CITY_PAGE.md specification.
 
 ### Backend
-The backend is developed with Express and TypeScript, leveraging PostgreSQL (Neon) and Drizzle ORM. It includes modular routes, JWT authentication with Google/Facebook OAuth, an 8-tier Role-Based Access Control (RBAC) system, and automated database migrations. Server-side FFmpeg is used for video transcoding. The API supports PRO functionalities, place recommendations, and enhanced Talent Match AI features. Email verification is mandatory for user access.
+The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. It features modular routes, JWT authentication with Google/Facebook OAuth, an 8-tier Role-Based Access Control (RBAC) system, and automated database migrations. Server-side FFmpeg is used for video transcoding. The API supports PRO functionalities, place recommendations, and enhanced Talent Match AI features. Email verification is mandatory for user access.
 
 ### AI Systems
-Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized agents, including self-healing infrastructure, a production-ready validation loop, and a Visual Validation Framework. A Bifrost AI Gateway enables multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization. The AI brain is structured into a modular `/mr-blue-brain/` system encompassing Identity, Cognition (e.g., ReAct Protocol, Chain-of-Thought), Operations, Orchestration (e.g., Mixture of Experts Router), Patterns, and specialized Agents.
+Mundo Tango integrates a comprehensive AI ecosystem with over 140 specialized agents. This includes self-healing infrastructure, a production-ready validation loop, and a Visual Validation Framework. A Bifrost AI Gateway facilitates multi-provider AI interactions. A RecursiveContextService manages hierarchical code summarization. The core AI brain is modular, located in `/mr-blue-brain/`, encompassing Identity, Cognition (e.g., ReAct Protocol, Chain-of-Thought), Operations, Orchestration (e.g., Mixture of Experts Router), Patterns, and specialized Agents.
 
-**Leadership Agent System (Dec 2025)**:
-- **4 Agents ONLINE**: CEO, CTO, GitHub Practices, Plan Tracker
-- **4-Layer Knowledge**: God Commands, Learned Experiences, Mundo Tango Knowledge, Real-World Knowledge
-- **API Routes**: `/api/mrblue/leadership/*` for agent queries and task routing
-- **Auto-Invoke Agents (God Command #0)**:
-  - **GitHub Practices Agent**: Enforces conventional commits, atomic commits, branch naming (triggers: session:start, task:complete, commit:prepare)
-  - **Plan Tracker Agent**: Updates The Plan with task status/progress (triggers: task:start, task:complete, session:end)
-- **God Commands**: 12 active directives including "test before complete", "work simultaneously", "work recursively", "feature branches required", "admin approval required"
-
-**Mr. Blue AI Assistant (Enhanced Dec 2025)**:
-- **Database Integration**: Real-time access to platform data via `MrBlueDataService` (events, cities, users, groups)
-- **Multi-AI Orchestrator (MB.MD Pattern 99)**: Intelligent task-based routing to best AI provider
-  - **Groq (Llama 3.3)**: Fast, cheap - used for simple Q&A, classification
-  - **OpenAI (GPT-4o-mini)**: Reliable - used for code generation, structured output
-  - **Anthropic (Claude)**: Best reasoning - used for complex analysis, nuanced responses
-  - **Automatic Fallback**: If one provider fails/rate-limited, automatically tries next
-  - **AI Consensus System**: Multiple AIs vote on critical decisions for validation
-  - **Service Location**: `server/services/ai/AIOrchestrator.ts`
-- **Query Intent Detection**: Automatically routes event/city/help queries with location extraction
-- **Fallback System**: Smart template responses if AI fails
-- **UI**: Glassmorphic design with header, message timestamps, "Thinking..." indicator
-- **Endpoint**: POST /api/mrblue/chat (requires auth)
-- **Singleton Pattern**: MB.MD Pattern 63 - Only one chat instance allowed globally (prevents duplicate panels)
-- **User Context**: MB.MD Pattern 64 - Full user data access (friends, RSVPs, cities, groups)
-- **God Powers**: MB.MD Pattern 65 - Admin/CTO users get full system access like Replit AI Agent
-- **Mobile Design**: MB.MD Pattern 66 - Full-screen takeover on mobile, floating panel on desktop
-- **QA/Customer Test Platform** (MB.MD Pattern 67): User monitoring, feedback capture, admin approval queue
-  - Regular users: Help + feedback → admin queue
-  - God-level admins: Full MB.MD execution rights
-  - Playbook: `Mr Blue/playbooks/qa-customer-platform.md`
-  - God Commands: gc-011 (Admin Approval), gc-012 (God-Level Execution)
-- **VibeCoding Tools (Dec 2025)**: File system and codebase access for god-level users
-  - `readFile`: Read project files from workspace
-  - `writeFile`: Create/update project files
-  - `grepFiles`: Search codebase with mb.md priority search
-  - `listFiles`: List directory contents
-  - `executeCommand`: Run safe shell commands (ls, cat, grep, git, npm)
-  - `getGitStatus`: Query current git state
-  - Service: `server/services/mrBlue/VibeCodingToolService.ts`
-  - Uses portable `import.meta.url` for ESM-compatible basePath resolution
-- **VibeCoding Streaming (MB.MD Pattern 97)**: Real-time ReAct protocol visualization
-  - Endpoint: POST `/api/mrblue/vibestream` (SSE streaming, tier 8 only)
-  - 6-Phase Pipeline: Clarify → Plan → Research → Execute → Verify → Report
-  - Event Types: THOUGHT/ACTION/OBSERVATION markers with timestamps
-  - **Chat Integration (Dec 2025)**: VibeCoding auto-triggers in MrBlueChat for god-level users
-    - Pattern detection: "fix RSVP", "update code", "implement feature" triggers VibeCoding mode
-    - Real-time SSE streaming shows THOUGHT (purple), ACTION (blue), OBSERVATION (green) messages
-    - Frontend: `MrBlueChat.tsx` with distinct vibe message styling
-    - Non-god users fall back to regular chat mode gracefully
-  - **Tool Pattern Improvements (Dec 2025)**:
-    - Added "can you see our repo" detection → triggers `getProjectStructure`
-    - Added "do you have access to the codebase" detection
-    - Added "look at the repo" / "check the codebase" patterns
-    - Conversation history now loads immediately on chat open (MB.MD Pattern 80)
-  - Features: AbortController for cancellation, session tracking, client disconnect cleanup
-  - God-level users can watch Mr. Blue think, plan, and execute in real-time
+Key AI features include:
+- **A2A Multi-Agent Orchestration System**: Manages communication and routing for 130+ agents across various categories (C-Suite, VP-Level, Page Agents, Self-Healing, Scraping, Business).
+- **Leadership Agent System**: Comprises CEO, CTO, GitHub Practices, and Plan Tracker agents, with 4-layer knowledge base and "God Commands" for enforcing directives like "test before complete" and "work simultaneously."
+- **Mr. Blue AI Assistant**: Provides real-time access to platform data via `MrBlueDataService`. It uses a Multi-AI Orchestrator (Groq, OpenAI, Anthropic with automatic fallback and consensus system) for intelligent task routing based on intent detection. It includes "VibeCoding Tools" (readFile, writeFile, grepFiles, etc.) and "VibeCoding Streaming" for real-time ReAct protocol visualization for god-level users, enabling them to observe AI thought processes and actions.
 
 ### Event Scraping System
-A multi-stage scraping architecture coordinated by a Master Orchestrator (Agent #115), including Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scraped events are stored in a `scraped_events` table and ingested into the main events table. An Admin UI at `/admin/scraping` provides real-time scraper status and a moderation queue.
-
-**User-Contributed Sources**: Users can submit local event website URLs during onboarding (CitySelectionPage). Submissions are stored with `submissionStatus: 'pending_review'` and require admin approval via `/admin/pending-sources` before activation. The scraping scheduler runs daily at 6 AM PST and uses the full orchestrator to process all 245+ active sources.
+A multi-stage scraping architecture is coordinated by a Master Orchestrator (Agent #115) and includes Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scraped events are stored in a `scraped_events` table and ingested into the main events table. An Admin UI provides real-time scraper status and a moderation queue. Users can also contribute local event website URLs, which require admin approval before activation.
 
 ### Platform Features
-Core functionalities include social features (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and an International Payment System supporting 30 currencies. All 276 city groups have valid coordinates, auto-geocoding, and public city pages. A comprehensive Data Quality System is in place.
-
-### MB.MD Compliance (v9.9.3)
-- **City-First Branding**: Cities use "Follow/Follower" terminology instead of "Join Group/Member" per CITY_PAGE.md specification
-- **Shadow Group Architecture**: Cities have `legacyGroupId` linking to underlying group infrastructure for Discussion/Follower features
-- **PostCreator Context Types**: Supports 'feed', 'event', 'group', 'city', 'memory' contexts
-- **Auto-Append Mentions**: Posts in city/group/event contexts auto-append canonical @mention format (@type:type_id:Name_With_Underscores)
-- **Privacy-by-Default**: City posts default to 'private' visibility (user can change before posting); groups maintain public default
-- **City Page 7 Tabs**: All tabs implemented per CITY_PAGE.md spec:
-  - Discussion: Chip filters (All/Recent/Popular) + sticky composer with backdrop-blur
-  - Overview: Layer toggle cards (All/Events/Housing/Tips) with color coding + compact map
-  - Events: Weekday filter tabs [Sun-Sat] + "Plan My Trip" CTA that switches to Housing tab
-  - Members: Role filter chips + PRO ribbons with gradient styling
-  - Housing: Airbnb housing view integration
-  - Visitors: List of travelers visiting the city
-  - Tips: Lucide icons (no emojis) via CategoryIcon component
-
-### Data Architecture & Statistics
-**Cities Table**: The authoritative data source for city information with 301 cities migrated from the legacy `groups` table. The `cities` table contains `legacyGroupId` to link back to the groups table for discussion features.
-
-**API Architecture**:
-- `/api/cities/by-slug/:slug` - Searches `cities` table first, falls back to `groups` table
-- Slug normalization handles both "tbilisi" and "tbilisi-tango" variations
-- Returns `id` (city table ID) and `legacyGroupId` (for Discussion tab compatibility)
-
-The database contains 301 cities (migrated from 278 city groups), totaling 811 events and 820 active users across 62 countries. All cities follow the CITY_PAGE.md specification with geocoded coordinates.
-
-### Testing & Production
-The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.
-
-### Marketing Site Architecture
-The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Program and an Ambassador Program. Public statistics are backed by real database data, and donations are handled via GoFundMe. The site includes "Coming Soon Features" and updated marketing pages.
-
-### Production Database Admin Tools
-Admin endpoints for troubleshooting production users (works when deployed):
-- `GET /api/admin/production/status` - Connection status
-- `GET /api/admin/production/user/:email` - User lookup with login diagnosis
-- `GET /api/admin/production/users/search?q=` - Search users
-- `GET /api/admin/production/users/recent` - Recent registrations
-- `GET /api/admin/production/waitlist` - Waitlist users
-- `GET /api/admin/production/stats` - User statistics
-
-**Note**: These endpoints use Supabase REST API and only work when deployed to production (mundotango.life). Development environment has network restrictions.
+Core functionalities include social features (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and an International Payment System supporting 30 currencies.
 
 ## External Dependencies
-- **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase (production)
+- **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase (for production admin tools)
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
 - **AI/ML:** OpenAI, Anthropic, Groq, Google, Luma, ElevenLabs, Bifrost Gateway, LanceDB
 - **Real-time:** Supabase Realtime, WebSocket
 - **Payments:** Stripe
 - **Email:** Replit Resend Connector
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
-- **Internationalization:** i18next with 69 language locales
+- **Internationalization:** i18next (with 69 language locales)
