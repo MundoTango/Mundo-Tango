@@ -17,9 +17,12 @@ export class SyntaxChecker {
         const parsed = JSON.parse(code);
         if (Array.isArray(parsed)) {
           files = parsed;
+        } else if (typeof parsed === 'object' && parsed !== null && parsed.path && parsed.content) {
+          // Valid single file object - wrap in array
+          files = [parsed];
         } else {
-          // Single object - wrap in array
-          files = [{ path: 'unknown.ts', content: code }];
+          // Invalid JSON structure - treat original as raw code
+          throw new Error('Not a valid file structure');
         }
       } catch {
         // Not JSON - treat as raw code string

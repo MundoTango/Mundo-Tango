@@ -102,13 +102,15 @@ export function UnifiedRSVPButton({
       
       // UNIFIED CACHE INVALIDATION: Ensure all components using RSVP data stay in sync
       // This is the single source of truth for RSVP cache invalidation
-      // MB.MD Fix: Use predicate to invalidate ALL my-rsvps queries including those with params
-      queryClient.invalidateQueries({ 
-        predicate: (query) => {
-          const queryKey = query.queryKey;
-          return Array.isArray(queryKey) && queryKey[0] === "/api/events/my-rsvps";
-        }
-      }); // useMyRSVPs, useMyEvents (with limit/upcoming params)
+      // MB.MD Fix: Comprehensive invalidation covering all RSVP query variants
+      // 1. Base key for useMyRSVPs (exact match)
+      queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
+      // 2. Refetch queries matching the base key prefix (covers parameterized variants)
+      // TanStack Query v5 matches prefixes by default, so this catches all variations
+      await queryClient.refetchQueries({ 
+        queryKey: ["/api/events/my-rsvps"],
+        exact: false // Match any query starting with this key
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/events/smart"] }); // useUpcomingEvents
       queryClient.invalidateQueries({ queryKey: ["/api/events/search"] }); // Discover tab
       queryClient.invalidateQueries({ queryKey: ["/api/events"] }); // useEvents
