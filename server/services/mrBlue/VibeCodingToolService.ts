@@ -472,18 +472,19 @@ class VibeCodingToolServiceClass {
       baseConfidence: number;
     }> = [
       // GitHub patterns - requires action verbs to avoid false positives
+      // MB.MD Pattern 98: Added "query" and broader matching for proactive tool usage
       {
-        pattern: /(?:(?:show|get|check|view|look at|display|what(?:'s| is))\s+(?:the\s+)?(?:my|our)?\s*github(?:\s+(?:info|repos?|account|details|status))?)|(?:(?:what(?:'s| is)|show|get)\s+(?:the\s+)?(?:our|my)\s+github\s*(?:repo|repository|account)?(?:\s*name)?)|(?:github\s+(?:info|status|repos?))/i,
+        pattern: /(?:(?:show|get|check|view|look at|display|query|search|find|what(?:'s| is))\s+(?:the\s+)?(?:my|our)?\s*github(?:\s+(?:info|repos?|account|details|status|repo))?)|(?:(?:what(?:'s| is)|show|get|query)\s+(?:the\s+)?(?:our|my)\s+github\s*(?:repo|repository|account)?(?:\s*name)?)|(?:github\s+(?:info|status|repos?))|(?:query\s+(?:the\s+)?(?:our|my)\s+(?:github\s+)?repo)/i,
+        tool: 'getGitHubInfo',
+        extractParams: () => ({}),
+        baseConfidence: 0.9  // Higher confidence for explicit GitHub requests
+      },
+      // Repo identification patterns - "what repo", "which repo", "our repo", "query our repo"
+      {
+        pattern: /(?:what|which)\s+(?:repo|repository)\s+(?:is this|are we|am I|is|this)|(?:(?:our|my|the|this)\s+repo(?:sitory)?(?:\s+(?:name|info|details))?)|(?:query\s+(?:our|my|the)\s+repo)/i,
         tool: 'getGitHubInfo',
         extractParams: () => ({}),
         baseConfidence: 0.85
-      },
-      // Repo identification patterns - "what repo", "which repo", "our repo"
-      {
-        pattern: /(?:what|which)\s+(?:repo|repository)\s+(?:is this|are we|am I|is|this)|(?:(?:our|my|the|this)\s+repo(?:sitory)?(?:\s+(?:name|info|details))?)/i,
-        tool: 'getGitHubInfo',
-        extractParams: () => ({}),
-        baseConfidence: 0.8
       },
       // Git status patterns  
       {
