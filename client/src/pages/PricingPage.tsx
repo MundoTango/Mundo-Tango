@@ -81,19 +81,26 @@ export default function PricingPage() {
   
   const checkoutMutation = useMutation({
     mutationFn: async () => {
-      const res = await apiRequest('POST', '/api/pricing/checkout-session', {
+      const response = await apiRequest('POST', '/api/pricing/checkout-session', {
         planId: 'pro_monthly',
         billingInterval: 'monthly',
         trialDays: 7
       });
-      return res.json();
+      const data = await response.json();
+      return data;
     },
-    onSuccess: (data: any) => {
-      if (data.url) {
+    onSuccess: (data: { url?: string }) => {
+      if (data?.url) {
         window.location.href = data.url;
+      } else {
+        toast({
+          title: 'Checkout Error',
+          description: 'No checkout URL received. Please try again.',
+          variant: 'destructive',
+        });
       }
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: 'Checkout Error',
         description: error.message || 'Failed to create checkout session. Please try again.',
