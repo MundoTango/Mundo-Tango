@@ -102,7 +102,13 @@ export function UnifiedRSVPButton({
       
       // UNIFIED CACHE INVALIDATION: Ensure all components using RSVP data stay in sync
       // This is the single source of truth for RSVP cache invalidation
-      queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] }); // useMyRSVPs, useMyEvents
+      // MB.MD Fix: Use predicate to invalidate ALL my-rsvps queries including those with params
+      queryClient.invalidateQueries({ 
+        predicate: (query) => {
+          const queryKey = query.queryKey;
+          return Array.isArray(queryKey) && queryKey[0] === "/api/events/my-rsvps";
+        }
+      }); // useMyRSVPs, useMyEvents (with limit/upcoming params)
       queryClient.invalidateQueries({ queryKey: ["/api/events/smart"] }); // useUpcomingEvents
       queryClient.invalidateQueries({ queryKey: ["/api/events/search"] }); // Discover tab
       queryClient.invalidateQueries({ queryKey: ["/api/events"] }); // useEvents

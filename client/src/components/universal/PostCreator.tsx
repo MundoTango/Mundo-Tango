@@ -1216,9 +1216,9 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         )}
       </AnimatePresence>
 
-      {/* 6 Animated Icon Buttons */}
-      <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: 'rgba(64, 224, 208, 0.2)' }}>
-        <div className="flex items-center gap-2">
+      {/* 6 Animated Icon Buttons - Responsive wrapping for mobile */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4 border-t" style={{ borderColor: 'rgba(64, 224, 208, 0.2)' }}>
+        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
           {/* 1. Hidden Gems (Recommendations) */}
           <motion.div
             custom={0}
