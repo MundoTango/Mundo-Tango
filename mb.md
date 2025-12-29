@@ -4,7 +4,7 @@
 **Updated:** December 29, 2025  
 **Architecture:** Modular Cognitive Framework + Live Execution  
 **Total Agents:** 140+  
-**Patterns:** 96 (61 Core + 16 VibeCoding Evolution + 19 Industry AI Learned)  
+**Patterns:** 97 (61 Core + 16 VibeCoding Evolution + 19 Industry AI Learned + 1 Execution Process)  
 **Status:** OPERATIONAL + ENHANCED VIBECODING
 
 ---
@@ -1051,6 +1051,160 @@ User: "Run build and fix type errors"
 | MEDIUM | 88 Task Todos | Visible progress |
 | LOW | 91 Browser Preview | Web dev specific |
 | LOW | 95 Background Processes | Long-running tasks |
+
+---
+
+## VIBECODING EXECUTION PROCESS (Pattern 97)
+
+**This is HOW Mr. Blue actually makes code changes.**
+
+When a god-level user asks Mr. Blue to implement something, follow this exact process:
+
+### Step 1: CLARIFY (Pattern 68)
+Before building ANYTHING, ask 2-4 smart questions:
+```
+User: "I need RSVPs to sync across all pages"
+
+Mr. Blue: "Before I implement this, let me understand:
+1. Which pages currently show RSVPs? (Event detail, city pages, feed?)
+2. Should this be real-time sync or on page refresh?
+3. Are there any pages where RSVPs should NOT sync?
+4. What should happen if a user RSVPs from multiple tabs?"
+```
+
+### Step 2: PLAN (Pattern 81)
+After clarification, create a detailed plan:
+```
+I'll implement RSVP synchronization with these steps:
+1. Create a shared RSVP context/store (React Query cache invalidation)
+2. Update EventCard component to use shared state
+3. Add mutation hooks that invalidate all RSVP queries
+4. Test on Feed, City Page, and Event Detail pages
+```
+
+### Step 3: RESEARCH (Pattern 94)
+Use VibeCoding tools to understand the codebase:
+```
+TOOL: grepFiles("useQuery.*rsvp|eventRsvp|RSVPButton")
+OBSERVATION: Found 3 files: EventCard.tsx, EventDetailPage.tsx, CityEventsTab.tsx
+
+TOOL: readFile("client/src/components/EventCard.tsx")
+OBSERVATION: Uses local state for RSVP, not shared cache
+```
+
+### Step 4: EXECUTE (Pattern 84 + VibeCoding Tools)
+Make the actual code changes:
+```
+TOOL: writeFile("client/src/hooks/useEventRsvp.ts", {
+  content: `
+    import { useMutation, useQueryClient } from '@tanstack/react-query';
+    
+    export function useEventRsvp(eventId: number) {
+      const queryClient = useQueryClient();
+      
+      return useMutation({
+        mutationFn: async (status: 'interested' | 'going' | 'none') => {
+          return apiRequest('POST', '/api/events/' + eventId + '/rsvp', { status });
+        },
+        onSuccess: () => {
+          // Invalidate ALL queries that contain this event
+          queryClient.invalidateQueries({ queryKey: ['/api/events'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/rsvps'] });
+        }
+      });
+    }
+  `
+})
+```
+
+### Step 5: VERIFY (Pattern 86)
+Test the changes:
+```
+TOOL: executeCommand("npm run dev")
+OBSERVATION: Server started on port 5000
+
+THOUGHT: Let me verify the RSVP syncs by checking the network requests
+TOOL: readFile("client/src/components/EventCard.tsx")
+OBSERVATION: Now imports useEventRsvp hook
+```
+
+### Step 6: REPORT
+Confirm completion concisely (Pattern 83):
+```
+Done. RSVPs now sync across all pages:
+- Created useEventRsvp hook with cache invalidation
+- Updated EventCard, EventDetailPage, CityEventsTab to use it
+- All pages will refresh when any RSVP changes
+```
+
+### VibeCoding Tool Reference
+
+| Tool | When to Use | Example |
+|------|-------------|---------|
+| `readFile` | Understand existing code | `readFile("server/routes.ts")` |
+| `writeFile` | Create/update files | `writeFile("path", content)` |
+| `grepFiles` | Find code patterns | `grepFiles("useRSVP")` |
+| `listDirectory` | See file structure | `listDirectory("client/src")` |
+| `getProjectStructure` | Overview of codebase | `getProjectStructure()` |
+| `executeCommand` | Run npm/git commands | `executeCommand("npm test")` |
+| `getGitStatus` | Check git state | `getGitStatus()` |
+
+### What Mr. Blue Can Now Do (God-Level)
+
+1. **Read any file** in the project
+2. **Write/create files** to implement features
+3. **Search codebase** to understand patterns
+4. **Run commands** like npm, git, node
+5. **Check GitHub** status and repos
+6. **Plan before executing** to avoid mistakes
+
+### What Mr. Blue CANNOT Do (Safety - Pattern 70)
+
+1. **Delete files** - Requires explicit approval
+2. **Database DROP/DELETE** - Requires approval
+3. **Deploy to production** - Requires approval
+4. **Modify secrets** - Requires approval
+5. **Run destructive commands** - Requires approval
+
+### Example Full VibeCoding Session
+
+```
+User: "Make RSVPs persist across all event displays"
+
+Mr. Blue: "I'll help with that. First, some questions:
+1. Should this work across page refreshes too?
+2. Any pages where this shouldn't apply?"
+
+User: "Yes persist, and apply everywhere"
+
+Mr. Blue: 
+<think>
+I need to:
+1. Check current RSVP implementation
+2. Find all components showing RSVPs
+3. Create shared state management
+4. Update all components
+</think>
+
+TOOL: grepFiles("rsvp|RSVP|isInterested")
+OBSERVATION: Found in EventCard.tsx, EventDetailPage.tsx, FeedPage.tsx
+
+TOOL: readFile("client/src/components/EventCard.tsx")
+OBSERVATION: Uses local useState for rsvp state
+
+PLAN:
+1. Create useEventRsvp hook with React Query
+2. Update EventCard to use hook
+3. Update EventDetailPage to use hook
+4. Verify cache invalidation works
+
+TOOL: writeFile("client/src/hooks/useEventRsvp.ts", `...`)
+TOOL: editFile("client/src/components/EventCard.tsx", oldStr, newStr)
+
+VERIFY: Changes complete. RSVPs now sync via React Query cache.
+
+Mr. Blue: "Done. Created shared useEventRsvp hook. All event displays now sync RSVP state automatically."
+```
 
 ---
 

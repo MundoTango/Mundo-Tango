@@ -495,14 +495,14 @@ router.post("/chat", optionalAuth, traceRoute("mr-blue-chat"), async (req: AuthR
         console.log('[Mr. Blue] ❓ Handling as QUESTION with page context');
         const questionResponse = await conversationOrchestrator.handleQuestion(message, enriched, parsedContext);
         
-        // MB.MD FIX: Save question messages to conversation history
+        // MB.MD Pattern 80: Save question messages to conversation history & return conversationId
+        let activeConversationId = conversationId;
         if (userId) {
           try {
-            let activeConversationId = conversationId;
             if (!activeConversationId) {
               const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
               activeConversationId = conversation.id;
-              console.log(`[MrBlue] Created/got active conversation for question: ${activeConversationId}`);
+              console.log(`[MrBlue] 🧠 Memory: Created/got conversation for question: ${activeConversationId}`);
             }
             
             await saveMessageToHistory(activeConversationId, userId, 'user', message);
@@ -519,7 +519,8 @@ router.post("/chat", optionalAuth, traceRoute("mr-blue-chat"), async (req: AuthR
           response: questionResponse.response,
           sources: questionResponse.sources,
           intent: intent.type,
-          confidence: intent.confidence
+          confidence: intent.confidence,
+          conversationId: activeConversationId // MB.MD Pattern 80: Return for memory persistence
         });
       } else if (intent.type === 'page_analysis') {
         // Handle page analysis - activate → audit → heal
@@ -567,9 +568,10 @@ Be conversational and helpful, not robotic.`;
           });
           const clarificationResponse = completion.choices[0]?.message?.content || "I'd like to help with that feature. Could you tell me more about what you're trying to achieve?";
           
+          // MB.MD Pattern 80: Save and return conversationId for memory persistence
+          let activeConversationId = conversationId;
           if (userId) {
             try {
-              let activeConversationId = conversationId;
               if (!activeConversationId) {
                 const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
                 activeConversationId = conversation.id;
@@ -588,7 +590,8 @@ Be conversational and helpful, not robotic.`;
             response: clarificationResponse,
             intent: intent.type,
             confidence: intent.confidence,
-            requiresClarification: true
+            requiresClarification: true,
+            conversationId: activeConversationId // MB.MD Pattern 80: Return for memory persistence
           });
         } catch (error) {
           console.error('[Mr. Blue] Feature request clarification failed:', error);
@@ -610,14 +613,14 @@ Be conversational and helpful, not robotic.`;
           userId || 0
         );
         
-        // MB.MD FIX: Save action messages to conversation history
+        // MB.MD Pattern 80: Save action messages and return conversationId
+        let activeConversationId = conversationId;
         if (userId) {
           try {
-            let activeConversationId = conversationId;
             if (!activeConversationId) {
               const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
               activeConversationId = conversation.id;
-              console.log(`[MrBlue] Created/got active conversation for action: ${activeConversationId}`);
+              console.log(`[MrBlue] 🧠 Memory: Created/got conversation for action: ${activeConversationId}`);
             }
             
             const response = actionResponse.vibecodingResult?.interpretation || 'Action processed';
@@ -636,7 +639,8 @@ Be conversational and helpful, not robotic.`;
           vibecodingResult: actionResponse.vibecodingResult,
           requiresApproval: actionResponse.requiresApproval,
           intent: intent.type,
-          confidence: intent.confidence
+          confidence: intent.confidence,
+          conversationId: activeConversationId // MB.MD Pattern 80: Return for memory persistence
         });
       }
 
@@ -934,17 +938,22 @@ Help users navigate the platform, answer questions, and provide personalized rec
         }).catch(err => console.error('[MrBlue] Cost tracking failed:', err));
       }
 
+      // MB.MD Pattern 80: Persistent Memory - Track conversation across messages
+      // Get or create conversation ID BEFORE saving (so we can return it)
+      let activeConversationId = conversationId;
+      if (userId && !activeConversationId) {
+        try {
+          const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
+          activeConversationId = conversation.id;
+          console.log(`[MrBlue] 🧠 Memory: Created/got active conversation: ${activeConversationId}`);
+        } catch (err) {
+          console.error('[MrBlue] Failed to get/create conversation:', err);
+        }
+      }
+      
       // Save messages to history - get or create conversation if needed
       if (userId) {
         try {
-          // MB.MD FIX: Get or create active conversation if conversationId not provided
-          let activeConversationId = conversationId;
-          if (!activeConversationId) {
-            const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
-            activeConversationId = conversation.id;
-            console.log(`[MrBlue] Created/got active conversation: ${activeConversationId}`);
-          }
-          
           await saveMessageToHistory(activeConversationId, userId, 'user', message);
           await saveMessageToHistory(activeConversationId, userId, 'assistant', response);
           
@@ -999,9 +1008,11 @@ Help users navigate the platform, answer questions, and provide personalized rec
         }
       }
 
+      // MB.MD Pattern 80: Return conversationId so frontend can maintain memory
       res.json({
         success: true,
-        response
+        response,
+        conversationId: activeConversationId // Frontend uses this for subsequent messages
       });
     } catch (error: any) {
       console.error('[MrBlue] Chat error:', {
