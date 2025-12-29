@@ -149,6 +149,17 @@ export class ContextService {
       path: 'Mr Blue/agents/leadership/memory/active-tasks.json',
       type: 'active-tasks',
       priority: 1  // Highest priority - check first
+    },
+    // VibeCoding Evolution Documents (Dec 2025)
+    {
+      path: 'Mr Blue/VIBECODING_GAP_ANALYSIS.md',
+      type: 'vibecoding-evolution',
+      priority: 1  // High priority - learning roadmap
+    },
+    {
+      path: 'Mr Blue/VIBECODING_LEARNING_GUIDE.md',
+      type: 'vibecoding-learning',
+      priority: 1  // High priority - expert knowledge
     }
   ];
 

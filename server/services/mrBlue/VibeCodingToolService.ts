@@ -458,11 +458,11 @@ class VibeCodingToolServiceClass {
         extractParams: () => ({}),
         baseConfidence: 0.9
       },
-      // Read file patterns
+      // Read file patterns - handles paths with spaces (quoted or unquoted)
       {
-        pattern: /(?:read|show|open|view|cat|display)\s+(?:the\s+)?(?:file\s+)?([\/\w\.\-]+\.[a-zA-Z]+)/i,
+        pattern: /(?:read|show|open|view|cat|display)\s+(?:the\s+)?(?:file\s+)?(?:["']([^"']+)["']|([\/\w\.\-]+(?:\s+[\/\w\.\-]+)*\.[a-zA-Z]+))/i,
         tool: 'readFile',
-        extractParams: (match) => ({ filePath: match[1] }),
+        extractParams: (match) => ({ filePath: match[1] || match[2] }),
         baseConfidence: 0.9
       },
       // List directory patterns
