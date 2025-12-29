@@ -87,7 +87,7 @@ Mr. Blue is a TRUE VibeCoding agent with real tool execution powers. When god-le
 
 | Tool | Description | Example Trigger |
 |------|-------------|-----------------|
-| `getGitHubInfo` | Query connected GitHub account & repos | "look at github", "show my repos" |
+| `getGitHubInfo` | Query connected GitHub account & repos | "look at github", "show my repos", "what repo are we in" |
 | `getGitHubRepo` | Get specific repo details | "check owner/repo-name" |
 | `getGitStatus` | Local git branch & recent commits | "git status", "what branch am I on" |
 | `getProjectStructure` | Overview of project files | "show project structure", "what files are there" |

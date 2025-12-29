@@ -444,6 +444,13 @@ class VibeCodingToolServiceClass {
         extractParams: () => ({}),
         baseConfidence: 0.85
       },
+      // Repo identification patterns - "what repo", "which repo", "our repo"
+      {
+        pattern: /(?:what|which)\s+(?:repo|repository)\s+(?:is this|are we|am I|is|this)|(?:(?:our|my|the|this)\s+repo(?:sitory)?(?:\s+(?:name|info|details))?)/i,
+        tool: 'getGitHubInfo',
+        extractParams: () => ({}),
+        baseConfidence: 0.8
+      },
       // Git status patterns  
       {
         pattern: /git\s*status|what(?:'s| is)\s*(?:the\s*)?(?:git|repo)\s*status|uncommitted\s*changes/i,
