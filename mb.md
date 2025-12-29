@@ -455,6 +455,132 @@ WHERE id IN (
 
 ---
 
+## VIBECODING EVOLUTION ROADMAP (Patterns 68-77)
+
+**Goal:** Transform Mr. Blue from pattern-based tools → autonomous agentic execution.
+
+**Current Gap Score:** 3/10 (tools exist, autonomy missing)
+
+### Pattern 68: Plan-Execute Loop
+**What I Learn:** Break complex requests into sequential steps before executing.
+```
+User: "Add user authentication"
+    ↓
+PLAN:
+  1. Create users table schema
+  2. Add auth API routes
+  3. Build login/register forms
+  4. Add session middleware
+  5. Test all flows
+    ↓
+EXECUTE each step autonomously
+```
+
+### Pattern 69: ReAct Orchestration
+**What I Learn:** Think → Act → Observe → Repeat until done.
+```
+THOUGHT: I need to check if routes.ts exists
+ACTION: readFile("server/routes.ts")
+OBSERVATION: File has 50 routes, no /api/users
+THOUGHT: I should add user routes
+ACTION: writeFile("server/routes.ts", updated_content)
+OBSERVATION: Success
+THOUGHT: Now test the endpoint
+ACTION: executeCommand("curl localhost:5000/api/users")
+OBSERVATION: 200 OK with user data
+FINAL: Task complete!
+```
+
+### Pattern 70: Safety Confirmation
+**What I Learn:** High-risk actions require human approval.
+- File deletion → CONFIRM
+- Database DROP → CONFIRM
+- API key changes → CONFIRM
+- Deployment → CONFIRM
+
+### Pattern 71: Checkpoint Management
+**What I Learn:** Save state before risky operations.
+```
+Before editing file:
+  → Save checkpoint
+  → Attempt edit
+  → If fail: rollback to checkpoint
+  → If success: commit checkpoint
+```
+
+### Pattern 72: Skill Catalog
+**What I Learn:** Reusable solution templates.
+| Skill | What It Does |
+|-------|--------------|
+| add-api-endpoint | Creates Express route + validation |
+| add-db-table | Creates Drizzle schema + migrations |
+| add-react-page | Creates page + routing |
+| add-auth | Full JWT + session setup |
+
+### Pattern 73: Connector Registry
+**What I Learn:** Pre-built integrations with external APIs.
+| Connector | APIs |
+|-----------|------|
+| stripe | Payments, subscriptions |
+| github | Repos, issues, PRs |
+| openai | Chat, embeddings |
+| resend | Email sending |
+
+### Pattern 74: Browser Automation
+**What I Learn:** Use Playwright for testing and visual verification.
+```
+THOUGHT: I should verify the UI works
+ACTION: launchBrowser("http://localhost:5000")
+ACTION: click("button-login")
+ACTION: screenshot()
+OBSERVATION: Login form displayed correctly
+```
+
+### Pattern 75: Code Sandbox
+**What I Learn:** Execute code safely in isolated environment.
+- Run untrusted code in sandbox
+- Capture output/errors
+- Time limit execution
+- No filesystem access outside sandbox
+
+### Pattern 76: Test Orchestration
+**What I Learn:** Automatically test my own work.
+```
+After making changes:
+  → Run relevant unit tests
+  → Run E2E tests if UI changed
+  → Report results
+  → Fix failures before completing
+```
+
+### Pattern 77: Web Search Integration
+**What I Learn:** Search the web for current information.
+```
+User: "What's the latest React version?"
+    ↓
+ACTION: webSearch("React latest version 2025")
+OBSERVATION: React 19.0 released Dec 2024
+    ↓
+Response with current data
+```
+
+### Implementation Phases
+
+| Phase | Weeks | Focus | Patterns |
+|-------|-------|-------|----------|
+| 1 | 1-2 | ReAct Loop Foundation | 68, 69 |
+| 2 | 3-4 | Safety & Checkpoints | 70, 71 |
+| 3 | 5-6 | Skills & Connectors | 72, 73 |
+| 4 | 7-8 | Browser & Sandbox | 74, 75 |
+| 5 | 9-10 | Testing & Search | 76, 77 |
+
+### Required Installations (Phase 1)
+```bash
+npm install @langchain/core @langchain/langgraph @langchain/openai
+```
+
+---
+
 ## THE MISSION
 
 > "How do we reverse the negative impacts of social media and make it all better?"

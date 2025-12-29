@@ -51,6 +51,15 @@ Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized age
   - God-level admins: Full MB.MD execution rights
   - Playbook: `Mr Blue/playbooks/qa-customer-platform.md`
   - God Commands: gc-011 (Admin Approval), gc-012 (God-Level Execution)
+- **VibeCoding Tools (Dec 2025)**: File system and codebase access for god-level users
+  - `readFile`: Read project files from workspace
+  - `writeFile`: Create/update project files
+  - `grepFiles`: Search codebase with mb.md priority search
+  - `listFiles`: List directory contents
+  - `executeCommand`: Run safe shell commands (ls, cat, grep, git, npm)
+  - `getGitStatus`: Query current git state
+  - Service: `server/services/mrBlue/VibeCodingToolService.ts`
+  - Uses portable `import.meta.url` for ESM-compatible basePath resolution
 
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator (Agent #115), including Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scraped events are stored in a `scraped_events` table and ingested into the main events table. An Admin UI at `/admin/scraping` provides real-time scraper status and a moderation queue.

@@ -14,10 +14,13 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { fileURLToPath } from 'url';
 import { getUncachableGitHubClient, getRepositoryInfo, getLatestCommit } from '../../lib/github-client';
 
 const execAsync = promisify(exec);
-const basePath = process.cwd();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const basePath = path.resolve(__dirname, '../../..');
 
 export interface ToolResult {
   success: boolean;
@@ -128,11 +131,41 @@ export async function searchFiles(pattern: string, directory: string = '.'): Pro
  */
 export async function grepFiles(searchTerm: string, directory: string = '.'): Promise<ToolResult> {
   try {
-    const { stdout } = await execAsync(
-      `grep -r -l --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" "${searchTerm}" ${directory} 2>/dev/null | head -20`,
-      { cwd: basePath, timeout: 10000 }
-    );
-    const files = stdout.trim().split('\n').filter(f => f);
+    // Always check mb.md first for knowledge/pattern searches
+    let mbmdLines = '';
+    console.log(`[grepFiles] Searching for "${searchTerm}" in ${directory}, basePath: ${basePath}`);
+    try {
+      const { stdout: mbmd } = await execAsync(
+        `grep -n "${searchTerm}" mb.md 2>&1 | head -30`,
+        { cwd: basePath, timeout: 10000 }
+      );
+      mbmdLines = mbmd.trim();
+      console.log(`[grepFiles] mb.md grep result: ${mbmdLines.substring(0, 100)}...`);
+    } catch (e: any) {
+      console.log(`[grepFiles] mb.md grep error: ${e.message}`);
+    }
+    
+    // Then search code files (wrap in try-catch as grep exits with code 1 when no matches)
+    let files: string[] = [];
+    try {
+      const { stdout } = await execAsync(
+        `grep -r -l --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.md" --include="*.json" "${searchTerm}" ${directory} 2>/dev/null | head -20`,
+        { cwd: basePath, timeout: 10000 }
+      );
+      files = stdout.trim().split('\n').filter(f => f);
+    } catch {
+      // No matches in code files - that's okay
+    }
+    
+    // If we found matches in mb.md, include those lines
+    if (mbmdLines) {
+      return {
+        success: true,
+        tool: 'grepFiles',
+        data: { searchTerm, matchingFiles: files.length > 0 ? files : ['mb.md'], count: files.length || 1, matchingLines: mbmdLines }
+      };
+    }
+    
     return {
       success: true,
       tool: 'grepFiles',
@@ -140,9 +173,10 @@ export async function grepFiles(searchTerm: string, directory: string = '.'): Pr
     };
   } catch (error: any) {
     return {
-      success: true,
+      success: false,
       tool: 'grepFiles',
-      data: { searchTerm, matchingFiles: [], count: 0 }
+      data: null,
+      error: error.message
     };
   }
 }
