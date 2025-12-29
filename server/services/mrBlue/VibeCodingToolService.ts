@@ -608,141 +608,182 @@ class VibeCodingToolServiceClass {
 }
 
 /**
- * Format tool results into readable markdown instead of raw JSON
+ * Format tool results into rich HTML for display in chat UI
  */
 export function formatToolResponse(toolName: string, result: ToolResult): string {
   if (!result.success) {
-    return `**Error:** ${result.error || 'Unknown error occurred'}`;
+    return `<div class="tool-error"><strong>Error:</strong> ${escapeHtml(result.error || 'Unknown error occurred')}</div>`;
   }
 
   const data = result.data;
 
   switch (toolName) {
     case 'getGitHubInfo': {
-      let response = '### GitHub Repository\n\n';
+      let html = '<div class="tool-result github-info">';
+      html += '<h3>GitHub Repository</h3>';
       if (data.mainRepository) {
         const repo = data.mainRepository;
-        response += `**${repo.fullName}**\n`;
-        response += `${repo.description || 'No description'}\n\n`;
-        response += `- **Language:** ${repo.language || 'Unknown'}\n`;
-        response += `- **Stars:** ${repo.stars} | **Forks:** ${repo.forks}\n`;
-        response += `- **Open Issues:** ${repo.openIssues}\n`;
-        response += `- **Default Branch:** ${repo.defaultBranch}\n`;
-        response += `- **URL:** [View on GitHub](${repo.url})\n\n`;
+        html += `<div class="repo-header"><strong>${escapeHtml(repo.fullName)}</strong></div>`;
+        html += `<p class="repo-desc">${escapeHtml(repo.description || 'No description')}</p>`;
+        html += '<ul class="repo-stats">';
+        html += `<li><strong>Language:</strong> ${escapeHtml(repo.language || 'Unknown')}</li>`;
+        html += `<li><strong>Stars:</strong> ${repo.stars} | <strong>Forks:</strong> ${repo.forks}</li>`;
+        html += `<li><strong>Open Issues:</strong> ${repo.openIssues}</li>`;
+        html += `<li><strong>Default Branch:</strong> ${escapeHtml(repo.defaultBranch)}</li>`;
+        html += `<li><a href="${escapeHtml(repo.url)}" target="_blank" rel="noopener">View on GitHub</a></li>`;
+        html += '</ul>';
       }
       if (data.recentCommits?.length > 0) {
-        response += '### Recent Commits\n\n';
+        html += '<h4>Recent Commits</h4><ul class="commit-list">';
         data.recentCommits.slice(0, 5).forEach((commit: any) => {
           const date = new Date(commit.date).toLocaleDateString();
-          response += `- **${commit.sha}** - ${commit.message} _(${commit.author}, ${date})_\n`;
+          html += `<li><code>${escapeHtml(commit.sha)}</code> - ${escapeHtml(commit.message)} <em>(${escapeHtml(commit.author)}, ${date})</em></li>`;
         });
-        response += '\n';
+        html += '</ul>';
       }
       if (data.openIssues?.length > 0) {
-        response += '### Open Issues\n\n';
+        html += '<h4>Open Issues</h4><ul class="issue-list">';
         data.openIssues.slice(0, 5).forEach((issue: any) => {
-          response += `- **#${issue.number}** ${issue.title}\n`;
+          html += `<li><strong>#${issue.number}</strong> ${escapeHtml(issue.title)}</li>`;
         });
+        html += '</ul>';
       }
-      return response;
+      html += '</div>';
+      return html;
     }
 
     case 'grepFiles': {
-      let response = `### Search Results for "${data.searchTerm}"\n\n`;
-      response += `**Found ${data.count} match${data.count !== 1 ? 'es' : ''}**\n\n`;
+      let html = '<div class="tool-result search-results">';
+      html += `<h3>Search Results for "${escapeHtml(data.searchTerm)}"</h3>`;
+      html += `<p><strong>Found ${data.count} match${data.count !== 1 ? 'es' : ''}</strong></p>`;
       if (data.matchingFiles?.length > 0) {
-        response += '**Files:**\n';
+        html += '<h4>Files:</h4><ul class="file-list">';
         data.matchingFiles.forEach((file: string) => {
-          response += `- \`${file}\`\n`;
+          html += `<li><code>${escapeHtml(file)}</code></li>`;
         });
+        html += '</ul>';
       }
       if (data.matchingLines) {
-        response += '\n**Matches:**\n```\n' + data.matchingLines + '\n```\n';
+        html += '<h4>Matches:</h4>';
+        html += `<pre class="code-block">${escapeHtml(data.matchingLines)}</pre>`;
       }
-      return response;
+      html += '</div>';
+      return html;
     }
 
     case 'readFile': {
-      let response = `### File: \`${data.path}\`\n\n`;
-      response += `**Lines:** ${data.lines}\n\n`;
-      const ext = data.path.split('.').pop() || 'txt';
+      let html = '<div class="tool-result file-content">';
+      html += `<h3>File: <code>${escapeHtml(data.path)}</code></h3>`;
+      html += `<p><strong>Lines:</strong> ${data.lines}</p>`;
       const content = data.content.length > 2000 ? data.content.slice(0, 2000) + '\n... (truncated)' : data.content;
-      response += '```' + ext + '\n' + content + '\n```';
-      return response;
+      html += `<pre class="code-block">${escapeHtml(content)}</pre>`;
+      html += '</div>';
+      return html;
     }
 
     case 'listDirectory': {
-      let response = `### Directory: \`${data.path}\`\n\n`;
+      let html = '<div class="tool-result directory-listing">';
+      html += `<h3>Directory: <code>${escapeHtml(data.path)}</code></h3>`;
       if (data.directories?.length > 0) {
-        response += '**Folders:**\n';
-        data.directories.forEach((dir: string) => response += `- 📁 ${dir}/\n`);
-        response += '\n';
+        html += '<h4>Folders:</h4><ul class="folder-list">';
+        data.directories.forEach((dir: string) => html += `<li>📁 ${escapeHtml(dir)}/</li>`);
+        html += '</ul>';
       }
       if (data.files?.length > 0) {
-        response += '**Files:**\n';
-        data.files.slice(0, 20).forEach((file: string) => response += `- 📄 ${file}\n`);
-        if (data.files.length > 20) response += `\n_...and ${data.files.length - 20} more files_\n`;
+        html += '<h4>Files:</h4><ul class="file-list">';
+        data.files.slice(0, 20).forEach((file: string) => html += `<li>📄 ${escapeHtml(file)}</li>`);
+        if (data.files.length > 20) html += `<li><em>...and ${data.files.length - 20} more files</em></li>`;
+        html += '</ul>';
       }
-      return response;
+      html += '</div>';
+      return html;
     }
 
     case 'getGitStatus': {
-      let response = '### Git Status\n\n';
-      response += `**Branch:** ${data.branch || 'unknown'}\n\n`;
+      let html = '<div class="tool-result git-status">';
+      html += '<h3>Git Status</h3>';
+      html += `<p><strong>Branch:</strong> ${escapeHtml(data.branch || 'unknown')}</p>`;
       if (data.staged?.length > 0) {
-        response += '**Staged Changes:**\n';
-        data.staged.forEach((file: string) => response += `- ✅ ${file}\n`);
-        response += '\n';
+        html += '<h4>Staged Changes:</h4><ul class="staged-list">';
+        data.staged.forEach((file: string) => html += `<li>✅ ${escapeHtml(file)}</li>`);
+        html += '</ul>';
       }
       if (data.modified?.length > 0) {
-        response += '**Modified Files:**\n';
-        data.modified.forEach((file: string) => response += `- 📝 ${file}\n`);
-        response += '\n';
+        html += '<h4>Modified Files:</h4><ul class="modified-list">';
+        data.modified.forEach((file: string) => html += `<li>📝 ${escapeHtml(file)}</li>`);
+        html += '</ul>';
       }
       if (data.untracked?.length > 0) {
-        response += '**Untracked Files:**\n';
-        data.untracked.forEach((file: string) => response += `- ❓ ${file}\n`);
+        html += '<h4>Untracked Files:</h4><ul class="untracked-list">';
+        data.untracked.forEach((file: string) => html += `<li>❓ ${escapeHtml(file)}</li>`);
+        html += '</ul>';
       }
       if (!data.staged?.length && !data.modified?.length && !data.untracked?.length) {
-        response += '_Working directory is clean_\n';
+        html += '<p><em>Working directory is clean</em></p>';
       }
-      return response;
+      html += '</div>';
+      return html;
     }
 
     case 'getProjectStructure': {
-      let response = '### Project Structure\n\n';
+      let html = '<div class="tool-result project-structure">';
+      html += '<h3>Project Structure</h3>';
       if (data.directories?.length > 0) {
-        response += '**Main Directories:**\n';
-        data.directories.slice(0, 15).forEach((dir: string) => response += `- 📁 ${dir}/\n`);
-        response += '\n';
+        html += '<h4>Main Directories:</h4><ul class="folder-list">';
+        data.directories.slice(0, 15).forEach((dir: string) => html += `<li>📁 ${escapeHtml(dir)}/</li>`);
+        html += '</ul>';
       }
       if (data.files?.length > 0) {
-        response += '**Root Files:**\n';
-        data.files.slice(0, 10).forEach((file: string) => response += `- 📄 ${file}\n`);
+        html += '<h4>Root Files:</h4><ul class="file-list">';
+        data.files.slice(0, 10).forEach((file: string) => html += `<li>📄 ${escapeHtml(file)}</li>`);
+        html += '</ul>';
       }
-      return response;
+      html += '</div>';
+      return html;
     }
 
     case 'executeCommand': {
-      let response = `### Command Output\n\n`;
-      response += `**Command:** \`${data.command}\`\n\n`;
+      let html = '<div class="tool-result command-output">';
+      html += '<h3>Command Output</h3>';
+      html += `<p><strong>Command:</strong> <code>${escapeHtml(data.command)}</code></p>`;
       if (data.stdout) {
         const output = data.stdout.length > 1500 ? data.stdout.slice(0, 1500) + '\n... (truncated)' : data.stdout;
-        response += '```\n' + output + '\n```\n';
+        html += `<pre class="code-block">${escapeHtml(output)}</pre>`;
       }
       if (data.stderr) {
-        response += '\n**Errors:**\n```\n' + data.stderr + '\n```';
+        html += '<h4>Errors:</h4>';
+        html += `<pre class="code-block error">${escapeHtml(data.stderr)}</pre>`;
       }
-      return response;
+      html += '</div>';
+      return html;
     }
 
     case 'writeFile': {
-      return `### File Written\n\n**Path:** \`${data.path}\`\n**Lines:** ${data.lines}\n\n_File saved successfully!_`;
+      let html = '<div class="tool-result file-written">';
+      html += '<h3>File Written</h3>';
+      html += `<p><strong>Path:</strong> <code>${escapeHtml(data.path)}</code></p>`;
+      html += `<p><strong>Lines:</strong> ${data.lines}</p>`;
+      html += '<p><em>File saved successfully!</em></p>';
+      html += '</div>';
+      return html;
     }
 
     default:
-      return '```json\n' + JSON.stringify(data, null, 2).slice(0, 2000) + '\n```';
+      return `<div class="tool-result"><pre class="code-block">${escapeHtml(JSON.stringify(data, null, 2).slice(0, 2000))}</pre></div>`;
   }
+}
+
+/**
+ * Escape HTML special characters to prevent XSS
+ */
+function escapeHtml(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 // Export singleton instance

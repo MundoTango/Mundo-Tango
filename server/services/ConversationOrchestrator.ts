@@ -196,31 +196,34 @@ export class ConversationOrchestrator {
       }
     }
 
-    // Tier 3: Check for action intent
-    const actionKeywords = [
-      'add',
-      'create',
-      'make',
-      'build',
-      'implement',
-      'fix',
-      'change',
-      'modify',
-      'update',
-      'remove',
-      'delete',
-      'refactor',
-      'improve',
-      'optimize',
+    // Tier 3: Check for action intent (IMPROVED - Dec 2025)
+    // Only match action keywords when they appear as imperative commands
+    // NOT when used descriptively (e.g., "when I make an rsvp" should NOT trigger action)
+    const actionPatterns = [
+      /^(?:please\s+)?add\s+/i,         // "add a button", "please add"
+      /^(?:please\s+)?create\s+/i,      // "create a component"
+      /^(?:please\s+)?make\s+/i,        // "make the button bigger"
+      /^(?:please\s+)?build\s+/i,       // "build a feature"
+      /^(?:please\s+)?implement\s+/i,   // "implement login"
+      /^(?:please\s+)?fix\s+/i,         // "fix the bug"
+      /^(?:please\s+)?change\s+/i,      // "change the color"
+      /^(?:please\s+)?modify\s+/i,      // "modify the layout"
+      /^(?:please\s+)?update\s+/i,      // "update the styling"
+      /^(?:please\s+)?remove\s+/i,      // "remove the button"
+      /^(?:please\s+)?delete\s+/i,      // "delete this section"
+      /^(?:please\s+)?refactor\s+/i,    // "refactor the code"
+      /^(?:please\s+)?improve\s+/i,     // "improve performance"
+      /^(?:please\s+)?optimize\s+/i,    // "optimize the query"
+      /(?:i need you to|can you|could you|would you)\s+(?:add|create|make|build|fix|change|modify|update|remove|delete)/i,
     ];
 
-    for (const keyword of actionKeywords) {
-      if (msg.includes(keyword)) {
-        console.log(`[Orchestrator] 🔨 Action intent detected (${Date.now() - startTime}ms)`);
+    for (const pattern of actionPatterns) {
+      if (pattern.test(msg)) {
+        console.log(`[Orchestrator] 🔨 Action intent detected: "${pattern.source}" (${Date.now() - startTime}ms)`);
         return {
           type: 'action',
           confidence: 0.85,
-          reasoning: `Matched action keyword: "${keyword}"`
+          reasoning: `Matched action pattern: "${pattern.source}"`
         };
       }
     }
