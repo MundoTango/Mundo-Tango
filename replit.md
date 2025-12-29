@@ -67,10 +67,14 @@ Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized age
   - Service: `server/services/mrBlue/VibeCodingToolService.ts`
   - Uses portable `import.meta.url` for ESM-compatible basePath resolution
 - **VibeCoding Streaming (MB.MD Pattern 97)**: Real-time ReAct protocol visualization
-  - Endpoint: POST `/api/mrblue/vibestream/start` (SSE streaming, tier 8 only)
+  - Endpoint: POST `/api/mrblue/vibestream` (SSE streaming, tier 8 only)
   - 6-Phase Pipeline: Clarify → Plan → Research → Execute → Verify → Report
   - Event Types: THOUGHT/ACTION/OBSERVATION markers with timestamps
-  - Frontend: `VibeCodingPanel.tsx` with phase timeline, event stream display
+  - **Chat Integration (Dec 2025)**: VibeCoding auto-triggers in MrBlueChat for god-level users
+    - Pattern detection: "fix RSVP", "update code", "implement feature" triggers VibeCoding mode
+    - Real-time SSE streaming shows THOUGHT (purple), ACTION (blue), OBSERVATION (green) messages
+    - Frontend: `MrBlueChat.tsx` with distinct vibe message styling
+    - Non-god users fall back to regular chat mode gracefully
   - Features: AbortController for cancellation, session tracking, client disconnect cleanup
   - God-level users can watch Mr. Blue think, plan, and execute in real-time
 

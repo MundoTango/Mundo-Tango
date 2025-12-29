@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Send, Loader2, X } from "lucide-react";
+import { Send, Loader2, X, Brain, Zap, Eye, CheckCircle, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,9 +12,25 @@ import { useMrBlue } from "@/contexts/MrBlueContext";
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'vibe';
   content: string;
   timestamp: Date;
+  vibeType?: 'thought' | 'action' | 'observation' | 'phase' | 'complete' | 'error';
+  vibePhase?: string;
+}
+
+// Detect if message is a VibeCoding task
+function isVibecodingTask(message: string): boolean {
+  const patterns = [
+    /\b(fix|repair|patch|debug|solve)\b.*\b(rsvp|cache|bug|error|issue|problem)\b/i,
+    /\b(update|change|modify|improve|enhance)\b.*\b(code|component|file|function)\b/i,
+    /\b(implement|add|create|build)\b.*\b(feature|functionality|system)\b/i,
+    /\b(make|ensure)\b.*\b(responsive|mobile|layout)\b/i,
+    /^fix\s+/i,
+    /^update\s+/i,
+    /^implement\s+/i
+  ];
+  return patterns.some(pattern => pattern.test(message));
 }
 
 interface MrBlueChatProps {
@@ -259,6 +275,108 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
 
     setIsLoading(true);
 
+    // Check if this is a VibeCoding task and user might be god-level
+    // Try streaming first, fall back to regular chat if not authorized
+    if (isVibecodingTask(messageText)) {
+      try {
+        console.log('[MrBlueChat] VibeCoding task detected, attempting stream...');
+        
+        // Get auth token from localStorage
+        const token = localStorage.getItem('token');
+        
+        // Call streaming endpoint
+        const response = await fetch('/api/mrblue/vibestream', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? 'Bearer ' + token : ''
+          },
+          body: JSON.stringify({
+            message: messageText,
+            context: {
+              currentPage: location,
+              pageTitle: document.title
+            }
+          })
+        });
+        
+        // Check if streaming is available (god-level users)
+        // Only add starting message AFTER confirming streaming works
+        if (response.ok && response.headers.get('content-type')?.includes('text/event-stream')) {
+          console.log('[MrBlueChat] Streaming response received');
+          
+          // Now add the starting message since we confirmed streaming
+          const startMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'vibe',
+            content: 'VibeCoding session started...',
+            timestamp: new Date(),
+            vibeType: 'phase',
+            vibePhase: 'init'
+          };
+          setMessages(prev => [...prev, startMessage]);
+          
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+          
+          if (reader) {
+            let buffer = '';
+            
+            try {
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+                
+                for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                    try {
+                      const eventData = JSON.parse(line.slice(6));
+                      
+                      // Add vibe event as a message
+                      const vibeMessage: Message = {
+                        id: (Date.now() + Math.random()).toString(),
+                        role: 'vibe',
+                        content: eventData.content,
+                        timestamp: new Date(),
+                        vibeType: eventData.type,
+                        vibePhase: eventData.phase
+                      };
+                      
+                      setMessages(prev => [...prev, vibeMessage]);
+                    } catch {
+                      // Ignore parse errors
+                    }
+                  }
+                }
+              }
+            } catch (streamError) {
+              console.error('[MrBlueChat] Stream read error:', streamError);
+              const errorMessage: Message = {
+                id: (Date.now() + Math.random()).toString(),
+                role: 'vibe',
+                content: 'VibeCoding stream interrupted. Please try again.',
+                timestamp: new Date(),
+                vibeType: 'error'
+              };
+              setMessages(prev => [...prev, errorMessage]);
+            }
+            
+            setIsLoading(false);
+            return;
+          }
+        }
+        
+        // If not streaming (403 for non-god users), fall through to regular chat silently
+        console.log('[MrBlueChat] Streaming not available (status: ' + response.status + '), falling back to regular chat');
+      } catch (error) {
+        console.log('[MrBlueChat] Streaming failed, falling back to regular chat');
+      }
+    }
+
     try {
       // Use apiRequest to include JWT authentication for god-level VibeCoding tools
       // Pass current page context so Mr. Blue knows where the user is
@@ -334,44 +452,88 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
       {/* Messages */}
       <ScrollArea className="flex-1 px-4 py-4" data-testid="scrollarea-chat-messages">
         <div className="space-y-4 max-w-2xl mx-auto">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              data-testid={`message-${message.role}-${message.id}`}
-              className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {message.role === 'assistant' && (
-                <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
-                  <ShadcnAvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary text-xs font-medium">
-                    MB
-                  </ShadcnAvatarFallback>
-                </ShadcnAvatar>
-              )}
+          {messages.map((message) => {
+            // Vibe message rendering with distinct styles
+            if (message.role === 'vibe') {
+              const getVibeStyle = () => {
+                switch (message.vibeType) {
+                  case 'thought':
+                    return { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-300', icon: Brain, label: 'THOUGHT' };
+                  case 'action':
+                    return { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-300', icon: Zap, label: 'ACTION' };
+                  case 'observation':
+                    return { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-300', icon: Eye, label: 'OBSERVATION' };
+                  case 'phase':
+                    return { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-300', icon: Loader2, label: message.vibePhase?.toUpperCase() || 'PHASE' };
+                  case 'complete':
+                    return { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-300', icon: CheckCircle, label: 'COMPLETE' };
+                  case 'error':
+                    return { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-300', icon: AlertTriangle, label: 'ERROR' };
+                  default:
+                    return { bg: 'bg-muted', border: 'border-border', text: 'text-muted-foreground', icon: Brain, label: 'VIBE' };
+                }
+              };
               
-              <div className={`max-w-[80%] sm:max-w-[75%] ${message.role === 'user' ? 'order-first' : ''}`}>
-                <div className={`rounded-2xl px-4 py-3 text-sm shadow-sm ${
-                  message.role === 'user' 
-                    ? 'bg-primary text-primary-foreground rounded-br-md' 
-                    : 'bg-card border border-border/50 rounded-bl-md backdrop-blur-sm'
-                }`}>
-                  <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+              const style = getVibeStyle();
+              const IconComponent = style.icon;
+              
+              return (
+                <div
+                  key={message.id}
+                  data-testid={'message-vibe-' + message.id}
+                  className="flex gap-2 justify-start"
+                >
+                  <div className={'flex items-start gap-2 max-w-[95%] rounded-lg px-3 py-2 text-xs font-mono border ' + style.bg + ' ' + style.border}>
+                    <IconComponent className={'h-3 w-3 flex-shrink-0 mt-0.5 ' + style.text + (message.vibeType === 'phase' ? ' animate-spin' : '')} />
+                    <div className="flex-1 min-w-0">
+                      <span className={'text-[10px] font-bold uppercase tracking-wider ' + style.text}>{style.label}</span>
+                      <p className="text-foreground/80 whitespace-pre-wrap break-words mt-0.5">{message.content}</p>
+                    </div>
+                  </div>
                 </div>
-                <p className={`text-[10px] text-muted-foreground mt-1 ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
-                  {message.timestamp instanceof Date 
-                    ? message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                    : message.timestamp 
-                      ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                      : ''}
-                </p>
-              </div>
+              );
+            }
+            
+            // Regular message rendering
+            return (
+              <div
+                key={message.id}
+                data-testid={'message-' + message.role + '-' + message.id}
+                className={'flex gap-3 ' + (message.role === 'user' ? 'justify-end' : 'justify-start')}
+              >
+                {message.role === 'assistant' && (
+                  <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
+                    <ShadcnAvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary text-xs font-medium">
+                      MB
+                    </ShadcnAvatarFallback>
+                  </ShadcnAvatar>
+                )}
+                
+                <div className={'max-w-[80%] sm:max-w-[75%] ' + (message.role === 'user' ? 'order-first' : '')}>
+                  <div className={'rounded-2xl px-4 py-3 text-sm shadow-sm ' + (
+                    message.role === 'user' 
+                      ? 'bg-primary text-primary-foreground rounded-br-md' 
+                      : 'bg-card border border-border/50 rounded-bl-md backdrop-blur-sm'
+                  )}>
+                    <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                  </div>
+                  <p className={'text-[10px] text-muted-foreground mt-1 ' + (message.role === 'user' ? 'text-right' : 'text-left')}>
+                    {message.timestamp instanceof Date 
+                      ? message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      : message.timestamp 
+                        ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        : ''}
+                  </p>
+                </div>
 
-              {message.role === 'user' && (
-                <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
-                  <ShadcnAvatarFallback className="bg-accent/10 text-accent text-xs font-medium">You</ShadcnAvatarFallback>
-                </ShadcnAvatar>
-              )}
-            </div>
-          ))}
+                {message.role === 'user' && (
+                  <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
+                    <ShadcnAvatarFallback className="bg-accent/10 text-accent text-xs font-medium">You</ShadcnAvatarFallback>
+                  </ShadcnAvatar>
+                )}
+              </div>
+            );
+          })}
           {isLoading && (
             <div className="flex gap-3 justify-start">
               <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
