@@ -343,3 +343,163 @@ export const VIBECODING_TOOLS = {
 };
 
 export type ToolName = keyof typeof VIBECODING_TOOLS;
+
+/**
+ * Tool detection result interface
+ */
+export interface ToolDetectionResult {
+  shouldExecuteTool: boolean;
+  suggestedTool: ToolName | null;
+  confidence: number;
+  parameters: Record<string, any>;
+}
+
+/**
+ * VibeCoding Tool Service - Pattern-based tool detection and execution
+ */
+class VibeCodingToolServiceClass {
+  
+  /**
+   * Detect if a message contains tool execution intent
+   */
+  detectToolIntent(message: string): ToolDetectionResult {
+    const lowerMessage = message.toLowerCase().trim();
+    
+    // Pattern matching for different tools
+    const patterns: Array<{
+      pattern: RegExp;
+      tool: ToolName;
+      extractParams: (match: RegExpMatchArray, msg: string) => Record<string, any>;
+      baseConfidence: number;
+    }> = [
+      // GitHub patterns
+      {
+        pattern: /(?:look at|show|check|what's on|my)\s*github|github\s*(?:info|repos|account)/i,
+        tool: 'getGitHubInfo',
+        extractParams: () => ({}),
+        baseConfidence: 0.85
+      },
+      // Git status patterns  
+      {
+        pattern: /git\s*status|what(?:'s| is)\s*(?:the\s*)?(?:git|repo)\s*status|uncommitted\s*changes/i,
+        tool: 'getGitStatus',
+        extractParams: () => ({}),
+        baseConfidence: 0.9
+      },
+      // Read file patterns
+      {
+        pattern: /(?:read|show|open|view|cat|display)\s+(?:the\s+)?(?:file\s+)?([\/\w\.\-]+\.[a-zA-Z]+)/i,
+        tool: 'readFile',
+        extractParams: (match) => ({ filePath: match[1] }),
+        baseConfidence: 0.9
+      },
+      // List directory patterns
+      {
+        pattern: /(?:list|ls|show|what's in)\s+(?:the\s+)?(?:directory|folder|dir)\s*([\/\w\.\-]*)?/i,
+        tool: 'listDirectory',
+        extractParams: (match) => ({ dirPath: match[1] || '.' }),
+        baseConfidence: 0.85
+      },
+      // Search files patterns
+      {
+        pattern: /(?:find|search for|locate)\s+(?:files?\s+)?(?:matching|named|called)\s+["\']?([^\s"']+)["\']?/i,
+        tool: 'searchFiles',
+        extractParams: (match) => ({ pattern: match[1] }),
+        baseConfidence: 0.85
+      },
+      // Grep patterns
+      {
+        pattern: /(?:grep|search|find)\s+(?:for\s+)?["\']?([^"']+)["\']?\s+(?:in|across)\s+(?:the\s+)?(?:codebase|files|code)/i,
+        tool: 'grepFiles',
+        extractParams: (match) => ({ searchTerm: match[1] }),
+        baseConfidence: 0.85
+      },
+      // Project structure patterns
+      {
+        pattern: /(?:project\s*structure|codebase\s*overview|what(?:'s| is)\s*(?:the\s*)?project\s*layout)/i,
+        tool: 'getProjectStructure',
+        extractParams: () => ({}),
+        baseConfidence: 0.85
+      }
+    ];
+    
+    // Try each pattern
+    for (const { pattern, tool, extractParams, baseConfidence } of patterns) {
+      const match = message.match(pattern);
+      if (match) {
+        return {
+          shouldExecuteTool: true,
+          suggestedTool: tool,
+          confidence: baseConfidence,
+          parameters: extractParams(match, message)
+        };
+      }
+    }
+    
+    // No tool detected
+    return {
+      shouldExecuteTool: false,
+      suggestedTool: null,
+      confidence: 0,
+      parameters: {}
+    };
+  }
+  
+  /**
+   * Execute a tool by name with given parameters
+   */
+  async executeTool(toolName: ToolName, parameters: Record<string, any>): Promise<ToolResult> {
+    const tool = VIBECODING_TOOLS[toolName];
+    if (!tool) {
+      return {
+        success: false,
+        tool: toolName,
+        data: null,
+        error: `Unknown tool: ${toolName}`
+      };
+    }
+    
+    try {
+      // Call the tool handler with appropriate parameters
+      switch (toolName) {
+        case 'readFile':
+          return await readFile(parameters.filePath);
+        case 'writeFile':
+          return await writeFile(parameters.filePath, parameters.content);
+        case 'listDirectory':
+          return await listDirectory(parameters.dirPath);
+        case 'searchFiles':
+          return await searchFiles(parameters.pattern, parameters.directory);
+        case 'grepFiles':
+          return await grepFiles(parameters.searchTerm, parameters.directory);
+        case 'executeCommand':
+          return await executeCommand(parameters.command);
+        case 'getGitHubInfo':
+          return await getGitHubInfo();
+        case 'getGitHubRepo':
+          return await getGitHubRepo(parameters.owner, parameters.repo);
+        case 'getGitStatus':
+          return await getGitStatus();
+        case 'getProjectStructure':
+          return await getProjectStructure();
+        default:
+          return {
+            success: false,
+            tool: toolName,
+            data: null,
+            error: `Unhandled tool: ${toolName}`
+          };
+      }
+    } catch (error: any) {
+      return {
+        success: false,
+        tool: toolName,
+        data: null,
+        error: error.message
+      };
+    }
+  }
+}
+
+// Export singleton instance
+export const vibeCodingToolService = new VibeCodingToolServiceClass();

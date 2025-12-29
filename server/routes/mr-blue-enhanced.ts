@@ -457,6 +457,8 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
     // This is what makes Mr. Blue a TRUE VibeCoding agent - the ability to DO things
     const toolIntent = detectToolIntent(message);
     
+    console.log(`[Mr. Blue] Tool detection: isGodLevel=${isGodLevel} (roleLevel=${userRoleLevel}, email=${userEmail}), tool=${toolIntent.tool}, confidence=${toolIntent.confidence}`);
+    
     if (isGodLevel && toolIntent.hasTool && toolIntent.tool && toolIntent.confidence >= 0.7) {
       console.log(`[Mr. Blue] Tool execution request from god-level user: ${toolIntent.tool}`);
       

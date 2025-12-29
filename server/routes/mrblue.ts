@@ -19,6 +19,7 @@ import { memoryService } from "../services/mrBlue/MemoryService";
 // import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
 import { CostTracker } from "../services/ai/CostTracker";
 import { isGodLevelUser, lookupProductionUser, searchProductionUsers, getProductionStats, formatUserInfoForMrBlue } from "../services/mrBlue/ProductionUserLookup";
+import { vibeCodingToolService, type ToolDetectionResult } from "../services/mrBlue/VibeCodingToolService";
 
 // MB.MD Pattern: Lazy-loaded services to break circular dependency chain
 let vibeCodingServiceInstance: any = null;
@@ -423,6 +424,71 @@ router.post("/chat", optionalAuth, traceRoute("mr-blue-chat"), async (req: AuthR
         } catch (error: any) {
           console.error('[Mr. Blue] Custom prompt error:', error);
           // Fall through to normal processing if custom prompt fails
+        }
+      }
+
+      // ================== MB.MD Pattern 65: VIBECODING TOOL DETECTION (GOD POWERS) ==================
+      // Only enabled for authenticated god-level users (tier 8, CTOs, admins)
+      if (authenticatedUserId) {
+        const isGod = await isGodLevelUser(authenticatedUserId);
+        if (isGod) {
+          console.log('[Mr. Blue] 🔧 Tool detection check for god-level user:', authenticatedUserId);
+          
+          // Detect if message contains tool-execution intent
+          const toolDetection = vibeCodingToolService.detectToolIntent(message);
+          console.log('[Mr. Blue] 🔧 Tool detection result:', JSON.stringify(toolDetection));
+          
+          if (toolDetection.shouldExecuteTool && toolDetection.confidence >= 0.7) {
+            console.log(`[Mr. Blue] ⚡ EXECUTING TOOL: ${toolDetection.suggestedTool} (confidence: ${toolDetection.confidence})`);
+            
+            try {
+              // Execute the detected tool
+              const toolResult = await vibeCodingToolService.executeTool(
+                toolDetection.suggestedTool || 'getProjectStructure',
+                toolDetection.parameters
+              );
+              
+              // Format the response based on tool output
+              let formattedResponse = '';
+              if (toolResult.success) {
+                formattedResponse = `**VibeCoding Tool Executed: ${toolDetection.suggestedTool}**\n\n`;
+                
+                if (typeof toolResult.data === 'string') {
+                  // Truncate long responses
+                  if (toolResult.data.length > 3000) {
+                    formattedResponse += '```\n' + toolResult.data.slice(0, 3000) + '\n... (truncated)\n```';
+                  } else {
+                    formattedResponse += '```\n' + toolResult.data + '\n```';
+                  }
+                } else {
+                  formattedResponse += '```json\n' + JSON.stringify(toolResult.data, null, 2).slice(0, 3000) + '\n```';
+                }
+              } else {
+                formattedResponse = `**Tool Error:** ${toolResult.error || 'Unknown error occurred'}`;
+              }
+              
+              return res.json({
+                success: true,
+                mode: 'vibecoding_tool',
+                response: formattedResponse,
+                intent: 'tool_execution',
+                tool: toolDetection.suggestedTool,
+                confidence: toolDetection.confidence,
+                isGodMode: true
+              });
+            } catch (toolError: any) {
+              console.error('[Mr. Blue] Tool execution error:', toolError);
+              return res.json({
+                success: true,
+                mode: 'vibecoding_tool',
+                response: `**Tool Execution Failed:** ${toolError.message}`,
+                intent: 'tool_execution',
+                tool: toolDetection.suggestedTool,
+                confidence: toolDetection.confidence,
+                isGodMode: true
+              });
+            }
+          }
         }
       }
 
