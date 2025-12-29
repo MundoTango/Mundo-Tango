@@ -62,6 +62,15 @@ const HomePage = lazy(() => import("@/pages/HomePage"));
 export function SocialRoutes() {
   return (
     <>
+      <Route path="/">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <FeedPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/dashboard">
         <ProtectedRoute>
           <AppLayout>

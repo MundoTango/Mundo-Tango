@@ -107,7 +107,7 @@ function AppContent() {
     '/help-center', '/contact', '/about-tango', '/h2ac', '/demos', '/faq',
     '/login', '/register', '/auth', '/forgot-password', '/reset-password'
   ];
-  const isMarketingPage = location === '/' || marketingPaths.some(path => location.startsWith(path));
+  const isMarketingPage = marketingPaths.some(path => location.startsWith(path));
 
   return (
     <>
