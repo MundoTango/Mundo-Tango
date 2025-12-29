@@ -1,4 +1,4 @@
-# MB.MD - Mr. Blue's Modular Brain v3.0
+# MB.MD - Mr. Blue's !Modular Brain v3.0
 
 **Version:** 3.0.0  
 **Updated:** December 28, 2025  
@@ -136,6 +136,52 @@ Regular users get normal chat responses.
 | `grepFiles` | ✅ PASS | "search for isGodLevelUser" |
 
 **Routing verified:** Non-tool messages correctly route to question mode.
+
+### VibeCoding Evolution Roadmap (NEW - Dec 29, 2025)
+
+**Current State:** Pattern-based tool detection (Gap Score: 3/10)
+**Target State:** Autonomous agentic execution (Gap Score: 9/10)
+
+See: `Mr Blue/VIBECODING_GAP_ANALYSIS.md` for full analysis.
+
+#### Upcoming Patterns (68-77)
+
+| Pattern | Name | Status |
+|---------|------|--------|
+| 68 | Plan-Execute Loop | PLANNED |
+| 69 | ReAct Orchestration | PLANNED |
+| 70 | Safety Confirmation | PLANNED |
+| 71 | Checkpoint Management | PLANNED |
+| 72 | Skill Catalog | PLANNED |
+| 73 | Connector Registry | PLANNED |
+| 74 | Browser Automation | PLANNED |
+| 75 | Code Sandbox | PLANNED |
+| 76 | Test Orchestration | PLANNED |
+| 77 | Web Search Integration | PLANNED |
+
+#### Required Installations
+
+```bash
+# Agentic Framework
+npm install @langchain/core @langchain/langgraph @langchain/openai
+
+# Code Sandbox (choose one)
+npm install @e2b/sdk     # Cloud sandboxed execution
+# OR
+pip install modal        # Modal cloud sandbox
+
+# Web Search
+npm install tavily       # AI-optimized search
+```
+
+#### Learning Resources
+
+| Topic | Resource | Priority |
+|-------|----------|----------|
+| ReAct Pattern | LangChain Docs | HIGH |
+| LangGraph | langchain-ai/langgraph | HIGH |
+| Reflexion | arxiv.org/abs/2303.11366 | MEDIUM |
+| Safety Patterns | Replit Agent patterns | HIGH |
 
 ---
 
