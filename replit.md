@@ -66,6 +66,13 @@ Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized age
   - `getGitStatus`: Query current git state
   - Service: `server/services/mrBlue/VibeCodingToolService.ts`
   - Uses portable `import.meta.url` for ESM-compatible basePath resolution
+- **VibeCoding Streaming (MB.MD Pattern 97)**: Real-time ReAct protocol visualization
+  - Endpoint: POST `/api/mrblue/vibestream/start` (SSE streaming, tier 8 only)
+  - 6-Phase Pipeline: Clarify → Plan → Research → Execute → Verify → Report
+  - Event Types: THOUGHT/ACTION/OBSERVATION markers with timestamps
+  - Frontend: `VibeCodingPanel.tsx` with phase timeline, event stream display
+  - Features: AbortController for cancellation, session tracking, client disconnect cleanup
+  - God-level users can watch Mr. Blue think, plan, and execute in real-time
 
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator (Agent #115), including Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scraped events are stored in a `scraped_events` table and ingested into the main events table. An Admin UI at `/admin/scraping` provides real-time scraper status and a moderation queue.

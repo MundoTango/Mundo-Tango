@@ -38,6 +38,7 @@ import { registerLumaRoutes } from "./routes/mrblue/luma-routes";
 import mrBlueContextRoutes from "./routes/mrblue-context-routes";
 import mrBlueVideoConferenceRoutes from "./routes/mrblue-video-conference-routes";
 import mrBlueVibeCodingRoutes from "./routes/mrblue-vibecoding-routes";
+import mrBlueVibeStreamRoutes from "./routes/mrblue-vibestream-routes";
 import mrBlueVoiceRoutes from "./routes/mrblue-voice-routes";
 import mrBlueTTSRoutes from "./routes/mrBlueTTS";
 import voiceFirstRoutes from "./routes/voice-first-routes";
@@ -1166,6 +1167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/context", mrBlueContextRoutes); // System 1: Context Service with LanceDB
   app.use("/api/mrblue/video", mrBlueVideoConferenceRoutes); // System 2: Daily.co Video Conference
   app.use("/api/mrblue/vibecode", mrBlueVibeCodingRoutes); // System 4: Vibe Coding Engine (Natural Language → Code)
+  app.use("/api/mrblue/vibestream", mrBlueVibeStreamRoutes); // System 4b: Streaming ReAct VibeCoding (MB.MD Pattern 97)
   app.use("/api/mrblue/voice", mrBlueVoiceRoutes); // System 5: Voice Cloning with ElevenLabs (17 languages)
   app.use("/api/mr-blue/tts", mrBlueTTSRoutes); // TTS Proxy for 3D Avatar (secure ElevenLabs key)
   app.use("/api/voice", voiceFirstRoutes); // Voice-First Features (Wispr Flow inspired): 4x faster than typing, 68 languages
