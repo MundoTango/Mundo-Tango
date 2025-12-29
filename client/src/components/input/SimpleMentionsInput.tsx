@@ -617,10 +617,17 @@ export function SimpleMentionsInput({
                 <div className="space-y-1">
                   {mentionResults.map((entity, index) => (
                     <button
+                      type="button"
                       key={entity.id}
                       data-mention-index={index}
                       onMouseDown={(e) => {
                         e.preventDefault();
+                        e.stopPropagation();
+                        insertMention(entity);
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         insertMention(entity);
                       }}
                       className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all text-white font-medium ${
@@ -631,7 +638,7 @@ export function SimpleMentionsInput({
                           ? 'rgba(255, 255, 255, 0.25)'
                           : 'transparent',
                       }}
-                      data-testid={`mention-result-${entity.id}`}
+                      data-testid={`mention-suggestion-${index}`}
                     >
                       <Avatar className="w-8 h-8 border-2 border-white/50">
                         <AvatarImage src={entity.avatar || undefined} />
