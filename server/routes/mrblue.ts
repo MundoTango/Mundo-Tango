@@ -448,24 +448,9 @@ router.post("/chat", optionalAuth, traceRoute("mr-blue-chat"), async (req: AuthR
                 toolDetection.parameters
               );
               
-              // Format the response based on tool output
-              let formattedResponse = '';
-              if (toolResult.success) {
-                formattedResponse = `**VibeCoding Tool Executed: ${toolDetection.suggestedTool}**\n\n`;
-                
-                if (typeof toolResult.data === 'string') {
-                  // Truncate long responses
-                  if (toolResult.data.length > 3000) {
-                    formattedResponse += '```\n' + toolResult.data.slice(0, 3000) + '\n... (truncated)\n```';
-                  } else {
-                    formattedResponse += '```\n' + toolResult.data + '\n```';
-                  }
-                } else {
-                  formattedResponse += '```json\n' + JSON.stringify(toolResult.data, null, 2).slice(0, 3000) + '\n```';
-                }
-              } else {
-                formattedResponse = `**Tool Error:** ${toolResult.error || 'Unknown error occurred'}`;
-              }
+              // Format the response using rich markdown formatting
+              const { formatToolResponse } = await import('../services/mrBlue/VibeCodingToolService');
+              const formattedResponse = formatToolResponse(toolDetection.suggestedTool || 'unknown', toolResult);
               
               return res.json({
                 success: true,

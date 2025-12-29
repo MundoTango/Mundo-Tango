@@ -607,5 +607,143 @@ class VibeCodingToolServiceClass {
   }
 }
 
+/**
+ * Format tool results into readable markdown instead of raw JSON
+ */
+export function formatToolResponse(toolName: string, result: ToolResult): string {
+  if (!result.success) {
+    return `**Error:** ${result.error || 'Unknown error occurred'}`;
+  }
+
+  const data = result.data;
+
+  switch (toolName) {
+    case 'getGitHubInfo': {
+      let response = '### GitHub Repository\n\n';
+      if (data.mainRepository) {
+        const repo = data.mainRepository;
+        response += `**${repo.fullName}**\n`;
+        response += `${repo.description || 'No description'}\n\n`;
+        response += `- **Language:** ${repo.language || 'Unknown'}\n`;
+        response += `- **Stars:** ${repo.stars} | **Forks:** ${repo.forks}\n`;
+        response += `- **Open Issues:** ${repo.openIssues}\n`;
+        response += `- **Default Branch:** ${repo.defaultBranch}\n`;
+        response += `- **URL:** [View on GitHub](${repo.url})\n\n`;
+      }
+      if (data.recentCommits?.length > 0) {
+        response += '### Recent Commits\n\n';
+        data.recentCommits.slice(0, 5).forEach((commit: any) => {
+          const date = new Date(commit.date).toLocaleDateString();
+          response += `- **${commit.sha}** - ${commit.message} _(${commit.author}, ${date})_\n`;
+        });
+        response += '\n';
+      }
+      if (data.openIssues?.length > 0) {
+        response += '### Open Issues\n\n';
+        data.openIssues.slice(0, 5).forEach((issue: any) => {
+          response += `- **#${issue.number}** ${issue.title}\n`;
+        });
+      }
+      return response;
+    }
+
+    case 'grepFiles': {
+      let response = `### Search Results for "${data.searchTerm}"\n\n`;
+      response += `**Found ${data.count} match${data.count !== 1 ? 'es' : ''}**\n\n`;
+      if (data.matchingFiles?.length > 0) {
+        response += '**Files:**\n';
+        data.matchingFiles.forEach((file: string) => {
+          response += `- \`${file}\`\n`;
+        });
+      }
+      if (data.matchingLines) {
+        response += '\n**Matches:**\n```\n' + data.matchingLines + '\n```\n';
+      }
+      return response;
+    }
+
+    case 'readFile': {
+      let response = `### File: \`${data.path}\`\n\n`;
+      response += `**Lines:** ${data.lines}\n\n`;
+      const ext = data.path.split('.').pop() || 'txt';
+      const content = data.content.length > 2000 ? data.content.slice(0, 2000) + '\n... (truncated)' : data.content;
+      response += '```' + ext + '\n' + content + '\n```';
+      return response;
+    }
+
+    case 'listDirectory': {
+      let response = `### Directory: \`${data.path}\`\n\n`;
+      if (data.directories?.length > 0) {
+        response += '**Folders:**\n';
+        data.directories.forEach((dir: string) => response += `- 📁 ${dir}/\n`);
+        response += '\n';
+      }
+      if (data.files?.length > 0) {
+        response += '**Files:**\n';
+        data.files.slice(0, 20).forEach((file: string) => response += `- 📄 ${file}\n`);
+        if (data.files.length > 20) response += `\n_...and ${data.files.length - 20} more files_\n`;
+      }
+      return response;
+    }
+
+    case 'getGitStatus': {
+      let response = '### Git Status\n\n';
+      response += `**Branch:** ${data.branch || 'unknown'}\n\n`;
+      if (data.staged?.length > 0) {
+        response += '**Staged Changes:**\n';
+        data.staged.forEach((file: string) => response += `- ✅ ${file}\n`);
+        response += '\n';
+      }
+      if (data.modified?.length > 0) {
+        response += '**Modified Files:**\n';
+        data.modified.forEach((file: string) => response += `- 📝 ${file}\n`);
+        response += '\n';
+      }
+      if (data.untracked?.length > 0) {
+        response += '**Untracked Files:**\n';
+        data.untracked.forEach((file: string) => response += `- ❓ ${file}\n`);
+      }
+      if (!data.staged?.length && !data.modified?.length && !data.untracked?.length) {
+        response += '_Working directory is clean_\n';
+      }
+      return response;
+    }
+
+    case 'getProjectStructure': {
+      let response = '### Project Structure\n\n';
+      if (data.directories?.length > 0) {
+        response += '**Main Directories:**\n';
+        data.directories.slice(0, 15).forEach((dir: string) => response += `- 📁 ${dir}/\n`);
+        response += '\n';
+      }
+      if (data.files?.length > 0) {
+        response += '**Root Files:**\n';
+        data.files.slice(0, 10).forEach((file: string) => response += `- 📄 ${file}\n`);
+      }
+      return response;
+    }
+
+    case 'executeCommand': {
+      let response = `### Command Output\n\n`;
+      response += `**Command:** \`${data.command}\`\n\n`;
+      if (data.stdout) {
+        const output = data.stdout.length > 1500 ? data.stdout.slice(0, 1500) + '\n... (truncated)' : data.stdout;
+        response += '```\n' + output + '\n```\n';
+      }
+      if (data.stderr) {
+        response += '\n**Errors:**\n```\n' + data.stderr + '\n```';
+      }
+      return response;
+    }
+
+    case 'writeFile': {
+      return `### File Written\n\n**Path:** \`${data.path}\`\n**Lines:** ${data.lines}\n\n_File saved successfully!_`;
+    }
+
+    default:
+      return '```json\n' + JSON.stringify(data, null, 2).slice(0, 2000) + '\n```';
+  }
+}
+
 // Export singleton instance
 export const vibeCodingToolService = new VibeCodingToolServiceClass();
