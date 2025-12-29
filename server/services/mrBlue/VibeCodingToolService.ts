@@ -465,23 +465,39 @@ class VibeCodingToolServiceClass {
     const lowerMessage = message.toLowerCase().trim();
     
     // Pattern matching for different tools
+    // MB.MD Pattern 98: Subject-specific searches should come BEFORE generic repo info
     const patterns: Array<{
       pattern: RegExp;
       tool: ToolName;
       extractParams: (match: RegExpMatchArray, msg: string) => Record<string, any>;
       baseConfidence: number;
     }> = [
-      // GitHub patterns - requires action verbs to avoid false positives
+      // PRIORITY 1: Subject-specific code search - "tell me about X system/code/feature on/in repo/codebase"
+      // This MUST come before GitHub patterns to avoid false matches
+      {
+        pattern: /(?:tell\s+me\s+about|explain|show\s+me|find|search\s+for|look\s+for|what\s+(?:is|are)\s+(?:the|our)?)\s+(?:the\s+)?(?:our\s+)?(\w+(?:\s+\w+)?)\s+(?:system|code|feature|implementation|logic|component|service|module|function)\s+(?:on|in)\s+(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code)/i,
+        tool: 'grepFiles',
+        extractParams: (match) => ({ searchTerm: match[1] }),
+        baseConfidence: 0.95  // Highest priority - specific subject search
+      },
+      // PRIORITY 2: Generic grep with subject - "how does X work in our code"
+      {
+        pattern: /(?:how\s+does|where\s+is|find)\s+(?:the\s+)?(\w+(?:\s+\w+)?)\s+(?:work|handled|implemented|defined)\s+(?:in\s+)?(?:the\s+)?(?:our\s+)?(?:repo|codebase|code)?/i,
+        tool: 'grepFiles',
+        extractParams: (match) => ({ searchTerm: match[1] }),
+        baseConfidence: 0.9
+      },
+      // GitHub patterns - requires action verbs, ONLY for generic repo info
       // MB.MD Pattern 98: Added "query" and broader matching for proactive tool usage
       {
-        pattern: /(?:(?:show|get|check|view|look at|display|query|search|find|what(?:'s| is))\s+(?:the\s+)?(?:my|our)?\s*github(?:\s+(?:info|repos?|account|details|status|repo))?)|(?:(?:what(?:'s| is)|show|get|query)\s+(?:the\s+)?(?:our|my)\s+github\s*(?:repo|repository|account)?(?:\s*name)?)|(?:github\s+(?:info|status|repos?))|(?:query\s+(?:the\s+)?(?:our|my)\s+(?:github\s+)?repo)/i,
+        pattern: /(?:(?:show|get|check|view|look at|display|query|search|find|what(?:'s| is))\s+(?:the\s+)?(?:my|our)?\s*github(?:\s+(?:info|repos?|account|details|status|repo))?)|(?:(?:what(?:'s| is)|show|get|query)\s+(?:the\s+)?(?:our|my)\s+github\s*(?:repo|repository|account)?(?:\s*name)?)|(?:github\s+(?:info|status|repos?))|(?:query\s+(?:the\s+)?(?:our|my)\s+(?:github\s+)?repo(?!\s+\w))/i,
         tool: 'getGitHubInfo',
         extractParams: () => ({}),
         baseConfidence: 0.9  // Higher confidence for explicit GitHub requests
       },
-      // Repo identification patterns - "what repo", "which repo", "our repo", "query our repo"
+      // Repo identification patterns - "what repo", "which repo" (NOT "X on our repo")
       {
-        pattern: /(?:what|which)\s+(?:repo|repository)\s+(?:is this|are we|am I|is|this)|(?:(?:our|my|the|this)\s+repo(?:sitory)?(?:\s+(?:name|info|details))?)|(?:query\s+(?:our|my|the)\s+repo)/i,
+        pattern: /(?:what|which)\s+(?:repo|repository)\s+(?:is this|are we|am I|is|this)|(?:^(?:our|my|the|this)\s+repo(?:sitory)?(?:\s+(?:name|info|details))?$)|(?:query\s+(?:our|my|the)\s+repo$)/i,
         tool: 'getGitHubInfo',
         extractParams: () => ({}),
         baseConfidence: 0.85
