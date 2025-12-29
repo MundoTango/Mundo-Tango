@@ -37,7 +37,13 @@ Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized age
 
 **Mr. Blue AI Assistant (Enhanced Dec 2025)**:
 - **Database Integration**: Real-time access to platform data via `MrBlueDataService` (events, cities, users, groups)
-- **AI Engine**: Groq llama-3.3-70b-versatile model with platform context injection
+- **Multi-AI Orchestrator (MB.MD Pattern 99)**: Intelligent task-based routing to best AI provider
+  - **Groq (Llama 3.3)**: Fast, cheap - used for simple Q&A, classification
+  - **OpenAI (GPT-4o-mini)**: Reliable - used for code generation, structured output
+  - **Anthropic (Claude)**: Best reasoning - used for complex analysis, nuanced responses
+  - **Automatic Fallback**: If one provider fails/rate-limited, automatically tries next
+  - **AI Consensus System**: Multiple AIs vote on critical decisions for validation
+  - **Service Location**: `server/services/ai/AIOrchestrator.ts`
 - **Query Intent Detection**: Automatically routes event/city/help queries with location extraction
 - **Fallback System**: Smart template responses if AI fails
 - **UI**: Glassmorphic design with header, message timestamps, "Thinking..." indicator

@@ -15,13 +15,14 @@
  * - Page analysis: <1000ms (activation + audit)
  */
 
-import Groq from 'groq-sdk';
 import { contextService } from './mrBlue/ContextService';
 // MB.MD Pattern: Lazy-loaded to avoid circular dependencies
 // import { vibeCodingService } from './mrBlue/VibeCodingService';
 import { AgentActivationService } from './self-healing/AgentActivationService';
 import { PageAuditService } from './self-healing/PageAuditService';
 import { SelfHealingService } from './self-healing/SelfHealingService';
+import { vibeCodingToolService, formatToolResponse } from './mrBlue/VibeCodingToolService';
+import { orchestrateAI, generateCode, analyzeCode, type TaskType } from './ai/AIOrchestrator';
 import { db } from '../db';
 import { events, cities, housingListings, travelPlans, users } from '@shared/schema';
 import { gte, lte, and, or, ilike, asc, eq, sql, desc } from 'drizzle-orm';
@@ -36,11 +37,29 @@ async function getLazyVibeCodingService() {
   return vibeCodingServiceInstance;
 }
 
-// Initialize GROQ client
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || '',
-  baseURL: process.env.BIFROST_BASE_URL || undefined,
-});
+/**
+ * MB.MD Pattern 99: Intelligent AI Chat with Task-Based Routing
+ * Routes to the best AI based on task type with automatic fallback
+ */
+async function aiChatWithFallback(
+  systemPrompt: string,
+  userMessage: string,
+  options: { maxTokens?: number; temperature?: number; taskType?: TaskType } = {}
+): Promise<{ content: string; provider: string }> {
+  const { maxTokens = 1024, temperature = 0.7, taskType = 'simple_qa' } = options;
+  
+  console.log(`[AI Orchestrator] Task type: ${taskType}`);
+  
+  const response = await orchestrateAI(taskType, systemPrompt, userMessage, {
+    maxTokens,
+    temperature,
+  });
+  
+  return {
+    content: response.content,
+    provider: response.provider,
+  };
+}
 
 export interface Intent {
   type: 'question' | 'action' | 'page_analysis' | 'feature_request' | 'unknown';
@@ -978,17 +997,14 @@ GUIDELINES:
       
       console.log(`[Orchestrator] 🤖 System prompt ready. Database sources: ${contextSources.length > 0 ? contextSources.join(', ') : 'none'}`);
 
-      const response = await groq.chat.completions.create({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: message }
-        ],
+      // MB.MD Pattern 99: Use AI fallback chain (Groq → OpenAI → Anthropic)
+      const aiResponse = await aiChatWithFallback(systemPrompt, message, {
+        maxTokens: 500,
         temperature: 0.3,
-        max_tokens: 500,
       });
+      console.log(`[Orchestrator] AI provider used: ${aiResponse.provider}`);
 
-      const answer = response.choices[0]?.message?.content || 'I apologize, I could not generate a response.';
+      const answer = aiResponse.content || 'I apologize, I could not generate a response.';
       const duration = Date.now() - startTime;
 
       console.log(`[Orchestrator] ✅ Question handled in ${duration}ms`);
@@ -1050,12 +1066,67 @@ GUIDELINES:
         vibecodingResult: vibeResult,
         requiresApproval: true,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('[Orchestrator] ❌ Action handling failed:', error);
+      
+      // MB.MD Pattern 98: Rate-limit fallback - use pattern-based tool detection
+      const errorString = JSON.stringify(error);
+      const isRateLimited = error?.status === 429 ||
+                           error?.message?.includes('429') || 
+                           error?.message?.includes('rate_limit') ||
+                           error?.message?.includes('Rate limit') ||
+                           errorString.includes('rate_limit_exceeded');
+      
+      if (isRateLimited) {
+        console.log('[Orchestrator] 🔄 Rate limited - attempting pattern-based tool fallback...');
+        
+        // Try to detect tool intent using pattern matching
+        const toolDetection = vibeCodingToolService.detectToolIntent(message);
+        
+        if (toolDetection.shouldExecuteTool && toolDetection.confidence >= 0.6) {
+          console.log(`[Orchestrator] 🔧 Fallback executing tool: ${toolDetection.suggestedTool} (confidence: ${toolDetection.confidence})`);
+          
+          try {
+            const toolResult = await vibeCodingToolService.executeTool(
+              toolDetection.suggestedTool || 'getProjectStructure',
+              toolDetection.parameters
+            );
+            
+            const formattedResponse = formatToolResponse(toolDetection.suggestedTool || 'unknown', toolResult);
+            
+            return {
+              success: true,
+              mode: 'action',
+              vibecodingResult: {
+                success: true,
+                sessionId: `fallback_${userId}_${Date.now()}`,
+                request: message,
+                interpretation: formattedResponse,
+                fileChanges: [],
+                validationResults: { syntax: true, lsp: true, safety: true, warnings: [] },
+                estimatedImpact: 'Read-only tool execution (rate-limit fallback)',
+              },
+              requiresApproval: false,
+            };
+          } catch (toolError: any) {
+            console.error('[Orchestrator] Tool fallback failed:', toolError);
+          }
+        }
+      }
+      
       return {
         success: false,
         mode: 'action',
-        vibecodingResult: null,
+        vibecodingResult: {
+          success: false,
+          sessionId: `action_${userId}_${Date.now()}`,
+          request: message,
+          interpretation: '',
+          fileChanges: [],
+          validationResults: { syntax: false, lsp: false, safety: false, warnings: [] },
+          estimatedImpact: 'Unknown',
+          error: error?.message || 'Action handling failed',
+        },
         requiresApproval: false,
       };
     }

@@ -34,7 +34,7 @@ interface DocumentChunk {
   timestamp: number;
 }
 
-interface ContextSearchResult {
+export interface ContextSearchResult {
   content: string;
   source: string;
   section: string;

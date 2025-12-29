@@ -13,14 +13,10 @@
  * - Code formatting
  */
 
-import Groq from 'groq-sdk';
 import { ContextService, ContextSearchResult } from './ContextService';
+import { orchestrateAI, type TaskType } from '../ai/AIOrchestrator';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
 
 interface GenerateRequest {
   request: string;
@@ -158,32 +154,22 @@ Generate the fix now:`;
   }
 
   /**
-   * Generate code using GROQ
+   * Generate code using AI Orchestrator (with automatic fallback)
+   * MB.MD Pattern 99: Routes to best AI for code generation (OpenAI preferred, falls back to others)
    */
   private async generateWithGroq(prompt: string, request: GenerateRequest): Promise<string> {
-    console.log('[CodeGenerator] 🤖 Calling GROQ API...');
+    console.log('[CodeGenerator] 🤖 Calling AI Orchestrator for code generation...');
 
-    const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert full-stack developer. You generate clean, production-ready code following best practices. You MUST respond with valid JSON only - no markdown, no explanations.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+    const systemPrompt = 'You are an expert full-stack developer. You generate clean, production-ready code following best practices. You MUST respond with valid JSON only - no markdown, no explanations.';
+
+    const aiResponse = await orchestrateAI('code_generation', systemPrompt, prompt, {
       temperature: 0.2,
-      max_tokens: 8000,
-      response_format: { type: 'json_object' }, // Force JSON mode
+      maxTokens: 4000, // Reduced from 8000 to stay within limits
     });
 
-    const response = completion.choices[0]?.message?.content || '[]';
-    console.log('[CodeGenerator] ✅ GROQ response received');
+    console.log(`[CodeGenerator] ✅ AI response received from ${aiResponse.provider} in ${aiResponse.latencyMs}ms`);
     
-    return response;
+    return aiResponse.content;
   }
 
   /**
