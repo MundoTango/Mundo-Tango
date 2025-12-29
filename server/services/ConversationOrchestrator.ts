@@ -43,7 +43,7 @@ const groq = new Groq({
 });
 
 export interface Intent {
-  type: 'question' | 'action' | 'page_analysis' | 'unknown';
+  type: 'question' | 'action' | 'page_analysis' | 'feature_request' | 'unknown';
   confidence: number;
   reasoning: string;
 }
@@ -196,7 +196,31 @@ export class ConversationOrchestrator {
       }
     }
 
-    // Tier 3: Check for action intent (IMPROVED - Dec 2025)
+    // Tier 3: Check for FEATURE REQUEST intent (MB.MD Pattern 68 - Dec 2025)
+    // These are requests that describe WHAT the user wants, not HOW to do it
+    // Mr. Blue should ask clarifying questions before building
+    const featureRequestPatterns = [
+      /i need\s+(?:all\s+)?(\w+)\s+to\s+/i,                    // "I need RSVPs to sync"
+      /i want\s+(?:the\s+)?(\w+)\s+to\s+/i,                    // "I want the button to"
+      /(?:it|this|that)\s+should\s+/i,                          // "it should persist"
+      /make\s+(?:it|them)\s+(?:so\s+)?(?:that\s+)?/i,          // "make it so that"
+      /(?:when|if)\s+i\s+(?:\w+)\s+(?:here|there|on)/i,        // "when I do X here"
+      /(?:should|must|needs? to)\s+(?:persist|sync|update|reflect|propagate|cascade)/i, // behavior descriptions
+      /(?:across|between|throughout)\s+(?:all\s+)?(?:pages?|instances?|components?)/i,   // sync requirements
+    ];
+
+    for (const pattern of featureRequestPatterns) {
+      if (pattern.test(msg)) {
+        console.log(`[Orchestrator] 🎯 FEATURE REQUEST intent detected (${Date.now() - startTime}ms)`);
+        return {
+          type: 'feature_request',
+          confidence: 0.90,
+          reasoning: `Feature request pattern matched: "${pattern.source}"`
+        };
+      }
+    }
+
+    // Tier 4: Check for action intent (IMPROVED - Dec 2025)
     // Only match action keywords when they appear as imperative commands
     // NOT when used descriptively (e.g., "when I make an rsvp" should NOT trigger action)
     const actionPatterns = [

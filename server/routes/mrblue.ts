@@ -535,6 +535,72 @@ router.post("/chat", optionalAuth, traceRoute("mr-blue-chat"), async (req: AuthR
           intent: intent.type,
           confidence: intent.confidence
         });
+      } else if (intent.type === 'feature_request') {
+        // MB.MD Pattern 68: Handle feature request - ASK CLARIFYING QUESTIONS FIRST
+        console.log('[Mr. Blue] 🎯 Handling as FEATURE REQUEST - Generating clarifying questions');
+        
+        try {
+          const clarificationPrompt = `You are Mr. Blue, an AI coding assistant for Mundo Tango. The user has made a feature request that needs clarification before you can implement it.
+
+USER'S REQUEST: "${message}"
+
+CURRENT PAGE: ${parsedContext.currentPage || 'Unknown'}
+
+Your job is to ask 2-4 smart clarifying questions to fully understand what needs to be built. Think like a senior developer who needs to understand:
+1. Current behavior vs expected behavior
+2. Scope - what components/pages are affected
+3. Edge cases or constraints
+4. Priority and dependencies
+
+Format your response as:
+1. A brief acknowledgment of what you understood
+2. Your clarifying questions as a numbered list
+3. End with "Once you answer these questions, I'll create a detailed plan before making any changes."
+
+Be conversational and helpful, not robotic.`;
+
+          const completion = await groq.chat.completions.create({
+            model: 'llama-3.3-70b-versatile',
+            messages: [{ role: 'user', content: clarificationPrompt }],
+            max_tokens: 1024,
+            temperature: 0.7
+          });
+          const clarificationResponse = completion.choices[0]?.message?.content || "I'd like to help with that feature. Could you tell me more about what you're trying to achieve?";
+          
+          if (userId) {
+            try {
+              let activeConversationId = conversationId;
+              if (!activeConversationId) {
+                const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
+                activeConversationId = conversation.id;
+              }
+              await saveMessageToHistory(activeConversationId, userId, 'user', message);
+              await saveMessageToHistory(activeConversationId, userId, 'assistant', clarificationResponse);
+              console.log(`[MrBlue] ✅ Saved feature request messages to conversation ${activeConversationId}`);
+            } catch (error) {
+              console.error('[MrBlue] Failed to save feature request messages:', error);
+            }
+          }
+          
+          return res.json({
+            success: true,
+            mode: 'feature_request',
+            response: clarificationResponse,
+            intent: intent.type,
+            confidence: intent.confidence,
+            requiresClarification: true
+          });
+        } catch (error) {
+          console.error('[Mr. Blue] Feature request clarification failed:', error);
+          return res.json({
+            success: false,
+            mode: 'feature_request',
+            response: "I'd like to help with that feature, but I need to ask some questions first. Could you tell me more about what you're trying to achieve?",
+            intent: intent.type,
+            confidence: intent.confidence,
+            requiresClarification: true
+          });
+        }
       } else if (intent.type === 'action') {
         // Handle action - route to VibeCoding
         console.log('[Mr. Blue] 🔨 Handling as ACTION (VibeCoding)');
