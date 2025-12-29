@@ -29,6 +29,7 @@ const AmbassadorsPage = lazy(() => import("@/pages/marketing/AmbassadorsPage"));
 const OpenSourcePage = lazy(() => import("@/pages/marketing/OpenSourcePage"));
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
 const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
+const PricingPage = lazy(() => import("@/pages/PricingPage"));
 const TestimonialsPage = lazy(() => import("@/pages/TestimonialsPage"));
 const DiscoverPage = lazy(() => import("@/pages/DiscoverPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
@@ -117,6 +118,11 @@ export function MarketingRoutes() {
       <Route path="/features">
         <Suspense fallback={<LoadingFallback />}>
           <FeaturesPage />
+        </Suspense>
+      </Route>
+      <Route path="/pricing">
+        <Suspense fallback={<LoadingFallback />}>
+          <PricingPage />
         </Suspense>
       </Route>
       <Route path="/testimonials">
