@@ -131,6 +131,18 @@ export class ConversationOrchestrator {
       'hide the',
       'show the',
       'display the',
+      'tell me about the',
+      'tell me about our',
+      'how does the',
+      'how does our',
+      'search for',
+      'grep',
+      'in the repo',
+      'in our repo',
+      'in the codebase',
+      'in our codebase',
+      'on github',
+      'tell me about'
     ];
 
     for (const keyword of uiModificationKeywords) {
