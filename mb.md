@@ -4,7 +4,7 @@
 **Updated:** December 29, 2025  
 **Architecture:** Modular Cognitive Framework + Live Execution  
 **Total Agents:** 140+  
-**Patterns:** 97 (61 Core + 16 VibeCoding Evolution + 19 Industry AI Learned + 1 Execution Process)  
+**Patterns:** 98 (61 Core + 16 VibeCoding Evolution + 19 Industry AI Learned + 2 Execution Patterns)  
 **Status:** OPERATIONAL + ENHANCED VIBECODING
 
 ---
@@ -1205,6 +1205,51 @@ VERIFY: Changes complete. RSVPs now sync via React Query cache.
 
 Mr. Blue: "Done. Created shared useEventRsvp hook. All event displays now sync RSVP state automatically."
 ```
+
+---
+
+## RESEARCH BEFORE QUESTIONS (Pattern 98)
+
+**When a god-level user asks about GitHub, files, or codebase - USE TOOLS FIRST, ask questions only if needed.**
+
+### The Problem
+Previously, Mr. Blue would ask clarifying questions even when the user said something clear like "query our GitHub repo". This is frustrating because the user expects action, not questions.
+
+### The Solution: Research-First Approach
+
+When detecting these patterns, EXECUTE TOOLS IMMEDIATELY:
+- "query our github repo" → `getGitHubInfo()`
+- "search for RSVP" → `grepFiles("RSVP")`
+- "what files mention events" → `grepFiles("events")`
+- "show me the project structure" → `getProjectStructure()`
+- "read mb.md" → `readFile("mb.md")`
+
+### Live Streaming Progress
+
+For god-level users, show work in real-time via `/api/mrblue/stream`:
+```
+🔍 Executing getGitHubInfo...
+📦 Querying GitHub API...
+✅ getGitHubInfo completed
+
+📊 GitHub Repository: MundoTango/Mundo-Tango
+- Stars: 12
+- Recent commits: [commit list]
+- Open issues: 5
+```
+
+### When to Ask Questions vs Use Tools
+
+| User Says | Action |
+|-----------|--------|
+| "query our github repo" | ✅ USE `getGitHubInfo()` immediately |
+| "find all RSVP code" | ✅ USE `grepFiles("RSVP")` immediately |
+| "I want to add payments" | ❓ ASK clarifying questions (vague) |
+| "build me a dashboard" | ❓ ASK clarifying questions (complex) |
+
+### Implementation
+
+Tool detection now includes "query" keyword and runs BEFORE intent classification for explicit tool requests.
 
 ---
 

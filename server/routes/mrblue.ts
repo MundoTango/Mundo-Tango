@@ -1037,9 +1037,11 @@ Help users navigate the platform, answer questions, and provide personalized rec
   });
 
 // Streaming chat with work progress (SSE)
-router.post("/stream", async (req: Request, res: Response) => {
+// MB.MD Pattern 98: Live VibeCoding execution stream for god-level users
+router.post("/stream", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     const { message, context, mode } = req.body;
+    const authenticatedUserId = req.user?.id;
 
     if (!message || !message.trim()) {
       return res.status(400).json({
@@ -1059,6 +1061,55 @@ router.post("/stream", async (req: Request, res: Response) => {
 
     // Initialize SSE
     streamingService.initSSE(res);
+
+    // MB.MD Pattern 98: Check for VibeCoding tool execution (god-level only)
+    if (authenticatedUserId) {
+      const isGod = await isGodLevelUser(authenticatedUserId);
+      if (isGod) {
+        const toolDetection = vibeCodingToolService.detectToolIntent(message);
+        
+        if (toolDetection.shouldExecuteTool && toolDetection.confidence >= 0.7) {
+          console.log(`[Mr. Blue Stream] ⚡ STREAMING TOOL: ${toolDetection.suggestedTool}`);
+          
+          try {
+            // Stream the tool execution with live progress
+            const toolResult = await streamingService.streamToolExecution(
+              res,
+              toolDetection.suggestedTool || 'unknown',
+              async () => vibeCodingToolService.executeTool(
+                toolDetection.suggestedTool || 'getProjectStructure',
+                toolDetection.parameters
+              )
+            );
+            
+            // Format and send the result
+            const { formatToolResponse } = await import('../services/mrBlue/VibeCodingToolService');
+            const formattedResponse = formatToolResponse(toolDetection.suggestedTool || 'unknown', toolResult);
+            
+            streamingService.send(res, {
+              type: 'completion',
+              status: 'done',
+              message: formattedResponse,
+              data: {
+                tool: toolDetection.suggestedTool,
+                success: toolResult.success,
+                isGodMode: true
+              }
+            });
+            
+            res.end();
+            return;
+          } catch (toolError: any) {
+            streamingService.send(res, {
+              type: 'error',
+              message: `Tool execution failed: ${toolError.message}`
+            });
+            res.end();
+            return;
+          }
+        }
+      }
+    }
 
     // Detect if this is an editing request
     const isEditRequest = detectEditRequest(message);

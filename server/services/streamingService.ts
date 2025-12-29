@@ -206,6 +206,67 @@ export class StreamingService {
       res.write(':heartbeat\n\n');
     }
   }
+
+  /**
+   * MB.MD Pattern 98: Stream VibeCoding tool execution with live progress
+   * Shows real-time work like Replit Agent
+   */
+  async streamToolExecution(
+    res: Response,
+    toolName: string,
+    executeToolFn: () => Promise<any>
+  ): Promise<any> {
+    try {
+      // Step 1: Show what we're doing
+      this.send(res, {
+        type: 'progress',
+        status: 'analyzing',
+        message: `🔍 **Executing ${toolName}...**`
+      });
+      await this.delay(200);
+
+      // Step 2: Show the research step
+      const toolLabels: Record<string, string> = {
+        getGitHubInfo: '📦 Querying GitHub API...',
+        getGitHubRepo: '📁 Fetching repository details...',
+        getGitStatus: '🔀 Checking git status...',
+        readFile: '📄 Reading file contents...',
+        grepFiles: '🔎 Searching codebase...',
+        searchFiles: '🔍 Finding files...',
+        listDirectory: '📂 Listing directory...',
+        getProjectStructure: '🏗️ Analyzing project structure...',
+        executeCommand: '⚡ Running command...'
+      };
+
+      this.send(res, {
+        type: 'progress',
+        status: 'analyzing',
+        message: toolLabels[toolName] || `⚙️ Running ${toolName}...`
+      });
+      await this.delay(100);
+
+      // Step 3: Execute the tool
+      const result = await executeToolFn();
+
+      // Step 4: Show success
+      this.send(res, {
+        type: 'progress',
+        status: 'done',
+        message: result.success 
+          ? `✅ **${toolName} completed**` 
+          : `❌ **${toolName} failed**: ${result.error}`
+      });
+      await this.delay(100);
+
+      return result;
+    } catch (error: any) {
+      this.send(res, {
+        type: 'error',
+        message: `Tool execution failed: ${error.message}`
+      });
+      throw error;
+    }
+  }
 }
 
 export const streamingService = new StreamingService();
