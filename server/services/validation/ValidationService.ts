@@ -65,8 +65,8 @@ export class ValidationService {
   }
 
   /**
-   * Multi-tier validation with Loop Orchestrator (Pattern 29)
-   * Retry until ALL tiers pass OR max attempts reached
+   * Multi-tier validation with direct execution (MB.MD Pattern 99 simplified)
+   * Validate files directly without agent orchestration to avoid missing agent issues
    */
   async validate(
     files: Array<{ path: string; content: string }>,
@@ -74,47 +74,43 @@ export class ValidationService {
   ): Promise<ValidationResult> {
     const cfg = { ...this.defaultConfig, ...config };
 
-    console.log(`[ValidationService] Starting validation: ${files.length} files, ${cfg.tiers.length} tiers`);
+    console.log(`[ValidationService] Starting direct validation: ${files.length} files, ${cfg.tiers.length} tiers`);
 
-    const step: WorkflowStep = {
-      id: 'validation',
-      agentId: 'quality-validator',
-      task: { files },
-      context: { config: cfg }
-    };
+    // MB.MD Fix: Execute validation directly instead of via LoopOrchestrator
+    // This avoids the "Agent not found: quality-validator" error
+    const allErrors: Array<{ file: string; line?: number; message: string; severity: 'error' | 'warning' | 'info' }> = [];
+    let totalScore = 0;
 
-    // Execute validation loop
-    const result = await loopOrchestrator.execute(step, {
-      maxIterations: cfg.maxAttempts,
-      shouldContinue: (iteration, result) => {
-        // Continue if validation failed
-        return result?.validation?.passed === false;
-      },
-      improveTask: async (task, previousResult, errors) => {
-        if (!previousResult?.validation) {
-          return task;
+    for (const tier of cfg.tiers) {
+      try {
+        for (const file of files) {
+          const tierResult = await tier.validator(file.content);
+          if (!tierResult.passed) {
+            allErrors.push(...tierResult.errors);
+          }
+          totalScore += tierResult.score * tier.weight;
         }
-
-        // Use recursive improver to fix errors
-        const improved = await recursiveImprover.improveCode(
-          task.files,
-          previousResult.validation.errors
-        );
-
-        return {
-          ...task,
-          files: improved,
-          previousAttempt: iteration,
-          previousErrors: errors
-        };
+      } catch (error: any) {
+        console.error(`[ValidationService] Tier ${tier.name} failed:`, error.message);
+        allErrors.push({
+          file: 'unknown',
+          message: `Tier ${tier.name} validation failed: ${error.message}`,
+          severity: 'error'
+        });
       }
-    });
+    }
 
-    return result.results[result.results.length - 1]?.validation || {
-      passed: false,
-      tier: 'unknown',
-      errors: [{ file: 'unknown', message: 'Validation failed', severity: 'error' as const }],
-      score: 0
+    const passed = allErrors.filter(e => e.severity === 'error').length === 0;
+    const score = Math.min(totalScore / files.length, 1);
+
+    console.log(`[ValidationService] Validation complete: ${passed ? 'PASSED' : 'FAILED'} (score: ${score.toFixed(2)})`);
+
+    return {
+      passed,
+      tier: 'all',
+      errors: allErrors,
+      score,
+      suggestions: passed ? [] : ['Review and fix the errors above']
     };
   }
 

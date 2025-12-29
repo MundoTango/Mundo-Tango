@@ -13,9 +13,9 @@
  * - Git integration for rollback
  */
 
-import Groq from 'groq-sdk';
 import { ContextService } from './ContextService';
 import { CodeGenerator } from './CodeGenerator';
+import { orchestrateAI } from '../ai/AIOrchestrator';
 import { agentEventBus } from './AgentEventBus';
 import { progressTrackingAgent } from './ProgressTrackingAgent';
 import { preferenceExtractor } from './preferenceExtractor';
@@ -68,10 +68,6 @@ async function getAutoRetryService() {
   }
   return autoRetryService;
 }
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
 
 export interface VibeCodeRequest {
   naturalLanguage: string;
@@ -191,8 +187,11 @@ export class VibeCodingService {
       // Use sessionId as conversationId for tracking
       const conversationId = parseInt(request.sessionId.split('-')[1] || '1', 10);
 
+      // MB.MD Fix: Use lazy-load getter to ensure service is initialized
+      const clarificationSvc = await getClarificationService();
+      
       // Step 1: Check initial clarity score
-      const clarityScore = await clarificationService['assessClarity'](request.naturalLanguage);
+      const clarityScore = await clarificationSvc['assessClarity'](request.naturalLanguage);
       console.log(`[VibeCoding] 📊 Initial clarity score: ${clarityScore.toFixed(2)}`);
 
       // Step 2: If clarity is below threshold (0.8), run clarification
@@ -214,7 +213,7 @@ export class VibeCodingService {
         await agentEventBus.publish(clarificationEvent);
 
         // Run clarification loop
-        const clarificationResult = await clarificationService.clarify(
+        const clarificationResult = await clarificationSvc.clarify(
           request.naturalLanguage,
           conversationId,
           {
@@ -369,7 +368,9 @@ export class VibeCodingService {
         content: fc.newContent
       }));
       
-      const validationResult = await validationService.validate(files, {
+      // MB.MD Fix: Use lazy-load getter to ensure service is initialized
+      const validationSvc = await getValidationService();
+      const validationResult = await validationSvc.validate(files, {
         strictMode: true,
         maxAttempts: 1
       });
@@ -391,7 +392,9 @@ export class VibeCodingService {
         if (attemptNumber < 3) {
           console.log(`[VibeCoding] 🔄 Initiating auto-retry (attempt ${attemptNumber + 1}/3)...`);
           
-          const retryResult = await autoRetryService.retry({
+          // MB.MD Fix: Use lazy-load getter to ensure service is initialized
+          const autoRetrySvc = await getAutoRetryService();
+          const retryResult = await autoRetrySvc.retry({
             sessionId: request.sessionId,
             originalRequest: request.naturalLanguage,
             validationResult,
@@ -661,19 +664,14 @@ Provide a JSON response with:
 
 Respond ONLY with valid JSON, no additional text.`;
 
-    const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+    // MB.MD Pattern 99: Use AI Orchestrator with automatic fallback
+    const aiResponse = await orchestrateAI('classification', '', prompt, {
       temperature: 0.3,
-      max_tokens: 500,
+      maxTokens: 500,
     });
+    console.log(`[VibeCoding] Interpretation from ${aiResponse.provider}`);
 
-    const response = completion.choices[0]?.message?.content || '{}';
+    const response = aiResponse.content || '{}';
     
     try {
       return JSON.parse(response);

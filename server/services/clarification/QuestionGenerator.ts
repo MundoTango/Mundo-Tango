@@ -1,6 +1,4 @@
-import Groq from 'groq-sdk';
-
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+import { orchestrateAI } from '../ai/AIOrchestrator';
 
 export interface QuestionTemplate {
   id: string;
@@ -81,12 +79,7 @@ export class QuestionGenerator {
 
     try {
       // Use AI to generate highly context-specific questions
-      const response = await groq.chat.completions.create({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a curious AI assistant that asks clarifying questions to understand user requests better.
+      const systemPrompt = `You are a curious AI assistant that asks clarifying questions to understand user requests better.
 
 Your goal is to ask ${count} highly specific questions that will help you understand:
 1. The exact scope and requirements
@@ -99,20 +92,19 @@ Rules:
 - Focus on reducing ambiguity
 - Questions should be answerable in 1-2 sentences
 - Return ONLY the questions, numbered 1-${count}
-- No extra commentary`
-          },
-          {
-            role: 'user',
-            content: `User Request: "${request}"
+- No extra commentary`;
 
-Generate ${count} clarifying questions:`
-          }
-        ],
+      const userPrompt = `User Request: "${request}"
+
+Generate ${count} clarifying questions:`;
+
+      // MB.MD Pattern 99: Use AI Orchestrator with fallback
+      const response = await orchestrateAI('classification', systemPrompt, userPrompt, {
         temperature: 0.7,
-        max_tokens: 500
+        maxTokens: 500,
       });
 
-      const content = response.choices[0].message.content?.trim() || '';
+      const content = response.content?.trim() || '';
       
       // Parse numbered questions
       const questions = content
@@ -188,23 +180,16 @@ Generate ${count} clarifying questions:`
    */
   async assessQuestionQuality(question: string, request: string): Promise<number> {
     try {
-      const response = await groq.chat.completions.create({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'system',
-            content: 'Rate the quality and relevance of this clarifying question on a scale of 0-1. Respond with ONLY a number.'
-          },
-          {
-            role: 'user',
-            content: `Request: "${request}"\nQuestion: "${question}"\n\nQuality Score:`
-          }
-        ],
+      const systemPrompt = 'Rate the quality and relevance of this clarifying question on a scale of 0-1. Respond with ONLY a number.';
+      const userPrompt = `Request: "${request}"\nQuestion: "${question}"\n\nQuality Score:`;
+
+      // MB.MD Pattern 99: Use AI Orchestrator with fallback
+      const response = await orchestrateAI('classification', systemPrompt, userPrompt, {
         temperature: 0.1,
-        max_tokens: 10
+        maxTokens: 10,
       });
 
-      const scoreText = response.choices[0].message.content?.trim() || '0.5';
+      const scoreText = response.content?.trim() || '0.5';
       return Math.min(Math.max(parseFloat(scoreText), 0), 1);
     } catch (error) {
       return 0.5;

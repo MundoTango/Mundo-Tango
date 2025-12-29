@@ -3,13 +3,36 @@ import type { ValidationResult } from './ValidationService';
 export class SyntaxChecker {
   /**
    * Check syntax errors in code
+   * Accepts either raw code string OR JSON array of {path, content} objects
    */
   async check(code: string): Promise<ValidationResult> {
     const errors: any[] = [];
     let score = 1.0;
 
     try {
-      const files = JSON.parse(code);
+      // Try to parse as JSON array of files first
+      let files: Array<{ path: string; content: string }>;
+      
+      try {
+        const parsed = JSON.parse(code);
+        if (Array.isArray(parsed)) {
+          files = parsed;
+        } else {
+          // Single object - wrap in array
+          files = [{ path: 'unknown.ts', content: code }];
+        }
+      } catch {
+        // Not JSON - treat as raw code string
+        // Detect file type from content
+        const isTypeScript = code.includes(': string') || code.includes(': number') || 
+                            code.includes('interface ') || code.includes(': React.') ||
+                            code.includes('import type');
+        const isReact = code.includes('React') || code.includes('useState') || 
+                       code.includes('useEffect') || code.includes('</');
+        
+        const ext = isReact ? (isTypeScript ? '.tsx' : '.jsx') : (isTypeScript ? '.ts' : '.js');
+        files = [{ path: `code${ext}`, content: code }];
+      }
 
       for (const file of files) {
         if (!file.path || !file.content) {
