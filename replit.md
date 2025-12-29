@@ -75,6 +75,11 @@ Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized age
     - Real-time SSE streaming shows THOUGHT (purple), ACTION (blue), OBSERVATION (green) messages
     - Frontend: `MrBlueChat.tsx` with distinct vibe message styling
     - Non-god users fall back to regular chat mode gracefully
+  - **Tool Pattern Improvements (Dec 2025)**:
+    - Added "can you see our repo" detection → triggers `getProjectStructure`
+    - Added "do you have access to the codebase" detection
+    - Added "look at the repo" / "check the codebase" patterns
+    - Conversation history now loads immediately on chat open (MB.MD Pattern 80)
   - Features: AbortController for cancellation, session tracking, client disconnect cleanup
   - God-level users can watch Mr. Blue think, plan, and execute in real-time
 

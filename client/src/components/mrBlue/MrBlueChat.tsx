@@ -136,15 +136,34 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     }
   }, [ctoWelcome, selfHealError, walkthroughResult]);
   
-  const { data: fetchedMessages, refetch: refetchMessages } = useQuery<Message[]>({
+  // MB.MD Pattern 80: Load recent conversations FIRST to get conversationId immediately
+  const { data: recentConversations, isLoading: conversationsLoading } = useQuery<any[]>({
+    queryKey: ['/api/mrblue/conversations'],
+    staleTime: 30000, // Cache for 30s to reduce re-fetches
+  });
+  
+  // Set conversation ID immediately when conversations load
+  useEffect(() => {
+    if (recentConversations && recentConversations.length > 0 && !currentConversationId) {
+      console.log('[MrBlueChat] Setting conversation ID from recent:', recentConversations[0].id);
+      setCurrentConversationId(recentConversations[0].id);
+    }
+  }, [recentConversations, currentConversationId]);
+  
+  const { data: fetchedMessages, refetch: refetchMessages, isLoading: messagesLoading } = useQuery<Message[]>({
     queryKey: ['/api/mrblue/conversations', currentConversationId, 'messages'],
     enabled: !!currentConversationId && currentConversationId > 0,
     retry: false,
+    staleTime: 10000, // Cache for 10s
   });
   
-  const { data: recentConversations } = useQuery<any[]>({
-    queryKey: ['/api/mrblue/conversations'],
-  });
+  // Show loading state while fetching previous conversation
+  useEffect(() => {
+    if (conversationsLoading || (currentConversationId && messagesLoading)) {
+      // Keep welcome message but user knows we're loading history
+      console.log('[MrBlueChat] Loading conversation history...');
+    }
+  }, [conversationsLoading, messagesLoading, currentConversationId]);
   
   useEffect(() => {
     if (fetchedMessages && fetchedMessages.length > 0) {
@@ -160,15 +179,10 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         ...msg,
         timestamp: msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp)
       }));
+      console.log('[MrBlueChat] Loaded', parsedMessages.length, 'messages from conversation', currentConversationId);
       setMessages([welcomeMessage, ...parsedMessages]);
     }
   }, [fetchedMessages, ctoWelcome, selfHealError]);
-  
-  useEffect(() => {
-    if (recentConversations && recentConversations.length > 0 && !currentConversationId) {
-      setCurrentConversationId(recentConversations[0].id);
-    }
-  }, [recentConversations, currentConversationId]);
 
   useEffect(() => {
     if (scrollRef.current) {

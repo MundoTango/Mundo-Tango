@@ -502,6 +502,27 @@ class VibeCodingToolServiceClass {
         extractParams: () => ({}),
         baseConfidence: 0.85
       },
+      // MB.MD: "Can you see the repo" patterns - tests if Mr. Blue has access
+      {
+        pattern: /(?:can you|do you)\s+(?:see|access|read|view|look at)\s+(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|files|project)/i,
+        tool: 'getProjectStructure',
+        extractParams: () => ({}),
+        baseConfidence: 0.9
+      },
+      // MB.MD: "Do you have access to" patterns
+      {
+        pattern: /(?:do you have|have you got)\s+(?:access|visibility)\s+(?:to\s+)?(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|files|project)/i,
+        tool: 'getProjectStructure',
+        extractParams: () => ({}),
+        baseConfidence: 0.9
+      },
+      // MB.MD: "Look at the repo" / "check the codebase" patterns
+      {
+        pattern: /(?:look at|check|examine|browse|explore)\s+(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|project)\b/i,
+        tool: 'getProjectStructure',
+        extractParams: () => ({}),
+        baseConfidence: 0.85
+      },
       // Git status patterns  
       {
         pattern: /git\s*status|what(?:'s| is)\s*(?:the\s*)?(?:git|repo)\s*status|uncommitted\s*changes/i,
