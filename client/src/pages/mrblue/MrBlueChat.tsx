@@ -46,16 +46,16 @@ export default function MrBlueChat() {
     try {
       // Use apiRequest to include JWT authentication for god-level VibeCoding tools
       // Pass current page context so Mr. Blue knows where the user is
-      const data = await apiRequest('/api/mrblue/chat', {
-        method: 'POST',
-        body: JSON.stringify({
-          message: input,
-          context: {
-            currentPage: location,
-            pageTitle: document.title
-          }
-        }),
+      // apiRequest signature: (method, url, data) - returns Response
+      const response = await apiRequest('POST', '/api/mrblue/chat', {
+        message: input,
+        context: {
+          currentPage: location,
+          pageTitle: document.title
+        }
       });
+
+      const data = await response.json();
 
       const mrBlueMessage: Message = {
         id: (Date.now() + 1).toString(),

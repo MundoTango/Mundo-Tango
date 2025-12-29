@@ -52,20 +52,20 @@ export function MrBlueWidget() {
     try {
       // Use apiRequest to include JWT authentication for god-level VibeCoding tools
       // Pass current page context so Mr. Blue knows where the user is
-      const data = await apiRequest("/api/mrblue/chat", {
-        method: "POST",
-        body: JSON.stringify({
-          message: message,
-          conversationHistory: [...messages, userMessage].map(m => ({
-            role: m.role,
-            content: m.content
-          })),
-          context: {
-            currentPage: location,
-            pageTitle: document.title
-          }
-        })
+      // apiRequest signature: (method, url, data) - returns Response
+      const response = await apiRequest("POST", "/api/mrblue/chat", {
+        message: message,
+        conversationHistory: [...messages, userMessage].map(m => ({
+          role: m.role,
+          content: m.content
+        })),
+        context: {
+          currentPage: location,
+          pageTitle: document.title
+        }
       });
+      
+      const data = await response.json();
       
       const aiMessage: Message = {
         role: "assistant",
