@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "wouter";
 import { MessageSquare, X, Send, Minimize2, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiRequest } from "@/lib/queryClient";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -14,6 +16,7 @@ interface Message {
 }
 
 export function MrBlueWidget() {
+  const [location] = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([
@@ -47,24 +50,22 @@ export function MrBlueWidget() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/mrblue/chat", {
+      // Use apiRequest to include JWT authentication for god-level VibeCoding tools
+      // Pass current page context so Mr. Blue knows where the user is
+      const data = await apiRequest("/api/mrblue/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // Include cookies for CSRF token
         body: JSON.stringify({
           message: message,
           conversationHistory: [...messages, userMessage].map(m => ({
             role: m.role,
             content: m.content
-          }))
+          })),
+          context: {
+            currentPage: location,
+            pageTitle: document.title
+          }
         })
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to get AI response");
-      }
-
-      const data = await response.json();
       
       const aiMessage: Message = {
         role: "assistant",

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
+import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -86,11 +87,9 @@ export default function MrBlueChatPage() {
     setIsLoading(true);
 
     try {
-      // Call Mr. Blue AI chat endpoint
-      const response = await fetch("/api/mrblue/chat", {
+      // Use apiRequest to include JWT authentication for god-level VibeCoding tools
+      const data = await apiRequest("/api/mrblue/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // Include cookies for CSRF token
         body: JSON.stringify({
           message: input,
           conversationHistory: [...messages, userMessage].map(m => ({
@@ -103,12 +102,6 @@ export default function MrBlueChatPage() {
           }
         })
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to get AI response");
-      }
-
-      const data = await response.json();
       
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),

@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Video, Loader2 } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { apiRequest } from '@/lib/queryClient';
 
 interface Message {
   id: string;
@@ -12,6 +14,7 @@ interface Message {
 
 export default function MrBlueChat() {
   const { t } = useTranslation(["pages", "common"]);
+  const [location] = useLocation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,20 +44,18 @@ export default function MrBlueChat() {
     setIsLoading(true);
 
     try {
-      // Send message to Mr Blue API
-      const response = await fetch('/api/mrblue/chat', {
+      // Use apiRequest to include JWT authentication for god-level VibeCoding tools
+      // Pass current page context so Mr. Blue knows where the user is
+      const data = await apiRequest('/api/mrblue/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({
+          message: input,
+          context: {
+            currentPage: location,
+            pageTitle: document.title
+          }
+        }),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to get response from Mr Blue');
-      }
-
-      const data = await response.json();
 
       const mrBlueMessage: Message = {
         id: (Date.now() + 1).toString(),

@@ -186,40 +186,105 @@ export async function executeCommand(command: string): Promise<ToolResult> {
 
 /**
  * TOOL: Get GitHub repository information
+ * MB.MD: Default to the main Mundo-Tango repo (MundoTango/Mundo-Tango)
+ * Falls back to listing authenticated repos if main repo is inaccessible
  */
 export async function getGitHubInfo(): Promise<ToolResult> {
   try {
     const octokit = await getUncachableGitHubClient();
     
-    const { data: user } = await octokit.users.getAuthenticated();
-    const { data: repos } = await octokit.repos.listForAuthenticatedUser({
-      sort: 'updated',
-      per_page: 10
-    });
+    // Get the main Mundo-Tango repo info first (this is our primary project)
+    const MAIN_REPO_OWNER = 'MundoTango';
+    const MAIN_REPO_NAME = 'Mundo-Tango';
     
-    return {
-      success: true,
-      tool: 'getGitHubInfo',
-      data: {
-        user: {
-          login: user.login,
-          name: user.name,
-          email: user.email,
-          publicRepos: user.public_repos,
-          followers: user.followers
-        },
-        recentRepos: repos.map(r => ({
-          name: r.name,
-          fullName: r.full_name,
-          description: r.description,
-          language: r.language,
-          stars: r.stargazers_count,
-          updatedAt: r.updated_at,
-          url: r.html_url
-        }))
-      }
-    };
+    try {
+      const { data: mainRepo } = await octokit.repos.get({
+        owner: MAIN_REPO_OWNER,
+        repo: MAIN_REPO_NAME
+      });
+      
+      // Get recent commits from main repo
+      const { data: commits } = await octokit.repos.listCommits({
+        owner: MAIN_REPO_OWNER,
+        repo: MAIN_REPO_NAME,
+        per_page: 5
+      });
+      
+      // Get open issues/PRs count
+      const { data: issues } = await octokit.issues.listForRepo({
+        owner: MAIN_REPO_OWNER,
+        repo: MAIN_REPO_NAME,
+        state: 'open',
+        per_page: 10
+      });
+      
+      return {
+        success: true,
+        tool: 'getGitHubInfo',
+        data: {
+          mainRepository: {
+            name: mainRepo.name,
+            fullName: mainRepo.full_name,
+            description: mainRepo.description || 'Mundo Tango - Global Tango Community Platform',
+            language: mainRepo.language,
+            stars: mainRepo.stargazers_count,
+            forks: mainRepo.forks_count,
+            openIssues: mainRepo.open_issues_count,
+            defaultBranch: mainRepo.default_branch,
+            url: mainRepo.html_url,
+            createdAt: mainRepo.created_at,
+            updatedAt: mainRepo.updated_at
+          },
+          recentCommits: commits.slice(0, 5).map(c => ({
+            sha: c.sha.substring(0, 7),
+            message: c.commit.message.split('\n')[0],
+            author: c.commit.author?.name || 'Unknown',
+            date: c.commit.author?.date
+          })),
+          openIssues: issues.slice(0, 5).map(i => ({
+            number: i.number,
+            title: i.title,
+            state: i.state,
+            labels: i.labels.map((l: any) => typeof l === 'string' ? l : l.name)
+          }))
+        }
+      };
+    } catch (repoError: any) {
+      // Fallback: If main repo is inaccessible (403/404), list authenticated user's repos
+      console.log('[VibeCoding] Main repo inaccessible, falling back to user repos:', repoError.message);
+      
+      const { data: user } = await octokit.users.getAuthenticated();
+      const { data: repos } = await octokit.repos.listForAuthenticatedUser({
+        sort: 'updated',
+        per_page: 10
+      });
+      
+      return {
+        success: true,
+        tool: 'getGitHubInfo',
+        data: {
+          note: 'Main repository (MundoTango/Mundo-Tango) not accessible. Showing authenticated user repos.',
+          user: {
+            login: user.login,
+            name: user.name,
+            email: user.email,
+            publicRepos: user.public_repos,
+            followers: user.followers
+          },
+          recentRepos: repos.map(r => ({
+            name: r.name,
+            fullName: r.full_name,
+            description: r.description,
+            language: r.language,
+            stars: r.stargazers_count,
+            updatedAt: r.updated_at,
+            url: r.html_url
+          }))
+        }
+      };
+    }
   } catch (error: any) {
+    console.error('[VibeCoding] GitHub API error:', error.message);
     return {
       success: false,
       tool: 'getGitHubInfo',
@@ -372,9 +437,9 @@ class VibeCodingToolServiceClass {
       extractParams: (match: RegExpMatchArray, msg: string) => Record<string, any>;
       baseConfidence: number;
     }> = [
-      // GitHub patterns
+      // GitHub patterns - requires action verbs to avoid false positives
       {
-        pattern: /(?:look at|show|check|what's on|my)\s*github|github\s*(?:info|repos|account)/i,
+        pattern: /(?:(?:show|get|check|view|look at|display|what(?:'s| is))\s+(?:the\s+)?(?:my|our)?\s*github(?:\s+(?:info|repos?|account|details|status))?)|(?:(?:what(?:'s| is)|show|get)\s+(?:the\s+)?(?:our|my)\s+github\s*(?:repo|repository|account)?(?:\s*name)?)|(?:github\s+(?:info|status|repos?))/i,
         tool: 'getGitHubInfo',
         extractParams: () => ({}),
         baseConfidence: 0.85
