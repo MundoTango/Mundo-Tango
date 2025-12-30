@@ -4478,6 +4478,32 @@ export class DbStorage implements IStorage {
     return results;
   }
 
+  async searchUsersAdmin(query: string, limit: number): Promise<any[]> {
+    const lowerQuery = `%${query.toLowerCase()}%`;
+    const results = await db.select({
+      id: users.id,
+      username: users.username,
+      name: users.name,
+      bio: users.bio,
+      profileImage: users.profileImage,
+    })
+    .from(users)
+    .where(
+      and(
+        eq(users.isActive, true),
+        eq(users.suspended, false),
+        or(
+          ilike(users.username, lowerQuery),
+          ilike(users.name, lowerQuery),
+          ilike(users.email, lowerQuery)
+        )
+      )
+    )
+    .limit(limit);
+    
+    return results;
+  }
+
   async searchEventsSimple(query: string, limit: number): Promise<any[]> {
     const lowerQuery = `%${query.toLowerCase()}%`;
     const results = await db.select({
