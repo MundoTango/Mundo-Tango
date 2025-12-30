@@ -404,7 +404,8 @@ class ScrapedEventIngestionService {
   /**
    * Normalize country names to canonical English spelling
    */
-  private normalizeCountryName(country: string): string {
+  private normalizeCountryName(country: string | null): string | null {
+    if (!country) return null;
     const normalized = country.trim();
     const countryMap: Record<string, string> = {
       // French/Spanish variants

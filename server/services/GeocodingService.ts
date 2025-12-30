@@ -208,7 +208,8 @@ class GeocodingService {
    */
   getCacheStats(): { size: number; hits: number; validEntries: number } {
     let validEntries = 0;
-    for (const entry of this.cache.values()) {
+    const values = Array.from(this.cache.values());
+    for (const entry of values) {
       if (this.isCacheValid(entry)) {
         validEntries++;
       }
@@ -225,7 +226,8 @@ class GeocodingService {
    */
   cleanCache(): number {
     let removed = 0;
-    for (const [key, entry] of this.cache.entries()) {
+    const entries = Array.from(this.cache.entries());
+    for (const [key, entry] of entries) {
       if (!this.isCacheValid(entry)) {
         this.cache.delete(key);
         removed++;
