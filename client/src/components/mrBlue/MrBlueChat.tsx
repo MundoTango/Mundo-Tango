@@ -124,15 +124,26 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   const [location] = useLocation();
   const { toast } = useToast();
   
-  // Update welcome message when CTO, self-heal, or walkthrough result context changes
+  // UX-001 FIX: Track last fetched message ID to avoid overwriting optimistic updates
+  const lastFetchedIdRef = useRef<string | null>(null);
+  // UX-004 FIX: Track context key to avoid wiping history on context changes
+  const lastContextKeyRef = useRef<string | null>(null);
+  
+  // UX-004 FIX: Update welcome message when CTO, self-heal, or walkthrough result context changes
+  // PREPEND context message instead of replacing entire history
   useEffect(() => {
-    if (ctoWelcome || selfHealError || walkthroughResult) {
-      setMessages([{
-        id: '1',
+    const contextKey = `${ctoWelcome ? 'cto' : ''}${selfHealError ? 'heal' : ''}${walkthroughResult ? 'walk' : ''}`;
+    
+    if ((ctoWelcome || selfHealError || walkthroughResult) && lastContextKeyRef.current !== contextKey) {
+      lastContextKeyRef.current = contextKey;
+      const contextMessage: Message = {
+        id: `context-${Date.now()}`,
         role: 'assistant',
         content: getWelcomeMessage(),
         timestamp: new Date()
-      }]);
+      };
+      // PREPEND context message, keep existing history (excluding old welcome)
+      setMessages(prev => [contextMessage, ...prev.filter(m => m.id !== '1' && !m.id.startsWith('context-'))]);
     }
   }, [ctoWelcome, selfHealError, walkthroughResult]);
   
@@ -165,22 +176,44 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     }
   }, [conversationsLoading, messagesLoading, currentConversationId]);
   
+  // UX-001 FIX: Smart merge instead of full replace
+  // Only update if we have genuinely NEW server data, preserve optimistic/local messages
   useEffect(() => {
     if (fetchedMessages && fetchedMessages.length > 0) {
-      // Use context-aware welcome message (CTO/self-heal) instead of generic one
-      const welcomeMessage = {
-        id: '1',
-        role: 'assistant' as const,
-        content: getWelcomeMessage(),
-        timestamp: new Date()
-      };
-      // Fix: Convert API timestamps (strings) to Date objects
-      const parsedMessages = fetchedMessages.map(msg => ({
-        ...msg,
-        timestamp: msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp)
-      }));
-      console.log('[MrBlueChat] Loaded', parsedMessages.length, 'messages from conversation', currentConversationId);
-      setMessages([welcomeMessage, ...parsedMessages]);
+      const lastFetchedId = fetchedMessages[fetchedMessages.length - 1]?.id?.toString();
+      
+      // Only process if this is new data we haven't seen
+      if (lastFetchedId && lastFetchedId !== lastFetchedIdRef.current) {
+        lastFetchedIdRef.current = lastFetchedId;
+        
+        const welcomeMessage: Message = {
+          id: '1',
+          role: 'assistant',
+          content: getWelcomeMessage(),
+          timestamp: new Date()
+        };
+        
+        // Fix: Convert API timestamps (strings) to Date objects
+        const parsedMessages = fetchedMessages.map(msg => ({
+          ...msg,
+          id: msg.id?.toString() || `server-${Date.now()}`,
+          timestamp: msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp)
+        }));
+        
+        console.log('[MrBlueChat] Merging', parsedMessages.length, 'messages from conversation', currentConversationId);
+        
+        // Merge: Keep local optimistic messages that aren't in server response
+        setMessages(prev => {
+          const serverIds = new Set(parsedMessages.map(m => m.id));
+          // Keep messages that are local-only (temp IDs, context messages, or not in server response)
+          const localOnlyMessages = prev.filter(m => 
+            m.id.startsWith('temp-') || 
+            m.id.startsWith('context-') ||
+            (!serverIds.has(m.id) && m.id !== '1')
+          );
+          return [welcomeMessage, ...parsedMessages, ...localOnlyMessages];
+        });
+      }
     }
   }, [fetchedMessages, ctoWelcome, selfHealError]);
 
@@ -216,7 +249,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
 
     const messageText = input;
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `temp-${Date.now()}`,  // UX-001 FIX: Use temp- prefix for optimistic messages
       role: 'user',
       content: messageText,
       timestamp: new Date()

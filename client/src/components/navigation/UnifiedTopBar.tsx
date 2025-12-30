@@ -351,10 +351,8 @@ function UnifiedTopBar({
             {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </Button>
 
-          {/* Feedback Button - Desktop Only */}
-          <div className="hidden md:block">
-            <FeedbackButton />
-          </div>
+          {/* UX-003 FIX: Feedback Button - Now visible on all devices */}
+          <FeedbackButton />
 
           {/* Favorites - Desktop Only */}
           <Link href="/favorites" className="hidden md:block">
