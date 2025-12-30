@@ -41,10 +41,7 @@ export function AnalyticsConsent({ userId, onConsentChange }: AnalyticsConsentPr
 
   const consentMutation = useMutation({
     mutationFn: async (consentGiven: boolean) => {
-      return apiRequest('/api/qa-platform/consent', {
-        method: 'POST',
-        body: JSON.stringify({ consentGiven }),
-      });
+      return apiRequest('POST', '/api/qa-platform/consent', { consentGiven });
     },
     onSuccess: (_, consentGiven) => {
       queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/consent'] });
@@ -188,10 +185,7 @@ export function useAnalyticsConsent() {
   const revokeConsent = async () => {
     sessionCapture.disableTracking();
     localStorage.setItem('analytics_consent', 'false');
-    await apiRequest('/api/qa-platform/consent', {
-      method: 'POST',
-      body: JSON.stringify({ consentGiven: false }),
-    });
+    await apiRequest('POST', '/api/qa-platform/consent', { consentGiven: false });
   };
 
   return { isEnabled, revokeConsent };
