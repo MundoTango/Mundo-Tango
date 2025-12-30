@@ -240,17 +240,37 @@ router.post('/contact', async (req: Request, res: Response) => {
     }
 
     // MB.MD FIX (Dec 30, 2025): Deliver message to user's inbox
-    // We create a special system notification or a direct message from a "System" or the guest email
     try {
       const contactMessage = `New PRO Page Inquiry from ${name} (${email}):\n\n${message}${phone ? `\n\nPhone: ${phone}` : ''}`;
       
-      // Store in chatMessages if we want it to appear in /messages
-      // We'll create a "system" user if it doesn't exist, or just use senderId 0 for system
+      // Check if a conversation already exists between system (id: 1) and proUser
+      const [existingRoom] = await db
+        .select()
+        .from(chatRooms)
+        .where(or(
+          and(eq(chatRooms.userId1, 1), eq(chatRooms.userId2, proUserId)),
+          and(eq(chatRooms.userId1, proUserId), eq(chatRooms.userId2, 1))
+        ))
+        .limit(1);
+
+      let chatRoomId: number;
+      if (existingRoom) {
+        chatRoomId = existingRoom.id;
+      } else {
+        const [newRoom] = await db.insert(chatRooms).values({
+          userId1: 1,
+          userId2: proUserId,
+          type: 'direct',
+          name: `Inquiry: ${name}`
+        }).returning();
+        chatRoomId = newRoom.id;
+      }
+      
+      // Store in chatMessages
       await db.insert(chatMessages).values({
         senderId: 1, // System/Admin user
-        recipientId: proUserId,
+        chatRoomId: chatRoomId,
         content: contactMessage,
-        isRead: false,
       });
 
       // Also create a notification

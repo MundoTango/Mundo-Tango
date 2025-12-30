@@ -251,15 +251,18 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                   <Avatar className="h-10 w-10 flex-shrink-0" />
                   <div className={`flex flex-col gap-1 max-w-lg ${isOwn ? "items-end" : "items-start"}`}> 
                     <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      className={`rounded-2xl p-4 ${
+                      whileHover={{ scale: 1.01 }}
+                      className={`rounded-2xl p-4 shadow-sm ${
                         isOwn 
                           ? "bg-primary text-primary-foreground" 
-                          : "bg-muted"
+                          : "bg-muted border"
                       }`}
                     >
-                      <p className="text-sm leading-relaxed">{msg.content}</p>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                     </motion.div>
+                    <span className="text-[10px] text-muted-foreground px-2">
+                      {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                    </span>
                   </div>
                 </motion.div>
               );
