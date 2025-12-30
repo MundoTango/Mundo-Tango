@@ -240,11 +240,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubLogin = subscribe('auth:login', () => {
       console.log('[Auth] Cross-tab login detected, refreshing user...');
+      // Dispatch CustomEvent first so WebSocket contexts can connect
+      window.dispatchEvent(new CustomEvent('auth:login'));
       loadCurrentUser();
     });
 
     const unsubLogout = subscribe('auth:logout', () => {
       console.log('[Auth] Cross-tab logout detected, clearing state...');
+      // Dispatch CustomEvent first so WebSocket contexts can disconnect
+      window.dispatchEvent(new CustomEvent('auth:logout'));
       setUser(null);
       setProfile(null);
       setSession(null);
