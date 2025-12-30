@@ -111,8 +111,13 @@ export default function MessagesPage() {
                                   <p className="font-semibold truncate">
                                     {conversation.name || t('pages:messages.defaultConversationName', "Conversation")}
                                   </p>
-                                  <span className="text-sm text-muted-foreground">Email</span>
+                                  {conversation.isRead === false && (
+                                    <span className="h-2 w-2 rounded-full bg-primary flex-shrink-0" />
+                                  )}
                                 </div>
+                                <p className="text-sm text-muted-foreground truncate">
+                                  {conversation.lastMessage || t('pages:messages.noMessages', 'No messages yet')}
+                                </p>
                               </div>
                             </div>
                           </motion.button>

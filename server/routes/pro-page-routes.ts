@@ -239,6 +239,33 @@ router.post('/contact', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Pro user not found' });
     }
 
+    // MB.MD FIX (Dec 30, 2025): Deliver message to user's inbox
+    // We create a special system notification or a direct message from a "System" or the guest email
+    try {
+      const contactMessage = `New PRO Page Inquiry from ${name} (${email}):\n\n${message}${phone ? `\n\nPhone: ${phone}` : ''}`;
+      
+      // Store in chatMessages if we want it to appear in /messages
+      // We'll create a "system" user if it doesn't exist, or just use senderId 0 for system
+      await db.insert(chatMessages).values({
+        senderId: 1, // System/Admin user
+        recipientId: proUserId,
+        content: contactMessage,
+        isRead: false,
+      });
+
+      // Also create a notification
+      await db.insert(notifications).values({
+        userId: proUserId,
+        type: 'message',
+        title: 'New PRO Inquiry',
+        message: `You received a new message from ${name} via your PRO page.`,
+        link: '/messages',
+        isRead: false,
+      });
+    } catch (msgError) {
+      console.error('[ProPage] Failed to deliver inbox message:', msgError);
+    }
+
     console.log(`[ProPage] Contact form submission from ${name} (${email}) to user ${proUserId}`);
 
     return res.json({ 
