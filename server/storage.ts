@@ -505,7 +505,7 @@ export interface IStorage {
   
   // Search methods for @mentions autocomplete
   searchUsers(query: string, limit: number): Promise<any[]>;
-  searchEventsSimple(query: string, limit: number): Promise<any[]>;
+  searchUsersAdmin(query: string, limit: number): Promise<any[]>;
   searchGroups(query: string, limit: number): Promise<any[]>;
   searchCommunities(query: string, limit: number): Promise<any[]>;
   getCommunityById(id: number): Promise<any | undefined>;
@@ -4317,7 +4317,7 @@ export class DbStorage implements IStorage {
     }).from(users).where(
       or(
         ilike(users.username, lowerQuery),
-        ilike(users.email, lowerQuery),
+        and(ilike(users.email, lowerQuery), not(like(users.email, '%@discovered.mundotango.app'))),
         ilike(users.name, lowerQuery)
       )
     ).limit(5);
@@ -4469,7 +4469,7 @@ export class DbStorage implements IStorage {
         or(
           ilike(users.username, lowerQuery),
           ilike(users.name, lowerQuery),
-          ilike(users.email, lowerQuery)
+          and(ilike(users.email, lowerQuery), not(like(users.email, '%@discovered.mundotango.app')))
         )
       )
     )
