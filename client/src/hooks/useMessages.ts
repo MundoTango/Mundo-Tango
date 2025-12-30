@@ -145,7 +145,9 @@ export function useSendMessage(conversationId: string) {
       const { type, targetId } = parseConversationId(conversationId);
       
       if (type === 'group') {
-        throw new Error("Group messaging not yet implemented");
+        const body = { content };
+        const response = await apiRequest("POST", `/api/messages/group/${targetId}`, body);
+        return response.json();
       }
       
       const body = { recipientId: targetId, content };

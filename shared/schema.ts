@@ -1847,6 +1847,45 @@ export type InsertDirectMessageReaction = z.infer<typeof insertDirectMessageReac
 export type SelectDirectMessageReaction = typeof directMessageReactions.$inferSelect;
 
 // ============================================================================
+// GROUP MESSAGES (Group Chat Messaging)
+// ============================================================================
+
+export const groupMessages = pgTable(
+  "group_messages",
+  {
+    id: serial("id").primaryKey(),
+    groupId: integer("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    senderId: integer("sender_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    mediaUrl: text("media_url"),
+    mediaType: varchar("media_type", { length: 32 }),
+    isPinned: boolean("is_pinned").default(false),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    groupIdx: index("group_messages_group_idx").on(table.groupId),
+    senderIdx: index("group_messages_sender_idx").on(table.senderId),
+    createdAtIdx: index("group_messages_created_at_idx").on(table.createdAt),
+    groupCreatedIdx: index("group_messages_group_created_idx").on(
+      table.groupId,
+      table.createdAt,
+    ),
+  }),
+);
+
+export const insertGroupMessageSchema = createInsertSchema(groupMessages).omit({
+  id: true,
+  createdAt: true,
+  isPinned: true,
+});
+export type InsertGroupMessage = z.infer<typeof insertGroupMessageSchema>;
+export type SelectGroupMessage = typeof groupMessages.$inferSelect;
+
+// ============================================================================
 // NOTIFICATIONS
 // ============================================================================
 

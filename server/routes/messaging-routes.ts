@@ -1,9 +1,10 @@
 import { type Express, Response } from "express";
 import { db } from "../db";
-import { directMessages, users, groups, groupMembers } from "@shared/schema";
+import { directMessages, users, groups, groupMembers, groupMessages } from "@shared/schema";
 import { eq, and, or, desc, sql } from "drizzle-orm";
 import { z } from "zod";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import { notificationService } from "../services/notification-service";
 
 const sendMessageSchema = z.object({
   recipientId: z.number().optional(),
@@ -187,6 +188,10 @@ export function registerMessagingRoutes(app: Express) {
         .where(eq(groups.id, groupId))
         .limit(1);
 
+      if (!group) {
+        return res.status(404).send("Group not found");
+      }
+
       const members = await db
         .select({
           id: users.id,
@@ -198,10 +203,28 @@ export function registerMessagingRoutes(app: Express) {
         .leftJoin(users, eq(groupMembers.userId, users.id))
         .where(eq(groupMembers.groupId, groupId));
 
+      // Fetch actual group messages
+      const messages = await db
+        .select({
+          id: groupMessages.id,
+          senderId: groupMessages.senderId,
+          content: groupMessages.content,
+          mediaUrl: groupMessages.mediaUrl,
+          mediaType: groupMessages.mediaType,
+          isPinned: groupMessages.isPinned,
+          createdAt: groupMessages.createdAt,
+          senderName: users.name,
+          senderImage: users.profileImage,
+        })
+        .from(groupMessages)
+        .leftJoin(users, eq(groupMessages.senderId, users.id))
+        .where(eq(groupMessages.groupId, groupId))
+        .orderBy(groupMessages.createdAt);
+
       res.json({
         group,
         members,
-        messages: [],
+        messages,
       });
     } catch (error: any) {
       console.error("Error fetching group messages:", error);
@@ -239,6 +262,13 @@ export function registerMessagingRoutes(app: Express) {
         })
         .returning();
 
+      // Send notification to recipient
+      try {
+        await notificationService.notifyNewMessage(recipientId!, req.user.id, content);
+      } catch (notifError) {
+        console.error("Error sending message notification:", notifError);
+      }
+
       res.json(message);
     } catch (error: any) {
       console.error("Error sending message:", error);
@@ -249,6 +279,85 @@ export function registerMessagingRoutes(app: Express) {
   // Register both endpoints - frontend uses send-direct, keep send for backwards compatibility
   app.post("/api/messages/send", authenticateToken, sendDirectMessageHandler);
   app.post("/api/messages/send-direct", authenticateToken, sendDirectMessageHandler);
+
+  // Send group message
+  app.post("/api/messages/group/:groupId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+
+    const groupId = parseInt(req.params.groupId);
+    if (isNaN(groupId)) return res.status(400).send("Invalid group ID");
+
+    const { content } = req.body;
+    if (!content || typeof content !== 'string') {
+      return res.status(400).send("Content is required");
+    }
+
+    try {
+      // Verify membership
+      const membership = await db
+        .select()
+        .from(groupMembers)
+        .where(
+          and(
+            eq(groupMembers.groupId, groupId),
+            eq(groupMembers.userId, req.user.id)
+          )
+        )
+        .limit(1);
+
+      if (membership.length === 0) {
+        return res.status(403).send("Not a member of this group");
+      }
+
+      // Get group info for notifications
+      const [group] = await db
+        .select({ name: groups.name })
+        .from(groups)
+        .where(eq(groups.id, groupId))
+        .limit(1);
+
+      if (!group) {
+        return res.status(404).send("Group not found");
+      }
+
+      // Insert message
+      const [message] = await db
+        .insert(groupMessages)
+        .values({
+          groupId,
+          senderId: req.user.id,
+          content,
+        })
+        .returning();
+
+      // Send notifications to other group members
+      try {
+        const members = await db
+          .select({ userId: groupMembers.userId })
+          .from(groupMembers)
+          .where(eq(groupMembers.groupId, groupId));
+
+        for (const member of members) {
+          if (member.userId !== req.user.id) {
+            await notificationService.notifyGroupMessage(
+              member.userId,
+              req.user.id,
+              groupId,
+              group?.name || 'Group',
+              content
+            );
+          }
+        }
+      } catch (notifError) {
+        console.error("Error sending group message notifications:", notifError);
+      }
+
+      res.json(message);
+    } catch (error: any) {
+      console.error("Error sending group message:", error);
+      res.status(500).send("Failed to send group message");
+    }
+  });
 
   app.put("/api/messages/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");

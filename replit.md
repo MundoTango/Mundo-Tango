@@ -59,10 +59,10 @@ Core functionalities include social features (events, groups, posts, notificatio
 | System | UI | Data | Interaction | Notes |
 |--------|----|----|-----------|-------|
 | Direct Messages | 90% | 95% | 85% | Fixed Dec 30 |
-| Notifications | 70% | 80% | 40% | new_message missing |
+| Notifications | 70% | 85% | 60% | new_message + group_message ADDED |
 | WebSocket | 30% | 60% | 10% | Uses polling |
 | External Channels | 80% | 50% | 30% | Facebook partial |
-| Groups | 70% | 30% | 10% | Throws error |
+| Groups | 85% | 90% | 80% | FIXED Dec 30 - group_messages table |
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase

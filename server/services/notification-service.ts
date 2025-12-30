@@ -21,7 +21,9 @@ export type NotificationType =
   | 'goal_milestone'
   | 'task_due'
   | 'task_completed'
-  | 'system_announcement';
+  | 'system_announcement'
+  | 'new_message'
+  | 'group_message';
 
 interface CreateNotificationParams {
   userId: number;
@@ -244,6 +246,46 @@ export class NotificationService {
       senderId: posterId,
       priority: 'low',
       metadata: { eventId, eventTitle },
+    });
+  }
+
+  async notifyNewMessage(recipientId: number, senderId: number, messagePreview?: string) {
+    const sender = await storage.getUserById(senderId);
+    if (!sender || recipientId === senderId) return;
+
+    const preview = messagePreview 
+      ? (messagePreview.length > 50 ? messagePreview.substring(0, 50) + '...' : messagePreview)
+      : 'sent you a message';
+
+    return this.createNotification({
+      userId: recipientId,
+      type: 'new_message',
+      title: 'New message',
+      message: `${sender.name}: ${preview}`,
+      actionUrl: `/messages?conversation=direct-${senderId}`,
+      senderId,
+      priority: 'high',
+      metadata: { senderId },
+    });
+  }
+
+  async notifyGroupMessage(recipientId: number, senderId: number, groupId: number, groupName: string, messagePreview?: string) {
+    const sender = await storage.getUserById(senderId);
+    if (!sender || recipientId === senderId) return;
+
+    const preview = messagePreview 
+      ? (messagePreview.length > 50 ? messagePreview.substring(0, 50) + '...' : messagePreview)
+      : 'sent a message';
+
+    return this.createNotification({
+      userId: recipientId,
+      type: 'group_message',
+      title: `New message in ${groupName}`,
+      message: `${sender.name}: ${preview}`,
+      actionUrl: `/messages?conversation=group-${groupId}`,
+      senderId,
+      priority: 'normal',
+      metadata: { senderId, groupId, groupName },
     });
   }
 }
