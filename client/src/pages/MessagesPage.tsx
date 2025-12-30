@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearch } from "wouter";
 import { useConversations, useConversation, useSendMessage, useMessagesRealtime, useMarkMessagesAsRead, useCreateConversation } from "@/hooks/useMessages";
@@ -10,12 +10,109 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { MessageCircle, Send, Plus, CheckCircle, Loader2, Users, Search, X } from "lucide-react";
+import { MessageCircle, Send, Plus, CheckCircle, Loader2, Users, Search, X, Mail, Phone, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useQuery } from "@tanstack/react-query";
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function RichTextMessage({ content, isOwn }: { content: string; isOwn: boolean }) {
+  const parsed = useMemo(() => {
+    const isPROContactForm = content.includes('**PRO Page Contact Form**');
+    
+    if (isPROContactForm) {
+      const lines = content.split('\n');
+      let fromName = '';
+      let email = '';
+      let phone = '';
+      let messageBody = '';
+      let inBody = false;
+      
+      for (const line of lines) {
+        if (line.startsWith('**From:**')) {
+          fromName = line.replace('**From:**', '').trim();
+        } else if (line.startsWith('**Email:**')) {
+          email = line.replace('**Email:**', '').trim();
+        } else if (line.startsWith('**Phone:**')) {
+          phone = line.replace('**Phone:**', '').trim();
+        } else if (line === '---') {
+          inBody = true;
+        } else if (inBody && line.trim()) {
+          messageBody += (messageBody ? '\n' : '') + line;
+        }
+      }
+      
+      return {
+        type: 'pro-contact' as const,
+        fromName: escapeHtml(fromName),
+        email: escapeHtml(email),
+        phone: escapeHtml(phone),
+        messageBody
+      };
+    }
+    
+    const escaped = escapeHtml(content);
+    const processed = escaped
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/`(.+?)`/g, '<code class="px-1 py-0.5 rounded bg-muted/50 text-xs font-mono">$1</code>');
+    
+    return { type: 'text' as const, html: processed };
+  }, [content]);
+  
+  if (parsed.type === 'pro-contact') {
+    return (
+      <div className="space-y-3">
+        <div className={`flex items-center gap-2 text-xs font-medium ${isOwn ? 'text-primary-foreground/80' : 'text-primary'}`}>
+          <Mail className="w-3.5 h-3.5" />
+          <span>PRO Page Contact</span>
+        </div>
+        
+        <div className={`space-y-1.5 text-sm ${isOwn ? 'text-primary-foreground/90' : 'text-foreground/80'}`}>
+          <div className="flex items-center gap-2">
+            <User className="w-3.5 h-3.5 opacity-60" />
+            <span className="font-medium">{parsed.fromName}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Mail className="w-3.5 h-3.5 opacity-60" />
+            <a href={`mailto:${parsed.email}`} className={`hover:underline ${isOwn ? 'text-primary-foreground' : 'text-primary'}`}>
+              {parsed.email}
+            </a>
+          </div>
+          {parsed.phone && (
+            <div className="flex items-center gap-2">
+              <Phone className="w-3.5 h-3.5 opacity-60" />
+              <a href={`tel:${parsed.phone}`} className={`hover:underline ${isOwn ? 'text-primary-foreground' : 'text-primary'}`}>
+                {parsed.phone}
+              </a>
+            </div>
+          )}
+        </div>
+        
+        <div className={`pt-2 border-t ${isOwn ? 'border-primary-foreground/20' : 'border-border'}`}>
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{parsed.messageBody}</p>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <p 
+      className="text-sm leading-relaxed whitespace-pre-wrap"
+      dangerouslySetInnerHTML={{ __html: parsed.html }}
+    />
+  );
+}
 
 export default function MessagesPage() {
   const { t } = useTranslation(["pages", "common"]);
@@ -457,7 +554,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                           : "bg-card border rounded-tl-none"
                       }`}
                     >
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                      <RichTextMessage content={msg.content} isOwn={isOwn} />
                     </motion.div>
                     <div className="flex items-center gap-2 px-1">
                       <span className="text-[10px] text-muted-foreground/60 font-medium">

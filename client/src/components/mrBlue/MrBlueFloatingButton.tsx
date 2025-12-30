@@ -30,6 +30,8 @@ const HIDDEN_PAGES = [
   '/donate',
   '/partners',
   '/tango-roles',
+  '/p/',
+  '/scott',
 ];
 
 // MB.MD Pattern 63: Singleton instance ID to prevent duplicates
