@@ -976,7 +976,16 @@ router.get("/my-rsvps", authenticateToken, async (req: AuthRequest, res: Respons
       .where(eq(eventRsvps.userId, userId))
       .orderBy(desc(events.startDate));
 
-    res.json(userRsvps);
+    // Flatten response to match frontend expected format: { eventId, status, event, organizer }
+    const flattenedRsvps = userRsvps.map(item => ({
+      eventId: item.rsvp.eventId,
+      status: item.rsvp.status,
+      createdAt: item.rsvp.createdAt,
+      event: item.event,
+      organizer: item.organizer
+    }));
+
+    res.json(flattenedRsvps);
   } catch (error) {
     console.error("[Events] Error fetching user RSVPs:", error);
     res.status(500).json({ message: "Failed to fetch user RSVPs" });

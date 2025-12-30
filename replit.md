@@ -37,6 +37,23 @@ A multi-stage scraping architecture is coordinated by a Master Orchestrator (Age
 ### Platform Features
 Core functionalities include social features (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and an International Payment System supporting 30 currencies.
 
+## Recent Changes (December 30, 2025)
+
+### Pattern 99 Multi-Agent Site Auditor Implementation
+Created infrastructure for Mr. Blue to orchestrate bug fixes through VibeCoding pipeline:
+
+**New Files Created:**
+- `server/services/mrBlue/MrBlueInternalExecutor.ts` - Internal automation helper for server-side VibeCoding execution, bypasses CSRF for internal automation while maintaining validation layers
+- `server/scripts/pattern99-executor.ts` - CLI tool to run Pattern 99 bug fixes through Mr. Blue's VibeCodingService
+
+**Bug Fixes (Tamás Report):**
+1. **Bug #1 (Event filtering)** - Fixed: CityDetailsPage.tsx now passes `city.city` instead of `city.name` to fetchCityEvents
+2. **Bug #2 (RSVP status)** - Fixed: Flattened `/api/events/my-rsvps` response from nested `{event, rsvp, organizer}` to `{eventId, status, event, organizer}`
+3. **Bug #4 (DM blank screen)** - Fixed: MessagesPage.tsx now auto-selects first conversation when data loads
+
+**Code Cleanup:**
+- Cleaned up unused stub files (`server/routes/post-routes.ts`, `client/src/components/posts/PostCard.tsx`) that contained outdated/broken code
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase (for production admin tools)
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
