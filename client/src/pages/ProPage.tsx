@@ -1,3 +1,4 @@
+import skootImage from "@assets/Skoot_(22)_1767098017222.jpg";
 import { useParams, Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'framer-motion';
@@ -376,9 +377,9 @@ export default function ProPage() {
                       transition={{ duration: 0.5, delay: 0.2 }}
                     >
                       <Avatar className="h-32 w-32 md:h-40 md:w-40 mb-6 ring-4 ring-white/30">
-                        <AvatarImage src={data.photo} alt={data.name} />
+                        <AvatarImage src={data.photo || skootImage} alt={data.name} />
                         <AvatarFallback className="text-5xl bg-gradient-to-br from-cyan-400 to-purple-500 text-white">
-                          {data.name?.charAt(0)?.toUpperCase() || 'P'}
+                          <img src={skootImage} alt={data.name} className="h-full w-full object-cover" />
                         </AvatarFallback>
                       </Avatar>
                     </motion.div>
