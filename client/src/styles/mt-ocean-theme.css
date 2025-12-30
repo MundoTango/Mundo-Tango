@@ -66,8 +66,8 @@
    SEMANTIC COLOR TOKENS (MT Ocean Theme)
    ============================================================================ */
 :root {
-  /* Primary - Ocean Seafoam (Turquoise) */
-  --primary: 177 72% 56%;
+  /* Primary - Ocean Seafoam (Turquoise) - Darkened for WCAG contrast */
+  --primary: 177 72% 38%;
   --primary-foreground: 0 0% 100%;
   
   /* Secondary - Ocean Cyan (Dodger Blue) */
@@ -127,8 +127,8 @@
    DARK MODE (MT Ocean Theme)
    ============================================================================ */
 .dark {
-  /* Ocean colors remain vibrant in dark mode */
-  --primary: 177 72% 56%;
+  /* Ocean colors remain vibrant in dark mode - Adjusted for WCAG contrast */
+  --primary: 177 72% 42%;
   --primary-foreground: 0 0% 100%;
   
   --secondary: 210 100% 56%;
