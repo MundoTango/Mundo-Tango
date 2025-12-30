@@ -1,31 +1,22 @@
-import { Resend } from "resend";
-import { config } from "dotenv";
+import { Resend } from 'resend';
+import { config } from 'dotenv';
 
 config();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const sendReply = async (fromEmail: string, toEmail: string, subject: string, body: string) => {
-  if (fromEmail !== process.env.PRO_PAGE_CONTACT_EMAIL) {
-    throw new Error("Invalid from email address.");
-  }
+const sendReplyEmail = async (options: { to: string, from: string, subject: string, body: string }) => {
   try {
     const response = await resend.sendEmail({
-      from: fromEmail,
-      to: toEmail,
-      subject: subject,
-      html: body
+      from: options.from,
+      to: options.to,
+      subject: options.subject,
+      html: options.body
     });
-    logEmail({ fromEmail, toEmail, subject, body, status: "sent" });
     return { success: true, messageId: response.id };
   } catch (error) {
-    logEmail({ fromEmail, toEmail, subject, body, status: "failed", error: error.message });
     return { success: false, error: error.message };
   }
 };
 
-const logEmail = (emailLog: any) => {
-  // Implement logging logic here
-};
-
-export { sendReply };
+export { sendReplyEmail };
