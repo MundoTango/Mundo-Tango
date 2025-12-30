@@ -5356,6 +5356,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // IMPORTANT: This route must come BEFORE /api/messages/:conversationId to avoid being caught by dynamic param
+  app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const userIdStr = String(userId);
+      
+      // Count messages where user is NOT in the readBy array
+      const result = await db.select({
+        count: sql<number>`count(*)::int`
+      })
+      .from(chatMessages)
+      .where(
+        sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
+      );
+      
+      res.json({ count: result[0]?.count || 0 });
+    } catch (error) {
+      console.error("Get unread message count error:", error);
+      res.json({ count: 0 });
+    }
+  });
+
   // Get messages in a conversation (alias for MessagesDetailPage compatibility)
   app.get("/api/messages/:conversationId", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
@@ -5427,29 +5449,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to mark as read" });
-    }
-  });
-
-  app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const userId = req.user!.id;
-      const userIdStr = String(userId);
-      
-      // Count messages where user is NOT in the readBy array
-      // Handle null readBy arrays and empty arrays properly
-      const result = await db.select({
-        count: sql<number>`count(*)::int`
-      })
-      .from(chatMessages)
-      .where(
-        sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
-      );
-      
-      res.json({ count: result[0]?.count || 0 });
-    } catch (error) {
-      console.error("Get unread message count error:", error);
-      // Return 0 instead of error to prevent UI spam
-      res.json({ count: 0 });
     }
   });
 

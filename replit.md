@@ -53,6 +53,9 @@ Core functionalities include social features (events, groups, posts, notificatio
 ### Critical Bug Fixes (Session)
 - **FeedbackButton.tsx** - Fixed import error: `@/hooks/useMrBlue` → `@/contexts/MrBlueContext`
 - **App.tsx** - Removed duplicate ProPage Route (already in MiscRoutes) and unused import that caused React ErrorBoundary crashes
+- **server/routes.ts** - Fixed route order: `/api/messages/unread-count` must be defined BEFORE `/api/messages/:conversationId` to prevent dynamic param from intercepting
+- **server/services/mr-blue-data-service.ts** - Fixed SQL column mismatch: `receiverId` → `recipientId` (matching schema)
+- **Database** - Created `user_feedback` table with proper schema and indexes (was missing from DB)
 
 ### QA System Integrated into Mr. Blue Chat (Pattern 67)
 Replaced simple quick-action buttons with full QA system inside Mr. Blue chat:

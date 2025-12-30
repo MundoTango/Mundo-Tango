@@ -406,7 +406,7 @@ MUNDO TANGO PLATFORM DATA (Real-time):
         .select({ count: sql<number>`count(*)` })
         .from(directMessages)
         .where(and(
-          eq(directMessages.receiverId, userId),
+          eq(directMessages.recipientId, userId),
           eq(directMessages.isRead, false)
         ));
       
