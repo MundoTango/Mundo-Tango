@@ -10,6 +10,7 @@ const FriendRequestCard = ({ request }) => {
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('friendRequests');
+      queryClient.invalidateQueries('friends');
     }
   });
 
@@ -18,6 +19,7 @@ const FriendRequestCard = ({ request }) => {
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('friendRequests');
+      queryClient.invalidateQueries('friends');
     }
   });
 

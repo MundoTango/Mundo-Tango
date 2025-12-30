@@ -1,17 +1,17 @@
-/**
- * POST ROUTES (STUB - NOT IN USE)
- * 
- * NOTE: The actual post like/unlike endpoints are implemented in server/routes.ts
- * at lines 3534-3551. This file is a stub and should not be used.
- * 
- * Real endpoints:
- * - POST /api/posts/:id/like → storage.likePost()
- * - DELETE /api/posts/:id/like → storage.unlikePost()
- * - POST /api/posts/:id/react → reactions system
- */
-
 import { Router } from 'express';
+import storage from '../storage';
 
 const router = Router();
+
+router.post('/api/posts/:id/like', async (req, res) => {
+  const postId = req.params.id;
+  try {
+    const result = await storage.likePost(postId);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error('Error liking post:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 export default router;

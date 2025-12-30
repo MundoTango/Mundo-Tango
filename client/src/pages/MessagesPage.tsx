@@ -19,36 +19,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Send, MessageCircle, Users, Heart, Search, PenSquare, Settings, Mail, Inbox } from "lucide-react";
-import { SiFacebook, SiWhatsapp, SiGmail, SiInstagram } from "react-icons/si";
-import { Input } from "@/components/ui/input";
+import { MessageCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { ChannelSettingsPanel } from "@/components/messages/ChannelSettingsPanel";
 
 export default function MessagesPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeChannel, setActiveChannel] = useState<'all' | MessageChannel>('all');
-  const [showSettings, setShowSettings] = useState(false);
   const { data: conversations, isLoading } = useConversations();
-  const { data: connectedChannels } = useConnectedChannels();
-  const { data: unreadCounts } = useUnreadCount();
-  const connectedChannelsList = connectedChannels?.filter(c => c.isActive) || [];
-  const hasConnectedChannels = connectedChannelsList.length > 0;
   const filteredConversations = conversations?.filter(c => 
     c.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.lastMessage?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
 
-  // Auto-select first conversation when data loads and none selected
   useEffect(() => {
     if (!selectedConversationId && filteredConversations.length > 0 && !isLoading) {
       setSelectedConversationId(filteredConversations[0].id);
