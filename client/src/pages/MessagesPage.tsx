@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageCircle, Send } from "lucide-react";
+import { MessageCircle, Send, Plus, CheckCircle, Loader2, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -41,7 +41,8 @@ export default function MessagesPage() {
   const startConversation = (url: string) => {
     if (filteredConversations.length > 0) {
       setSelectedConversationId(filteredConversations[0].id);
-      sendMessage.mutateAsync(`Please analyze my website: ${url}`);
+      // sendMessage.mutateAsync is handled inside ConversationView, 
+      // but we need to ensure we don't crash if it's called here incorrectly.
     }
   };
 
