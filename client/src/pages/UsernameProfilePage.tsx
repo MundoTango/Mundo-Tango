@@ -1,4 +1,4 @@
-import { useParams, useLocation, Redirect } from "wouter";
+import { useParams, Redirect } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,6 +20,13 @@ export default function UsernameProfilePage() {
 
   const { data: user, isLoading, error } = useQuery<UserLookup>({
     queryKey: ['/api/users', username],
+    queryFn: async () => {
+      const response = await fetch(`/api/users/${encodeURIComponent(username || '')}`);
+      if (!response.ok) {
+        throw new Error('User not found');
+      }
+      return response.json();
+    },
     enabled: !!username,
     retry: false,
   });
