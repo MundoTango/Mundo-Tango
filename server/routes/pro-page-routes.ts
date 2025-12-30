@@ -107,7 +107,7 @@ router.get('/page/:slug', async (req: Request, res: Response) => {
       id: user.id,
       name: user.name,
       bio: user.bio,
-      photo: user.profileImageUrl,
+      photo: user.profileImage,
       socialLinks: user.socialLinks || {},
       galleryEnabled: (user.proPageSections as any)?.galleryEnabled ?? true,
       photos: user.portfolioUrls || [],
