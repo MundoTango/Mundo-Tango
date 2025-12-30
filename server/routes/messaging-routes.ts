@@ -405,4 +405,89 @@ export function registerMessagingRoutes(app: Express) {
       res.status(500).send("Failed to delete message");
     }
   });
+
+  // PRO Contact Form - Routes contact form submissions to PRO user's inbox
+  const proContactSchema = z.object({
+    proUserId: z.number(),
+    name: z.string().min(1),
+    email: z.string().email(),
+    phone: z.string().optional(),
+    message: z.string().min(1),
+  });
+
+  app.post("/api/pro/contact", async (req, res) => {
+    try {
+      const validation = proContactSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({ error: validation.error.errors });
+      }
+
+      const { proUserId, name, email, phone, message } = validation.data;
+
+      // Verify the PRO user exists
+      const [proUser] = await db
+        .select({ id: users.id, name: users.name })
+        .from(users)
+        .where(eq(users.id, proUserId))
+        .limit(1);
+
+      if (!proUser) {
+        return res.status(404).send("PRO user not found");
+      }
+
+      // SECURITY: Always use guest contact user for anonymous submissions
+      // This prevents impersonation attacks where attacker could submit another user's email
+      // The contact details (name, email, phone) are preserved in the message body
+      let [guestUser] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, 'guest-contact@mundotango.life'))
+        .limit(1);
+
+      if (!guestUser) {
+        [guestUser] = await db.insert(users).values({
+          email: 'guest-contact@mundotango.life',
+          username: 'guest-contact',
+          name: 'Guest Contact',
+          password: 'no-login',
+          roleLevel: 0,
+          isEmailVerified: true,
+        }).returning({ id: users.id });
+      }
+      const senderId = guestUser.id;
+
+      // Format message with contact details
+      const formattedMessage = `📧 **PRO Page Contact Form**
+
+**From:** ${name}
+**Email:** ${email}${phone ? `\n**Phone:** ${phone}` : ''}
+
+---
+
+${message}`;
+
+      // Create direct message to PRO user
+      const [dm] = await db
+        .insert(directMessages)
+        .values({
+          senderId,
+          recipientId: proUserId,
+          content: formattedMessage,
+          isRead: false,
+        })
+        .returning();
+
+      // Send notification to PRO user
+      try {
+        await notificationService.notifyNewMessage(proUserId, senderId, formattedMessage.substring(0, 100));
+      } catch (notifError) {
+        console.error("Error sending PRO contact notification:", notifError);
+      }
+
+      res.json({ success: true, messageId: dm.id });
+    } catch (error: any) {
+      console.error("Error processing PRO contact form:", error);
+      res.status(500).send("Failed to send message");
+    }
+  });
 }

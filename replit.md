@@ -37,21 +37,22 @@ Core functionalities include social features (events, groups, posts, notificatio
 
 ### Messaging System (Updated Dec 30, 2025)
 - **Database**: Uses `directMessages` table (PRIMARY). `chatRooms`/`chatMessages` are DEPRECATED.
-- **PRO Contact → Inbox**: Contact form submissions route to directMessages
+- **PRO Contact → Inbox**: Contact form via `/api/pro/contact` routes to directMessages ✅ COMPLETE
 - **New Conversations**: User search via `/api/users/search` endpoint
 - **Real-time**: Currently polling (5s), WebSocket planned
-- **Group Chat**: NOT IMPLEMENTED (throws error)
+- **Group Chat**: Uses `group_messages` table via `/api/groups/:id/messages` ✅ FIXED
 - **Documentation**: See `docs/PRD_MESSAGING_AND_PRO_PAGE.md` for full specification
 - **Related PRDs**:
   - `docs/MESSAGING_ECOSYSTEM_MAP.md` - All systems interacting with messaging
-  - `docs/prd/NOTIFICATIONS_SYSTEM.md` - 15 notification types (new_message MISSING)
+  - `docs/prd/NOTIFICATIONS_SYSTEM.md` - 17 notification types (new_message + group_message ADDED)
   - `docs/prd/REALTIME_WEBSOCKET.md` - Replace polling with WebSocket
   - `docs/prd/EXTERNAL_MESSAGING_CHANNELS.md` - Facebook/Instagram/WhatsApp/Gmail
-  - `docs/prd/GROUPS_SYSTEM.md` - Group chat implementation (currently throws error)
+  - `docs/prd/GROUPS_SYSTEM.md` - Group chat implementation
 
 ### PRO Pages (/p/:slug)
 - **Public Profiles**: Glassmorphic design with bio, gallery, testimonials
-- **Contact Form**: Submits to PRO's inbox via directMessages
+- **Contact Form**: Submits to PRO's inbox via directMessages (guest-contact user, CSRF exempt)
+- **Endpoint**: `POST /api/pro/contact` - Zod validated, secure (no email impersonation)
 - **Vanity URLs**: `/:username` resolves to PRO page or user profile
 - **Documentation**: See `docs/prd/VANITY_URLS.md` for URL routing spec
 

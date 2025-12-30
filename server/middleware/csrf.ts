@@ -60,6 +60,12 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for PRO contact form (public form for anonymous visitors to contact PRO users)
+  // Protected by Zod validation and rate limiting in production
+  if (req.originalUrl === "/api/pro/contact") {
+    return next();
+  }
+  
   // Skip CSRF for public Mr. Blue endpoints (no auth required)
   const publicMrBlueEndpoints = [
     "/api/mrblue/chat",
@@ -241,6 +247,12 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   
   // Skip CSRF for n8n messaging webhooks (external automation platform)
   if (req.originalUrl.startsWith("/api/messaging/webhook/")) {
+    return next();
+  }
+  
+  // Skip CSRF for PRO contact form (public form for anonymous visitors to contact PRO users)
+  // Protected by Zod validation and rate limiting in production
+  if (req.originalUrl === "/api/pro/contact") {
     return next();
   }
   
