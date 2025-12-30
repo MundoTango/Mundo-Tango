@@ -1,9 +1,25 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Send, Loader2, X, Brain, Zap, Eye, CheckCircle, AlertTriangle, HelpCircle, Sparkles, Bug, MessageSquare } from "lucide-react";
+import {
+  Send,
+  Loader2,
+  X,
+  Brain,
+  Zap,
+  Eye,
+  CheckCircle,
+  AlertTriangle,
+  HelpCircle,
+  Sparkles,
+  Bug,
+  MessageSquare,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar as ShadcnAvatar, AvatarFallback as ShadcnAvatarFallback } from "@/components/ui/avatar";
+import {
+  Avatar as ShadcnAvatar,
+  AvatarFallback as ShadcnAvatarFallback,
+} from "@/components/ui/avatar";
 import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
@@ -14,10 +30,16 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant' | 'vibe';
+  role: "user" | "assistant" | "vibe";
   content: string;
   timestamp: Date;
-  vibeType?: 'thought' | 'action' | 'observation' | 'phase' | 'complete' | 'error';
+  vibeType?:
+    | "thought"
+    | "action"
+    | "observation"
+    | "phase"
+    | "complete"
+    | "error";
   vibePhase?: string;
 }
 
@@ -30,9 +52,9 @@ function isVibecodingTask(message: string): boolean {
     /\b(make|ensure)\b.*\b(responsive|mobile|layout)\b/i,
     /^fix\s+/i,
     /^update\s+/i,
-    /^implement\s+/i
+    /^implement\s+/i,
   ];
-  return patterns.some(pattern => pattern.test(message));
+  return patterns.some((pattern) => pattern.test(message));
 }
 
 interface MrBlueChatProps {
@@ -40,27 +62,39 @@ interface MrBlueChatProps {
 }
 
 export function MrBlueChat({ onClose }: MrBlueChatProps) {
-  const { ctoWelcome, clearCTOWelcome, selfHealError, clearSelfHealError, openWalkthrough, walkthroughResult, setWalkthroughResult } = useMrBlue();
+  const {
+    ctoWelcome,
+    clearCTOWelcome,
+    selfHealError,
+    clearSelfHealError,
+    openWalkthrough,
+    walkthroughResult,
+    setWalkthroughResult,
+  } = useMrBlue();
   const { user } = useAuth();
   const { getSnapshot, trackStep, sessionId } = useJourneyTracker(user?.id);
-  
+
   // QA Mode state - tracks if user is in help/feature request mode
-  const [qaMode, setQaMode] = useState<'none' | 'help' | 'features' | 'bug'>('none');
-  
+  const [qaMode, setQaMode] = useState<"none" | "help" | "features" | "bug">(
+    "none",
+  );
+
   // Generate welcome message based on context
   const getWelcomeMessage = () => {
     // Walkthrough result takes priority - show the test results
     if (walkthroughResult) {
-      const successEmoji = walkthroughResult.success ? '✓' : '✗';
-      const statusText = walkthroughResult.success ? 'PASSED' : 'FAILED';
+      const successEmoji = walkthroughResult.success ? "✓" : "✗";
+      const statusText = walkthroughResult.success ? "PASSED" : "FAILED";
       const durationSec = (walkthroughResult.duration / 1000).toFixed(1);
-      
-      let stepsReport = walkthroughResult.steps.map((s, i) => {
-        const icon = s.status === 'success' ? '✓' : '✗';
-        const time = s.duration ? ` (${s.duration}ms)` : '';
-        return `${icon} Step ${i + 1}: ${s.description}${time}`;
-      }).join('\n');
-      
+
+      let stepsReport = walkthroughResult.steps
+        .map((s, i) => {
+          const icon = s.status === "success" ? "✓" : "✗";
+          const time = s.duration ? ` (${s.duration}ms)` : "";
+          return `${icon} Step ${i + 1}: ${s.description}${time}`;
+        })
+        .join("\n");
+
       if (walkthroughResult.success) {
         return `**${successEmoji} CTO Walkthrough: ${walkthroughResult.testName}**
 
@@ -76,7 +110,9 @@ Would you like to:
 - Review the platform health dashboard
 - Ask me anything about the codebase`;
       } else {
-        const failedStep = walkthroughResult.steps.find(s => s.status === 'failed');
+        const failedStep = walkthroughResult.steps.find(
+          (s) => s.status === "failed",
+        );
         return `**${successEmoji} CTO Walkthrough: ${walkthroughResult.testName}**
 
 Status: **${statusText}** at ${durationSec}s
@@ -84,12 +120,12 @@ Steps: ${walkthroughResult.completedSteps}/${walkthroughResult.totalSteps} passe
 
 ${stepsReport}
 
-**Error detected:** ${failedStep?.error || 'Unknown error'}
+**Error detected:** ${failedStep?.error || "Unknown error"}
 
 I can help you analyze and fix this issue using **MB.MD Pattern 53**. Say "apply fix" to proceed.`;
       }
     }
-    
+
     if (ctoWelcome) {
       return `Welcome back, ${ctoWelcome.userName}! I detected you're a ${ctoWelcome.userRole} user.
 
@@ -107,116 +143,146 @@ Just say "start walkthrough" or ask me anything about the platform!`;
 **Error:** ${selfHealError.errorMessage.substring(0, 200)}...
 
 **MB.MD Analysis:**
-- Pattern: ${selfHealError.mbmdAnalysis?.mbmdPattern || 'Unknown'}
-- Root Cause: ${selfHealError.mbmdAnalysis?.rootCause || 'Analyzing...'}
-- Recommended Fix: ${selfHealError.mbmdAnalysis?.recommendedFix || 'Let me investigate...'}
+- Pattern: ${selfHealError.mbmdAnalysis?.mbmdPattern || "Unknown"}
+- Root Cause: ${selfHealError.mbmdAnalysis?.rootCause || "Analyzing..."}
+- Recommended Fix: ${selfHealError.mbmdAnalysis?.recommendedFix || "Let me investigate..."}
 
 Would you like me to help apply the fix, or explain the issue in more detail?`;
     }
     return "Hi! I'm Mr. Blue, your AI companion. I can help you navigate the platform, answer questions, and provide personalized recommendations. What can I help you with today?";
   };
-  
+
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
-      role: 'assistant',
+      id: "1",
+      role: "assistant",
       content: getWelcomeMessage(),
-      timestamp: new Date()
-    }
+      timestamp: new Date(),
+    },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
+  const [currentConversationId, setCurrentConversationId] = useState<
+    number | null
+  >(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [location] = useLocation();
   const { toast } = useToast();
-  
+
   // UX-001 FIX: Track last fetched message ID to avoid overwriting optimistic updates
   const lastFetchedIdRef = useRef<string | null>(null);
   // UX-004 FIX: Track context key to avoid wiping history on context changes
   const lastContextKeyRef = useRef<string | null>(null);
-  
+
   // UX-004 FIX: Update welcome message when CTO, self-heal, or walkthrough result context changes
   // PREPEND context message instead of replacing entire history
   useEffect(() => {
-    const contextKey = `${ctoWelcome ? 'cto' : ''}${selfHealError ? 'heal' : ''}${walkthroughResult ? 'walk' : ''}`;
-    
-    if ((ctoWelcome || selfHealError || walkthroughResult) && lastContextKeyRef.current !== contextKey) {
+    const contextKey = `${ctoWelcome ? "cto" : ""}${selfHealError ? "heal" : ""}${walkthroughResult ? "walk" : ""}`;
+
+    if (
+      (ctoWelcome || selfHealError || walkthroughResult) &&
+      lastContextKeyRef.current !== contextKey
+    ) {
       lastContextKeyRef.current = contextKey;
       const contextMessage: Message = {
         id: `context-${Date.now()}`,
-        role: 'assistant',
+        role: "assistant",
         content: getWelcomeMessage(),
-        timestamp: new Date()
+        timestamp: new Date(),
       };
       // PREPEND context message, keep existing history (excluding old welcome)
-      setMessages(prev => [contextMessage, ...prev.filter(m => m.id !== '1' && !m.id.startsWith('context-'))]);
+      setMessages((prev) => [
+        contextMessage,
+        ...prev.filter((m) => m.id !== "1" && !m.id.startsWith("context-")),
+      ]);
     }
   }, [ctoWelcome, selfHealError, walkthroughResult]);
-  
+
   // MB.MD Pattern 80: Load recent conversations FIRST to get conversationId immediately
-  const { data: recentConversations, isLoading: conversationsLoading } = useQuery<any[]>({
-    queryKey: ['/api/mrblue/conversations'],
-    staleTime: 30000, // Cache for 30s to reduce re-fetches
-  });
-  
+  const { data: recentConversations, isLoading: conversationsLoading } =
+    useQuery<any[]>({
+      queryKey: ["/api/mrblue/conversations"],
+      staleTime: 30000, // Cache for 30s to reduce re-fetches
+    });
+
   // Set conversation ID immediately when conversations load
   useEffect(() => {
-    if (recentConversations && recentConversations.length > 0 && !currentConversationId) {
-      console.log('[MrBlueChat] Setting conversation ID from recent:', recentConversations[0].id);
+    if (
+      recentConversations &&
+      recentConversations.length > 0 &&
+      !currentConversationId
+    ) {
+      console.log(
+        "[MrBlueChat] Setting conversation ID from recent:",
+        recentConversations[0].id,
+      );
       setCurrentConversationId(recentConversations[0].id);
     }
   }, [recentConversations, currentConversationId]);
-  
-  const { data: fetchedMessages, refetch: refetchMessages, isLoading: messagesLoading } = useQuery<Message[]>({
-    queryKey: ['/api/mrblue/conversations', currentConversationId, 'messages'],
+
+  const {
+    data: fetchedMessages,
+    refetch: refetchMessages,
+    isLoading: messagesLoading,
+  } = useQuery<Message[]>({
+    queryKey: ["/api/mrblue/conversations", currentConversationId, "messages"],
     enabled: !!currentConversationId && currentConversationId > 0,
     retry: false,
     staleTime: 10000, // Cache for 10s
   });
-  
+
   // Show loading state while fetching previous conversation
   useEffect(() => {
     if (conversationsLoading || (currentConversationId && messagesLoading)) {
       // Keep welcome message but user knows we're loading history
-      console.log('[MrBlueChat] Loading conversation history...');
+      console.log("[MrBlueChat] Loading conversation history...");
     }
   }, [conversationsLoading, messagesLoading, currentConversationId]);
-  
+
   // UX-001 FIX: Smart merge instead of full replace
   // Only update if we have genuinely NEW server data, preserve optimistic/local messages
   useEffect(() => {
     if (fetchedMessages && fetchedMessages.length > 0) {
-      const lastFetchedId = fetchedMessages[fetchedMessages.length - 1]?.id?.toString();
-      
+      const lastFetchedId =
+        fetchedMessages[fetchedMessages.length - 1]?.id?.toString();
+
       // Only process if this is new data we haven't seen
       if (lastFetchedId && lastFetchedId !== lastFetchedIdRef.current) {
         lastFetchedIdRef.current = lastFetchedId;
-        
+
         const welcomeMessage: Message = {
-          id: '1',
-          role: 'assistant',
+          id: "1",
+          role: "assistant",
           content: getWelcomeMessage(),
-          timestamp: new Date()
+          timestamp: new Date(),
         };
-        
+
         // Fix: Convert API timestamps (strings) to Date objects
-        const parsedMessages = fetchedMessages.map(msg => ({
+        const parsedMessages = fetchedMessages.map((msg) => ({
           ...msg,
           id: msg.id?.toString() || `server-${Date.now()}`,
-          timestamp: msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp)
+          timestamp:
+            msg.timestamp instanceof Date
+              ? msg.timestamp
+              : new Date(msg.timestamp),
         }));
-        
-        console.log('[MrBlueChat] Merging', parsedMessages.length, 'messages from conversation', currentConversationId);
-        
+
+        console.log(
+          "[MrBlueChat] Merging",
+          parsedMessages.length,
+          "messages from conversation",
+          currentConversationId,
+        );
+
         // Merge: Keep local optimistic messages that aren't in server response
-        setMessages(prev => {
-          const serverIds = new Set(parsedMessages.map(m => m.id));
+        setMessages((prev) => {
+          const serverIds = new Set(parsedMessages.map((m) => m.id));
           // Keep messages that are local-only (temp IDs, context messages, or not in server response)
-          const localOnlyMessages = prev.filter(m => 
-            m.id.startsWith('temp-') || 
-            m.id.startsWith('context-') ||
-            (!serverIds.has(m.id) && m.id !== '1')
+          const localOnlyMessages = prev.filter(
+            (m) =>
+              m.id.startsWith("temp-") ||
+              m.id.startsWith("context-") ||
+              (!serverIds.has(m.id) && m.id !== "1"),
           );
           return [welcomeMessage, ...parsedMessages, ...localOnlyMessages];
         });
@@ -233,22 +299,45 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   // Check if message is a CTO walkthrough trigger
   const isWalkthroughTrigger = (text: string): boolean => {
     const triggers = [
-      'yes', 'start walkthrough', 'start the walkthrough', 'begin walkthrough',
-      'run test', 'run the test', 'test resume', 'test resume parsing',
-      'let\'s go', 'let\'s start', 'begin', 'ok', 'okay', 'sure', 'go ahead'
+      "yes",
+      "start walkthrough",
+      "start the walkthrough",
+      "begin walkthrough",
+      "run test",
+      "run the test",
+      "test resume",
+      "test resume parsing",
+      "let's go",
+      "let's start",
+      "begin",
+      "ok",
+      "okay",
+      "sure",
+      "go ahead",
     ];
     const lowerText = text.toLowerCase().trim();
-    return triggers.some(trigger => lowerText === trigger || lowerText.includes('start walkthrough'));
+    return triggers.some(
+      (trigger) =>
+        lowerText === trigger || lowerText.includes("start walkthrough"),
+    );
   };
-  
+
   // Check if message is a fix approval trigger
   const isFixApprovalTrigger = (text: string): boolean => {
     const triggers = [
-      'yes', 'apply fix', 'apply the fix', 'fix it', 'do it', 
-      'go ahead', 'approve', 'ok', 'okay', 'sure'
+      "yes",
+      "apply fix",
+      "apply the fix",
+      "fix it",
+      "do it",
+      "go ahead",
+      "approve",
+      "ok",
+      "okay",
+      "sure",
     ];
     const lowerText = text.toLowerCase().trim();
-    return triggers.some(trigger => lowerText === trigger);
+    return triggers.some((trigger) => lowerText === trigger);
   };
 
   const sendMessage = async () => {
@@ -256,71 +345,73 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
 
     const messageText = input;
     const userMessage: Message = {
-      id: `temp-${Date.now()}`,  // UX-001 FIX: Use temp- prefix for optimistic messages
-      role: 'user',
+      id: `temp-${Date.now()}`, // UX-001 FIX: Use temp- prefix for optimistic messages
+      role: "user",
       content: messageText,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    
+
     // Check for CTO walkthrough trigger when in CTO welcome context
     if (ctoWelcome && isWalkthroughTrigger(messageText)) {
       const responseMessage: Message = {
         id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: "Opening the walkthrough preview now. You'll see a live test of the resume upload flow on the waitlist page. I'll monitor for any issues and report back.",
-        timestamp: new Date()
+        role: "assistant",
+        content:
+          "Opening the walkthrough preview now. You'll see a live test of the resume upload flow on the waitlist page. I'll monitor for any issues and report back.",
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, responseMessage]);
-      
+      setMessages((prev) => [...prev, responseMessage]);
+
       // Small delay then open walkthrough
       setTimeout(() => {
         openWalkthrough();
       }, 500);
       return;
     }
-    
+
     // Check for fix approval when in self-heal context
     if (selfHealError && isFixApprovalTrigger(messageText)) {
       setIsLoading(true);
-      
+
       try {
-        const response = await fetch('/api/cto/walkthrough/apply-fix', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/cto/walkthrough/apply-fix", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            errorType: selfHealError.mbmdAnalysis?.mbmdPattern || 'unknown',
+            errorType: selfHealError.mbmdAnalysis?.mbmdPattern || "unknown",
             mbmdPattern: selfHealError.mbmdAnalysis?.mbmdPattern,
-            recommendedFix: selfHealError.mbmdAnalysis?.recommendedFix
-          })
+            recommendedFix: selfHealError.mbmdAnalysis?.recommendedFix,
+          }),
         });
-        
+
         const data = await response.json();
-        
+
         const fixResultMessage: Message = {
           id: (Date.now() + 1).toString(),
-          role: 'assistant',
+          role: "assistant",
           content: data.success
-            ? `Fix applied successfully!\n\n**Files Modified:**\n${data.filesModified?.join(', ') || 'None'}\n\n**Result:** ${data.message}\n\nWould you like me to re-run the walkthrough to verify the fix?`
+            ? `Fix applied successfully!\n\n**Files Modified:**\n${data.filesModified?.join(", ") || "None"}\n\n**Result:** ${data.message}\n\nWould you like me to re-run the walkthrough to verify the fix?`
             : `Fix could not be applied: ${data.error}\n\nWould you like me to try an alternative approach?`,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
-        
-        setMessages(prev => [...prev, fixResultMessage]);
-        
+
+        setMessages((prev) => [...prev, fixResultMessage]);
+
         if (data.success) {
           clearSelfHealError();
         }
       } catch (error) {
         const errorMessage: Message = {
           id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: "Sorry, I encountered an error while applying the fix. Let me try a different approach.",
-          timestamp: new Date()
+          role: "assistant",
+          content:
+            "Sorry, I encountered an error while applying the fix. Let me try a different approach.",
+          timestamp: new Date(),
         };
-        setMessages(prev => [...prev, errorMessage]);
+        setMessages((prev) => [...prev, errorMessage]);
       } finally {
         setIsLoading(false);
       }
@@ -333,74 +424,79 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     // Try streaming first, fall back to regular chat if not authorized
     if (isVibecodingTask(messageText)) {
       try {
-        console.log('[MrBlueChat] VibeCoding task detected, attempting stream...');
-        
+        console.log(
+          "[MrBlueChat] VibeCoding task detected, attempting stream...",
+        );
+
         // Get auth token from localStorage
-        const token = localStorage.getItem('token');
-        
+        const token = localStorage.getItem("token");
+
         // Call streaming endpoint
-        const response = await fetch('/api/mrblue/vibestream', {
-          method: 'POST',
+        const response = await fetch("/api/mrblue/vibecoding", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token ? 'Bearer ' + token : ''
+            "Content-Type": "application/json",
+            Authorization: token ? "Bearer " + token : "",
           },
           body: JSON.stringify({
             message: messageText,
             context: {
               currentPage: location,
-              pageTitle: document.title
-            }
-          })
+              pageTitle: document.title,
+            },
+          }),
         });
-        
+
         // Check if streaming is available (god-level users)
         // Only add starting message AFTER confirming streaming works
-        if (response.ok && response.headers.get('content-type')?.includes('text/event-stream')) {
-          console.log('[MrBlueChat] Streaming response received');
-          
+        if (
+          response.ok &&
+          response.headers.get("content-type")?.includes("text/event-stream")
+        ) {
+          console.log("[MrBlueChat] Streaming response received");
+
           // Now add the starting message since we confirmed streaming
           const startMessage: Message = {
             id: (Date.now() + 1).toString(),
-            role: 'vibe',
-            content: 'VibeCoding session started...',
+            role: "vibe",
+            content: "VibeCoding session started...",
             timestamp: new Date(),
-            vibeType: 'phase',
-            vibePhase: 'init'
+            vibeType: "phase",
+            vibePhase: "init",
           };
-          setMessages(prev => [...prev, startMessage]);
-          
+          setMessages((prev) => [...prev, startMessage]);
+
           const reader = response.body?.getReader();
           const decoder = new TextDecoder();
-          
+
           if (reader) {
-            let buffer = '';
-            
+            let buffer = "";
+
             try {
               while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
-                
+
                 buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
-                
+                const lines = buffer.split("\n");
+                buffer = lines.pop() || "";
+
                 for (const line of lines) {
-                  if (line.startsWith('data: ')) {
+                  if (line.startsWith("data: ")) {
                     try {
                       const eventData = JSON.parse(line.slice(6));
-                      
+
                       // Add vibe event as a message
                       const vibeMessage: Message = {
                         id: (Date.now() + Math.random()).toString(),
-                        role: 'vibe',
+                        role: "vibe",
                         content: eventData.content,
                         timestamp: new Date(),
                         vibeType: eventData.type,
-                        vibePhase: eventData.phase
+                        vibePhase: eventData.phase,
                       };
-                      
-                      setMessages(prev => [...prev, vibeMessage]);
+
+                      setMessages((prev) => [...prev, vibeMessage]);
                     } catch {
                       // Ignore parse errors
                     }
@@ -408,26 +504,32 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
                 }
               }
             } catch (streamError) {
-              console.error('[MrBlueChat] Stream read error:', streamError);
+              console.error("[MrBlueChat] Stream read error:", streamError);
               const errorMessage: Message = {
                 id: (Date.now() + Math.random()).toString(),
-                role: 'vibe',
-                content: 'VibeCoding stream interrupted. Please try again.',
+                role: "vibe",
+                content: "VibeCoding stream interrupted. Please try again.",
                 timestamp: new Date(),
-                vibeType: 'error'
+                vibeType: "error",
               };
-              setMessages(prev => [...prev, errorMessage]);
+              setMessages((prev) => [...prev, errorMessage]);
             }
-            
+
             setIsLoading(false);
             return;
           }
         }
-        
+
         // If not streaming (403 for non-god users), fall through to regular chat silently
-        console.log('[MrBlueChat] Streaming not available (status: ' + response.status + '), falling back to regular chat');
+        console.log(
+          "[MrBlueChat] Streaming not available (status: " +
+            response.status +
+            "), falling back to regular chat",
+        );
       } catch (error) {
-        console.log('[MrBlueChat] Streaming failed, falling back to regular chat');
+        console.log(
+          "[MrBlueChat] Streaming failed, falling back to regular chat",
+        );
       }
     }
 
@@ -435,26 +537,29 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
       // Use apiRequest to include JWT authentication for god-level VibeCoding tools
       // Pass current page context so Mr. Blue knows where the user is
       // apiRequest signature: (method, url, data) - returns Response
-      const response = await apiRequest('POST', '/api/mrblue/chat', {
+      const response = await apiRequest("POST", "/api/mrblue/chat", {
         message: messageText,
         conversationId: currentConversationId,
         context: {
           currentPage: location,
-          pageTitle: document.title
-        }
+          pageTitle: document.title,
+        },
       });
-      
+
       const data = await response.json();
-      
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.response || data.content || "I'm sorry, I couldn't process that request.",
+        role: "assistant",
+        content:
+          data.response ||
+          data.content ||
+          "I'm sorry, I couldn't process that request.",
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
-      
+      setMessages((prev) => [...prev, assistantMessage]);
+
       // Update conversation ID if returned from backend
       if (data.conversationId && !currentConversationId) {
         setCurrentConversationId(data.conversationId);
@@ -471,7 +576,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -480,13 +585,13 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   // QA System Handler: Help Button - Opens support flow with journey context
   const handleHelpRequest = useCallback(() => {
     const snapshot = getSnapshot();
-    trackStep({ path: location, action: 'qa_help_opened' });
-    setQaMode('help');
-    
+    trackStep({ path: location, action: "qa_help_opened" });
+    setQaMode("help");
+
     // Add system message with journey context
     const helpMessage: Message = {
       id: `qa-help-${Date.now()}`,
-      role: 'assistant',
+      role: "assistant",
       content: `**Need Help?** I'm here to assist you!
 
 I can see you've been browsing: **${snapshot.currentPath}**
@@ -498,20 +603,20 @@ Session: ${snapshot.journey.length} pages visited
 - Ask about any platform feature
 
 What would you like help with?`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    setMessages(prev => [...prev, helpMessage]);
+    setMessages((prev) => [...prev, helpMessage]);
   }, [getSnapshot, trackStep, location]);
 
   // QA System Handler: Features Button - Opens feature discovery/request flow
   const handleFeaturesRequest = useCallback(() => {
     const snapshot = getSnapshot();
-    trackStep({ path: location, action: 'qa_features_opened' });
-    setQaMode('features');
-    
+    trackStep({ path: location, action: "qa_features_opened" });
+    setQaMode("features");
+
     const featuresMessage: Message = {
       id: `qa-features-${Date.now()}`,
-      role: 'assistant',
+      role: "assistant",
       content: `**Platform Features & Requests**
 
 Based on your current page (**${snapshot.currentPath}**), here are relevant features:
@@ -529,24 +634,27 @@ Based on your current page (**${snapshot.currentPath}**), here are relevant feat
 3. Suggest similar existing features
 
 What interests you?`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    setMessages(prev => [...prev, featuresMessage]);
+    setMessages((prev) => [...prev, featuresMessage]);
   }, [getSnapshot, trackStep, location]);
 
   // QA System Handler: Bug Report - Captures full context
   const handleBugReport = useCallback(() => {
     const snapshot = getSnapshot();
-    trackStep({ path: location, action: 'qa_bug_report' });
-    setQaMode('bug');
-    
-    const recentJourney = snapshot.journey.slice(-5).map(s => 
-      `- ${s.action}: ${s.path}${s.element ? ` (${s.element})` : ''}`
-    ).join('\n');
-    
+    trackStep({ path: location, action: "qa_bug_report" });
+    setQaMode("bug");
+
+    const recentJourney = snapshot.journey
+      .slice(-5)
+      .map(
+        (s) => `- ${s.action}: ${s.path}${s.element ? ` (${s.element})` : ""}`,
+      )
+      .join("\n");
+
     const bugMessage: Message = {
       id: `qa-bug-${Date.now()}`,
-      role: 'assistant',
+      role: "assistant",
       content: `**Bug Report Mode**
 
 I've captured your session context for the development team:
@@ -565,9 +673,9 @@ Please describe the issue you encountered:
 - Any error messages?
 
 I'll analyze this and may be able to fix it automatically.`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    setMessages(prev => [...prev, bugMessage]);
+    setMessages((prev) => [...prev, bugMessage]);
   }, [getSnapshot, trackStep, location, sessionId]);
 
   return (
@@ -581,7 +689,9 @@ I'll analyze this and may be able to fix it automatically.`,
         </ShadcnAvatar>
         <div className="flex-1 min-w-0">
           <h2 className="font-semibold text-sm text-foreground">Mr. Blue</h2>
-          <p className="text-xs text-muted-foreground truncate">Your Tango AI Assistant</p>
+          <p className="text-xs text-muted-foreground truncate">
+            Your Tango AI Assistant
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
@@ -589,93 +699,191 @@ I'll analyze this and may be able to fix it automatically.`,
             <span className="text-xs text-muted-foreground">Online</span>
           </div>
           {onClose && (
-            <Button size="icon" variant="ghost" onClick={onClose} data-testid="button-close-chat">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={onClose}
+              data-testid="button-close-chat"
+            >
               <X className="h-4 w-4" />
             </Button>
           )}
         </div>
       </div>
-      
+
       {/* Messages */}
-      <ScrollArea className="flex-1 px-4 py-4" data-testid="scrollarea-chat-messages">
+      <ScrollArea
+        className="flex-1 px-4 py-4"
+        data-testid="scrollarea-chat-messages"
+      >
         <div className="space-y-4 max-w-2xl mx-auto">
           {messages.map((message) => {
             // Vibe message rendering with distinct styles
-            if (message.role === 'vibe') {
+            if (message.role === "vibe") {
               const getVibeStyle = () => {
                 switch (message.vibeType) {
-                  case 'thought':
-                    return { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-300', icon: Brain, label: 'THOUGHT' };
-                  case 'action':
-                    return { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-300', icon: Zap, label: 'ACTION' };
-                  case 'observation':
-                    return { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-300', icon: Eye, label: 'OBSERVATION' };
-                  case 'phase':
-                    return { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-300', icon: Loader2, label: message.vibePhase?.toUpperCase() || 'PHASE' };
-                  case 'complete':
-                    return { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-300', icon: CheckCircle, label: 'COMPLETE' };
-                  case 'error':
-                    return { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-300', icon: AlertTriangle, label: 'ERROR' };
+                  case "thought":
+                    return {
+                      bg: "bg-purple-500/10",
+                      border: "border-purple-500/30",
+                      text: "text-purple-300",
+                      icon: Brain,
+                      label: "THOUGHT",
+                    };
+                  case "action":
+                    return {
+                      bg: "bg-blue-500/10",
+                      border: "border-blue-500/30",
+                      text: "text-blue-300",
+                      icon: Zap,
+                      label: "ACTION",
+                    };
+                  case "observation":
+                    return {
+                      bg: "bg-green-500/10",
+                      border: "border-green-500/30",
+                      text: "text-green-300",
+                      icon: Eye,
+                      label: "OBSERVATION",
+                    };
+                  case "phase":
+                    return {
+                      bg: "bg-yellow-500/10",
+                      border: "border-yellow-500/30",
+                      text: "text-yellow-300",
+                      icon: Loader2,
+                      label: message.vibePhase?.toUpperCase() || "PHASE",
+                    };
+                  case "complete":
+                    return {
+                      bg: "bg-emerald-500/10",
+                      border: "border-emerald-500/30",
+                      text: "text-emerald-300",
+                      icon: CheckCircle,
+                      label: "COMPLETE",
+                    };
+                  case "error":
+                    return {
+                      bg: "bg-red-500/10",
+                      border: "border-red-500/30",
+                      text: "text-red-300",
+                      icon: AlertTriangle,
+                      label: "ERROR",
+                    };
                   default:
-                    return { bg: 'bg-muted', border: 'border-border', text: 'text-muted-foreground', icon: Brain, label: 'VIBE' };
+                    return {
+                      bg: "bg-muted",
+                      border: "border-border",
+                      text: "text-muted-foreground",
+                      icon: Brain,
+                      label: "VIBE",
+                    };
                 }
               };
-              
+
               const style = getVibeStyle();
               const IconComponent = style.icon;
-              
+
               return (
                 <div
                   key={message.id}
-                  data-testid={'message-vibe-' + message.id}
+                  data-testid={"message-vibe-" + message.id}
                   className="flex gap-2 justify-start"
                 >
-                  <div className={'flex items-start gap-2 max-w-[95%] rounded-lg px-3 py-2 text-xs font-mono border ' + style.bg + ' ' + style.border}>
-                    <IconComponent className={'h-3 w-3 flex-shrink-0 mt-0.5 ' + style.text + (message.vibeType === 'phase' ? ' animate-spin' : '')} />
+                  <div
+                    className={
+                      "flex items-start gap-2 max-w-[95%] rounded-lg px-3 py-2 text-xs font-mono border " +
+                      style.bg +
+                      " " +
+                      style.border
+                    }
+                  >
+                    <IconComponent
+                      className={
+                        "h-3 w-3 flex-shrink-0 mt-0.5 " +
+                        style.text +
+                        (message.vibeType === "phase" ? " animate-spin" : "")
+                      }
+                    />
                     <div className="flex-1 min-w-0">
-                      <span className={'text-[10px] font-bold uppercase tracking-wider ' + style.text}>{style.label}</span>
-                      <p className="text-foreground/80 whitespace-pre-wrap break-words mt-0.5">{message.content}</p>
+                      <span
+                        className={
+                          "text-[10px] font-bold uppercase tracking-wider " +
+                          style.text
+                        }
+                      >
+                        {style.label}
+                      </span>
+                      <p className="text-foreground/80 whitespace-pre-wrap break-words mt-0.5">
+                        {message.content}
+                      </p>
                     </div>
                   </div>
                 </div>
               );
             }
-            
+
             // Regular message rendering
             return (
               <div
                 key={message.id}
-                data-testid={'message-' + message.role + '-' + message.id}
-                className={'flex gap-3 ' + (message.role === 'user' ? 'justify-end' : 'justify-start')}
+                data-testid={"message-" + message.role + "-" + message.id}
+                className={
+                  "flex gap-3 " +
+                  (message.role === "user" ? "justify-end" : "justify-start")
+                }
               >
-                {message.role === 'assistant' && (
+                {message.role === "assistant" && (
                   <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
                     <ShadcnAvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary text-xs font-medium">
                       MB
                     </ShadcnAvatarFallback>
                   </ShadcnAvatar>
                 )}
-                
-                <div className={'max-w-[80%] sm:max-w-[75%] ' + (message.role === 'user' ? 'order-first' : '')}>
-                  <div className={'rounded-2xl px-4 py-3 text-sm shadow-sm ' + (
-                    message.role === 'user' 
-                      ? 'bg-primary text-primary-foreground rounded-br-md' 
-                      : 'bg-card border border-border/50 rounded-bl-md backdrop-blur-sm'
-                  )}>
-                    <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+
+                <div
+                  className={
+                    "max-w-[80%] sm:max-w-[75%] " +
+                    (message.role === "user" ? "order-first" : "")
+                  }
+                >
+                  <div
+                    className={
+                      "rounded-2xl px-4 py-3 text-sm shadow-sm " +
+                      (message.role === "user"
+                        ? "bg-primary text-primary-foreground rounded-br-md"
+                        : "bg-card border border-border/50 rounded-bl-md backdrop-blur-sm")
+                    }
+                  >
+                    <p className="whitespace-pre-wrap leading-relaxed">
+                      {message.content}
+                    </p>
                   </div>
-                  <p className={'text-[10px] text-muted-foreground mt-1 ' + (message.role === 'user' ? 'text-right' : 'text-left')}>
-                    {message.timestamp instanceof Date 
-                      ? message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                      : message.timestamp 
-                        ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                        : ''}
+                  <p
+                    className={
+                      "text-[10px] text-muted-foreground mt-1 " +
+                      (message.role === "user" ? "text-right" : "text-left")
+                    }
+                  >
+                    {message.timestamp instanceof Date
+                      ? message.timestamp.toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : message.timestamp
+                        ? new Date(message.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : ""}
                   </p>
                 </div>
 
-                {message.role === 'user' && (
+                {message.role === "user" && (
                   <ShadcnAvatar className="h-8 w-8 border shadow-sm flex-shrink-0">
-                    <ShadcnAvatarFallback className="bg-accent/10 text-accent text-xs font-medium">You</ShadcnAvatarFallback>
+                    <ShadcnAvatarFallback className="bg-accent/10 text-accent text-xs font-medium">
+                      You
+                    </ShadcnAvatarFallback>
                   </ShadcnAvatar>
                 )}
               </div>
@@ -691,7 +899,9 @@ I'll analyze this and may be able to fix it automatically.`,
               <div className="bg-card border border-border/50 rounded-2xl rounded-bl-md px-4 py-3 backdrop-blur-sm">
                 <div className="flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                  <span className="text-xs text-muted-foreground">Thinking...</span>
+                  <span className="text-xs text-muted-foreground">
+                    Thinking...
+                  </span>
                 </div>
               </div>
             </div>
@@ -705,7 +915,7 @@ I'll analyze this and may be able to fix it automatically.`,
         <div className="flex flex-wrap gap-2 max-w-2xl mx-auto justify-center">
           <Button
             size="sm"
-            variant={qaMode === 'help' ? 'default' : 'outline'}
+            variant={qaMode === "help" ? "default" : "outline"}
             className="gap-1.5 text-xs"
             onClick={handleHelpRequest}
             data-testid="button-qa-help"
@@ -715,7 +925,7 @@ I'll analyze this and may be able to fix it automatically.`,
           </Button>
           <Button
             size="sm"
-            variant={qaMode === 'features' ? 'default' : 'outline'}
+            variant={qaMode === "features" ? "default" : "outline"}
             className="gap-1.5 text-xs"
             onClick={handleFeaturesRequest}
             data-testid="button-qa-features"
@@ -725,7 +935,7 @@ I'll analyze this and may be able to fix it automatically.`,
           </Button>
           <Button
             size="sm"
-            variant={qaMode === 'bug' ? 'default' : 'outline'}
+            variant={qaMode === "bug" ? "default" : "outline"}
             className="gap-1.5 text-xs"
             onClick={handleBugReport}
             data-testid="button-qa-bug"
@@ -741,21 +951,27 @@ I'll analyze this and may be able to fix it automatically.`,
         {/* Smart Suggestions */}
         <div className="flex flex-wrap gap-1.5 mb-3 max-w-2xl mx-auto">
           <button
-            onClick={() => { setInput("Find milongas this weekend"); }}
+            onClick={() => {
+              setInput("Find milongas this weekend");
+            }}
             className="px-2.5 py-1 text-[11px] bg-primary/10 hover:bg-primary/20 text-primary rounded-full transition-colors"
             data-testid="suggestion-milongas"
           >
             Find milongas this weekend
           </button>
           <button
-            onClick={() => { setInput("Recommend teachers near me"); }}
+            onClick={() => {
+              setInput("Recommend teachers near me");
+            }}
             className="px-2.5 py-1 text-[11px] bg-primary/10 hover:bg-primary/20 text-primary rounded-full transition-colors"
             data-testid="suggestion-teachers"
           >
             Recommend teachers
           </button>
           <button
-            onClick={() => { setInput("What's new on the platform?"); }}
+            onClick={() => {
+              setInput("What's new on the platform?");
+            }}
             className="px-2.5 py-1 text-[11px] bg-primary/10 hover:bg-primary/20 text-primary rounded-full transition-colors"
             data-testid="suggestion-whats-new"
           >
@@ -773,18 +989,23 @@ I'll analyze this and may be able to fix it automatically.`,
             disabled={isLoading}
             data-testid="input-chat-message"
           />
-          <Button 
-            size="icon" 
+          <Button
+            size="icon"
             className="absolute right-2 bottom-2 h-9 w-9 rounded-full shadow-sm"
             disabled={!input.trim() || isLoading}
             onClick={sendMessage}
             data-testid="button-send-message"
           >
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
           </Button>
         </div>
         <p className="text-center text-[10px] text-muted-foreground mt-2 max-w-2xl mx-auto">
-          Mr. Blue has access to real platform data including events, cities, and community info
+          Mr. Blue has access to real platform data including events, cities,
+          and community info
         </p>
       </div>
     </main>

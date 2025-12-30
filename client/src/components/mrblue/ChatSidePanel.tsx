@@ -6,7 +6,16 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Bot, User, X, Brain, Code, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  Send,
+  Bot,
+  User,
+  X,
+  Brain,
+  Code,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMrBlue } from "@/contexts/MrBlueContext";
 import { AutomationTaskMessage } from "./AutomationTaskMessage";
@@ -16,7 +25,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
-  type?: 'THOUGHT' | 'ACTION' | 'OBSERVATION' | 'RESULT' | 'ERROR';
+  type?: "THOUGHT" | "ACTION" | "OBSERVATION" | "RESULT" | "ERROR";
   automationType?: string;
   automationStatus?: string;
   taskId?: string;
@@ -28,14 +37,17 @@ export function ChatSidePanel() {
   const { toast } = useToast();
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-  
-  const [mode, setMode] = useState<'chat' | 'vibecoding'>('chat');
-  const [messages, setMessages] = useState<Message[]>([{
-    id: "1",
-    role: "assistant",
-    content: "Hello! I'm Mr. Blue, your AI assistant for Mundo Tango. How can I help you today?",
-    timestamp: new Date()
-  }]);
+
+  const [mode, setMode] = useState<"chat" | "vibecoding">("chat");
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "1",
+      role: "assistant",
+      content:
+        "Hello! I'm Mr. Blue, your AI assistant for Mundo Tango. How can I help you today?",
+      timestamp: new Date(),
+    },
+  ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isVibeCoding, setIsVibeCoding] = useState(false);
@@ -49,7 +61,7 @@ export function ChatSidePanel() {
   const handleSend = async () => {
     if (!input.trim() || isLoading || isVibeCoding) return;
 
-    if (mode === 'vibecoding') {
+    if (mode === "vibecoding") {
       await handleVibeCoding();
     } else {
       await handleChat();
@@ -61,10 +73,10 @@ export function ChatSidePanel() {
       id: Date.now().toString(),
       role: "user",
       content: input,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
@@ -75,11 +87,11 @@ export function ChatSidePanel() {
         credentials: "include",
         body: JSON.stringify({
           message: input,
-          conversationHistory: [...messages, userMessage].map(m => ({
+          conversationHistory: [...messages, userMessage].map((m) => ({
             role: m.role,
-            content: m.content
-          }))
-        })
+            content: m.content,
+          })),
+        }),
       });
 
       if (!response.ok) {
@@ -87,7 +99,7 @@ export function ChatSidePanel() {
       }
 
       const data = await response.json();
-      
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
@@ -96,24 +108,25 @@ export function ChatSidePanel() {
         automationType: data.automationType,
         automationStatus: data.automationStatus,
         taskId: data.taskId,
-        pollUrl: data.pollUrl
+        pollUrl: data.pollUrl,
       };
-      
-      setMessages(prev => [...prev, aiMessage]);
+
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message || "Failed to send message",
-        variant: "destructive"
+        variant: "destructive",
       });
-      
+
       const fallbackMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "I apologize, but I'm having trouble connecting right now. Please try again in a moment.",
-        timestamp: new Date()
+        content:
+          "I apologize, but I'm having trouble connecting right now. Please try again in a moment.",
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, fallbackMessage]);
+      setMessages((prev) => [...prev, fallbackMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -124,10 +137,10 @@ export function ChatSidePanel() {
       id: Date.now().toString(),
       role: "user",
       content: input,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsVibeCoding(true);
 
@@ -135,10 +148,10 @@ export function ChatSidePanel() {
     abortControllerRef.current = new AbortController();
 
     try {
-      const response = await fetch('/api/mrblue/vibecoding/stream', {
-        method: 'POST',
+      const response = await fetch("/api/mrblue/vibecoding/stream", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ goal: input }),
         signal: abortControllerRef.current.signal,
@@ -149,62 +162,62 @@ export function ChatSidePanel() {
       }
 
       if (!response.body) {
-        throw new Error('No response body');
+        throw new Error("No response body");
       }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let buffer = '';
+      let buffer = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
 
         for (const line of lines) {
-          if (line.startsWith('data: ')) {
+          if (line.startsWith("data: ")) {
             const data = line.slice(6).trim();
-            if (data === '[DONE]') continue;
+            if (data === "[DONE]") continue;
 
             try {
               const parsed = JSON.parse(data);
 
               const message: Message = {
                 id: Date.now().toString() + Math.random(),
-                role: 'assistant',
-                type: parsed.type || 'RESULT',
-                content: parsed.content || parsed.message || parsed.text || '',
-                timestamp: new Date()
+                role: "assistant",
+                type: parsed.type || "RESULT",
+                content: parsed.content || parsed.message || parsed.text || "",
+                timestamp: new Date(),
               };
 
-              setMessages(prev => [...prev, message]);
+              setMessages((prev) => [...prev, message]);
             } catch (e) {
-              console.warn('Failed to parse SSE data:', data);
+              console.warn("Failed to parse SSE data:", data);
             }
           }
         }
       }
     } catch (error: any) {
-      if (error.name === 'AbortError') {
-        console.log('VibeCoding request aborted');
+      if (error.name === "AbortError") {
+        console.log("VibeCoding request aborted");
       } else {
-        console.error('VibeCoding execution error:', error);
+        console.error("VibeCoding execution error:", error);
         const errorMessage: Message = {
           id: Date.now().toString(),
-          role: 'assistant',
-          type: 'ERROR',
+          role: "assistant",
+          type: "ERROR",
           content: `❌ Error: ${error.message}`,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
-        setMessages(prev => [...prev, errorMessage]);
-        
+        setMessages((prev) => [...prev, errorMessage]);
+
         toast({
           title: "VibeCoding Error",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } finally {
@@ -220,33 +233,33 @@ export function ChatSidePanel() {
     }
   };
 
-  const getMessageIcon = (type?: Message['type']) => {
+  const getMessageIcon = (type?: Message["type"]) => {
     switch (type) {
-      case 'THOUGHT':
+      case "THOUGHT":
         return <Brain className="h-4 w-4 text-purple-500" />;
-      case 'ACTION':
+      case "ACTION":
         return <Code className="h-4 w-4 text-blue-500" />;
-      case 'OBSERVATION':
+      case "OBSERVATION":
         return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      case 'ERROR':
+      case "ERROR":
         return <AlertCircle className="h-4 w-4 text-red-500" />;
       default:
         return <Bot className="h-5 w-5 text-primary" />;
     }
   };
 
-  const getMessageBgColor = (type?: Message['type']) => {
+  const getMessageBgColor = (type?: Message["type"]) => {
     switch (type) {
-      case 'THOUGHT':
-        return 'bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800';
-      case 'ACTION':
-        return 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800';
-      case 'OBSERVATION':
-        return 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800';
-      case 'ERROR':
-        return 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800';
+      case "THOUGHT":
+        return "bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800";
+      case "ACTION":
+        return "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800";
+      case "OBSERVATION":
+        return "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800";
+      case "ERROR":
+        return "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800";
       default:
-        return '';
+        return "";
     }
   };
 
@@ -270,8 +283,33 @@ export function ChatSidePanel() {
               </div>
               <div>
                 <h2 className="font-semibold">Mr. Blue</h2>
-                <p className="text-xs text-muted-foreground">Your AI Assistant</p>
+                <p className="text-xs text-muted-foreground">
+                  Your AI Assistant
+                </p>
               </div>
+
+              {/* Mode Toggle */}
+              <Tabs
+                value={mode}
+                onValueChange={(value) =>
+                  setMode(value as "chat" | "vibecoding")
+                }
+                className="w-full px-4 pb-2"
+              >
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="chat" className="flex items-center gap-2">
+                    <Brain className="h-4 w-4" />
+                    Chat
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="vibecoding"
+                    className="flex items-center gap-2"
+                  >
+                    <Code className="h-4 w-4" />
+                    VibeCoding
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
             <div className="flex gap-1">
               <Button
@@ -287,7 +325,10 @@ export function ChatSidePanel() {
 
           {/* Mode Toggle */}
           <div className="px-4 pt-3 pb-2 border-b">
-            <Tabs value={mode} onValueChange={(v) => setMode(v as 'chat' | 'vibecoding')}>
+            <Tabs
+              value={mode}
+              onValueChange={(v) => setMode(v as "chat" | "vibecoding")}
+            >
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="chat">Chat</TabsTrigger>
                 <TabsTrigger value="vibecoding">VibeCoding</TabsTrigger>
@@ -308,11 +349,17 @@ export function ChatSidePanel() {
                 >
                   {message.role === "assistant" && (
                     <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      {message.type ? getMessageIcon(message.type) : <Bot className="h-5 w-5 text-primary" />}
+                      {message.type ? (
+                        getMessageIcon(message.type)
+                      ) : (
+                        <Bot className="h-5 w-5 text-primary" />
+                      )}
                     </div>
                   )}
-                  
-                  <div className={`max-w-[75%] ${message.role === "user" ? "order-first" : ""}`}>
+
+                  <div
+                    className={`max-w-[75%] ${message.role === "user" ? "order-first" : ""}`}
+                  >
                     {message.automationType && message.taskId ? (
                       <AutomationTaskMessage
                         taskId={message.taskId}
@@ -321,12 +368,18 @@ export function ChatSidePanel() {
                         pollUrl={message.pollUrl}
                       />
                     ) : (
-                      <Card className={`${message.role === "user" ? "bg-primary text-primary-foreground" : getMessageBgColor(message.type)} ${message.type ? 'border' : ''}`}>
+                      <Card
+                        className={`${message.role === "user" ? "bg-primary text-primary-foreground" : getMessageBgColor(message.type)} ${message.type ? "border" : ""}`}
+                      >
                         <CardContent className="p-3">
-                          {message.type && mode === 'vibecoding' && (
-                            <p className="text-xs font-semibold mb-1 opacity-75">{message.type}</p>
+                          {message.type && mode === "vibecoding" && (
+                            <p className="text-xs font-semibold mb-1 opacity-75">
+                              {message.type}
+                            </p>
                           )}
-                          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                          <p className="text-sm whitespace-pre-wrap">
+                            {message.content}
+                          </p>
                           <p className="text-xs opacity-60 mt-1">
                             {message.timestamp.toLocaleTimeString()}
                           </p>
@@ -355,15 +408,24 @@ export function ChatSidePanel() {
                   <Card>
                     <CardContent className="p-3">
                       <div className="flex gap-1">
-                        <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                        <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                        <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                        <div
+                          className="h-2 w-2 rounded-full bg-primary/40 animate-bounce"
+                          style={{ animationDelay: "0ms" }}
+                        />
+                        <div
+                          className="h-2 w-2 rounded-full bg-primary/40 animate-bounce"
+                          style={{ animationDelay: "150ms" }}
+                        />
+                        <div
+                          className="h-2 w-2 rounded-full bg-primary/40 animate-bounce"
+                          style={{ animationDelay: "300ms" }}
+                        />
                       </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               )}
-              
+
               <div ref={scrollRef} />
             </div>
           </ScrollArea>
@@ -380,7 +442,11 @@ export function ChatSidePanel() {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={mode === 'vibecoding' ? "Describe your coding task..." : "Ask Mr. Blue anything..."}
+                placeholder={
+                  mode === "vibecoding"
+                    ? "Describe your coding task..."
+                    : "Ask Mr. Blue anything..."
+                }
                 disabled={isLoading || isVibeCoding}
                 className="flex-1"
                 data-testid="input-chat-message"
