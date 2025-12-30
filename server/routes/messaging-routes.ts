@@ -1,74 +1,106 @@
-import { type Express } from "express";
+import { type Express, Response } from "express";
 import { db } from "../db";
-import { socialMessages, users, groups, groupMembers } from "@shared/schema";
-import { eq, and, or, desc, sql, inArray } from "drizzle-orm";
+import { directMessages, users, groups, groupMembers } from "@shared/schema";
+import { eq, and, or, desc, sql } from "drizzle-orm";
 import { z } from "zod";
+import { authenticateToken, AuthRequest } from "../middleware/auth";
 
 const sendMessageSchema = z.object({
   recipientId: z.number().optional(),
   groupId: z.number().optional(),
   content: z.string().min(1),
-  attachments: z.array(z.string()).optional(),
 });
 
 export function registerMessagingRoutes(app: Express) {
-  // Get all conversations (threads)
-  app.get("/api/messages/conversations", async (req, res) => {
+  app.get("/api/messages/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     try {
-      // Get direct message conversations
-      const directMessages = await db
+      const dms = await db
         .select({
-          id: socialMessages.id,
-          userId: socialMessages.senderId,
-          userName: users.name,
-          userImage: users.profileImage,
-          lastMessage: socialMessages.content,
-          timestamp: socialMessages.createdAt,
-          isRead: socialMessages.isRead,
-          type: sql<string>`'direct'`,
+          id: directMessages.id,
+          senderId: directMessages.senderId,
+          recipientId: directMessages.recipientId,
+          content: directMessages.content,
+          isRead: directMessages.isRead,
+          createdAt: directMessages.createdAt,
         })
-        .from(socialMessages)
-        .leftJoin(users, eq(socialMessages.senderId, users.id))
+        .from(directMessages)
         .where(
           or(
-            eq(socialMessages.senderId, req.user.id),
-            eq(socialMessages.recipientId, req.user.id)
+            eq(directMessages.senderId, req.user.id),
+            eq(directMessages.recipientId, req.user.id)
           )
         )
-        .orderBy(desc(socialMessages.createdAt))
-        .limit(50);
+        .orderBy(desc(directMessages.createdAt))
+        .limit(100);
 
-      // Get group conversations
+      const conversationMap = new Map<number, any>();
+      
+      for (const msg of dms) {
+        const partnerId = msg.senderId === req.user.id ? msg.recipientId : msg.senderId;
+        if (!conversationMap.has(partnerId)) {
+          conversationMap.set(partnerId, {
+            id: msg.id,
+            userId: partnerId,
+            lastMessage: msg.content,
+            timestamp: msg.createdAt,
+            isRead: msg.senderId !== req.user.id ? msg.isRead : true,
+            type: 'direct',
+          });
+        }
+      }
+
+      const partnerIds = Array.from(conversationMap.keys());
+      if (partnerIds.length > 0) {
+        const partners = await db
+          .select({ id: users.id, name: users.name, profileImage: users.profileImage })
+          .from(users)
+          .where(sql`${users.id} IN (${sql.join(partnerIds.map(id => sql`${id}`), sql`, `)})`);
+
+        for (const partner of partners) {
+          const conv = conversationMap.get(partner.id);
+          if (conv) {
+            conv.userName = partner.name;
+            conv.userImage = partner.profileImage;
+          }
+        }
+      }
+
       const userGroups = await db
         .select({
           id: groups.id,
           name: groups.name,
-          image: groups.profileImage,
-          lastMessage: sql<string>`''`,
+          image: groups.coverImage,
           timestamp: groups.createdAt,
-          isRead: sql<boolean>`true`,
-          type: sql<string>`'group'`,
         })
         .from(groups)
         .innerJoin(groupMembers, eq(groupMembers.groupId, groups.id))
         .where(eq(groupMembers.userId, req.user.id));
 
-      // Combine and deduplicate
-      const conversations = [...directMessages, ...userGroups].sort(
-        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      );
+      const groupConversations = userGroups.map(g => ({
+        id: g.id,
+        name: g.name,
+        image: g.image,
+        lastMessage: '',
+        timestamp: g.timestamp,
+        isRead: true,
+        type: 'group',
+      }));
 
-      res.json(conversations);
+      const allConversations = [
+        ...Array.from(conversationMap.values()),
+        ...groupConversations
+      ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+      res.json(allConversations);
     } catch (error: any) {
       console.error("Error fetching conversations:", error);
       res.status(500).send("Failed to fetch conversations");
     }
   });
 
-  // Get direct messages with a specific user
-  app.get("/api/messages/direct/:userId", async (req, res) => {
+  app.get("/api/messages/direct/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     const userId = parseInt(req.params.userId);
@@ -77,47 +109,63 @@ export function registerMessagingRoutes(app: Express) {
     try {
       const messages = await db
         .select({
-          id: socialMessages.id,
-          senderId: socialMessages.senderId,
-          senderName: users.name,
-          senderImage: users.profileImage,
-          content: socialMessages.content,
-          attachments: socialMessages.attachments,
-          isRead: socialMessages.isRead,
-          createdAt: socialMessages.createdAt,
+          id: directMessages.id,
+          senderId: directMessages.senderId,
+          content: directMessages.content,
+          mediaUrl: directMessages.mediaUrl,
+          mediaType: directMessages.mediaType,
+          isRead: directMessages.isRead,
+          createdAt: directMessages.createdAt,
         })
-        .from(socialMessages)
-        .leftJoin(users, eq(socialMessages.senderId, users.id))
+        .from(directMessages)
         .where(
           or(
             and(
-              eq(socialMessages.senderId, req.user.id),
-              eq(socialMessages.recipientId, userId)
+              eq(directMessages.senderId, req.user.id),
+              eq(directMessages.recipientId, userId)
             ),
             and(
-              eq(socialMessages.senderId, userId),
-              eq(socialMessages.recipientId, req.user.id)
+              eq(directMessages.senderId, userId),
+              eq(directMessages.recipientId, req.user.id)
             )
           )
         )
-        .orderBy(socialMessages.createdAt);
+        .orderBy(directMessages.createdAt);
 
-      res.json(messages);
+      const senderIds = [...new Set(messages.map(m => m.senderId))];
+      const senderMap = new Map<number, any>();
+      
+      if (senderIds.length > 0) {
+        const senders = await db
+          .select({ id: users.id, name: users.name, profileImage: users.profileImage })
+          .from(users)
+          .where(sql`${users.id} IN (${sql.join(senderIds.map(id => sql`${id}`), sql`, `)})`);
+        
+        for (const sender of senders) {
+          senderMap.set(sender.id, sender);
+        }
+      }
+
+      const enrichedMessages = messages.map(msg => ({
+        ...msg,
+        senderName: senderMap.get(msg.senderId)?.name,
+        senderImage: senderMap.get(msg.senderId)?.profileImage,
+      }));
+
+      res.json(enrichedMessages);
     } catch (error: any) {
       console.error("Error fetching direct messages:", error);
       res.status(500).send("Failed to fetch messages");
     }
   });
 
-  // Get group messages
-  app.get("/api/messages/group/:groupId", async (req, res) => {
+  app.get("/api/messages/group/:groupId", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     const groupId = parseInt(req.params.groupId);
     if (isNaN(groupId)) return res.status(400).send("Invalid group ID");
 
     try {
-      // Verify user is a member of the group
       const membership = await db
         .select()
         .from(groupMembers)
@@ -133,14 +181,12 @@ export function registerMessagingRoutes(app: Express) {
         return res.status(403).send("Not a member of this group");
       }
 
-      // Get group details
       const [group] = await db
         .select()
         .from(groups)
         .where(eq(groups.id, groupId))
         .limit(1);
 
-      // Get group members
       const members = await db
         .select({
           id: users.id,
@@ -152,26 +198,10 @@ export function registerMessagingRoutes(app: Express) {
         .leftJoin(users, eq(groupMembers.userId, users.id))
         .where(eq(groupMembers.groupId, groupId));
 
-      // Get messages
-      const messages = await db
-        .select({
-          id: socialMessages.id,
-          senderId: socialMessages.senderId,
-          senderName: users.name,
-          senderImage: users.profileImage,
-          content: socialMessages.content,
-          attachments: socialMessages.attachments,
-          createdAt: socialMessages.createdAt,
-        })
-        .from(socialMessages)
-        .leftJoin(users, eq(socialMessages.senderId, users.id))
-        .where(eq(socialMessages.groupId, groupId))
-        .orderBy(socialMessages.createdAt);
-
       res.json({
         group,
         members,
-        messages,
+        messages: [],
       });
     } catch (error: any) {
       console.error("Error fetching group messages:", error);
@@ -179,8 +209,7 @@ export function registerMessagingRoutes(app: Express) {
     }
   });
 
-  // Send a message
-  app.post("/api/messages/send", async (req, res) => {
+  app.post("/api/messages/send", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     const validation = sendMessageSchema.safeParse(req.body);
@@ -188,21 +217,23 @@ export function registerMessagingRoutes(app: Express) {
       return res.status(400).json({ error: validation.error });
     }
 
-    const { recipientId, groupId, content, attachments } = validation.data;
+    const { recipientId, groupId, content } = validation.data;
 
     if (!recipientId && !groupId) {
       return res.status(400).send("Must specify recipientId or groupId");
     }
 
+    if (groupId) {
+      return res.status(501).send("Group messages not yet implemented");
+    }
+
     try {
       const [message] = await db
-        .insert(socialMessages)
+        .insert(directMessages)
         .values({
           senderId: req.user.id,
-          recipientId: recipientId || null,
-          groupId: groupId || null,
+          recipientId: recipientId!,
           content,
-          attachments: attachments || [],
           isRead: false,
         })
         .returning();
@@ -214,8 +245,7 @@ export function registerMessagingRoutes(app: Express) {
     }
   });
 
-  // Mark message as read
-  app.put("/api/messages/:id/read", async (req, res) => {
+  app.put("/api/messages/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     const messageId = parseInt(req.params.id);
@@ -223,12 +253,12 @@ export function registerMessagingRoutes(app: Express) {
 
     try {
       await db
-        .update(socialMessages)
+        .update(directMessages)
         .set({ isRead: true })
         .where(
           and(
-            eq(socialMessages.id, messageId),
-            eq(socialMessages.recipientId, req.user.id)
+            eq(directMessages.id, messageId),
+            eq(directMessages.recipientId, req.user.id)
           )
         );
 
@@ -239,8 +269,7 @@ export function registerMessagingRoutes(app: Express) {
     }
   });
 
-  // Delete a message
-  app.delete("/api/messages/:id", async (req, res) => {
+  app.delete("/api/messages/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     const messageId = parseInt(req.params.id);
@@ -248,11 +277,11 @@ export function registerMessagingRoutes(app: Express) {
 
     try {
       await db
-        .delete(socialMessages)
+        .delete(directMessages)
         .where(
           and(
-            eq(socialMessages.id, messageId),
-            eq(socialMessages.senderId, req.user.id)
+            eq(directMessages.id, messageId),
+            eq(directMessages.senderId, req.user.id)
           )
         );
 

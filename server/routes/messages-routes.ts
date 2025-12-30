@@ -31,7 +31,7 @@ import {
   type MessageAutomation,
   type ScheduledMessage,
 } from "@shared/schema";
-import { chatMessages, chatRooms, chatRoomUsers, users } from "@shared/schema";
+import { chatMessages, chatRooms, chatRoomUsers, users, directMessages } from "@shared/schema";
 import { eq, and, or, desc, asc, sql, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { encrypt, decrypt } from "../utils/encryption";
@@ -1808,7 +1808,7 @@ router.get("/channels/whatsapp/webhook-status", authenticateToken, async (req: A
 
 /**
  * GET /api/messages/direct/:userId
- * Get direct messages with a specific user
+ * Get direct messages with a specific user (uses directMessages table)
  */
 router.get("/direct/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -1819,77 +1819,37 @@ router.get("/direct/:userId", authenticateToken, async (req: AuthRequest, res: R
       return res.status(400).json({ error: "Invalid user ID" });
     }
 
-    // Find or create a direct chat room between the two users
-    const currentUserRooms = await db.select({ chatRoomId: chatRoomUsers.chatRoomId })
-      .from(chatRoomUsers)
-      .where(eq(chatRoomUsers.userId, currentUserId));
-
-    const otherUserRooms = await db.select({ chatRoomId: chatRoomUsers.chatRoomId })
-      .from(chatRoomUsers)
-      .where(eq(chatRoomUsers.userId, otherUserId));
-
-    const currentUserRoomIds = currentUserRooms.map(r => r.chatRoomId);
-    const otherUserRoomIds = otherUserRooms.map(r => r.chatRoomId);
-    
-    // Find common direct rooms
-    const commonRoomIds = currentUserRoomIds.filter(id => otherUserRoomIds.includes(id));
-
-    let chatRoomId: number | null = null;
-    
-    for (const roomId of commonRoomIds) {
-      const [room] = await db.select()
-        .from(chatRooms)
-        .where(and(eq(chatRooms.id, roomId), eq(chatRooms.type, 'direct')));
-      
-      if (room) {
-        // Verify it's a 2-person room
-        const participants = await db.select()
-          .from(chatRoomUsers)
-          .where(eq(chatRoomUsers.chatRoomId, roomId));
-        
-        if (participants.length === 2) {
-          chatRoomId = roomId;
-          break;
-        }
-      }
-    }
-
-    // If no room exists, return empty array
-    if (!chatRoomId) {
-      return res.json([]);
-    }
-
-    // Get messages with sender info
+    // Get messages from directMessages table where current user is sender or recipient
     const messages = await db.select({
-      id: chatMessages.id,
-      senderId: chatMessages.userId,
-      content: chatMessages.message,
-      createdAt: chatMessages.createdAt,
-      mediaUrl: chatMessages.mediaUrl,
-      mediaType: chatMessages.mediaType,
+      id: directMessages.id,
+      senderId: directMessages.senderId,
+      recipientId: directMessages.recipientId,
+      content: directMessages.content,
+      createdAt: directMessages.createdAt,
+      isRead: directMessages.isRead,
       senderName: users.name,
       senderImage: users.profileImage,
     })
-    .from(chatMessages)
-    .leftJoin(users, eq(chatMessages.userId, users.id))
-    .where(eq(chatMessages.chatRoomId, chatRoomId))
-    .orderBy(asc(chatMessages.createdAt));
+    .from(directMessages)
+    .leftJoin(users, eq(directMessages.senderId, users.id))
+    .where(
+      or(
+        and(eq(directMessages.senderId, currentUserId), eq(directMessages.recipientId, otherUserId)),
+        and(eq(directMessages.senderId, otherUserId), eq(directMessages.recipientId, currentUserId))
+      )
+    )
+    .orderBy(asc(directMessages.createdAt));
 
     // Transform to expected format
     const formattedMessages = messages.map(msg => ({
       id: msg.id,
       senderId: msg.senderId,
-      recipientId: msg.senderId === currentUserId ? otherUserId : currentUserId,
+      recipientId: msg.recipientId,
       content: msg.content,
       createdAt: msg.createdAt,
+      isRead: msg.isRead,
       senderName: msg.senderName,
       senderImage: msg.senderImage,
-      media: msg.mediaUrl ? [{
-        id: String(msg.id),
-        type: msg.mediaType?.startsWith('image') ? 'image' : 'file',
-        url: msg.mediaUrl,
-        name: 'attachment',
-      }] : undefined,
       reactions: [],
     }));
 

@@ -1,65 +1,142 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useCallback, useState } from "react";
-import { queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
-import {
-  getUserConversations,
-  getConversationMessages,
-  createConversation,
-} from "@/lib/supabaseQueries";
-import type { MessageWithProfile, InsertConversation } from "@shared/supabase-types";
-import type { RealtimeChannel } from "@supabase/supabase-js";
+
+interface Conversation {
+  id: string;
+  name: string;
+  avatar?: string;
+  lastMessage?: string;
+  timestamp?: string;
+  isRead?: boolean;
+  type: 'direct' | 'group';
+  userId?: number;
+}
+
+interface Message {
+  id: number;
+  senderId: number;
+  recipientId?: number;
+  senderName?: string;
+  senderImage?: string;
+  content: string;
+  attachments?: string[];
+  isRead?: boolean;
+  createdAt?: string;
+}
 
 export function useConversations() {
   const { user } = useAuth();
 
   return useQuery({
     queryKey: ["conversations"],
-    queryFn: () => {
-      if (!user) throw new Error("Must be logged in");
-      return getUserConversations(user.id);
+    queryFn: async () => {
+      const response = await fetch("/api/messages/conversations", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch conversations");
+      }
+      const data = await response.json();
+      
+      return data.map((conv: any) => ({
+        id: conv.type === 'direct' ? `direct-${conv.userId}` : `group-${conv.id}`,
+        name: conv.userName || conv.name || "Unknown",
+        avatar: conv.userImage || conv.image,
+        lastMessage: conv.lastMessage,
+        timestamp: conv.timestamp,
+        isRead: conv.isRead,
+        type: conv.type,
+        userId: conv.userId,
+      })) as Conversation[];
     },
     enabled: !!user,
   });
 }
 
 export function useConversation(id: string) {
-  return useQuery<MessageWithProfile[]>({
+  const { user } = useAuth();
+  
+  const parseConversationId = (convId: string) => {
+    if (convId.startsWith('direct-')) {
+      return { type: 'direct', targetId: parseInt(convId.replace('direct-', '')) };
+    }
+    if (convId.startsWith('group-')) {
+      return { type: 'group', targetId: parseInt(convId.replace('group-', '')) };
+    }
+    return { type: 'direct', targetId: parseInt(convId) };
+  };
+
+  return useQuery<Message[]>({
     queryKey: ["conversations", id, "messages"],
-    queryFn: () => getConversationMessages(id),
-    enabled: !!id,
+    queryFn: async () => {
+      const { type, targetId } = parseConversationId(id);
+      const endpoint = type === 'direct' 
+        ? `/api/messages/direct/${targetId}`
+        : `/api/messages/group/${targetId}`;
+      
+      const response = await fetch(endpoint, {
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch messages");
+      }
+      
+      const data = await response.json();
+      
+      if (type === 'group') {
+        return (data.messages || []).map((msg: any) => ({
+          id: msg.id,
+          senderId: msg.senderId,
+          recipientId: msg.recipientId,
+          senderName: msg.senderName,
+          senderImage: msg.senderImage,
+          content: msg.content,
+          attachments: msg.attachments,
+          createdAt: msg.createdAt,
+        }));
+      }
+      
+      return data.map((msg: any) => ({
+        id: msg.id,
+        senderId: msg.senderId,
+        recipientId: msg.recipientId,
+        senderName: msg.senderName,
+        senderImage: msg.senderImage,
+        content: msg.content,
+        attachments: msg.attachments,
+        isRead: msg.isRead,
+        createdAt: msg.createdAt,
+      }));
+    },
+    enabled: !!id && !!user,
   });
 }
 
 export function useSendMessage(conversationId: string) {
-  const { user } = useAuth();
+  const parseConversationId = (convId: string) => {
+    if (convId.startsWith('direct-')) {
+      return { type: 'direct', targetId: parseInt(convId.replace('direct-', '')) };
+    }
+    if (convId.startsWith('group-')) {
+      return { type: 'group', targetId: parseInt(convId.replace('group-', '')) };
+    }
+    return { type: 'direct', targetId: parseInt(convId) };
+  };
 
   return useMutation({
     mutationFn: async (content: string) => {
-      if (!user) throw new Error("Must be logged in");
+      const { type, targetId } = parseConversationId(conversationId);
       
-      const { data, error } = await supabase
-        .from("messages")
-        .insert({
-          conversation_id: conversationId,
-          sender_id: user.id,
-          content,
-        })
-        .select(`
-          *,
-          profiles (*)
-        `)
-        .single();
-
-      if (error) throw error;
-
-      await supabase
-        .from("conversations")
-        .update({ last_message_at: new Date().toISOString() })
-        .eq("id", conversationId);
-
-      return data as MessageWithProfile;
+      if (type === 'group') {
+        throw new Error("Group messaging not yet implemented");
+      }
+      
+      const body = { recipientId: targetId, content };
+      const response = await apiRequest("POST", "/api/messages/send-direct", body);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["conversations", conversationId, "messages"] });
@@ -71,13 +148,12 @@ export function useSendMessage(conversationId: string) {
 export function useCreateConversation() {
   return useMutation({
     mutationFn: async (data: { participantIds: string[]; isGroup?: boolean; name?: string }) => {
-      return createConversation(
-        {
-          is_group: data.isGroup || false,
-          name: data.name || null,
-        },
-        data.participantIds
-      );
+      if (data.participantIds.length === 1 && !data.isGroup) {
+        return { id: `direct-${data.participantIds[0]}`, type: 'direct' };
+      }
+      
+      console.warn("Group conversation creation not fully implemented");
+      return { id: `group-new`, type: 'group' };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
@@ -93,106 +169,28 @@ interface TypingUser {
 
 export function useMessagesRealtime(conversationId: string | null) {
   const { user } = useAuth();
-  const channelRef = useRef<RealtimeChannel | null>(null);
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!conversationId || !user) return;
 
-    const channel = supabase.channel(`conversation:${conversationId}`, {
-      config: {
-        presence: {
-          key: user.id,
-        },
-      },
-    });
-
-    channel
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `conversation_id=eq.${conversationId}`,
-        },
-        (payload) => {
-          const newMessage = payload.new as MessageWithProfile;
-          
-          queryClient.setQueryData(
-            ["conversations", conversationId, "messages"],
-            (old: MessageWithProfile[] | undefined) => {
-              if (!old) return [newMessage];
-              const exists = old.some((msg) => msg.id === newMessage.id);
-              if (exists) return old;
-              return [...old, newMessage];
-            }
-          );
-
-          queryClient.invalidateQueries({ queryKey: ["conversations"] });
-        }
-      )
-      .on("presence", { event: "sync" }, () => {
-        const state = channel.presenceState<{ typing?: boolean; username?: string }>();
-        const now = Date.now();
-        
-        const typing: TypingUser[] = [];
-        Object.entries(state).forEach(([userId, presences]) => {
-          if (userId !== user.id && presences.length > 0) {
-            const presence = presences[0];
-            if (presence.typing) {
-              typing.push({
-                user_id: userId,
-                username: presence.username || "User",
-                timestamp: now,
-              });
-            }
-          }
-        });
-        
-        setTypingUsers(typing);
-      })
-      .subscribe(async (status) => {
-        if (status === "SUBSCRIBED") {
-          await channel.track({ typing: false, username: user.user_metadata?.username || "User" });
-        }
-      });
-
-    channelRef.current = channel;
+    pollingRef.current = setInterval(() => {
+      queryClient.invalidateQueries({ queryKey: ["conversations", conversationId, "messages"] });
+    }, 5000);
 
     return () => {
-      if (channelRef.current) {
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
       }
     };
   }, [conversationId, user]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = Date.now();
-      setTypingUsers((current) =>
-        current.filter((tu) => now - tu.timestamp < 3000)
-      );
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const broadcastTyping = useCallback(
     async (isTyping: boolean) => {
-      if (!channelRef.current || !user) return;
-
-      try {
-        await channelRef.current.track({
-          typing: isTyping,
-          username: user.user_metadata?.username || "User",
-        });
-      } catch (error) {
-        console.error("Error broadcasting typing state:", error);
-      }
     },
-    [user]
+    []
   );
 
   return {
@@ -202,17 +200,9 @@ export function useMessagesRealtime(conversationId: string | null) {
 }
 
 export function useMarkMessagesAsRead(conversationId: string | null) {
-  const { user } = useAuth();
-
   return useMutation({
     mutationFn: async () => {
-      if (!conversationId || !user) return;
-
-      await supabase
-        .from("conversation_participants")
-        .update({ last_read_at: new Date().toISOString() })
-        .eq("conversation_id", conversationId)
-        .eq("user_id", user.id);
+      if (!conversationId) return;
     },
     onSuccess: () => {
       if (conversationId) {

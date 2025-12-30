@@ -223,7 +223,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
         ) : messages && messages.length > 0 ? (
           <div className="space-y-6">
             {messages.map((msg, index) => {
-              const isOwn = String(msg.sender_id) === String(user?.id);
+              const isOwn = String(msg.senderId) === String(user?.id);
               return (
                 <motion.div
                   key={msg.id}
