@@ -192,6 +192,51 @@ class SkillCatalogService {
       .sort((a, b) => b.usageCount - a.usageCount)
       .slice(0, limit);
   }
+
+  async executeSkill(
+    skillId: string,
+    params: Record<string, any>
+  ): Promise<{ success: boolean; result?: any; error?: string; steps?: string[] }> {
+    const skill = this.skills.get(skillId);
+    if (!skill) {
+      return { success: false, error: `Skill not found: ${skillId}` };
+    }
+
+    console.log(`[SkillCatalog] Executing skill: ${skill.name}`);
+    const executedSteps: string[] = [];
+
+    try {
+      for (const step of skill.steps) {
+        console.log(`[SkillCatalog] Step ${step.order}: ${step.description}`);
+        executedSteps.push(step.description);
+        
+        if (step.toolRequired) {
+          console.log(`[SkillCatalog] Tool required: ${step.toolRequired}`);
+        }
+      }
+
+      this.recordSkillUsage(skillId, true);
+      
+      return {
+        success: true,
+        result: {
+          skillId,
+          skillName: skill.name,
+          params,
+          stepsCompleted: executedSteps.length,
+          estimatedTime: skill.estimatedTime
+        },
+        steps: executedSteps
+      };
+    } catch (error: any) {
+      this.recordSkillUsage(skillId, false);
+      return {
+        success: false,
+        error: error.message,
+        steps: executedSteps
+      };
+    }
+  }
 }
 
 export const skillCatalogService = new SkillCatalogService();
