@@ -37,7 +37,6 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { LanguageSelectorButton } from "@/components/LanguageSelector";
 import { InlineSearchInput } from "@/components/navigation/InlineSearchInput";
 import { FeedbackButton } from "@/components/qa/FeedbackButton";
 import { cn } from "@/lib/utils";
@@ -336,11 +335,6 @@ function UnifiedTopBar({
             </Button>
           </Link>
 
-          {/* Language Selector - Desktop Only */}
-          <div className="hidden md:block">
-            <LanguageSelectorButton />
-          </div>
-
           {/* Theme Toggle */}
           <Button
             variant="ghost"
@@ -367,7 +361,7 @@ function UnifiedTopBar({
               <UserPlus className="h-5 w-5 transition-colors duration-200" style={{ color: pendingFriendRequestCount > 0 ? '#40E0D0' : 'currentColor' }} />
               {pendingFriendRequestCount > 0 && (
                 <span 
-                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg animate-pulse"
+                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg animate-pulse pointer-events-none"
                   style={{
                     background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
                     boxShadow: '0 2px 8px rgba(255, 107, 107, 0.4)',
@@ -385,7 +379,7 @@ function UnifiedTopBar({
               <MessageSquare className="h-5 w-5 transition-colors duration-200" style={{ color: messageCount > 0 ? '#40E0D0' : 'currentColor' }} />
               {messageCount > 0 && (
                 <span 
-                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg animate-pulse"
+                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg animate-pulse pointer-events-none"
                   style={{
                     background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
                     boxShadow: '0 2px 8px rgba(64, 224, 208, 0.4)',
@@ -410,7 +404,7 @@ function UnifiedTopBar({
                 )}
                 {notificationCount > 0 && (
                   <span 
-                    className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg"
+                    className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg pointer-events-none"
                     style={{
                       background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
                       boxShadow: '0 2px 8px rgba(64, 224, 208, 0.4)',

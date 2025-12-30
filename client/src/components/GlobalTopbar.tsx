@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Bell, User, Moon, Sun, MessageSquare, Heart, Settings, HelpCircle, Shield } from "lucide-react";
+import { Bell, Moon, Sun, MessageSquare, Heart, Settings, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
 import { SearchBar } from "./SearchBar";
-import { LanguageSelectorButton } from "./LanguageSelector";
 import { UserRoleBadges } from "@/components/UserRoleBadges";
 import { useQuery } from "@tanstack/react-query";
 
@@ -58,9 +57,6 @@ export function GlobalTopbar() {
 
         {/* Right side actions */}
         <div className="flex items-center gap-2">
-          {/* E106 - Language Switcher */}
-          <LanguageSelectorButton />
-
           {/* E105 - Theme Toggle */}
           <Button
             variant="ghost"
@@ -130,13 +126,6 @@ export function GlobalTopbar() {
           <Link href="/settings">
             <Button variant="ghost" size="icon" data-testid="button-settings">
               <Settings className="h-5 w-5" />
-            </Button>
-          </Link>
-
-          {/* Help */}
-          <Link href="/help">
-            <Button variant="ghost" size="icon" data-testid="button-help">
-              <HelpCircle className="h-5 w-5" />
             </Button>
           </Link>
 

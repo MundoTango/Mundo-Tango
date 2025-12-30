@@ -56,6 +56,13 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Vanity URLs**: `/:username` resolves to PRO page or user profile
 - **Documentation**: See `docs/prd/VANITY_URLS.md` for URL routing spec
 
+### Navigation & Attention Hub (Updated Dec 30, 2025)
+- **Fake User Filter**: `@discovered.mundotango.app` emails excluded from friend requests/suggestions via `not(like(users.email, '%@discovered.mundotango.app'))` filter in storage.ts
+- **Language Selector**: REMOVED from both UnifiedTopBar.tsx and GlobalTopbar.tsx (language setting from user profile only)
+- **Help Button**: REMOVED from GlobalTopbar.tsx (consolidated in user menu)
+- **Badge Clickability**: All topbar badges now have `pointer-events-none` class to ensure button clicks work
+- **PRDs**: See `docs/prd/NAVIGATION_ATTENTION_HUB.md` and `docs/prd/PEOPLE_PERSONALIZATION.md`
+
 ### Three-Layer Completion Status (Dec 30, 2025)
 | System | UI | Data | Interaction | Notes |
 |--------|----|----|-----------|-------|
@@ -64,6 +71,7 @@ Core functionalities include social features (events, groups, posts, notificatio
 | WebSocket | 30% | 60% | 10% | Uses polling |
 | External Channels | 80% | 50% | 30% | Facebook partial |
 | Groups | 85% | 90% | 80% | FIXED Dec 30 - group_messages table |
+| Navigation Hub | 95% | 100% | 90% | Fake user filter + badge fix Dec 30 |
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase

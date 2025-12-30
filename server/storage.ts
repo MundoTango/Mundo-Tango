@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { eq, and, gt, desc, asc, or, ilike, inArray, sql, lt, gte, lte, ne, notInArray } from "drizzle-orm";
+import { eq, and, gt, desc, asc, or, ilike, inArray, sql, lt, gte, lte, ne, notInArray, not, like } from "drizzle-orm";
 import {
   users,
   refreshTokens,
@@ -2260,7 +2260,8 @@ export class DbStorage implements IStorage {
       .where(
         and(
           eq(friendRequests.receiverId, userId),
-          inArray(friendRequests.status, ['pending', 'snoozed'])
+          inArray(friendRequests.status, ['pending', 'snoozed']),
+          not(like(users.email, '%@discovered.mundotango.app'))
         )
       );
     
@@ -2317,7 +2318,8 @@ export class DbStorage implements IStorage {
         and(
           ne(users.id, userId),
           eq(users.isActive, true),
-          eq(users.suspended, false)
+          eq(users.suspended, false),
+          not(like(users.email, '%@discovered.mundotango.app'))
         )
       ).limit(10);
       
@@ -2341,7 +2343,8 @@ export class DbStorage implements IStorage {
           notInArray(users.id, friendIds),
           ne(users.id, userId),
           eq(users.isActive, true),
-          eq(users.suspended, false)
+          eq(users.suspended, false),
+          not(like(users.email, '%@discovered.mundotango.app'))
         )
       )
       .limit(10);
