@@ -150,6 +150,13 @@ export const users = pgTable(
     latitude: numeric("latitude", { precision: 10, scale: 7 }),
     longitude: numeric("longitude", { precision: 10, scale: 7 }),
     communityWebsiteUrl: text("community_website_url"),
+    
+    // Pro Page Settings
+    proPageSlug: varchar("pro_page_slug", { length: 50 }).unique(),
+    proPageContactEmail: varchar("pro_page_contact_email"),
+    proPageEnabled: boolean("pro_page_enabled").default(false),
+    proPageSections: jsonb("pro_page_sections"),
+    proPageTheme: varchar("pro_page_theme"),
   },
   (table) => ({
     emailIdx: index("users_email_idx").on(table.email),

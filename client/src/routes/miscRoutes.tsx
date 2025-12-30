@@ -92,6 +92,8 @@ const PROCommunityBuildersPage = lazy(() => import("@/pages/pro/PROGroupPublicPa
 const PROTaxiDancersPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then((m) => ({ default: m.TaxiDancersPage })));
 const PRODancersPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then((m) => ({ default: m.DancersPage })));
 const PROResearchersPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then((m) => ({ default: m.ResearchersPage })));
+const ProPage = lazy(() => import("@/pages/ProPage"));
+const ProPageSettings = lazy(() => import("@/pages/ProPageSettings"));
 
 export function MiscRoutes() {
   return (
@@ -599,6 +601,20 @@ export function MiscRoutes() {
       <Route path="/pro/taxi-dancers"><AppLayout><Suspense fallback={<LoadingFallback />}><PROTaxiDancersPage /></Suspense></AppLayout></Route>
       <Route path="/pro/dancers"><AppLayout><Suspense fallback={<LoadingFallback />}><PRODancersPage /></Suspense></AppLayout></Route>
       <Route path="/pro/researchers"><AppLayout><Suspense fallback={<LoadingFallback />}><PROResearchersPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/settings">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <ProPageSettings />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/p/:slug">
+        <Suspense fallback={<LoadingFallback />}>
+          <ProPage />
+        </Suspense>
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,19 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { 
-  useConversations, 
-  useConversation, 
-  useSendMessage,
-  useMessagesRealtime,
-  useMarkMessagesAsRead 
-} from "@/hooks/useMessages";
-import {
-  useConnectedChannels,
-  useUnreadCount,
-  CHANNEL_CONFIG,
-  type MessageChannel
-} from "@/hooks/useMessageChannels";
+import { useSearch } from "wouter";
+import { useConversations, useConversation, useSendMessage, useMessagesRealtime, useMarkMessagesAsRead } from "@/hooks/useMessages";
+import { useConnectedChannels, useUnreadCount, CHANNEL_CONFIG, type MessageChannel } from "@/hooks/useMessageChannels";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -34,6 +24,26 @@ export default function MessagesPage() {
     c.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.lastMessage?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
+  const [search] = useSearch();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mrblue = params.get("mrblue");
+    const url = params.get("url");
+    if (mrblue === "analyze-website" && url) {
+      startConversation(url);
+      params.delete("mrblue");
+      params.delete("url");
+      window.history.replaceState({}, document.title, window.location.pathname + '?' + params.toString());
+    }
+  }, []);
+
+  const startConversation = (url: string) => {
+    if (filteredConversations.length > 0) {
+      setSelectedConversationId(filteredConversations[0].id);
+      sendMessage.mutateAsync(`Please analyze my website: ${url}`);
+    }
+  };
 
   useEffect(() => {
     if (!selectedConversationId && filteredConversations.length > 0 && !isLoading) {
@@ -101,6 +111,7 @@ export default function MessagesPage() {
                                   <p className="font-semibold truncate">
                                     {conversation.name || t('pages:messages.defaultConversationName', "Conversation")}
                                   </p>
+                                  <span className="text-sm text-muted-foreground">Email</span>
                                 </div>
                               </div>
                             </div>

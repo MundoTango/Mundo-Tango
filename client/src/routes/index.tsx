@@ -73,7 +73,7 @@ export function RouteLoader() {
     if (location.startsWith("/marketplace") || location.startsWith("/checkout") || location.startsWith("/billing") || location.startsWith("/payment") || location.startsWith("/subscription") || location.startsWith("/crowdfunding") || location.startsWith("/financial") || location.startsWith("/invoices") || location.startsWith("/booking")) {
       return <CommerceRoutes />;
     }
-    if (location.startsWith("/pro/") || location.startsWith("/housing")) {
+    if (location.startsWith("/pro/") || location.startsWith("/p/") || location.startsWith("/housing")) {
       return <MiscRoutes />;
     }
     if (location === "/") {
