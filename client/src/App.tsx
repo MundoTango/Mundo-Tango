@@ -31,7 +31,6 @@ import { setupNavigationInterceptor } from "./lib/navigationInterceptor";
 import { HEAVY_FEATURES_ENABLED } from "./config/featureFlags";
 import { detectAndApplyLanguage } from "./lib/i18n";
 import { RouteLoader } from "./routes";
-import ProPage from "@/pages/ProPage";
 
 const FeatureDisabled = lazy(() => import("./components/FeatureDisabled"));
 const VisualEditorSplitPane = HEAVY_FEATURES_ENABLED
@@ -128,7 +127,6 @@ function AppContent() {
       )}
       <Suspense fallback={<LoadingFallback />}> 
         <RouteLoader />
-        <Route path="/p/:slug" component={ProPage} />
       </Suspense>
       <CookieConsent />
       {isVisualEditorOpen && (

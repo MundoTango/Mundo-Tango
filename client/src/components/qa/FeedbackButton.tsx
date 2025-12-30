@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useJourneyTracker } from '@/hooks/useJourneyTracker';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
-import { useMrBlue } from '@/hooks/useMrBlue';
+import { useMrBlue } from '@/contexts/MrBlueContext';
 
 export function FeedbackButton() {
   const { user } = useAuth();

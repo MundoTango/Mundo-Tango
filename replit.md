@@ -50,6 +50,10 @@ Core functionalities include social features (events, groups, posts, notificatio
 
 ## Recent Changes (December 30, 2025)
 
+### Critical Bug Fixes (Session)
+- **FeedbackButton.tsx** - Fixed import error: `@/hooks/useMrBlue` → `@/contexts/MrBlueContext`
+- **App.tsx** - Removed duplicate ProPage Route (already in MiscRoutes) and unused import that caused React ErrorBoundary crashes
+
 ### Pattern 100 Master Orchestration - All Waves Complete
 Implemented complete VibeCoding evolution patterns for autonomous agent capabilities:
 
