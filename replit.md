@@ -57,6 +57,12 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **server/services/mr-blue-data-service.ts** - Fixed SQL column mismatch: `receiverId` → `recipientId` (matching schema)
 - **Database** - Created `user_feedback` table with proper schema and indexes (was missing from DB)
 
+### Messaging System Refactor (Critical Fix)
+- **Duplicate Route Conflict Resolved** - `/api/messages/conversations` was defined in both routes.ts (chat-room based) and messaging-routes.ts (direct-message based), causing conflicts
+- **server/routes.ts** - Commented out duplicate chat-room based conversation routes to avoid conflicts with direct-message system
+- **server/routes/messaging-routes.ts** - Added `/api/messages/send-direct` endpoint as an alias to `/api/messages/send` (frontend hooks expected this endpoint)
+- **Architecture Decision**: Frontend hooks use `direct-{userId}` format for direct messages, calling `/api/messages/direct/:userId` for fetching messages
+
 ### QA System Integrated into Mr. Blue Chat (Pattern 67)
 Replaced simple quick-action buttons with full QA system inside Mr. Blue chat:
 

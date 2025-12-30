@@ -5331,30 +5331,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/messages/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const conversations = await storage.getUserConversations(req.user!.id);
-      res.json(conversations);
-    } catch (error) {
-      console.error("Error fetching conversations:", error);
-      res.status(500).json({ message: "Failed to fetch conversations" });
-    }
-  });
+  // NOTE: /api/messages/conversations is handled by messaging-routes.ts (direct-message based)
+  // These chat-room based routes are disabled to avoid conflicts with the frontend hooks
+  // which expect the direct-message format with userId for DMs
+  
+  // app.get("/api/messages/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  //   try {
+  //     const conversations = await storage.getUserConversations(req.user!.id);
+  //     res.json(conversations);
+  //   } catch (error) {
+  //     console.error("Error fetching conversations:", error);
+  //     res.status(500).json({ message: "Failed to fetch conversations" });
+  //   }
+  // });
 
-  app.post("/api/messages/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const { userId: otherUserId } = req.body;
-      
-      if (!otherUserId) {
-        return res.status(400).json({ message: "userId is required" });
-      }
-      
-      const conversation = await storage.getOrCreateDirectConversation(req.user!.id, otherUserId);
-      res.status(201).json(conversation);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to create conversation" });
-    }
-  });
+  // app.post("/api/messages/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  //   try {
+  //     const { userId: otherUserId } = req.body;
+  //     
+  //     if (!otherUserId) {
+  //       return res.status(400).json({ message: "userId is required" });
+  //     }
+  //     
+  //     const conversation = await storage.getOrCreateDirectConversation(req.user!.id, otherUserId);
+  //     res.status(201).json(conversation);
+  //   } catch (error) {
+  //     res.status(500).json({ message: "Failed to create conversation" });
+  //   }
+  // });
 
   // IMPORTANT: This route must come BEFORE /api/messages/:conversationId to avoid being caught by dynamic param
   app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {

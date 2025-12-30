@@ -209,7 +209,8 @@ export function registerMessagingRoutes(app: Express) {
     }
   });
 
-  app.post("/api/messages/send", authenticateToken, async (req: AuthRequest, res: Response) => {
+  // Handler for sending direct messages
+  const sendDirectMessageHandler = async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     const validation = sendMessageSchema.safeParse(req.body);
@@ -243,7 +244,11 @@ export function registerMessagingRoutes(app: Express) {
       console.error("Error sending message:", error);
       res.status(500).send("Failed to send message");
     }
-  });
+  };
+
+  // Register both endpoints - frontend uses send-direct, keep send for backwards compatibility
+  app.post("/api/messages/send", authenticateToken, sendDirectMessageHandler);
+  app.post("/api/messages/send-direct", authenticateToken, sendDirectMessageHandler);
 
   app.put("/api/messages/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
