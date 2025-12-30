@@ -132,17 +132,21 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
         data-testid={`card-event-${eventData.id}`}
       >
         <div className="relative aspect-[16/9] overflow-hidden">
-          <motion.img
-            src={imageUrl}
-            alt={eventData.title}
-            className="w-full h-full object-cover"
-            loading="lazy"
-            decoding="async"
+          <motion.div
+            className="w-full h-full"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.6 }}
-            onError={handleImageError}
-            data-testid={`img-event-${eventData.id}`}
-          />
+          >
+            <img
+              src={imageUrl}
+              alt={eventData.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+              onError={handleImageError}
+              data-testid={`img-event-${eventData.id}`}
+            />
+          </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           <div className="absolute top-4 right-4 flex gap-2">
             {eventData.category && (

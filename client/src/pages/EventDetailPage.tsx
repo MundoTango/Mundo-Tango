@@ -324,7 +324,6 @@ export default function EventDetailPage() {
             <EventPostFeed 
               eventId={parseInt(id || "0")}
               eventName={event.title}
-              canPost={!!user}
             />
           </TabsContent>
 

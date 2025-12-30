@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Send } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -276,6 +276,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
             placeholder="Type a message..."
             className="resize-none min-h-[52px] max-h-[120px] rounded-xl"
             rows={1}
+            data-testid="input-message"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -287,6 +288,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
             type="submit"
             disabled={!message.trim()}
             className="h-[52px] w-[52px]"
+            data-testid="button-send-message"
           >
             <Send className="h-5 w-5" />
           </Button>
