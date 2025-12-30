@@ -254,9 +254,9 @@ If the task is complete:
   }
 
   private async callLLM(prompt: string): Promise<string> {
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      throw new Error('OPENAI_API_KEY not configured');
+      throw new Error('OPENAI_API_KEY not configured - ReAct requires AI integration');
     }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -267,18 +267,42 @@ If the task is complete:
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
+        messages: [
+          { 
+            role: 'system', 
+            content: 'You are a precise AI that always responds with valid JSON. Never include markdown code blocks or extra text.'
+          },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.3,
         max_tokens: 1000,
+        response_format: { type: 'json_object' },
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`OpenAI API error ${response.status}: ${errorText.substring(0, 200)}`);
     }
 
     const data = await response.json();
-    return data.choices[0]?.message?.content || '';
+    const content = data.choices[0]?.message?.content || '';
+    
+    return this.extractJSON(content);
+  }
+
+  private extractJSON(content: string): string {
+    const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (jsonMatch) {
+      return jsonMatch[1].trim();
+    }
+    
+    const objectMatch = content.match(/\{[\s\S]*\}/);
+    if (objectMatch) {
+      return objectMatch[0];
+    }
+    
+    return content;
   }
 
   getSession(sessionId: string): ReActSession | undefined {
