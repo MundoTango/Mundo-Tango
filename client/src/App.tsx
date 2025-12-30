@@ -58,27 +58,35 @@ function AppContent() {
       return;
     }
 
-    console.log("[App] Initializing Proactive Error Detection...");
-    const detector = initErrorDetection();
+    try {
+      console.log("[App] Initializing Proactive Error Detection...");
+      initErrorDetection();
 
-    console.log("[App] Initializing HTTP Interceptor...");
-    initHttpInterceptor();
+      console.log("[App] Initializing HTTP Interceptor...");
+      initHttpInterceptor();
 
-    console.log("[App] Initializing Component Health Monitor...");
-    initComponentHealthMonitor();
+      console.log("[App] Initializing Component Health Monitor...");
+      initComponentHealthMonitor();
 
-    console.log("[App] Initializing Navigation Interceptor...");
-    setupNavigationInterceptor();
+      console.log("[App] Initializing Navigation Interceptor...");
+      setupNavigationInterceptor();
+    } catch (error) {
+      console.error("[App] Self-healing initialization failed, continuing without:", error);
+    }
 
     return () => {
-      console.log("[App] Cleaning up Component Health Monitor...");
-      cleanupComponentHealthMonitor();
+      try {
+        console.log("[App] Cleaning up Component Health Monitor...");
+        cleanupComponentHealthMonitor();
 
-      console.log("[App] Cleaning up HTTP Interceptor...");
-      cleanupHttpInterceptor();
+        console.log("[App] Cleaning up HTTP Interceptor...");
+        cleanupHttpInterceptor();
 
-      console.log("[App] Cleaning up Proactive Error Detection...");
-      cleanupErrorDetection();
+        console.log("[App] Cleaning up Proactive Error Detection...");
+        cleanupErrorDetection();
+      } catch (error) {
+        console.error("[App] Self-healing cleanup failed:", error);
+      }
     };
   }, []);
 
