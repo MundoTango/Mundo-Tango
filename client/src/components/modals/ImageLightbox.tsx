@@ -53,6 +53,7 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, alt = "Image" }: I
             onClick={handleZoomOut}
             className="text-white hover:bg-white/20"
             data-testid="button-zoom-out"
+            aria-label="Zoom out"
           >
             <ZoomOut className="w-5 h-5" />
           </Button>
@@ -65,6 +66,7 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, alt = "Image" }: I
             onClick={handleZoomIn}
             className="text-white hover:bg-white/20"
             data-testid="button-zoom-in"
+            aria-label="Zoom in"
           >
             <ZoomIn className="w-5 h-5" />
           </Button>
@@ -74,6 +76,7 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, alt = "Image" }: I
             onClick={handleRotate}
             className="text-white hover:bg-white/20"
             data-testid="button-rotate"
+            aria-label="Rotate image"
           >
             <RotateCw className="w-5 h-5" />
           </Button>
@@ -83,6 +86,7 @@ export function ImageLightbox({ open, onOpenChange, imageUrl, alt = "Image" }: I
             onClick={() => onOpenChange(false)}
             className="text-white hover:bg-white/20"
             data-testid="button-close-lightbox"
+            aria-label="Close lightbox"
           >
             <X className="w-5 h-5" />
           </Button>
