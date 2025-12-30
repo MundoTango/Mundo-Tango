@@ -7,15 +7,12 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
 
-interface ProPageCheck {
-  id: number;
-  name: string;
-}
-
-interface UserLookup {
-  id: number;
-  username: string;
-  name: string;
+interface UsernameResolution {
+  found: boolean;
+  type: 'pro' | 'user' | null;
+  id?: number;
+  name?: string;
+  redirectTo: string | null;
 }
 
 export default function UsernameProfilePage() {
@@ -23,40 +20,21 @@ export default function UsernameProfilePage() {
   const { username } = useParams<{ username: string }>();
 
   const { 
-    data: proPage, 
-    isLoading: proLoading, 
-    error: proError 
-  } = useQuery<ProPageCheck>({
-    queryKey: ['/api/pro/page', username],
+    data, 
+    isLoading, 
+    error 
+  } = useQuery<UsernameResolution>({
+    queryKey: ['/api/pro/resolve', username],
     queryFn: async () => {
-      const response = await fetch(`/api/pro/page/${encodeURIComponent(username || '')}`);
+      const response = await fetch(`/api/pro/resolve/${encodeURIComponent(username || '')}`);
       if (!response.ok) {
-        throw new Error('Pro page not found');
+        throw new Error('Resolution failed');
       }
       return response.json();
     },
     enabled: !!username,
     retry: false,
   });
-
-  const { 
-    data: user, 
-    isLoading: userLoading, 
-    error: userError 
-  } = useQuery<UserLookup>({
-    queryKey: ['/api/users', username],
-    queryFn: async () => {
-      const response = await fetch(`/api/users/${encodeURIComponent(username || '')}`);
-      if (!response.ok) {
-        throw new Error('User not found');
-      }
-      return response.json();
-    },
-    enabled: !!username && !!proError,
-    retry: false,
-  });
-
-  const isLoading = proLoading || (proError && userLoading);
 
   if (isLoading) {
     return (
@@ -71,12 +49,8 @@ export default function UsernameProfilePage() {
     );
   }
 
-  if (proPage && !proError) {
-    return <Redirect to={`/p/${encodeURIComponent(username || '')}`} />;
-  }
-
-  if (user && !userError) {
-    return <Redirect to={`/profile/${user.id}`} />;
+  if (data?.found && data.redirectTo) {
+    return <Redirect to={data.redirectTo} />;
   }
 
   return (

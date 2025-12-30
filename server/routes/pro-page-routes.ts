@@ -23,6 +23,69 @@ const settingsSchema = z.object({
   testimonialsEnabled: z.boolean().default(false),
 });
 
+router.get('/resolve/:slug', async (req: Request, res: Response) => {
+  try {
+    const { slug } = req.params;
+    const slugLower = slug.toLowerCase();
+    
+    const [proUser] = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        proPageSlug: users.proPageSlug,
+      })
+      .from(users)
+      .where(and(
+        sql`LOWER(${users.proPageSlug}) = ${slugLower}`,
+        eq(users.proPageEnabled, true),
+        eq(users.isActive, true)
+      ))
+      .limit(1);
+    
+    if (proUser) {
+      return res.json({
+        found: true,
+        type: 'pro',
+        id: proUser.id,
+        name: proUser.name,
+        redirectTo: `/p/${proUser.proPageSlug}`,
+      });
+    }
+    
+    const [regularUser] = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+      })
+      .from(users)
+      .where(and(
+        sql`LOWER(${users.username}) = ${slugLower}`,
+        eq(users.isActive, true)
+      ))
+      .limit(1);
+    
+    if (regularUser) {
+      return res.json({
+        found: true,
+        type: 'user',
+        id: regularUser.id,
+        name: regularUser.name,
+        redirectTo: `/profile/${regularUser.id}`,
+      });
+    }
+    
+    return res.json({
+      found: false,
+      type: null,
+      redirectTo: null,
+    });
+  } catch (error) {
+    console.error('[ProPage] Error resolving username:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.get('/page/:slug', async (req: Request, res: Response) => {
   try {
     const { slug } = req.params;
