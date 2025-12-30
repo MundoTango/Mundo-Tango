@@ -1,4 +1,4 @@
-import skootImage from "@assets/Skoot_(22)_1767098017222.jpg";
+import skootImage from "@assets/stock_images/tango_dancers_in_ele_003ee0cf.jpg";
 import { useParams, Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'framer-motion';
