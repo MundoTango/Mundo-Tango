@@ -50,6 +50,16 @@ Core functionalities include social features (events, groups, posts, notificatio
 
 ## Recent Changes (December 30, 2025)
 
+### Messages API & Username Routes Fix (Session)
+- **client/src/hooks/useMessages.ts** - Added Authorization Bearer token headers to `useConversations()` and `useConversation()` hooks. Backend requires Bearer token authentication, not just cookies.
+- **client/src/pages/UsernameProfilePage.tsx** - Created new page component that:
+  - Fetches user by username from `/api/users/{username}` (with encodeURIComponent for special chars)
+  - Shows loading skeleton while fetching
+  - Displays "User Not Found" error with Go Home button on 404
+  - Redirects to `/profile/{userId}` on success
+- **client/src/routes/miscRoutes.tsx** - Added `/:username` route at END of routes (before NotFound) to handle vanity URLs like `/scott`
+- **Backend note**: `/api/users/:id` already supports both numeric ID and username string lookups
+
 ### Critical Bug Fixes (Session)
 - **FeedbackButton.tsx** - Fixed import error: `@/hooks/useMrBlue` → `@/contexts/MrBlueContext`
 - **App.tsx** - Removed duplicate ProPage Route (already in MiscRoutes) and unused import that caused React ErrorBoundary crashes
