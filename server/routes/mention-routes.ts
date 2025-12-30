@@ -20,8 +20,8 @@ router.get("/users/search", authenticateToken, async (req, res) => {
 
     const isAdmin = (req as any).user?.role === 'admin';
     const searchedUsers = isAdmin 
-      ? await storage.searchUsersAdmin(searchQuery, limit)
-      : await storage.searchUsers(searchQuery, limit);
+      ? await (storage as any).searchUsersAdmin(searchQuery, limit)
+      : await (storage as any).searchUsers(searchQuery, limit);
     const results = searchedUsers.map((user: any) => ({
       id: `user_${user.id}`,
       type: "user" as const,
@@ -50,7 +50,7 @@ router.get("/events/search", authenticateToken, async (req, res) => {
     const searchQuery = String(q).toLowerCase();
     const limit = 10;
 
-    const searchedEvents = await storage.searchEventsSimple(searchQuery, limit);
+    const searchedEvents = await (storage as any).searchEventsSimple(searchQuery, limit);
     const results = searchedEvents.map((event: any) => ({
       id: `event_${event.id}`,
       type: "event" as const,
@@ -77,7 +77,7 @@ router.get("/groups/search", authenticateToken, async (req, res) => {
     const searchQuery = String(q).toLowerCase();
     const limit = 10;
 
-    const searchedGroups = await storage.searchGroups(searchQuery, limit);
+    const searchedGroups = await (storage as any).searchGroups(searchQuery, limit);
     const results = searchedGroups.map((group: any) => ({
       id: `group_${group.id}`,
       type: "group" as const,
@@ -104,7 +104,7 @@ router.get("/cities/search", authenticateToken, async (req, res) => {
     const searchQuery = String(q).toLowerCase();
     const limit = 10;
 
-    const searchedCommunities = await storage.searchCommunities(searchQuery, limit);
+    const searchedCommunities = await (storage as any).searchCommunities(searchQuery, limit);
     const results = searchedCommunities.map((community: any) => ({
       id: `city_${community.id}`,
       type: "city" as const,
@@ -159,10 +159,10 @@ router.get("/search", authenticateToken, async (req, res) => {
 
     // Search @people (users)
     if (!type || type === "user") {
-    const isAdmin = (req as any).user?.role === 'admin';
-    const searchedUsers = isAdmin 
-      ? await storage.searchUsersAdmin(searchQuery, limit)
-      : await storage.searchUsers(searchQuery, limit);
+      const isAdmin = (req as any).user?.role === 'admin';
+      const searchedUsers = isAdmin 
+        ? await (storage as any).searchUsersAdmin(searchQuery, limit)
+        : await (storage as any).searchUsers(searchQuery, limit);
       results.push(...searchedUsers.map((user: any) => ({
         id: user.id,
         type: "user" as const,
@@ -187,7 +187,7 @@ router.get("/search", authenticateToken, async (req, res) => {
 
     // Search @professional-groups (regular groups)
     if (!type || type === "professional-group") {
-      const searchedGroups = await storage.searchGroups(searchQuery, limit);
+      const searchedGroups = await (storage as any).searchGroups(searchQuery, limit);
       results.push(...searchedGroups.map((group: any) => ({
         id: group.id,
         type: "professional-group" as const,
@@ -200,7 +200,7 @@ router.get("/search", authenticateToken, async (req, res) => {
 
     // Search @city-groups (communities)
     if (!type || type === "city-group") {
-      const searchedCommunities = await storage.searchCommunities(searchQuery, limit);
+      const searchedCommunities = await (storage as any).searchCommunities(searchQuery, limit);
       results.push(...searchedCommunities.map((community: any) => ({
         id: community.id,
         type: "city-group" as const,

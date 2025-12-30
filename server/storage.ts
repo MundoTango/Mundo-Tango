@@ -507,9 +507,11 @@ export interface IStorage {
   searchUsers(query: string, limit: number): Promise<any[]>;
   searchUsersAdmin(query: string, limit: number): Promise<any[]>;
   searchEventsSimple(query: string, limit: number): Promise<any[]>;
+  searchEvents(query: string, limit: number): Promise<any[]>;
   searchGroups(query: string, limit: number): Promise<any[]>;
   searchCommunities(query: string, limit: number): Promise<any[]>;
   getCommunityById(id: number): Promise<any | undefined>;
+  getGroupBySlug(slug: string): Promise<SelectGroup | undefined>;
   updateGroup(id: number, data: Partial<SelectGroup>): Promise<SelectGroup | undefined>;
   deleteGroup(id: number): Promise<void>;
   
