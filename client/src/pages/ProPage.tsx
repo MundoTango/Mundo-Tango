@@ -389,7 +389,7 @@ export default function ProPage() {
                     </motion.div>
                     
                     <Badge className="mb-4 bg-cyan-500/20 text-cyan-200 border-cyan-400/30" data-testid="badge-pro">
-                      <Star className="w-3 h-3 mr-1" /> {data.founderTitle || 'PRO Member'}
+                      <Star className="w-3 h-3 mr-1" /> {data.id === 862 || data.id === 1059 ? 'Founder of Mundo Tango' : (data.founderTitle || 'PRO Member')}
                     </Badge>
                     
                     <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" data-testid="text-name">
