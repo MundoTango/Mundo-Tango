@@ -1266,4 +1266,51 @@ Tool detection now includes "query" keyword and runs BEFORE intent classificatio
 
 ---
 
-**Mr. Blue Brain v3.0** - Modular, Token-Efficient, 140+ Agents, LIVE AND OPERATIONAL
+## PATTERN 99: MULTI-AGENT SITE AUDITOR (ACTIVE)
+
+**Status:** EXECUTING - December 30, 2025  
+**Audit Document:** `docs/audit/SITE_AUDIT_DEC_30_2025.md`
+
+### Current Fixes Applied
+
+| Issue | Status | Description |
+|-------|--------|-------------|
+| RSVP Sync | ✅ FIXED | Unified cache invalidation keys between EventsPage and EventDetailPage |
+| Photo Lightbox | ✅ COMPLETE | ImageLightbox.tsx with zoom/rotate/keyboard shortcuts |
+| Who Liked Modal | ✅ COMPLETE | WhoLikedModal.tsx with reaction icons |
+| QA Feedback | ✅ COMPLETE | FeedbackButton in UnifiedTopBar.tsx (desktop) |
+
+### God-Level Login Credentials
+
+For VibeCoding execution and admin access:
+- **Email:** admin@mundotango.life
+- **Role:** Admin (roleLevel >= 8)
+- **Alt:** scott@boddye.com
+
+### Mr. Blue VibeCoding Execution
+
+When god-level users interact with Mr. Blue:
+1. Detect tool intent from message
+2. Execute VibeCoding tools (readFile, writeFile, grepFiles, etc.)
+3. Stream progress in real-time
+4. Return results conversationally
+
+### Assumption: Things Are Broken
+
+Per Scott's directive, assume ALL features need verification:
+- Test cache invalidation on ALL mutations (not just RSVP)
+- Check ALL list/detail view pairs for sync issues
+- Validate ALL form submissions work end-to-end
+- Verify ALL navigation flows complete without errors
+
+### Audit Execution Rules
+
+1. **RESEARCH FIRST** - Always check existing code before changing
+2. **PARALLEL WORK** - Use Promise.all, parallel tool calls
+3. **RECURSIVE ANALYSIS** - Read imports, dependencies, related files
+4. **TARGET 95-99/100** - Test before completing, validate edge cases
+5. **AUTO-FIX** - 3-attempt retry, <10% escalation rate
+
+---
+
+**Mr. Blue Brain v3.1** - Modular, Token-Efficient, 140+ Agents, LIVE AND OPERATIONAL + PATTERN 99 ACTIVE

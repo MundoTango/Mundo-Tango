@@ -68,10 +68,12 @@ export default function EventDetailPage() {
     enabled: !!id,
   });
 
+  // Use consistent query key with EventsPage/useEventRSVPs for proper cache sync
+  const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
   const { data: attendees } = useQuery<any[]>({
-    queryKey: ["/api/events", id, "attendees"],
+    queryKey: ["/api/events", numericId, "attendees", "all"],
     queryFn: async () => {
-      const res = await fetch(`/api/events/${id}/attendees`, { credentials: "include" });
+      const res = await fetch(`/api/events/${id}/attendees?status=all`, { credentials: "include" });
       if (!res.ok) return [];
       return res.json();
     },
@@ -81,8 +83,25 @@ export default function EventDetailPage() {
   const rsvpMutation = useMutation({
     mutationFn: (status: string) => apiRequest(`/api/events/${id}/rsvp`, "POST", { status }),
     onSuccess: () => {
+      // numericId already defined above for query key consistency
+      
+      // Invalidate event detail
       queryClient.invalidateQueries({ queryKey: ["/api/events", id] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", numericId] });
+      
+      // CRITICAL: Invalidate ALL attendees query variants (with and without status filter)
+      // This ensures sync between EventDetailPage and EventsPage which use different query keys
       queryClient.invalidateQueries({ queryKey: ["/api/events", id, "attendees"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", numericId, "attendees"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", numericId, "attendees", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", numericId, "attendees", "going"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", numericId, "attendees", "maybe"] });
+      
+      // Invalidate list views that show RSVP status
+      queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events/smart"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+      
       toast({ title: "RSVP updated successfully!" });
     },
     onError: () => {
