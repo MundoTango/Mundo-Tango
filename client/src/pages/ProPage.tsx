@@ -43,6 +43,10 @@ interface ProPageData {
   testimonialsEnabled: boolean;
   testimonials: { id: number; text: string; author: string }[];
   proPageContactEmail?: string;
+  // PRO profile fields
+  specialties?: string[];
+  yearsOfExperience?: number | null;
+  founderTitle?: string | null;
 }
 
 const contactFormSchema = z.object({
@@ -385,7 +389,7 @@ export default function ProPage() {
                     </motion.div>
                     
                     <Badge className="mb-4 bg-cyan-500/20 text-cyan-200 border-cyan-400/30" data-testid="badge-pro">
-                      <Star className="w-3 h-3 mr-1" /> PRO Member
+                      <Star className="w-3 h-3 mr-1" /> {data.founderTitle || 'PRO Member'}
                     </Badge>
                     
                     <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" data-testid="text-name">
@@ -397,6 +401,30 @@ export default function ProPage() {
                         <MapPin className="w-4 h-4" />
                         {[data.city, data.country].filter(Boolean).join(', ')}
                       </p>
+                    )}
+                    
+                    {/* Years of Experience */}
+                    {data.yearsOfExperience && data.yearsOfExperience > 0 && (
+                      <p className="text-white/70 flex items-center gap-1 mb-3" data-testid="text-experience">
+                        <Calendar className="w-4 h-4" />
+                        {data.yearsOfExperience}+ years of tango experience
+                      </p>
+                    )}
+                    
+                    {/* Specialties */}
+                    {data.specialties && data.specialties.length > 0 && (
+                      <div className="flex flex-wrap justify-center gap-2 mb-4" data-testid="specialties-container">
+                        {data.specialties.map((specialty, index) => (
+                          <Badge 
+                            key={index}
+                            variant="outline" 
+                            className="bg-white/5 text-white/80 border-white/20"
+                            data-testid={`badge-specialty-${index}`}
+                          >
+                            {specialty}
+                          </Badge>
+                        ))}
+                      </div>
                     )}
                     
                     {data.bio && (

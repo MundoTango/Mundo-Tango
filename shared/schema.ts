@@ -157,6 +157,9 @@ export const users = pgTable(
     proPageEnabled: boolean("pro_page_enabled").default(false),
     proPageSections: jsonb("pro_page_sections"),
     proPageTheme: varchar("pro_page_theme"),
+    // PRO Profile Details
+    specialties: text("specialties").array(), // ['Teaching', 'Performing', 'DJing', etc.]
+    founderTitle: varchar("founder_title", { length: 100 }), // Special title for founders/admins
   },
   (table) => ({
     emailIdx: index("users_email_idx").on(table.email),

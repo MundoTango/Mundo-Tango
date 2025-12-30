@@ -103,17 +103,29 @@ router.get('/page/:slug', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Pro page not found' });
     }
 
+    // Calculate years of experience from tangoStartYear
+    const currentYear = new Date().getFullYear();
+    const yearsOfExperience = user.tangoStartYear 
+      ? currentYear - user.tangoStartYear 
+      : null;
+
     const proPageData = {
       id: user.id,
       name: user.name,
       bio: user.bio,
       photo: user.profileImage,
+      city: user.city,
+      country: user.country,
       socialLinks: user.socialLinks || {},
       galleryEnabled: (user.proPageSections as any)?.galleryEnabled ?? true,
       photos: user.portfolioUrls || [],
       testimonialsEnabled: (user.proPageSections as any)?.testimonialsEnabled ?? false,
       testimonials: [],
       proPageContactEmail: user.proPageContactEmail,
+      // New PRO profile fields
+      specialties: user.specialties || [],
+      yearsOfExperience,
+      founderTitle: user.founderTitle,
     };
 
     return res.json(proPageData);
