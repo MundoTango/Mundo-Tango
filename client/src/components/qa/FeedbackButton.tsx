@@ -50,8 +50,10 @@ export function FeedbackButton() {
         title: data.title,
         description: data.description,
         currentPage: window.location.pathname,
-        sessionId,
+        sessionId: sessionId || `guest-${Date.now()}`,
         sessionSnapshot: snapshot,
+        userId: user?.id || null,
+        isGuest: !user,
       });
     },
     onSuccess: () => {

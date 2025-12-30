@@ -5,6 +5,7 @@ import { queryClient } from "@/lib/queryClient";
 import type { SelectUser } from "@shared/client-types";
 import i18n from "@/lib/i18n";
 import { cacheUserForGodDetection } from "@/lib/godLevelDetection";
+import { broadcast, subscribe } from "@/lib/broadcastSync";
 
 const API_BASE_URL = "";
 
@@ -235,6 +236,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // UX-007: Multi-tab state sync - listen for auth events from other tabs
+  useEffect(() => {
+    const unsubLogin = subscribe('auth:login', () => {
+      console.log('[Auth] Cross-tab login detected, refreshing user...');
+      loadCurrentUser();
+    });
+
+    const unsubLogout = subscribe('auth:logout', () => {
+      console.log('[Auth] Cross-tab logout detected, clearing state...');
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      localStorage.removeItem('accessToken');
+      navigate('/login');
+    });
+
+    return () => {
+      unsubLogin();
+      unsubLogout();
+    };
+  }, [navigate]);
+
   const getCsrfToken = () => {
     const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
     return match ? match[1] : null;
@@ -281,6 +304,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Dispatch auth:login event for WebSocket context to connect
       window.dispatchEvent(new CustomEvent('auth:login'));
+      
+      // Broadcast to other tabs for multi-tab sync (UX-007)
+      broadcast('auth:login', { userId: data.user?.id });
 
       // Fetch full user data (including city, tangoRoles) from /api/auth/me
       // The login response doesn't include all profile fields
@@ -399,6 +425,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Dispatch auth:logout event for WebSocket context to disconnect
       window.dispatchEvent(new CustomEvent('auth:logout'));
+      
+      // Broadcast to other tabs for multi-tab sync (UX-007)
+      broadcast('auth:logout');
       
       navigate("/login");
     }
