@@ -567,8 +567,75 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         </div>
       </ScrollArea>
 
+      {/* Quick Action Buttons */}
+      <div className="px-4 py-2 border-t bg-muted/30">
+        <div className="flex flex-wrap gap-2 max-w-2xl mx-auto justify-center">
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5 text-xs"
+            onClick={() => setInput("Show me upcoming events near me")}
+            data-testid="button-quick-events"
+          >
+            📅 Events
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5 text-xs"
+            onClick={() => setInput("What cities have the best tango scene?")}
+            data-testid="button-quick-cities"
+          >
+            🌍 Cities
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5 text-xs"
+            onClick={() => setInput("How do I create an event?")}
+            data-testid="button-quick-help"
+          >
+            ❓ Help
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5 text-xs"
+            onClick={() => setInput("What are the platform features?")}
+            data-testid="button-quick-features"
+          >
+            ✨ Features
+          </Button>
+        </div>
+      </div>
+
       {/* Input Area */}
       <div className="p-4 border-t bg-background/80 backdrop-blur-sm">
+        {/* Smart Suggestions */}
+        <div className="flex flex-wrap gap-1.5 mb-3 max-w-2xl mx-auto">
+          <button
+            onClick={() => { setInput("Find milongas this weekend"); }}
+            className="px-2.5 py-1 text-[11px] bg-primary/10 hover:bg-primary/20 text-primary rounded-full transition-colors"
+            data-testid="suggestion-milongas"
+          >
+            Find milongas this weekend
+          </button>
+          <button
+            onClick={() => { setInput("Recommend teachers near me"); }}
+            className="px-2.5 py-1 text-[11px] bg-primary/10 hover:bg-primary/20 text-primary rounded-full transition-colors"
+            data-testid="suggestion-teachers"
+          >
+            Recommend teachers
+          </button>
+          <button
+            onClick={() => { setInput("What's new on the platform?"); }}
+            className="px-2.5 py-1 text-[11px] bg-primary/10 hover:bg-primary/20 text-primary rounded-full transition-colors"
+            data-testid="suggestion-whats-new"
+          >
+            What's new?
+          </button>
+        </div>
+
         <div className="relative flex items-end gap-2 max-w-2xl mx-auto">
           <Textarea
             value={input}
