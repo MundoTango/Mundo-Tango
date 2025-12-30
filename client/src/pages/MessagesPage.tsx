@@ -1,56 +1,43 @@
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useSearch } from "wouter";
-import { useConversations, useConversation, useSendMessage, useMessagesRealtime, useMarkMessagesAsRead } from "@/hooks/useMessages";
-import { useConnectedChannels, useUnreadCount, CHANNEL_CONFIG, type MessageChannel } from "@/hooks/useMessageChannels";
+import { useConversations, useConversation, useSendMessage, useMessagesRealtime, useMarkMessagesAsRead, useCreateConversation } from "@/hooks/useMessages";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageCircle, Send, Plus, CheckCircle, Loader2, Users } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { MessageCircle, Send, Plus, CheckCircle, Loader2, Users, Search, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { useQuery } from "@tanstack/react-query";
 
 export default function MessagesPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showNewChatDialog, setShowNewChatDialog] = useState(false);
   const { data: conversations, isLoading } = useConversations();
   const filteredConversations = conversations?.filter(c => 
     c.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.lastMessage?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
-  const [search] = useSearch();
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const mrblue = params.get("mrblue");
-    const url = params.get("url");
-    if (mrblue === "analyze-website" && url) {
-      startConversation(url);
-      params.delete("mrblue");
-      params.delete("url");
-      window.history.replaceState({}, document.title, window.location.pathname + '?' + params.toString());
-    }
-  }, []);
-
-  const startConversation = (url: string) => {
-    if (filteredConversations.length > 0) {
-      setSelectedConversationId(filteredConversations[0].id);
-      // sendMessage.mutateAsync is handled inside ConversationView, 
-      // but we need to ensure we don't crash if it's called here incorrectly.
-    }
-  };
 
   useEffect(() => {
     if (!selectedConversationId && filteredConversations.length > 0 && !isLoading) {
       setSelectedConversationId(filteredConversations[0].id);
     }
   }, [filteredConversations, selectedConversationId, isLoading]);
+
+  const handleNewConversation = (conversationId: string) => {
+    setSelectedConversationId(conversationId);
+    setShowNewChatDialog(false);
+  };
 
   return (
     <SelfHealingErrorBoundary pageName={t('pages:messages.errorBoundary', 'Messages')} fallbackRoute="/feed">
@@ -68,15 +55,58 @@ export default function MessagesPage() {
               className="h-[calc(100vh-12rem)] md:h-[700px]"
             >
               <div className="h-full flex rounded-3xl overflow-hidden border border-white/10 shadow-2xl backdrop-blur-3xl bg-card/30">
+                {/* Sidebar */}
                 <div className="flex-1 border-r border-white/5 flex flex-col max-w-[300px] md:max-w-[35%] bg-card/40">
-                  <div className="p-4 border-b border-white/5 flex items-center justify-between">
+                  {/* Header with New Chat button */}
+                  <div className="p-4 border-b border-white/5 flex items-center justify-between gap-2">
                     <h2 className="font-serif text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                       {t('pages:messages.chats', 'Chats')}
                     </h2>
-                    <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full hover:bg-primary/10">
-                      <Plus className="h-4 w-4" />
-                    </Button>
+                    <Dialog open={showNewChatDialog} onOpenChange={setShowNewChatDialog}>
+                      <DialogTrigger asChild>
+                        <Button 
+                          size="icon" 
+                          variant="ghost"
+                          data-testid="button-new-chat"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>{t('pages:messages.newConversation', 'Start New Conversation')}</DialogTitle>
+                        </DialogHeader>
+                        <NewChatSearch onSelect={handleNewConversation} onClose={() => setShowNewChatDialog(false)} />
+                      </DialogContent>
+                    </Dialog>
                   </div>
+
+                  {/* Search Input */}
+                  <div className="p-3 border-b border-white/5">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                      <Input
+                        placeholder={t('pages:messages.searchChats', 'Search chats...')}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 bg-muted/30 border-none"
+                        data-testid="input-search-chats"
+                      />
+                      {searchQuery && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6"
+                          onClick={() => setSearchQuery("")}
+                          data-testid="button-clear-search"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Conversation List */}
                   <ScrollArea className="flex-1">
                     {isLoading ? (
                       <div className="p-6 space-y-6">
@@ -105,10 +135,11 @@ export default function MessagesPage() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
                             onClick={() => setSelectedConversationId(conversation.id)}
+                            data-testid={`button-conversation-${conversation.id}`}
                             className={`w-full p-3 rounded-2xl hover-elevate active-elevate-2 text-left transition-all duration-200 ${
                               selectedConversationId === conversation.id 
                                 ? "bg-primary/10 ring-1 ring-primary/20 shadow-inner" 
-                                : "hover:bg-white/5"
+                                : ""
                             }`}
                           >
                             <div className="flex items-center gap-3">
@@ -128,8 +159,8 @@ export default function MessagesPage() {
                                   <p className={`text-sm font-bold truncate ${selectedConversationId === conversation.id ? "text-primary" : "text-foreground"}`}>
                                     {conversation.name || t('pages:messages.defaultConversationName', "Conversation")}
                                   </p>
-                                  <span className="text-[10px] text-muted-foreground/60">
-                                    {conversation.lastMessageTime ? new Date(conversation.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                                  <span className="text-[10px] text-muted-foreground/60 flex-shrink-0">
+                                    {(conversation.timestamp || conversation.lastMessageTime) ? new Date(conversation.timestamp || conversation.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                                   </span>
                                 </div>
                                 <p className={`text-[11px] truncate ${conversation.isRead === false ? "text-foreground font-semibold" : "text-muted-foreground/80"}`}>
@@ -150,12 +181,23 @@ export default function MessagesPage() {
                           <MessageCircle className="w-10 h-10 text-muted-foreground/20" />
                         </div>
                         <h3 className="text-sm font-serif font-bold text-muted-foreground/40">
-                          {t('pages:messages.noChats', 'No active chats')}
+                          {searchQuery ? t('pages:messages.noResults', 'No matching chats') : t('pages:messages.noChats', 'No active chats')}
                         </h3>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setShowNewChatDialog(true)}
+                          data-testid="button-start-first-chat"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          {t('pages:messages.startChat', 'Start a chat')}
+                        </Button>
                       </motion.div>
                     )}
                   </ScrollArea>
                 </div>
+
+                {/* Main Chat Area */}
                 <div className="flex-1 flex flex-col min-w-0 relative">
                   {selectedConversationId ? (
                     <ConversationView conversationId={selectedConversationId} />
@@ -177,6 +219,13 @@ export default function MessagesPage() {
                           {t('pages:messages.selectDesc', 'Select a conversation from the sidebar to start chatting with your tango community.')}
                         </p>
                       </div>
+                      <Button 
+                        onClick={() => setShowNewChatDialog(true)}
+                        data-testid="button-new-chat-main"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        {t('pages:messages.newConversation', 'Start New Conversation')}
+                      </Button>
                     </motion.div>
                   )}
                 </div>
@@ -189,7 +238,109 @@ export default function MessagesPage() {
   );
 }
 
+function NewChatSearch({ onSelect, onClose }: { onSelect: (id: string) => void; onClose: () => void }) {
+  const { t } = useTranslation(["pages", "common"]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const createConversation = useCreateConversation();
+
+  const { data: users, isLoading } = useQuery({
+    queryKey: ["/api/users/search", searchQuery],
+    queryFn: async () => {
+      if (!searchQuery.trim() || searchQuery.length < 2) return [];
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      
+      const response = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}`, {
+        credentials: "include",
+        headers,
+      });
+      if (!response.ok) return [];
+      return response.json();
+    },
+    enabled: searchQuery.length >= 2,
+  });
+
+  const handleSelectUser = async (userId: number) => {
+    try {
+      const result = await createConversation.mutateAsync({ 
+        participantIds: [String(userId)], 
+        isGroup: false 
+      });
+      onSelect(result.id);
+    } catch (error) {
+      console.error("Failed to create conversation:", error);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+        <Input
+          placeholder={t('pages:messages.searchUsers', 'Search users by name...')}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9"
+          autoFocus
+          data-testid="input-search-users"
+        />
+      </div>
+
+      <ScrollArea className="h-[300px]">
+        {isLoading ? (
+          <div className="space-y-3 p-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-3 p-2">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+            ))}
+          </div>
+        ) : searchQuery.length < 2 ? (
+          <div className="text-center text-muted-foreground/60 py-8">
+            <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">{t('pages:messages.typeToSearch', 'Type at least 2 characters to search')}</p>
+          </div>
+        ) : users && users.length > 0 ? (
+          <div className="space-y-1 p-2">
+            {users.map((user: any) => (
+              <button
+                key={user.id}
+                onClick={() => handleSelectUser(user.id)}
+                disabled={createConversation.isPending}
+                data-testid={`button-select-user-${user.id}`}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover-elevate active-elevate-2 text-left transition-all"
+              >
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={user.profileImageUrl || undefined} />
+                  <AvatarFallback>{user.name?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm truncate">{user.name}</p>
+                  {user.username && (
+                    <p className="text-xs text-muted-foreground/60 truncate">@{user.username}</p>
+                  )}
+                </div>
+                {createConversation.isPending && (
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                )}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-muted-foreground/60 py-8">
+            <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">{t('pages:messages.noUsersFound', 'No users found')}</p>
+          </div>
+        )}
+      </ScrollArea>
+    </div>
+  );
+}
+
 function ConversationView({ conversationId }: { conversationId: string }) {
+  const { t } = useTranslation(["pages", "common"]);
   const [message, setMessage] = useState("");
   const { user } = useAuth();
   const { data: messages, isLoading } = useConversation(conversationId);
@@ -244,7 +395,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
       transition={{ duration: 0.3 }}
     >
       {/* Conversation Header */}
-      <div className="p-4 border-b flex items-center justify-between bg-card/30">
+      <div className="p-4 border-b flex items-center justify-between gap-2 bg-card/30">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 ring-2 ring-primary/10">
             <AvatarFallback>
@@ -290,6 +441,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                   className={`flex gap-3 ${isOwn ? "flex-row-reverse" : ""}`}
+                  data-testid={`message-${msg.id}`}
                 >
                   <Avatar className="h-8 w-8 flex-shrink-0 ring-1 ring-border">
                     <AvatarFallback className="text-[10px]">
@@ -302,7 +454,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                       className={`relative rounded-2xl px-4 py-2.5 shadow-sm transition-all duration-200 ${
                         isOwn 
                           ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-tr-none" 
-                          : "bg-card border rounded-tl-none hover:bg-accent/50"
+                          : "bg-card border rounded-tl-none"
                       }`}
                     >
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -330,9 +482,9 @@ function ConversationView({ conversationId }: { conversationId: string }) {
             </div>
             <div>
               <h3 className="text-lg font-serif font-bold text-muted-foreground/50">
-                No messages yet
+                {t('pages:messages.noMessagesYet', 'No messages yet')}
               </h3>
-              <p className="text-sm text-muted-foreground/40">Start a conversation to see messages here</p>
+              <p className="text-sm text-muted-foreground/40">{t('pages:messages.startConversation', 'Start a conversation to see messages here')}</p>
             </div>
           </motion.div>
         )}
@@ -348,7 +500,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                 handleTyping();
               }}
               placeholder={t('pages:messages.typeMessage', 'Type a message...')}
-              className="resize-none min-h-[44px] max-h-[120px] rounded-2xl pr-12 py-3 bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary/20 transition-all duration-200"
+              className="resize-none min-h-[44px] max-h-[120px] rounded-2xl py-3 bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary/20 transition-all duration-200"
               rows={1}
               data-testid="input-message"
               onKeyDown={(e) => {
@@ -358,21 +510,12 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                 }
               }}
             />
-            <div className="absolute right-2 bottom-1.5 flex items-center gap-1">
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8 rounded-full text-muted-foreground/50 hover:text-primary transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
           <Button
             type="submit"
             disabled={!message.trim() || sendMessage.isPending}
             size="icon"
-            className="h-10 w-10 rounded-full shadow-lg shadow-primary/20 transition-all active:scale-95"
+            className="rounded-full shadow-lg shadow-primary/20 transition-all active:scale-95"
             data-testid="button-send-message"
           >
             {sendMessage.isPending ? (
@@ -382,17 +525,20 @@ function ConversationView({ conversationId }: { conversationId: string }) {
             )}
           </Button>
         </form>
-        <div className="mt-2 text-center h-4">
+        <AnimatePresence>
           {typingUsers.length > 0 && (
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-[10px] text-primary font-medium animate-pulse"
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-2 text-center"
             >
-              Someone is typing...
-            </motion.p>
+              <p className="text-[10px] text-primary font-medium animate-pulse">
+                {t('pages:messages.someoneTyping', 'Someone is typing...')}
+              </p>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
     </motion.div>
   );

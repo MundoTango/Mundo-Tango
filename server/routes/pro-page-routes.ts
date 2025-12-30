@@ -1,8 +1,8 @@
 import { Router, type Request, Response } from 'express';
 import { authenticateToken, type AuthRequest, optionalAuth } from '../middleware/auth';
 import { db } from '../db';
-import { users } from '@shared/schema';
-import { eq, ne, and, sql } from 'drizzle-orm';
+import { users, chatRooms, chatMessages, notifications } from '@shared/schema';
+import { eq, ne, and, sql, or } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();

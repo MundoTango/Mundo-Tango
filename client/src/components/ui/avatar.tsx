@@ -28,7 +28,7 @@ const AvatarImage = React.forwardRef<
 >(({ className, src, size = 'md', ...props }, ref) => (
   <AvatarPrimitive.Image
     ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
+    className={cn("aspect-square h-full w-full object-cover object-center", className)}
     src={optimizeAvatar(src, size)}
     {...props}
   />

@@ -14,6 +14,9 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - Auto-Fix Maximization - All auto-fix as much as possible (3-attempt retry, <10% escalation rate)
 - Validation Loop - observe → decide → act → validate → adapt (not just automation)
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
+- Three-Layer Completion - Every feature requires: UI Layer + Data Layer + Interaction Layer (never mark UI-only as complete)
+- Never mark messaging tasks complete without E2E verification - Must test PRO contact → inbox flow and new conversation creation
+- Verify imports exist before using - Check all referenced schemas/tables are imported at file top
 
 ## System Architecture
 
