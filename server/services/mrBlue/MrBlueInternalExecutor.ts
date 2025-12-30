@@ -149,18 +149,9 @@ export class MrBlueInternalExecutor {
         await LearningRetentionService.recordSuccessPattern({
           agentId: 'MrBlueInternalExecutor',
           task: request.description,
-          taskType: 'bug_fix',
-          pattern: {
-            patternType: 'internal_execution',
-            description: `Fixed ${request.bugId} via Pattern 99`,
-            appliedTo: request.targetFiles || [],
-          },
-          outcome: 'success',
-          metadata: {
-            bugId: request.bugId,
-            elapsedMs,
-            filesModified: execution.filesModified,
-          },
+          solution: `Fixed ${request.bugId} via Pattern 99. Files: ${execution.filesModified.join(', ')}`,
+          validationScore: 1.0,
+          patternsUsed: [],
         });
       } catch (e) {
         console.log(`[MrBlue Internal] Note: Pattern recording skipped`);
