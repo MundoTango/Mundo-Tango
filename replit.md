@@ -35,6 +35,20 @@ A multi-stage scraping architecture is coordinated by a Master Orchestrator, uti
 ### Platform Features
 Core functionalities include social features (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and an International Payment System supporting 30 currencies.
 
+### Messaging System (Updated Dec 30, 2025)
+- **Database**: Uses `directMessages` table (PRIMARY). `chatRooms`/`chatMessages` are DEPRECATED.
+- **PRO Contact → Inbox**: Contact form submissions route to directMessages
+- **New Conversations**: User search via `/api/users/search` endpoint
+- **Real-time**: Currently polling (5s), WebSocket planned
+- **Group Chat**: NOT IMPLEMENTED (throws error)
+- **Documentation**: See `docs/PRD_MESSAGING_AND_PRO_PAGE.md` for full specification
+
+### PRO Pages (/p/:slug)
+- **Public Profiles**: Glassmorphic design with bio, gallery, testimonials
+- **Contact Form**: Submits to PRO's inbox via directMessages
+- **Vanity URLs**: `/:username` resolves to PRO page or user profile
+- **Documentation**: See `docs/prd/VANITY_URLS.md` for URL routing spec
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
