@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Send, Loader2, X, Brain, Zap, Eye, CheckCircle, AlertTriangle } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Send, Loader2, X, Brain, Zap, Eye, CheckCircle, AlertTriangle, HelpCircle, Sparkles, Bug, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,6 +9,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useMrBlue } from "@/contexts/MrBlueContext";
+import { useJourneyTracker } from "@/hooks/useJourneyTracker";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Message {
   id: string;
@@ -39,6 +41,11 @@ interface MrBlueChatProps {
 
 export function MrBlueChat({ onClose }: MrBlueChatProps) {
   const { ctoWelcome, clearCTOWelcome, selfHealError, clearSelfHealError, openWalkthrough, walkthroughResult, setWalkthroughResult } = useMrBlue();
+  const { user } = useAuth();
+  const { getSnapshot, trackStep, sessionId } = useJourneyTracker(user?.id);
+  
+  // QA Mode state - tracks if user is in help/feature request mode
+  const [qaMode, setQaMode] = useState<'none' | 'help' | 'features' | 'bug'>('none');
   
   // Generate welcome message based on context
   const getWelcomeMessage = () => {
@@ -470,6 +477,99 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     }
   };
 
+  // QA System Handler: Help Button - Opens support flow with journey context
+  const handleHelpRequest = useCallback(() => {
+    const snapshot = getSnapshot();
+    trackStep({ path: location, action: 'qa_help_opened' });
+    setQaMode('help');
+    
+    // Add system message with journey context
+    const helpMessage: Message = {
+      id: `qa-help-${Date.now()}`,
+      role: 'assistant',
+      content: `**Need Help?** I'm here to assist you!
+
+I can see you've been browsing: **${snapshot.currentPath}**
+Session: ${snapshot.journey.length} pages visited
+
+**Quick Options:**
+- Describe what you're trying to do and I'll guide you
+- Report something that's not working (I'll capture your context)
+- Ask about any platform feature
+
+What would you like help with?`,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, helpMessage]);
+  }, [getSnapshot, trackStep, location]);
+
+  // QA System Handler: Features Button - Opens feature discovery/request flow
+  const handleFeaturesRequest = useCallback(() => {
+    const snapshot = getSnapshot();
+    trackStep({ path: location, action: 'qa_features_opened' });
+    setQaMode('features');
+    
+    const featuresMessage: Message = {
+      id: `qa-features-${Date.now()}`,
+      role: 'assistant',
+      content: `**Platform Features & Requests**
+
+Based on your current page (**${snapshot.currentPath}**), here are relevant features:
+
+**Available Features:**
+- Events discovery and RSVP
+- City tango scenes and communities
+- Messaging and connections
+- Profile and preferences
+- Teacher/organizer tools
+
+**Want something new?** Tell me about a feature you'd like to see and I'll:
+1. Check if it already exists
+2. Record your request for the development team
+3. Suggest similar existing features
+
+What interests you?`,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, featuresMessage]);
+  }, [getSnapshot, trackStep, location]);
+
+  // QA System Handler: Bug Report - Captures full context
+  const handleBugReport = useCallback(() => {
+    const snapshot = getSnapshot();
+    trackStep({ path: location, action: 'qa_bug_report' });
+    setQaMode('bug');
+    
+    const recentJourney = snapshot.journey.slice(-5).map(s => 
+      `- ${s.action}: ${s.path}${s.element ? ` (${s.element})` : ''}`
+    ).join('\n');
+    
+    const bugMessage: Message = {
+      id: `qa-bug-${Date.now()}`,
+      role: 'assistant',
+      content: `**Bug Report Mode**
+
+I've captured your session context for the development team:
+
+**Session:** ${sessionId}
+**Current Page:** ${snapshot.currentPath}
+**Browser:** ${snapshot.browserInfo.platform}
+**Viewport:** ${snapshot.browserInfo.viewport.width}x${snapshot.browserInfo.viewport.height}
+
+**Recent Activity:**
+${recentJourney}
+
+Please describe the issue you encountered:
+- What were you trying to do?
+- What happened instead?
+- Any error messages?
+
+I'll analyze this and may be able to fix it automatically.`,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, bugMessage]);
+  }, [getSnapshot, trackStep, location, sessionId]);
+
   return (
     <main className="flex flex-col h-full bg-gradient-to-b from-background via-background to-muted/30">
       {/* Header */}
@@ -600,44 +700,38 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         </div>
       </ScrollArea>
 
-      {/* Quick Action Buttons */}
+      {/* QA System Quick Action Buttons */}
       <div className="px-4 py-2 border-t bg-muted/30">
         <div className="flex flex-wrap gap-2 max-w-2xl mx-auto justify-center">
           <Button
             size="sm"
-            variant="outline"
+            variant={qaMode === 'help' ? 'default' : 'outline'}
             className="gap-1.5 text-xs"
-            onClick={() => setInput("Show me upcoming events near me")}
-            data-testid="button-quick-events"
+            onClick={handleHelpRequest}
+            data-testid="button-qa-help"
           >
-            📅 Events
+            <HelpCircle className="h-3.5 w-3.5" />
+            Help
           </Button>
           <Button
             size="sm"
-            variant="outline"
+            variant={qaMode === 'features' ? 'default' : 'outline'}
             className="gap-1.5 text-xs"
-            onClick={() => setInput("What cities have the best tango scene?")}
-            data-testid="button-quick-cities"
+            onClick={handleFeaturesRequest}
+            data-testid="button-qa-features"
           >
-            🌍 Cities
+            <Sparkles className="h-3.5 w-3.5" />
+            Features
           </Button>
           <Button
             size="sm"
-            variant="outline"
+            variant={qaMode === 'bug' ? 'default' : 'outline'}
             className="gap-1.5 text-xs"
-            onClick={() => setInput("How do I create an event?")}
-            data-testid="button-quick-help"
+            onClick={handleBugReport}
+            data-testid="button-qa-bug"
           >
-            ❓ Help
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="gap-1.5 text-xs"
-            onClick={() => setInput("What are the platform features?")}
-            data-testid="button-quick-features"
-          >
-            ✨ Features
+            <Bug className="h-3.5 w-3.5" />
+            Report Bug
           </Button>
         </div>
       </div>

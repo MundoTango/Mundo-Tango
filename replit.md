@@ -54,6 +54,24 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **FeedbackButton.tsx** - Fixed import error: `@/hooks/useMrBlue` → `@/contexts/MrBlueContext`
 - **App.tsx** - Removed duplicate ProPage Route (already in MiscRoutes) and unused import that caused React ErrorBoundary crashes
 
+### QA System Integrated into Mr. Blue Chat (Pattern 67)
+Replaced simple quick-action buttons with full QA system inside Mr. Blue chat:
+
+**New QA Buttons in MrBlueChat.tsx:**
+- **Help** - Opens context-aware support flow with journey tracking
+- **Features** - Opens feature discovery/request flow with page context
+- **Report Bug** - Captures full session context (journey, browser info, viewport)
+
+**Integration:**
+- Uses `useJourneyTracker` hook for session tracking
+- Captures user navigation path and interactions
+- Context-aware responses based on current page
+- QA mode state tracks active workflow (help/features/bug)
+
+**Files Modified:**
+- `client/src/components/mrBlue/MrBlueChat.tsx` - Added QA handlers and buttons
+- `client/src/components/qa/FeedbackButton.tsx` - Simplified to open Mr. Blue chat
+
 ### Pattern 100 Master Orchestration - All Waves Complete
 Implemented complete VibeCoding evolution patterns for autonomous agent capabilities:
 
