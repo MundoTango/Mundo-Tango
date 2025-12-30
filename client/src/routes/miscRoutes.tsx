@@ -73,6 +73,7 @@ const ESATasksPage = lazy(() => import("@/pages/platform/ESATasksPage"));
 const ESACommunicationsPage = lazy(() => import("@/pages/platform/ESACommunicationsPage"));
 const AgentTasksPage = lazy(() => import("@/pages/AgentTasksPage"));
 const AgentCommunicationsPage = lazy(() => import("@/pages/AgentCommunicationsPage"));
+const UsernameProfilePage = lazy(() => import("@/pages/UsernameProfilePage"));
 
 const PROLearningPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then((m) => ({ default: m.LearningPage })));
 const PROMusicPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then((m) => ({ default: m.MusicPage })));
@@ -613,6 +614,11 @@ export function MiscRoutes() {
       <Route path="/p/:slug">
         <Suspense fallback={<LoadingFallback />}>
           <ProPage />
+        </Suspense>
+      </Route>
+      <Route path="/:username">
+        <Suspense fallback={<LoadingFallback />}>
+          <UsernameProfilePage />
         </Suspense>
       </Route>
       <Route component={NotFound} />

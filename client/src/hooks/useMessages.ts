@@ -32,8 +32,15 @@ export function useConversations() {
   return useQuery({
     queryKey: ["conversations"],
     queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      
       const response = await fetch("/api/messages/conversations", {
         credentials: "include",
+        headers,
       });
       if (!response.ok) {
         throw new Error("Failed to fetch conversations");
@@ -76,8 +83,15 @@ export function useConversation(id: string) {
         ? `/api/messages/direct/${targetId}`
         : `/api/messages/group/${targetId}`;
       
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(endpoint, {
         credentials: "include",
+        headers,
       });
       
       if (!response.ok) {
