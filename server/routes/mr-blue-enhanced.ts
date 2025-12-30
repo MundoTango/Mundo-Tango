@@ -240,6 +240,13 @@ function detectVibeCodingIntent(message: string): {
     /\bimplement\s+(this|the)\b/i,
     /\bcan you (add|fix|create|change|update|build|implement)/i,
     /\bplease (add|fix|create|change|update|build|implement)/i,
+    /\bpattern\s*9{1,2}\b/i,
+    /\bexecute\s+(pattern|audit|fix|phase)/i,
+    /\bspawn\s+(fix\s+)?subagent/i,
+    /\bvibecoding\b/i,
+    /\baudit\s+(and\s+)?fix/i,
+    /\bfix\s+all\s+(issues?|bugs?)/i,
+    /\bauto.?fix/i,
   ];
   
   // Check for matches

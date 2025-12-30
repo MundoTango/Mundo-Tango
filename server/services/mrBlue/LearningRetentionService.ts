@@ -449,4 +449,93 @@ export class LearningRetentionService {
       return null;
     }
   }
+
+  /**
+   * Record a successful pattern for future learning
+   * Called when VibeCoding or Auto-Retry successfully completes a task
+   */
+  static async recordSuccessPattern(params: {
+    agentId: string;
+    task: string;
+    solution: string;
+    validationScore: number;
+    patternsUsed?: string[];
+  }): Promise<void> {
+    try {
+      const { agentId, task, solution, validationScore, patternsUsed = [] } = params;
+      
+      console.log(`[LearningRetention] Recording success pattern for ${agentId}: ${task.substring(0, 50)}...`);
+
+      // Create or update pattern based on the successful task
+      const patternName = `Success: ${task.substring(0, 100)}`;
+      const signature = task.toLowerCase().replace(/[^a-z0-9\s]/g, '').substring(0, 200);
+
+      // Check if similar pattern exists
+      const existingPatterns = await db
+        .select()
+        .from(learningPatterns)
+        .where(
+          and(
+            sql`${learningPatterns.discoveredBy} @> ARRAY[${agentId}]::text[]` as any,
+            eq(learningPatterns.isActive, true)
+          )
+        );
+
+      const existingPattern = existingPatterns.find(p => 
+        p.problemSignature.toLowerCase().includes(signature.substring(0, 50))
+      );
+
+      if (existingPattern) {
+        // Update existing pattern with success
+        const newTimesApplied = existingPattern.timesApplied + 1;
+        const newSuccessRate = (existingPattern.successRate * existingPattern.timesApplied + validationScore) / newTimesApplied;
+        const newConfidence = Math.min(1, existingPattern.confidence + 0.05);
+
+        await db
+          .update(learningPatterns)
+          .set({
+            timesApplied: newTimesApplied,
+            successRate: newSuccessRate,
+            confidence: newConfidence,
+            lastUsed: new Date(),
+            updatedAt: new Date(),
+          })
+          .where(eq(learningPatterns.id, existingPattern.id));
+
+        console.log(`[LearningRetention] ✅ Updated existing pattern: ${existingPattern.patternName}`);
+      } else {
+        // Create new pattern
+        await db
+          .insert(learningPatterns)
+          .values({
+            patternName,
+            patternType: 'solution',
+            category: 'positive-pattern',
+            problemSignature: signature,
+            solutionTemplate: solution,
+            confidence: Math.min(1, 0.5 + validationScore * 0.5),
+            successRate: validationScore,
+            timesApplied: 1,
+            discoveredBy: [agentId],
+            isActive: true,
+            lastUsed: new Date(),
+            tags: ['auto-learned', 'vibecoding'],
+          });
+
+        console.log(`[LearningRetention] ✅ Created new success pattern: ${patternName}`);
+      }
+
+      // Update related patterns if any were used
+      for (const patternId of patternsUsed) {
+        try {
+          await this.trackPatternUsage(parseInt(patternId), undefined as any, true);
+        } catch {
+          // Ignore errors for pattern tracking
+        }
+      }
+    } catch (error: any) {
+      console.error('[LearningRetention] ❌ Failed to record success pattern:', error);
+      // Don't throw - this is not critical for VibeCoding success
+    }
+  }
 }

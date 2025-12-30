@@ -81,15 +81,16 @@ export class ValidationService {
     const allErrors: Array<{ file: string; line?: number; message: string; severity: 'error' | 'warning' | 'info' }> = [];
     let totalScore = 0;
 
+    // Pass JSON-stringified files array to each tier (validators expect JSON structure)
+    const filesPayload = JSON.stringify(files);
+
     for (const tier of cfg.tiers) {
       try {
-        for (const file of files) {
-          const tierResult = await tier.validator(file.content);
-          if (!tierResult.passed) {
-            allErrors.push(...tierResult.errors);
-          }
-          totalScore += tierResult.score * tier.weight;
+        const tierResult = await tier.validator(filesPayload);
+        if (!tierResult.passed) {
+          allErrors.push(...tierResult.errors);
         }
+        totalScore += tierResult.score * tier.weight;
       } catch (error: any) {
         console.error(`[ValidationService] Tier ${tier.name} failed:`, error.message);
         allErrors.push({
