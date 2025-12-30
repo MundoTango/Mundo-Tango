@@ -300,11 +300,14 @@ export const MBMD_PATTERNS: MBMDPattern[] = [
   }
 ];
 
+// Healing log entry type
+type HealingLogEntry = { timestamp: Date; agent: string; action: string; result: string };
+
 // Main Self-Healing Service
 export class SelfHealingService {
   private maxRetries: number = 3;
   private retryCount: number = 0;
-  private healingLog: Array<{ timestamp: Date; agent: string; action: string; result: string }> = [];
+  private healingLog: HealingLogEntry[] = [];
 
   constructor() {
     console.log('[Mr Blue Self-Healing] Service initialized with 10 agents');
@@ -371,7 +374,7 @@ export class SelfHealingService {
     pattern: MBMDPattern | null;
     fixResult: FixResult | null;
     retryRecommended: boolean;
-    healingLog: typeof this.healingLog;
+    healingLog: HealingLogEntry[];
   }> {
     console.log('[Mr Blue Self-Healing] Starting healing cycle...');
     
@@ -424,7 +427,7 @@ export class SelfHealingService {
     issuesFound: number;
     issuesFixed: number;
     retryCount: number;
-    log: typeof this.healingLog;
+    log: HealingLogEntry[];
   } {
     const issuesFixed = this.healingLog.filter(l => l.result === 'SUCCESS').length;
     return {

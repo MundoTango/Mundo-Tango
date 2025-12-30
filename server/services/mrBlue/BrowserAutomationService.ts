@@ -390,7 +390,10 @@ export class BrowserAutomationService {
         status: 'running',
         totalSteps,
         stepsCompleted: 0,
-      }).returning({ id: browserAutomationExecutions.id });
+      }).returning({ 
+        id: browserAutomationExecutions.id,
+        startedAt: browserAutomationExecutions.startedAt 
+      });
 
       executionId = execution.id;
 
