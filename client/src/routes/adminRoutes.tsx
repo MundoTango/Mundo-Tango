@@ -49,6 +49,7 @@ const AdminContentModerationDetailPage = lazy(() => import("@/pages/AdminContent
 const AdminSettingsPage = lazy(() => import("@/pages/AdminSettingsPage"));
 const AdminReportsPage = lazy(() => import("@/pages/AdminReportsPage"));
 const DataQualityPage = lazy(() => import("@/pages/admin/DataQualityPage"));
+const FeedbackManagementPage = lazy(() => import("@/pages/admin/FeedbackManagementPage"));
 
 export function AdminRoutes() {
   return (
@@ -409,6 +410,15 @@ export function AdminRoutes() {
           <AdminLayout>
             <Suspense fallback={<LoadingFallback />}>
               <DataQualityPage />
+            </Suspense>
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/feedback">
+        <ProtectedRoute>
+          <AdminLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <FeedbackManagementPage />
             </Suspense>
           </AdminLayout>
         </ProtectedRoute>

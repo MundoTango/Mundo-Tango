@@ -39,6 +39,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { LanguageSelectorButton } from "@/components/LanguageSelector";
 import { InlineSearchInput } from "@/components/navigation/InlineSearchInput";
+import { FeedbackButton } from "@/components/qa/FeedbackButton";
 import { cn } from "@/lib/utils";
 
 interface UnifiedTopBarProps {
@@ -349,6 +350,11 @@ function UnifiedTopBar({
           >
             {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </Button>
+
+          {/* Feedback Button - Desktop Only */}
+          <div className="hidden md:block">
+            <FeedbackButton />
+          </div>
 
           {/* Favorites - Desktop Only */}
           <Link href="/favorites" className="hidden md:block">

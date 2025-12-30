@@ -16,6 +16,7 @@ const FollowingPage = lazy(() => import("@/pages/FollowingPage"));
 const FollowersPage = lazy(() => import("@/pages/FollowersPage"));
 const MessagesPage = lazy(() => import("@/pages/MessagesPage"));
 const CreatePostPage = lazy(() => import("@/pages/CreatePostPage"));
+const PostDetailPage = lazy(() => import("@/pages/PostDetailPage"));
 const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
 const ReputationProfile = lazy(() => import("@/pages/ReputationProfile"));
@@ -282,6 +283,13 @@ export function SocialRoutes() {
             </Suspense>
           </AppLayout>
         </ProtectedRoute>
+      </Route>
+      <Route path="/posts/:id">
+        <AppLayout>
+          <Suspense fallback={<LoadingFallback />}>
+            <PostDetailPage />
+          </Suspense>
+        </AppLayout>
       </Route>
       <Route path="/notifications">
         <ProtectedRoute>

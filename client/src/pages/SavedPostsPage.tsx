@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 export default function SavedPostsPage() {
   const { t } = useTranslation(['pages', 'common']);
   const { data: savedPosts, isLoading } = useQuery<PostItemData[]>({
-    queryKey: ["/api/saved-posts"],
+    queryKey: ["/api/posts/saved"],
   });
 
   const postsWithSavedFlag = (savedPosts || []).map(post => ({

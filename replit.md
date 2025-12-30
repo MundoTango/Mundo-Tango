@@ -39,20 +39,49 @@ Core functionalities include social features (events, groups, posts, notificatio
 
 ## Recent Changes (December 30, 2025)
 
+### QA Feedback System (Pattern 67 + Pattern 99)
+Implemented complete user feedback system with 3-button interface and admin management:
+
+**Frontend Components:**
+- `client/src/components/qa/FeedbackButton.tsx` - 3-button feedback dialog (Support/Bug/Feature)
+- `client/src/hooks/useJourneyTracker.ts` - User journey/navigation tracking
+- `client/src/pages/admin/FeedbackManagementPage.tsx` - Admin ticket queue
+- `client/src/pages/PostDetailPage.tsx` - Single post view for Facebook sharing
+
+**Integration:**
+- FeedbackButton added to UnifiedTopBar (desktop)
+- Admin route: `/admin/feedback`
+- Mr. Blue integration for bug analysis via VibeCoding
+
+### Agent Knowledge Base
+Created living documentation for 140+ agents:
+- `docs/AGENT_KNOWLEDGE_BASE.md` - Agent onboarding guide
+- `docs/prd/QA_FEEDBACK_SYSTEM.md` - QA system PRD
+- `docs/prd/POSTS_SYSTEM.md` - Posts/Feed PRD
+- `docs/agent-knowledge/vibecoding.md` - VibeCoding patterns
+
 ### Pattern 99 Multi-Agent Site Auditor Implementation
 Created infrastructure for Mr. Blue to orchestrate bug fixes through VibeCoding pipeline:
 
 **New Files Created:**
-- `server/services/mrBlue/MrBlueInternalExecutor.ts` - Internal automation helper for server-side VibeCoding execution, bypasses CSRF for internal automation while maintaining validation layers
-- `server/scripts/pattern99-executor.ts` - CLI tool to run Pattern 99 bug fixes through Mr. Blue's VibeCodingService
+- `server/services/mrBlue/MrBlueInternalExecutor.ts` - Internal automation helper for server-side VibeCoding execution
+- `server/scripts/pattern99-executor.ts` - CLI tool to run Pattern 99 bug fixes
 
 **Bug Fixes (Tamás Report):**
-1. **Bug #1 (Event filtering)** - Fixed: CityDetailsPage.tsx now passes `city.city` instead of `city.name` to fetchCityEvents
-2. **Bug #2 (RSVP status)** - Fixed: Flattened `/api/events/my-rsvps` response from nested `{event, rsvp, organizer}` to `{eventId, status, event, organizer}`
-3. **Bug #4 (DM blank screen)** - Fixed: MessagesPage.tsx now auto-selects first conversation when data loads
+1. **Bug #1 (Event filtering)** - Fixed: CityDetailsPage.tsx now passes `city.city` instead of `city.name`
+2. **Bug #2 (RSVP status)** - Fixed: Flattened `/api/events/my-rsvps` response structure
+3. **Bug #4 (DM blank screen)** - Fixed: MessagesPage.tsx auto-selects first conversation
+4. **Bug #5 (Facebook share 404)** - Fixed: Created `/posts/:id` route with SEOHead for OG tags
+5. **Bug #7 (Saved posts)** - Fixed: Corrected API endpoint to `/api/posts/saved`
+6. **Bug #8 (Localization)** - Fixed: Added localStorage caching to i18n detection
+7. **Bug #9 (Toast z-index)** - Verified: Already correct at z-[99999]
+
+**Pending Enhancements:**
+- Bug #10: Photo lightbox (feature not yet implemented)
+- Bug #11: Who liked display (feature not yet implemented)
 
 **Code Cleanup:**
-- Cleaned up unused stub files (`server/routes/post-routes.ts`, `client/src/components/posts/PostCard.tsx`) that contained outdated/broken code
+- Cleaned up unused stub files (`server/routes/post-routes.ts`, `client/src/components/posts/PostCard.tsx`)
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase (for production admin tools)
