@@ -30,8 +30,8 @@ import {
 import { setupNavigationInterceptor } from "./lib/navigationInterceptor";
 import { HEAVY_FEATURES_ENABLED } from "./config/featureFlags";
 import { detectAndApplyLanguage } from "./lib/i18n";
-
 import { RouteLoader } from "./routes";
+import ProPage from "@/pages/ProPage";
 
 const FeatureDisabled = lazy(() => import("./components/FeatureDisabled"));
 const VisualEditorSplitPane = HEAVY_FEATURES_ENABLED
@@ -99,7 +99,6 @@ function AppContent() {
     };
   }, []);
 
-  // Marketing pages where Mr Blue should NOT appear
   const marketingPaths = [
     '/landing', '/lander', '/for-dancers', '/for-teachers', '/for-organizers',
     '/tango-roles', '/support', '/donate', '/supporters', '/volunteer',
@@ -111,21 +110,21 @@ function AppContent() {
   const isMarketingPage = marketingPaths.some(path => location.startsWith(path));
 
   return (
-    <>
+    <> 
       <Toaster />
-      {/* Mr. Blue components - hidden on marketing/public pages */}
       {!isMarketingPage && (
-        <>
+        <> 
           <GlobalMrBlue />
           <MrBlueFloatingButton />
         </>
       )}
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<LoadingFallback />}> 
         <RouteLoader />
+        <Route path="/p/:slug" component={ProPage} />
       </Suspense>
       <CookieConsent />
       {isVisualEditorOpen && (
-        <Suspense fallback={<LoadingFallback />}>
+        <Suspense fallback={<LoadingFallback />}> 
           <VisualEditorSplitPane
             isOpen={isVisualEditorOpen}
             onClose={() => setIsVisualEditorOpen(false)}

@@ -11,7 +11,7 @@ import { SEO } from "@/components/SEO";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import { Heart, Sparkles, Users, Loader2, KeyRound, Check, X } from "lucide-react";
+import { Heart, Sparkles, Users, KeyRound, Check, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
@@ -23,15 +23,10 @@ export default function LoginPage() {
   const [showInviteCode, setShowInviteCode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
-  
-  const isCodeValid = inviteCode.toLowerCase().trim() === "nomad";
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  
-  // Get redirect parameter from URL
   const searchParams = new URLSearchParams(window.location.search);
   const redirectTo = searchParams.get("redirect") || "/feed";
-  
   const { data: stats } = useQuery<{
     dancers: number | null;
     events: number | null;
@@ -44,11 +39,8 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
       const result = await login(email, password, inviteCode || undefined);
-      
-      // Handle email verification required
       if (result?.requiresVerification) {
         toast({
           title: t('pages:login.toast.verificationRequired.title', 'Email verification required'),
@@ -58,7 +50,6 @@ export default function LoginPage() {
         setLocation(`/email-verification?email=${encodeURIComponent(result.verificationEmail || email)}`);
         return;
       }
-      
       if (result?.upgraded) {
         toast({
           title: t('pages:login.toast.upgradedTitle', 'Account Upgraded!'),
@@ -70,9 +61,6 @@ export default function LoginPage() {
           description: t('pages:login.toast.successDescription', "You've successfully logged in."),
         });
       }
-      
-      // Redirect to the specified URL or default to /feed
-      // Use setTimeout to ensure navigation happens after React state updates
       setTimeout(() => {
         window.location.href = redirectTo;
       }, 100);
@@ -82,6 +70,7 @@ export default function LoginPage() {
         description: error.message || t('pages:login.toast.errorDescription', 'Invalid credentials'),
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -93,13 +82,10 @@ export default function LoginPage() {
           title={t('pages:login.seo.title', 'Sign In - Mundo Tango')}
           description={t('pages:login.seo.description', 'Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango.')}
         />
-
-        {/* Editorial Hero Section - Full Screen */}
         <div className="relative h-screen w-full overflow-hidden" data-testid="hero-login">
           <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${tangoHeroImage})`}}>
             <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
           </div>
-          
           <div className="relative z-10 flex flex-col items-center justify-center h-full px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -107,22 +93,17 @@ export default function LoginPage() {
               transition={{ duration: 1, ease: "easeOut" }}
               className="w-full max-w-md"
             >
-              {/* Editorial Header */}
               <div className="text-center mb-8">
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
                   <Heart className="w-3 h-3 mr-1" />
                   {t('pages:login.badge', 'Welcome Back')}
                 </Badge>
-                
                 <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight leading-tight" data-testid="heading-hero">
                   {t('pages:login.hero.heading', 'Your Tango Journey Continues')}
                 </h1>
-                
                 <p className="text-lg text-white/80 max-w-md mx-auto mb-8">
                   {t('pages:login.hero.paragraph', 'Sign in to connect with dancers worldwide, discover events, and share your passion')}
                 </p>
-
-                {/* Community Stats - Real data from /api/stats/public */}
                 {(stats?.dancers || stats?.events) && (
                   <div className="flex gap-6 justify-center mb-8 text-white/70 text-sm">
                     {stats?.dancers && (
@@ -140,8 +121,6 @@ export default function LoginPage() {
                   </div>
                 )}
               </div>
-
-              {/* Glassmorphic Login Card */}
               <motion.form
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -165,7 +144,6 @@ export default function LoginPage() {
                       className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
                     />
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="password" className="text-sm font-medium text-white">{t('pages:login.form.password', 'Password')}</Label>
                     <Input
@@ -180,8 +158,6 @@ export default function LoginPage() {
                       className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
                     />
                   </div>
-
-                  {/* Invite Code Section */}
                   <div className="space-y-2">
                     <button
                       type="button"
@@ -192,7 +168,6 @@ export default function LoginPage() {
                       <KeyRound className="w-4 h-4" />
                       {t('pages:login.form.haveInviteCode', 'Have an invite code?')}
                     </button>
-                    
                     {showInviteCode && (
                       <div className="relative">
                         <Input
@@ -207,14 +182,14 @@ export default function LoginPage() {
                         />
                         {inviteCode && (
                           <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                            {isCodeValid ? (
+                            {inviteCode.toLowerCase().trim() === "nomad" ? (
                               <Check className="w-5 h-5 text-green-400" data-testid="icon-code-valid" />
                             ) : (
                               <X className="w-5 h-5 text-red-400" data-testid="icon-code-invalid" />
                             )}
                           </div>
                         )}
-                        {isCodeValid && (
+                        {inviteCode.toLowerCase().trim() === "nomad" && (
                           <p className="text-xs text-green-400 mt-1" data-testid="text-upgrade-message">
                             {t('pages:login.form.upgradeMessage', 'Your account will be upgraded from waitlist!')}
                           </p>
@@ -222,7 +197,6 @@ export default function LoginPage() {
                       </div>
                     )}
                   </div>
-
                   <Button
                     type="submit"
                     className="w-full mt-6 bg-white text-black hover:bg-white/90"
@@ -232,7 +206,6 @@ export default function LoginPage() {
                   >
                     {isLoading ? t('pages:login.form.signingIn', 'Signing in...') : t('pages:login.form.signIn', 'Sign In')}
                   </Button>
-
                   <Link 
                     href="/password-reset" 
                     className="block text-center text-sm text-white/80 hover:text-white mt-4 transition-colors" 
@@ -242,7 +215,6 @@ export default function LoginPage() {
                   </Link>
                 </div>
               </motion.form>
-
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

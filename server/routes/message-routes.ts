@@ -1,5 +1,5 @@
 import express from 'express';
-import { getMessages, sendMessage } from '../controllers/messageController';
+import { getMessages, sendMessage, getUnreadCount } from '../controllers/messageController';
 import { sendReplyEmail } from '../services/emailReplyService';
 import { db } from '../db';
 import { eq } from 'drizzle-orm';
@@ -23,6 +23,16 @@ router.get('/messages', async (req, res) => {
 });
 
 router.post('/messages', sendMessage);
+
+router.get('/messages/unread-count', async (req, res) => {
+  try {
+    const count = await getUnreadCount(req.user!.id);
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching unread count:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 router.post('/:id/reply-external', async (req, res) => {
   const { id } = req.params;
