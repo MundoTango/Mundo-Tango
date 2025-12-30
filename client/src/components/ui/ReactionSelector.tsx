@@ -45,6 +45,7 @@ interface ReactionSelectorProps {
   className?: string;
   isLoading?: boolean;
   onReact?: (reactionId: string) => Promise<void> | void;
+  onCountClick?: () => void;
   'data-testid'?: string;
 }
 
@@ -58,6 +59,7 @@ export const ReactionSelector = ({
   className = '',
   isLoading = false,
   onReact,
+  onCountClick,
   'data-testid': dataTestId
 }: ReactionSelectorProps) => {
   const queryClient = useQueryClient();
@@ -222,7 +224,16 @@ export const ReactionSelector = ({
           />
         )}
         {getTotalReactions() > 0 && (
-          <span className="text-sm font-medium" data-testid={`text-reaction-count-${targetId}`}>
+          <span 
+            className={`text-sm font-medium ${onCountClick ? 'hover:underline cursor-pointer' : ''}`}
+            data-testid={`text-reaction-count-${targetId}`}
+            onClick={(e) => {
+              if (onCountClick) {
+                e.stopPropagation();
+                onCountClick();
+              }
+            }}
+          >
             {getTotalReactions()}
           </span>
         )}

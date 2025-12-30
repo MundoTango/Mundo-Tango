@@ -3,13 +3,15 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users, Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette, Music, Dumbbell, Camera as PhotoIcon, HeartHandshake, UserPlus, Briefcase, Target, PartyPopper, MapPin, UtensilsCrossed, Coffee, Hotel, Wine, DollarSign, Star } from "lucide-react";
+import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users, Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette, Music, Dumbbell, Camera as PhotoIcon, HeartHandshake, UserPlus, Briefcase, Target, PartyPopper, MapPin, UtensilsCrossed, Coffee, Hotel, Wine, DollarSign, Star, Maximize2 } from "lucide-react";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { PostActionsMenu } from "@/components/ui/PostActionsMenu";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { ReportModal } from "@/components/modals/ReportModal";
+import { ImageLightbox } from "@/components/modals/ImageLightbox";
+import { WhoLikedModal } from "@/components/modals/WhoLikedModal";
 import { useReactToPost, useSharePost, useSavePost, useUnsavePost, useDeletePost, useReportPost } from "@/hooks/usePostInteractions";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { useAuth } from "@/contexts/AuthContext";
@@ -90,6 +92,8 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showLightbox, setShowLightbox] = useState(false);
+  const [showWhoLiked, setShowWhoLiked] = useState(false);
   const [videoBlobUrl, setVideoBlobUrl] = useState<string | null>(null);
 
   // Convert base64 video to Blob URL for better mobile playback
@@ -322,10 +326,14 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
           </div>
         )}
 
-        {/* Image */}
+        {/* Image with Lightbox (Bug #10) */}
         {post.imageUrl && (
           <div className="px-4 pb-3">
-            <div className="relative aspect-[16/9] overflow-hidden rounded-lg">
+            <div 
+              className="relative aspect-[16/9] overflow-hidden rounded-lg cursor-pointer group"
+              onClick={() => setShowLightbox(true)}
+              data-testid={`post-image-container-${post.id}`}
+            >
               <motion.img 
                 src={post.imageUrl} 
                 alt="Post media" 
@@ -334,6 +342,9 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                 transition={{ duration: 0.6 }}
                 data-testid={`post-image-${post.id}`}
               />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                <Maximize2 className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+              </div>
             </div>
           </div>
         )}
@@ -370,6 +381,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
             onReact={handleReaction}
             reactions={post.reactions || {}}
             totalCount={post.likes}
+            onCountClick={() => post.likes > 0 && setShowWhoLiked(true)}
           />
 
           <Button
@@ -453,6 +465,22 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         onOpenChange={setShowEditDialog}
         postId={post.id}
         initialContent={post.content || ""}
+      />
+      {/* Bug #10: Image Lightbox */}
+      {post.imageUrl && (
+        <ImageLightbox
+          open={showLightbox}
+          onOpenChange={setShowLightbox}
+          imageUrl={post.imageUrl}
+          alt={`Post by ${post.user?.name || 'Unknown'}`}
+        />
+      )}
+      {/* Bug #11: Who Liked Modal */}
+      <WhoLikedModal
+        open={showWhoLiked}
+        onOpenChange={setShowWhoLiked}
+        postId={post.id}
+        totalLikes={post.likes}
       />
     </>
   );

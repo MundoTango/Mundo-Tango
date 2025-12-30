@@ -4136,6 +4136,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get users who liked/reacted to a post (Bug #11 - Who Liked)
+  app.get("/api/posts/:id/likes", async (req: Request, res: Response) => {
+    try {
+      const postId = parseInt(req.params.id);
+      const limit = parseInt(req.query.limit as string) || 50;
+      
+      const likedUsers = await db
+        .select({
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage,
+          reactionType: postLikes.reactionType,
+        })
+        .from(postLikes)
+        .innerJoin(users, eq(postLikes.userId, users.id))
+        .where(eq(postLikes.postId, postId))
+        .orderBy(desc(postLikes.createdAt))
+        .limit(limit);
+      
+      res.json(likedUsers);
+    } catch (error) {
+      console.error("Error fetching post likes:", error);
+      res.status(500).json({ message: "Failed to fetch likes" });
+    }
+  });
+
   app.post("/api/users/:id/follow", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const followingId = parseInt(req.params.id);

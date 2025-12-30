@@ -76,9 +76,9 @@ Created infrastructure for Mr. Blue to orchestrate bug fixes through VibeCoding 
 6. **Bug #8 (Localization)** - Fixed: Added localStorage caching to i18n detection
 7. **Bug #9 (Toast z-index)** - Verified: Already correct at z-[99999]
 
-**Pending Enhancements:**
-- Bug #10: Photo lightbox (feature not yet implemented)
-- Bug #11: Who liked display (feature not yet implemented)
+**Bug #10 & #11 - Completed:**
+- Bug #10 (Photo Lightbox): Created `ImageLightbox.tsx` component with zoom/rotate controls, keyboard shortcuts, and fullscreen view
+- Bug #11 (Who Liked): Created `WhoLikedModal.tsx` showing users who reacted, added `/api/posts/:id/likes` endpoint, made reaction count clickable
 
 **Code Cleanup:**
 - Cleaned up unused stub files (`server/routes/post-routes.ts`, `client/src/components/posts/PostCard.tsx`)
