@@ -6,6 +6,41 @@ import { authenticateToken } from '../middleware/auth';
 
 const router = Router();
 
+// Simple user search endpoint for messaging
+router.get('/search', authenticateToken, async (req, res) => {
+  try {
+    const query = req.query.q as string;
+    
+    if (!query || query.trim().length < 2) {
+      return res.json([]);
+    }
+
+    const searchTerm = `%${query.trim()}%`;
+
+    const userResults = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImageUrl: users.profileImage,
+        bio: users.bio,
+      })
+      .from(users)
+      .where(
+        or(
+          ilike(users.name, searchTerm),
+          ilike(users.username, searchTerm)
+        )
+      )
+      .limit(20);
+
+    res.json(userResults);
+  } catch (error) {
+    console.error('User search error:', error);
+    res.status(500).json({ error: 'Failed to search users' });
+  }
+});
+
 // Global search endpoint for UnifiedTopBar
 router.get('/global-search', authenticateToken, async (req, res) => {
   try {

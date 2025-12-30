@@ -1,7 +1,7 @@
 import { Router, type Request, Response } from 'express';
 import { authenticateToken, type AuthRequest, optionalAuth } from '../middleware/auth';
 import { db } from '../db';
-import { users, chatRooms, chatMessages, notifications } from '@shared/schema';
+import { users, directMessages, notifications } from '@shared/schema';
 import { eq, ne, and, sql, or } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -239,38 +239,17 @@ router.post('/contact', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Pro user not found' });
     }
 
-    // MB.MD FIX (Dec 30, 2025): Deliver message to user's inbox
+    // MB.MD FIX (Dec 30, 2025): Deliver message to user's inbox using directMessages
     try {
       const contactMessage = `New PRO Page Inquiry from ${name} (${email}):\n\n${message}${phone ? `\n\nPhone: ${phone}` : ''}`;
       
-      // Check if a conversation already exists between system (id: 1) and proUser
-      const [existingRoom] = await db
-        .select()
-        .from(chatRooms)
-        .where(or(
-          and(eq(chatRooms.userId1, 1), eq(chatRooms.userId2, proUserId)),
-          and(eq(chatRooms.userId1, proUserId), eq(chatRooms.userId2, 1))
-        ))
-        .limit(1);
-
-      let chatRoomId: number;
-      if (existingRoom) {
-        chatRoomId = existingRoom.id;
-      } else {
-        const [newRoom] = await db.insert(chatRooms).values({
-          userId1: 1,
-          userId2: proUserId,
-          type: 'direct',
-          name: `Inquiry: ${name}`
-        }).returning();
-        chatRoomId = newRoom.id;
-      }
-      
-      // Store in chatMessages
-      await db.insert(chatMessages).values({
-        senderId: 1, // System/Admin user
-        chatRoomId: chatRoomId,
+      // Insert directly into directMessages table (same table inbox reads from)
+      // Use senderId: 1 as system/admin user for PRO inquiries
+      await db.insert(directMessages).values({
+        senderId: 1, // System/Admin user for PRO inquiries
+        recipientId: proUserId,
         content: contactMessage,
+        isRead: false,
       });
 
       // Also create a notification

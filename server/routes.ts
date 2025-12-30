@@ -1220,6 +1220,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/god-level", authenticateToken, godLevelRoutes);
   app.use("/api/ai", aiEnhanceRoutes);
   app.use("/api/user", userSearchRoutes);
+  app.use("/api/users", userSearchRoutes); // Also mount at /api/users for messaging user search
   app.use("/api/locations", locationRoutes);
   app.use("/api/locations", locationsRoutes); // MB.MD Agent 1: Live city search with caching
   app.use("/api/location", locationChangeRoutes); // Location change effects endpoint
