@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts. Its extensive AI ecosystem provides strategic oversight and execution capabilities, positioning Mundo Tango as a comprehensive solution for the global tango market.
+Mundo Tango is a production-ready social platform connecting the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts. Its extensive AI ecosystem provides strategic oversight and execution capabilities, positioning Mundo Tango as a comprehensive solution for the global tango market. The platform's business vision includes capturing market potential through advanced AI, robust social features, and a scalable architecture.
 
 ## User Preferences
 - Work Simultaneously - Run operations in parallel (use Promise.all, parallel tool calls)
@@ -15,166 +15,29 @@ Mundo Tango is a production-ready social platform designed to connect the global
 - Validation Loop - observe → decide → act → validate → adapt (not just automation)
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
 
-## Test Credentials
-**For all E2E and Playwright tests, use these admin credentials:**
-- Email: `admin@mundotango.life`
-- Password: `admin123` (or `admin123!` if first fails)
-- Role Level: 8 (God-level access)
-
-This account has full platform access for testing all features including:
-- Admin dashboard, feedback management, scraper controls
-- Mr. Blue VibeCoding tools (god-level only)
-- All RBAC-protected features
-
 ## System Architecture
 
 ### UI/UX
-The platform employs an "MT Ocean Theme" with dark mode, built using Tailwind CSS, shadcn/ui, and Radix UI. It supports 68 languages via `i18next` and uses Wouter for routing. Key UI components include a Visual Editor, Unified Sidebar, PublicProfileView, and PerRoleExperience, with a strict z-index hierarchy. Icons are sourced from Lucide React and React Icons. City pages follow a "City-First Branding" with 7 tabs including Discussion, Overview, Events, Members, Housing, Visitors, and Tips, adhering to the CITY_PAGE.md specification.
+The platform utilizes an "MT Ocean Theme" with dark mode, built using Tailwind CSS, shadcn/ui, and Radix UI. It supports 68 languages via `i18next` and uses Wouter for routing. Key UI components include a Visual Editor, Unified Sidebar, PublicProfileView, and PerRoleExperience, adhering to a strict z-index hierarchy. Icons are from Lucide React and React Icons. City pages feature a "City-First Branding" with 7 tabs (Discussion, Overview, Events, Members, Housing, Visitors, Tips) following the CITY_PAGE.md specification.
 
 ### Backend
-The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. It features modular routes, JWT authentication with Google/Facebook OAuth, an 8-tier Role-Based Access Control (RBAC) system, and automated database migrations. Server-side FFmpeg is used for video transcoding. The API supports PRO functionalities, place recommendations, and enhanced Talent Match AI features. Email verification is mandatory for user access.
+The backend is developed with Express and TypeScript, leveraging PostgreSQL (Neon) and Drizzle ORM. It features modular routes, JWT authentication with Google/Facebook OAuth, an 8-tier Role-Based Access Control (RBAC) system, and automated database migrations. Server-side FFmpeg handles video transcoding. The API supports PRO functionalities, place recommendations, and enhanced Talent Match AI features. Email verification is mandatory for user access.
 
 ### AI Systems
-Mundo Tango integrates a comprehensive AI ecosystem with over 140 specialized agents. This includes self-healing infrastructure, a production-ready validation loop, and a Visual Validation Framework. A Bifrost AI Gateway facilitates multi-provider AI interactions. A RecursiveContextService manages hierarchical code summarization. The core AI brain is modular, located in `/mr-blue-brain/`, encompassing Identity, Cognition (e.g., ReAct Protocol, Chain-of-Thought), Operations, Orchestration (e.g., Mixture of Experts Router), Patterns, and specialized Agents.
-
-Key AI features include:
-- **A2A Multi-Agent Orchestration System**: Manages communication and routing for 130+ agents across various categories (C-Suite, VP-Level, Page Agents, Self-Healing, Scraping, Business).
-- **Leadership Agent System**: Comprises CEO, CTO, GitHub Practices, and Plan Tracker agents, with 4-layer knowledge base and "God Commands" for enforcing directives like "test before complete" and "work simultaneously."
-- **Mr. Blue AI Assistant**: Provides real-time access to platform data via `MrBlueDataService`. It uses a Multi-AI Orchestrator (Groq, OpenAI, Anthropic with automatic fallback and consensus system) for intelligent task routing based on intent detection. It includes "VibeCoding Tools" (readFile, writeFile, grepFiles, etc.) and "VibeCoding Streaming" for real-time ReAct protocol visualization for god-level users, enabling them to observe AI thought processes and actions.
+Mundo Tango integrates a comprehensive AI ecosystem with over 140 specialized agents, including self-healing infrastructure, a production-ready validation loop, and a Visual Validation Framework. A Bifrost AI Gateway facilitates multi-provider AI interactions. A RecursiveContextService manages hierarchical code summarization. The core AI brain, located in `/mr-blue-brain/`, is modular, encompassing Identity, Cognition (e.g., ReAct Protocol, Chain-of-Thought), Operations, Orchestration (e.g., Mixture of Experts Router), Patterns, and specialized Agents. This includes a Multi-Agent Orchestration System for 130+ agents, a Leadership Agent System with "God Commands," and the Mr. Blue AI Assistant providing real-time data access and intelligent task routing via a Multi-AI Orchestrator (Groq, OpenAI, Anthropic with fallbacks and consensus).
 
 ### Event Scraping System
-A multi-stage scraping architecture is coordinated by a Master Orchestrator (Agent #115) and includes Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scraped events are stored in a `scraped_events` table and ingested into the main events table. An Admin UI provides real-time scraper status and a moderation queue. Users can also contribute local event website URLs, which require admin approval before activation.
+A multi-stage scraping architecture is coordinated by a Master Orchestrator, utilizing Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation. Scraped events are stored in a `scraped_events` table and ingested into the main events table, with an Admin UI for real-time status and moderation.
 
 ### Platform Features
 Core functionalities include social features (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and an International Payment System supporting 30 currencies.
 
-## Recent Changes (December 30, 2025)
-
-### Messages API & Username Routes Fix (Session)
-- **client/src/hooks/useMessages.ts** - Added Authorization Bearer token headers to `useConversations()` and `useConversation()` hooks. Backend requires Bearer token authentication, not just cookies.
-- **client/src/pages/UsernameProfilePage.tsx** - Created new page component that:
-  - Fetches user by username from `/api/users/{username}` (with encodeURIComponent for special chars)
-  - Shows loading skeleton while fetching
-  - Displays "User Not Found" error with Go Home button on 404
-  - Redirects to `/profile/{userId}` on success
-- **client/src/routes/miscRoutes.tsx** - Added `/:username` route at END of routes (before NotFound) to handle vanity URLs like `/scott`
-- **Backend note**: `/api/users/:id` already supports both numeric ID and username string lookups
-
-### Critical Bug Fixes (Session)
-- **FeedbackButton.tsx** - Fixed import error: `@/hooks/useMrBlue` → `@/contexts/MrBlueContext`
-- **App.tsx** - Removed duplicate ProPage Route (already in MiscRoutes) and unused import that caused React ErrorBoundary crashes
-- **server/routes.ts** - Fixed route order: `/api/messages/unread-count` must be defined BEFORE `/api/messages/:conversationId` to prevent dynamic param from intercepting
-- **server/services/mr-blue-data-service.ts** - Fixed SQL column mismatch: `receiverId` → `recipientId` (matching schema)
-- **Database** - Created `user_feedback` table with proper schema and indexes (was missing from DB)
-
-### Messaging System Refactor (Critical Fix)
-- **Duplicate Route Conflict Resolved** - `/api/messages/conversations` was defined in both routes.ts (chat-room based) and messaging-routes.ts (direct-message based), causing conflicts
-- **server/routes.ts** - Commented out duplicate chat-room based conversation routes to avoid conflicts with direct-message system
-- **server/routes/messaging-routes.ts** - Added `/api/messages/send-direct` endpoint as an alias to `/api/messages/send` (frontend hooks expected this endpoint)
-- **Architecture Decision**: Frontend hooks use `direct-{userId}` format for direct messages, calling `/api/messages/direct/:userId` for fetching messages
-
-### QA System Integrated into Mr. Blue Chat (Pattern 67)
-Replaced simple quick-action buttons with full QA system inside Mr. Blue chat:
-
-**New QA Buttons in MrBlueChat.tsx:**
-- **Help** - Opens context-aware support flow with journey tracking
-- **Features** - Opens feature discovery/request flow with page context
-- **Report Bug** - Captures full session context (journey, browser info, viewport)
-
-**Integration:**
-- Uses `useJourneyTracker` hook for session tracking
-- Captures user navigation path and interactions
-- Context-aware responses based on current page
-- QA mode state tracks active workflow (help/features/bug)
-
-**Files Modified:**
-- `client/src/components/mrBlue/MrBlueChat.tsx` - Added QA handlers and buttons
-- `client/src/components/qa/FeedbackButton.tsx` - Simplified to open Mr. Blue chat
-
-### Pattern 100 Master Orchestration - All Waves Complete
-Implemented complete VibeCoding evolution patterns for autonomous agent capabilities:
-
-**Wave 1 - Core VibeCoding Patterns (Complete):**
-- `server/services/mrBlue/PlanExecuteLoop.ts` - Pattern 68: Plan → Execute → Observe → Replan cycle with templates
-- `server/services/mrBlue/ReactProtocol.ts` - Pattern 69: THOUGHT → ACTION → OBSERVATION loop
-- `server/services/mrBlue/SafetyConfirmation.ts` - Pattern 70: Risk detection with 4 levels
-- `server/services/mrBlue/CheckpointManager.ts` - Pattern 71: State rollback with file snapshots
-
-**Wave 3 - VibeCoding Evolution Patterns 72-77 (Complete):**
-- `server/services/mrBlue/SkillCatalog.ts` - Pattern 72: Skill registry with 5 built-in skills, searchable by domain/capability
-- `server/services/mrBlue/CodeSandbox.ts` - Pattern 74: EXPERIMENTAL code execution (development-only, hard-disabled in production)
-- `server/services/mrBlue/TestOrchestrator.ts` - Pattern 75: Vitest/Playwright test management
-- `server/services/mrBlue/WebSearchService.ts` - Pattern 76: DuckDuckGo search with 5-minute caching
-- `server/services/mrBlue/ConnectorRegistry.ts` - Pattern 77: 7 external API connectors (stripe, github, openai, anthropic, groq, resend, cloudinary)
-
-**Wave 4 - Self-Healing Production Toggle (Complete):**
-- `server/services/mrBlue/SelfHealingConfig.ts` - Environment-aware configuration
-- CodeSandbox security hardening: production-disabled, role-level gating (level 8+), audit logging
-
-**Security Notes:**
-- CodeSandbox marked EXPERIMENTAL - uses child_process (not true containerized sandbox)
-- Production guards: NODE_ENV check, ENABLE_CODE_SANDBOX env flag, role-level 8+ requirement
-- Future improvement: Replace with container/VM isolation before production use
-
-**QA Platform (Verified Existing):**
-- Phase 0: Database schema (analyticsConsent, userFeedback, adminApprovals)
-- Phase 1: Session capture SDK (client/src/lib/session-capture.ts)
-- Phase 2: GDPR consent (client/src/components/AnalyticsConsent.tsx)
-- Routes: Complete API at server/routes/qa-platform-routes.ts
-
-**Playbook Created:**
-- `Mr Blue/playbooks/MASTER_ORCHESTRATION_PROMPT.md` - 4-wave staged execution strategy
-
-### QA Feedback System (Pattern 67 + Pattern 99)
-Implemented complete user feedback system with 3-button interface and admin management:
-
-**Frontend Components:**
-- `client/src/components/qa/FeedbackButton.tsx` - 3-button feedback dialog (Support/Bug/Feature)
-- `client/src/hooks/useJourneyTracker.ts` - User journey/navigation tracking
-- `client/src/pages/admin/FeedbackManagementPage.tsx` - Admin ticket queue
-- `client/src/pages/PostDetailPage.tsx` - Single post view for Facebook sharing
-
-**Integration:**
-- FeedbackButton added to UnifiedTopBar (desktop)
-- Admin route: `/admin/feedback`
-- Mr. Blue integration for bug analysis via VibeCoding
-
-### Agent Knowledge Base
-Created living documentation for 140+ agents:
-- `docs/AGENT_KNOWLEDGE_BASE.md` - Agent onboarding guide
-- `docs/prd/QA_FEEDBACK_SYSTEM.md` - QA system PRD
-- `docs/prd/POSTS_SYSTEM.md` - Posts/Feed PRD
-- `docs/agent-knowledge/vibecoding.md` - VibeCoding patterns
-
-### Pattern 99 Multi-Agent Site Auditor Implementation
-Created infrastructure for Mr. Blue to orchestrate bug fixes through VibeCoding pipeline:
-
-**New Files Created:**
-- `server/services/mrBlue/MrBlueInternalExecutor.ts` - Internal automation helper for server-side VibeCoding execution
-- `server/scripts/pattern99-executor.ts` - CLI tool to run Pattern 99 bug fixes
-
-**Bug Fixes (Tamás Report):**
-1. **Bug #1 (Event filtering)** - Fixed: CityDetailsPage.tsx now passes `city.city` instead of `city.name`
-2. **Bug #2 (RSVP status)** - Fixed: Flattened `/api/events/my-rsvps` response structure
-3. **Bug #4 (DM blank screen)** - Fixed: MessagesPage.tsx auto-selects first conversation
-4. **Bug #5 (Facebook share 404)** - Fixed: Created `/posts/:id` route with SEOHead for OG tags
-5. **Bug #7 (Saved posts)** - Fixed: Corrected API endpoint to `/api/posts/saved`
-6. **Bug #8 (Localization)** - Fixed: Added localStorage caching to i18n detection
-7. **Bug #9 (Toast z-index)** - Verified: Already correct at z-[99999]
-
-**Bug #10 & #11 - Completed:**
-- Bug #10 (Photo Lightbox): Created `ImageLightbox.tsx` component with zoom/rotate controls, keyboard shortcuts, and fullscreen view
-- Bug #11 (Who Liked): Created `WhoLikedModal.tsx` showing users who reacted, added `/api/posts/:id/likes` endpoint, made reaction count clickable
-
-**Code Cleanup:**
-- Cleaned up unused stub files (`server/routes/post-routes.ts`, `client/src/components/posts/PostCard.tsx`)
-
 ## External Dependencies
-- **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase (for production admin tools)
+- **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
 - **AI/ML:** OpenAI, Anthropic, Groq, Google, Luma, ElevenLabs, Bifrost Gateway, LanceDB
 - **Real-time:** Supabase Realtime, WebSocket
 - **Payments:** Stripe
 - **Email:** Replit Resend Connector
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
-- **Internationalization:** i18next (with 69 language locales)
+- **Internationalization:** i18next
