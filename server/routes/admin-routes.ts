@@ -378,42 +378,43 @@ router.get("/users", authenticateToken, requireAdmin, async (req, res: Response)
       });
     }
 
-    // Default: Active registered users (not on waitlist)
-    const activeBaseFilter = and(eq(users.isActive, true), eq(users.waitlist, false));
-    
-    // Build combined filter with search and role
-    let finalFilter: any = activeBaseFilter;
-    
-    if (search && typeof search === "string") {
-      finalFilter = and(
-        activeBaseFilter,
-        or(
-          like(users.name, `%${search}%`),
-          like(users.email, `%${search}%`),
-          like(users.username, `%${search}%`)
-        )
-      );
-    }
-    
-    if (role && typeof role === "string") {
-      finalFilter = and(finalFilter, eq(users.role, role));
-    }
+    if (tab === "active") {
+      // Use admin-specific search for active tab to see discovered users
+      const lowerQuery = `%${search.toLowerCase()}%`;
+      const activeBaseFilter = and(eq(users.isActive, true), eq(users.waitlist, false));
+      
+      let finalFilter: any = activeBaseFilter;
+      
+      if (search && typeof search === "string") {
+        finalFilter = and(
+          activeBaseFilter,
+          or(
+            like(users.name, `%${search}%`),
+            like(users.email, `%${search}%`),
+            like(users.username, `%${search}%`)
+          )
+        );
+      }
+      
+      if (role && typeof role === "string") {
+        finalFilter = and(finalFilter, eq(users.role, role));
+      }
 
-    const results = await db.select().from(users)
-      .where(finalFilter as any)
-      .orderBy(desc(users.createdAt))
-      .limit(limitNum)
-      .offset(offset);
-    
-    // Count with same filter
-    const totalCount = await db.select({ count: count() }).from(users).where(finalFilter as any);
+      const results = await db.select().from(users)
+        .where(finalFilter as any)
+        .orderBy(desc(users.createdAt))
+        .limit(limitNum)
+        .offset(offset);
+      
+      const totalCount = await db.select({ count: count() }).from(users).where(finalFilter as any);
 
-    res.json({
-      users: results.map(u => ({ ...u, type: "active" })),
-      total: totalCount[0]?.count || 0,
-      page: pageNum,
-      limit: limitNum,
-    });
+      return res.json({
+        users: results.map(u => ({ ...u, type: "active" })),
+        total: totalCount[0]?.count || 0,
+        page: pageNum,
+        limit: limitNum,
+      });
+    }
   } catch (error: any) {
     console.error("Error fetching admin users:", error);
     res.status(500).json({ error: error.message });

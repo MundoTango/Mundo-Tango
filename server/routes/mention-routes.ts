@@ -18,7 +18,10 @@ router.get("/users/search", authenticateToken, async (req, res) => {
     const searchQuery = String(q).toLowerCase();
     const limit = 10;
 
-    const searchedUsers = await storage.searchUsers(searchQuery, limit);
+    const isAdmin = (req as any).user?.role === 'admin';
+    const searchedUsers = isAdmin 
+      ? await storage.searchUsersAdmin(searchQuery, limit)
+      : await storage.searchUsers(searchQuery, limit);
     const results = searchedUsers.map((user: any) => ({
       id: `user_${user.id}`,
       type: "user" as const,
@@ -156,7 +159,10 @@ router.get("/search", authenticateToken, async (req, res) => {
 
     // Search @people (users)
     if (!type || type === "user") {
-      const searchedUsers = await storage.searchUsers(searchQuery, limit);
+    const isAdmin = (req as any).user?.role === 'admin';
+    const searchedUsers = isAdmin 
+      ? await storage.searchUsersAdmin(searchQuery, limit)
+      : await storage.searchUsers(searchQuery, limit);
       results.push(...searchedUsers.map((user: any) => ({
         id: user.id,
         type: "user" as const,

@@ -506,6 +506,7 @@ export interface IStorage {
   // Search methods for @mentions autocomplete
   searchUsers(query: string, limit: number): Promise<any[]>;
   searchUsersAdmin(query: string, limit: number): Promise<any[]>;
+  searchEventsSimple(query: string, limit: number): Promise<any[]>;
   searchGroups(query: string, limit: number): Promise<any[]>;
   searchCommunities(query: string, limit: number): Promise<any[]>;
   getCommunityById(id: number): Promise<any | undefined>;
@@ -2323,7 +2324,7 @@ export class DbStorage implements IStorage {
         )
       ).limit(10);
       
-      const suggestions = rawUsers.map((u: any) => ({
+      return rawUsers.map((u: any) => ({
         id: u.id,
         name: u.name,
         username: u.username,
@@ -2332,7 +2333,6 @@ export class DbStorage implements IStorage {
         bio: u.bio,
         city: u.city,
       }));
-      return suggestions;
     }
     
     // Only show active, non-suspended, non-discovered users
@@ -2349,7 +2349,7 @@ export class DbStorage implements IStorage {
       )
       .limit(10);
     
-    const suggestions = rawSuggestions.map((u: any) => ({
+    return rawSuggestions.map((u: any) => ({
       id: u.id,
       name: u.name,
       username: u.username,
@@ -2358,8 +2358,6 @@ export class DbStorage implements IStorage {
       bio: u.bio,
       city: u.city,
     }));
-    
-    return suggestions;
   }
 
   async sendFriendRequest(data: any): Promise<any> {
