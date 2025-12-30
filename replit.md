@@ -42,12 +42,27 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Real-time**: Currently polling (5s), WebSocket planned
 - **Group Chat**: NOT IMPLEMENTED (throws error)
 - **Documentation**: See `docs/PRD_MESSAGING_AND_PRO_PAGE.md` for full specification
+- **Related PRDs**:
+  - `docs/MESSAGING_ECOSYSTEM_MAP.md` - All systems interacting with messaging
+  - `docs/prd/NOTIFICATIONS_SYSTEM.md` - 15 notification types (new_message MISSING)
+  - `docs/prd/REALTIME_WEBSOCKET.md` - Replace polling with WebSocket
+  - `docs/prd/EXTERNAL_MESSAGING_CHANNELS.md` - Facebook/Instagram/WhatsApp/Gmail
+  - `docs/prd/GROUPS_SYSTEM.md` - Group chat implementation (currently throws error)
 
 ### PRO Pages (/p/:slug)
 - **Public Profiles**: Glassmorphic design with bio, gallery, testimonials
 - **Contact Form**: Submits to PRO's inbox via directMessages
 - **Vanity URLs**: `/:username` resolves to PRO page or user profile
 - **Documentation**: See `docs/prd/VANITY_URLS.md` for URL routing spec
+
+### Three-Layer Completion Status (Dec 30, 2025)
+| System | UI | Data | Interaction | Notes |
+|--------|----|----|-----------|-------|
+| Direct Messages | 90% | 95% | 85% | Fixed Dec 30 |
+| Notifications | 70% | 80% | 40% | new_message missing |
+| WebSocket | 30% | 60% | 10% | Uses polling |
+| External Channels | 80% | 50% | 30% | Facebook partial |
+| Groups | 70% | 30% | 10% | Throws error |
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase
