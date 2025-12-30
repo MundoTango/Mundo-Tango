@@ -15,6 +15,17 @@ Mundo Tango is a production-ready social platform designed to connect the global
 - Validation Loop - observe → decide → act → validate → adapt (not just automation)
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
 
+## Test Credentials
+**For all E2E and Playwright tests, use these admin credentials:**
+- Email: `admin@mundotango.life`
+- Password: `admin123` (or `admin123!` if first fails)
+- Role Level: 8 (God-level access)
+
+This account has full platform access for testing all features including:
+- Admin dashboard, feedback management, scraper controls
+- Mr. Blue VibeCoding tools (god-level only)
+- All RBAC-protected features
+
 ## System Architecture
 
 ### UI/UX
