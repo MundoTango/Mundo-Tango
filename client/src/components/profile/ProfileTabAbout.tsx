@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
-import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama, Briefcase, Link as LinkIcon, Globe, Plus, Trash2, ExternalLink, User, AtSign, History, Home } from "lucide-react";
+import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama, Briefcase, Link as LinkIcon, Globe, Plus, Trash2, ExternalLink, User, AtSign, History, Home, Sparkles } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { toCitySlug } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -102,6 +102,7 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { refreshCurrentUser } = useAuth();
+  const [, setLocation] = useLocation();
   const [isEditing, setIsEditing] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<AboutSubTab>('profile');
   const yearOptions = generateYearOptions();
@@ -848,27 +849,61 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
         <div>
           <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
             <Globe className="w-4 h-4" />
-            Community Website
+            Personal Website
           </h3>
           {isEditing ? (
-            <Input
-              value={editValues.communityWebsiteUrl || ''}
-              onChange={(e) => setEditValues({ ...editValues, communityWebsiteUrl: e.target.value })}
-              placeholder="https://yourcommunity.com"
-              data-testid="input-community-website"
-            />
+            <div className="space-y-2">
+              <Input
+                value={editValues.communityWebsiteUrl || ''}
+                onChange={(e) => setEditValues({ ...editValues, communityWebsiteUrl: e.target.value })}
+                placeholder="https://yourwebsite.com"
+                data-testid="input-personal-website"
+              />
+              {editValues.communityWebsiteUrl && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setLocation(`/messages?mrblue=analyze-website&url=${encodeURIComponent(editValues.communityWebsiteUrl || '')}`);
+                  }}
+                  className="gap-2"
+                  data-testid="button-analyze-website"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Analyze with Mr. Blue
+                </Button>
+              )}
+            </div>
           ) : (
             user.communityWebsiteUrl ? (
-              <a
-                href={user.communityWebsiteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-primary hover:underline"
-                data-testid="link-community-website"
-              >
-                <ExternalLink className="w-4 h-4" />
-                <span className="text-sm">{user.communityWebsiteUrl}</span>
-              </a>
+              <div className="flex items-center gap-3">
+                <a
+                  href={user.communityWebsiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-primary hover:underline"
+                  data-testid="link-personal-website"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="text-sm">{user.communityWebsiteUrl}</span>
+                </a>
+                {canEdit && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setLocation(`/messages?mrblue=analyze-website&url=${encodeURIComponent(user.communityWebsiteUrl || '')}`);
+                    }}
+                    className="gap-1 text-xs"
+                    data-testid="button-analyze-website"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    Analyze
+                  </Button>
+                )}
+              </div>
             ) : (
               <span className="text-muted-foreground italic">No website set</span>
             )
