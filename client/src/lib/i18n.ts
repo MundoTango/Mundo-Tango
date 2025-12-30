@@ -100,7 +100,7 @@ if (!i18n.isInitialized) {
         order: ["querystring", "localStorage", "navigator", "htmlTag"],
         lookupQuerystring: "lng",
         lookupLocalStorage: "i18nextLng",
-        caches: [],
+        caches: ["localStorage"],
         excludeCacheFor: ["cimode"],
         // Normalize language codes to lowercase to match our locale folder names
         convertDetectedLanguage: (lng: string) => lng.toLowerCase(),
