@@ -31,32 +31,14 @@ export class WebSocketNotificationService {
   private wss: WebSocketServer | null = null;
 
   initialize(server: any) {
-    console.log("[WS Server] 🔧 Initializing WebSocketServer on /ws/notifications...");
-    console.log("[WS Server] 🔧 Server object type:", typeof server);
-    console.log("[WS Server] 🔧 Server has 'on' method:", typeof server.on === 'function');
+    console.log("[WS Server] 🔧 Initializing WebSocketServer in noServer mode...");
     
-    this.wss = new WebSocketServer({ 
-      server, 
-      path: "/ws/notifications",
-      verifyClient: (info) => {
-        console.log("[WS Server] 🔍 Verifying client from:", info.origin);
-        console.log("[WS Server] 🔍 Request URL:", info.req.url);
-        console.log("[WS Server] 🔍 Request headers:", JSON.stringify(info.req.headers).substring(0, 200));
-        return true; // Accept all connections
-      }
-    });
+    this.wss = new WebSocketServer({ noServer: true });
 
     console.log("[WS Server] ✅ WebSocketServer instance created successfully");
-    console.log("[WS Server] 📡 Listening on path: /ws/notifications");
 
-    // Add error handler for the WebSocketServer itself
     this.wss.on("error", (error) => {
       console.error("[WS Server] ❌ WebSocketServer error:", error);
-    });
-
-    // Add headers handler for debugging
-    this.wss.on("headers", (headers, req) => {
-      console.log("[WS Server] 📨 Sending handshake headers for:", req.url);
     });
 
     this.wss.on("connection", (ws: WebSocket, req: any) => {
@@ -260,6 +242,17 @@ export class WebSocketNotificationService {
 
   getOnlineUserCount(): number {
     return this.clients.size;
+  }
+
+  registerWithRouter(router: any) {
+    router.register('/ws/notifications', 'Notification Service', (request: any, socket: any, head: any) => {
+      console.log("[WS Server] 📨 Handling upgrade via router for:", request.url);
+      
+      this.wss!.handleUpgrade(request, socket, head, (ws) => {
+        this.wss!.emit('connection', ws, request);
+      });
+    });
+    console.log("[WS Server] ✅ Registered with WebSocket upgrade router");
   }
 }
 

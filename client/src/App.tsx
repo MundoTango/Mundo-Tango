@@ -9,6 +9,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { MrBlueProvider } from "./contexts/MrBlueContext";
 import { TalentMatchSessionProvider } from "./contexts/TalentMatchSessionContext";
 import { PredictiveContextProvider } from "./providers/PredictiveContextProvider";
+import { NotificationWebSocketProvider } from "./contexts/NotificationWebSocketContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingFallback } from "./components/LoadingFallback";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
@@ -144,9 +145,11 @@ function App() {
             <TalentMatchSessionProvider>
               <PredictiveContextProvider>
                 <MrBlueProvider>
-                  <TooltipProvider>
-                    <AppContent />
-                  </TooltipProvider>
+                  <NotificationWebSocketProvider>
+                    <TooltipProvider>
+                      <AppContent />
+                    </TooltipProvider>
+                  </NotificationWebSocketProvider>
                 </MrBlueProvider>
               </PredictiveContextProvider>
             </TalentMatchSessionProvider>

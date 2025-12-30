@@ -6840,7 +6840,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
 
+  // Initialize WebSocket Upgrade Router BEFORE any WebSocket services
+  const { wsUpgradeRouter } = await import("./lib/websocketUpgradeRouter");
+  wsUpgradeRouter.initialize(httpServer);
+  
+  // Initialize and register notification service with router
   wsNotificationService.initialize(httpServer);
+  wsNotificationService.registerWithRouter(wsUpgradeRouter);
   console.log("[WebSocket] Notification service initialized on /ws/notifications");
 
   // Initialize Realtime Voice WebSocket

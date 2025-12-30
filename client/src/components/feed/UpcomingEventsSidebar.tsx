@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { safeDateFormat, safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 import { UnifiedRSVPButton, type RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 import { useMyEvents, useUpcomingEvents, useMyRSVPs } from "@/hooks/useEvents";
+import { useNotificationSubscription } from "@/contexts/NotificationWebSocketContext";
 
 interface Event {
   id: number;
@@ -83,55 +84,18 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
   
   const isLoading = selectedCategory === 'my-events' ? isLoadingMyEvents : isLoadingUpcoming;
 
-  // Real-time RSVP updates via WebSocket
-  useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) return;
-
-    let ws: WebSocket | null = null;
-
-    const connect = () => {
-      try {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/ws/notifications?token=${encodeURIComponent(accessToken)}`;
-        ws = new WebSocket(wsUrl);
-        
-        ws.onopen = () => {
-          console.log('[WS] Connected to notification service');
-        };
-
-        ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          if (data.type === 'event_rsvp_update') {
-            setRealtimeRsvps(prev => ({
-              ...prev,
-              [data.eventId]: data.rsvpCount,
-            }));
-            // Also invalidate queries to sync
-            queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
-          }
-        };
-
-        ws.onerror = (error) => {
-          console.log('[WS] WebSocket error:', error);
-        };
-
-        ws.onclose = () => {
-          console.log('[WS] Disconnected from notification service');
-        };
-      } catch (error) {
-        console.error('[WS] Failed to create WebSocket:', error);
-      }
-    };
-
-    connect();
-
-    return () => {
-      if (ws) {
-        ws.close();
-      }
-    };
+  // Real-time RSVP updates via shared WebSocket context
+  const handleMessage = useCallback((message: { type: string; eventId?: number; rsvpCount?: number }) => {
+    if (message.type === 'event_rsvp_update' && message.eventId !== undefined) {
+      setRealtimeRsvps(prev => ({
+        ...prev,
+        [message.eventId!]: message.rsvpCount ?? 0,
+      }));
+      queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
+    }
   }, [queryClient]);
+
+  useNotificationSubscription(handleMessage);
 
   const getRsvpCount = (eventId: number, baseCount: number) => {
     return realtimeRsvps[eventId] ?? baseCount;

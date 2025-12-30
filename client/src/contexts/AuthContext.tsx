@@ -278,6 +278,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("accessToken", data.accessToken);
       console.log("[Auth] Stored accessToken in localStorage");
       setSession({ accessToken: data.accessToken });
+      
+      // Dispatch auth:login event for WebSocket context to connect
+      window.dispatchEvent(new CustomEvent('auth:login'));
 
       // Fetch full user data (including city, tangoRoles) from /api/auth/me
       // The login response doesn't include all profile fields
@@ -393,6 +396,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       setProfile(null);
       setSession(null);
+      
+      // Dispatch auth:logout event for WebSocket context to disconnect
+      window.dispatchEvent(new CustomEvent('auth:logout'));
+      
       navigate("/login");
     }
   };

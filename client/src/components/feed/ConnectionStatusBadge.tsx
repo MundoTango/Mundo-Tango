@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Wifi, WifiOff } from "lucide-react";
 import { motion } from "framer-motion";
-import { useWebSocket, WebSocketMessage } from "@/hooks/useWebSocket";
+import { useNotificationWebSocket, useNotificationSubscription } from "@/contexts/NotificationWebSocketContext";
 
 interface ConnectionStatusBadgeProps {
   className?: string;
@@ -10,26 +10,18 @@ interface ConnectionStatusBadgeProps {
 
 export function ConnectionStatusBadge({ className }: ConnectionStatusBadgeProps) {
   const [isConnected, setIsConnected] = useState(true);
+  const { status: wsStatus } = useNotificationWebSocket();
 
-  // Use the new WebSocket hook with proper reconnection logic
-  const { status: wsStatus } = useWebSocket({
-    path: '/ws/notifications',
-    onMessage: (message: WebSocketMessage) => {
-      if (message.type === 'notification') {
-        console.log('[WS] Notification received:', message.data);
-        window.dispatchEvent(new CustomEvent('ws-notification', { detail: message.data }));
-      }
-    },
-    onError: (error) => {
-      console.error('[WS] Connection error:', error);
-    },
-    reconnect: true,
-    maxRetries: 5,
-    heartbeatInterval: 30000,
-  });
+  const handleMessage = useCallback((message: { type: string; data?: any }) => {
+    if (message.type === 'notification') {
+      console.log('[WS] Notification received:', message.data);
+      window.dispatchEvent(new CustomEvent('ws-notification', { detail: message.data }));
+    }
+  }, []);
+
+  useNotificationSubscription(handleMessage);
 
   useEffect(() => {
-    // Monitor online/offline status
     const handleOnline = () => setIsConnected(true);
     const handleOffline = () => setIsConnected(false);
 
@@ -110,9 +102,8 @@ export function ConnectionStatusBadge({ className }: ConnectionStatusBadgeProps)
             }}
           />
         )}
-        <span className={`absolute inset-0.5 ${status.color} rounded-full`} />
       </div>
-      <span>{status.label}</span>
+      <span className="font-medium">{status.label}</span>
     </Badge>
   );
 }

@@ -63,28 +63,28 @@ export function useWebSocket(options: UseWebSocketOptions) {
   const [status, setStatus] = useState<WebSocketStatus>('disconnected');
   const wsRef = useRef<WebSocket | null>(null);
   const retriesRef = useRef(0);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
-  const heartbeatIntervalRef = useRef<NodeJS.Timeout>();
-  const connectionTimeoutRef = useRef<NodeJS.Timeout>();
-  const authTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const connectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const authTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isManualClose = useRef(false);
 
   const cleanup = useCallback(() => {
     if (heartbeatIntervalRef.current) {
       clearInterval(heartbeatIntervalRef.current);
-      heartbeatIntervalRef.current = undefined;
+      heartbeatIntervalRef.current = null;
     }
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
-      reconnectTimeoutRef.current = undefined;
+      reconnectTimeoutRef.current = null;
     }
     if (connectionTimeoutRef.current) {
       clearTimeout(connectionTimeoutRef.current);
-      connectionTimeoutRef.current = undefined;
+      connectionTimeoutRef.current = null;
     }
     if (authTimeoutRef.current) {
       clearTimeout(authTimeoutRef.current);
-      authTimeoutRef.current = undefined;
+      authTimeoutRef.current = null;
     }
   }, []);
 
@@ -171,7 +171,7 @@ export function useWebSocket(options: UseWebSocketOptions) {
         // Clear connection timeout since we're connected
         if (connectionTimeoutRef.current) {
           clearTimeout(connectionTimeoutRef.current);
-          connectionTimeoutRef.current = undefined;
+          connectionTimeoutRef.current = null;
         }
         
         // Authentication happens via JWT token in URL during handshake
@@ -197,11 +197,11 @@ export function useWebSocket(options: UseWebSocketOptions) {
             // Clear all pending timeouts
             if (connectionTimeoutRef.current) {
               clearTimeout(connectionTimeoutRef.current);
-              connectionTimeoutRef.current = undefined;
+              connectionTimeoutRef.current = null;
             }
             if (authTimeoutRef.current) {
               clearTimeout(authTimeoutRef.current);
-              authTimeoutRef.current = undefined;
+              authTimeoutRef.current = null;
             }
             
             setStatus('connected');
