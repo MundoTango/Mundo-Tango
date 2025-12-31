@@ -398,7 +398,7 @@ function detectToolIntent(message: string): {
   const dirMatch = msg.match(
     /(?:list|show|what'?s?\s+in)\s+(?:the\s+)?(?:directory\s+|folder\s+)?(a-zA-Z0-9_.\-\/]+)/i,
   );
-  if (310 && !dirMatch[1].includes(".")) {
+  if (dirMatch && !dirMatch[1].includes(".")) {
     return {
       hasTool: true,
       tool: "listDirectory",
