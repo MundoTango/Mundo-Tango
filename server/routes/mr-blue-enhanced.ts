@@ -1373,6 +1373,159 @@ ${sessionContextStr}`;
   }
 });
 
+// ============================================================================
+// MB.MD Pattern 65: Mr Blue Conversation Management
+// Store and retrieve conversation history for each user
+// ============================================================================
+
+interface MrBlueMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: string;
+  toolExecuted?: string;
+  toolSuccess?: boolean;
+}
+
+interface MrBlueConversation {
+  id: string;
+  userId: number;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messages: MrBlueMessage[];
+}
+
+// In-memory conversation store (per user)
+const conversationStore = new Map<number, MrBlueConversation[]>();
+
+/**
+ * GET /api/mrblue/conversations
+ * List all conversations for the current user
+ */
+router.get("/api/mrblue/conversations", authenticateToken, async (req, res) => {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const conversations = conversationStore.get(userId) || [];
+    
+    // Return conversations without full message content for listing
+    const conversationList = conversations.map(c => ({
+      id: c.id,
+      title: c.title,
+      createdAt: c.createdAt,
+      updatedAt: c.updatedAt,
+      messageCount: c.messages.length,
+      lastMessage: c.messages.length > 0 ? c.messages[c.messages.length - 1].content.substring(0, 100) : null,
+    }));
+
+    res.json(conversationList);
+  } catch (error: any) {
+    console.error("[Mr. Blue Conversations] List error:", error);
+    res.status(500).json({ error: "Failed to list conversations" });
+  }
+});
+
+/**
+ * POST /api/mrblue/conversations
+ * Create a new conversation
+ */
+router.post("/api/mrblue/conversations", authenticateToken, async (req, res) => {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { title } = req.body;
+    const now = new Date().toISOString();
+    
+    const newConversation: MrBlueConversation = {
+      id: nanoid(),
+      userId,
+      title: title || `Conversation ${new Date().toLocaleDateString()}`,
+      createdAt: now,
+      updatedAt: now,
+      messages: [],
+    };
+
+    const userConversations = conversationStore.get(userId) || [];
+    userConversations.unshift(newConversation);
+    conversationStore.set(userId, userConversations);
+
+    res.json({
+      id: newConversation.id,
+      title: newConversation.title,
+      createdAt: newConversation.createdAt,
+    });
+  } catch (error: any) {
+    console.error("[Mr. Blue Conversations] Create error:", error);
+    res.status(500).json({ error: "Failed to create conversation" });
+  }
+});
+
+/**
+ * GET /api/mrblue/conversations/:conversationId/messages
+ * Get messages for a specific conversation
+ */
+router.get("/api/mrblue/conversations/:conversationId/messages", authenticateToken, async (req, res) => {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { conversationId } = req.params;
+    const userConversations = conversationStore.get(userId) || [];
+    const conversation = userConversations.find(c => c.id === conversationId);
+
+    if (!conversation) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
+    res.json({
+      conversationId: conversation.id,
+      title: conversation.title,
+      messages: conversation.messages,
+    });
+  } catch (error: any) {
+    console.error("[Mr. Blue Conversations] Get messages error:", error);
+    res.status(500).json({ error: "Failed to get messages" });
+  }
+});
+
+/**
+ * DELETE /api/mrblue/conversations/:conversationId
+ * Delete a conversation
+ */
+router.delete("/api/mrblue/conversations/:conversationId", authenticateToken, async (req, res) => {
+  try {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { conversationId } = req.params;
+    const userConversations = conversationStore.get(userId) || [];
+    const index = userConversations.findIndex(c => c.id === conversationId);
+
+    if (index === -1) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
+    userConversations.splice(index, 1);
+    conversationStore.set(userId, userConversations);
+
+    res.json({ success: true, message: "Conversation deleted" });
+  } catch (error: any) {
+    console.error("[Mr. Blue Conversations] Delete error:", error);
+    res.status(500).json({ error: "Failed to delete conversation" });
+  }
+});
+
 /**
  * Enhanced chat endpoint with automatic error detection and legal intelligence
  */
