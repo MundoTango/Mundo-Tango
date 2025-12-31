@@ -79,10 +79,106 @@ export class GodCommandEnforcer {
   }
 
   /**
+   * Command #3: Work Recursively
+   * Enforces deep dependency analysis by reading file contents and resolving import paths
+   */
+  public async enforceRecursively(files: string[], maxDepth: number = 3): Promise<{ analyzed: string[], depth: number }> {
+    logger.info(`[GodCommandEnforcer] Enforcing #3 WORK RECURSIVELY for ${files.length} files (max depth: ${maxDepth})`);
+    
+    const analyzed = new Set<string>();
+    let currentDepth = 0;
+    let filesToProcess = [...files];
+    
+    const resolveImportPath = async (importPath: string, currentFile: string): Promise<string | null> => {
+      if (importPath.startsWith('.')) {
+        const dir = currentFile.substring(0, currentFile.lastIndexOf('/')) || '.';
+        let resolved = `${dir}/${importPath}`
+          .replace(/\/\.\//g, '/')
+          .replace(/\/[^/]+\/\.\.\//g, '/');
+        
+        const extensions = ['.ts', '.tsx', '.js', '.jsx', '/index.ts', '/index.tsx', '/index.js', ''];
+        for (const ext of extensions) {
+          const fullPath = resolved + ext;
+          try {
+            const checkResult = await this.toolService.executeTool('readFile', { path: fullPath });
+            if (checkResult.success) {
+              return fullPath;
+            }
+          } catch (e) {
+            // File doesn't exist with this extension, try next
+          }
+        }
+      }
+      return null;
+    };
+    
+    const unresolvedImports: string[] = [];
+    const failedReads: string[] = [];
+    
+    while (currentDepth < maxDepth && filesToProcess.length > 0) {
+      const nextLevel: string[] = [];
+      
+      for (const file of filesToProcess) {
+        if (!analyzed.has(file)) {
+          try {
+            const readResult = await this.toolService.executeTool('readFile', { path: file });
+            
+            if (!readResult.success || !readResult.content) {
+              failedReads.push(file);
+              logger.error(`[GodCommandEnforcer] #3 FAILED to read file: ${file}`);
+              continue;
+            }
+            
+            analyzed.add(file);
+            
+            const importRegex = /import\s+(?:(?:\{[^}]*\}|[^{}\s]+)\s+from\s+)?['"]([^'"]+)['"]/g;
+            let match;
+            while ((match = importRegex.exec(readResult.content)) !== null) {
+              const importPath = match[1];
+              if (importPath.startsWith('.')) {
+                const resolved = await resolveImportPath(importPath, file);
+                if (resolved && !analyzed.has(resolved)) {
+                  nextLevel.push(resolved);
+                } else if (!resolved) {
+                  unresolvedImports.push(`${file} -> ${importPath}`);
+                }
+              }
+            }
+          } catch (e) {
+            failedReads.push(file);
+            logger.error(`[GodCommandEnforcer] #3 ERROR reading file: ${file}`);
+          }
+        }
+      }
+      
+      currentDepth++;
+      filesToProcess = nextLevel;
+    }
+    
+    // Fail if seed files couldn't be read
+    if (analyzed.size === 0 && failedReads.length > 0) {
+      throw new Error(`Command #3 Violation: Could not read seed files: ${failedReads.join(', ')}`);
+    }
+    
+    // Fail if critical dependencies are unresolved (only for root level failures)
+    if (failedReads.length > 0 && currentDepth <= 1) {
+      throw new Error(`Command #3 Violation: Failed to read ${failedReads.length} root file(s): ${failedReads.slice(0, 3).join(', ')}`);
+    }
+    
+    // Warn about unresolved imports (deeper levels are non-blocking)
+    if (unresolvedImports.length > 0) {
+      logger.warn(`[GodCommandEnforcer] #3 Unresolved imports (${unresolvedImports.length}): ${unresolvedImports.slice(0, 3).join('; ')}`);
+    }
+    
+    logger.info(`[GodCommandEnforcer] #3 RECURSIVELY Complete: ${analyzed.size} files analyzed at depth ${currentDepth}`);
+    return { analyzed: Array.from(analyzed), depth: currentDepth };
+  }
+
+  /**
    * Command #4: Work Critically
    * Enforces a minimum quality score before permitting changes
    */
-  public async validateCritically(content: string): Promise<void> {
+  public async validateCritically(content: string): Promise<{ score: number, passed: boolean }> {
     logger.info("[GodCommandEnforcer] Enforcing #4 WORK CRITICALLY (95% Quality Threshold)");
     const report = await mbmdEngine.validateTaskAgainstQualityGates({
       subtasks: [{ description: content, estimatedMinutes: 1, type: 'code_generation' } as any],
@@ -90,9 +186,31 @@ export class GodCommandEnforcer {
       dependencies: { nodes: [], edges: [], levels: [] }
     } as any);
 
-    if (report.score < 95) {
-      throw new Error(`Command #4 Violation: Quality score ${report.score.toFixed(1)}% is below the required 95% threshold.`);
+    const passed = report.score >= 95;
+    if (!passed) {
+      logger.error(`[GodCommandEnforcer] #4 CRITICAL VIOLATION: Quality score ${report.score.toFixed(1)}% is below 95% threshold`);
+      throw new Error(`Command #4 Violation: Quality score ${report.score.toFixed(1)}% is below the required 95% threshold. Execution blocked.`);
     }
+    logger.info(`[GodCommandEnforcer] #4 Quality score ${report.score.toFixed(1)}% - PASSED`);
+    return { score: report.score, passed: true };
+  }
+
+  /**
+   * Command #6: Infrastructure First
+   * Checks existing systems before building new ones
+   */
+  public async checkInfrastructureFirst(capability: string): Promise<{ exists: boolean, system?: string }> {
+    logger.info(`[GodCommandEnforcer] Enforcing #6 INFRASTRUCTURE FIRST for: ${capability}`);
+    
+    const existingSystems = ['Page Audit', 'Auto-Fix', 'Agent Orchestration', 'Self-Healing'];
+    const matching = existingSystems.find(s => capability.toLowerCase().includes(s.toLowerCase()));
+    
+    if (matching) {
+      logger.info(`[GodCommandEnforcer] #6 Found existing system: ${matching}`);
+      return { exists: true, system: matching };
+    }
+    
+    return { exists: false };
   }
 
   /**
@@ -130,18 +248,48 @@ export class GodCommandEnforcer {
   }
 
   /**
-   * Command #8: Validation Score (Observe -> Decide -> Act)
-   * Enforces the structured feedback loop for every major action
+   * Command #8: Validation Score (Observe -> Decide -> Act -> Validate -> Adapt)
+   * Enforces the structured feedback loop with mandatory revalidation after adaptation
    */
-  public async runValidationLoop(observation: any, decision: () => Promise<void>): Promise<void> {
+  public async runValidationLoop<T>(
+    observation: any, 
+    decide: () => Promise<T>,
+    validate: (result: T) => Promise<boolean>,
+    adapt?: (result: T) => Promise<T>
+  ): Promise<{ result: T, validated: boolean, adapted: boolean }> {
     logger.info("[GodCommandEnforcer] Enforcing #8 VALIDATION SCORE Loop");
+    
     // OBSERVE
     logger.info(`[GodCommandEnforcer] OBSERVE: ${JSON.stringify(observation).substring(0, 100)}...`);
     
     // DECIDE & ACT
-    await decision();
+    let result = await decide();
+    logger.info("[GodCommandEnforcer] DECIDE & ACT complete");
     
-    logger.info("[GodCommandEnforcer] #8 Loop Complete");
+    // VALIDATE (first attempt)
+    let isValid = await validate(result);
+    logger.info(`[GodCommandEnforcer] VALIDATE (attempt 1): ${isValid ? 'PASSED' : 'FAILED'}`);
+    
+    // ADAPT (if validation failed and adapter provided)
+    let adapted = false;
+    if (!isValid && adapt) {
+      result = await adapt(result);
+      adapted = true;
+      logger.info("[GodCommandEnforcer] ADAPT: Applied corrections");
+      
+      // REVALIDATE after adaptation (mandatory)
+      isValid = await validate(result);
+      logger.info(`[GodCommandEnforcer] VALIDATE (post-adapt): ${isValid ? 'PASSED' : 'FAILED'}`);
+    }
+    
+    // Fail hard if still not validated
+    if (!isValid) {
+      logger.error("[GodCommandEnforcer] #8 CRITICAL: Validation failed even after adaptation");
+      throw new Error("Command #8 Violation: Validation loop failed - result did not pass validation after adaptation.");
+    }
+    
+    logger.info("[GodCommandEnforcer] #8 Loop Complete - VALIDATED");
+    return { result, validated: true, adapted };
   }
 }
 

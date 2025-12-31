@@ -73,18 +73,57 @@ class VibeCodingMasterLoopService {
       emit('phase', 'Researching codebase and context', 'RESEARCH');
       const research = await this.phaseResearch(plan, req, emit);
       
+      // #3 RECURSIVELY God Command - analyze dependencies
+      const relevantFiles = req.context?.relevantFiles || [];
+      if (relevantFiles.length > 0) {
+        await godCommandEnforcer.enforceRecursively(relevantFiles, 3);
+      }
+      
+      // #6 INFRASTRUCTURE FIRST God Command
+      await godCommandEnforcer.checkInfrastructureFirst(req.goal);
+      
       // PHASE 4: EXECUTE
       emit('phase', 'Executing code changes', 'EXECUTE');
       const checkpoint = await checkpointManager.createCheckpoint(req.sessionId, req.userId, 'pre-vibecoding', []);
       
-      // #7 AUTO-FIX God Command applied to execution
-      const execution = await godCommandEnforcer.executeWithAutoFix(
-        () => this.phaseExecute(plan, research, req, emit),
-        "Phase Execute"
+      // #8 VALIDATION LOOP + #7 AUTO-FIX God Commands combined
+      const executionResult = await godCommandEnforcer.runValidationLoop(
+        { phase: 'EXECUTE', goal: req.goal, timestamp: Date.now() },
+        async () => {
+          return await godCommandEnforcer.executeWithAutoFix(
+            () => this.phaseExecute(plan, research, req, emit),
+            "Phase Execute"
+          );
+        },
+        async (result) => {
+          // Substantive validation: check execution succeeded with actual file operations
+          const hasValidResult = result && typeof result === 'object';
+          const hasFileOperations = result.filesModified !== undefined || result.filesCreated !== undefined;
+          const executionSucceeded = result.result && !result.result.error;
+          return hasValidResult && hasFileOperations && executionSucceeded;
+        },
+        async (result) => {
+          // Adaptation: retry execution if validation failed
+          emit('thought', 'Validation failed, adapting and retrying...');
+          return await godCommandEnforcer.executeWithAutoFix(
+            () => this.phaseExecute(plan, research, req, emit),
+            "Phase Execute (Adapted)"
+          );
+        }
       );
       
+      // runValidationLoop now throws if validation fails, so if we reach here, we're validated
+      if (!executionResult.validated) {
+        throw new Error('Command #8 Violation: Execution did not pass final validation');
+      }
+      
+      const execution = executionResult.result;
       filesModified.push(...(execution.filesModified || []));
       filesCreated.push(...(execution.filesCreated || []));
+      
+      // #4 CRITICALLY God Command - validate quality (throws on failure)
+      const qualityResult = await godCommandEnforcer.validateCritically(req.goal);
+      emit('thought', `Quality score: ${qualityResult.score.toFixed(1)}% - PASSED`);
       
       // PHASE 5: VERIFY
       emit('phase', 'Running tests and validation', 'VERIFY');
