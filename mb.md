@@ -1,4 +1,6 @@
-# MB.MD - Mr. Blue's !Modular Brain v3.1
+# MB.MD - Mr. Blue's 
+
+!Modular Brain v3.1
 
 **Version:** 3.2.0
 **Updated:** December 30, 2025

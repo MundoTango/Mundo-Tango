@@ -698,30 +698,26 @@ I'll analyze this and may be able to fix it automatically.`,
           </p>
         </div>
 
-        {/* Mode Toggle */}
-        <Tabs value={mode} onValueChange={(value) => setMode(value as 'chat' | 'vibecoding')} className="w-full px-4 pb-2">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="chat" className="flex items-center gap-2">
-              <Brain className="h-4 w-4" />
-              Chat
+        {/* Mode Toggle & Close Button */}
+        <div className="flex items-center gap-2">
+          <Tabs value={mode} onValueChange={(value) => setMode(value as 'chat' | 'vibecoding')} className="w-auto">
+            <TabsList className="grid w-32 grid-cols-2">
+              <TabsTrigger value="chat" className="p-1">
+                <Brain className="h-4 w-4" />
               </TabsTrigger>
-            <TabsTrigger value="vibecoding" className="flex items-center gap-2">
-              <Code className="h-4 w-4" />
-              VibeCoding
+              <TabsTrigger value="vibecoding" className="p-1">
+                <Code className="h-4 w-4" />
               </TabsTrigger>
             </TabsList>
           </Tabs>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs text-muted-foreground">Online</span>
-          </div>
+
           {onClose && (
             <Button
               size="icon"
               variant="ghost"
               onClick={onClose}
               data-testid="button-close-chat"
+              className="h-8 w-8"
             >
               <X className="h-4 w-4" />
             </Button>

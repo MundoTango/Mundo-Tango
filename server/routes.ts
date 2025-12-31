@@ -42,6 +42,7 @@ import mrBlueVibeStreamRoutes from "./routes/mrblue-vibestream-routes";
 import mrBlueVoiceRoutes from "./routes/mrblue-voice-routes";
 import mrBlueTTSRoutes from "./routes/mrBlueTTS";
 import voiceFirstRoutes from "./routes/voice-first-routes";
+import mrBlueVibecodingRoutes from "./routes/mrblue-vibecoding-routes";
 import mrBlueMessengerRoutes from "./routes/mrblue-messenger-routes";
 import mrBlueAutonomousRoutes from "./routes/mrblue-autonomous-routes";
 import mrBlueMemoryRoutes from "./routes/mrblue-memory-routes";
@@ -1163,8 +1164,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue", mrblueVideoRoutes);
   app.use("/api/mrblue", mrBlueStreamRoutes); // Streaming SSE endpoint
   app.use("/api/mrblue", mrBlueRoutes);
-  app.use("/api/mrblue/activate-agents", mrBlueActivateAgentsRoutes); // MB.MD v9.2: Contextual agent activation
-  app.use("/api/mrblue/save-backend", mrBlueSaveBackendRoutes); // MB.MD v9.3: Backend agent system (Save button)
+  app.use("/api/mrblue/activate-agents", mrBlueActivateAgentsRoutes); // MB.MD v9.2: Contextual agent activat
+  app.use("/api/mrblue", mrBlueVibecodingRoutes);
+  app.use("/api/1167/save-backend", mrBlueSaveBackendRoutes); // MB.MD v9.3: Backend agent system (Save button)
   app.use("/api/mrblue/context", mrBlueContextRoutes); // System 1: Context Service with LanceDB
   app.use("/api/mrblue/video", mrBlueVideoConferenceRoutes); // System 2: Daily.co Video Conference
   app.use("/api/mrblue/vibecode", mrBlueVibeCodingRoutes); // System 4: Vibe Coding Engine (Natural Language → Code)
