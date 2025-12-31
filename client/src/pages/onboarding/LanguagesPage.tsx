@@ -25,6 +25,14 @@ export default function LanguagesPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // Initialize primary language from localStorage if not set
+    const storedLng = localStorage.getItem('i18nextLng');
+    if (storedLng && !primaryLanguage) {
+      setPrimaryLanguage(storedLng);
+    }
+  }, [primaryLanguage]);
+
+  useEffect(() => {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {

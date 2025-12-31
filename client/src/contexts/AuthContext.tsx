@@ -370,6 +370,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log("[Auth] Registration response:", data);
       
       // New flow: registration requires email verification before login
+      const storedLng = localStorage.getItem('i18nextLng') || 'en';
+      
       if (data.requiresVerification) {
         console.log("[Auth] Email verification required, redirecting to verification page");
         return { requiresVerification: true, email: data.email };
@@ -380,17 +382,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("accessToken", data.accessToken);
         setSession({ accessToken: data.accessToken });
         setUser(data.user);
-        setProfile({
-          id: data.user.id,
-          username: data.user.username,
-          name: data.user.name,
-          email: data.user.email,
-          profileImage: data.user.profileImage,
-          bio: data.user.bio,
-          city: data.user.city,
-          country: data.user.country,
-          tangoRoles: data.user.tangoRoles || [],
-        });
+        
+        // Persist language if not already set on user
+        if (!data.user.primaryLanguage && storedLng) {
+          try {
+            await fetch(`${API_BASE_URL}/api/users/me`, {
+              method: "PATCH",
+              headers: {
+                ...headers,
+                Authorization: `Bearer ${data.accessToken}`,
+              },
+              body: JSON.stringify({ primaryLanguage: storedLng }),
+            });
+          } catch (e) {
+            console.error("[Auth] Failed to persist language during registration", e);
+          }
+        }
 
         if (!data.user.isOnboardingComplete) {
           navigate("/onboarding/welcome");
