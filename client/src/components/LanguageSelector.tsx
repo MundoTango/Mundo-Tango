@@ -151,6 +151,9 @@ function LanguageSelectorComponent() {
         console.error('Failed to save language preference:', error);
       }
     }
+    
+    // Force page reload to ensure all translations are applied correctly
+    window.location.reload();
   }, [user?.id]);
 
   return (
@@ -246,6 +249,9 @@ function LanguageSelectorButtonComponent() {
         console.error('Failed to save language preference:', error);
       }
     }
+    
+    // Force page reload to ensure all translations are applied correctly
+    window.location.reload();
   }, [user?.id]);
 
   return (
