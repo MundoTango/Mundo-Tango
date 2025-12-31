@@ -107,7 +107,7 @@ if (!i18n.isInitialized) {
       interpolation: { escapeValue: false },
       backend: { loadPath: "/locales/{{lng}}/{{ns}}.json" },
       react: { 
-        useSuspense: true,
+        useSuspense: false,
         bindI18n: 'languageChanged loaded',
         bindI18nStore: 'added removed',
       },

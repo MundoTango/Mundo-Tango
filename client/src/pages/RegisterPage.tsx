@@ -18,7 +18,19 @@ import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.j
 import { TalentMatchModal } from "@/components/TalentMatchModal";
 
 export default function RegisterPage() {
-  const { t } = useTranslation(['pages', 'common']);
+  const { t, i18n } = useTranslation(['pages', 'common']);
+  
+  // Force re-render when language changes by tracking language in local state
+  const [currentLang, setCurrentLang] = useState(i18n.language);
+  useEffect(() => {
+    const handleLanguageChange = (lng: string) => {
+      setCurrentLang(lng);
+    };
+    i18n.on('languageChanged', handleLanguageChange);
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, [i18n]);
   const [, navigate] = useLocation();
   const [inviteCode, setInviteCode] = useState("");
   const [isCodeValid, setIsCodeValid] = useState(false);
