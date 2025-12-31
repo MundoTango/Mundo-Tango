@@ -12,7 +12,7 @@ import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
 const router = Router();
 
 // Main VibeCoding endpoint with streaming support
-router.post("/vibecodeing", async (req: Request, res: Response) => {
+router.post("/vibecoding", async (req: Request, res: Response) => {
   try {
     const { goal, context } = req.body;
     const user = (req as any).user;

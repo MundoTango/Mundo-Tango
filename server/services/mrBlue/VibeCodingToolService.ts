@@ -1,7 +1,7 @@
 /**
  * MR. BLUE VIBECODING TOOL SERVICE
  * MB.MD Pattern 65 - Gives Mr. Blue actual tools to DO things, not just TALK about them
- * 
+ *
  * A true VibeCoding agent needs:
  * 1. File System Access - Read/write project files
  * 2. GitHub Access - Query repos, commits, issues
@@ -10,17 +10,22 @@
  * 5. Project Context - Understand the codebase
  */
 
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import { fileURLToPath } from 'url';
-import { getUncachableGitHubClient, getRepositoryInfo, getLatestCommit } from '../../lib/github-client';
+import * as fs from "fs/promises";
+import * as path from "path";
+import { exec } from "child_process";
+import { promisify } from "util";
+import { fileURLToPath } from "url";
+import {
+  getUncachableGitHubClient,
+  getRepositoryInfo,
+  getLatestCommit,
+} from "../../lib/github-client";
 
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const basePath = path.resolve(__dirname, '../../..');
+const basePath = process.cwd(); // Use process.cwd() for reliable Replit workspace path
+console.log("[VibeCoding] basePath resolved to:", basePath);
 
 export interface ToolResult {
   success: boolean;
@@ -35,18 +40,18 @@ export interface ToolResult {
 export async function readFile(filePath: string): Promise<ToolResult> {
   try {
     const fullPath = path.join(basePath, filePath);
-    const content = await fs.readFile(fullPath, 'utf-8');
+    const content = await fs.readFile(fullPath, "utf-8");
     return {
       success: true,
-      tool: 'readFile',
-      data: { path: filePath, content, lines: content.split('\n').length }
+      tool: "readFile",
+      data: { path: filePath, content, lines: content.split("\n").length },
     };
   } catch (error: any) {
     return {
       success: false,
-      tool: 'readFile',
+      tool: "readFile",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -54,23 +59,26 @@ export async function readFile(filePath: string): Promise<ToolResult> {
 /**
  * TOOL: Write/create a project file
  */
-export async function writeFile(filePath: string, content: string): Promise<ToolResult> {
+export async function writeFile(
+  filePath: string,
+  content: string,
+): Promise<ToolResult> {
   try {
     const fullPath = path.join(basePath, filePath);
     const dir = path.dirname(fullPath);
     await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(fullPath, content, 'utf-8');
+    await fs.writeFile(fullPath, content, "utf-8");
     return {
       success: true,
-      tool: 'writeFile',
-      data: { path: filePath, bytesWritten: content.length }
+      tool: "writeFile",
+      data: { path: filePath, bytesWritten: content.length },
     };
   } catch (error: any) {
     return {
       success: false,
-      tool: 'writeFile',
+      tool: "writeFile",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -78,25 +86,27 @@ export async function writeFile(filePath: string, content: string): Promise<Tool
 /**
  * TOOL: List directory contents
  */
-export async function listDirectory(dirPath: string = '.'): Promise<ToolResult> {
+export async function listDirectory(
+  dirPath: string = ".",
+): Promise<ToolResult> {
   try {
     const fullPath = path.join(basePath, dirPath);
     const entries = await fs.readdir(fullPath, { withFileTypes: true });
-    const files = entries.map(e => ({
+    const files = entries.map((e) => ({
       name: e.name,
-      type: e.isDirectory() ? 'directory' : 'file'
+      type: e.isDirectory() ? "directory" : "file",
     }));
     return {
       success: true,
-      tool: 'listDirectory',
-      data: { path: dirPath, entries: files }
+      tool: "listDirectory",
+      data: { path: dirPath, entries: files },
     };
   } catch (error: any) {
     return {
       success: false,
-      tool: 'listDirectory',
+      tool: "listDirectory",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -104,24 +114,33 @@ export async function listDirectory(dirPath: string = '.'): Promise<ToolResult> 
 /**
  * TOOL: Search for files by pattern
  */
-export async function searchFiles(pattern: string, directory: string = '.'): Promise<ToolResult> {
+export async function searchFiles(
+  pattern: string,
+  directory: string = ".",
+): Promise<ToolResult> {
   try {
-    const { stdout } = await execAsync(`find ${directory} -name "${pattern}" -type f 2>/dev/null | head -50`, {
-      cwd: basePath,
-      timeout: 10000
-    });
-    const files = stdout.trim().split('\n').filter(f => f);
+    const { stdout } = await execAsync(
+      `find ${directory} -name "${pattern}" -type f 2>/dev/null | head -50`,
+      {
+        cwd: basePath,
+        timeout: 10000,
+      },
+    );
+    const files = stdout
+      .trim()
+      .split("\n")
+      .filter((f) => f);
     return {
       success: true,
-      tool: 'searchFiles',
-      data: { pattern, files, count: files.length }
+      tool: "searchFiles",
+      data: { pattern, files, count: files.length },
     };
   } catch (error: any) {
     return {
       success: false,
-      tool: 'searchFiles',
+      tool: "searchFiles",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -129,54 +148,69 @@ export async function searchFiles(pattern: string, directory: string = '.'): Pro
 /**
  * TOOL: Search file contents (grep)
  */
-export async function grepFiles(searchTerm: string, directory: string = '.'): Promise<ToolResult> {
+export async function grepFiles(
+  searchTerm: string,
+  directory: string = ".",
+): Promise<ToolResult> {
   try {
     // Always check mb.md first for knowledge/pattern searches
-    let mbmdLines = '';
-    console.log(`[grepFiles] Searching for "${searchTerm}" in ${directory}, basePath: ${basePath}`);
+    let mbmdLines = "";
+    console.log(
+      `[grepFiles] Searching for "${searchTerm}" in ${directory}, basePath: ${basePath}`,
+    );
     try {
       const { stdout: mbmd } = await execAsync(
         `grep -n "${searchTerm}" mb.md 2>&1 | head -30`,
-        { cwd: basePath, timeout: 10000 }
+        { cwd: basePath, timeout: 10000 },
       );
       mbmdLines = mbmd.trim();
-      console.log(`[grepFiles] mb.md grep result: ${mbmdLines.substring(0, 100)}...`);
+      console.log(
+        `[grepFiles] mb.md grep result: ${mbmdLines.substring(0, 100)}...`,
+      );
     } catch (e: any) {
       console.log(`[grepFiles] mb.md grep error: ${e.message}`);
     }
-    
+
     // Then search code files (wrap in try-catch as grep exits with code 1 when no matches)
     let files: string[] = [];
     try {
       const { stdout } = await execAsync(
         `grep -r -l --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.md" --include="*.json" "${searchTerm}" ${directory} 2>/dev/null | head -20`,
-        { cwd: basePath, timeout: 10000 }
+        { cwd: basePath, timeout: 10000 },
       );
-      files = stdout.trim().split('\n').filter(f => f);
+      files = stdout
+        .trim()
+        .split("\n")
+        .filter((f) => f);
     } catch {
       // No matches in code files - that's okay
     }
-    
+
     // If we found matches in mb.md, include those lines
     if (mbmdLines) {
       return {
         success: true,
-        tool: 'grepFiles',
-        data: { searchTerm, matchingFiles: files.length > 0 ? files : ['mb.md'], count: files.length || 1, matchingLines: mbmdLines }
+        tool: "grepFiles",
+        data: {
+          searchTerm,
+          matchingFiles: files.length > 0 ? files : ["mb.md"],
+          count: files.length || 1,
+          matchingLines: mbmdLines,
+        },
       };
     }
-    
+
     return {
       success: true,
-      tool: 'grepFiles',
-      data: { searchTerm, matchingFiles: files, count: files.length }
+      tool: "grepFiles",
+      data: { searchTerm, matchingFiles: files, count: files.length },
     };
   } catch (error: any) {
     return {
       success: false,
-      tool: 'grepFiles',
+      tool: "grepFiles",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -185,35 +219,50 @@ export async function grepFiles(searchTerm: string, directory: string = '.'): Pr
  * TOOL: Execute shell command (safe, limited commands only)
  */
 export async function executeCommand(command: string): Promise<ToolResult> {
-  const allowedCommands = ['ls', 'cat', 'head', 'tail', 'grep', 'find', 'wc', 'git', 'npm', 'node'];
-  const firstWord = command.split(' ')[0];
-  
+  const allowedCommands = [
+    "ls",
+    "cat",
+    "head",
+    "tail",
+    "grep",
+    "find",
+    "wc",
+    "git",
+    "npm",
+    "node",
+  ];
+  const firstWord = command.split(" ")[0];
+
   if (!allowedCommands.includes(firstWord)) {
     return {
       success: false,
-      tool: 'executeCommand',
+      tool: "executeCommand",
       data: null,
-      error: `Command '${firstWord}' not allowed. Allowed: ${allowedCommands.join(', ')}`
+      error: `Command '${firstWord}' not allowed. Allowed: ${allowedCommands.join(", ")}`,
     };
   }
-  
+
   try {
     const { stdout, stderr } = await execAsync(command, {
       cwd: basePath,
       timeout: 30000,
-      maxBuffer: 1024 * 1024
+      maxBuffer: 1024 * 1024,
     });
     return {
       success: true,
-      tool: 'executeCommand',
-      data: { command, stdout: stdout.substring(0, 5000), stderr: stderr.substring(0, 1000) }
+      tool: "executeCommand",
+      data: {
+        command,
+        stdout: stdout.substring(0, 5000),
+        stderr: stderr.substring(0, 1000),
+      },
     };
   } catch (error: any) {
     return {
       success: false,
-      tool: 'executeCommand',
+      tool: "executeCommand",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -226,40 +275,42 @@ export async function executeCommand(command: string): Promise<ToolResult> {
 export async function getGitHubInfo(): Promise<ToolResult> {
   try {
     const octokit = await getUncachableGitHubClient();
-    
+
     // Get the main Mundo-Tango repo info first (this is our primary project)
-    const MAIN_REPO_OWNER = 'MundoTango';
-    const MAIN_REPO_NAME = 'Mundo-Tango';
-    
+    const MAIN_REPO_OWNER = "MundoTango";
+    const MAIN_REPO_NAME = "Mundo-Tango";
+
     try {
       const { data: mainRepo } = await octokit.repos.get({
         owner: MAIN_REPO_OWNER,
-        repo: MAIN_REPO_NAME
+        repo: MAIN_REPO_NAME,
       });
-      
+
       // Get recent commits from main repo
       const { data: commits } = await octokit.repos.listCommits({
         owner: MAIN_REPO_OWNER,
         repo: MAIN_REPO_NAME,
-        per_page: 5
+        per_page: 5,
       });
-      
+
       // Get open issues/PRs count
       const { data: issues } = await octokit.issues.listForRepo({
         owner: MAIN_REPO_OWNER,
         repo: MAIN_REPO_NAME,
-        state: 'open',
-        per_page: 10
+        state: "open",
+        per_page: 10,
       });
-      
+
       return {
         success: true,
-        tool: 'getGitHubInfo',
+        tool: "getGitHubInfo",
         data: {
           mainRepository: {
             name: mainRepo.name,
             fullName: mainRepo.full_name,
-            description: mainRepo.description || 'Mundo Tango - Global Tango Community Platform',
+            description:
+              mainRepo.description ||
+              "Mundo Tango - Global Tango Community Platform",
             language: mainRepo.language,
             stars: mainRepo.stargazers_count,
             forks: mainRepo.forks_count,
@@ -267,63 +318,68 @@ export async function getGitHubInfo(): Promise<ToolResult> {
             defaultBranch: mainRepo.default_branch,
             url: mainRepo.html_url,
             createdAt: mainRepo.created_at,
-            updatedAt: mainRepo.updated_at
+            updatedAt: mainRepo.updated_at,
           },
-          recentCommits: commits.slice(0, 5).map(c => ({
+          recentCommits: commits.slice(0, 5).map((c) => ({
             sha: c.sha.substring(0, 7),
-            message: c.commit.message.split('\n')[0],
-            author: c.commit.author?.name || 'Unknown',
-            date: c.commit.author?.date
+            message: c.commit.message.split("\n")[0],
+            author: c.commit.author?.name || "Unknown",
+            date: c.commit.author?.date,
           })),
-          openIssues: issues.slice(0, 5).map(i => ({
+          openIssues: issues.slice(0, 5).map((i) => ({
             number: i.number,
             title: i.title,
             state: i.state,
-            labels: i.labels.map((l: any) => typeof l === 'string' ? l : l.name)
-          }))
-        }
+            labels: i.labels.map((l: any) =>
+              typeof l === "string" ? l : l.name,
+            ),
+          })),
+        },
       };
     } catch (repoError: any) {
       // Fallback: If main repo is inaccessible (403/404), list authenticated user's repos
-      console.log('[VibeCoding] Main repo inaccessible, falling back to user repos:', repoError.message);
-      
+      console.log(
+        "[VibeCoding] Main repo inaccessible, falling back to user repos:",
+        repoError.message,
+      );
+
       const { data: user } = await octokit.users.getAuthenticated();
       const { data: repos } = await octokit.repos.listForAuthenticatedUser({
-        sort: 'updated',
-        per_page: 10
+        sort: "updated",
+        per_page: 10,
       });
-      
+
       return {
         success: true,
-        tool: 'getGitHubInfo',
+        tool: "getGitHubInfo",
         data: {
-          note: 'Main repository (MundoTango/Mundo-Tango) not accessible. Showing authenticated user repos.',
+          note: "Main repository (MundoTango/Mundo-Tango) not accessible. Showing authenticated user repos.",
           user: {
             login: user.login,
             name: user.name,
             email: user.email,
             publicRepos: user.public_repos,
-            followers: user.followers
+            followers: user.followers,
           },
-          recentRepos: repos.map(r => ({
+          recentRepos: repos.map((r) => ({
             name: r.name,
             fullName: r.full_name,
             description: r.description,
             language: r.language,
             stars: r.stargazers_count,
             updatedAt: r.updated_at,
-            url: r.html_url
-          }))
-        }
+            url: r.html_url,
+          })),
+        },
       };
     }
   } catch (error: any) {
-    console.error('[VibeCoding] GitHub API error:', error.message);
+    console.error("[VibeCoding] GitHub API error:", error.message);
     return {
       success: false,
-      tool: 'getGitHubInfo',
+      tool: "getGitHubInfo",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -331,14 +387,17 @@ export async function getGitHubInfo(): Promise<ToolResult> {
 /**
  * TOOL: Get specific GitHub repo details
  */
-export async function getGitHubRepo(owner: string, repo: string): Promise<ToolResult> {
+export async function getGitHubRepo(
+  owner: string,
+  repo: string,
+): Promise<ToolResult> {
   try {
     const repoInfo = await getRepositoryInfo(owner, repo);
     const latestCommit = await getLatestCommit(owner, repo);
-    
+
     return {
       success: true,
-      tool: 'getGitHubRepo',
+      tool: "getGitHubRepo",
       data: {
         name: repoInfo.name,
         fullName: repoInfo.full_name,
@@ -349,15 +408,15 @@ export async function getGitHubRepo(owner: string, repo: string): Promise<ToolRe
         openIssues: repoInfo.open_issues_count,
         defaultBranch: repoInfo.default_branch,
         latestCommit,
-        url: repoInfo.html_url
-      }
+        url: repoInfo.html_url,
+      },
     };
   } catch (error: any) {
     return {
       success: false,
-      tool: 'getGitHubRepo',
+      tool: "getGitHubRepo",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -367,25 +426,34 @@ export async function getGitHubRepo(owner: string, repo: string): Promise<ToolRe
  */
 export async function getGitStatus(): Promise<ToolResult> {
   try {
-    const { stdout: status } = await execAsync('git status --short', { cwd: basePath });
-    const { stdout: branch } = await execAsync('git branch --show-current', { cwd: basePath });
-    const { stdout: log } = await execAsync('git log --oneline -5', { cwd: basePath });
-    
+    const { stdout: status } = await execAsync("git status --short", {
+      cwd: basePath,
+    });
+    const { stdout: branch } = await execAsync("git branch --show-current", {
+      cwd: basePath,
+    });
+    const { stdout: log } = await execAsync("git log --oneline -5", {
+      cwd: basePath,
+    });
+
     return {
       success: true,
-      tool: 'getGitStatus',
+      tool: "getGitStatus",
       data: {
         branch: branch.trim(),
-        status: status.trim().split('\n').filter(l => l),
-        recentCommits: log.trim().split('\n')
-      }
+        status: status
+          .trim()
+          .split("\n")
+          .filter((l) => l),
+        recentCommits: log.trim().split("\n"),
+      },
     };
   } catch (error: any) {
     return {
       success: false,
-      tool: 'getGitStatus',
+      tool: "getGitStatus",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -397,30 +465,36 @@ export async function getProjectStructure(): Promise<ToolResult> {
   try {
     const { stdout } = await execAsync(
       'find . -type f -name "*.ts" -o -name "*.tsx" | grep -v node_modules | grep -v .git | head -50',
-      { cwd: basePath }
+      { cwd: basePath },
     );
-    
-    const packageJson = await fs.readFile(path.join(basePath, 'package.json'), 'utf-8');
+
+    const packageJson = await fs.readFile(
+      path.join(basePath, "package.json"),
+      "utf-8",
+    );
     const pkg = JSON.parse(packageJson);
-    
+
     return {
       success: true,
-      tool: 'getProjectStructure',
+      tool: "getProjectStructure",
       data: {
         name: pkg.name,
         version: pkg.version,
         dependencies: Object.keys(pkg.dependencies || {}),
         devDependencies: Object.keys(pkg.devDependencies || {}),
         scripts: Object.keys(pkg.scripts || {}),
-        sourceFiles: stdout.trim().split('\n').filter(f => f)
-      }
+        sourceFiles: stdout
+          .trim()
+          .split("\n")
+          .filter((f) => f),
+      },
     };
   } catch (error: any) {
     return {
       success: false,
-      tool: 'getProjectStructure',
+      tool: "getProjectStructure",
       data: null,
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -429,16 +503,56 @@ export async function getProjectStructure(): Promise<ToolResult> {
  * Available tools registry
  */
 export const VIBECODING_TOOLS = {
-  readFile: { name: 'readFile', description: 'Read contents of a project file', handler: readFile },
-  writeFile: { name: 'writeFile', description: 'Write/create a project file', handler: writeFile },
-  listDirectory: { name: 'listDirectory', description: 'List directory contents', handler: listDirectory },
-  searchFiles: { name: 'searchFiles', description: 'Search for files by pattern', handler: searchFiles },
-  grepFiles: { name: 'grepFiles', description: 'Search file contents', handler: grepFiles },
-  executeCommand: { name: 'executeCommand', description: 'Execute safe shell commands', handler: executeCommand },
-  getGitHubInfo: { name: 'getGitHubInfo', description: 'Get GitHub account and repos', handler: getGitHubInfo },
-  getGitHubRepo: { name: 'getGitHubRepo', description: 'Get specific GitHub repo details', handler: getGitHubRepo },
-  getGitStatus: { name: 'getGitStatus', description: 'Get local git status', handler: getGitStatus },
-  getProjectStructure: { name: 'getProjectStructure', description: 'Get project overview', handler: getProjectStructure },
+  readFile: {
+    name: "readFile",
+    description: "Read contents of a project file",
+    handler: readFile,
+  },
+  writeFile: {
+    name: "writeFile",
+    description: "Write/create a project file",
+    handler: writeFile,
+  },
+  listDirectory: {
+    name: "listDirectory",
+    description: "List directory contents",
+    handler: listDirectory,
+  },
+  searchFiles: {
+    name: "searchFiles",
+    description: "Search for files by pattern",
+    handler: searchFiles,
+  },
+  grepFiles: {
+    name: "grepFiles",
+    description: "Search file contents",
+    handler: grepFiles,
+  },
+  executeCommand: {
+    name: "executeCommand",
+    description: "Execute safe shell commands",
+    handler: executeCommand,
+  },
+  getGitHubInfo: {
+    name: "getGitHubInfo",
+    description: "Get GitHub account and repos",
+    handler: getGitHubInfo,
+  },
+  getGitHubRepo: {
+    name: "getGitHubRepo",
+    description: "Get specific GitHub repo details",
+    handler: getGitHubRepo,
+  },
+  getGitStatus: {
+    name: "getGitStatus",
+    description: "Get local git status",
+    handler: getGitStatus,
+  },
+  getProjectStructure: {
+    name: "getProjectStructure",
+    description: "Get project overview",
+    handler: getProjectStructure,
+  },
 };
 
 export type ToolName = keyof typeof VIBECODING_TOOLS;
@@ -457,116 +571,131 @@ export interface ToolDetectionResult {
  * VibeCoding Tool Service - Pattern-based tool detection and execution
  */
 class VibeCodingToolServiceClass {
-  
   /**
    * Detect if a message contains tool execution intent
    */
   detectToolIntent(message: string): ToolDetectionResult {
     const lowerMessage = message.toLowerCase().trim();
-    
+
     // Pattern matching for different tools
     // MB.MD Pattern 98: Subject-specific searches should come BEFORE generic repo info
     const patterns: Array<{
       pattern: RegExp;
       tool: ToolName;
-      extractParams: (match: RegExpMatchArray, msg: string) => Record<string, any>;
+      extractParams: (
+        match: RegExpMatchArray,
+        msg: string,
+      ) => Record<string, any>;
       baseConfidence: number;
     }> = [
       // PRIORITY 1: Subject-specific code search - "tell me about X system/code/feature on/in repo/codebase"
       // This MUST come before GitHub patterns to avoid false matches
       {
-        pattern: /(?:tell\s+me\s+about|explain|show\s+me|find|search\s+for|look\s+for|what\s+(?:is|are)\s+(?:the|our)?)\s+(?:the\s+)?(?:our\s+)?([\w\-]+(?:\s+[\w\-]+)?)\s+(?:system|code|feature|implementation|logic|component|service|module|function)\s+(?:on|in|from)\s+(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|github)/i,
-        tool: 'grepFiles',
+        pattern:
+          /(?:tell\s+me\s+about|explain|show\s+me|find|search\s+for|look\s+for|what\s+(?:is|are)\s+(?:the|our)?)\s+(?:the\s+)?(?:our\s+)?([\w\-]+(?:\s+[\w\-]+)?)\s+(?:system|code|feature|implementation|logic|component|service|module|function)\s+(?:on|in|from)\s+(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|github)/i,
+        tool: "grepFiles",
         extractParams: (match) => ({ searchTerm: match[1] }),
-        baseConfidence: 0.95  // Highest priority - specific subject search
+        baseConfidence: 0.95, // Highest priority - specific subject search
       },
       // PRIORITY 2: Generic grep with subject - "how does X work in our code"
       {
-        pattern: /(?:how\s+does|where\s+is|find)\s+(?:the\s+)?([\w\-]+(?:\s+[\w\-]+)?)\s+(?:work|handled|implemented|defined)\s+(?:in\s+)?(?:the\s+)?(?:our\s+)?(?:repo|codebase|code|github)?/i,
-        tool: 'grepFiles',
+        pattern:
+          /(?:how\s+does|where\s+is|find)\s+(?:the\s+)?([\w\-]+(?:\s+[\w\-]+)?)\s+(?:work|handled|implemented|defined)\s+(?:in\s+)?(?:the\s+)?(?:our\s+)?(?:repo|codebase|code|github)?/i,
+        tool: "grepFiles",
         extractParams: (match) => ({ searchTerm: match[1] }),
-        baseConfidence: 0.9
+        baseConfidence: 0.9,
       },
       // GitHub patterns - requires action verbs, ONLY for generic repo info
       // MB.MD Pattern 98: Added "query" and broader matching for proactive tool usage
       {
-        pattern: /(?:(?:show|get|check|view|look at|display|query|search|find|what(?:'s| is))\s+(?:the\s+)?(?:my|our)?\s*github(?:\s+(?:info|repos?|account|details|status|repo))?)|(?:(?:what(?:'s| is)|show|get|query)\s+(?:the\s+)?(?:our|my)\s+github\s*(?:repo|repository|account)?(?:\s*name)?)|(?:github\s+(?:info|status|repos?))|(?:query\s+(?:the\s+)?(?:our|my)\s+(?:github\s+)?repo(?:\b|$)(?!\s+\w))/i,
-        tool: 'getGitHubInfo',
+        pattern:
+          /(?:(?:show|get|check|view|look at|display|query|search|find|what(?:'s| is))\s+(?:the\s+)?(?:my|our)?\s*github(?:\s+(?:info|repos?|account|details|status|repo))?)|(?:(?:what(?:'s| is)|show|get|query)\s+(?:the\s+)?(?:our|my)\s+github\s*(?:repo|repository|account)?(?:\s*name)?)|(?:github\s+(?:info|status|repos?))|(?:query\s+(?:the\s+)?(?:our|my)\s+(?:github\s+)?repo(?:\b|$)(?!\s+\w))/i,
+        tool: "getGitHubInfo",
         extractParams: () => ({}),
-        baseConfidence: 0.9  // Higher confidence for explicit GitHub requests
+        baseConfidence: 0.9, // Higher confidence for explicit GitHub requests
       },
       // Repo identification patterns - "what repo", "which repo" (NOT "X on our repo")
       {
-        pattern: /(?:what|which)\s+(?:repo|repository)\s+(?:is this|are we|am I|is|this)|(?:^(?:our|my|the|this)\s+repo(?:sitory)?(?:\s+(?:name|info|details))?$)|(?:query\s+(?:our|my|the)\s+repo$)/i,
-        tool: 'getGitHubInfo',
+        pattern:
+          /(?:what|which)\s+(?:repo|repository)\s+(?:is this|are we|am I|is|this)|(?:^(?:our|my|the|this)\s+repo(?:sitory)?(?:\s+(?:name|info|details))?$)|(?:query\s+(?:our|my|the)\s+repo$)/i,
+        tool: "getGitHubInfo",
         extractParams: () => ({}),
-        baseConfidence: 0.85
+        baseConfidence: 0.85,
       },
       // MB.MD: "Can you see the repo" patterns - tests if Mr. Blue has access
       {
-        pattern: /(?:can you|do you)\s+(?:see|access|read|view|look at)\s+(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|files|project)/i,
-        tool: 'getProjectStructure',
+        pattern:
+          /(?:can you|do you)\s+(?:see|access|read|view|look at)\s+(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|files|project)/i,
+        tool: "getProjectStructure",
         extractParams: () => ({}),
-        baseConfidence: 0.9
+        baseConfidence: 0.9,
       },
       // MB.MD: "Do you have access to" patterns
       {
-        pattern: /(?:do you have|have you got)\s+(?:access|visibility)\s+(?:to\s+)?(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|files|project)/i,
-        tool: 'getProjectStructure',
+        pattern:
+          /(?:do you have|have you got)\s+(?:access|visibility)\s+(?:to\s+)?(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|files|project)/i,
+        tool: "getProjectStructure",
         extractParams: () => ({}),
-        baseConfidence: 0.9
+        baseConfidence: 0.9,
       },
       // MB.MD: "Look at the repo" / "check the codebase" patterns
       {
-        pattern: /(?:look at|check|examine|browse|explore)\s+(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|project)\b/i,
-        tool: 'getProjectStructure',
+        pattern:
+          /(?:look at|check|examine|browse|explore)\s+(?:the\s+)?(?:our\s+)?(?:repo|repository|codebase|code|project)\b/i,
+        tool: "getProjectStructure",
         extractParams: () => ({}),
-        baseConfidence: 0.85
+        baseConfidence: 0.85,
       },
-      // Git status patterns  
+      // Git status patterns
       {
-        pattern: /git\s*status|what(?:'s| is)\s*(?:the\s*)?(?:git|repo)\s*status|uncommitted\s*changes/i,
-        tool: 'getGitStatus',
+        pattern:
+          /git\s*status|what(?:'s| is)\s*(?:the\s*)?(?:git|repo)\s*status|uncommitted\s*changes/i,
+        tool: "getGitStatus",
         extractParams: () => ({}),
-        baseConfidence: 0.9
+        baseConfidence: 0.9,
       },
       // Read file patterns - handles paths with spaces (quoted or unquoted)
       {
-        pattern: /(?:read|show|open|view|cat|display)\s+(?:the\s+)?(?:file\s+)?(?:at\s+)?(?:["']([^"']+)["']|([\/\w\.\-]+(?:\s+[\/\w\.\-]+)*\.[a-zA-Z]+))/i,
-        tool: 'readFile',
+        pattern:
+          /(?:read|show|open|view|cat|display)\s+(?:the\s+)?(?:file\s+)?(?:at\s+)?(?:["']([^"']+)["']|([\/\w\.\-]+(?:\s+[\/\w\.\-]+)*\.[a-zA-Z]+))/i,
+        tool: "readFile",
         extractParams: (match) => ({ filePath: match[1] || match[2] }),
-        baseConfidence: 0.9
+        baseConfidence: 0.9,
       },
       // List directory patterns
       {
-        pattern: /(?:list|ls|show|what's in)\s+(?:the\s+)?(?:directory|folder|dir)\s*([\/\w\.\-]*)?/i,
-        tool: 'listDirectory',
-        extractParams: (match) => ({ dirPath: match[1] || '.' }),
-        baseConfidence: 0.85
+        pattern:
+          /(?:list|ls|show|what's in)\s+(?:the\s+)?(?:directory|folder|dir)\s*([\/\w\.\-]*)?/i,
+        tool: "listDirectory",
+        extractParams: (match) => ({ dirPath: match[1] || "." }),
+        baseConfidence: 0.85,
       },
       // Search files patterns
       {
-        pattern: /(?:find|search for|locate)\s+(?:files?\s+)?(?:matching|named|called)\s+["\']?([^\s"']+)["\']?/i,
-        tool: 'searchFiles',
+        pattern:
+          /(?:find|search for|locate)\s+(?:files?\s+)?(?:matching|named|called)\s+["\']?([^\s"']+)["\']?/i,
+        tool: "searchFiles",
         extractParams: (match) => ({ pattern: match[1] }),
-        baseConfidence: 0.85
+        baseConfidence: 0.85,
       },
       // Grep patterns
       {
-        pattern: /(?:grep|search|find)\s+(?:for\s+)?["\']?([^"']+)["\']?\s+(?:in|across)\s+(?:the\s+)?(?:codebase|files|code)/i,
-        tool: 'grepFiles',
+        pattern:
+          /(?:grep|search|find)\s+(?:for\s+)?["\']?([^"']+)["\']?\s+(?:in|across)\s+(?:the\s+)?(?:codebase|files|code)/i,
+        tool: "grepFiles",
         extractParams: (match) => ({ searchTerm: match[1] }),
-        baseConfidence: 0.85
+        baseConfidence: 0.85,
       },
       // Project structure patterns
       {
-        pattern: /(?:project\s*structure|codebase\s*overview|what(?:'s| is)\s*(?:the\s*)?project\s*layout)/i,
-        tool: 'getProjectStructure',
+        pattern:
+          /(?:project\s*structure|codebase\s*overview|what(?:'s| is)\s*(?:the\s*)?project\s*layout)/i,
+        tool: "getProjectStructure",
         extractParams: () => ({}),
-        baseConfidence: 0.85
-      }
+        baseConfidence: 0.85,
+      },
     ];
-    
+
     // Try each pattern
     for (const { pattern, tool, extractParams, baseConfidence } of patterns) {
       const match = message.match(pattern);
@@ -575,63 +704,66 @@ class VibeCodingToolServiceClass {
           shouldExecuteTool: true,
           suggestedTool: tool,
           confidence: baseConfidence,
-          parameters: extractParams(match, message)
+          parameters: extractParams(match, message),
         };
       }
     }
-    
+
     // No tool detected
     return {
       shouldExecuteTool: false,
       suggestedTool: null,
       confidence: 0,
-      parameters: {}
+      parameters: {},
     };
   }
-  
+
   /**
    * Execute a tool by name with given parameters
    */
-  async executeTool(toolName: ToolName, parameters: Record<string, any>): Promise<ToolResult> {
+  async executeTool(
+    toolName: ToolName,
+    parameters: Record<string, any>,
+  ): Promise<ToolResult> {
     const tool = VIBECODING_TOOLS[toolName];
     if (!tool) {
       return {
         success: false,
         tool: toolName,
         data: null,
-        error: `Unknown tool: ${toolName}`
+        error: `Unknown tool: ${toolName}`,
       };
     }
-    
+
     try {
       // Call the tool handler with appropriate parameters
       switch (toolName) {
-        case 'readFile':
+        case "readFile":
           return await readFile(parameters.filePath);
-        case 'writeFile':
+        case "writeFile":
           return await writeFile(parameters.filePath, parameters.content);
-        case 'listDirectory':
+        case "listDirectory":
           return await listDirectory(parameters.dirPath);
-        case 'searchFiles':
+        case "searchFiles":
           return await searchFiles(parameters.pattern, parameters.directory);
-        case 'grepFiles':
+        case "grepFiles":
           return await grepFiles(parameters.searchTerm, parameters.directory);
-        case 'executeCommand':
+        case "executeCommand":
           return await executeCommand(parameters.command);
-        case 'getGitHubInfo':
+        case "getGitHubInfo":
           return await getGitHubInfo();
-        case 'getGitHubRepo':
+        case "getGitHubRepo":
           return await getGitHubRepo(parameters.owner, parameters.repo);
-        case 'getGitStatus':
+        case "getGitStatus":
           return await getGitStatus();
-        case 'getProjectStructure':
+        case "getProjectStructure":
           return await getProjectStructure();
         default:
           return {
             success: false,
             tool: toolName,
             data: null,
-            error: `Unhandled tool: ${toolName}`
+            error: `Unhandled tool: ${toolName}`,
           };
       }
     } catch (error: any) {
@@ -639,7 +771,7 @@ class VibeCodingToolServiceClass {
         success: false,
         tool: toolName,
         data: null,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -648,28 +780,31 @@ class VibeCodingToolServiceClass {
 /**
  * Format tool results into rich HTML for display in chat UI
  */
-export function formatToolResponse(toolName: string, result: ToolResult): string {
+export function formatToolResponse(
+  toolName: string,
+  result: ToolResult,
+): string {
   if (!result.success) {
-    return `<div class="tool-error"><strong>Error:</strong> ${escapeHtml(result.error || 'Unknown error occurred')}</div>`;
+    return `<div class="tool-error"><strong>Error:</strong> ${escapeHtml(result.error || "Unknown error occurred")}</div>`;
   }
 
   const data = result.data;
 
   switch (toolName) {
-    case 'getGitHubInfo': {
+    case "getGitHubInfo": {
       let html = '<div class="tool-result github-info">';
-      html += '<h3>GitHub Repository</h3>';
+      html += "<h3>GitHub Repository</h3>";
       if (data.mainRepository) {
         const repo = data.mainRepository;
         html += `<div class="repo-header"><strong>${escapeHtml(repo.fullName)}</strong></div>`;
-        html += `<p class="repo-desc">${escapeHtml(repo.description || 'No description')}</p>`;
+        html += `<p class="repo-desc">${escapeHtml(repo.description || "No description")}</p>`;
         html += '<ul class="repo-stats">';
-        html += `<li><strong>Language:</strong> ${escapeHtml(repo.language || 'Unknown')}</li>`;
+        html += `<li><strong>Language:</strong> ${escapeHtml(repo.language || "Unknown")}</li>`;
         html += `<li><strong>Stars:</strong> ${repo.stars} | <strong>Forks:</strong> ${repo.forks}</li>`;
         html += `<li><strong>Open Issues:</strong> ${repo.openIssues}</li>`;
         html += `<li><strong>Default Branch:</strong> ${escapeHtml(repo.defaultBranch)}</li>`;
         html += `<li><a href="${escapeHtml(repo.url)}" target="_blank" rel="noopener">View on GitHub</a></li>`;
-        html += '</ul>';
+        html += "</ul>";
       }
       if (data.recentCommits?.length > 0) {
         html += '<h4>Recent Commits</h4><ul class="commit-list">';
@@ -677,132 +812,163 @@ export function formatToolResponse(toolName: string, result: ToolResult): string
           const date = new Date(commit.date).toLocaleDateString();
           html += `<li><code>${escapeHtml(commit.sha)}</code> - ${escapeHtml(commit.message)} <em>(${escapeHtml(commit.author)}, ${date})</em></li>`;
         });
-        html += '</ul>';
+        html += "</ul>";
       }
       if (data.openIssues?.length > 0) {
         html += '<h4>Open Issues</h4><ul class="issue-list">';
         data.openIssues.slice(0, 5).forEach((issue: any) => {
           html += `<li><strong>#${issue.number}</strong> ${escapeHtml(issue.title)}</li>`;
         });
-        html += '</ul>';
+        html += "</ul>";
       }
-      html += '</div>';
+      html += "</div>";
       return html;
     }
 
-    case 'grepFiles': {
+    case "grepFiles": {
       let html = '<div class="tool-result search-results">';
       html += `<h3>Search Results for "${escapeHtml(data.searchTerm)}"</h3>`;
-      html += `<p><strong>Found ${data.count} match${data.count !== 1 ? 'es' : ''}</strong></p>`;
+      html += `<p><strong>Found ${data.count} match${data.count !== 1 ? "es" : ""}</strong></p>`;
       if (data.matchingFiles?.length > 0) {
         html += '<h4>Files:</h4><ul class="file-list">';
         data.matchingFiles.forEach((file: string) => {
           html += `<li><code>${escapeHtml(file)}</code></li>`;
         });
-        html += '</ul>';
+        html += "</ul>";
       }
       if (data.matchingLines) {
-        html += '<h4>Matches:</h4>';
+        html += "<h4>Matches:</h4>";
         html += `<pre class="code-block">${escapeHtml(data.matchingLines)}</pre>`;
       }
-      html += '</div>';
+      html += "</div>";
       return html;
     }
 
-    case 'readFile': {
+    case "readFile": {
       let html = '<div class="tool-result file-content">';
       html += `<h3>File: <code>${escapeHtml(data.path)}</code></h3>`;
       html += `<p><strong>Lines:</strong> ${data.lines}</p>`;
-      const content = data.content.length > 2000 ? data.content.slice(0, 2000) + '\n... (truncated)' : data.content;
+      const content =
+        data.content.length > 2000
+          ? data.content.slice(0, 2000) + "\n... (truncated)"
+          : data.content;
       html += `<pre class="code-block">${escapeHtml(content)}</pre>`;
-      html += '</div>';
+      html += "</div>";
       return html;
     }
 
-    case 'listDirectory': {
+    case "listDirectory": {
       let html = '<div class="tool-result directory-listing">';
       html += `<h3>Directory: <code>${escapeHtml(data.path)}</code></h3>`;
       if (data.directories?.length > 0) {
         html += '<h4>Folders:</h4><ul class="folder-list">';
-        data.directories.forEach((dir: string) => html += `<li>📁 ${escapeHtml(dir)}/</li>`);
-        html += '</ul>';
+        data.directories.forEach(
+          (dir: string) => (html += `<li>📁 ${escapeHtml(dir)}/</li>`),
+        );
+        html += "</ul>";
       }
       if (data.files?.length > 0) {
         html += '<h4>Files:</h4><ul class="file-list">';
-        data.files.slice(0, 20).forEach((file: string) => html += `<li>📄 ${escapeHtml(file)}</li>`);
-        if (data.files.length > 20) html += `<li><em>...and ${data.files.length - 20} more files</em></li>`;
-        html += '</ul>';
+        data.files
+          .slice(0, 20)
+          .forEach(
+            (file: string) => (html += `<li>📄 ${escapeHtml(file)}</li>`),
+          );
+        if (data.files.length > 20)
+          html += `<li><em>...and ${data.files.length - 20} more files</em></li>`;
+        html += "</ul>";
       }
-      html += '</div>';
+      html += "</div>";
       return html;
     }
 
-    case 'getGitStatus': {
+    case "getGitStatus": {
       let html = '<div class="tool-result git-status">';
-      html += '<h3>Git Status</h3>';
-      html += `<p><strong>Branch:</strong> ${escapeHtml(data.branch || 'unknown')}</p>`;
+      html += "<h3>Git Status</h3>";
+      html += `<p><strong>Branch:</strong> ${escapeHtml(data.branch || "unknown")}</p>`;
       if (data.staged?.length > 0) {
         html += '<h4>Staged Changes:</h4><ul class="staged-list">';
-        data.staged.forEach((file: string) => html += `<li>✅ ${escapeHtml(file)}</li>`);
-        html += '</ul>';
+        data.staged.forEach(
+          (file: string) => (html += `<li>✅ ${escapeHtml(file)}</li>`),
+        );
+        html += "</ul>";
       }
       if (data.modified?.length > 0) {
         html += '<h4>Modified Files:</h4><ul class="modified-list">';
-        data.modified.forEach((file: string) => html += `<li>📝 ${escapeHtml(file)}</li>`);
-        html += '</ul>';
+        data.modified.forEach(
+          (file: string) => (html += `<li>📝 ${escapeHtml(file)}</li>`),
+        );
+        html += "</ul>";
       }
       if (data.untracked?.length > 0) {
         html += '<h4>Untracked Files:</h4><ul class="untracked-list">';
-        data.untracked.forEach((file: string) => html += `<li>❓ ${escapeHtml(file)}</li>`);
-        html += '</ul>';
+        data.untracked.forEach(
+          (file: string) => (html += `<li>❓ ${escapeHtml(file)}</li>`),
+        );
+        html += "</ul>";
       }
-      if (!data.staged?.length && !data.modified?.length && !data.untracked?.length) {
-        html += '<p><em>Working directory is clean</em></p>';
+      if (
+        !data.staged?.length &&
+        !data.modified?.length &&
+        !data.untracked?.length
+      ) {
+        html += "<p><em>Working directory is clean</em></p>";
       }
-      html += '</div>';
+      html += "</div>";
       return html;
     }
 
-    case 'getProjectStructure': {
+    case "getProjectStructure": {
       let html = '<div class="tool-result project-structure">';
-      html += '<h3>Project Structure</h3>';
+      html += "<h3>Project Structure</h3>";
       if (data.directories?.length > 0) {
         html += '<h4>Main Directories:</h4><ul class="folder-list">';
-        data.directories.slice(0, 15).forEach((dir: string) => html += `<li>📁 ${escapeHtml(dir)}/</li>`);
-        html += '</ul>';
+        data.directories
+          .slice(0, 15)
+          .forEach(
+            (dir: string) => (html += `<li>📁 ${escapeHtml(dir)}/</li>`),
+          );
+        html += "</ul>";
       }
       if (data.files?.length > 0) {
         html += '<h4>Root Files:</h4><ul class="file-list">';
-        data.files.slice(0, 10).forEach((file: string) => html += `<li>📄 ${escapeHtml(file)}</li>`);
-        html += '</ul>';
+        data.files
+          .slice(0, 10)
+          .forEach(
+            (file: string) => (html += `<li>📄 ${escapeHtml(file)}</li>`),
+          );
+        html += "</ul>";
       }
-      html += '</div>';
+      html += "</div>";
       return html;
     }
 
-    case 'executeCommand': {
+    case "executeCommand": {
       let html = '<div class="tool-result command-output">';
-      html += '<h3>Command Output</h3>';
+      html += "<h3>Command Output</h3>";
       html += `<p><strong>Command:</strong> <code>${escapeHtml(data.command)}</code></p>`;
       if (data.stdout) {
-        const output = data.stdout.length > 1500 ? data.stdout.slice(0, 1500) + '\n... (truncated)' : data.stdout;
+        const output =
+          data.stdout.length > 1500
+            ? data.stdout.slice(0, 1500) + "\n... (truncated)"
+            : data.stdout;
         html += `<pre class="code-block">${escapeHtml(output)}</pre>`;
       }
       if (data.stderr) {
-        html += '<h4>Errors:</h4>';
+        html += "<h4>Errors:</h4>";
         html += `<pre class="code-block error">${escapeHtml(data.stderr)}</pre>`;
       }
-      html += '</div>';
+      html += "</div>";
       return html;
     }
 
-    case 'writeFile': {
+    case "writeFile": {
       let html = '<div class="tool-result file-written">';
-      html += '<h3>File Written</h3>';
+      html += "<h3>File Written</h3>";
       html += `<p><strong>Path:</strong> <code>${escapeHtml(data.path)}</code></p>`;
       html += `<p><strong>Lines:</strong> ${data.lines}</p>`;
-      html += '<p><em>File saved successfully!</em></p>';
-      html += '</div>';
+      html += "<p><em>File saved successfully!</em></p>";
+      html += "</div>";
       return html;
     }
 
@@ -815,13 +981,13 @@ export function formatToolResponse(toolName: string, result: ToolResult): string
  * Escape HTML special characters to prevent XSS
  */
 function escapeHtml(text: string): string {
-  if (!text) return '';
+  if (!text) return "";
   return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 // Export singleton instance
