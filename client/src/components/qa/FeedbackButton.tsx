@@ -1,5 +1,3 @@
-import { Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useMrBlue } from '@/contexts/MrBlueContext';
 
 /**
@@ -10,18 +8,5 @@ import { useMrBlue } from '@/contexts/MrBlueContext';
 export function FeedbackButton() {
   const { openChat } = useMrBlue();
 
-  return (
-    <div className="flex gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => openChat()}
-        className="gap-1.5"
-        data-testid="button-features"
-      >
-        <Sparkles className="h-3.5 w-3.5" />
-        Features
-      </Button>
-    </div>
-  );
+  return null;
 }
