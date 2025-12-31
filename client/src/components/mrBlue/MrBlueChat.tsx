@@ -3,7 +3,7 @@ import {
   Send,
   Loader2,
   X,
-  Brain,
+  Brain, Code,
   Zap,
   Eye,
   CheckCircle,
@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Avatar as ShadcnAvatar,
   AvatarFallback as ShadcnAvatarFallback,
@@ -78,6 +79,9 @@ export function MrBlueChat({ onClose }: MrBlueChatProps) {
   const [qaMode, setQaMode] = useState<"none" | "help" | "features" | "bug">(
     "none",
   );
+
+  // VibeCoding Mode state - toggle between chat and vibecoding
+  const [mode, setMode] = useState<'chat' | 'vibecoding'>('chat');
 
   // Generate welcome message based on context
   const getWelcomeMessage = () => {
@@ -152,7 +156,8 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     return "Hi! I'm Mr. Blue, your AI companion. I can help you navigate the platform, answer questions, and provide personalized recommendations. What can I help you with today?";
   };
 
-  const [messages, setMessages] = useState<Message[]>([
+         695
+           messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       role: "assistant",
@@ -417,8 +422,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
       }
       return;
     }
-
-    setIsLoading(true);
+    isVibecodingTask    setIsLoading(true);
 
     // Check if this is a VibeCoding task and user might be god-level
     // Try streaming first, fall back to regular chat if not authorized
@@ -693,6 +697,20 @@ I'll analyze this and may be able to fix it automatically.`,
             Your Tango AI Assistant
           </p>
         </div>
+
+        {/* Mode Toggle */}
+        <Tabs value={mode} onValueChange={(value) => setMode(value as 'chat' | 'vibecoding')} className="w-full px-4 pb-2">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="chat" className="flex items-center gap-2">
+              <Brain className="h-4 w-4" />
+              Chat
+              </TabsTrigger>
+            <TabsTrigger value="vibecoding" className="flex items-center gap-2">
+              <Code className="h-4 w-4" />
+              VibeCoding
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
