@@ -106,7 +106,11 @@ if (!i18n.isInitialized) {
       lowerCaseLng: true,
       interpolation: { escapeValue: false },
       backend: { loadPath: "/locales/{{lng}}/{{ns}}.json" },
-      react: { useSuspense: true },
+      react: { 
+        useSuspense: true,
+        bindI18n: 'languageChanged loaded',
+        bindI18nStore: 'added removed',
+      },
       supportedLngs: allLangs,
       detection: {
         order: ["querystring", "localStorage", "navigator", "htmlTag"],
