@@ -211,7 +211,7 @@ export default function CitySelectionPage() {
 
               <CardContent className="p-8 space-y-6">
                 <div className="space-y-3">
-                  <Label htmlFor="city" className="text-base font-medium">{t('pages:onboarding.city.searchLabel', 'Search for your city')}</Label>
+                  <Label htmlFor="city" className="text-base font-medium">{t('pages:onboarding.city.searchLabel', 'Search for the city you connect with the most')}</Label>
                   <UnifiedLocationPicker
                     mode="city"
                     value={citySearch}
