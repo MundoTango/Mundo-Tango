@@ -29,6 +29,7 @@ import videoRecordingRoutes from "./routes/video-recording-routes";
 import { objectStorageService } from "./objectStorage";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
 import mrBlueRoutes from "./routes/mrblue";
+import mrBlueChatRoutes from "./routes/mrblue-chat";
 import mrBlueStreamRoutes from "./routes/mrblue-stream";
 import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
@@ -771,6 +772,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const buffer = Buffer.from(fileBuffer, "base64");
       
+      // DEBUG: Log buffer details in route
+      console.log(`[TalentMatch Route] Decoded buffer for ${filename}: ${buffer.length} bytes`);
+      console.log(`[TalentMatch Route] Buffer starts with: ${buffer.slice(0, 5).toString('hex')}`);
+      
       // Validate actual buffer size
       if (buffer.length > MAX_FILE_SIZE_BYTES) {
         console.warn(`[TalentMatch] Rejected oversized file: ${filename}, ${buffer.length} bytes`);
@@ -1164,6 +1169,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue", mrblueVideoRoutes);
   app.use("/api/mrblue", mrBlueStreamRoutes); // Streaming SSE endpoint
   app.use("/api/mrblue", mrBlueRoutes);
+  app.use("/api/mrblue", mrBlueChatRoutes);
   app.use("/api/mrblue/activate-agents", mrBlueActivateAgentsRoutes); // MB.MD v9.2: Contextual agent activat
   app.use("/api/mrblue", mrBlueVibecodingRoutes);
   app.use("/api/1167/save-backend", mrBlueSaveBackendRoutes); // MB.MD v9.3: Backend agent system (Save button)

@@ -84,6 +84,9 @@ export class ResumeParser {
     const header = buffer.slice(0, 20).toString('utf8', 0, 20);
     console.log("[Resume Parser] 📊 Buffer header (first 20 bytes):", JSON.stringify(header));
     
+    // DEBUG: Log the full buffer for inspection if it's small, or size if large
+    console.log(`[Resume Parser] 📊 Buffer total size: ${buffer.length} bytes`);
+    
     const extension = filename.toLowerCase().split('.').pop();
     console.log("[Resume Parser] 📄 Detected extension:", extension);
     

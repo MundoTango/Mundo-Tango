@@ -735,6 +735,9 @@ export function TalentMatchExperience({
         const candidateName = user?.name || initialName || "there";
         
         try {
+          // DEBUG: Log the resume content length being sent
+          console.log(`[TalentMatch] Sending interview request with ${resumeContent.length} chars of resume content`);
+          
           const response = await fetch("/api/mrblue/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
