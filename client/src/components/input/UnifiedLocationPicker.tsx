@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Loader2, X, Home, Building2, Star, Check } from "lucide-react";
+import { MapPin, Loader2, Home, Building2, Star, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface LocationResult {
