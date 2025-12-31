@@ -495,8 +495,8 @@ export default function DanceExperiencePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
               >
-                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-5">
-                  {t('pages:onboarding.hobbies.step', 'Step 5 of 5 - Final Step!')}
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-6">
+                  {t('pages:onboarding.hobbies.step', 'Step 6 of 6 - Final Step!')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
@@ -531,19 +531,6 @@ export default function DanceExperiencePage() {
                   </CardHeader>
 
                   <CardContent className="p-8 space-y-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-muted-foreground uppercase tracking-widest">Facebook URL (Optional)</label>
-                      <Input
-                        placeholder="https://www.facebook.com/your.profile"
-                        value={user?.facebookUrl || ""}
-                        onChange={async (e) => {
-                          const val = e.target.value;
-                          // Facebook URL removed - moved to SocialConnectPage
-                        }}
-                        className="hidden"
-                      />
-                    </div>
-
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -703,11 +690,12 @@ export default function DanceExperiencePage() {
                 </Card>
 
                 <div className="flex justify-center gap-2 mt-8">
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
                 </div>
               </motion.div>
             </div>

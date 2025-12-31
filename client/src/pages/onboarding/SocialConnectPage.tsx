@@ -80,7 +80,7 @@ export default function SocialConnectPage() {
             transition={{ duration: 0.4 }}
           >
             <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-              Step 2 of 5
+              Step 2 of 6
             </Badge>
             <h1 className="text-4xl md:text-5xl font-serif text-white font-bold leading-tight mb-4">
               Connect Your Social World
@@ -144,6 +144,15 @@ export default function SocialConnectPage() {
               </Button>
             </CardFooter>
           </Card>
+          
+          <div className="flex justify-center gap-2 mt-8">
+            <div className="h-2 w-10 rounded-full bg-primary"></div>
+            <div className="h-2 w-10 rounded-full bg-primary"></div>
+            <div className="h-2 w-10 rounded-full bg-muted"></div>
+            <div className="h-2 w-10 rounded-full bg-muted"></div>
+            <div className="h-2 w-10 rounded-full bg-muted"></div>
+            <div className="h-2 w-10 rounded-full bg-muted"></div>
+          </div>
         </motion.div>
       </div>
       </>

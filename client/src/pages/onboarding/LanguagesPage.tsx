@@ -117,8 +117,8 @@ export default function LanguagesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
               >
-                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-4">
-                  {t('pages:onboarding.languages.step', 'Step 4 of 5')}
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-5">
+                  {t('pages:onboarding.languages.step', 'Step 5 of 6')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
@@ -228,11 +228,12 @@ export default function LanguagesPage() {
                 </Card>
 
                 <div className="flex justify-center gap-2 mt-8">
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-muted"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-muted"></div>
                 </div>
               </motion.div>
             </div>

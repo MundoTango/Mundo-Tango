@@ -173,7 +173,7 @@ export default function PhotoUploadPage() {
                 transition={{ duration: 0.4, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-3">
-                  {t('pages:onboarding.photo.step', 'Step 3 of 5')}
+                  {t('pages:onboarding.photo.step', 'Step 3 of 6')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
@@ -292,7 +292,7 @@ export default function PhotoUploadPage() {
                   <CardFooter className="p-8 bg-muted/20 flex justify-between">
                     <Button
                       variant="outline"
-                      onClick={() => navigate("/onboarding/city")}
+                      onClick={() => navigate("/onboarding/social")}
                       disabled={isLoading}
                       data-testid="button-back"
                     >
@@ -330,11 +330,12 @@ export default function PhotoUploadPage() {
                 </Card>
 
                 <div className="flex justify-center gap-2 mt-8">
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-primary"></div>
-                  <div className="h-2 w-12 rounded-full bg-muted"></div>
-                  <div className="h-2 w-12 rounded-full bg-muted"></div>
-                  <div className="h-2 w-12 rounded-full bg-muted"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-primary"></div>
+                  <div className="h-2 w-10 rounded-full bg-muted"></div>
+                  <div className="h-2 w-10 rounded-full bg-muted"></div>
+                  <div className="h-2 w-10 rounded-full bg-muted"></div>
                 </div>
               </motion.div>
             </div>
