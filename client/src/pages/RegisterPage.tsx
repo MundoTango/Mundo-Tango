@@ -18,9 +18,42 @@ import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.j
 import { TalentMatchModal } from "@/components/TalentMatchModal";
 
 export default function RegisterPage() {
-  // Use the same simple pattern as marketing pages
-  const { t } = useTranslation(['pages', 'common']);
+  // Use same pattern as working marketing pages
+  const { t, ready, i18n } = useTranslation(['pages', 'common']);
   const [, navigate] = useLocation();
+  
+  // Force re-render when language changes or resources are loaded
+  const [renderKey, setRenderKey] = useState(0);
+  useEffect(() => {
+    const handleChange = () => {
+      console.log('[RegisterPage] Translation event - forcing re-render');
+      setRenderKey(prev => prev + 1);
+    };
+    i18n.on('languageChanged', handleChange);
+    i18n.on('loaded', handleChange);
+    i18n.store.on('added', handleChange);
+    return () => {
+      i18n.off('languageChanged', handleChange);
+      i18n.off('loaded', handleChange);
+      i18n.store.off('added', handleChange);
+    };
+  }, [i18n]);
+  
+  // Check if the pages namespace has actual content for current language
+  const pagesResource = i18n.getResourceBundle(i18n.language, 'pages');
+  const hasRegisterContent = !!pagesResource?.register?.hero?.joinMundoTango;
+  const isReady = ready && hasRegisterContent;
+  
+  // Debug logging
+  console.log('[RegisterPage] Debug state:', {
+    isReady,
+    lang: i18n.language,
+    ready,
+    hasRegisterContent,
+    pagesKeys: pagesResource ? Object.keys(pagesResource) : 'none',
+    registerHeroValue: pagesResource?.register?.hero?.joinMundoTango,
+    renderKey
+  });
   const [inviteCode, setInviteCode] = useState("");
   const [isCodeValid, setIsCodeValid] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
@@ -323,8 +356,24 @@ export default function RegisterPage() {
     }
   };
 
+  // Wait for translations to be ready to avoid flash of English fallback text
+  if (!isReady) {
+    return (
+      <PublicLayout>
+        <div className="relative min-h-screen w-full overflow-hidden" data-testid="hero-register-loading">
+          <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${tangoHeroImage})`}}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
+          </div>
+          <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-white" />
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
+
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:register.pageName', 'Register')} fallbackRoute="/login">
+    <SelfHealingErrorBoundary key={i18n.language} pageName={t('pages:register.pageName', 'Register')} fallbackRoute="/login">
       <PublicLayout>
         <SEO
           title={t('pages:register.seo.title', 'Join Mundo Tango - Create Your Account')}

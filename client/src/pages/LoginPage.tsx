@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,13 +11,29 @@ import { SEO } from "@/components/SEO";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import { Heart, Sparkles, Users, KeyRound, Check, X } from "lucide-react";
+import { Heart, Sparkles, Users, KeyRound, Check, X, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 export default function LoginPage() {
-  const { t } = useTranslation(['pages', 'common']);
+  const { t, ready, i18n } = useTranslation(['pages', 'common']);
   const [email, setEmail] = useState("");
+  
+  // Force re-render when language changes by using language as state trigger
+  const [, forceUpdate] = useState({});
+  useEffect(() => {
+    const handleLanguageChange = () => forceUpdate({});
+    i18n.on('languageChanged', handleLanguageChange);
+    i18n.on('loaded', handleLanguageChange);
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+      i18n.off('loaded', handleLanguageChange);
+    };
+  }, [i18n]);
+  
+  // Wait for translations to be ready AND resolved to the correct language
+  const isReady = ready && i18n.hasLoadedNamespace('pages') && 
+    (i18n.resolvedLanguage === i18n.language || i18n.language === 'en');
   const [password, setPassword] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [showInviteCode, setShowInviteCode] = useState(false);
@@ -75,8 +91,24 @@ export default function LoginPage() {
     }
   };
 
+  // Wait for translations to be ready to avoid flash of English fallback text
+  if (!isReady) {
+    return (
+      <PublicLayout>
+        <div className="relative h-screen w-full overflow-hidden" data-testid="hero-login-loading">
+          <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${tangoHeroImage})`}}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
+          </div>
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-4">
+            <Loader2 className="h-8 w-8 animate-spin text-white" />
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
+
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:login.pageName', 'Login')} fallbackRoute="/">
+    <SelfHealingErrorBoundary key={i18n.language} pageName={t('pages:login.pageName', 'Login')} fallbackRoute="/">
       <PublicLayout>
         <SEO
           title={t('pages:login.seo.title', 'Sign In - Mundo Tango')}
