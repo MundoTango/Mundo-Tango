@@ -66,20 +66,20 @@ function VolunteerPageContent() {
   };
 
   const roleHierarchy = [
-    { level: t('pages:marketing.volunteer.roles.cLevel', 'C-Level Advisors'), description: t('pages:marketing.volunteer.roles.cLevelDesc', 'Strategic guidance and industry expertise'), count: t('pages:marketing.volunteer.roles.cLevelCount', 'CEO, CTO, CPO, CMO') },
-    { level: t('pages:marketing.volunteer.roles.divisionChiefs', 'Division Chiefs'), description: t('pages:marketing.volunteer.roles.divisionChiefsDesc', 'Lead entire technology divisions'), count: t('pages:marketing.volunteer.roles.divisionChiefsCount', '6 positions') },
-    { level: t('pages:marketing.volunteer.roles.directors', 'Directors'), description: t('pages:marketing.volunteer.roles.directorsDesc', 'Manage teams within divisions'), count: t('pages:marketing.volunteer.roles.directorsCount', '~20 positions') },
-    { level: t('pages:marketing.volunteer.roles.teamLeads', 'Team Leads'), description: t('pages:marketing.volunteer.roles.teamLeadsDesc', 'Coordinate small teams on projects'), count: t('pages:marketing.volunteer.roles.teamLeadsCount', '~50 positions') },
-    { level: t('pages:marketing.volunteer.roles.expertAgents', 'Expert Agents'), description: t('pages:marketing.volunteer.roles.expertAgentsDesc', 'Senior contributors with specialized skills'), count: t('pages:marketing.volunteer.roles.expertAgentsCount', '~100 positions') },
-    { level: t('pages:marketing.volunteer.roles.contributors', 'Individual Contributors'), description: t('pages:marketing.volunteer.roles.contributorsDesc', 'Core contributors to various tasks'), count: t('pages:marketing.volunteer.roles.contributorsCount', 'Open positions') },
+    { level: t('pages:volunteer.roles.cLevel', 'C-Level Advisors'), description: t('pages:volunteer.roles.cLevelDesc', 'Strategic guidance and industry expertise'), count: t('pages:volunteer.roles.cLevelCount', 'CEO, CTO, CPO, CMO') },
+    { level: t('pages:volunteer.roles.divisionChiefs', 'Division Chiefs'), description: t('pages:volunteer.roles.divisionChiefsDesc', 'Lead entire technology divisions'), count: t('pages:volunteer.roles.divisionChiefsCount', '6 positions') },
+    { level: t('pages:volunteer.roles.directors', 'Directors'), description: t('pages:volunteer.roles.directorsDesc', 'Manage teams within divisions'), count: t('pages:volunteer.roles.directorsCount', '~20 positions') },
+    { level: t('pages:volunteer.roles.teamLeads', 'Team Leads'), description: t('pages:volunteer.roles.teamLeadsDesc', 'Coordinate small teams on projects'), count: t('pages:volunteer.roles.teamLeadsCount', '~50 positions') },
+    { level: t('pages:volunteer.roles.expertAgents', 'Expert Agents'), description: t('pages:volunteer.roles.expertAgentsDesc', 'Senior contributors with specialized skills'), count: t('pages:volunteer.roles.expertAgentsCount', '~100 positions') },
+    { level: t('pages:volunteer.roles.contributors', 'Individual Contributors'), description: t('pages:volunteer.roles.contributorsDesc', 'Core contributors to various tasks'), count: t('pages:volunteer.roles.contributorsCount', 'Open positions') },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <PublicNavbar />
       <SEO
-        title={t('pages:marketing.volunteer.seo.title', 'Volunteer with Mundo Tango')}
-        description={t('pages:marketing.volunteer.seo.description', 'Join our volunteer program. Contribute your skills to build the platform connecting the global tango community.')}
+        title={t('pages:volunteer.seo.title', 'Volunteer with Mundo Tango')}
+        description={t('pages:volunteer.seo.description', 'Join our volunteer program. Contribute your skills to build the platform connecting the global tango community.')}
       />
 
       {/* Hero Section */}
@@ -98,7 +98,7 @@ function VolunteerPageContent() {
               <motion.div variants={fadeInUp}>
                 <Badge variant="secondary" className="mb-4">
                   <Users className="h-3 w-3 mr-1" />
-                  {t('pages:marketing.volunteer.badge', 'Volunteer Program')}
+                  {t('pages:volunteer.badge', 'Volunteer Program')}
                 </Badge>
               </motion.div>
 
@@ -107,14 +107,14 @@ function VolunteerPageContent() {
                 className="text-4xl md:text-5xl font-bold text-white"
                 data-testid="text-hero-headline"
               >
-                {t('pages:marketing.volunteer.hero.title', 'Volunteer with Mundo Tango')}
+                {t('pages:volunteer.hero.title', 'Volunteer with Mundo Tango')}
               </motion.h1>
 
               <motion.p
                 variants={fadeInUp}
                 className="text-xl text-white/90 max-w-2xl mx-auto"
               >
-                {t('pages:marketing.volunteer.hero.subtitle', 'Work alongside our team to build the platform the tango community deserves. Contribute your skills. Make a real impact.')}
+                {t('pages:volunteer.hero.subtitle', 'Work alongside our team to build the platform the tango community deserves. Contribute your skills. Make a real impact.')}
               </motion.p>
 
               <motion.div
@@ -123,15 +123,15 @@ function VolunteerPageContent() {
               >
                 <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
                   <Heart className="h-4 w-4" />
-                  <span>{t('pages:marketing.volunteer.features.communityDriven', 'Community Driven')}</span>
+                  <span>{t('pages:volunteer.features.communityDriven', 'Community Driven')}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
                   <Clock className="h-4 w-4" />
-                  <span>{t('pages:marketing.volunteer.features.flexibleHours', 'Flexible Hours')}</span>
+                  <span>{t('pages:volunteer.features.flexibleHours', 'Flexible Hours')}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
                   <Globe className="h-4 w-4" />
-                  <span>{t('pages:marketing.volunteer.features.remoteFriendly', 'Remote Friendly')}</span>
+                  <span>{t('pages:volunteer.features.remoteFriendly', 'Remote Friendly')}</span>
                 </div>
               </motion.div>
 
@@ -143,7 +143,7 @@ function VolunteerPageContent() {
                   data-testid="button-apply-volunteer"
                 >
                   <Brain className="h-4 w-4 mr-2" />
-                  {t('pages:marketing.volunteer.cta.applyNow', 'Apply Now')}
+                  {t('pages:volunteer.cta.applyNow', 'Apply Now')}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </motion.div>
@@ -169,10 +169,10 @@ function VolunteerPageContent() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-bold">
-                {t('pages:marketing.volunteer.hierarchy.title', 'Volunteer Role Hierarchy')}
+                {t('pages:volunteer.hierarchy.title', 'Volunteer Role Hierarchy')}
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-lg text-muted-foreground">
-                {t('pages:marketing.volunteer.hierarchy.subtitle', 'From C-level advisors to individual contributors, find your place in our organization.')}
+                {t('pages:volunteer.hierarchy.subtitle', 'From C-level advisors to individual contributors, find your place in our organization.')}
               </motion.p>
             </div>
 
@@ -212,10 +212,10 @@ function VolunteerPageContent() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-bold">
-                {t('pages:marketing.volunteer.divisions.title', '6 Technology Divisions')}
+                {t('pages:volunteer.divisions.title', '6 Technology Divisions')}
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-lg text-muted-foreground">
-                {t('pages:marketing.volunteer.divisions.subtitle', 'Each division covers specific layers of our technology stack.')}
+                {t('pages:volunteer.divisions.subtitle', 'Each division covers specific layers of our technology stack.')}
               </motion.p>
             </div>
 
@@ -235,7 +235,7 @@ function VolunteerPageContent() {
                           <Icon className="h-8 w-8 text-primary" />
                           <div>
                             <CardTitle>{division.name}</CardTitle>
-                            <CardDescription>{t('pages:marketing.volunteer.divisions.layers', 'Layers')} {division.layers}</CardDescription>
+                            <CardDescription>{t('pages:volunteer.divisions.layers', 'Layers')} {division.layers}</CardDescription>
                           </div>
                         </div>
                       </CardHeader>
@@ -243,7 +243,7 @@ function VolunteerPageContent() {
                         <p className="text-sm text-muted-foreground">{division.description}</p>
                         
                         <div>
-                          <div className="text-sm font-medium mb-2">{t('pages:marketing.volunteer.divisions.rolesLabel', 'Roles:')}</div>
+                          <div className="text-sm font-medium mb-2">{t('pages:volunteer.divisions.rolesLabel', 'Roles:')}</div>
                           <div className="flex flex-wrap gap-1">
                             {division.roles.slice(0, 3).map((role) => (
                               <Badge key={role} variant="secondary" className="text-xs">
@@ -259,7 +259,7 @@ function VolunteerPageContent() {
                         </div>
 
                         <div>
-                          <div className="text-sm font-medium mb-2">{t('pages:marketing.volunteer.divisions.skillsLabel', 'Skills:')}</div>
+                          <div className="text-sm font-medium mb-2">{t('pages:volunteer.divisions.skillsLabel', 'Skills:')}</div>
                           <div className="flex flex-wrap gap-1">
                             {division.skills.slice(0, 3).map((skill) => (
                               <Badge key={skill} variant="outline" className="text-xs">
@@ -295,19 +295,19 @@ function VolunteerPageContent() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2 variants={fadeInUp} className="text-3xl font-bold">
-                {t('pages:marketing.volunteer.benefits.title', 'Why Volunteer?')}
+                {t('pages:volunteer.benefits.title', 'Why Volunteer?')}
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-muted-foreground">
-                {t('pages:marketing.volunteer.benefits.subtitle', 'Gain experience, build your portfolio, and make a real impact.')}
+                {t('pages:volunteer.benefits.subtitle', 'Gain experience, build your portfolio, and make a real impact.')}
               </motion.p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
               {[
-                { icon: Award, title: t('pages:marketing.volunteer.benefits.portfolio.title', 'Build Portfolio'), desc: t('pages:marketing.volunteer.benefits.portfolio.desc', 'Real-world experience on a production platform') },
-                { icon: Users, title: t('pages:marketing.volunteer.benefits.community.title', 'Join Community'), desc: t('pages:marketing.volunteer.benefits.community.desc', 'Connect with passionate tango enthusiasts') },
-                { icon: Clock, title: t('pages:marketing.volunteer.benefits.flexible.title', 'Flexible Hours'), desc: t('pages:marketing.volunteer.benefits.flexible.desc', 'Contribute on your own schedule') },
-                { icon: Zap, title: t('pages:marketing.volunteer.benefits.impact.title', 'Real Impact'), desc: t('pages:marketing.volunteer.benefits.impact.desc', 'Your work helps dancers worldwide') },
+                { icon: Award, title: t('pages:volunteer.benefits.portfolio.title', 'Build Portfolio'), desc: t('pages:volunteer.benefits.portfolio.desc', 'Real-world experience on a production platform') },
+                { icon: Users, title: t('pages:volunteer.benefits.community.title', 'Join Community'), desc: t('pages:volunteer.benefits.community.desc', 'Connect with passionate tango enthusiasts') },
+                { icon: Clock, title: t('pages:volunteer.benefits.flexible.title', 'Flexible Hours'), desc: t('pages:volunteer.benefits.flexible.desc', 'Contribute on your own schedule') },
+                { icon: Zap, title: t('pages:volunteer.benefits.impact.title', 'Real Impact'), desc: t('pages:volunteer.benefits.impact.desc', 'Your work helps dancers worldwide') },
               ].map((benefit, index) => (
                 <motion.div key={index} variants={fadeInUp}>
                   <Card className="h-full text-center hover-elevate">
@@ -335,10 +335,10 @@ function VolunteerPageContent() {
             className="text-center max-w-3xl mx-auto space-y-6"
           >
             <motion.h2 variants={fadeInUp} className="text-3xl font-bold text-white">
-              {t('pages:marketing.volunteer.finalCta.title', 'Ready to Contribute?')}
+              {t('pages:volunteer.finalCta.title', 'Ready to Contribute?')}
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-white/90 text-lg">
-              {t('pages:marketing.volunteer.finalCta.subtitle', "Apply to join our volunteer program. We'll match you with tasks that fit your skills and interests.")}
+              {t('pages:volunteer.finalCta.subtitle', "Apply to join our volunteer program. We'll match you with tasks that fit your skills and interests.")}
             </motion.p>
             <motion.div variants={fadeInUp} className="flex justify-center gap-4 flex-wrap">
               <Link href="/register?redirect=/talent-match&role=volunteer">
@@ -347,7 +347,7 @@ function VolunteerPageContent() {
                   className="bg-white text-primary hover:bg-white/90"
                   data-testid="button-apply-now"
                 >
-                  {t('pages:marketing.volunteer.cta.applyToVolunteer', 'Apply to Volunteer')}
+                  {t('pages:volunteer.cta.applyToVolunteer', 'Apply to Volunteer')}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
@@ -358,7 +358,7 @@ function VolunteerPageContent() {
                   className="border-white text-white hover:bg-white/10"
                   data-testid="button-become-ambassador"
                 >
-                  {t('pages:marketing.volunteer.cta.becomeAmbassador', 'Become Ambassador')}
+                  {t('pages:volunteer.cta.becomeAmbassador', 'Become Ambassador')}
                 </Button>
               </Link>
             </motion.div>

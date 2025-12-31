@@ -23,80 +23,80 @@ export default function VolunteerPage() {
   const opportunities = [
     {
       icon: Code,
-      title: t('pages:marketing.volunteer.roles.development.title', 'Software Development'),
-      description: t('pages:marketing.volunteer.roles.development.description', 'Build features, fix bugs, and help scale our platform'),
+      title: t('pages:volunteer.roles.development.title', 'Software Development'),
+      description: t('pages:volunteer.roles.development.description', 'Build features, fix bugs, and help scale our platform'),
       skills: [
-        t('pages:marketing.volunteer.skills.react', 'React'), 
-        t('pages:marketing.volunteer.skills.nodejs', 'Node.js'), 
-        t('pages:marketing.volunteer.skills.typescript', 'TypeScript'), 
-        t('pages:marketing.volunteer.skills.postgresql', 'PostgreSQL')
+        t('pages:volunteer.skills.react', 'React'), 
+        t('pages:volunteer.skills.nodejs', 'Node.js'), 
+        t('pages:volunteer.skills.typescript', 'TypeScript'), 
+        t('pages:volunteer.skills.postgresql', 'PostgreSQL')
       ],
-      commitment: t('pages:marketing.volunteer.commitment.510hours', '5-10 hours/week')
+      commitment: t('pages:volunteer.commitment.510hours', '5-10 hours/week')
     },
     {
       icon: Palette,
-      title: t('pages:marketing.volunteer.roles.design.title', 'Design & UX'),
-      description: t('pages:marketing.volunteer.roles.design.description', 'Create beautiful interfaces and improve user experience'),
+      title: t('pages:volunteer.roles.design.title', 'Design & UX'),
+      description: t('pages:volunteer.roles.design.description', 'Create beautiful interfaces and improve user experience'),
       skills: [
-        t('pages:marketing.volunteer.skills.figma', 'Figma'), 
-        t('pages:marketing.volunteer.skills.uiux', 'UI/UX'), 
-        t('pages:marketing.volunteer.skills.branding', 'Branding'), 
-        t('pages:marketing.volunteer.skills.illustrations', 'Illustrations')
+        t('pages:volunteer.skills.figma', 'Figma'), 
+        t('pages:volunteer.skills.uiux', 'UI/UX'), 
+        t('pages:volunteer.skills.branding', 'Branding'), 
+        t('pages:volunteer.skills.illustrations', 'Illustrations')
       ],
-      commitment: t('pages:marketing.volunteer.commitment.37hours', '3-7 hours/week')
+      commitment: t('pages:volunteer.commitment.37hours', '3-7 hours/week')
     },
     {
       icon: Megaphone,
-      title: t('pages:marketing.volunteer.roles.marketing.title', 'Marketing & Growth'),
-      description: t('pages:marketing.volunteer.roles.marketing.description', 'Spread the word and grow our community worldwide'),
+      title: t('pages:volunteer.roles.marketing.title', 'Marketing & Growth'),
+      description: t('pages:volunteer.roles.marketing.description', 'Spread the word and grow our community worldwide'),
       skills: [
-        t('pages:marketing.volunteer.skills.socialMedia', 'Social Media'), 
-        t('pages:marketing.volunteer.skills.content', 'Content'), 
-        t('pages:marketing.volunteer.skills.seo', 'SEO'), 
-        t('pages:marketing.volunteer.skills.analytics', 'Analytics')
+        t('pages:volunteer.skills.socialMedia', 'Social Media'), 
+        t('pages:volunteer.skills.content', 'Content'), 
+        t('pages:volunteer.skills.seo', 'SEO'), 
+        t('pages:volunteer.skills.analytics', 'Analytics')
       ],
-      commitment: t('pages:marketing.volunteer.commitment.48hours', '4-8 hours/week')
+      commitment: t('pages:volunteer.commitment.48hours', '4-8 hours/week')
     },
     {
       icon: FileText,
-      title: t('pages:marketing.volunteer.roles.content.title', 'Content Creation'),
-      description: t('pages:marketing.volunteer.roles.content.description', 'Write articles, create videos, and curate resources'),
+      title: t('pages:volunteer.roles.content.title', 'Content Creation'),
+      description: t('pages:volunteer.roles.content.description', 'Write articles, create videos, and curate resources'),
       skills: [
-        t('pages:marketing.volunteer.skills.writing', 'Writing'), 
-        t('pages:marketing.volunteer.skills.video', 'Video'), 
-        t('pages:marketing.volunteer.skills.photography', 'Photography'), 
-        t('pages:marketing.volunteer.skills.translation', 'Translation')
+        t('pages:volunteer.skills.writing', 'Writing'), 
+        t('pages:volunteer.skills.video', 'Video'), 
+        t('pages:volunteer.skills.photography', 'Photography'), 
+        t('pages:volunteer.skills.translation', 'Translation')
       ],
-      commitment: t('pages:marketing.volunteer.commitment.26hours', '2-6 hours/week')
+      commitment: t('pages:volunteer.commitment.26hours', '2-6 hours/week')
     },
     {
       icon: Users,
-      title: t('pages:marketing.volunteer.roles.community.title', 'Community Management'),
-      description: t('pages:marketing.volunteer.roles.community.description', 'Support users, moderate content, and foster engagement'),
+      title: t('pages:volunteer.roles.community.title', 'Community Management'),
+      description: t('pages:volunteer.roles.community.description', 'Support users, moderate content, and foster engagement'),
       skills: [
-        t('pages:marketing.volunteer.skills.communication', 'Communication'), 
-        t('pages:marketing.volunteer.skills.empathy', 'Empathy'), 
-        t('pages:marketing.volunteer.skills.organization', 'Organization')
+        t('pages:volunteer.skills.communication', 'Communication'), 
+        t('pages:volunteer.skills.empathy', 'Empathy'), 
+        t('pages:volunteer.skills.organization', 'Organization')
       ],
-      commitment: t('pages:marketing.volunteer.commitment.510hours', '5-10 hours/week')
+      commitment: t('pages:volunteer.commitment.510hours', '5-10 hours/week')
     }
   ];
 
   const benefits = [
-    t('pages:marketing.volunteer.benefits.portfolio', 'Build your portfolio with real-world projects'),
-    t('pages:marketing.volunteer.benefits.connect', 'Connect with passionate tango enthusiasts globally'),
-    t('pages:marketing.volunteer.benefits.flexible', 'Flexible schedule - work when it suits you'),
-    t('pages:marketing.volunteer.benefits.contribute', 'Contribute to a platform you love'),
-    t('pages:marketing.volunteer.benefits.experience', 'Gain experience in tech startups'),
-    t('pages:marketing.volunteer.benefits.team', 'Join a supportive, collaborative team')
+    t('pages:volunteer.benefits.portfolio', 'Build your portfolio with real-world projects'),
+    t('pages:volunteer.benefits.connect', 'Connect with passionate tango enthusiasts globally'),
+    t('pages:volunteer.benefits.flexible', 'Flexible schedule - work when it suits you'),
+    t('pages:volunteer.benefits.contribute', 'Contribute to a platform you love'),
+    t('pages:volunteer.benefits.experience', 'Gain experience in tech startups'),
+    t('pages:volunteer.benefits.team', 'Join a supportive, collaborative team')
   ];
 
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:marketing.volunteer.pageName', 'Volunteer Page')} fallbackRoute="/">
+    <SelfHealingErrorBoundary pageName={t('pages:volunteer.pageName', 'Volunteer Page')} fallbackRoute="/">
       <>
         <SEO
-          title={t('pages:marketing.volunteer.seo.title', 'Volunteer with Mundo Tango')}
-          description={t('pages:marketing.volunteer.seo.description', 'Join our volunteer team and help create the future of tango technology. Share your skills, grow your experience, and make an impact.')}
+          title={t('pages:volunteer.seo.title', 'Volunteer with Mundo Tango')}
+          description={t('pages:volunteer.seo.description', 'Join our volunteer team and help create the future of tango technology. Share your skills, grow your experience, and make an impact.')}
         />
 
         <div className="min-h-screen">
@@ -122,15 +122,15 @@ export default function VolunteerPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                   <Heart className="w-3 h-3 mr-1.5" />
-                  {t('pages:marketing.volunteer.badge', 'Volunteer Opportunities')}
+                  {t('pages:volunteer.badge', 'Volunteer Opportunities')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                  {t('pages:marketing.volunteer.title', 'Help Build Mundo Tango')}
+                  {t('pages:volunteer.title', 'Help Build Mundo Tango')}
                 </h1>
                 
                 <p className="mx-auto mb-8 max-w-2xl text-xl text-white/80 leading-relaxed">
-                  {t('pages:marketing.volunteer.subtitle', 'Join our volunteer team and help create the future of tango technology. Share your skills, grow your experience, and make an impact.')}
+                  {t('pages:volunteer.subtitle', 'Join our volunteer team and help create the future of tango technology. Share your skills, grow your experience, and make an impact.')}
                 </p>
                 
                 <div className="flex flex-wrap gap-4 justify-center">
@@ -154,9 +154,9 @@ export default function VolunteerPage() {
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-6xl">
           <motion.div {...fadeInUp} className="mb-16 text-center">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">{t('pages:marketing.volunteer.opportunitiesTitle', 'Volunteer Opportunities')}</h2>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">{t('pages:volunteer.opportunitiesTitle', 'Volunteer Opportunities')}</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              {t('pages:marketing.volunteer.opportunitiesDescription', "We're looking for talented individuals to help build features, improve design, and grow our community")}
+              {t('pages:volunteer.opportunitiesDescription', "We're looking for talented individuals to help build features, improve design, and grow our community")}
             </p>
           </motion.div>
 
@@ -174,7 +174,7 @@ export default function VolunteerPage() {
                     <p className="text-sm text-muted-foreground mb-4">{opp.description}</p>
                     
                     <div className="mb-4">
-                      <div className="text-sm font-semibold mb-2">{t('pages:marketing.volunteer.skills', 'Skills')}:</div>
+                      <div className="text-sm font-semibold mb-2">{t('pages:volunteer.skills', 'Skills')}:</div>
                       <div className="flex flex-wrap gap-2">
                         {opp.skills.map((skill, i) => (
                           <span 
@@ -188,7 +188,7 @@ export default function VolunteerPage() {
                     </div>
 
                     <div className="text-sm text-muted-foreground">
-                      <strong>{t('pages:marketing.volunteer.time', 'Time')}:</strong> {opp.commitment}
+                      <strong>{t('pages:volunteer.time', 'Time')}:</strong> {opp.commitment}
                     </div>
                   </CardContent>
                 </Card>
@@ -202,18 +202,18 @@ export default function VolunteerPage() {
       <section className="py-20 px-6 bg-card/30">
         <div className="container mx-auto max-w-6xl">
           <motion.div {...fadeInUp} className="mb-16 text-center">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">{t('pages:marketing.volunteer.howItWorksTitle', 'How It Works')}</h2>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">{t('pages:volunteer.howItWorksTitle', 'How It Works')}</h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              {t('pages:marketing.volunteer.howItWorksDescription', 'Our AI-powered Talent Match system connects you with the perfect tasks')}
+              {t('pages:volunteer.howItWorksDescription', 'Our AI-powered Talent Match system connects you with the perfect tasks')}
             </p>
           </motion.div>
 
           <div className="grid gap-8 md:grid-cols-4">
             {[
-              { num: "1", title: t('pages:marketing.volunteer.steps.upload.title', 'Upload Your Info'), desc: t('pages:marketing.volunteer.steps.upload.description', 'Share your resume or LinkedIn profile') },
-              { num: "2", title: t('pages:marketing.volunteer.steps.interview.title', 'AI Interview'), desc: t('pages:marketing.volunteer.steps.interview.description', 'Chat with our AI Clarifier to understand your skills') },
-              { num: "3", title: t('pages:marketing.volunteer.steps.match.title', 'Get Matched'), desc: t('pages:marketing.volunteer.steps.match.description', 'Receive personalized task recommendations') },
-              { num: "4", title: t('pages:marketing.volunteer.steps.contribute.title', 'Start Contributing'), desc: t('pages:marketing.volunteer.steps.contribute.description', 'Work on projects that match your expertise') }
+              { num: "1", title: t('pages:volunteer.steps.upload.title', 'Upload Your Info'), desc: t('pages:volunteer.steps.upload.description', 'Share your resume or LinkedIn profile') },
+              { num: "2", title: t('pages:volunteer.steps.interview.title', 'AI Interview'), desc: t('pages:volunteer.steps.interview.description', 'Chat with our AI Clarifier to understand your skills') },
+              { num: "3", title: t('pages:volunteer.steps.match.title', 'Get Matched'), desc: t('pages:volunteer.steps.match.description', 'Receive personalized task recommendations') },
+              { num: "4", title: t('pages:volunteer.steps.contribute.title', 'Start Contributing'), desc: t('pages:volunteer.steps.contribute.description', 'Work on projects that match your expertise') }
             ].map((step, idx) => (
               <motion.div 
                 key={idx} 
@@ -236,9 +236,9 @@ export default function VolunteerPage() {
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <motion.div {...fadeInUp} className="mb-16 text-center">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">{t('pages:marketing.volunteer.benefitsTitle', 'Why Volunteer With Us?')}</h2>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">{t('pages:volunteer.benefitsTitle', 'Why Volunteer With Us?')}</h2>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              {t('pages:marketing.volunteer.benefitsDescription', 'Join a passionate team building technology for the global tango community')}
+              {t('pages:volunteer.benefitsDescription', 'Join a passionate team building technology for the global tango community')}
             </p>
           </motion.div>
 
@@ -268,19 +268,19 @@ export default function VolunteerPage() {
         <motion.div {...fadeInUp} className="container mx-auto max-w-3xl text-center">
           <Card className="p-12 md:p-16">
             <Sparkles className="h-20 w-20 text-primary mx-auto mb-8" />
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">{t('pages:marketing.volunteer.ctaTitle', 'Ready to Make an Impact?')}</h2>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">{t('pages:volunteer.ctaTitle', 'Ready to Make an Impact?')}</h2>
             <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-              {t('pages:marketing.volunteer.ctaDescription', 'Apply now and let our AI Talent Match system find the perfect volunteer opportunities based on your skills and interests.')}
+              {t('pages:volunteer.ctaDescription', 'Apply now and let our AI Talent Match system find the perfect volunteer opportunities based on your skills and interests.')}
             </p>
             <Link href="/talent-match">
               <Button size="lg" className="gap-2" data-testid="button-apply-cta">
                 <Heart className="h-5 w-5" />
-                {t('pages:marketing.volunteer.ctaButton', 'Start Your Application')}
+                {t('pages:volunteer.ctaButton', 'Start Your Application')}
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </Link>
             <p className="mt-8 text-base text-muted-foreground">
-              {t('pages:marketing.volunteer.ctaNote', 'Takes only 5 minutes • No commitment required')}
+              {t('pages:volunteer.ctaNote', 'Takes only 5 minutes • No commitment required')}
             </p>
           </Card>
         </motion.div>

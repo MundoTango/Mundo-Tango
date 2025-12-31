@@ -51,28 +51,28 @@ function AmbassadorsPageContent() {
   });
 
   const benefits = [
-    { icon: Star, title: t('pages:marketing.ambassadors.benefits.badge.title', 'Ambassador Badge'), description: t('pages:marketing.ambassadors.benefits.badge.desc', 'Exclusive profile badge showing your ambassador status') },
-    { icon: Gift, title: t('pages:marketing.ambassadors.benefits.pro.title', 'Free Pro Membership'), description: t('pages:marketing.ambassadors.benefits.pro.desc', "Complimentary Pro features while you're an active ambassador") },
-    { icon: Megaphone, title: t('pages:marketing.ambassadors.benefits.promotion.title', 'Event Promotion'), description: t('pages:marketing.ambassadors.benefits.promotion.desc', 'Priority promotion for events you organize or recommend') },
-    { icon: Users, title: t('pages:marketing.ambassadors.benefits.network.title', 'Network Access'), description: t('pages:marketing.ambassadors.benefits.network.desc', 'Connect with ambassadors worldwide and share insights') },
-    { icon: Calendar, title: t('pages:marketing.ambassadors.benefits.earlyAccess.title', 'Early Access'), description: t('pages:marketing.ambassadors.benefits.earlyAccess.desc', 'Be the first to try new features before public release') },
-    { icon: Heart, title: t('pages:marketing.ambassadors.benefits.impact.title', 'Community Impact'), description: t('pages:marketing.ambassadors.benefits.impact.desc', 'Shape the tango community in your city') },
+    { icon: Star, title: t('pages:ambassadors.benefits.badge.title', 'Ambassador Badge'), description: t('pages:ambassadors.benefits.badge.desc', 'Exclusive profile badge showing your ambassador status') },
+    { icon: Gift, title: t('pages:ambassadors.benefits.pro.title', 'Free Pro Membership'), description: t('pages:ambassadors.benefits.pro.desc', "Complimentary Pro features while you're an active ambassador") },
+    { icon: Megaphone, title: t('pages:ambassadors.benefits.promotion.title', 'Event Promotion'), description: t('pages:ambassadors.benefits.promotion.desc', 'Priority promotion for events you organize or recommend') },
+    { icon: Users, title: t('pages:ambassadors.benefits.network.title', 'Network Access'), description: t('pages:ambassadors.benefits.network.desc', 'Connect with ambassadors worldwide and share insights') },
+    { icon: Calendar, title: t('pages:ambassadors.benefits.earlyAccess.title', 'Early Access'), description: t('pages:ambassadors.benefits.earlyAccess.desc', 'Be the first to try new features before public release') },
+    { icon: Heart, title: t('pages:ambassadors.benefits.impact.title', 'Community Impact'), description: t('pages:ambassadors.benefits.impact.desc', 'Shape the tango community in your city') },
   ];
 
   const requirements = [
-    t('pages:marketing.ambassadors.requirements.milonga', 'Host at least 1 milonga per week in your city'),
-    t('pages:marketing.ambassadors.requirements.active', 'Be active on the platform (post, share events, connect)'),
-    t('pages:marketing.ambassadors.requirements.respond', 'Respond to questions from visiting dancers'),
-    t('pages:marketing.ambassadors.requirements.onboard', 'Help onboard new local dancers to the platform'),
-    t('pages:marketing.ambassadors.requirements.share', 'Share accurate local event information'),
+    t('pages:ambassadors.requirements.milonga', 'Host at least 1 milonga per week in your city'),
+    t('pages:ambassadors.requirements.active', 'Be active on the platform (post, share events, connect)'),
+    t('pages:ambassadors.requirements.respond', 'Respond to questions from visiting dancers'),
+    t('pages:ambassadors.requirements.onboard', 'Help onboard new local dancers to the platform'),
+    t('pages:ambassadors.requirements.share', 'Share accurate local event information'),
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <PublicNavbar />
       <SEO
-        title={t('pages:marketing.ambassadors.seo.title', 'Become an Ambassador - Mundo Tango')}
-        description={t('pages:marketing.ambassadors.seo.description', 'Represent Mundo Tango in your city. Get free Pro membership, exclusive badges, and help connect the global tango community.')}
+        title={t('pages:ambassadors.seo.title', 'Become an Ambassador - Mundo Tango')}
+        description={t('pages:ambassadors.seo.description', 'Represent Mundo Tango in your city. Get free Pro membership, exclusive badges, and help connect the global tango community.')}
       />
 
       {/* Hero Section */}
@@ -91,7 +91,7 @@ function AmbassadorsPageContent() {
               <motion.div variants={fadeInUp}>
                 <Badge variant="secondary" className="mb-4">
                   <Globe className="h-3 w-3 mr-1" />
-                  {t('pages:marketing.ambassadors.badge', 'Global Network')}
+                  {t('pages:ambassadors.badge', 'Global Network')}
                 </Badge>
               </motion.div>
 
@@ -100,20 +100,20 @@ function AmbassadorsPageContent() {
                 className="text-4xl md:text-5xl font-bold text-white"
                 data-testid="text-hero-headline"
               >
-                {t('pages:marketing.ambassadors.hero.title', 'Become a City Ambassador')}
+                {t('pages:ambassadors.hero.title', 'Become a City Ambassador')}
               </motion.h1>
 
               <motion.p
                 variants={fadeInUp}
                 className="text-xl text-white/90 max-w-2xl mx-auto"
               >
-                {t('pages:marketing.ambassadors.hero.subtitle', 'Represent Mundo Tango in your city. Help visiting dancers discover your local scene and connect the global tango community.')}
+                {t('pages:ambassadors.hero.subtitle', 'Represent Mundo Tango in your city. Help visiting dancers discover your local scene and connect the global tango community.')}
               </motion.p>
 
               <motion.div variants={fadeInUp}>
                 <Link href="/register?redirect=/talent-match&role=ambassador">
                   <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-apply">
-                    {t('pages:marketing.ambassadors.cta.apply', 'Apply to be Ambassador')}
+                    {t('pages:ambassadors.cta.apply', 'Apply to be Ambassador')}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </Link>
@@ -135,10 +135,10 @@ function AmbassadorsPageContent() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-bold">
-                {t('pages:marketing.ambassadors.benefitsSection.title', 'Ambassador Benefits')}
+                {t('pages:ambassadors.benefitsSection.title', 'Ambassador Benefits')}
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-lg text-muted-foreground">
-                {t('pages:marketing.ambassadors.benefitsSection.subtitle', 'Be recognized for your contribution to the tango community.')}
+                {t('pages:ambassadors.benefitsSection.subtitle', 'Be recognized for your contribution to the tango community.')}
               </motion.p>
             </div>
 
@@ -175,9 +175,9 @@ function AmbassadorsPageContent() {
           >
             <Card className="p-8">
               <CardHeader className="text-center pb-6">
-                <CardTitle className="text-2xl">{t('pages:marketing.ambassadors.requirements.title', 'Ambassador Requirements')}</CardTitle>
+                <CardTitle className="text-2xl">{t('pages:ambassadors.requirements.title', 'Ambassador Requirements')}</CardTitle>
                 <CardDescription>
-                  {t('pages:marketing.ambassadors.requirements.subtitle', 'What it takes to represent Mundo Tango in your city')}
+                  {t('pages:ambassadors.requirements.subtitle', 'What it takes to represent Mundo Tango in your city')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -199,7 +199,7 @@ function AmbassadorsPageContent() {
               <CardFooter className="justify-center pt-6">
                 <Link href="/register?redirect=/talent-match&role=ambassador">
                   <Button size="lg" data-testid="button-apply-now">
-                    {t('pages:marketing.ambassadors.cta.applyNow', 'Apply Now')}
+                    {t('pages:ambassadors.cta.applyNow', 'Apply Now')}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </Link>
@@ -222,10 +222,10 @@ function AmbassadorsPageContent() {
             >
               <div className="text-center max-w-3xl mx-auto space-y-4">
                 <motion.h2 variants={fadeInUp} className="text-3xl font-bold">
-                  {t('pages:marketing.ambassadors.current.title', 'Current Ambassadors')}
+                  {t('pages:ambassadors.current.title', 'Current Ambassadors')}
                 </motion.h2>
                 <motion.p variants={fadeInUp} className="text-muted-foreground">
-                  {t('pages:marketing.ambassadors.current.count', '{{count}} ambassadors representing cities worldwide', { count: ambassadors.length })}
+                  {t('pages:ambassadors.current.count', '{{count}} ambassadors representing cities worldwide', { count: ambassadors.length })}
                 </motion.p>
               </div>
 
@@ -268,10 +268,10 @@ function AmbassadorsPageContent() {
             >
               <div className="text-center max-w-3xl mx-auto space-y-4">
                 <motion.h2 variants={fadeInUp} className="text-3xl font-bold">
-                  {t('pages:marketing.ambassadors.seeking.title', 'Cities Looking for Ambassadors')}
+                  {t('pages:ambassadors.seeking.title', 'Cities Looking for Ambassadors')}
                 </motion.h2>
                 <motion.p variants={fadeInUp} className="text-muted-foreground">
-                  {t('pages:marketing.ambassadors.seeking.subtitle', 'These cities have active dancers but no ambassador yet. Could it be you?')}
+                  {t('pages:ambassadors.seeking.subtitle', 'These cities have active dancers but no ambassador yet. Could it be you?')}
                 </motion.p>
               </div>
 
@@ -285,7 +285,7 @@ function AmbassadorsPageContent() {
                     >
                       <MapPin className="h-3 w-3 mr-1" />
                       {city.city}, {city.country}
-                      <span className="ml-2 text-muted-foreground">({city.userCount} {t('pages:marketing.ambassadors.seeking.dancers', 'dancers')})</span>
+                      <span className="ml-2 text-muted-foreground">({city.userCount} {t('pages:ambassadors.seeking.dancers', 'dancers')})</span>
                     </Badge>
                   </motion.div>
                 ))}
@@ -306,15 +306,15 @@ function AmbassadorsPageContent() {
             className="text-center max-w-3xl mx-auto space-y-6"
           >
             <motion.h2 variants={fadeInUp} className="text-3xl font-bold text-white">
-              {t('pages:marketing.ambassadors.finalCta.title', 'Ready to Represent Your City?')}
+              {t('pages:ambassadors.finalCta.title', 'Ready to Represent Your City?')}
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-white/90 text-lg">
-              {t('pages:marketing.ambassadors.finalCta.subtitle', 'Join the global network of ambassadors connecting dancers worldwide.')}
+              {t('pages:ambassadors.finalCta.subtitle', 'Join the global network of ambassadors connecting dancers worldwide.')}
             </motion.p>
             <motion.div variants={fadeInUp} className="flex justify-center gap-4">
               <Link href="/register?redirect=/talent-match&role=ambassador">
                 <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-apply-final">
-                  {t('pages:marketing.ambassadors.cta.apply', 'Apply to be Ambassador')}
+                  {t('pages:ambassadors.cta.apply', 'Apply to be Ambassador')}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>

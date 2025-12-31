@@ -20,33 +20,33 @@ export default function ForDancersPage() {
   const features = [
     {
       icon: Users,
-      title: t('pages:marketing.dancers.features.findPartners.title', 'Find Dance Partners'),
-      description: t('pages:marketing.dancers.features.findPartners.description', 'Connect with dancers at your level in any city. Our AI matching considers style, experience, and availability.')
+      title: t('pages:dancers.features.findPartners.title', 'Find Dance Partners'),
+      description: t('pages:dancers.features.findPartners.description', 'Connect with dancers at your level in any city. Our AI matching considers style, experience, and availability.')
     },
     {
       icon: Calendar,
-      title: t('pages:marketing.dancers.features.discoverEvents.title', 'Discover Events'),
-      description: t('pages:marketing.dancers.features.discoverEvents.description', 'Never miss a milonga, practica, or festival. Get personalized recommendations based on your preferences.')
+      title: t('pages:dancers.features.discoverEvents.title', 'Discover Events'),
+      description: t('pages:dancers.features.discoverEvents.description', 'Never miss a milonga, practica, or festival. Get personalized recommendations based on your preferences.')
     },
     {
       icon: Globe,
-      title: t('pages:marketing.dancers.features.travelDance.title', 'Travel & Dance'),
-      description: t('pages:marketing.dancers.features.travelDance.description', 'Plan tango trips with local recommendations. Find milongas, housing, and dancers wherever you go.')
+      title: t('pages:dancers.features.travelDance.title', 'Travel & Dance'),
+      description: t('pages:dancers.features.travelDance.description', 'Plan tango trips with local recommendations. Find milongas, housing, and dancers wherever you go.')
     },
     {
       icon: Star,
-      title: t('pages:marketing.dancers.features.trackJourney.title', 'Track Your Journey'),
-      description: t('pages:marketing.dancers.features.trackJourney.description', 'Build your tango portfolio with memories, events attended, and skills developed over time.')
+      title: t('pages:dancers.features.trackJourney.title', 'Track Your Journey'),
+      description: t('pages:dancers.features.trackJourney.description', 'Build your tango portfolio with memories, events attended, and skills developed over time.')
     },
     {
       icon: MessageCircle,
-      title: t('pages:marketing.dancers.features.communityChat.title', 'Community Chat'),
-      description: t('pages:marketing.dancers.features.communityChat.description', 'Join discussions, ask questions, and share experiences with the global tango community.')
+      title: t('pages:dancers.features.communityChat.title', 'Community Chat'),
+      description: t('pages:dancers.features.communityChat.description', 'Join discussions, ask questions, and share experiences with the global tango community.')
     },
     {
       icon: Heart,
-      title: t('pages:marketing.dancers.features.buildConnections.title', 'Build Connections'),
-      description: t('pages:marketing.dancers.features.buildConnections.description', 'Create meaningful friendships that last beyond the dance floor. Your tango family awaits.')
+      title: t('pages:dancers.features.buildConnections.title', 'Build Connections'),
+      description: t('pages:dancers.features.buildConnections.description', 'Create meaningful friendships that last beyond the dance floor. Your tango family awaits.')
     }
   ];
   
@@ -58,10 +58,10 @@ export default function ForDancersPage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:marketing.dancers.pageName', 'For Dancers')} fallbackRoute="/">
+    <SelfHealingErrorBoundary pageName={t('pages:dancers.pageName', 'For Dancers')} fallbackRoute="/">
       <SEO 
-        title={t('pages:marketing.dancers.seo.title', 'For Dancers - Mundo Tango')}
-        description={t('pages:marketing.dancers.seo.description', 'Join the global tango community. Find partners, discover events, and connect with dancers worldwide.')}
+        title={t('pages:dancers.seo.title', 'For Dancers - Mundo Tango')}
+        description={t('pages:dancers.seo.description', 'Join the global tango community. Find partners, discover events, and connect with dancers worldwide.')}
       />
       
       <div className="min-h-screen bg-background overflow-x-hidden">
@@ -85,13 +85,13 @@ export default function ForDancersPage() {
                 className="mb-6 border-primary/30 bg-primary/10"
                 data-testid="badge-dancers"
               >
-                {t('pages:marketing.dancers.badge', 'FOR DANCERS')}
+                {t('pages:dancers.badge', 'FOR DANCERS')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 tracking-tight leading-tight">
-                {t('pages:marketing.dancers.hero.heading', 'Your Tango Journey')}{" "}
+                {t('pages:dancers.hero.heading', 'Your Tango Journey')}{" "}
                 <br />
-                <span className="text-primary">{t('pages:marketing.dancers.hero.headingHighlight', 'Starts Here')}</span>
+                <span className="text-primary">{t('pages:dancers.hero.headingHighlight', 'Starts Here')}</span>
               </h1>
             </motion.div>
 
@@ -101,7 +101,7 @@ export default function ForDancersPage() {
               transition={{ duration: 1, delay: 0.3 }}
               className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed"
             >
-              {t('pages:marketing.dancers.hero.paragraph', 'Whether you are taking your first steps or perfecting your volcadas, Mundo Tango connects you with dancers, events, and experiences that elevate your passion.')}
+              {t('pages:dancers.hero.paragraph', 'Whether you are taking your first steps or perfecting your volcadas, Mundo Tango connects you with dancers, events, and experiences that elevate your passion.')}
             </motion.p>
 
             <motion.div
@@ -112,7 +112,7 @@ export default function ForDancersPage() {
             >
               <Link href="/register?redirect=/talent-match">
                 <Button size="lg" className="text-lg px-8" data-testid="button-join-dancers">
-                  {t('pages:marketing.dancers.hero.button', 'Join Free Today')}
+                  {t('pages:dancers.hero.button', 'Join Free Today')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -129,10 +129,10 @@ export default function ForDancersPage() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-                {t('pages:marketing.dancers.featuresSection.heading', 'Everything You Need to Dance')}
+                {t('pages:dancers.featuresSection.heading', 'Everything You Need to Dance')}
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                {t('pages:marketing.dancers.featuresSection.paragraph', 'From finding partners to discovering your next milonga, we have got you covered.')}
+                {t('pages:dancers.featuresSection.paragraph', 'From finding partners to discovering your next milonga, we have got you covered.')}
               </p>
             </motion.div>
 
@@ -168,14 +168,14 @@ export default function ForDancersPage() {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-                {t('pages:marketing.dancers.cta.heading', 'Ready to Dance?')}
+                {t('pages:dancers.cta.heading', 'Ready to Dance?')}
               </h2>
               <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-                {t('pages:marketing.dancers.cta.paragraph', 'Join Mundo Tango today and become part of the global tango family.')}
+                {t('pages:dancers.cta.paragraph', 'Join Mundo Tango today and become part of the global tango family.')}
               </p>
               <Link href="/register?redirect=/talent-match">
                 <Button size="lg" className="text-lg px-12" data-testid="button-cta-dancers">
-                  {t('pages:marketing.dancers.cta.button', 'Start Dancing')}
+                  {t('pages:dancers.cta.button', 'Start Dancing')}
                   <Sparkles className="ml-2 h-5 w-5" />
                 </Button>
               </Link>

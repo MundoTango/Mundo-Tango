@@ -12,7 +12,7 @@ export function PublicNavbar() {
   const [location] = useLocation();
 
   const navItems = [
-    { label: t('common:home'), path: "/" },
+    { label: t('common:home'), path: "/landing" },
     { label: t('common:aboutUs', 'About Us'), path: "/about" },
     { label: t('common:contact', 'Contact'), path: "/contact" },
     { label: t('common:help', 'Help'), path: "/support" },
@@ -36,8 +36,8 @@ export function PublicNavbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" data-testid="public-navbar">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/">
+        {/* Logo - Links to landing page */}
+        <Link href="/landing">
           <div className="flex items-center gap-2 hover-elevate px-3 py-2 rounded-lg cursor-pointer" data-testid="link-home">
             <div className="w-8 h-8 ocean-gradient rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">MT</span>

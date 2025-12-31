@@ -20,33 +20,33 @@ export default function ForOrganizersPage() {
   const features = [
     {
       icon: CalendarCheck,
-      title: t('pages:marketing.organizers.features.eventManagement.title', 'Event Management'),
-      description: t('pages:marketing.organizers.features.eventManagement.description', 'Create and manage milongas, festivals, and workshops. One dashboard for all your events.')
+      title: t('pages:organizers.features.eventManagement.title', 'Event Management'),
+      description: t('pages:organizers.features.eventManagement.description', 'Create and manage milongas, festivals, and workshops. One dashboard for all your events.')
     },
     {
       icon: TicketIcon,
-      title: t('pages:marketing.organizers.features.ticketingRsvp.title', 'Ticketing & RSVP'),
-      description: t('pages:marketing.organizers.features.ticketingRsvp.description', 'Sell tickets, manage capacity, and track RSVPs. Built-in waitlist management included.')
+      title: t('pages:organizers.features.ticketingRsvp.title', 'Ticketing & RSVP'),
+      description: t('pages:organizers.features.ticketingRsvp.description', 'Sell tickets, manage capacity, and track RSVPs. Built-in waitlist management included.')
     },
     {
       icon: Users,
-      title: t('pages:marketing.organizers.features.attendeeInsights.title', 'Attendee Insights'),
-      description: t('pages:marketing.organizers.features.attendeeInsights.description', 'Understand your audience with detailed analytics. Know who comes, what they like, and when.')
+      title: t('pages:organizers.features.attendeeInsights.title', 'Attendee Insights'),
+      description: t('pages:organizers.features.attendeeInsights.description', 'Understand your audience with detailed analytics. Know who comes, what they like, and when.')
     },
     {
       icon: Mail,
-      title: t('pages:marketing.organizers.features.emailMarketing.title', 'Email Marketing'),
-      description: t('pages:marketing.organizers.features.emailMarketing.description', 'Send announcements, reminders, and thank-you notes. Keep your dancers engaged.')
+      title: t('pages:organizers.features.emailMarketing.title', 'Email Marketing'),
+      description: t('pages:organizers.features.emailMarketing.description', 'Send announcements, reminders, and thank-you notes. Keep your dancers engaged.')
     },
     {
       icon: CreditCard,
-      title: t('pages:marketing.organizers.features.paymentProcessing.title', 'Payment Processing'),
-      description: t('pages:marketing.organizers.features.paymentProcessing.description', 'Accept payments online with low fees. Multi-currency support for international events.')
+      title: t('pages:organizers.features.paymentProcessing.title', 'Payment Processing'),
+      description: t('pages:organizers.features.paymentProcessing.description', 'Accept payments online with low fees. Multi-currency support for international events.')
     },
     {
       icon: Globe,
-      title: t('pages:marketing.organizers.features.globalReach.title', 'Global Reach'),
-      description: t('pages:marketing.organizers.features.globalReach.description', 'Promote to dancers worldwide. Travelers discover your events before arriving.')
+      title: t('pages:organizers.features.globalReach.title', 'Global Reach'),
+      description: t('pages:organizers.features.globalReach.description', 'Promote to dancers worldwide. Travelers discover your events before arriving.')
     }
   ];
 
@@ -65,10 +65,10 @@ export default function ForOrganizersPage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:marketing.organizers.pageName', 'For Organizers')} fallbackRoute="/">
+    <SelfHealingErrorBoundary pageName={t('pages:organizers.pageName', 'For Organizers')} fallbackRoute="/">
       <SEO 
-        title={t('pages:marketing.organizers.seo.title', 'For Organizers - Mundo Tango')}
-        description={t('pages:marketing.organizers.seo.description', 'Host successful tango events. Manage ticketing, reach global dancers, and grow your community with Mundo Tango.')}
+        title={t('pages:organizers.seo.title', 'For Organizers - Mundo Tango')}
+        description={t('pages:organizers.seo.description', 'Host successful tango events. Manage ticketing, reach global dancers, and grow your community with Mundo Tango.')}
       />
       
       <div className="min-h-screen bg-background overflow-x-hidden">
@@ -92,13 +92,13 @@ export default function ForOrganizersPage() {
                 className="mb-6 border-primary/30 bg-primary/10"
                 data-testid="badge-organizers"
               >
-                {t('pages:marketing.organizers.badge', 'FOR ORGANIZERS')}
+                {t('pages:organizers.badge', 'FOR ORGANIZERS')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 tracking-tight leading-tight">
-                {t('pages:marketing.organizers.hero.heading', 'Host Unforgettable')}{" "}
+                {t('pages:organizers.hero.heading', 'Host Unforgettable')}{" "}
                 <br />
-                <span className="text-primary">{t('pages:marketing.organizers.hero.headingHighlight', 'Tango Events')}</span>
+                <span className="text-primary">{t('pages:organizers.hero.headingHighlight', 'Tango Events')}</span>
               </h1>
             </motion.div>
 
@@ -108,7 +108,7 @@ export default function ForOrganizersPage() {
               transition={{ duration: 1, delay: 0.3 }}
               className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed"
             >
-              {t('pages:marketing.organizers.hero.paragraph', 'From intimate milongas to grand festivals, manage every detail and reach dancers worldwide. Your event deserves the spotlight.')}
+              {t('pages:organizers.hero.paragraph', 'From intimate milongas to grand festivals, manage every detail and reach dancers worldwide. Your event deserves the spotlight.')}
             </motion.p>
 
             <motion.div
@@ -119,13 +119,13 @@ export default function ForOrganizersPage() {
             >
               <Link href="/register?redirect=/talent-match&role=organizer">
                 <Button size="lg" className="text-lg px-8" data-testid="button-join-organizers">
-                  {t('pages:marketing.organizers.hero.button', 'Create Your Event')}
+                  {t('pages:organizers.hero.button', 'Create Your Event')}
                   <CalendarCheck className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/events">
                 <Button size="lg" variant="outline" className="text-lg px-8" data-testid="button-explore-organizers">
-                  {t('pages:marketing.organizers.hero.buttonSecondary', 'See Examples')}
+                  {t('pages:organizers.hero.buttonSecondary', 'See Examples')}
                 </Button>
               </Link>
             </motion.div>
@@ -141,10 +141,10 @@ export default function ForOrganizersPage() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-                {t('pages:marketing.organizers.featuresSection.heading', 'Everything for Your Events')}
+                {t('pages:organizers.featuresSection.heading', 'Everything for Your Events')}
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                {t('pages:marketing.organizers.featuresSection.paragraph', 'Powerful tools to manage, promote, and analyze your tango events.')}
+                {t('pages:organizers.featuresSection.paragraph', 'Powerful tools to manage, promote, and analyze your tango events.')}
               </p>
             </motion.div>
 
@@ -180,10 +180,10 @@ export default function ForOrganizersPage() {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-                {t('pages:marketing.organizers.cta.heading', 'Ready to Fill Your Dance Floor?')}
+                {t('pages:organizers.cta.heading', 'Ready to Fill Your Dance Floor?')}
               </h2>
               <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-                {t('pages:marketing.organizers.cta.paragraph', 'List your first event free. No credit card required.')}
+                {t('pages:organizers.cta.paragraph', 'List your first event free. No credit card required.')}
               </p>
               <div className="flex flex-wrap justify-center gap-4 mb-10">
                 {benefitsList.map((benefit, idx) => (
@@ -195,7 +195,7 @@ export default function ForOrganizersPage() {
               </div>
               <Link href="/register?redirect=/talent-match&role=organizer">
                 <Button size="lg" className="text-lg px-12" data-testid="button-cta-organizers">
-                  {t('pages:marketing.organizers.cta.button', 'List Your Event')}
+                  {t('pages:organizers.cta.button', 'List Your Event')}
                   <Sparkles className="ml-2 h-5 w-5" />
                 </Button>
               </Link>

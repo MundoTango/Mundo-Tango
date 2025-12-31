@@ -43,10 +43,16 @@ const VisualEditorSplitPane = HEAVY_FEATURES_ENABLED
 
 function AppContent() {
   const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
+  const [i18nReady, setI18nReady] = useState(false);
   const [location] = useLocation();
 
+  // Initialize i18n with correct language BEFORE first meaningful render
   useEffect(() => {
-    detectAndApplyLanguage();
+    const initI18n = async () => {
+      await detectAndApplyLanguage();
+      setI18nReady(true);
+    };
+    initI18n();
   }, [location]);
 
   useEffect(() => {
@@ -115,6 +121,11 @@ function AppContent() {
     '/login', '/register', '/auth', '/forgot-password', '/reset-password'
   ];
   const isMarketingPage = marketingPaths.some(path => location.startsWith(path));
+
+  // Wait for i18n to be ready before rendering marketing pages to prevent English fallbacks
+  if (isMarketingPage && !i18nReady) {
+    return <LoadingFallback />;
+  }
 
   return (
     <> 

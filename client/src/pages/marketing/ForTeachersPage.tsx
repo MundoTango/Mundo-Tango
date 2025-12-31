@@ -20,43 +20,43 @@ export default function ForTeachersPage() {
   const features = [
     {
       icon: Users,
-      title: t('pages:marketing.teachers.features.studentManagement.title', 'Student Management'),
-      description: t('pages:marketing.teachers.features.studentManagement.description', 'Track student progress, manage class rosters, and build lasting relationships with your dancers.')
+      title: t('pages:teachers.features.studentManagement.title', 'Student Management'),
+      description: t('pages:teachers.features.studentManagement.description', 'Track student progress, manage class rosters, and build lasting relationships with your dancers.')
     },
     {
       icon: Calendar,
-      title: t('pages:marketing.teachers.features.classScheduling.title', 'Class Scheduling'),
-      description: t('pages:marketing.teachers.features.classScheduling.description', 'Easy booking system for classes, privates, and workshops. Students book directly on your profile.')
+      title: t('pages:teachers.features.classScheduling.title', 'Class Scheduling'),
+      description: t('pages:teachers.features.classScheduling.description', 'Easy booking system for classes, privates, and workshops. Students book directly on your profile.')
     },
     {
       icon: Video,
-      title: t('pages:marketing.teachers.features.videoLibrary.title', 'Video Library'),
-      description: t('pages:marketing.teachers.features.videoLibrary.description', 'Upload and share instructional videos with your students. Build your teaching archive.')
+      title: t('pages:teachers.features.videoLibrary.title', 'Video Library'),
+      description: t('pages:teachers.features.videoLibrary.description', 'Upload and share instructional videos with your students. Build your teaching archive.')
     },
     {
       icon: DollarSign,
-      title: t('pages:marketing.teachers.features.paymentProcessing.title', 'Payment Processing'),
-      description: t('pages:marketing.teachers.features.paymentProcessing.description', 'Accept payments for classes, packages, and workshops. Integrated billing keeps it simple.')
+      title: t('pages:teachers.features.paymentProcessing.title', 'Payment Processing'),
+      description: t('pages:teachers.features.paymentProcessing.description', 'Accept payments for classes, packages, and workshops. Integrated billing keeps it simple.')
     },
     {
       icon: BarChart3,
-      title: t('pages:marketing.teachers.features.analyticsDashboard.title', 'Analytics Dashboard'),
-      description: t('pages:marketing.teachers.features.analyticsDashboard.description', 'Track your growth, student retention, and revenue. Make data-driven decisions for your school.')
+      title: t('pages:teachers.features.analyticsDashboard.title', 'Analytics Dashboard'),
+      description: t('pages:teachers.features.analyticsDashboard.description', 'Track your growth, student retention, and revenue. Make data-driven decisions for your school.')
     },
     {
       icon: Globe,
-      title: t('pages:marketing.teachers.features.globalVisibility.title', 'Global Visibility'),
-      description: t('pages:marketing.teachers.features.globalVisibility.description', 'Get discovered by dancers worldwide. Your teaching profile reaches the global tango community.')
+      title: t('pages:teachers.features.globalVisibility.title', 'Global Visibility'),
+      description: t('pages:teachers.features.globalVisibility.description', 'Get discovered by dancers worldwide. Your teaching profile reaches the global tango community.')
     }
   ];
 
   const benefits = [
-    t('pages:marketing.teachers.benefits.freeTrial', '7-day free trial with Pro features'),
-    t('pages:marketing.teachers.benefits.cancelAnytime', 'Cancel anytime'),
-    t('pages:marketing.teachers.benefits.unlimitedListings', 'Unlimited class listings'),
-    t('pages:marketing.teachers.benefits.studentTools', 'Student management tools'),
-    t('pages:marketing.teachers.benefits.calendarSync', 'Integrated calendar sync'),
-    t('pages:marketing.teachers.benefits.prioritySupport', 'Priority support')
+    t('pages:teachers.benefits.freeTrial', '7-day free trial with Pro features'),
+    t('pages:teachers.benefits.cancelAnytime', 'Cancel anytime'),
+    t('pages:teachers.benefits.unlimitedListings', 'Unlimited class listings'),
+    t('pages:teachers.benefits.studentTools', 'Student management tools'),
+    t('pages:teachers.benefits.calendarSync', 'Integrated calendar sync'),
+    t('pages:teachers.benefits.prioritySupport', 'Priority support')
   ];
   
   const { scrollYProgress } = useScroll({
@@ -67,10 +67,10 @@ export default function ForTeachersPage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:marketing.teachers.pageName', 'For Teachers')} fallbackRoute="/">
+    <SelfHealingErrorBoundary pageName={t('pages:teachers.pageName', 'For Teachers')} fallbackRoute="/">
       <SEO 
-        title={t('pages:marketing.teachers.seo.title', 'For Teachers - Mundo Tango')}
-        description={t('pages:marketing.teachers.seo.description', 'Grow your tango teaching business. Manage students, schedule classes, and reach dancers worldwide with Mundo Tango.')}
+        title={t('pages:teachers.seo.title', 'For Teachers - Mundo Tango')}
+        description={t('pages:teachers.seo.description', 'Grow your tango teaching business. Manage students, schedule classes, and reach dancers worldwide with Mundo Tango.')}
       />
       
       <div className="min-h-screen bg-background overflow-x-hidden">
@@ -94,13 +94,13 @@ export default function ForTeachersPage() {
                 className="mb-6 border-accent/30 bg-accent/10"
                 data-testid="badge-teachers"
               >
-                {t('pages:marketing.teachers.badge', 'FOR TEACHERS')}
+                {t('pages:teachers.badge', 'FOR TEACHERS')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 tracking-tight leading-tight">
-                {t('pages:marketing.teachers.hero.heading', 'Teach Tango')}{" "}
+                {t('pages:teachers.hero.heading', 'Teach Tango')}{" "}
                 <br />
-                <span className="text-accent">{t('pages:marketing.teachers.hero.headingHighlight', 'Your Way')}</span>
+                <span className="text-accent">{t('pages:teachers.hero.headingHighlight', 'Your Way')}</span>
               </h1>
             </motion.div>
 
@@ -110,7 +110,7 @@ export default function ForTeachersPage() {
               transition={{ duration: 1, delay: 0.3 }}
               className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed"
             >
-              {t('pages:marketing.teachers.hero.paragraph', 'Build your teaching business with powerful tools for scheduling, payments, and student management. Reach dancers worldwide.')}
+              {t('pages:teachers.hero.paragraph', 'Build your teaching business with powerful tools for scheduling, payments, and student management. Reach dancers worldwide.')}
             </motion.p>
 
             <motion.div
@@ -121,7 +121,7 @@ export default function ForTeachersPage() {
             >
               <Link href="/register?redirect=/talent-match&role=teacher">
                 <Button size="lg" className="text-lg px-8" data-testid="button-join-teachers">
-                  {t('pages:marketing.teachers.hero.button', 'Start Teaching')}
+                  {t('pages:teachers.hero.button', 'Start Teaching')}
                   <GraduationCap className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -138,10 +138,10 @@ export default function ForTeachersPage() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-                {t('pages:marketing.teachers.featuresSection.heading', 'Tools Built for Teachers')}
+                {t('pages:teachers.featuresSection.heading', 'Tools Built for Teachers')}
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                {t('pages:marketing.teachers.featuresSection.paragraph', 'Everything you need to grow your tango teaching business.')}
+                {t('pages:teachers.featuresSection.paragraph', 'Everything you need to grow your tango teaching business.')}
               </p>
             </motion.div>
 
@@ -177,10 +177,10 @@ export default function ForTeachersPage() {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-                {t('pages:marketing.teachers.cta.heading', 'Ready to Grow?')}
+                {t('pages:teachers.cta.heading', 'Ready to Grow?')}
               </h2>
               <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-                {t('pages:marketing.teachers.cta.paragraph', 'Join hundreds of teachers who have built thriving tango businesses.')}
+                {t('pages:teachers.cta.paragraph', 'Join hundreds of teachers who have built thriving tango businesses.')}
               </p>
               <div className="flex flex-wrap justify-center gap-4 mb-10">
                 {benefits.map((benefit, idx) => (
@@ -192,7 +192,7 @@ export default function ForTeachersPage() {
               </div>
               <Link href="/register?redirect=/talent-match&role=teacher">
                 <Button size="lg" className="text-lg px-12" data-testid="button-cta-teachers">
-                  {t('pages:marketing.teachers.cta.button', 'Start Your Free Trial')}
+                  {t('pages:teachers.cta.button', 'Start Your Free Trial')}
                   <Sparkles className="ml-2 h-5 w-5" />
                 </Button>
               </Link>

@@ -18,42 +18,11 @@ import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.j
 import { TalentMatchModal } from "@/components/TalentMatchModal";
 
 export default function RegisterPage() {
-  // Use same pattern as working marketing pages
-  const { t, ready, i18n } = useTranslation(['pages', 'common']);
+  // Use ready flag to only render when translations are loaded
+  const { t, i18n, ready } = useTranslation(['pages', 'common']);
   const [, navigate] = useLocation();
   
-  // Force re-render when language changes or resources are loaded
-  const [renderKey, setRenderKey] = useState(0);
-  useEffect(() => {
-    const handleChange = () => {
-      console.log('[RegisterPage] Translation event - forcing re-render');
-      setRenderKey(prev => prev + 1);
-    };
-    i18n.on('languageChanged', handleChange);
-    i18n.on('loaded', handleChange);
-    i18n.store.on('added', handleChange);
-    return () => {
-      i18n.off('languageChanged', handleChange);
-      i18n.off('loaded', handleChange);
-      i18n.store.off('added', handleChange);
-    };
-  }, [i18n]);
-  
-  // Check if the pages namespace has actual content for current language
-  const pagesResource = i18n.getResourceBundle(i18n.language, 'pages');
-  const hasRegisterContent = !!pagesResource?.register?.hero?.joinMundoTango;
-  const isReady = ready && hasRegisterContent;
-  
-  // Debug logging
-  console.log('[RegisterPage] Debug state:', {
-    isReady,
-    lang: i18n.language,
-    ready,
-    hasRegisterContent,
-    pagesKeys: pagesResource ? Object.keys(pagesResource) : 'none',
-    registerHeroValue: pagesResource?.register?.hero?.joinMundoTango,
-    renderKey
-  });
+  // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const [inviteCode, setInviteCode] = useState("");
   const [isCodeValid, setIsCodeValid] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
@@ -79,6 +48,80 @@ export default function RegisterPage() {
   const [resendSuccess, setResendSuccess] = useState(false);
   const { register } = useAuth();
   const { toast } = useToast();
+  
+  // Stats query - must be called before conditional return
+  const { data: stats } = useQuery<{
+    dancers: number | null;
+    events: number | null;
+    cities: number | null;
+    countries: number | null;
+  }>({
+    queryKey: ["/api/stats/public"],
+    staleTime: 5 * 60 * 1000,
+  });
+  
+  // Username availability check - must be called before conditional return
+  useEffect(() => {
+    if (username.length >= 3) {
+      const checkUsername = async () => {
+        setIsCheckingUsername(true);
+        try {
+          const response = await fetch(`/api/auth/check-username/${username}`);
+          if (!response.ok) {
+            console.error("Username check failed:", response.status);
+            setUsernameAvailable(null);
+            return;
+          }
+          const data = await response.json();
+          setUsernameAvailable(data.available);
+        } catch (error) {
+          console.error("Username check error:", error);
+          setUsernameAvailable(null);
+        } finally {
+          setIsCheckingUsername(false);
+        }
+      };
+      
+      const debounce = setTimeout(checkUsername, 500);
+      return () => clearTimeout(debounce);
+    } else {
+      setUsernameAvailable(null);
+    }
+  }, [username]);
+
+  // Email availability check - must be called before conditional return
+  useEffect(() => {
+    if (email.length >= 5 && email.includes('@')) {
+      const checkEmail = async () => {
+        setIsCheckingEmail(true);
+        try {
+          const response = await fetch(`/api/auth/check-email/${encodeURIComponent(email)}`);
+          if (!response.ok) {
+            console.error("Email check failed:", response.status);
+            setEmailAvailable(null);
+            return;
+          }
+          const data = await response.json();
+          setEmailAvailable(data.available);
+        } catch (error) {
+          console.error("Email check error:", error);
+          setEmailAvailable(null);
+        } finally {
+          setIsCheckingEmail(false);
+        }
+      };
+      
+      const debounce = setTimeout(checkEmail, 500);
+      return () => clearTimeout(debounce);
+    } else {
+      setEmailAvailable(null);
+    }
+  }, [email]);
+  
+  // Don't render until translations are ready to avoid English fallbacks
+  if (!ready) {
+    return null;
+  }
   
   const getCsrfToken = () => {
     const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
@@ -201,16 +244,6 @@ export default function RegisterPage() {
     setIsCodeValid(code.toLowerCase().trim() === "nomad");
   };
 
-  const { data: stats } = useQuery<{
-    dancers: number | null;
-    events: number | null;
-    cities: number | null;
-    countries: number | null;
-  }>({
-    queryKey: ["/api/stats/public"],
-    staleTime: 5 * 60 * 1000,
-  });
-
   const getPasswordStrengthLabel = (score: number): string => {
     if (score <= 2) return t('pages:register.passwordStrength.weak', 'Weak');
     if (score <= 4) return t('pages:register.passwordStrength.medium', 'Medium');
@@ -236,63 +269,6 @@ export default function RegisterPage() {
   const passwordStrength = password ? calculatePasswordStrength(password) : null;
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
   const passwordsDontMatch = confirmPassword && !passwordsMatch;
-
-
-  useEffect(() => {
-    if (username.length >= 3) {
-      const checkUsername = async () => {
-        setIsCheckingUsername(true);
-        try {
-          const response = await fetch(`/api/auth/check-username/${username}`);
-          if (!response.ok) {
-            console.error("Username check failed:", response.status);
-            setUsernameAvailable(null);
-            return;
-          }
-          const data = await response.json();
-          setUsernameAvailable(data.available);
-        } catch (error) {
-          console.error("Username check error:", error);
-          setUsernameAvailable(null);
-        } finally {
-          setIsCheckingUsername(false);
-        }
-      };
-      
-      const debounce = setTimeout(checkUsername, 500);
-      return () => clearTimeout(debounce);
-    } else {
-      setUsernameAvailable(null);
-    }
-  }, [username]);
-
-  useEffect(() => {
-    if (email.length >= 5 && email.includes('@')) {
-      const checkEmail = async () => {
-        setIsCheckingEmail(true);
-        try {
-          const response = await fetch(`/api/auth/check-email/${encodeURIComponent(email)}`);
-          if (!response.ok) {
-            console.error("Email check failed:", response.status);
-            setEmailAvailable(null);
-            return;
-          }
-          const data = await response.json();
-          setEmailAvailable(data.available);
-        } catch (error) {
-          console.error("Email check error:", error);
-          setEmailAvailable(null);
-        } finally {
-          setIsCheckingEmail(false);
-        }
-      };
-      
-      const debounce = setTimeout(checkEmail, 500);
-      return () => clearTimeout(debounce);
-    } else {
-      setEmailAvailable(null);
-    }
-  }, [email]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -355,22 +331,6 @@ export default function RegisterPage() {
       setIsLoading(false);
     }
   };
-
-  // Wait for translations to be ready to avoid flash of English fallback text
-  if (!isReady) {
-    return (
-      <PublicLayout>
-        <div className="relative min-h-screen w-full overflow-hidden" data-testid="hero-register-loading">
-          <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${tangoHeroImage})`}}>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
-          </div>
-          <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-white" />
-          </div>
-        </div>
-      </PublicLayout>
-    );
-  }
 
   return (
     <SelfHealingErrorBoundary key={i18n.language} pageName={t('pages:register.pageName', 'Register')} fallbackRoute="/login">
