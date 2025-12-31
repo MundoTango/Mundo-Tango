@@ -124,6 +124,43 @@
       "tryAgain": "Bitte versuchen Sie es erneut"
     }
   },
+  "login": {
+    "pageName": "Anmelden",
+    "seo": {
+      "title": "Anmelden - Mundo Tango",
+      "description": "Melden Sie sich bei Ihrem Mundo Tango-Konto an, um sich mit der globalen Tango-Community zu verbinden, Events zu entdecken und Ihre Leidenschaft für argentinischen Tango zu teilen."
+    },
+    "badge": "Willkommen zurück",
+    "hero": {
+      "heading": "Ihre Tango-Reise geht weiter",
+      "paragraph": "Melden Sie sich an, um sich mit Tänzern weltweit zu verbinden, Events zu entdecken und Ihre Leidenschaft zu teilen"
+    },
+    "stats": {
+      "dancers": "Tänzer",
+      "events": "Events"
+    },
+    "form": {
+      "email": "E-Mail",
+      "password": "Passwort",
+      "signIn": "Anmelden",
+      "signingIn": "Anmeldung läuft...",
+      "forgotPassword": "Passwort vergessen?"
+    },
+    "noAccount": "Noch kein Konto?",
+    "createAccount": "Jetzt erstellen",
+    "toast": {
+      "successTitle": "Willkommen zurück!",
+      "successDescription": "Sie haben sich erfolgreich angemeldet.",
+      "errorTitle": "Anmeldung fehlgeschlagen",
+      "errorDescription": "Ungültige Anmeldedaten",
+      "verificationRequired": {
+        "title": "E-Mail-Bestätigung erforderlich",
+        "description": "Bitte überprüfen Sie Ihre E-Mail und bestätigen Sie Ihre Adresse."
+      },
+      "upgradedTitle": "Konto aktualisiert!",
+      "upgradedDescription": "Willkommen! Sie haben jetzt vollen Zugang zu Mundo Tango."
+    }
+  },
   "onboarding": {
     "welcome": {
       "pageTitle": "Willkommen",
@@ -153,8 +190,37 @@
         "journey": {
           "title": "Teilen Sie Ihre Reise",
           "description": "Verbinden Sie sich mit Tänzern auf Ihrem Niveau"
+        },
+        "facebook": {
+          "title": "Facebook verbinden",
+          "description": "Verknüpfen Sie Ihr Facebook-Profil, um Freunde in der Community zu finden"
         }
       }
+    },
+    "social": {
+      "pageTitle": "Soziale Verbindung",
+      "seoTitle": "Verbinden Sie Ihre soziale Welt - Mundo Tango",
+      "seoDescription": "Verknüpfen Sie Ihre sozialen Profile, um Freunde in der Tango-Community zu finden.",
+      "step": "Schritt 2 von 6",
+      "title": "Verbinden Sie Ihre soziale Welt",
+      "quote": "\"Viele Tango-Tänzer kennen sich bereits über Facebook. Durch das Verknüpfen Ihres Profils können wir Ihnen zeigen, welche Tänzer in Ihrem Netzwerk bereits hier sind - so finden Sie leichter bekannte Gesichter bei Milongas und bauen tiefere Verbindungen auf.\"",
+      "cardTitle": "Finden Sie Ihre Freunde",
+      "cardDescription": "Ihr Facebook hilft uns, Sie mit Tänzern zu verbinden, die Sie möglicherweise bereits kennen.",
+      "facebookLabel": "Facebook-Profil-URL (Optional)",
+      "facebookPlaceholder": "https://www.facebook.com/ihr.profil",
+      "helperText": "Wir nutzen dies als Brücke zu anderen Communities und um Sie mit Tänzern zu verbinden, die Sie kennen könnten.",
+      "toast": {
+        "errorTitle": "Fehler",
+        "errorDescription": "Profilinformationen konnten nicht gespeichert werden"
+      }
+    },
+    "navigation": {
+      "back": "Zurück",
+      "continue": "Weiter",
+      "skip": "Überspringen",
+      "next": "Weiter",
+      "finish": "Fertig",
+      "saving": "Wird gespeichert..."
     },
     "city": {
       "pageTitle": "Stadtauswahl",
@@ -173,6 +239,15 @@
       "errors": {
         "required": "Stadt erforderlich",
         "selectCity": "Bitte wählen Sie Ihre Heimatstadt"
+      },
+      "toast": {
+        "sourceAdded": "Quelle hinzugefügt!",
+        "submittedForReview": "Zur Überprüfung eingereicht",
+        "trackingEvents": "Wir werden Events von dieser Seite verfolgen",
+        "thankYou": "Vielen Dank! Ihr Vorschlag wurde zur Überprüfung gesendet.",
+        "errorTitle": "Fehler",
+        "suggestionFailed": "Vorschlag konnte nicht gesendet werden",
+        "saveFailed": "Städte konnten nicht gespeichert werden"
       }
     },
     "photo": {
@@ -201,6 +276,24 @@
         "skipFailed": "Überspringen fehlgeschlagen. Bitte versuchen Sie es erneut."
       }
     },
+    "roles": {
+      "pageTitle": "Tango-Rollen",
+      "seoTitle": "Ihre Tango-Rollen - Mundo Tango",
+      "seoDescription": "Erzählen Sie uns von Ihrer Tango-Reise",
+      "step": "Schritt 2 von 6",
+      "title": "Welche Rollen spielen Sie?",
+      "subtitle": "Wählen Sie alle zutreffenden aus",
+      "cardTitle": "Ihre Tango-Identität",
+      "cardDescription": "Helfen Sie anderen zu wissen, wie Sie an der Tango-Welt teilnehmen"
+    },
+    "experience": {
+      "pageTitle": "Tanzerfahrung",
+      "seoTitle": "Ihre Tanzerfahrung - Mundo Tango",
+      "seoDescription": "Teilen Sie Ihr Tanzerfahrungsniveau",
+      "step": "Schritt 4 von 6",
+      "title": "Ihre Tanzerfahrung",
+      "subtitle": "Helfen Sie uns, Sie mit den richtigen Tänzern zu verbinden"
+    },
     "languages": {
       "pageTitle": "Sprachen",
       "seoTitle": "Ihre Sprachen - Mundo Tango",
@@ -221,24 +314,6 @@
         "saveFailedTitle": "Speichern der Sprachen fehlgeschlagen"
       }
     },
-    "roles": {
-      "pageTitle": "Tango-Rollen",
-      "seoTitle": "Ihre Tango-Rollen - Mundo Tango",
-      "seoDescription": "Erzählen Sie uns von Ihrer Tango-Reise",
-      "step": "Schritt 2 von 6",
-      "title": "Welche Rollen spielen Sie?",
-      "subtitle": "Wählen Sie alle zutreffenden aus",
-      "cardTitle": "Ihre Tango-Identität",
-      "cardDescription": "Helfen Sie anderen zu wissen, wie Sie an der Tango-Welt teilnehmen"
-    },
-    "experience": {
-      "pageTitle": "Tanzerfahrung",
-      "seoTitle": "Ihre Tanzerfahrung - Mundo Tango",
-      "seoDescription": "Teilen Sie Ihr Tanzerfahrungsniveau",
-      "step": "Schritt 4 von 6",
-      "title": "Ihre Tanzerfahrung",
-      "subtitle": "Helfen Sie uns, Sie mit den richtigen Tänzern zu verbinden"
-    },
     "hobbies": {
       "pageTitle": "Interessen",
       "seoTitle": "Ihre Interessen - Mundo Tango",
@@ -250,6 +325,134 @@
       "selectedCount": "{{count}} ausgewählt",
       "finishing": "Wird abgeschlossen...",
       "completeSetup": "Einrichtung abschließen",
+      "searchPlaceholder": "Communities durchsuchen oder neue hinzufügen...",
+      "categories": {
+        "fitness": { "label": "Fitness & Sport" },
+        "tech": { "label": "Technik & Innovation" },
+        "spirituality": { "label": "Spiritualität & Wachstum" },
+        "yoga": { "label": "Yoga & Wellness" },
+        "music": { "label": "Musik" },
+        "photography": { "label": "Fotografie & Video" },
+        "art": { "label": "Kunst & Kreativität" },
+        "reading": { "label": "Lesen & Schreiben" },
+        "travel": { "label": "Reisen & Abenteuer" },
+        "cooking": { "label": "Kochen & Essen" },
+        "wine": { "label": "Wein & Getränke" },
+        "gaming": { "label": "Gaming" },
+        "outdoors": { "label": "Outdoor-Aktivitäten" },
+        "snow": { "label": "Wintersport" },
+        "cycling": { "label": "Radfahren" },
+        "water": { "label": "Wassersport" },
+        "nature": { "label": "Natur & Garten" },
+        "movies": { "label": "Filme & Unterhaltung" },
+        "pets": { "label": "Haustiere & Tiere" },
+        "social": { "label": "Soziales & Community" }
+      },
+      "items": {
+        "fitness_gym": "Fitnessstudio & Gewichte",
+        "fitness_running": "Laufen",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Kampfsport",
+        "fitness_tennis": "Tennis",
+        "fitness_soccer": "Fußball",
+        "fitness_basketball": "Basketball",
+        "fitness_fencing": "Fechten",
+        "tech_coding": "Programmierung & Entwicklung",
+        "tech_ai": "KI & Zukunftstechnologie",
+        "tech_crypto": "Web3 & Krypto",
+        "tech_gaming": "Gaming-Kultur",
+        "spirit_meditation": "Meditation",
+        "spirit_astrology": "Astrologie",
+        "spirit_philosophy": "Philosophie",
+        "spirit_community": "Community-Aufbau",
+        "yoga_hatha": "Hatha Yoga",
+        "yoga_vinyasa": "Vinyasa Flow",
+        "yoga_meditation": "Meditation",
+        "yoga_pilates": "Pilates",
+        "yoga_breathwork": "Atemarbeit",
+        "music_listening": "Musik hören",
+        "music_concerts": "Live-Konzerte",
+        "music_piano": "Klavier",
+        "music_guitar": "Gitarre",
+        "music_singing": "Singen",
+        "music_dj": "DJing",
+        "music_production": "Musikproduktion",
+        "photo_portrait": "Porträtfotografie",
+        "photo_landscape": "Landschaftsfotografie",
+        "photo_street": "Straßenfotografie",
+        "photo_video": "Videografie",
+        "photo_editing": "Bildbearbeitung",
+        "art_painting": "Malerei",
+        "art_drawing": "Zeichnen",
+        "art_sculpture": "Bildhauerei",
+        "art_digital": "Digitale Kunst",
+        "art_crafts": "Handwerk & DIY",
+        "art_pottery": "Töpfern",
+        "reading_fiction": "Belletristik",
+        "reading_nonfiction": "Sachbücher",
+        "reading_poetry": "Poesie",
+        "reading_writing": "Kreatives Schreiben",
+        "reading_journals": "Tagebuch führen",
+        "travel_backpacking": "Rucksackreisen",
+        "travel_luxury": "Luxusreisen",
+        "travel_cultural": "Kulturtourismus",
+        "travel_road_trips": "Roadtrips",
+        "travel_solo": "Alleinreisen",
+        "cooking_home": "Hausmannskost",
+        "cooking_baking": "Backen",
+        "cooking_gourmet": "Gourmet-Küche",
+        "cooking_international": "Internationale Küche",
+        "cooking_healthy": "Gesunde Ernährung",
+        "wine_tasting": "Weinverkostung",
+        "wine_cocktails": "Cocktails",
+        "wine_coffee": "Kaffeegenuss",
+        "wine_tea": "Teekultur",
+        "wine_brewing": "Heimbrauen",
+        "gaming_video": "Videospiele",
+        "gaming_board": "Brettspiele",
+        "gaming_card": "Kartenspiele",
+        "gaming_tabletop": "Tabletop-RPGs",
+        "gaming_esports": "eSports",
+        "outdoor_hiking": "Wandern",
+        "outdoor_camping": "Camping",
+        "outdoor_climbing": "Klettern",
+        "outdoor_fishing": "Angeln",
+        "outdoor_kayaking": "Kajakfahren",
+        "outdoor_surfing": "Surfen",
+        "snow_skiing": "Skifahren",
+        "snow_snowboard": "Snowboarden",
+        "snow_crosscountry": "Langlauf",
+        "snow_ice_skating": "Eislaufen",
+        "snow_sledding": "Rodeln",
+        "snow_snowshoeing": "Schneeschuhwandern",
+        "cycling_road": "Rennradfahren",
+        "cycling_mountain": "Mountainbiking",
+        "cycling_urban": "Stadtradfahren",
+        "cycling_touring": "Radtouren",
+        "water_swimming": "Schwimmen",
+        "water_scuba": "Tauchen",
+        "water_snorkel": "Schnorcheln",
+        "water_sailing": "Segeln",
+        "water_paddleboard": "Stand-Up-Paddling",
+        "nature_gardening": "Gärtnern",
+        "nature_birdwatching": "Vogelbeobachtung",
+        "nature_botany": "Pflanzensammlung",
+        "nature_wildlife": "Tierfotografie",
+        "movies_cinema": "Kino",
+        "movies_tv": "TV-Serien",
+        "movies_documentary": "Dokumentarfilme",
+        "movies_theater": "Theater",
+        "movies_standup": "Stand-up-Comedy",
+        "pets_dogs": "Hunde",
+        "pets_cats": "Katzen",
+        "pets_exotic": "Exotische Haustiere",
+        "pets_horses": "Reiten",
+        "pets_rescue": "Tierrettung",
+        "social_volunteering": "Freiwilligenarbeit",
+        "social_meetups": "Meetups",
+        "social_networking": "Networking",
+        "social_languages": "Sprachaustausch"
+      },
       "success": {
         "completeTitle": "Willkommen bei Mundo Tango!",
         "completeDesc": "Ihr Profil ist bereit. Beginnen Sie mit der Erkundung!",
@@ -397,13 +600,6 @@
           }
         }
       }
-    },
-    "navigation": {
-      "back": "Zurück",
-      "next": "Weiter",
-      "skip": "Überspringen",
-      "finish": "Fertig",
-      "saving": "Wird gespeichert..."
     }
   },
   "home": {
@@ -440,14 +636,6 @@
     "following": "Folgend",
     "posts": "Beiträge",
     "about": "Über"
-  },
-  "login": {
-    "title": "Anmelden",
-    "email": "E-Mail",
-    "password": "Passwort",
-    "forgotPassword": "Passwort vergessen?",
-    "noAccount": "Kein Konto?",
-    "signUp": "Registrieren"
   },
   "signup": {
     "title": "Konto erstellen",

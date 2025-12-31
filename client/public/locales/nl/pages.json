@@ -1,291 +1,863 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "Inloggen",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Inloggen - Mundo Tango",
+      "description": "Log in op uw Mundo Tango-account om verbinding te maken met de wereldwijde tango-community, evenementen te ontdekken en uw passie voor Argentijnse tango te delen."
     },
-    "badge": "Welcome Back",
+    "badge": "Welkom terug",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Uw tango-reis gaat verder",
+      "paragraph": "Log in om verbinding te maken met dansers wereldwijd, evenementen te ontdekken en uw passie te delen"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "dansers",
+      "events": "evenementen"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "E-mail",
+      "password": "Wachtwoord",
+      "signIn": "Inloggen",
+      "signingIn": "Bezig met inloggen...",
+      "forgotPassword": "Wachtwoord vergeten?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Nog geen account?",
+    "createAccount": "Maak er nu een aan",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Welkom terug!",
+      "successDescription": "U bent succesvol ingelogd.",
+      "errorTitle": "Inloggen mislukt",
+      "errorDescription": "Ongeldige inloggegevens",
+      "verificationRequired": {
+        "title": "E-mailverificatie vereist",
+        "description": "Controleer uw e-mail en bevestig uw adres."
+      },
+      "upgradedTitle": "Account geüpgraded!",
+      "upgradedDescription": "Welkom! U heeft nu volledige toegang tot Mundo Tango."
+    }
+  },
+  "register": {
+    "pageName": "Registreren",
+    "seo": {
+      "title": "Word lid van Mundo Tango - Maak uw account aan",
+      "description": "Maak uw Mundo Tango-account aan en word lid van de wereldwijde Argentijnse tango-community. Maak verbinding met dansers, ontdek evenementen en deel uw passie voor tango."
+    },
+    "badge": {
+      "welcomeFamily": "Welkom in de familie",
+      "beginJourney": "Begin uw reis",
+      "joinCommunity": "Word lid van de community"
+    },
+    "hero": {
+      "youreIn": "U bent binnen!",
+      "joinMundoTango": "Word lid van Mundo Tango",
+      "description": "Maak verbinding met dansers wereldwijd, ontdek milongas en dompel u onder in de hartstochtelijke wereld van Argentijnse tango",
+      "waitlistDescription": "Welkom bij de Mundo Tango-community. We bereiden uw account voor en laten het u snel weten!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ dansers",
+      "events": "{{count}}+ evenementen",
+      "cities": "{{count}} steden"
+    },
+    "form": {
+      "fullName": "Volledige naam",
+      "fullNamePlaceholder": "Maria Rodriguez",
+      "email": "E-mail",
+      "emailPlaceholder": "maria@example.com",
+      "username": "Gebruikersnaam",
+      "usernamePlaceholder": "maria_tango",
+      "password": "Wachtwoord",
+      "confirmPassword": "Bevestig wachtwoord",
+      "inviteOnlyNotice": "Registratie is momenteel alleen op uitnodiging. Vul dit formulier in om u aan te melden voor onze wachtlijst en we laten u weten wanneer uw account klaar is.",
+      "acceptTermsPrefix": "Ik accepteer de",
+      "termsAndConditions": "Algemene voorwaarden"
+    },
+    "validation": {
+      "emailTaken": "Dit e-mailadres is al geregistreerd",
+      "emailAvailable": "E-mail beschikbaar!",
+      "usernameTaken": "Gebruikersnaam bezet. Probeer {{suggestion}}",
+      "usernameAvailable": "Gebruikersnaam beschikbaar!",
+      "passwordsMatch": "Wachtwoorden komen overeen",
+      "passwordsDontMatch": "Wachtwoorden komen niet overeen"
+    },
+    "passwordStrength": {
+      "weak": "Zwak",
+      "medium": "Gemiddeld",
+      "strong": "Sterk",
+      "veryStrong": "Zeer sterk"
+    },
+    "inviteCode": {
+      "label": "Heeft u een uitnodigingscode? (Optioneel)",
+      "placeholder": "Voer uw uitnodigingscode in voor directe toegang",
+      "accepted": "Code geaccepteerd! Uw account wordt direct geactiveerd.",
+      "noWorries": "Geen zorgen! Vul het onderstaande formulier in om u aan te melden voor onze wachtlijst."
+    },
+    "waitlist": {
+      "welcomeUser": "Welkom, {{name}}!",
+      "defaultName": "Danser",
+      "onTheList": "U staat op de lijst. We sturen u een e-mail naar",
+      "whenReady": "wanneer uw account klaar is.",
+      "helpUsGrow": "Terwijl u wacht, help ons groeien",
+      "volunteerWithUs": "Word vrijwilliger",
+      "supportMundoTango": "Steun Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Account wordt aangemaakt...",
+      "joining": "Bezig met aanmelden...",
+      "createAccount": "Account aanmaken",
+      "joinMundoTango": "Word lid van Mundo Tango"
+    },
+    "alreadyHaveAccount": "Heeft u al een account?",
+    "signIn": "Inloggen",
+    "toast": {
+      "invalidCode": {
+        "title": "Ongeldige code",
+        "description": "Voer een geldige 6-cijferige verificatiecode in."
+      },
+      "verified": {
+        "title": "E-mail geverifieerd!",
+        "description": "Welkom bij Mundo Tango! Uw onboarding wordt gestart..."
+      },
+      "verifyError": {
+        "title": "Verificatie mislukt",
+        "description": "Ongeldige of verlopen code. Probeer het opnieuw."
+      },
+      "error": {
+        "title": "Fout",
+        "description": "E-mailverificatie mislukt. Probeer het opnieuw."
+      },
+      "tooMany": {
+        "title": "Te veel verzoeken",
+        "description": "Wacht een paar minuten voordat u het opnieuw probeert."
+      },
+      "codeSent": {
+        "title": "Code verzonden!",
+        "description": "Controleer uw inbox voor een nieuwe code."
+      },
+      "resendError": {
+        "description": "Code opnieuw verzenden mislukt. Probeer het opnieuw."
+      },
+      "termsRequired": {
+        "title": "Voorwaarden vereist",
+        "description": "Accepteer de algemene voorwaarden"
+      },
+      "passwordMismatch": {
+        "title": "Wachtwoorden komen niet overeen",
+        "description": "Zorg ervoor dat beide wachtwoorden identiek zijn"
+      },
+      "weakPassword": {
+        "title": "Zwak wachtwoord",
+        "description": "Kies een sterker wachtwoord"
+      },
+      "checkEmail": {
+        "title": "Controleer uw e-mail",
+        "description": "We hebben u een 6-cijferige verificatiecode gestuurd. Controleer uw inbox."
+      },
+      "registrationFailed": {
+        "title": "Registratie mislukt"
+      },
+      "signupFailed": {
+        "title": "Aanmelding kon niet worden voltooid"
+      },
+      "tryAgain": "Probeer het opnieuw"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Welkom",
+      "seoTitle": "Welkom bij Mundo Tango",
+      "seoDescription": "Begin uw tango-reis met Mundo Tango",
+      "badge": "Snelle installatie",
+      "title": "Welkom bij Mundo Tango",
+      "subtitle": "Laten we uw profiel instellen zodat u verbinding kunt maken met de wereldwijde tango-community",
+      "duration": "Duurt ongeveer 2 minuten",
+      "stepIndicator": "Stap {{current}} van {{total}}",
+      "getStarted": "Aan de slag",
+      "profileTitle": "Uw tango-reis begint",
+      "profileSubtitle": "Vertel ons iets over uzelf",
+      "features": {
+        "city": {
+          "title": "Kies uw stad",
+          "description": "Maak verbinding met uw lokale tango-community"
+        },
+        "roles": {
+          "title": "Vertel ons uw rollen",
+          "description": "Danser, leraar, DJ, organisator, of alles tegelijk?"
+        },
+        "events": {
+          "title": "Ontdek evenementen",
+          "description": "Vind milongas, lessen en festivals bij u in de buurt"
+        },
+        "journey": {
+          "title": "Deel uw reis",
+          "description": "Maak verbinding met dansers op uw niveau"
+        },
+        "facebook": {
+          "title": "Facebook verbinden",
+          "description": "Koppel uw Facebook-profiel om vrienden in de community te vinden"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "Sociale verbinding",
+      "seoTitle": "Verbind uw sociale wereld - Mundo Tango",
+      "seoDescription": "Koppel uw sociale profielen om vrienden in de tango-community te vinden.",
+      "step": "Stap 2 van 6",
+      "title": "Verbind uw sociale wereld",
+      "quote": "\"Veel tangodansers kennen elkaar al via Facebook. Door uw profiel te koppelen, kunnen we u laten zien welke dansers in uw netwerk hier al zijn - waardoor u gemakkelijker bekende gezichten vindt bij milongas en diepere connecties opbouwt.\"",
+      "cardTitle": "Vind uw vrienden",
+      "cardDescription": "Uw Facebook helpt ons u te matchen met dansers die u mogelijk al kent.",
+      "facebookLabel": "Facebook-profiel URL (Optioneel)",
+      "facebookPlaceholder": "https://www.facebook.com/uw.profiel",
+      "helperText": "We gebruiken dit als brug naar andere communities en om u te matchen met dansers die u zou kunnen kennen.",
+      "toast": {
+        "errorTitle": "Fout",
+        "errorDescription": "Profielinformatie kon niet worden opgeslagen"
+      }
+    },
+    "navigation": {
+      "back": "Terug",
+      "continue": "Doorgaan",
+      "skip": "Overslaan",
+      "next": "Volgende",
+      "finish": "Voltooien",
+      "saving": "Opslaan..."
+    },
+    "city": {
+      "pageTitle": "Stad selecteren",
+      "seoTitle": "Selecteer uw stad - Mundo Tango",
+      "seoDescription": "Kies uw thuisstad om verbinding te maken met lokale tangodansers",
+      "step": "Stap 1 van 6",
+      "title": "Waar danst u?",
+      "subtitle": "Maak verbinding met dansers in uw buurt",
+      "cardTitle": "Uw thuisstad",
+      "cardDescription": "Dit helpt ons u lokale evenementen en dansers te tonen",
+      "searchLabel": "Zoek uw stad",
+      "searchPlaceholder": "Typ uw stadsnaam...",
+      "eventSite": {
+        "help": "Kies uit populaire tango-bestemmingen"
+      },
+      "errors": {
+        "required": "Stad vereist",
+        "selectCity": "Selecteer uw thuisstad"
+      },
+      "toast": {
+        "sourceAdded": "Bron toegevoegd!",
+        "submittedForReview": "Ingediend ter beoordeling",
+        "trackingEvents": "We gaan evenementen van de site volgen",
+        "thankYou": "Bedankt! Uw suggestie is ingediend ter beoordeling.",
+        "errorTitle": "Fout",
+        "suggestionFailed": "Suggestie indienen mislukt",
+        "saveFailed": "Steden opslaan mislukt"
+      }
+    },
+    "photo": {
+      "pageTitle": "Foto uploaden",
+      "seoTitle": "Voeg profielfoto toe - Mundo Tango",
+      "seoDescription": "Upload uw profielfoto",
+      "step": "Stap 3 van 6",
+      "title": "Voeg uw profielfoto toe",
+      "subtitle": "Help anderen u te herkennen in de community",
+      "cardTitle": "Uw profielfoto",
+      "cardDescription": "Help anderen u te herkennen (u kunt deze stap overslaan)",
+      "previewAlt": "Profielvoorbeeld",
+      "dropHere": "Laat uw foto hier vallen",
+      "or": "of",
+      "browseFiles": "Blader door bestanden",
+      "fileTypes": "PNG, JPG tot 5MB",
+      "photoSelected": "Foto geselecteerd!",
+      "uploading": "Uploaden...",
+      "errors": {
+        "invalidFile": "Ongeldig bestand",
+        "selectImage": "Selecteer een afbeeldingsbestand",
+        "fileTooLarge": "Bestand te groot",
+        "sizeLimit": "Selecteer een afbeelding kleiner dan 5MB",
+        "uploadFailed": "Upload mislukt",
+        "tryAgain": "Foto uploaden mislukt. Probeer het opnieuw.",
+        "skipFailed": "Overslaan mislukt. Probeer het opnieuw."
+      }
+    },
+    "roles": {
+      "pageTitle": "Tango-rollen",
+      "seoTitle": "Uw tango-rollen - Mundo Tango",
+      "seoDescription": "Vertel ons over uw tango-reis",
+      "step": "Stap 2 van 6",
+      "title": "Welke rollen speelt u?",
+      "subtitle": "Selecteer alles wat van toepassing is",
+      "cardTitle": "Uw tango-identiteit",
+      "cardDescription": "Help anderen te weten hoe u deelneemt aan de tangowereld"
+    },
+    "experience": {
+      "pageTitle": "Danservaring",
+      "seoTitle": "Uw danservaring - Mundo Tango",
+      "seoDescription": "Deel uw danservaringsniveau",
+      "step": "Stap 4 van 6",
+      "title": "Uw danservaring",
+      "subtitle": "Help ons u te verbinden met de juiste dansers"
+    },
+    "languages": {
+      "pageTitle": "Talen",
+      "seoTitle": "Uw talen - Mundo Tango",
+      "seoDescription": "Vertel ons welke talen u spreekt",
+      "step": "Stap 5 van 6",
+      "title": "Welke talen spreekt u?",
+      "subtitle": "Maak verbinding met dansers in uw taal",
+      "cardTitle": "Uw talen",
+      "cardDescription": "Selecteer uw primaire taal en eventuele extra talen die u spreekt",
+      "primaryLabel": "Primaire taal",
+      "primaryHint": "Dit stelt ook uw weergavetaal in",
+      "primaryPlaceholder": "Selecteer uw primaire taal",
+      "additionalLabel": "Extra talen (Optioneel)",
+      "errors": {
+        "required": "Primaire taal vereist",
+        "selectPrimary": "Selecteer uw primaire taal",
+        "saveFailed": "Talen opslaan mislukt",
+        "saveFailedTitle": "Talen opslaan mislukt"
+      }
+    },
+    "hobbies": {
+      "pageTitle": "Interesses",
+      "seoTitle": "Uw interesses - Mundo Tango",
+      "seoDescription": "Vertel ons over uw interesses",
+      "step": "Stap 6 van 6",
+      "title": "Wat zijn uw interesses?",
+      "subtitle": "Selecteer onderwerpen die u interesseren",
+      "helpText": "Kies minimaal 3 interesses om uw feed te personaliseren",
+      "selectedCount": "{{count}} geselecteerd",
+      "finishing": "Afronden...",
+      "completeSetup": "Installatie voltooien",
+      "searchPlaceholder": "Zoek communities of voeg een nieuwe toe...",
+      "categories": {
+        "fitness": { "label": "Fitness & Sport" },
+        "tech": { "label": "Tech & Innovatie" },
+        "spirituality": { "label": "Spiritualiteit & Groei" },
+        "yoga": { "label": "Yoga & Welzijn" },
+        "music": { "label": "Muziek" },
+        "photography": { "label": "Fotografie & Video" },
+        "art": { "label": "Kunst & Creativiteit" },
+        "reading": { "label": "Lezen & Schrijven" },
+        "travel": { "label": "Reizen & Avontuur" },
+        "cooking": { "label": "Koken & Eten" },
+        "wine": { "label": "Wijn & Dranken" },
+        "gaming": { "label": "Gaming" },
+        "outdoors": { "label": "Buitenactiviteiten" },
+        "snow": { "label": "Wintersport" },
+        "cycling": { "label": "Fietsen" },
+        "water": { "label": "Watersport" },
+        "nature": { "label": "Natuur & Tuinieren" },
+        "movies": { "label": "Films & Entertainment" },
+        "pets": { "label": "Huisdieren & Dieren" },
+        "social": { "label": "Sociaal & Community" }
+      },
+      "items": {
+        "fitness_gym": "Sportschool & Gewichten",
+        "fitness_running": "Hardlopen",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Vechtsport",
+        "fitness_tennis": "Tennis",
+        "fitness_soccer": "Voetbal",
+        "fitness_basketball": "Basketbal",
+        "fitness_fencing": "Schermen",
+        "tech_coding": "Programmeren & Dev",
+        "tech_ai": "AI & Toekomstige Tech",
+        "tech_crypto": "Web3 & Crypto",
+        "tech_gaming": "Gaming Cultuur",
+        "spirit_meditation": "Meditatie",
+        "spirit_astrology": "Astrologie",
+        "spirit_philosophy": "Filosofie",
+        "spirit_community": "Community Building",
+        "yoga_hatha": "Hatha Yoga",
+        "yoga_vinyasa": "Vinyasa Flow",
+        "yoga_meditation": "Meditatie",
+        "yoga_pilates": "Pilates",
+        "yoga_breathwork": "Ademwerk",
+        "music_listening": "Muziek luisteren",
+        "music_concerts": "Live concerten",
+        "music_piano": "Piano",
+        "music_guitar": "Gitaar",
+        "music_singing": "Zingen",
+        "music_dj": "DJen",
+        "music_production": "Muziekproductie",
+        "photo_portrait": "Portretfotografie",
+        "photo_landscape": "Landschapsfotografie",
+        "photo_street": "Straatfotografie",
+        "photo_video": "Videografie",
+        "photo_editing": "Fotobewerking",
+        "art_painting": "Schilderen",
+        "art_drawing": "Tekenen",
+        "art_sculpture": "Beeldhouwen",
+        "art_digital": "Digitale kunst",
+        "art_crafts": "Handwerk & DIY",
+        "art_pottery": "Pottenbakken",
+        "reading_fiction": "Fictie",
+        "reading_nonfiction": "Non-fictie",
+        "reading_poetry": "Poëzie",
+        "reading_writing": "Creatief schrijven",
+        "reading_journals": "Dagboek schrijven",
+        "travel_backpacking": "Backpacken",
+        "travel_luxury": "Luxe reizen",
+        "travel_cultural": "Cultureel toerisme",
+        "travel_road_trips": "Roadtrips",
+        "travel_solo": "Solo reizen",
+        "cooking_home": "Thuis koken",
+        "cooking_baking": "Bakken",
+        "cooking_gourmet": "Gourmetkeuken",
+        "cooking_international": "Internationale keuken",
+        "cooking_healthy": "Gezond eten",
+        "wine_tasting": "Wijnproeven",
+        "wine_cocktails": "Cocktails",
+        "wine_coffee": "Koffie appreciatie",
+        "wine_tea": "Theecultuur",
+        "wine_brewing": "Thuis brouwen",
+        "gaming_video": "Videogames",
+        "gaming_board": "Bordspellen",
+        "gaming_card": "Kaartspellen",
+        "gaming_tabletop": "Tabletop RPGs",
+        "gaming_esports": "eSports",
+        "outdoor_hiking": "Wandelen",
+        "outdoor_camping": "Kamperen",
+        "outdoor_climbing": "Klimmen",
+        "outdoor_fishing": "Vissen",
+        "outdoor_kayaking": "Kajakken",
+        "outdoor_surfing": "Surfen",
+        "snow_skiing": "Skiën",
+        "snow_snowboard": "Snowboarden",
+        "snow_crosscountry": "Langlaufen",
+        "snow_ice_skating": "Schaatsen",
+        "snow_sledding": "Sleeën",
+        "snow_snowshoeing": "Sneeuwschoenwandelen",
+        "cycling_road": "Wielrennen",
+        "cycling_mountain": "Mountainbiken",
+        "cycling_urban": "Stadsfiets",
+        "cycling_touring": "Fietstochten",
+        "water_swimming": "Zwemmen",
+        "water_scuba": "Duiken",
+        "water_snorkel": "Snorkelen",
+        "water_sailing": "Zeilen",
+        "water_paddleboard": "Paddleboarden",
+        "nature_gardening": "Tuinieren",
+        "nature_birdwatching": "Vogels kijken",
+        "nature_botany": "Planten verzamelen",
+        "nature_wildlife": "Natuurfotografie",
+        "movies_cinema": "Bioscoop",
+        "movies_tv": "TV-series",
+        "movies_documentary": "Documentaires",
+        "movies_theater": "Theater",
+        "movies_standup": "Stand-up comedy",
+        "pets_dogs": "Honden",
+        "pets_cats": "Katten",
+        "pets_exotic": "Exotische huisdieren",
+        "pets_horses": "Paardrijden",
+        "pets_rescue": "Dierenredding",
+        "social_volunteering": "Vrijwilligerswerk",
+        "social_meetups": "Meetups",
+        "social_networking": "Netwerken",
+        "social_languages": "Taaluitwisseling"
+      },
+      "success": {
+        "completeTitle": "Welkom bij Mundo Tango!",
+        "completeDesc": "Uw profiel is klaar. Begin met ontdekken!",
+        "waitlistTitle": "Profiel voltooid!",
+        "waitlistDesc": "We laten u weten wanneer uw account is geactiveerd"
+      },
+      "errors": {
+        "saveFailed": "Opslaan mislukt. Probeer het opnieuw."
+      }
+    },
+    "legal": {
+      "title": "Communityrichtlijnen",
+      "subtitle": "Lees en accepteer onze voorwaarden",
+      "legalDocsTitle": "Juridische documenten",
+      "legalDocsDescription": "Bekijk onze servicevoorwaarden en privacybeleid",
+      "termsOfService": {
+        "label": "Ik accepteer de servicevoorwaarden",
+        "description": "Onze voorwaarden regelen uw gebruik van Mundo Tango",
+        "link": "Lees servicevoorwaarden"
+      },
+      "privacyPolicy": {
+        "label": "Ik accepteer het privacybeleid",
+        "description": "Hoe we uw gegevens verwerken",
+        "link": "Lees privacybeleid"
+      },
+      "cocTitle": "Community gedragscode",
+      "cocDescription": "Help ons een respectvolle community te behouden",
+      "coc": {
+        "respectful": {
+          "title": "Wees respectvol",
+          "description": "Behandel iedereen met waardigheid en beleefdheid"
+        },
+        "inclusive": {
+          "title": "Wees inclusief",
+          "description": "Verwelkom dansers van alle niveaus en achtergronden"
+        },
+        "authentic": {
+          "title": "Wees authentiek",
+          "description": "Gebruik uw echte identiteit en eerlijke informatie"
+        },
+        "consent": {
+          "title": "Respecteer toestemming",
+          "description": "Vraag altijd voor het dansen en respecteer grenzen"
+        },
+        "noHarassment": {
+          "title": "Geen intimidatie",
+          "description": "Geen tolerantie voor intimidatie of pesten"
+        },
+        "noSpam": {
+          "title": "Geen spam",
+          "description": "Stuur geen ongevraagde promoties"
+        },
+        "noDiscrimination": {
+          "title": "Geen discriminatie",
+          "description": "We tolereren geen enkele vorm van discriminatie"
+        },
+        "privacy": {
+          "title": "Bescherm privacy",
+          "description": "Deel geen informatie van anderen zonder toestemming"
+        },
+        "safety": {
+          "title": "Prioriteer veiligheid",
+          "description": "Meld onveilig gedrag onmiddellijk"
+        },
+        "laws": {
+          "title": "Volg wetten",
+          "description": "Houd u aan alle toepasselijke wetten"
+        },
+        "report": {
+          "title": "Meld problemen",
+          "description": "Help ons door overtredingen te melden"
+        },
+        "support": {
+          "title": "Steun elkaar",
+          "description": "Help mededansers groeien"
+        }
+      },
+      "acceptAll": "Alles accepteren en doorgaan",
+      "accepting": "Accepteren...",
+      "incompleteAlert": "Accepteer alle vereiste voorwaarden",
+      "success": {
+        "title": "Welkom!",
+        "description": "U heeft onze communityrichtlijnen geaccepteerd"
+      },
+      "errors": {
+        "failed": "Opslaan mislukt. Probeer het opnieuw."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Wachtlijst",
+      "seoTitle": "U staat op de wachtlijst - Mundo Tango",
+      "seoDescription": "Uw account wacht op activering",
+      "title": "U staat op de wachtlijst!",
+      "welcomeMessage": "Welkom, {{name}}!",
+      "defaultName": "Danser",
+      "profileComplete": "Profiel voltooid",
+      "profileCompleteDesc": "Uw profiel is klaar en wacht",
+      "emailNotice": "We sturen u een e-mail naar {{email}} wanneer uw account klaar is",
+      "whenReady": "wanneer uw account klaar is.",
+      "whileYouWait": "Terwijl u wacht, help ons groeien:",
+      "volunteerButton": "Word vrijwilliger",
+      "supportButton": "Steun Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "Rondleiding",
+      "seoTitle": "Ontdek Mundo Tango",
+      "seoDescription": "Leer hoe u Mundo Tango gebruikt",
+      "skipTour": "Tour overslaan",
+      "finish": "Tour voltooien",
+      "steps": {
+        "feed": "Ontdek berichten van de tango-community",
+        "events": "Vind milongas, lessen en festivals",
+        "groups": "Word lid van groepen voor uw stad of interesses",
+        "messages": "Maak direct verbinding met andere dansers",
+        "profile": "Personaliseer uw tango-profiel",
+        "createPost": "Deel uw tango-momenten"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Upgrade uw ervaring",
+        "subtitle": "Haal het meeste uit Mundo Tango",
+        "limitedOffer": "Beperkte tijdaanbieding",
+        "getStarted": "Aan de slag",
+        "features": {
+          "connect": {
+            "title": "Verbinden",
+            "description": "Stuur direct berichten naar elke danser"
+          },
+          "visibility": {
+            "title": "Zichtbaarheid",
+            "description": "Word uitgelicht in zoekresultaten"
+          },
+          "events": {
+            "title": "Evenementen",
+            "description": "Prioriteitstoegang tot populaire evenementen"
+          },
+          "grow": {
+            "title": "Groeien",
+            "description": "Geavanceerde analyses voor uw profiel"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Exclusieve premium-functies"
+          }
+        }
+      }
     }
   },
   "home": {
     "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageLayoutTitle": "Waar Tango Community Ontmoet",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Verbind met de Wereldwijde Tango Community",
+      "description": "Sluit u aan bij duizenden tangodansers wereldwijd. Ontdek evenementen, vind leraren, verbind met dansers en dompel u onder in de hartstochtelijke wereld van Argentijnse tango."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Welkom bij de Wereldwijde Tango Community",
+      "heading": "Waar Tango Community Ontmoet",
+      "paragraph": "Deel herinneringen, vind evenementen en help ons de toekomst van tango tech te bouwen. Sluit u aan bij duizenden gepassioneerde dansers die wereldwijd verbinden.",
+      "getStarted": "Gratis beginnen",
+      "volunteer": "Vrijwilliger om MT te helpen bouwen"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Hoe het werkt",
+      "description": "Begin uw tango-reis in drie eenvoudige stappen",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Maak uw profiel",
+        "description": "Word gratis lid en vertel ons over uw tango-reis, ervaringsniveau en dansvoorkeuren"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Ontdek & Verbind",
+        "description": "Vind evenementen, leraren en locaties bij u in de buurt. Verbind met dansers die uw passie delen"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Dans & Groei",
+        "description": "Bezoek evenementen, volg lessen, maak vrienden en word onderdeel van de wereldwijde tango-community"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Alles wat u nodig heeft",
+      "description": "Verbind, ontdek en groei uw tango-reis met krachtige functies",
       "community": {
         "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "heading": "Verbind met dansers wereldwijd",
+        "description": "Word lid van een levendige wereldwijde community van tango-enthousiastelingen. Verbind met dansers, leraren en organisatoren van Buenos Aires tot Tokio.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Volg dansers en bouw uw netwerk",
+          "groups": "Word lid van groepen op basis van interesses en locatie",
+          "messaging": "Realtime berichten en chatfuncties",
+          "discover": "Ontdek dansers die uw stad bezoeken"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Evenementen",
+        "heading": "Ontdek evenementen overal",
+        "description": "Mis nooit meer een milonga, festival of workshop. Ons platform verbindt u met duizenden tango-evenementen wereldwijd.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Uitgebreide evenementenkalender",
+          "rsvp": "RSVP en ticketboeking",
+          "notifications": "Evenementmeldingen en herinneringen",
+          "map": "Interactieve kaart van locaties"
         }
       },
       "cards": {
         "liveStreaming": {
           "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "description": "Bekijk milongas wereldwijd in realtime"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Muziekbibliotheek",
+          "description": "Samengestelde tango-afspeellijsten en gidsen"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Geverifieerde leraren",
+          "description": "Leer van gecertificeerde instructeurs"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Reisplanner",
+          "description": "Plan reizen en vind hosts wereldwijd"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Wat dansers zeggen",
+      "description": "Sluit u aan bij duizenden tevreden dansers wereldwijd",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "Buenos Aires, Argentinië",
+          "text": "Mundo Tango heeft me geholpen mijn dansfamilie te vinden in een nieuwe stad. De community is warm, gastvrij en echt gepassioneerd over tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, VS",
+          "text": "Ik heb geweldige milongas en workshops ontdekt via dit platform. Het is essentieel geworden voor mijn tango-reis."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moskou, Rusland",
+          "text": "De lerarengids heeft me geholpen ongelooflijke instructeurs te vinden. Mijn dansen is enorm verbeterd!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Veelgestelde vragen",
+      "description": "Alles wat u moet weten over Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Wat is Mundo Tango?",
+          "answer": "Mundo Tango is een wereldwijd platform dat tangodansers, leraren en organisatoren verbindt. We helpen u evenementen te ontdekken, danspartners te vinden, te leren van topinstructeurs en u onder te dompelen in de levendige tango-community wereldwijd."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Is Mundo Tango gratis te gebruiken?",
+          "answer": "Ja! We bieden een gratis niveau met basisprofiel aanmaken, evenementen ontdekken en berichten sturen. Premium-functies zoals onbeperkt berichten, AI-danspartner matching en prioriteitsmeldingen zijn beschikbaar met ons Pro-abonnement."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Hoe vind ik tango-evenementen bij mij in de buurt?",
+          "answer": "Gebruik eenvoudig onze evenementenkalender of zoekfuncties om te filteren op stad, datum en type evenement. U kunt milongas, festivals, workshops en oefensessies ontdekken die plaatsvinden in uw buurt of waar dan ook ter wereld."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Kan ik verbinden met andere dansers?",
+          "answer": "Absoluut! Volg dansers, word lid van groepen, stuur vriendschapsverzoeken en chat met de community. Ons platform is ontworpen om authentieke connecties binnen de tangowereld te bevorderen."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Hoe vind ik tangoleraars?",
+          "answer": "Bezoek onze lerarengids om geverifieerde instructeurs wereldwijd te bekijken. Filter op locatie, specialiteit en ervaringsniveau. Lees recensies van andere studenten en boek privélessen direct via het platform."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Wat maakt Mundo Tango anders?",
+          "answer": "We zijn gebouwd door tangodansers, voor tangodansers. Onze focus ligt op authentieke communityvorming, kwaliteitsevenementcuratie en u verbinden met de wereldwijde tangofamilie - niet zomaar een sociaal netwerk."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Klaar om lid te worden van de community?",
+      "description": "Maak vandaag uw gratis account aan en begin met verbinden met gepassioneerde tangodansers wereldwijd. Geen creditcard vereist.",
+      "button": "Word gratis lid van Mundo Tango",
+      "freeForever": "Voor altijd gratis",
+      "noCreditCard": "Geen creditcard",
+      "cancelAnytime": "Altijd opzegbaar"
     }
   },
   "feed": {
     "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "description": "Blijf op de hoogte van het laatste nieuws uit de tango-community",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
+      "all": "Alle berichten",
+      "following": "Volgend",
+      "popular": "Populair",
       "recent": "Recent"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Wat denkt u?",
+    "noPost": "Geen berichten om weer te geven"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Evenementen",
+    "description": "Ontdek tango-evenementen bij u in de buurt",
+    "upcoming": "Aankomende evenementen",
+    "past": "Afgelopen evenementen",
     "filters": {
-      "all": "All Events",
+      "all": "Alle evenementen",
       "milongas": "Milongas",
       "workshops": "Workshops",
       "festivals": "Festivals",
-      "classes": "Classes"
+      "classes": "Lessen"
     },
-    "noEvents": "No events found"
+    "noEvents": "Geen evenementen gevonden"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Profiel",
+    "description": "Bekijk en bewerk uw profiel",
+    "editProfile": "Profiel bewerken",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Berichten",
+      "photos": "Foto's",
+      "videos": "Video's",
+      "events": "Evenementen",
+      "friends": "Vrienden"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Berichten",
+      "followers": "Volgers",
+      "following": "Volgend",
+      "events": "Bezochte evenementen"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Berichten",
+    "description": "Chat met uw tango-connecties",
+    "newMessage": "Nieuw bericht",
+    "searchConversations": "Zoek gesprekken",
+    "noMessages": "Nog geen berichten",
+    "startConversation": "Start een gesprek"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Tangoleraars",
+    "description": "Vind en verbind met tangoleraars",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Alle leraren",
+      "featured": "Uitgelicht",
+      "nearby": "In de buurt"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Bekijk profiel",
+    "bookLesson": "Boek een les"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Tangolocaties",
+    "description": "Ontdek tangolocaties wereldwijd",
     "filters": {
-      "all": "All Venues",
+      "all": "Alle locaties",
       "milongas": "Milongas",
-      "schools": "Dance Schools",
+      "schools": "Dansscholen",
       "theaters": "Theaters"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Route opvragen"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Instellingen",
+    "description": "Beheer uw accountinstellingen",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
+      "account": "Accountinstellingen",
+      "profile": "Profiel",
       "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "notifications": "Meldingen",
+      "security": "Beveiliging",
+      "billing": "Facturatie",
+      "preferences": "Voorkeuren"
     }
   },
   "lifeCEO": {
     "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "description": "Uw persoonlijke AI-assistent voor levensbeheer",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Gezondheidsagent",
+      "fitness": "Fitnessagent",
+      "nutrition": "Voedingsagent",
+      "finance": "Financiële agent",
+      "career": "Carrière-agent",
+      "productivity": "Productiviteitsagent",
+      "relationships": "Relatieagent",
+      "learning": "Leeragent"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Marktplaats",
+    "description": "Koop en verkoop tango-gerelateerde items",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Dansschoenen",
+      "clothing": "Kleding",
+      "music": "Muziek",
+      "accessories": "Accessoires",
+      "other": "Overig"
     }
   },
   "admin": {
     "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "description": "Platformbeheer en administratie",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
+      "overview": "Overzicht",
+      "users": "Gebruikers",
+      "content": "Inhoud",
+      "reports": "Rapporten",
       "analytics": "Analytics",
-      "settings": "Settings"
+      "settings": "Instellingen"
     }
   }
 }

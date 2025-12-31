@@ -1,291 +1,863 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "Logga in",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Logga in - Mundo Tango",
+      "description": "Logga in på ditt Mundo Tango-konto för att ansluta till det globala tango-communityt, upptäcka evenemang och dela din passion för argentinsk tango."
     },
-    "badge": "Welcome Back",
+    "badge": "Välkommen tillbaka",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Din tangoresa fortsätter",
+      "paragraph": "Logga in för att ansluta med dansare världen över, upptäcka evenemang och dela din passion"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "dansare",
+      "events": "evenemang"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "E-post",
+      "password": "Lösenord",
+      "signIn": "Logga in",
+      "signingIn": "Loggar in...",
+      "forgotPassword": "Glömt lösenord?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Har du inget konto?",
+    "createAccount": "Skapa ett nu",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Välkommen tillbaka!",
+      "successDescription": "Du är nu inloggad.",
+      "errorTitle": "Inloggning misslyckades",
+      "errorDescription": "Ogiltiga inloggningsuppgifter",
+      "verificationRequired": {
+        "title": "E-postverifiering krävs",
+        "description": "Kontrollera din e-post och bekräfta din adress."
+      },
+      "upgradedTitle": "Konto uppgraderat!",
+      "upgradedDescription": "Välkommen! Du har nu full tillgång till Mundo Tango."
+    }
+  },
+  "register": {
+    "pageName": "Registrera",
+    "seo": {
+      "title": "Gå med i Mundo Tango - Skapa ditt konto",
+      "description": "Skapa ditt Mundo Tango-konto och gå med i det globala argentinska tango-communityt. Anslut med dansare, upptäck evenemang och dela din passion för tango."
+    },
+    "badge": {
+      "welcomeFamily": "Välkommen till familjen",
+      "beginJourney": "Börja din resa",
+      "joinCommunity": "Gå med i communityt"
+    },
+    "hero": {
+      "youreIn": "Du är med!",
+      "joinMundoTango": "Gå med i Mundo Tango",
+      "description": "Anslut med dansare världen över, upptäck milongas och fördjupa dig i den passionerade världen av argentinsk tango",
+      "waitlistDescription": "Välkommen till Mundo Tango-communityt. Vi förbereder ditt konto och meddelar dig snart!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ dansare",
+      "events": "{{count}}+ evenemang",
+      "cities": "{{count}} städer"
+    },
+    "form": {
+      "fullName": "Fullständigt namn",
+      "fullNamePlaceholder": "Maria Rodriguez",
+      "email": "E-post",
+      "emailPlaceholder": "maria@example.com",
+      "username": "Användarnamn",
+      "usernamePlaceholder": "maria_tango",
+      "password": "Lösenord",
+      "confirmPassword": "Bekräfta lösenord",
+      "inviteOnlyNotice": "Registrering är endast på inbjudan. Fyll i detta formulär för att gå med på vår väntelista och vi meddelar dig när ditt konto är klart.",
+      "acceptTermsPrefix": "Jag accepterar",
+      "termsAndConditions": "Villkor och bestämmelser"
+    },
+    "validation": {
+      "emailTaken": "Denna e-post är redan registrerad",
+      "emailAvailable": "E-post tillgänglig!",
+      "usernameTaken": "Användarnamn upptaget. Prova {{suggestion}}",
+      "usernameAvailable": "Användarnamn tillgängligt!",
+      "passwordsMatch": "Lösenorden matchar",
+      "passwordsDontMatch": "Lösenorden matchar inte"
+    },
+    "passwordStrength": {
+      "weak": "Svag",
+      "medium": "Medium",
+      "strong": "Stark",
+      "veryStrong": "Mycket stark"
+    },
+    "inviteCode": {
+      "label": "Har du en inbjudningskod? (Valfritt)",
+      "placeholder": "Ange din inbjudningskod för omedelbar åtkomst",
+      "accepted": "Kod accepterad! Ditt konto kommer att aktiveras omedelbart.",
+      "noWorries": "Inga problem! Fyll i formuläret nedan för att gå med på vår väntelista."
+    },
+    "waitlist": {
+      "welcomeUser": "Välkommen, {{name}}!",
+      "defaultName": "Dansare",
+      "onTheList": "Du är på listan. Vi skickar e-post till",
+      "whenReady": "när ditt konto är klart.",
+      "helpUsGrow": "Medan du väntar, hjälp oss växa",
+      "volunteerWithUs": "Bli volontär",
+      "supportMundoTango": "Stöd Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Skapar ditt konto...",
+      "joining": "Ansluter...",
+      "createAccount": "Skapa konto",
+      "joinMundoTango": "Gå med i Mundo Tango"
+    },
+    "alreadyHaveAccount": "Har du redan ett konto?",
+    "signIn": "Logga in",
+    "toast": {
+      "invalidCode": {
+        "title": "Ogiltig kod",
+        "description": "Ange en giltig 6-siffrig verifieringskod."
+      },
+      "verified": {
+        "title": "E-post verifierad!",
+        "description": "Välkommen till Mundo Tango! Startar din onboarding..."
+      },
+      "verifyError": {
+        "title": "Verifiering misslyckades",
+        "description": "Ogiltig eller utgången kod. Försök igen."
+      },
+      "error": {
+        "title": "Fel",
+        "description": "E-postverifiering misslyckades. Försök igen."
+      },
+      "tooMany": {
+        "title": "För många förfrågningar",
+        "description": "Vänta några minuter innan du försöker igen."
+      },
+      "codeSent": {
+        "title": "Kod skickad!",
+        "description": "Kontrollera din inkorg för en ny kod."
+      },
+      "resendError": {
+        "description": "Kunde inte skicka om koden. Försök igen."
+      },
+      "termsRequired": {
+        "title": "Villkor krävs",
+        "description": "Acceptera villkoren och bestämmelserna"
+      },
+      "passwordMismatch": {
+        "title": "Lösenorden matchar inte",
+        "description": "Se till att båda lösenorden är identiska"
+      },
+      "weakPassword": {
+        "title": "Svagt lösenord",
+        "description": "Välj ett starkare lösenord"
+      },
+      "checkEmail": {
+        "title": "Kontrollera din e-post",
+        "description": "Vi har skickat en 6-siffrig verifieringskod. Kontrollera din inkorg."
+      },
+      "registrationFailed": {
+        "title": "Registrering misslyckades"
+      },
+      "signupFailed": {
+        "title": "Kunde inte slutföra registrering"
+      },
+      "tryAgain": "Försök igen"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Välkommen",
+      "seoTitle": "Välkommen till Mundo Tango",
+      "seoDescription": "Börja din tangoresa med Mundo Tango",
+      "badge": "Snabb installation",
+      "title": "Välkommen till Mundo Tango",
+      "subtitle": "Låt oss ställa in din profil så att du kan ansluta med det globala tango-communityt",
+      "duration": "Tar cirka 2 minuter",
+      "stepIndicator": "Steg {{current}} av {{total}}",
+      "getStarted": "Kom igång",
+      "profileTitle": "Din tangoresa börjar",
+      "profileSubtitle": "Berätta lite om dig själv",
+      "features": {
+        "city": {
+          "title": "Välj din stad",
+          "description": "Anslut med ditt lokala tango-community"
+        },
+        "roles": {
+          "title": "Berätta om dina roller",
+          "description": "Dansare, lärare, DJ, arrangör eller allt ovanstående?"
+        },
+        "events": {
+          "title": "Upptäck evenemang",
+          "description": "Hitta milongas, kurser och festivaler nära dig"
+        },
+        "journey": {
+          "title": "Dela din resa",
+          "description": "Anslut med dansare på din nivå"
+        },
+        "facebook": {
+          "title": "Anslut Facebook",
+          "description": "Länka din Facebook-profil för att hitta vänner i communityt"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "Social anslutning",
+      "seoTitle": "Anslut din sociala värld - Mundo Tango",
+      "seoDescription": "Länka dina sociala profiler för att hitta vänner i tango-communityt.",
+      "step": "Steg 2 av 6",
+      "title": "Anslut din sociala värld",
+      "quote": "\"Många tangodansare känner redan varandra genom Facebook. Genom att länka din profil kan vi visa vilka dansare i ditt nätverk som redan är här - vilket gör det lättare att hitta bekanta ansikten på milongas och bygga djupare anslutningar.\"",
+      "cardTitle": "Hitta dina vänner",
+      "cardDescription": "Din Facebook hjälper oss att matcha dig med dansare du kanske redan känner.",
+      "facebookLabel": "Facebook-profil URL (Valfritt)",
+      "facebookPlaceholder": "https://www.facebook.com/din.profil",
+      "helperText": "Vi använder detta som en bro till andra communities och för att matcha dig med dansare du kanske känner.",
+      "toast": {
+        "errorTitle": "Fel",
+        "errorDescription": "Kunde inte spara profilinformation"
+      }
+    },
+    "navigation": {
+      "back": "Tillbaka",
+      "continue": "Fortsätt",
+      "skip": "Hoppa över",
+      "next": "Nästa",
+      "finish": "Slutför",
+      "saving": "Sparar..."
+    },
+    "city": {
+      "pageTitle": "Välj stad",
+      "seoTitle": "Välj din stad - Mundo Tango",
+      "seoDescription": "Välj din hemstad för att ansluta med lokala tangodansare",
+      "step": "Steg 1 av 6",
+      "title": "Var dansar du?",
+      "subtitle": "Anslut med dansare i ditt område",
+      "cardTitle": "Din hemstad",
+      "cardDescription": "Detta hjälper oss att visa lokala evenemang och dansare",
+      "searchLabel": "Sök efter din stad",
+      "searchPlaceholder": "Skriv ditt stadsnamn...",
+      "eventSite": {
+        "help": "Välj från populära tango-destinationer"
+      },
+      "errors": {
+        "required": "Stad krävs",
+        "selectCity": "Välj din hemstad"
+      },
+      "toast": {
+        "sourceAdded": "Källa tillagd!",
+        "submittedForReview": "Skickad för granskning",
+        "trackingEvents": "Vi börjar spåra evenemang från webbplatsen",
+        "thankYou": "Tack! Ditt förslag har skickats för granskning.",
+        "errorTitle": "Fel",
+        "suggestionFailed": "Kunde inte skicka förslag",
+        "saveFailed": "Kunde inte spara städer"
+      }
+    },
+    "photo": {
+      "pageTitle": "Ladda upp foto",
+      "seoTitle": "Lägg till profilbild - Mundo Tango",
+      "seoDescription": "Ladda upp din profilbild",
+      "step": "Steg 3 av 6",
+      "title": "Lägg till din profilbild",
+      "subtitle": "Hjälp andra att känna igen dig i communityt",
+      "cardTitle": "Din profilbild",
+      "cardDescription": "Hjälp andra att känna igen dig (du kan hoppa över detta steg)",
+      "previewAlt": "Förhandsgranskning av profil",
+      "dropHere": "Släpp ditt foto här",
+      "or": "eller",
+      "browseFiles": "Bläddra bland filer",
+      "fileTypes": "PNG, JPG upp till 5MB",
+      "photoSelected": "Foto valt!",
+      "uploading": "Laddar upp...",
+      "errors": {
+        "invalidFile": "Ogiltig fil",
+        "selectImage": "Välj en bildfil",
+        "fileTooLarge": "Filen är för stor",
+        "sizeLimit": "Välj en bild under 5MB",
+        "uploadFailed": "Uppladdning misslyckades",
+        "tryAgain": "Kunde inte ladda upp foto. Försök igen.",
+        "skipFailed": "Kunde inte hoppa över. Försök igen."
+      }
+    },
+    "roles": {
+      "pageTitle": "Tango-roller",
+      "seoTitle": "Dina tango-roller - Mundo Tango",
+      "seoDescription": "Berätta om din tangoresa",
+      "step": "Steg 2 av 6",
+      "title": "Vilka roller spelar du?",
+      "subtitle": "Välj alla som gäller",
+      "cardTitle": "Din tango-identitet",
+      "cardDescription": "Hjälp andra att veta hur du deltar i tangovärlden"
+    },
+    "experience": {
+      "pageTitle": "Danserfarenhet",
+      "seoTitle": "Din danserfarenhet - Mundo Tango",
+      "seoDescription": "Dela din erfarenhetsnivå inom dans",
+      "step": "Steg 4 av 6",
+      "title": "Din danserfarenhet",
+      "subtitle": "Hjälp oss att koppla dig med rätt dansare"
+    },
+    "languages": {
+      "pageTitle": "Språk",
+      "seoTitle": "Dina språk - Mundo Tango",
+      "seoDescription": "Berätta vilka språk du talar",
+      "step": "Steg 5 av 6",
+      "title": "Vilka språk talar du?",
+      "subtitle": "Anslut med dansare på ditt språk",
+      "cardTitle": "Dina språk",
+      "cardDescription": "Välj ditt primära språk och eventuella extra språk du talar",
+      "primaryLabel": "Primärt språk",
+      "primaryHint": "Detta ställer också in ditt webbplatsspråk",
+      "primaryPlaceholder": "Välj ditt primära språk",
+      "additionalLabel": "Extra språk (Valfritt)",
+      "errors": {
+        "required": "Primärt språk krävs",
+        "selectPrimary": "Välj ditt primära språk",
+        "saveFailed": "Kunde inte spara språk",
+        "saveFailedTitle": "Språksparning misslyckades"
+      }
+    },
+    "hobbies": {
+      "pageTitle": "Intressen",
+      "seoTitle": "Dina intressen - Mundo Tango",
+      "seoDescription": "Berätta om dina intressen",
+      "step": "Steg 6 av 6",
+      "title": "Vilka är dina intressen?",
+      "subtitle": "Välj ämnen som intresserar dig",
+      "helpText": "Välj minst 3 intressen för att personalisera ditt flöde",
+      "selectedCount": "{{count}} valda",
+      "finishing": "Slutför...",
+      "completeSetup": "Slutför installation",
+      "searchPlaceholder": "Sök communities eller lägg till ett nytt...",
+      "categories": {
+        "fitness": { "label": "Fitness & Sport" },
+        "tech": { "label": "Tech & Innovation" },
+        "spirituality": { "label": "Spiritualitet & Tillväxt" },
+        "yoga": { "label": "Yoga & Wellness" },
+        "music": { "label": "Musik" },
+        "photography": { "label": "Fotografi & Video" },
+        "art": { "label": "Konst & Kreativitet" },
+        "reading": { "label": "Läsning & Skrivning" },
+        "travel": { "label": "Resor & Äventyr" },
+        "cooking": { "label": "Matlagning & Mat" },
+        "wine": { "label": "Vin & Drycker" },
+        "gaming": { "label": "Gaming" },
+        "outdoors": { "label": "Utomhusaktiviteter" },
+        "snow": { "label": "Vintersport" },
+        "cycling": { "label": "Cykling" },
+        "water": { "label": "Vattensport" },
+        "nature": { "label": "Natur & Trädgård" },
+        "movies": { "label": "Film & Underhållning" },
+        "pets": { "label": "Husdjur & Djur" },
+        "social": { "label": "Socialt & Community" }
+      },
+      "items": {
+        "fitness_gym": "Gym & Vikter",
+        "fitness_running": "Löpning",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Kampsport",
+        "fitness_tennis": "Tennis",
+        "fitness_soccer": "Fotboll",
+        "fitness_basketball": "Basket",
+        "fitness_fencing": "Fäktning",
+        "tech_coding": "Kodning & Dev",
+        "tech_ai": "AI & Framtidsteknologi",
+        "tech_crypto": "Web3 & Crypto",
+        "tech_gaming": "Gaming-kultur",
+        "spirit_meditation": "Meditation",
+        "spirit_astrology": "Astrologi",
+        "spirit_philosophy": "Filosofi",
+        "spirit_community": "Community-byggande",
+        "yoga_hatha": "Hatha Yoga",
+        "yoga_vinyasa": "Vinyasa Flow",
+        "yoga_meditation": "Meditation",
+        "yoga_pilates": "Pilates",
+        "yoga_breathwork": "Andningsarbete",
+        "music_listening": "Lyssna på musik",
+        "music_concerts": "Livekonserter",
+        "music_piano": "Piano",
+        "music_guitar": "Gitarr",
+        "music_singing": "Sång",
+        "music_dj": "DJ",
+        "music_production": "Musikproduktion",
+        "photo_portrait": "Porträttfotografi",
+        "photo_landscape": "Landskapsfotografi",
+        "photo_street": "Gatufotografi",
+        "photo_video": "Videografi",
+        "photo_editing": "Fotoredigering",
+        "art_painting": "Målning",
+        "art_drawing": "Teckning",
+        "art_sculpture": "Skulptur",
+        "art_digital": "Digital konst",
+        "art_crafts": "Hantverk & DIY",
+        "art_pottery": "Keramik",
+        "reading_fiction": "Fiktion",
+        "reading_nonfiction": "Facklitteratur",
+        "reading_poetry": "Poesi",
+        "reading_writing": "Kreativt skrivande",
+        "reading_journals": "Dagboksskrivande",
+        "travel_backpacking": "Backpacking",
+        "travel_luxury": "Lyxresor",
+        "travel_cultural": "Kulturturism",
+        "travel_road_trips": "Roadtrips",
+        "travel_solo": "Soloresor",
+        "cooking_home": "Hemmalagning",
+        "cooking_baking": "Bakning",
+        "cooking_gourmet": "Gourmetmat",
+        "cooking_international": "Internationellt kök",
+        "cooking_healthy": "Hälsosam mat",
+        "wine_tasting": "Vinprovning",
+        "wine_cocktails": "Cocktails",
+        "wine_coffee": "Kaffe",
+        "wine_tea": "Tekultur",
+        "wine_brewing": "Hembryggning",
+        "gaming_video": "Videospel",
+        "gaming_board": "Brädspel",
+        "gaming_card": "Kortspel",
+        "gaming_tabletop": "Tabletop RPGs",
+        "gaming_esports": "eSports",
+        "outdoor_hiking": "Vandring",
+        "outdoor_camping": "Camping",
+        "outdoor_climbing": "Klättring",
+        "outdoor_fishing": "Fiske",
+        "outdoor_kayaking": "Kajak",
+        "outdoor_surfing": "Surfing",
+        "snow_skiing": "Skidåkning",
+        "snow_snowboard": "Snowboard",
+        "snow_crosscountry": "Längdskidåkning",
+        "snow_ice_skating": "Skridskoåkning",
+        "snow_sledding": "Pulkaåkning",
+        "snow_snowshoeing": "Snöskovandring",
+        "cycling_road": "Landsvägscykling",
+        "cycling_mountain": "Mountainbiking",
+        "cycling_urban": "Stadscykling",
+        "cycling_touring": "Cykelturer",
+        "water_swimming": "Simning",
+        "water_scuba": "Dykning",
+        "water_snorkel": "Snorkling",
+        "water_sailing": "Segling",
+        "water_paddleboard": "Paddleboard",
+        "nature_gardening": "Trädgårdsarbete",
+        "nature_birdwatching": "Fågelskådning",
+        "nature_botany": "Växtsamling",
+        "nature_wildlife": "Naturfotografi",
+        "movies_cinema": "Bio",
+        "movies_tv": "TV-serier",
+        "movies_documentary": "Dokumentärer",
+        "movies_theater": "Teater",
+        "movies_standup": "Stand-up comedy",
+        "pets_dogs": "Hundar",
+        "pets_cats": "Katter",
+        "pets_exotic": "Exotiska husdjur",
+        "pets_horses": "Ridning",
+        "pets_rescue": "Djurräddning",
+        "social_volunteering": "Volontärarbete",
+        "social_meetups": "Meetups",
+        "social_networking": "Nätverkande",
+        "social_languages": "Språkutbyte"
+      },
+      "success": {
+        "completeTitle": "Välkommen till Mundo Tango!",
+        "completeDesc": "Din profil är klar. Börja utforska!",
+        "waitlistTitle": "Profil slutförd!",
+        "waitlistDesc": "Vi meddelar dig när ditt konto är aktiverat"
+      },
+      "errors": {
+        "saveFailed": "Kunde inte spara. Försök igen."
+      }
+    },
+    "legal": {
+      "title": "Community-riktlinjer",
+      "subtitle": "Granska och acceptera våra villkor",
+      "legalDocsTitle": "Juridiska dokument",
+      "legalDocsDescription": "Granska våra användarvillkor och integritetspolicy",
+      "termsOfService": {
+        "label": "Jag accepterar användarvillkoren",
+        "description": "Våra villkor styr din användning av Mundo Tango",
+        "link": "Läs användarvillkor"
+      },
+      "privacyPolicy": {
+        "label": "Jag accepterar integritetspolicyn",
+        "description": "Hur vi hanterar dina uppgifter",
+        "link": "Läs integritetspolicy"
+      },
+      "cocTitle": "Communityns uppförandekod",
+      "cocDescription": "Hjälp oss att upprätthålla ett respektfullt community",
+      "coc": {
+        "respectful": {
+          "title": "Var respektfull",
+          "description": "Behandla alla med värdighet och artighet"
+        },
+        "inclusive": {
+          "title": "Var inkluderande",
+          "description": "Välkomna dansare på alla nivåer och bakgrunder"
+        },
+        "authentic": {
+          "title": "Var autentisk",
+          "description": "Använd din riktiga identitet och ärlig information"
+        },
+        "consent": {
+          "title": "Respektera samtycke",
+          "description": "Fråga alltid innan dans och respektera gränser"
+        },
+        "noHarassment": {
+          "title": "Ingen trakassering",
+          "description": "Nolltolerans för trakasserier eller mobbning"
+        },
+        "noSpam": {
+          "title": "Ingen spam",
+          "description": "Skicka inte oönskade reklamer"
+        },
+        "noDiscrimination": {
+          "title": "Ingen diskriminering",
+          "description": "Vi tolererar inte diskriminering av något slag"
+        },
+        "privacy": {
+          "title": "Skydda integritet",
+          "description": "Dela inte andras information utan samtycke"
+        },
+        "safety": {
+          "title": "Prioritera säkerhet",
+          "description": "Rapportera osäkert beteende omedelbart"
+        },
+        "laws": {
+          "title": "Följ lagar",
+          "description": "Följ alla tillämpliga lagar"
+        },
+        "report": {
+          "title": "Rapportera problem",
+          "description": "Hjälp oss genom att rapportera överträdelser"
+        },
+        "support": {
+          "title": "Stöd varandra",
+          "description": "Hjälp meddansare att växa"
+        }
+      },
+      "acceptAll": "Acceptera alla och fortsätt",
+      "accepting": "Accepterar...",
+      "incompleteAlert": "Acceptera alla nödvändiga villkor",
+      "success": {
+        "title": "Välkommen!",
+        "description": "Du har accepterat våra community-riktlinjer"
+      },
+      "errors": {
+        "failed": "Kunde inte spara. Försök igen."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Väntelista",
+      "seoTitle": "Du är på väntelistan - Mundo Tango",
+      "seoDescription": "Ditt konto väntar på aktivering",
+      "title": "Du är på väntelistan!",
+      "welcomeMessage": "Välkommen, {{name}}!",
+      "defaultName": "Dansare",
+      "profileComplete": "Profil slutförd",
+      "profileCompleteDesc": "Din profil är klar och väntar",
+      "emailNotice": "Vi skickar e-post till {{email}} när ditt konto är klart",
+      "whenReady": "när ditt konto är klart.",
+      "whileYouWait": "Medan du väntar, hjälp oss växa:",
+      "volunteerButton": "Bli volontär",
+      "supportButton": "Stöd Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "Guidad tur",
+      "seoTitle": "Utforska Mundo Tango",
+      "seoDescription": "Lär dig hur du använder Mundo Tango",
+      "skipTour": "Hoppa över turen",
+      "finish": "Slutför turen",
+      "steps": {
+        "feed": "Upptäck inlägg från tango-communityt",
+        "events": "Hitta milongas, kurser och festivaler",
+        "groups": "Gå med i grupper för din stad eller intressen",
+        "messages": "Anslut direkt med andra dansare",
+        "profile": "Anpassa din tango-profil",
+        "createPost": "Dela dina tango-ögonblick"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Uppgradera din upplevelse",
+        "subtitle": "Få ut det mesta av Mundo Tango",
+        "limitedOffer": "Tidsbegränsat erbjudande",
+        "getStarted": "Kom igång",
+        "features": {
+          "connect": {
+            "title": "Anslut",
+            "description": "Skicka meddelanden direkt till vilken dansare som helst"
+          },
+          "visibility": {
+            "title": "Synlighet",
+            "description": "Bli framhävd i sökresultat"
+          },
+          "events": {
+            "title": "Evenemang",
+            "description": "Prioritetsåtkomst till populära evenemang"
+          },
+          "grow": {
+            "title": "Växa",
+            "description": "Avancerad analys för din profil"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Exklusiva premium-funktioner"
+          }
+        }
+      }
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Hem",
+    "pageLayoutTitle": "Där Tango Möter Community",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Anslut med det Globala Tango-communityt",
+      "description": "Gå med i tusentals tangodansare världen över. Upptäck evenemang, hitta lärare, anslut med dansare och fördjupa dig i den passionerade världen av argentinsk tango."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Välkommen till det Globala Tango-communityt",
+      "heading": "Där Tango Möter Community",
+      "paragraph": "Dela minnen, hitta evenemang och hjälp oss bygga framtiden för tango-tech. Gå med i tusentals passionerade dansare som ansluter världen över.",
+      "getStarted": "Kom igång gratis",
+      "volunteer": "Bli volontär för att hjälpa bygga MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Så fungerar det",
+      "description": "Börja din tangoresa i tre enkla steg",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Skapa din profil",
+        "description": "Gå med gratis och berätta om din tangoresa, erfarenhetsnivå och danspreferenser"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Upptäck & Anslut",
+        "description": "Hitta evenemang, lärare och lokaler nära dig. Anslut med dansare som delar din passion"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Dansa & Växa",
+        "description": "Delta i evenemang, ta lektioner, skaffa vänner och bli en del av det globala tango-communityt"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Allt du behöver",
+      "description": "Anslut, upptäck och växa din tangoresa med kraftfulla funktioner",
       "community": {
         "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "heading": "Anslut med dansare världen över",
+        "description": "Gå med i ett levande globalt community av tango-entusiaster. Anslut med dansare, lärare och arrangörer från Buenos Aires till Tokyo.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Följ dansare och bygg ditt nätverk",
+          "groups": "Gå med i grupper baserade på intressen och plats",
+          "messaging": "Realtidsmeddelanden och chattfunktioner",
+          "discover": "Upptäck dansare som besöker din stad"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Evenemang",
+        "heading": "Upptäck evenemang överallt",
+        "description": "Missa aldrig en milonga, festival eller workshop. Vår plattform kopplar dig till tusentals tango-evenemang som äger rum globalt.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Omfattande evenemangskalender",
+          "rsvp": "RSVP och biljettbokning",
+          "notifications": "Evenemangsnotifikationer och påminnelser",
+          "map": "Interaktiv karta över lokaler"
         }
       },
       "cards": {
         "liveStreaming": {
           "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "description": "Se milongas världen över i realtid"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Musikbibliotek",
+          "description": "Kurerade tango-spellistor och guider"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Verifierade lärare",
+          "description": "Lär dig från certifierade instruktörer"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Reseplanerare",
+          "description": "Planera resor och hitta värdar globalt"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Vad dansare säger",
+      "description": "Gå med i tusentals nöjda dansare världen över",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
           "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "text": "Mundo Tango hjälpte mig att hitta min dansfamilj i en ny stad. Communityt är varmt, välkomnande och verkligt passionerat om tango."
         },
         "testimonial2": {
           "name": "James Chen",
           "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "text": "Jag har upptäckt fantastiska milongas och workshops genom denna plattform. Den har blivit nödvändig för min tangoresa."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moskva, Ryssland",
+          "text": "Lärarkatalogen hjälpte mig att hitta otroliga instruktörer. Min dans har förbättrats enormt!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Vanliga frågor",
+      "description": "Allt du behöver veta om Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Vad är Mundo Tango?",
+          "answer": "Mundo Tango är en global plattform som kopplar samman tangodansare, lärare och arrangörer. Vi hjälper dig upptäcka evenemang, hitta danspartners, lära från toppinstruktörer och fördjupa dig i det levande tango-communityt världen över."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Är Mundo Tango gratis att använda?",
+          "answer": "Ja! Vi erbjuder en gratis nivå som inkluderar grundläggande profilskapande, evenemangsupptäckt och meddelanden. Premium-funktioner som obegränsade meddelanden, AI-danspartner-matchning och prioritetsnotifikationer finns tillgängliga med vårt Pro-abonnemang."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Hur hittar jag tango-evenemang nära mig?",
+          "answer": "Använd helt enkelt vår evenemangskalender eller sökfunktioner för att filtrera efter stad, datum och evenemangstyp. Du kan upptäcka milongas, festivaler, workshops och övningssessioner som äger rum i ditt område eller var som helst i världen."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Kan jag ansluta med andra dansare?",
+          "answer": "Absolut! Följ dansare, gå med i grupper, skicka vänförfrågningar och chatta med communityt. Vår plattform är designad för att främja autentiska anslutningar inom tangovärlden."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Hur hittar jag tangolärare?",
+          "answer": "Besök vår lärarkatalog för att bläddra bland verifierade instruktörer världen över. Filtrera efter plats, specialitet och erfarenhetsnivå. Läs recensioner från andra elever och boka privatlektioner direkt genom plattformen."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Vad gör Mundo Tango annorlunda?",
+          "answer": "Vi är byggda av tangodansare, för tangodansare. Vårt fokus ligger på autentiskt community-byggande, kvalitetsevenemangskuratering och att koppla dig med den globala tangofamiljen - inte bara ett till socialt nätverk."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Redo att gå med i communityt?",
+      "description": "Skapa ditt gratis konto idag och börja ansluta med passionerade tangodansare världen över. Inget kreditkort krävs.",
+      "button": "Gå med i Mundo Tango gratis",
+      "freeForever": "Gratis för alltid",
+      "noCreditCard": "Inget kreditkort",
+      "cancelAnytime": "Avsluta när som helst"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Flöde",
+    "description": "Håll dig uppdaterad med det senaste från tango-communityt",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Alla inlägg",
+      "following": "Följer",
+      "popular": "Populärt",
+      "recent": "Senaste"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Vad tänker du på?",
+    "noPost": "Inga inlägg att visa"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Evenemang",
+    "description": "Upptäck tango-evenemang nära dig",
+    "upcoming": "Kommande evenemang",
+    "past": "Tidigare evenemang",
     "filters": {
-      "all": "All Events",
+      "all": "Alla evenemang",
       "milongas": "Milongas",
       "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "festivals": "Festivaler",
+      "classes": "Kurser"
     },
-    "noEvents": "No events found"
+    "noEvents": "Inga evenemang hittades"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Profil",
+    "description": "Visa och redigera din profil",
+    "editProfile": "Redigera profil",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Inlägg",
+      "photos": "Foton",
+      "videos": "Videor",
+      "events": "Evenemang",
+      "friends": "Vänner"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Inlägg",
+      "followers": "Följare",
+      "following": "Följer",
+      "events": "Besökta evenemang"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Meddelanden",
+    "description": "Chatta med dina tango-anslutningar",
+    "newMessage": "Nytt meddelande",
+    "searchConversations": "Sök konversationer",
+    "noMessages": "Inga meddelanden ännu",
+    "startConversation": "Starta en konversation"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Tangolärare",
+    "description": "Hitta och anslut med tangolärare",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Alla lärare",
+      "featured": "Framhävda",
+      "nearby": "I närheten"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Visa profil",
+    "bookLesson": "Boka en lektion"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Tango-lokaler",
+    "description": "Upptäck tango-lokaler världen över",
     "filters": {
-      "all": "All Venues",
+      "all": "Alla lokaler",
       "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "schools": "Dansskolor",
+      "theaters": "Teatrar"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Få vägbeskrivning"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Inställningar",
+    "description": "Hantera dina kontoinställningar",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Kontoinställningar",
+      "profile": "Profil",
+      "privacy": "Integritet",
+      "notifications": "Notifikationer",
+      "security": "Säkerhet",
+      "billing": "Fakturering",
+      "preferences": "Preferenser"
     }
   },
   "lifeCEO": {
     "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "description": "Din personliga AI-assistent för livshantering",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Hälsoagent",
+      "fitness": "Fitnessagent",
+      "nutrition": "Näringsagent",
+      "finance": "Finansagent",
+      "career": "Karriäragent",
+      "productivity": "Produktivitetsagent",
+      "relationships": "Relationsagent",
+      "learning": "Lärande-agent"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Marknadsplats",
+    "description": "Köp och sälj tango-relaterade varor",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Dansskor",
+      "clothing": "Kläder",
+      "music": "Musik",
+      "accessories": "Tillbehör",
+      "other": "Övrigt"
     }
   },
   "admin": {
     "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "description": "Plattformsadministration och hantering",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Översikt",
+      "users": "Användare",
+      "content": "Innehåll",
+      "reports": "Rapporter",
+      "analytics": "Analys",
+      "settings": "Inställningar"
     }
   }
 }

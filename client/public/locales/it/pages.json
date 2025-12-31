@@ -442,12 +442,41 @@
     "about": "Chi sono"
   },
   "login": {
-    "title": "Accedi",
-    "email": "Email",
-    "password": "Password",
-    "forgotPassword": "Password dimenticata?",
+    "pageName": "Accesso",
+    "seo": {
+      "title": "Accedi - Mundo Tango",
+      "description": "Accedi al tuo account Mundo Tango per connetterti con la comunità globale del tango, scoprire eventi e condividere la tua passione per il tango argentino."
+    },
+    "badge": "Bentornato",
+    "hero": {
+      "heading": "Il tuo viaggio nel tango continua",
+      "paragraph": "Accedi per connetterti con ballerini di tutto il mondo, scoprire eventi e condividere la tua passione"
+    },
+    "stats": {
+      "dancers": "ballerini",
+      "events": "eventi"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Accedi",
+      "signingIn": "Accesso in corso...",
+      "forgotPassword": "Password dimenticata?"
+    },
     "noAccount": "Non hai un account?",
-    "signUp": "Registrati"
+    "createAccount": "Creane uno ora",
+    "toast": {
+      "successTitle": "Bentornato!",
+      "successDescription": "Hai effettuato l'accesso con successo.",
+      "errorTitle": "Accesso fallito",
+      "errorDescription": "Credenziali non valide",
+      "verificationRequired": {
+        "title": "Verifica email richiesta",
+        "description": "Controlla la tua casella di posta e conferma la tua email."
+      },
+      "upgradedTitle": "Account aggiornato!",
+      "upgradedDescription": "Benvenuto! Ora hai accesso completo a Mundo Tango."
+    }
   },
   "signup": {
     "title": "Crea Account",

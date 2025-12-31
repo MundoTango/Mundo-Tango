@@ -1,0 +1,556 @@
+{
+  "register": {
+    "pageName": "Registre",
+    "seo": {
+      "title": "Uneix-te a Mundo Tango - Crea el teu compte",
+      "description": "Crea el teu compte de Mundo Tango i uneix-te a la comunitat global del tango argentí. Connecta amb balladors, descobreix esdeveniments i comparteix la teva passió pel tango."
+    },
+    "badge": {
+      "welcomeFamily": "Benvingut a la família",
+      "beginJourney": "Comença el teu viatge",
+      "joinCommunity": "Uneix-te a la comunitat"
+    },
+    "hero": {
+      "youreIn": "Ja hi ets!",
+      "joinMundoTango": "Uneix-te a Mundo Tango",
+      "description": "Connecta amb balladors d'arreu del món, descobreix milongues i submergeix-te en el món apassionat del tango argentí",
+      "waitlistDescription": "Benvingut a la comunitat Mundo Tango. Estem preparant el teu compte i t'avisarem aviat!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ balladors",
+      "events": "{{count}}+ esdeveniments",
+      "cities": "{{count}} ciutats"
+    },
+    "form": {
+      "fullName": "Nom complet",
+      "fullNamePlaceholder": "Maria Rodriguez",
+      "email": "Correu electrònic",
+      "emailPlaceholder": "maria@example.com",
+      "username": "Nom d'usuari",
+      "usernamePlaceholder": "maria_tango",
+      "password": "Contrasenya",
+      "confirmPassword": "Confirma la contrasenya",
+      "inviteOnlyNotice": "El registre és actualment només per invitació. Omple aquest formulari per unir-te a la nostra llista d'espera i t'avisarem quan el teu compte estigui llest.",
+      "acceptTermsPrefix": "Accepto els",
+      "termsAndConditions": "Termes i condicions"
+    },
+    "validation": {
+      "emailTaken": "Aquest correu electrònic ja està registrat",
+      "emailAvailable": "Correu electrònic disponible!",
+      "usernameTaken": "Nom d'usuari ocupat. Prova {{suggestion}}",
+      "usernameAvailable": "Nom d'usuari disponible!",
+      "passwordsMatch": "Les contrasenyes coincideixen",
+      "passwordsDontMatch": "Les contrasenyes no coincideixen"
+    },
+    "passwordStrength": {
+      "weak": "Feble",
+      "medium": "Mitjana",
+      "strong": "Forta",
+      "veryStrong": "Molt forta"
+    },
+    "inviteCode": {
+      "label": "Tens un codi d'invitació? (Opcional)",
+      "placeholder": "Introdueix el teu codi d'invitació per accés immediat",
+      "accepted": "Codi acceptat! El teu compte s'activarà immediatament.",
+      "noWorries": "Cap problema! Omple el formulari següent per unir-te a la nostra llista d'espera."
+    },
+    "waitlist": {
+      "welcomeUser": "Benvingut, {{name}}!",
+      "defaultName": "Ballador",
+      "onTheList": "Ets a la llista. T'enviarem un correu electrònic a",
+      "whenReady": "quan el teu compte estigui llest.",
+      "helpUsGrow": "Mentre esperes, ajuda'ns a créixer",
+      "volunteerWithUs": "Fes-te voluntari",
+      "supportMundoTango": "Dóna suport a Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Creant el teu compte...",
+      "joining": "Unint-se...",
+      "createAccount": "Crear compte",
+      "joinMundoTango": "Uneix-te a Mundo Tango"
+    },
+    "alreadyHaveAccount": "Ja tens un compte?",
+    "signIn": "Inicia sessió",
+    "toast": {
+      "invalidCode": {
+        "title": "Codi no vàlid",
+        "description": "Si us plau, introdueix un codi de verificació de 6 dígits vàlid."
+      },
+      "verified": {
+        "title": "Correu electrònic verificat!",
+        "description": "Benvingut a Mundo Tango! Iniciant la teva integració..."
+      },
+      "verifyError": {
+        "title": "Verificació fallida",
+        "description": "Codi no vàlid o caducat. Si us plau, torna-ho a provar."
+      },
+      "error": {
+        "title": "Error",
+        "description": "No s'ha pogut verificar el correu electrònic. Si us plau, torna-ho a provar."
+      },
+      "tooMany": {
+        "title": "Massa sol·licituds",
+        "description": "Si us plau, espera uns minuts abans de tornar-ho a provar."
+      },
+      "codeSent": {
+        "title": "Codi enviat!",
+        "description": "Si us plau, comprova la teva safata d'entrada per a un nou codi."
+      },
+      "resendError": {
+        "description": "No s'ha pogut reenviar el codi. Si us plau, torna-ho a provar."
+      },
+      "termsRequired": {
+        "title": "Termes requerits",
+        "description": "Si us plau, accepta els Termes i Condicions"
+      },
+      "passwordMismatch": {
+        "title": "Les contrasenyes no coincideixen",
+        "description": "Si us plau, assegura't que les dues contrasenyes són idèntiques"
+      },
+      "weakPassword": {
+        "title": "Contrasenya feble",
+        "description": "Si us plau, tria una contrasenya més forta"
+      },
+      "checkEmail": {
+        "title": "Comprova el teu correu electrònic",
+        "description": "T'hem enviat un codi de verificació de 6 dígits. Si us plau, comprova la teva safata d'entrada."
+      },
+      "registrationFailed": {
+        "title": "Registre fallat"
+      },
+      "signupFailed": {
+        "title": "No s'ha pogut completar el registre"
+      },
+      "tryAgain": "Si us plau, torna-ho a provar"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Benvingut",
+      "seoTitle": "Benvingut a Mundo Tango",
+      "seoDescription": "Comença el teu viatge de tango amb Mundo Tango",
+      "badge": "Configuració ràpida",
+      "title": "Benvingut a Mundo Tango",
+      "subtitle": "Configurem el teu perfil perquè puguis connectar amb la comunitat global del tango",
+      "duration": "Triga uns 2 minuts",
+      "stepIndicator": "Pas {{current}} de {{total}}",
+      "getStarted": "Començar",
+      "profileTitle": "El teu viatge de tango comença",
+      "profileSubtitle": "Explica'ns una mica sobre tu",
+      "features": {
+        "city": {
+          "title": "Tria la teva ciutat",
+          "description": "Connecta amb la teva comunitat de tango local"
+        },
+        "roles": {
+          "title": "Explica'ns els teus rols",
+          "description": "Ballador, professor, DJ, organitzador, o tots?"
+        },
+        "events": {
+          "title": "Descobreix esdeveniments",
+          "description": "Troba milongues, classes i festivals a prop teu"
+        },
+        "journey": {
+          "title": "Comparteix el teu viatge",
+          "description": "Connecta amb balladors del teu nivell"
+        },
+        "facebook": {
+          "title": "Connectar Facebook",
+          "description": "Vincula el teu perfil de Facebook per trobar amics a la comunitat"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "Connexió Social",
+      "seoTitle": "Connecta el teu Món Social - Mundo Tango",
+      "seoDescription": "Vincula els teus perfils socials per trobar amics a la comunitat del tango.",
+      "step": "Pas 2 de 6",
+      "title": "Connecta el teu Món Social",
+      "quote": "\"Molts balladors de tango ja es coneixen a través de Facebook. En vincular el teu perfil, podem mostrar-te quins balladors de la teva xarxa ja hi són - facilitant trobar cares conegudes a les milongues i crear connexions més profundes.\"",
+      "cardTitle": "Troba els teus Amics",
+      "cardDescription": "El teu Facebook ens ajuda a connectar-te amb balladors que potser ja coneixes, perquè no comencis de zero.",
+      "facebookLabel": "URL del Perfil de Facebook (Opcional)",
+      "facebookPlaceholder": "https://www.facebook.com/el.teu.perfil",
+      "helperText": "Utilitzem això com a pont cap a altres comunitats i per connectar-te amb balladors que potser coneixes.",
+      "toast": {
+        "errorTitle": "Error",
+        "errorDescription": "No s'ha pogut desar la informació del perfil"
+      }
+    },
+    "navigation": {
+      "back": "Enrere",
+      "continue": "Continuar",
+      "skip": "Saltar",
+      "next": "Següent"
+    },
+    "city": {
+      "pageTitle": "Selecció de Ciutat",
+      "seoTitle": "Selecciona la teva Ciutat - Mundo Tango",
+      "seoDescription": "Tria la teva ciutat per connectar amb balladors locals",
+      "step": "Pas 1 de 6",
+      "title": "On balles?",
+      "subtitle": "Connecta amb balladors de la teva zona",
+      "cardTitle": "La teva Ciutat",
+      "cardDescription": "Això ens ajuda a mostrar-te esdeveniments i balladors locals",
+      "searchLabel": "Cerca la teva ciutat",
+      "searchPlaceholder": "Escriu el nom de la teva ciutat...",
+      "eventSite": {
+        "help": "Selecciona entre destinacions de tango populars"
+      },
+      "errors": {
+        "required": "Ciutat requerida",
+        "selectCity": "Si us plau, selecciona la teva ciutat"
+      },
+      "toast": {
+        "sourceAdded": "Font afegida!",
+        "submittedForReview": "Enviat per revisió",
+        "trackingEvents": "Començarem a fer seguiment dels esdeveniments del lloc",
+        "thankYou": "Gràcies! El teu suggeriment s'ha enviat per revisió.",
+        "errorTitle": "Error",
+        "suggestionFailed": "No s'ha pogut enviar el suggeriment",
+        "saveFailed": "No s'han pogut desar les ciutats"
+      }
+    },
+    "photo": {
+      "pageTitle": "Càrrega de Foto",
+      "seoTitle": "Afegeix Foto de Perfil - Mundo Tango",
+      "seoDescription": "Carrega la teva foto de perfil",
+      "step": "Pas 3 de 6",
+      "title": "Afegeix la teva Foto de Perfil",
+      "subtitle": "Ajuda els altres a reconèixer-te a la comunitat",
+      "cardTitle": "La teva Foto de Perfil",
+      "cardDescription": "Ajuda els altres a reconèixer-te (pots saltar aquest pas)",
+      "previewAlt": "Vista prèvia del perfil",
+      "dropHere": "Deixa la teva foto aquí",
+      "or": "o",
+      "browseFiles": "Navega pels fitxers",
+      "fileTypes": "PNG, JPG fins a 5MB",
+      "photoSelected": "Foto seleccionada!",
+      "uploading": "Carregant...",
+      "errors": {
+        "invalidFile": "Fitxer no vàlid",
+        "selectImage": "Si us plau, selecciona un fitxer d'imatge",
+        "fileTooLarge": "Fitxer massa gran",
+        "sizeLimit": "Si us plau, selecciona una imatge de menys de 5MB",
+        "uploadFailed": "Càrrega fallida",
+        "tryAgain": "No s'ha pogut carregar la foto. Si us plau, torna-ho a provar.",
+        "skipFailed": "No s'ha pogut saltar. Si us plau, torna-ho a provar."
+      }
+    },
+    "languages": {
+      "pageTitle": "Idiomes",
+      "seoTitle": "Els teus Idiomes - Mundo Tango",
+      "seoDescription": "Explica'ns quins idiomes parles",
+      "step": "Pas 5 de 6",
+      "title": "Quins idiomes parles?",
+      "subtitle": "Connecta amb balladors en el teu idioma",
+      "cardTitle": "Els teus Idiomes",
+      "cardDescription": "Selecciona el teu idioma principal i els idiomes addicionals que parles",
+      "primaryLabel": "Idioma principal",
+      "primaryHint": "Això també establirà l'idioma de visualització del lloc",
+      "primaryPlaceholder": "Selecciona el teu idioma principal",
+      "additionalLabel": "Idiomes addicionals (Opcional)",
+      "errors": {
+        "required": "Idioma principal requerit",
+        "selectPrimary": "Si us plau, selecciona el teu idioma principal",
+        "saveFailed": "No s'han pogut desar els idiomes",
+        "saveFailedTitle": "No s'han pogut desar els idiomes"
+      }
+    },
+    "roles": {
+      "pageTitle": "Rols de Tango",
+      "seoTitle": "Els teus Rols de Tango - Mundo Tango",
+      "seoDescription": "Explica'ns sobre el teu viatge de tango",
+      "step": "Pas 2 de 6",
+      "title": "Quins rols exerceixes?",
+      "subtitle": "Selecciona tots els que s'apliquin a tu",
+      "cardTitle": "La teva Identitat de Tango",
+      "cardDescription": "Ajuda els altres a saber com participes en el món del tango"
+    },
+    "experience": {
+      "pageTitle": "Experiència de Ball",
+      "seoTitle": "La teva Experiència de Ball - Mundo Tango",
+      "seoDescription": "Comparteix el teu nivell d'experiència de ball",
+      "step": "Pas 4 de 6",
+      "title": "La teva Experiència de Ball",
+      "subtitle": "Ajuda'ns a connectar-te amb els balladors adequats"
+    },
+    "hobbies": {
+      "pageTitle": "Interessos",
+      "seoTitle": "Els teus Interessos - Mundo Tango",
+      "seoDescription": "Explica'ns sobre els teus interessos",
+      "step": "Pas 6 de 6",
+      "title": "Quins són els teus interessos?",
+      "subtitle": "Selecciona temes que t'interessin",
+      "helpText": "Tria almenys 3 interessos per personalitzar el teu feed",
+      "selectedCount": "{{count}} seleccionats",
+      "finishing": "Finalitzant...",
+      "completeSetup": "Completar configuració",
+      "searchPlaceholder": "Cerca comunitats o afegeix-ne una de nova...",
+      "categories": {
+        "fitness": { "label": "Fitness i Esports" },
+        "tech": { "label": "Tecnologia i Innovació" },
+        "spirituality": { "label": "Espiritualitat i Creixement" },
+        "yoga": { "label": "Ioga i Benestar" },
+        "music": { "label": "Música" },
+        "photography": { "label": "Fotografia i Vídeo" },
+        "art": { "label": "Art i Creativitat" },
+        "reading": { "label": "Lectura i Escriptura" },
+        "travel": { "label": "Viatge i Aventura" },
+        "cooking": { "label": "Cuina i Gastronomia" },
+        "wine": { "label": "Vi i Begudes" },
+        "gaming": { "label": "Videojocs" },
+        "outdoors": { "label": "Activitats a l'Aire Lliure" },
+        "snow": { "label": "Esports de Neu" },
+        "cycling": { "label": "Ciclisme" },
+        "water": { "label": "Esports Aquàtics" },
+        "nature": { "label": "Natura i Jardineria" },
+        "movies": { "label": "Pel·lícules i Entreteniment" },
+        "pets": { "label": "Mascotes i Animals" },
+        "social": { "label": "Social i Comunitat" }
+      },
+      "success": {
+        "completeTitle": "Benvingut a Mundo Tango!",
+        "completeDesc": "El teu perfil està llest. Comença a explorar!",
+        "waitlistTitle": "Perfil completat!",
+        "waitlistDesc": "T'avisarem quan el teu compte s'activi"
+      },
+      "errors": {
+        "saveFailed": "No s'ha pogut desar. Si us plau, torna-ho a provar."
+      }
+    },
+    "legal": {
+      "title": "Directrius de la Comunitat",
+      "subtitle": "Si us plau, revisa i accepta els nostres termes",
+      "legalDocsTitle": "Documents Legals",
+      "legalDocsDescription": "Revisa els nostres termes de servei i política de privacitat",
+      "termsOfService": {
+        "label": "Accepto els Termes de Servei",
+        "description": "Els nostres termes regeixen l'ús de Mundo Tango",
+        "link": "Llegir Termes de Servei"
+      },
+      "privacyPolicy": {
+        "label": "Accepto la Política de Privacitat",
+        "description": "Com gestionem les teves dades",
+        "link": "Llegir Política de Privacitat"
+      },
+      "cocTitle": "Codi de Conducta de la Comunitat",
+      "cocDescription": "Ajuda'ns a mantenir una comunitat respectuosa",
+      "coc": {
+        "respectful": {
+          "title": "Sigues respectuós",
+          "description": "Tracta a tothom amb dignitat i cortesia"
+        },
+        "inclusive": {
+          "title": "Sigues inclusiu",
+          "description": "Dona la benvinguda a balladors de tots els nivells i orígens"
+        },
+        "authentic": {
+          "title": "Sigues autèntic",
+          "description": "Utilitza la teva identitat real i informació honesta"
+        },
+        "consent": {
+          "title": "Respecta el consentiment",
+          "description": "Sempre pregunta abans de ballar i respecta els límits"
+        },
+        "noHarassment": {
+          "title": "Sense assetjament",
+          "description": "Tolerància zero per a l'assetjament o el bullying"
+        },
+        "noSpam": {
+          "title": "Sense spam",
+          "description": "No enviïs promocions no sol·licitades"
+        },
+        "noDiscrimination": {
+          "title": "Sense discriminació",
+          "description": "No tolerem cap forma de discriminació"
+        },
+        "privacy": {
+          "title": "Protegeix la privacitat",
+          "description": "No comparteixis informació d'altres sense consentiment"
+        },
+        "safety": {
+          "title": "Prioritza la seguretat",
+          "description": "Reporta comportaments insegurs immediatament"
+        },
+        "laws": {
+          "title": "Segueix les lleis",
+          "description": "Compleix totes les lleis aplicables"
+        },
+        "report": {
+          "title": "Reporta problemes",
+          "description": "Ajuda'ns reportant violacions"
+        },
+        "support": {
+          "title": "Doneu-vos suport mútuament",
+          "description": "Ajuda altres balladors a créixer"
+        }
+      },
+      "acceptAll": "Acceptar tot i continuar",
+      "accepting": "Acceptant...",
+      "incompleteAlert": "Si us plau, accepta tots els termes requerits",
+      "success": {
+        "title": "Benvingut!",
+        "description": "Has acceptat les nostres directrius de la comunitat"
+      },
+      "errors": {
+        "failed": "No s'ha pogut desar. Si us plau, torna-ho a provar."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Llista d'Espera",
+      "seoTitle": "Ets a la Llista d'Espera - Mundo Tango",
+      "seoDescription": "El teu compte està pendent d'activació",
+      "title": "Ets a la Llista d'Espera!",
+      "welcomeMessage": "Benvingut, {{name}}!",
+      "defaultName": "Ballador",
+      "profileComplete": "Perfil Completat",
+      "profileCompleteDesc": "El teu perfil està llest i esperant",
+      "emailNotice": "T'enviarem un correu electrònic a {{email}} quan el teu compte estigui llest",
+      "whenReady": "quan el teu compte estigui llest.",
+      "whileYouWait": "Mentre esperes, ajuda'ns a créixer:",
+      "volunteerButton": "Fes-te Voluntari",
+      "supportButton": "Dóna suport a Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "Visita Guiada",
+      "seoTitle": "Explora Mundo Tango",
+      "seoDescription": "Aprèn a utilitzar Mundo Tango",
+      "skipTour": "Saltar visita",
+      "finish": "Finalitzar visita",
+      "steps": {
+        "feed": "Descobreix publicacions de la comunitat del tango",
+        "events": "Troba milongues, classes i festivals",
+        "groups": "Uneix-te a grups de la teva ciutat o interessos",
+        "messages": "Connecta directament amb altres balladors",
+        "profile": "Personalitza el teu perfil de tango",
+        "createPost": "Comparteix els teus moments de tango"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Millora la teva Experiència",
+        "subtitle": "Treu el màxim partit de Mundo Tango",
+        "limitedOffer": "Oferta per Temps Limitat",
+        "getStarted": "Començar",
+        "features": {
+          "connect": {
+            "title": "Connectar",
+            "description": "Envia missatges a qualsevol ballador directament"
+          },
+          "visibility": {
+            "title": "Visibilitat",
+            "description": "Apareix destacat als resultats de cerca"
+          },
+          "events": {
+            "title": "Esdeveniments",
+            "description": "Accés prioritari a esdeveniments populars"
+          },
+          "grow": {
+            "title": "Créixer",
+            "description": "Anàlisis avançades per al teu perfil"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Funcions premium exclusives"
+          }
+        }
+      }
+    },
+    "navigation": {
+      "back": "Enrere",
+      "next": "Següent",
+      "skip": "Saltar",
+      "finish": "Finalitzar",
+      "saving": "Desant..."
+    }
+  },
+  "login": {
+    "pageName": "Iniciar Sessió",
+    "seo": {
+      "title": "Inicia Sessió - Mundo Tango",
+      "description": "Accedeix al teu compte de Mundo Tango per connectar amb la comunitat global del tango, descobrir esdeveniments i compartir la teva passió pel tango argentí."
+    },
+    "badge": "Benvingut de nou",
+    "hero": {
+      "heading": "El teu viatge de tango continua",
+      "paragraph": "Inicia sessió per connectar amb balladors d'arreu del món, descobrir esdeveniments i compartir la teva passió"
+    },
+    "stats": {
+      "dancers": "balladors",
+      "events": "esdeveniments"
+    },
+    "form": {
+      "email": "Correu electrònic",
+      "password": "Contrasenya",
+      "signIn": "Iniciar Sessió",
+      "signingIn": "Iniciant sessió...",
+      "forgotPassword": "Has oblidat la contrasenya?"
+    },
+    "noAccount": "No tens un compte?",
+    "createAccount": "Crea'n un ara",
+    "toast": {
+      "successTitle": "Benvingut de nou!",
+      "successDescription": "Has iniciat sessió correctament.",
+      "errorTitle": "Inici de sessió fallat",
+      "errorDescription": "Credencials no vàlides",
+      "verificationRequired": {
+        "title": "Verificació de correu electrònic requerida",
+        "description": "Si us plau, comprova la teva safata d'entrada i confirma el teu correu electrònic."
+      },
+      "upgradedTitle": "Compte actualitzat!",
+      "upgradedDescription": "Benvingut! Ara tens accés complet a Mundo Tango."
+    }
+  },
+  "home": {
+    "title": "Benvingut a Mundo Tango",
+    "subtitle": "Connecta amb la comunitat global del tango",
+    "cta": "Començar"
+  },
+  "events": {
+    "title": "Esdeveniments de Tango",
+    "subtitle": "Descobreix milongues, festivals i tallers",
+    "filterByCity": "Filtrar per ciutat",
+    "filterByType": "Filtrar per tipus",
+    "noEvents": "No s'han trobat esdeveniments"
+  },
+  "cities": {
+    "title": "Ciutats de Tango",
+    "subtitle": "Explora comunitats de tango arreu del món",
+    "members": "membres",
+    "events": "esdeveniments",
+    "viewCity": "Veure Ciutat"
+  },
+  "groups": {
+    "title": "Grups de Tango",
+    "subtitle": "Uneix-te a comunitats locals i temàtiques",
+    "join": "Unir-se al Grup",
+    "leave": "Deixar el Grup",
+    "members": "Membres",
+    "posts": "Publicacions"
+  },
+  "profile": {
+    "title": "Perfil",
+    "editProfile": "Editar Perfil",
+    "followers": "Seguidors",
+    "following": "Seguint",
+    "posts": "Publicacions",
+    "about": "Sobre"
+  },
+  "signup": {
+    "title": "Crear Compte",
+    "name": "Nom",
+    "email": "Correu electrònic",
+    "password": "Contrasenya",
+    "confirmPassword": "Confirmar Contrasenya",
+    "hasAccount": "Ja tens un compte?",
+    "login": "Iniciar Sessió"
+  },
+  "proDiscovery": {
+    "title": "Descobreix Professionals del Tango",
+    "subtitle": "Troba professors, DJs, artistes i més",
+    "search": "Cercar professionals...",
+    "filterByRole": "Filtrar per rol",
+    "filterByCity": "Filtrar per ciutat"
+  }
+}

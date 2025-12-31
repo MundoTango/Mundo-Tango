@@ -1,6 +1,6 @@
 {
   "register": {
-    "pageName": "Registro",
+    "pageName": "Cadastro",
     "seo": {
       "title": "Junte-se ao Mundo Tango - Crie sua conta",
       "description": "Crie sua conta no Mundo Tango e junte-se à comunidade global de tango argentino. Conecte-se com dançarinos, descubra eventos e compartilhe sua paixão pelo tango."
@@ -14,7 +14,7 @@
       "youreIn": "Você está dentro!",
       "joinMundoTango": "Junte-se ao Mundo Tango",
       "description": "Conecte-se com dançarinos do mundo todo, descubra milongas e mergulhe no mundo apaixonante do tango argentino",
-      "waitlistDescription": "Bem-vindo à comunidade Mundo Tango. Estamos preparando sua conta e notificaremos você em breve!"
+      "waitlistDescription": "Bem-vindo à comunidade Mundo Tango. Estamos preparando sua conta e vamos te avisar em breve!"
     },
     "stats": {
       "dancers": "{{count}}+ dançarinos",
@@ -30,17 +30,17 @@
       "usernamePlaceholder": "maria_tango",
       "password": "Senha",
       "confirmPassword": "Confirmar senha",
-      "inviteOnlyNotice": "O registro está atualmente apenas por convite. Preencha este formulário para entrar em nossa lista de espera e notificaremos você quando sua conta estiver pronta.",
+      "inviteOnlyNotice": "O cadastro está atualmente apenas por convite. Preencha este formulário para entrar na nossa lista de espera e vamos te avisar quando sua conta estiver pronta.",
       "acceptTermsPrefix": "Aceito os",
       "termsAndConditions": "Termos e Condições"
     },
     "validation": {
-      "emailTaken": "Este email já está registrado",
+      "emailTaken": "Este email já está cadastrado",
       "emailAvailable": "Email disponível!",
       "usernameTaken": "Nome de usuário em uso. Tente {{suggestion}}",
       "usernameAvailable": "Nome de usuário disponível!",
-      "passwordsMatch": "As senhas coincidem",
-      "passwordsDontMatch": "As senhas não coincidem"
+      "passwordsMatch": "As senhas conferem",
+      "passwordsDontMatch": "As senhas não conferem"
     },
     "passwordStrength": {
       "weak": "Fraca",
@@ -52,14 +52,14 @@
       "label": "Tem um código de convite? (Opcional)",
       "placeholder": "Digite seu código de convite para acesso imediato",
       "accepted": "Código aceito! Sua conta será ativada imediatamente.",
-      "noWorries": "Sem problemas! Preencha o formulário abaixo para entrar em nossa lista de espera."
+      "noWorries": "Sem problemas! Preencha o formulário abaixo para entrar na nossa lista de espera."
     },
     "waitlist": {
       "welcomeUser": "Bem-vindo, {{name}}!",
       "defaultName": "Dançarino",
-      "onTheList": "Você está na lista. Enviaremos um email para",
+      "onTheList": "Você está na lista. Vamos enviar um email para",
       "whenReady": "quando sua conta estiver pronta.",
-      "helpUsGrow": "Enquanto espera, ajude-nos a crescer",
+      "helpUsGrow": "Enquanto espera, ajude a gente a crescer",
       "volunteerWithUs": "Seja voluntário",
       "supportMundoTango": "Apoie o Mundo Tango"
     },
@@ -104,8 +104,8 @@
         "description": "Por favor, aceite os Termos e Condições"
       },
       "passwordMismatch": {
-        "title": "As senhas não coincidem",
-        "description": "Por favor, certifique-se de que ambas as senhas são idênticas"
+        "title": "As senhas não conferem",
+        "description": "Por favor, verifique se as senhas são idênticas"
       },
       "weakPassword": {
         "title": "Senha fraca",
@@ -116,7 +116,7 @@
         "description": "Enviamos um código de verificação de 6 dígitos. Por favor, verifique sua caixa de entrada."
       },
       "registrationFailed": {
-        "title": "Registro falhou"
+        "title": "Cadastro falhou"
       },
       "signupFailed": {
         "title": "Não foi possível completar o cadastro"
@@ -136,7 +136,7 @@
       "stepIndicator": "Passo {{current}} de {{total}}",
       "getStarted": "Começar",
       "profileTitle": "Sua jornada no tango começa",
-      "profileSubtitle": "Conte-nos um pouco sobre você",
+      "profileSubtitle": "Conta um pouco sobre você",
       "features": {
         "city": {
           "title": "Escolha sua cidade",
@@ -153,17 +153,44 @@
         "journey": {
           "title": "Compartilhe sua jornada",
           "description": "Conecte-se com dançarinos do seu nível"
+        },
+        "facebook": {
+          "title": "Conectar Facebook",
+          "description": "Vincule seu perfil do Facebook para encontrar amigos na comunidade"
         }
       }
     },
+    "social": {
+      "pageTitle": "Conexão Social",
+      "seoTitle": "Conecte seu Mundo Social - Mundo Tango",
+      "seoDescription": "Vincule seus perfis sociais para encontrar amigos na comunidade do tango.",
+      "step": "Passo 2 de 6",
+      "title": "Conecte seu Mundo Social",
+      "quote": "\"Muitos dançarinos de tango já se conhecem pelo Facebook. Ao vincular seu perfil, podemos mostrar quais dançarinos da sua rede já estão aqui - facilitando encontrar rostos conhecidos nas milongas e criar conexões mais profundas.\"",
+      "cardTitle": "Encontre seus Amigos",
+      "cardDescription": "Seu Facebook nos ajuda a conectar você com dançarinos que você talvez já conheça, para você não começar do zero.",
+      "facebookLabel": "URL do Perfil do Facebook (Opcional)",
+      "facebookPlaceholder": "https://www.facebook.com/seu.perfil",
+      "helperText": "Usamos isso como uma ponte para outras comunidades e para conectar você com dançarinos que você pode conhecer.",
+      "toast": {
+        "errorTitle": "Erro",
+        "errorDescription": "Falha ao salvar informações do perfil"
+      }
+    },
+    "navigation": {
+      "back": "Voltar",
+      "continue": "Continuar",
+      "skip": "Pular",
+      "next": "Próximo"
+    },
     "city": {
-      "pageTitle": "Seleção de cidade",
-      "seoTitle": "Selecione sua cidade - Mundo Tango",
+      "pageTitle": "Seleção de Cidade",
+      "seoTitle": "Selecione sua Cidade - Mundo Tango",
       "seoDescription": "Escolha sua cidade para se conectar com dançarinos locais",
       "step": "Passo 1 de 6",
       "title": "Onde você dança?",
       "subtitle": "Conecte-se com dançarinos da sua região",
-      "cardTitle": "Sua cidade",
+      "cardTitle": "Sua Cidade",
       "cardDescription": "Isso nos ajuda a mostrar eventos e dançarinos locais",
       "searchLabel": "Pesquise sua cidade",
       "searchPlaceholder": "Digite o nome da sua cidade...",
@@ -173,17 +200,26 @@
       "errors": {
         "required": "Cidade obrigatória",
         "selectCity": "Por favor, selecione sua cidade"
+      },
+      "toast": {
+        "sourceAdded": "Fonte adicionada!",
+        "submittedForReview": "Enviado para revisão",
+        "trackingEvents": "Vamos começar a rastrear eventos do site",
+        "thankYou": "Obrigado! Sua sugestão foi enviada para revisão.",
+        "errorTitle": "Erro",
+        "suggestionFailed": "Falha ao enviar sugestão",
+        "saveFailed": "Falha ao salvar cidades"
       }
     },
     "photo": {
-      "pageTitle": "Upload de foto",
-      "seoTitle": "Adicionar foto de perfil - Mundo Tango",
+      "pageTitle": "Upload de Foto",
+      "seoTitle": "Adicionar Foto de Perfil - Mundo Tango",
       "seoDescription": "Faça upload da sua foto de perfil",
       "step": "Passo 3 de 6",
-      "title": "Adicione sua foto de perfil",
-      "subtitle": "Ajude outros a reconhecê-lo na comunidade",
-      "cardTitle": "Sua foto de perfil",
-      "cardDescription": "Ajude outros a reconhecê-lo (você pode pular esta etapa)",
+      "title": "Adicione sua Foto de Perfil",
+      "subtitle": "Ajude outros a te reconhecer na comunidade",
+      "cardTitle": "Sua Foto de Perfil",
+      "cardDescription": "Ajude outros a te reconhecer (você pode pular esta etapa)",
       "previewAlt": "Prévia do perfil",
       "dropHere": "Solte sua foto aqui",
       "or": "ou",
@@ -203,15 +239,15 @@
     },
     "languages": {
       "pageTitle": "Idiomas",
-      "seoTitle": "Seus idiomas - Mundo Tango",
+      "seoTitle": "Seus Idiomas - Mundo Tango",
       "seoDescription": "Conte-nos quais idiomas você fala",
       "step": "Passo 5 de 6",
       "title": "Quais idiomas você fala?",
       "subtitle": "Conecte-se com dançarinos no seu idioma",
-      "cardTitle": "Seus idiomas",
+      "cardTitle": "Seus Idiomas",
       "cardDescription": "Selecione seu idioma principal e idiomas adicionais que você fala",
       "primaryLabel": "Idioma principal",
-      "primaryHint": "Isso também definirá o idioma de exibição do site",
+      "primaryHint": "Isso também vai definir o idioma de exibição do site",
       "primaryPlaceholder": "Selecione seu idioma principal",
       "additionalLabel": "Idiomas adicionais (Opcional)",
       "errors": {
@@ -222,26 +258,26 @@
       }
     },
     "roles": {
-      "pageTitle": "Papéis no tango",
-      "seoTitle": "Seus papéis no tango - Mundo Tango",
+      "pageTitle": "Papéis no Tango",
+      "seoTitle": "Seus Papéis no Tango - Mundo Tango",
       "seoDescription": "Conte-nos sobre sua jornada no tango",
       "step": "Passo 2 de 6",
       "title": "Quais papéis você desempenha?",
       "subtitle": "Selecione todos que se aplicam a você",
-      "cardTitle": "Sua identidade no tango",
+      "cardTitle": "Sua Identidade no Tango",
       "cardDescription": "Ajude outros a saber como você participa do mundo do tango"
     },
     "experience": {
-      "pageTitle": "Experiência de dança",
-      "seoTitle": "Sua experiência de dança - Mundo Tango",
+      "pageTitle": "Experiência de Dança",
+      "seoTitle": "Sua Experiência de Dança - Mundo Tango",
       "seoDescription": "Compartilhe seu nível de experiência em dança",
       "step": "Passo 4 de 6",
-      "title": "Sua experiência de dança",
-      "subtitle": "Ajude-nos a conectá-lo com os dançarinos certos"
+      "title": "Sua Experiência de Dança",
+      "subtitle": "Nos ajude a te conectar com os dançarinos certos"
     },
     "hobbies": {
       "pageTitle": "Interesses",
-      "seoTitle": "Seus interesses - Mundo Tango",
+      "seoTitle": "Seus Interesses - Mundo Tango",
       "seoDescription": "Conte-nos sobre seus interesses",
       "step": "Passo 6 de 6",
       "title": "Quais são seus interesses?",
@@ -250,20 +286,43 @@
       "selectedCount": "{{count}} selecionados",
       "finishing": "Finalizando...",
       "completeSetup": "Concluir configuração",
+      "searchPlaceholder": "Busque comunidades ou adicione uma nova...",
+      "categories": {
+        "fitness": { "label": "Fitness e Esportes" },
+        "tech": { "label": "Tecnologia e Inovação" },
+        "spirituality": { "label": "Espiritualidade e Crescimento" },
+        "yoga": { "label": "Yoga e Bem-estar" },
+        "music": { "label": "Música" },
+        "photography": { "label": "Fotografia e Vídeo" },
+        "art": { "label": "Arte e Criatividade" },
+        "reading": { "label": "Leitura e Escrita" },
+        "travel": { "label": "Viagem e Aventura" },
+        "cooking": { "label": "Culinária e Gastronomia" },
+        "wine": { "label": "Vinhos e Bebidas" },
+        "gaming": { "label": "Games" },
+        "outdoors": { "label": "Atividades ao Ar Livre" },
+        "snow": { "label": "Esportes de Inverno" },
+        "cycling": { "label": "Ciclismo" },
+        "water": { "label": "Esportes Aquáticos" },
+        "nature": { "label": "Natureza e Jardinagem" },
+        "movies": { "label": "Filmes e Entretenimento" },
+        "pets": { "label": "Pets e Animais" },
+        "social": { "label": "Social e Comunidade" }
+      },
       "success": {
         "completeTitle": "Bem-vindo ao Mundo Tango!",
         "completeDesc": "Seu perfil está pronto. Comece a explorar!",
         "waitlistTitle": "Perfil concluído!",
-        "waitlistDesc": "Notificaremos você quando sua conta for ativada"
+        "waitlistDesc": "Vamos te avisar quando sua conta for ativada"
       },
       "errors": {
         "saveFailed": "Falha ao salvar. Por favor, tente novamente."
       }
     },
     "legal": {
-      "title": "Diretrizes da comunidade",
+      "title": "Diretrizes da Comunidade",
       "subtitle": "Por favor, leia e aceite nossos termos",
-      "legalDocsTitle": "Documentos legais",
+      "legalDocsTitle": "Documentos Legais",
       "legalDocsDescription": "Revise nossos termos de serviço e política de privacidade",
       "termsOfService": {
         "label": "Aceito os Termos de Serviço",
@@ -339,22 +398,22 @@
       }
     },
     "waitlist": {
-      "pageTitle": "Lista de espera",
-      "seoTitle": "Você está na lista de espera - Mundo Tango",
+      "pageTitle": "Lista de Espera",
+      "seoTitle": "Você está na Lista de Espera - Mundo Tango",
       "seoDescription": "Sua conta está aguardando ativação",
-      "title": "Você está na lista de espera!",
+      "title": "Você está na Lista de Espera!",
       "welcomeMessage": "Bem-vindo, {{name}}!",
       "defaultName": "Dançarino",
-      "profileComplete": "Perfil concluído",
+      "profileComplete": "Perfil Concluído",
       "profileCompleteDesc": "Seu perfil está pronto e aguardando",
-      "emailNotice": "Enviaremos um email para {{email}} quando sua conta estiver pronta",
+      "emailNotice": "Vamos enviar um email para {{email}} quando sua conta estiver pronta",
       "whenReady": "quando sua conta estiver pronta.",
-      "whileYouWait": "Enquanto espera, ajude-nos a crescer:",
-      "volunteerButton": "Seja voluntário",
+      "whileYouWait": "Enquanto espera, ajude a gente a crescer:",
+      "volunteerButton": "Seja Voluntário",
       "supportButton": "Apoie o Mundo Tango"
     },
     "tour": {
-      "pageTitle": "Tour guiado",
+      "pageTitle": "Tour Guiado",
       "seoTitle": "Explore o Mundo Tango",
       "seoDescription": "Aprenda a usar o Mundo Tango",
       "skipTour": "Pular tour",
@@ -370,9 +429,9 @@
     },
     "subscription": {
       "welcome": {
-        "title": "Melhore sua experiência",
+        "title": "Melhore sua Experiência",
         "subtitle": "Aproveite ao máximo o Mundo Tango",
-        "limitedOffer": "Oferta por tempo limitado",
+        "limitedOffer": "Oferta por Tempo Limitado",
         "getStarted": "Começar",
         "features": {
           "connect": {
@@ -405,41 +464,6 @@
       "finish": "Finalizar",
       "saving": "Salvando..."
     }
-  },
-  "home": {
-    "title": "Bem-vindo ao Mundo Tango",
-    "subtitle": "Conecte-se com a comunidade global do tango",
-    "cta": "Começar"
-  },
-  "events": {
-    "title": "Eventos de Tango",
-    "subtitle": "Descubra milongas, festivais e workshops",
-    "filterByCity": "Filtrar por cidade",
-    "filterByType": "Filtrar por tipo",
-    "noEvents": "Nenhum evento encontrado"
-  },
-  "cities": {
-    "title": "Cidades de Tango",
-    "subtitle": "Explore comunidades de tango pelo mundo",
-    "members": "membros",
-    "events": "eventos",
-    "viewCity": "Ver Cidade"
-  },
-  "groups": {
-    "title": "Grupos de Tango",
-    "subtitle": "Junte-se a comunidades locais e de interesse",
-    "join": "Entrar no Grupo",
-    "leave": "Sair do Grupo",
-    "members": "Membros",
-    "posts": "Publicações"
-  },
-  "profile": {
-    "title": "Perfil",
-    "editProfile": "Editar Perfil",
-    "followers": "Seguidores",
-    "following": "Seguindo",
-    "posts": "Publicações",
-    "about": "Sobre"
   },
   "login": {
     "pageName": "Entrar",
@@ -477,6 +501,41 @@
       "upgradedTitle": "Conta atualizada!",
       "upgradedDescription": "Bem-vindo! Você agora tem acesso completo ao Mundo Tango."
     }
+  },
+  "home": {
+    "title": "Bem-vindo ao Mundo Tango",
+    "subtitle": "Conecte-se com a comunidade global do tango",
+    "cta": "Começar"
+  },
+  "events": {
+    "title": "Eventos de Tango",
+    "subtitle": "Descubra milongas, festivais e workshops",
+    "filterByCity": "Filtrar por cidade",
+    "filterByType": "Filtrar por tipo",
+    "noEvents": "Nenhum evento encontrado"
+  },
+  "cities": {
+    "title": "Cidades de Tango",
+    "subtitle": "Explore comunidades de tango pelo mundo",
+    "members": "membros",
+    "events": "eventos",
+    "viewCity": "Ver Cidade"
+  },
+  "groups": {
+    "title": "Grupos de Tango",
+    "subtitle": "Junte-se a comunidades locais e de interesse",
+    "join": "Entrar no Grupo",
+    "leave": "Sair do Grupo",
+    "members": "Membros",
+    "posts": "Publicações"
+  },
+  "profile": {
+    "title": "Perfil",
+    "editProfile": "Editar Perfil",
+    "followers": "Seguidores",
+    "following": "Seguindo",
+    "posts": "Publicações",
+    "about": "Sobre"
   },
   "signup": {
     "title": "Criar Conta",

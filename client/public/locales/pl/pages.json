@@ -1,291 +1,656 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "Logowanie",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Zaloguj się - Mundo Tango",
+      "description": "Zaloguj się do swojego konta Mundo Tango, aby połączyć się ze światową społecznością tanga, odkrywać wydarzenia i dzielić się swoją pasją do argentyńskiego tanga."
     },
-    "badge": "Welcome Back",
+    "badge": "Witamy ponownie",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Twoja podróż z tangiem trwa",
+      "paragraph": "Zaloguj się, aby połączyć się z tancerzami na całym świecie, odkrywać wydarzenia i dzielić się swoją pasją"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "tancerzy",
+      "events": "wydarzeń"
     },
     "form": {
       "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "password": "Hasło",
+      "signIn": "Zaloguj się",
+      "signingIn": "Logowanie...",
+      "forgotPassword": "Zapomniałeś hasła?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Nie masz konta?",
+    "createAccount": "Utwórz teraz",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Witamy ponownie!",
+      "successDescription": "Pomyślnie się zalogowałeś.",
+      "errorTitle": "Błąd logowania",
+      "errorDescription": "Nieprawidłowe dane logowania",
+      "verificationRequired": {
+        "title": "Wymagana weryfikacja email",
+        "description": "Sprawdź swoją skrzynkę pocztową i potwierdź swój email."
+      },
+      "upgradedTitle": "Konto zaktualizowane!",
+      "upgradedDescription": "Witamy! Masz teraz pełny dostęp do Mundo Tango."
+    }
+  },
+  "register": {
+    "pageName": "Rejestracja",
+    "seo": {
+      "title": "Dołącz do Mundo Tango - Utwórz konto",
+      "description": "Utwórz konto Mundo Tango i dołącz do światowej społeczności argentyńskiego tanga. Łącz się z tancerzami, odkrywaj wydarzenia i dziel się swoją pasją do tanga."
+    },
+    "badge": {
+      "welcomeFamily": "Witamy w rodzinie",
+      "beginJourney": "Rozpocznij swoją podróż",
+      "joinCommunity": "Dołącz do społeczności"
+    },
+    "hero": {
+      "youreIn": "Jesteś w grze!",
+      "joinMundoTango": "Dołącz do Mundo Tango",
+      "description": "Łącz się z tancerzami na całym świecie, odkrywaj milongi i zanurz się w namiętnym świecie argentyńskiego tanga",
+      "waitlistDescription": "Witamy w społeczności Mundo Tango. Przygotowujemy Twoje konto i wkrótce Cię powiadomimy!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ tancerzy",
+      "events": "{{count}}+ wydarzeń",
+      "cities": "{{count}} miast"
+    },
+    "form": {
+      "fullName": "Imię i nazwisko",
+      "fullNamePlaceholder": "Maria Rodriguez",
+      "email": "Email",
+      "emailPlaceholder": "maria@example.com",
+      "username": "Nazwa użytkownika",
+      "usernamePlaceholder": "maria_tango",
+      "password": "Hasło",
+      "confirmPassword": "Potwierdź hasło",
+      "inviteOnlyNotice": "Rejestracja jest obecnie tylko na zaproszenie. Wypełnij formularz, aby dołączyć do listy oczekujących, a powiadomimy Cię, gdy Twoje konto będzie gotowe.",
+      "acceptTermsPrefix": "Akceptuję",
+      "termsAndConditions": "Regulamin"
+    },
+    "validation": {
+      "emailTaken": "Ten email jest już zarejestrowany",
+      "emailAvailable": "Email dostępny!",
+      "usernameTaken": "Nazwa zajęta. Spróbuj {{suggestion}}",
+      "usernameAvailable": "Nazwa dostępna!",
+      "passwordsMatch": "Hasła pasują",
+      "passwordsDontMatch": "Hasła nie pasują"
+    },
+    "passwordStrength": {
+      "weak": "Słabe",
+      "medium": "Średnie",
+      "strong": "Silne",
+      "veryStrong": "Bardzo silne"
+    },
+    "inviteCode": {
+      "label": "Masz kod zaproszenia? (Opcjonalnie)",
+      "placeholder": "Wpisz kod, aby uzyskać natychmiastowy dostęp",
+      "accepted": "Kod zaakceptowany! Twoje konto zostanie natychmiast aktywowane.",
+      "noWorries": "Nie martw się! Wypełnij poniższy formularz, aby dołączyć do listy oczekujących."
+    },
+    "waitlist": {
+      "welcomeUser": "Witaj, {{name}}!",
+      "defaultName": "Tancerzu",
+      "onTheList": "Jesteś na liście. Wyślemy email na",
+      "whenReady": "gdy Twoje konto będzie gotowe.",
+      "helpUsGrow": "Czekając, pomóż nam się rozwijać",
+      "volunteerWithUs": "Zostań wolontariuszem",
+      "supportMundoTango": "Wesprzyj Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Tworzenie konta...",
+      "joining": "Dołączanie...",
+      "createAccount": "Utwórz konto",
+      "joinMundoTango": "Dołącz do Mundo Tango"
+    },
+    "alreadyHaveAccount": "Masz już konto?",
+    "signIn": "Zaloguj się",
+    "toast": {
+      "invalidCode": {
+        "title": "Nieprawidłowy kod",
+        "description": "Wprowadź prawidłowy 6-cyfrowy kod weryfikacyjny."
+      },
+      "verified": {
+        "title": "Email zweryfikowany!",
+        "description": "Witamy w Mundo Tango! Rozpoczynamy rejestrację..."
+      },
+      "verifyError": {
+        "title": "Weryfikacja nie powiodła się",
+        "description": "Nieprawidłowy lub wygasły kod. Spróbuj ponownie."
+      },
+      "error": {
+        "title": "Błąd",
+        "description": "Nie udało się zweryfikować emaila. Spróbuj ponownie."
+      },
+      "tooMany": {
+        "title": "Zbyt wiele prób",
+        "description": "Poczekaj kilka minut przed ponowną próbą."
+      },
+      "codeSent": {
+        "title": "Kod wysłany!",
+        "description": "Sprawdź skrzynkę odbiorczą, aby uzyskać nowy kod."
+      },
+      "resendError": {
+        "description": "Nie udało się wysłać kodu. Spróbuj ponownie."
+      },
+      "termsRequired": {
+        "title": "Wymagany regulamin",
+        "description": "Zaakceptuj Regulamin"
+      },
+      "passwordMismatch": {
+        "title": "Hasła nie pasują",
+        "description": "Upewnij się, że oba hasła są identyczne"
+      },
+      "weakPassword": {
+        "title": "Słabe hasło",
+        "description": "Wybierz silniejsze hasło"
+      },
+      "checkEmail": {
+        "title": "Sprawdź email",
+        "description": "Wysłaliśmy 6-cyfrowy kod weryfikacyjny. Sprawdź skrzynkę odbiorczą."
+      },
+      "registrationFailed": {
+        "title": "Rejestracja nie powiodła się"
+      },
+      "signupFailed": {
+        "title": "Nie udało się zakończyć rejestracji"
+      },
+      "tryAgain": "Spróbuj ponownie"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Witamy",
+      "seoTitle": "Witamy w Mundo Tango",
+      "seoDescription": "Rozpocznij swoją podróż z tangiem w Mundo Tango",
+      "badge": "Szybka konfiguracja",
+      "title": "Witamy w Mundo Tango",
+      "subtitle": "Skonfigurujmy Twój profil, abyś mógł połączyć się ze światową społecznością tanga",
+      "duration": "Zajmie około 2 minuty",
+      "stepIndicator": "Krok {{current}} z {{total}}",
+      "getStarted": "Rozpocznij",
+      "profileTitle": "Twoja podróż z tangiem się zaczyna",
+      "profileSubtitle": "Opowiedz nam trochę o sobie",
+      "features": {
+        "city": {
+          "title": "Wybierz swoje miasto",
+          "description": "Połącz się z lokalną społecznością tanga"
+        },
+        "roles": {
+          "title": "Powiedz nam o swoich rolach",
+          "description": "Tancerz, nauczyciel, DJ, organizator, czy wszystko naraz?"
+        },
+        "events": {
+          "title": "Odkrywaj wydarzenia",
+          "description": "Znajdź milongi, zajęcia i festiwale w pobliżu"
+        },
+        "journey": {
+          "title": "Podziel się swoją drogą",
+          "description": "Połącz się z tancerzami na Twoim poziomie"
+        },
+        "facebook": {
+          "title": "Połącz z Facebookiem",
+          "description": "Połącz swój profil Facebook, aby znaleźć znajomych w społeczności"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "Połączenie społecznościowe",
+      "seoTitle": "Połącz swój świat społecznościowy - Mundo Tango",
+      "seoDescription": "Połącz swoje profile społecznościowe, aby znaleźć przyjaciół w społeczności tanga.",
+      "step": "Krok 2 z 6",
+      "title": "Połącz swój świat społecznościowy",
+      "quote": "\"Wielu tancerzy tanga już zna się przez Facebooka. Łącząc swój profil, pokażemy Ci, którzy tancerze z Twojej sieci są już tutaj - ułatwiając znajdowanie znajomych twarzy na milongach i budowanie głębszych więzi.\"",
+      "cardTitle": "Znajdź przyjaciół",
+      "cardDescription": "Twój Facebook pomoże nam połączyć Cię z tancerzami, których możesz już znać.",
+      "facebookLabel": "Link do profilu Facebook (Opcjonalnie)",
+      "facebookPlaceholder": "https://www.facebook.com/twoj.profil",
+      "helperText": "Używamy tego jako mostu do innych społeczności i do znajdowania znanych Ci tancerzy.",
+      "toast": {
+        "errorTitle": "Błąd",
+        "errorDescription": "Nie udało się zapisać informacji o profilu"
+      }
+    },
+    "navigation": {
+      "back": "Wstecz",
+      "next": "Dalej",
+      "skip": "Pomiń",
+      "finish": "Zakończ",
+      "saving": "Zapisywanie...",
+      "continue": "Kontynuuj"
+    },
+    "city": {
+      "pageTitle": "Wybór miasta",
+      "seoTitle": "Wybierz miasto - Mundo Tango",
+      "seoDescription": "Wybierz swoje miasto, aby połączyć się z lokalnymi tancerzami tanga",
+      "step": "Krok 1 z 6",
+      "title": "Gdzie tańczysz?",
+      "subtitle": "Połącz się z tancerzami w Twojej okolicy",
+      "cardTitle": "Twoje miasto",
+      "cardDescription": "Pomoże nam to pokazać lokalne wydarzenia i tancerzy",
+      "searchLabel": "Wyszukaj swoje miasto",
+      "searchPlaceholder": "Wpisz nazwę miasta...",
+      "eventSite": {
+        "help": "Wybierz z popularnych miejsc tanga"
+      },
+      "errors": {
+        "required": "Miasto jest wymagane",
+        "selectCity": "Wybierz swoje miasto"
+      },
+      "toast": {
+        "sourceAdded": "Źródło dodane!",
+        "submittedForReview": "Przesłano do weryfikacji",
+        "trackingEvents": "Rozpoczniemy śledzenie wydarzeń z tej strony",
+        "thankYou": "Dziękujemy! Twoja sugestia została przesłana do weryfikacji.",
+        "errorTitle": "Błąd",
+        "suggestionFailed": "Nie udało się przesłać sugestii",
+        "saveFailed": "Nie udało się zapisać miast"
+      }
+    },
+    "photo": {
+      "pageTitle": "Przesyłanie zdjęcia",
+      "seoTitle": "Dodaj zdjęcie profilowe - Mundo Tango",
+      "seoDescription": "Prześlij swoje zdjęcie profilowe",
+      "step": "Krok 3 z 6",
+      "title": "Dodaj zdjęcie profilowe",
+      "subtitle": "Pomóż innym rozpoznać Cię w społeczności",
+      "cardTitle": "Twoje zdjęcie profilowe",
+      "cardDescription": "Pomóż innym Cię rozpoznać (możesz pominąć ten krok)",
+      "previewAlt": "Podgląd profilu",
+      "dropHere": "Upuść zdjęcie tutaj",
+      "or": "lub",
+      "browseFiles": "Przeglądaj pliki",
+      "fileTypes": "PNG, JPG do 5MB",
+      "photoSelected": "Zdjęcie wybrane!",
+      "uploading": "Przesyłanie...",
+      "errors": {
+        "invalidFile": "Nieprawidłowy plik",
+        "selectImage": "Wybierz plik obrazu",
+        "fileTooLarge": "Plik za duży",
+        "sizeLimit": "Wybierz obraz do 5MB",
+        "uploadFailed": "Przesyłanie nie powiodło się",
+        "tryAgain": "Nie udało się przesłać zdjęcia. Spróbuj ponownie.",
+        "skipFailed": "Nie udało się pominąć. Spróbuj ponownie."
+      }
+    },
+    "languages": {
+      "pageTitle": "Języki",
+      "seoTitle": "Twoje języki - Mundo Tango",
+      "seoDescription": "Powiedz nam, jakimi językami mówisz",
+      "step": "Krok 5 z 6",
+      "title": "Jakimi językami mówisz?",
+      "subtitle": "Połącz się z tancerzami w Twoim języku",
+      "cardTitle": "Twoje języki",
+      "cardDescription": "Wybierz główny język i dodatkowe języki, którymi mówisz",
+      "primaryLabel": "Język główny",
+      "primaryHint": "To również ustawi język wyświetlania strony",
+      "primaryPlaceholder": "Wybierz język główny",
+      "additionalLabel": "Dodatkowe języki (Opcjonalnie)",
+      "errors": {
+        "required": "Język główny jest wymagany",
+        "selectPrimary": "Wybierz język główny",
+        "saveFailed": "Nie udało się zapisać języków",
+        "saveFailedTitle": "Błąd zapisu języków"
+      }
+    },
+    "roles": {
+      "pageTitle": "Role w tangu",
+      "seoTitle": "Twoje role w tangu - Mundo Tango",
+      "seoDescription": "Opowiedz nam o swojej drodze z tangiem",
+      "step": "Krok 2 z 6",
+      "title": "Jakie role pełnisz?",
+      "subtitle": "Wybierz wszystkie, które Cię dotyczą",
+      "cardTitle": "Twoja tożsamość tanga",
+      "cardDescription": "Pomóż innym zrozumieć, jak uczestniczysz w świecie tanga"
+    },
+    "experience": {
+      "pageTitle": "Doświadczenie taneczne",
+      "seoTitle": "Twoje doświadczenie taneczne - Mundo Tango",
+      "seoDescription": "Podziel się swoim poziomem doświadczenia tanecznego",
+      "step": "Krok 4 z 6",
+      "title": "Twoje doświadczenie taneczne",
+      "subtitle": "Pomóż nam połączyć Cię z odpowiednimi tancerzami"
+    },
+    "hobbies": {
+      "pageTitle": "Zainteresowania",
+      "seoTitle": "Twoje zainteresowania - Mundo Tango",
+      "seoDescription": "Opowiedz nam o swoich zainteresowaniach",
+      "step": "Krok 6 z 6",
+      "title": "Jakie masz zainteresowania?",
+      "subtitle": "Wybierz tematy, które Cię interesują",
+      "helpText": "Wybierz co najmniej 3 zainteresowania, aby spersonalizować kanał",
+      "selectedCount": "{{count}} wybranych",
+      "finishing": "Kończenie...",
+      "completeSetup": "Zakończ konfigurację",
+      "searchPlaceholder": "Szukaj społeczności lub dodaj nową...",
+      "categories": {
+        "fitness": { "label": "Fitness i sport" },
+        "tech": { "label": "Technologia i innowacje" },
+        "spirituality": { "label": "Duchowość i rozwój" },
+        "yoga": { "label": "Joga i wellness" },
+        "music": { "label": "Muzyka" },
+        "photography": { "label": "Fotografia i wideo" },
+        "art": { "label": "Sztuka i kreatywność" },
+        "reading": { "label": "Czytanie i pisanie" },
+        "travel": { "label": "Podróże i przygody" },
+        "cooking": { "label": "Gotowanie i jedzenie" },
+        "wine": { "label": "Wino i napoje" },
+        "gaming": { "label": "Gry" },
+        "outdoors": { "label": "Aktywności na świeżym powietrzu" },
+        "snow": { "label": "Sporty zimowe" },
+        "cycling": { "label": "Kolarstwo" },
+        "water": { "label": "Sporty wodne" },
+        "nature": { "label": "Przyroda i ogrodnictwo" },
+        "movies": { "label": "Filmy i rozrywka" },
+        "pets": { "label": "Zwierzęta" },
+        "social": { "label": "Społeczność" }
+      }
+    },
+    "tour": {
+      "pageTitle": "Wycieczka",
+      "seoTitle": "Odkryj Mundo Tango",
+      "seoDescription": "Dowiedz się, jak korzystać z Mundo Tango",
+      "skipTour": "Pomiń wycieczkę",
+      "finish": "Zakończ wycieczkę",
+      "steps": {
+        "feed": "Odkrywaj posty społeczności tanga",
+        "events": "Znajdź milongi, zajęcia i festiwale",
+        "groups": "Dołączaj do grup według miasta lub zainteresowań",
+        "messages": "Rozmawiaj bezpośrednio z innymi tancerzami",
+        "profile": "Dostosuj swój profil tanga",
+        "createPost": "Dziel się swoimi momentami tanga"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Ulepsz swoje doświadczenie",
+        "subtitle": "Wykorzystaj Mundo Tango w pełni",
+        "limitedOffer": "Oferta limitowana",
+        "getStarted": "Rozpocznij",
+        "features": {
+          "connect": {
+            "title": "Połączenia",
+            "description": "Pisz bezpośrednio do każdego tancerza"
+          },
+          "visibility": {
+            "title": "Widoczność",
+            "description": "Pojawiaj się na górze wyników wyszukiwania"
+          },
+          "events": {
+            "title": "Wydarzenia",
+            "description": "Priorytetowy dostęp do popularnych wydarzeń"
+          },
+          "grow": {
+            "title": "Rozwój",
+            "description": "Zaawansowana analityka profilu"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Ekskluzywne funkcje premium"
+          }
+        }
+      }
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Strona główna",
+    "pageLayoutTitle": "Gdzie tango spotyka społeczność",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Połącz się ze światową społecznością tanga",
+      "description": "Dołącz do tysięcy tancerzy tanga na całym świecie. Odkrywaj wydarzenia, znajdź nauczycieli, łącz się z tancerzami i zanurz się w namiętnym świecie argentyńskiego tanga."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Witamy w światowej społeczności tanga",
+      "heading": "Gdzie tango spotyka społeczność",
+      "paragraph": "Dziel się wspomnieniami, znajdź wydarzenia i pomóż nam budować przyszłość technologii tanga. Dołącz do tysięcy pasjonatów łączących się na całym świecie.",
+      "getStarted": "Rozpocznij za darmo",
+      "volunteer": "Zostań wolontariuszem MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Jak to działa",
+      "description": "Rozpocznij swoją podróż z tangiem w trzech prostych krokach",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Utwórz swój profil",
+        "description": "Dołącz za darmo i opowiedz nam o swojej podróży z tangiem, poziomie doświadczenia i preferencjach tanecznych"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Odkrywaj i łącz się",
+        "description": "Znajdź wydarzenia, nauczycieli i miejsca w pobliżu. Połącz się z tancerzami, którzy dzielą Twoją pasję"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Tańcz i rozwijaj się",
+        "description": "Uczestnicz w wydarzeniach, bierz lekcje, zawieraj przyjaźnie i stań się częścią globalnej społeczności tanga"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Wszystko, czego potrzebujesz",
+      "description": "Łącz się, odkrywaj i rozwijaj swoją podróż z tangiem dzięki potężnym funkcjom",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Społeczność",
+        "heading": "Łącz się z tancerzami na całym świecie",
+        "description": "Dołącz do tętniącej życiem globalnej społeczności entuzjastów tanga. Łącz się z tancerzami, nauczycielami i organizatorami od Buenos Aires po Tokio.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Obserwuj tancerzy i buduj swoją sieć",
+          "groups": "Dołączaj do grup według zainteresowań i lokalizacji",
+          "messaging": "Wiadomości w czasie rzeczywistym i funkcje czatu",
+          "discover": "Odkrywaj tancerzy odwiedzających Twoje miasto"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Wydarzenia",
+        "heading": "Odkrywaj wydarzenia wszędzie",
+        "description": "Nigdy nie przegap milongi, festiwalu czy warsztatu. Nasza platforma łączy Cię z tysiącami wydarzeń tanga na całym świecie.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Kompleksowy kalendarz wydarzeń",
+          "rsvp": "RSVP i rezerwacja biletów",
+          "notifications": "Powiadomienia i przypomnienia o wydarzeniach",
+          "map": "Interaktywna mapa miejsc"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Transmisje na żywo",
+          "description": "Oglądaj milongi na całym świecie w czasie rzeczywistym"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Biblioteka muzyki",
+          "description": "Wyselekcjonowane playlisty tanga i przewodniki"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Zweryfikowani nauczyciele",
+          "description": "Ucz się od certyfikowanych instruktorów"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Planer podróży",
+          "description": "Planuj podróże i znajdź gospodarzy globalnie"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Co mówią tancerze",
+      "description": "Dołącz do tysięcy zadowolonych tancerzy na całym świecie",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "Buenos Aires, Argentyna",
+          "text": "Mundo Tango pomogło mi znaleźć moją taneczną rodzinę w nowym mieście. Społeczność jest ciepła, przyjazna i naprawdę pasjonująca się tangiem."
         },
         "testimonial2": {
           "name": "James Chen",
           "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "text": "Odkryłem niesamowite milongi i warsztaty dzięki tej platformie. Stała się niezbędna w mojej podróży z tangiem."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moskwa, Rosja",
+          "text": "Katalog nauczycieli pomógł mi znaleźć niesamowitych instruktorów. Moje tańczenie znacznie się poprawiło!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Często zadawane pytania",
+      "description": "Wszystko, co musisz wiedzieć o Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Czym jest Mundo Tango?",
+          "answer": "Mundo Tango to globalna platforma łącząca tancerzy, nauczycieli i organizatorów tanga. Pomagamy odkrywać wydarzenia, znajdować partnerów do tańca, uczyć się od najlepszych instruktorów i zanurzyć się w tętniącej życiem społeczności tanga na całym świecie."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Czy Mundo Tango jest darmowe?",
+          "answer": "Tak! Oferujemy darmowy plan, który obejmuje podstawowe tworzenie profilu, odkrywanie wydarzeń i wiadomości. Funkcje premium, takie jak nieograniczone wiadomości, dopasowywanie partnerów AI i priorytetowe powiadomienia o wydarzeniach, są dostępne w subskrypcji Pro."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Jak znaleźć wydarzenia tanga w mojej okolicy?",
+          "answer": "Po prostu użyj naszego Kalendarza wydarzeń lub funkcji Wyszukiwania, aby filtrować według miasta, daty i typu wydarzenia. Możesz odkrywać milongi, festiwale, warsztaty i praktyki odbywające się w Twojej okolicy lub gdziekolwiek na świecie."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Czy mogę łączyć się z innymi tancerzami?",
+          "answer": "Oczywiście! Obserwuj tancerzy, dołączaj do grup, wysyłaj zaproszenia do znajomych i rozmawiaj ze społecznością. Nasza platforma została zaprojektowana, aby wspierać autentyczne połączenia w świecie tanga."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Jak znaleźć nauczycieli tanga?",
+          "answer": "Odwiedź nasz Katalog nauczycieli, aby przeglądać zweryfikowanych instruktorów na całym świecie. Filtruj według lokalizacji, specjalizacji i poziomu doświadczenia. Czytaj recenzje od innych uczniów i rezerwuj prywatne lekcje bezpośrednio przez platformę."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Co wyróżnia Mundo Tango?",
+          "answer": "Zostaliśmy stworzeni przez tancerzy tanga, dla tancerzy tanga. Koncentrujemy się na autentycznym budowaniu społeczności, wysokiej jakości kuracji wydarzeń i łączeniu Cię z globalną rodziną tanga - to nie jest tylko kolejna sieć społecznościowa."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Gotowy dołączyć do społeczności?",
+      "description": "Utwórz darmowe konto już dziś i zacznij łączyć się z pasjonatami tanga na całym świecie. Karta kredytowa nie jest wymagana.",
+      "button": "Dołącz do Mundo Tango za darmo",
+      "freeForever": "Zawsze darmowe",
+      "noCreditCard": "Bez karty kredytowej",
+      "cancelAnytime": "Anuluj w dowolnym momencie"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Aktualności",
+    "description": "Bądź na bieżąco z najnowszymi wiadomościami ze społeczności tanga",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Wszystkie posty",
+      "following": "Obserwowani",
+      "popular": "Popularne",
+      "recent": "Najnowsze"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "O czym myślisz?",
+    "noPost": "Brak postów do wyświetlenia"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Wydarzenia",
+    "description": "Odkryj wydarzenia tanga w Twojej okolicy",
+    "upcoming": "Nadchodzące wydarzenia",
+    "past": "Przeszłe wydarzenia",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "Wszystkie wydarzenia",
+      "milongas": "Milongi",
+      "workshops": "Warsztaty",
+      "festivals": "Festiwale",
+      "classes": "Zajęcia"
     },
-    "noEvents": "No events found"
+    "noEvents": "Nie znaleziono wydarzeń"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Profil",
+    "description": "Zobacz i edytuj swój profil",
+    "editProfile": "Edytuj profil",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Posty",
+      "photos": "Zdjęcia",
+      "videos": "Filmy",
+      "events": "Wydarzenia",
+      "friends": "Znajomi"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Posty",
+      "followers": "Obserwujący",
+      "following": "Obserwowani",
+      "events": "Uczestnictwo w wydarzeniach"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Wiadomości",
+    "description": "Rozmawiaj ze swoimi kontaktami tanga",
+    "newMessage": "Nowa wiadomość",
+    "searchConversations": "Szukaj rozmów",
+    "noMessages": "Brak wiadomości",
+    "startConversation": "Rozpocznij rozmowę"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Nauczyciele tanga",
+    "description": "Znajdź i połącz się z nauczycielami tanga",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Wszyscy nauczyciele",
+      "featured": "Wyróżnieni",
+      "nearby": "W pobliżu"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Zobacz profil",
+    "bookLesson": "Zarezerwuj lekcję"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Miejsca tanga",
+    "description": "Odkryj miejsca tanga na całym świecie",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Wszystkie miejsca",
+      "milongas": "Milongi",
+      "schools": "Szkoły tańca",
+      "theaters": "Teatry"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Uzyskaj wskazówki"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Ustawienia",
+    "description": "Zarządzaj ustawieniami swojego konta",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Ustawienia konta",
+      "profile": "Profil",
+      "privacy": "Prywatność",
+      "notifications": "Powiadomienia",
+      "security": "Bezpieczeństwo",
+      "billing": "Rozliczenia",
+      "preferences": "Preferencje"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Panel Life CEO",
+    "description": "Twój osobisty asystent AI do zarządzania życiem",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Agent zdrowia",
+      "fitness": "Agent fitness",
+      "nutrition": "Agent żywienia",
+      "finance": "Agent finansów",
+      "career": "Agent kariery",
+      "productivity": "Agent produktywności",
+      "relationships": "Agent relacji",
+      "learning": "Agent nauki"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Rynek",
+    "description": "Kupuj i sprzedawaj przedmioty związane z tangiem",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Buty taneczne",
+      "clothing": "Odzież",
+      "music": "Muzyka",
+      "accessories": "Akcesoria",
+      "other": "Inne"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Panel administracyjny",
+    "description": "Administracja i zarządzanie platformą",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Przegląd",
+      "users": "Użytkownicy",
+      "content": "Treść",
+      "reports": "Raporty",
+      "analytics": "Analityka",
+      "settings": "Ustawienia"
     }
   }
 }

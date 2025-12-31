@@ -442,12 +442,41 @@
     "about": "Sobre"
   },
   "login": {
-    "title": "Entrar",
-    "email": "Email",
-    "password": "Senha",
-    "forgotPassword": "Esqueceu a senha?",
+    "pageName": "Entrar",
+    "seo": {
+      "title": "Entrar - Mundo Tango",
+      "description": "Acesse sua conta no Mundo Tango para se conectar com a comunidade global do tango, descobrir eventos e compartilhar sua paixão pelo tango argentino."
+    },
+    "badge": "Bem-vindo de volta",
+    "hero": {
+      "heading": "Sua jornada no tango continua",
+      "paragraph": "Entre para se conectar com dançarinos do mundo todo, descobrir eventos e compartilhar sua paixão"
+    },
+    "stats": {
+      "dancers": "dançarinos",
+      "events": "eventos"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Senha",
+      "signIn": "Entrar",
+      "signingIn": "Entrando...",
+      "forgotPassword": "Esqueceu a senha?"
+    },
     "noAccount": "Não tem uma conta?",
-    "signUp": "Cadastre-se"
+    "createAccount": "Crie uma agora",
+    "toast": {
+      "successTitle": "Bem-vindo de volta!",
+      "successDescription": "Você entrou com sucesso.",
+      "errorTitle": "Falha ao entrar",
+      "errorDescription": "Credenciais inválidas",
+      "verificationRequired": {
+        "title": "Verificação de email necessária",
+        "description": "Por favor, verifique sua caixa de entrada e confirme seu email."
+      },
+      "upgradedTitle": "Conta atualizada!",
+      "upgradedDescription": "Bem-vindo! Você agora tem acesso completo ao Mundo Tango."
+    }
   },
   "signup": {
     "title": "Criar Conta",
