@@ -1,4 +1,4 @@
-import { HelpCircle, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useMrBlue } from '@/contexts/MrBlueContext';
 
@@ -12,16 +12,6 @@ export function FeedbackButton() {
 
   return (
     <div className="flex gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => openChat()}
-        className="gap-1.5"
-        data-testid="button-help"
-      >
-        <HelpCircle className="h-3.5 w-3.5" />
-        Help
-      </Button>
       <Button
         variant="outline"
         size="sm"
