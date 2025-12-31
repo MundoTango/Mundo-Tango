@@ -48,9 +48,9 @@
       "waitlistDescription": "Únete a nuestra lista de espera y sé el primero en saber cuando lancemos"
     },
     "stats": {
-      "dancers": "bailarines",
-      "events": "eventos",
-      "cities": "ciudades"
+      "dancers": "{{count}}+ bailarines",
+      "events": "{{count}}+ eventos",
+      "cities": "{{count}} ciudades"
     },
     "form": {
       "fullName": "Nombre Completo",
@@ -60,13 +60,16 @@
       "confirmPassword": "Confirmar Contraseña",
       "fullNamePlaceholder": "Tu nombre completo",
       "emailPlaceholder": "tu@email.com",
-      "usernamePlaceholder": "tu_usuario"
+      "usernamePlaceholder": "tu_usuario",
+      "inviteOnlyNotice": "El registro es actualmente solo por invitación. Completa este formulario para unirte a nuestra lista de espera y te notificaremos cuando tu cuenta esté lista.",
+      "acceptTermsPrefix": "Acepto los",
+      "termsAndConditions": "Términos y Condiciones"
     },
     "validation": {
       "emailTaken": "Este correo ya está registrado",
-      "emailAvailable": "Correo disponible",
-      "usernameTaken": "Usuario no disponible. Prueba: {{suggestion}}",
-      "usernameAvailable": "Usuario disponible",
+      "emailAvailable": "¡Correo disponible!",
+      "usernameTaken": "Usuario no disponible. Prueba {{suggestion}}",
+      "usernameAvailable": "¡Usuario disponible!",
       "passwordsMatch": "Las contraseñas coinciden",
       "passwordsDontMatch": "Las contraseñas no coinciden"
     },
@@ -77,26 +80,27 @@
       "veryStrong": "Muy Fuerte"
     },
     "inviteCode": {
-      "label": "Código de Invitación",
-      "placeholder": "Ingresa tu código",
-      "accepted": "¡Código aceptado!",
-      "noWorries": "¿No tienes código? No te preocupes, únete a la lista de espera"
+      "label": "¿Tienes un código de invitación? (Opcional)",
+      "placeholder": "Ingresa tu código de invitación para acceso inmediato",
+      "accepted": "¡Código aceptado! Tu cuenta se activará inmediatamente.",
+      "noWorries": "¡No te preocupes! Completa el formulario a continuación para unirte a nuestra lista de espera."
     },
     "inviteOnlyNotice": "Actualmente solo por invitación. Únete a la lista de espera.",
     "waitlist": {
       "welcomeUser": "¡Bienvenido, {{name}}!",
-      "onTheList": "Estás en la lista de espera",
-      "whenReady": "Te notificaremos cuando tu cuenta esté lista",
-      "helpUsGrow": "Ayúdanos a Crecer",
-      "volunteerWithUs": "Sé Voluntario",
+      "defaultName": "Bailarín",
+      "onTheList": "Estás en la lista. Te enviaremos un correo a",
+      "whenReady": "cuando tu cuenta esté lista.",
+      "helpUsGrow": "Mientras esperas, ayúdanos a crecer",
+      "volunteerWithUs": "Sé voluntario con nosotros",
       "supportMundoTango": "Apoya Mundo Tango"
     },
     "terms": {
       "acceptTermsPrefix": "Acepto los",
       "termsAndConditions": "Términos y Condiciones"
     },
-    "buttons": {
-      "creatingAccount": "Creando cuenta...",
+    "button": {
+      "creatingAccount": "Creando tu cuenta...",
       "joining": "Uniéndose...",
       "createAccount": "Crear Cuenta",
       "joinMundoTango": "Unirse a Mundo Tango"
@@ -110,11 +114,55 @@
       "startTalentMatch": "Iniciar Talent Match"
     },
     "toast": {
-      "termsRequired": "Debes aceptar los términos y condiciones",
-      "passwordMismatch": "Las contraseñas no coinciden",
-      "weakPassword": "La contraseña es muy débil",
-      "registrationFailed": "Error en el registro",
-      "signupFailed": "Error al registrarse",
+      "invalidCode": {
+        "title": "Código inválido",
+        "description": "Por favor ingresa un código de verificación de 6 dígitos válido."
+      },
+      "verified": {
+        "title": "¡Correo verificado!",
+        "description": "¡Bienvenido a Mundo Tango! Iniciando tu incorporación..."
+      },
+      "verifyError": {
+        "title": "Verificación fallida",
+        "description": "Código inválido o expirado. Por favor intenta de nuevo."
+      },
+      "error": {
+        "title": "Error",
+        "description": "Error al verificar el correo. Por favor intenta de nuevo."
+      },
+      "tooMany": {
+        "title": "Demasiadas solicitudes",
+        "description": "Por favor espera unos minutos antes de intentar de nuevo."
+      },
+      "codeSent": {
+        "title": "¡Código enviado!",
+        "description": "Por favor revisa tu bandeja de entrada para un nuevo código."
+      },
+      "resendError": {
+        "description": "Error al reenviar el código. Por favor intenta de nuevo."
+      },
+      "termsRequired": {
+        "title": "Términos requeridos",
+        "description": "Por favor acepta los Términos y Condiciones"
+      },
+      "passwordMismatch": {
+        "title": "Las contraseñas no coinciden",
+        "description": "Por favor asegúrate de que ambas contraseñas sean idénticas"
+      },
+      "weakPassword": {
+        "title": "Contraseña débil",
+        "description": "Por favor elige una contraseña más segura"
+      },
+      "checkEmail": {
+        "title": "Revisa tu correo",
+        "description": "Te enviamos un código de verificación de 6 dígitos. Por favor revisa tu bandeja de entrada."
+      },
+      "registrationFailed": {
+        "title": "Error en el registro"
+      },
+      "signupFailed": {
+        "title": "No se pudo completar el registro"
+      },
       "tryAgain": "Por favor intenta de nuevo"
     }
   },

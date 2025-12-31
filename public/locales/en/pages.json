@@ -1,4 +1,411 @@
 {
+  "register": {
+    "pageName": "Register",
+    "seo": {
+      "title": "Join Mundo Tango - Create Your Account",
+      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+    },
+    "badge": {
+      "welcomeFamily": "Welcome to the Family",
+      "beginJourney": "Begin Your Journey",
+      "joinCommunity": "Join the Community"
+    },
+    "hero": {
+      "youreIn": "You're In!",
+      "joinMundoTango": "Join Mundo Tango",
+      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
+      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ dancers",
+      "events": "{{count}}+ events",
+      "cities": "{{count}} cities"
+    },
+    "form": {
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Maria Rodriguez",
+      "email": "Email",
+      "emailPlaceholder": "maria@example.com",
+      "username": "Username",
+      "usernamePlaceholder": "maria_tango",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
+      "acceptTermsPrefix": "I accept the",
+      "termsAndConditions": "Terms & Conditions"
+    },
+    "validation": {
+      "emailTaken": "This email is already registered",
+      "emailAvailable": "Email available!",
+      "usernameTaken": "Username taken. Try {{suggestion}}",
+      "usernameAvailable": "Username available!",
+      "passwordsMatch": "Passwords match",
+      "passwordsDontMatch": "Passwords don't match"
+    },
+    "passwordStrength": {
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong",
+      "veryStrong": "Very Strong"
+    },
+    "inviteCode": {
+      "label": "Have an invite code? (Optional)",
+      "placeholder": "Enter your invite code for immediate access",
+      "accepted": "Code accepted! Your account will be activated immediately.",
+      "noWorries": "No worries! Complete the form below to join our waitlist."
+    },
+    "waitlist": {
+      "welcomeUser": "Welcome, {{name}}!",
+      "defaultName": "Dancer",
+      "onTheList": "You're on the list. We'll email you at",
+      "whenReady": "when your account is ready.",
+      "helpUsGrow": "While you wait, help us grow",
+      "volunteerWithUs": "Volunteer with us",
+      "supportMundoTango": "Support Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Creating your account...",
+      "joining": "Joining...",
+      "createAccount": "Create Account",
+      "joinMundoTango": "Join Mundo Tango"
+    },
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "toast": {
+      "invalidCode": {
+        "title": "Invalid code",
+        "description": "Please enter a valid 6-digit verification code."
+      },
+      "verified": {
+        "title": "Email verified!",
+        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+      },
+      "verifyError": {
+        "title": "Verification failed",
+        "description": "Invalid or expired code. Please try again."
+      },
+      "error": {
+        "title": "Error",
+        "description": "Failed to verify email. Please try again."
+      },
+      "tooMany": {
+        "title": "Too many requests",
+        "description": "Please wait a few minutes before trying again."
+      },
+      "codeSent": {
+        "title": "Code sent!",
+        "description": "Please check your inbox for a new code."
+      },
+      "resendError": {
+        "description": "Failed to resend code. Please try again."
+      },
+      "termsRequired": {
+        "title": "Terms required",
+        "description": "Please accept the Terms & Conditions"
+      },
+      "passwordMismatch": {
+        "title": "Passwords don't match",
+        "description": "Please ensure both passwords are identical"
+      },
+      "weakPassword": {
+        "title": "Weak password",
+        "description": "Please choose a stronger password"
+      },
+      "checkEmail": {
+        "title": "Check your email",
+        "description": "We sent you a 6-digit verification code. Please check your inbox."
+      },
+      "registrationFailed": {
+        "title": "Registration failed"
+      },
+      "signupFailed": {
+        "title": "Couldn't complete signup"
+      },
+      "tryAgain": "Please try again"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Welcome",
+      "seoTitle": "Welcome to Mundo Tango",
+      "seoDescription": "Start your tango journey with Mundo Tango",
+      "badge": "Quick Setup",
+      "title": "Welcome to Mundo Tango",
+      "subtitle": "Let's set up your profile so you can connect with the global tango community",
+      "duration": "Takes about 2 minutes",
+      "stepIndicator": "Step {{current}} of {{total}}",
+      "getStarted": "Get Started",
+      "profileTitle": "Your Tango Journey Begins",
+      "profileSubtitle": "Tell us a bit about yourself",
+      "features": {
+        "city": {
+          "title": "Choose Your City",
+          "description": "Connect with your local tango community"
+        },
+        "roles": {
+          "title": "Tell Us Your Roles",
+          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+        },
+        "events": {
+          "title": "Discover Events",
+          "description": "Find milongas, classes, and festivals near you"
+        },
+        "journey": {
+          "title": "Share Your Journey",
+          "description": "Connect with dancers at your level"
+        }
+      }
+    },
+    "city": {
+      "pageTitle": "City Selection",
+      "seoTitle": "Select Your City - Mundo Tango",
+      "seoDescription": "Choose your home city to connect with local tango dancers",
+      "step": "Step 1 of 6",
+      "title": "Where Do You Dance?",
+      "subtitle": "Connect with dancers in your area",
+      "cardTitle": "Your Home City",
+      "cardDescription": "This helps us show you local events and dancers",
+      "searchLabel": "Search for your city",
+      "searchPlaceholder": "Type your city name...",
+      "eventSite": {
+        "help": "Select from popular tango destinations"
+      },
+      "errors": {
+        "required": "City required",
+        "selectCity": "Please select your home city"
+      }
+    },
+    "photo": {
+      "pageTitle": "Photo Upload",
+      "seoTitle": "Add Profile Photo - Mundo Tango",
+      "seoDescription": "Upload your profile photo",
+      "step": "Step 3 of 6",
+      "title": "Add Your Profile Photo",
+      "subtitle": "Help others recognize you in the community",
+      "cardTitle": "Your Profile Photo",
+      "cardDescription": "Help others recognize you (you can skip this step)",
+      "previewAlt": "Profile preview",
+      "dropHere": "Drop your photo here",
+      "or": "or",
+      "browseFiles": "Browse Files",
+      "fileTypes": "PNG, JPG up to 5MB",
+      "photoSelected": "Photo selected!",
+      "uploading": "Uploading...",
+      "errors": {
+        "invalidFile": "Invalid file",
+        "selectImage": "Please select an image file",
+        "fileTooLarge": "File too large",
+        "sizeLimit": "Please select an image under 5MB",
+        "uploadFailed": "Upload failed",
+        "tryAgain": "Failed to upload photo. Please try again.",
+        "skipFailed": "Failed to skip. Please try again."
+      }
+    },
+    "languages": {
+      "pageTitle": "Languages",
+      "seoTitle": "Your Languages - Mundo Tango",
+      "seoDescription": "Tell us what languages you speak",
+      "step": "Step 5 of 6",
+      "title": "What Languages Do You Speak?",
+      "subtitle": "Connect with dancers in your language",
+      "cardTitle": "Your Languages",
+      "cardDescription": "Select your primary language and any additional languages you speak",
+      "primaryLabel": "Primary Language",
+      "primaryHint": "This will also set your site display language",
+      "primaryPlaceholder": "Select your primary language",
+      "additionalLabel": "Additional Languages (Optional)",
+      "errors": {
+        "required": "Primary language required",
+        "selectPrimary": "Please select your primary language",
+        "saveFailed": "Failed to save languages",
+        "saveFailedTitle": "Language Save Failed"
+      }
+    },
+    "roles": {
+      "pageTitle": "Tango Roles",
+      "seoTitle": "Your Tango Roles - Mundo Tango",
+      "seoDescription": "Tell us about your tango journey",
+      "step": "Step 2 of 6",
+      "title": "What Roles Do You Play?",
+      "subtitle": "Select all that apply to you",
+      "cardTitle": "Your Tango Identity",
+      "cardDescription": "Help others know how you participate in the tango world"
+    },
+    "experience": {
+      "pageTitle": "Dance Experience",
+      "seoTitle": "Your Dance Experience - Mundo Tango",
+      "seoDescription": "Share your dance experience level",
+      "step": "Step 4 of 6",
+      "title": "Your Dance Experience",
+      "subtitle": "Help us connect you with the right dancers"
+    },
+    "hobbies": {
+      "pageTitle": "Interests",
+      "seoTitle": "Your Interests - Mundo Tango",
+      "seoDescription": "Tell us about your interests",
+      "step": "Step 6 of 6",
+      "title": "What Are Your Interests?",
+      "subtitle": "Select topics that interest you",
+      "helpText": "Choose at least 3 interests to personalize your feed",
+      "selectedCount": "{{count}} selected",
+      "finishing": "Finishing...",
+      "completeSetup": "Complete Setup",
+      "success": {
+        "completeTitle": "Welcome to Mundo Tango!",
+        "completeDesc": "Your profile is ready. Start exploring!",
+        "waitlistTitle": "Profile Complete!",
+        "waitlistDesc": "We'll notify you when your account is activated"
+      },
+      "errors": {
+        "saveFailed": "Failed to save. Please try again."
+      }
+    },
+    "legal": {
+      "title": "Community Guidelines",
+      "subtitle": "Please review and accept our terms",
+      "legalDocsTitle": "Legal Documents",
+      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "termsOfService": {
+        "label": "I accept the Terms of Service",
+        "description": "Our terms govern your use of Mundo Tango",
+        "link": "Read Terms of Service"
+      },
+      "privacyPolicy": {
+        "label": "I accept the Privacy Policy",
+        "description": "How we handle your data",
+        "link": "Read Privacy Policy"
+      },
+      "cocTitle": "Community Code of Conduct",
+      "cocDescription": "Help us maintain a respectful community",
+      "coc": {
+        "respectful": {
+          "title": "Be Respectful",
+          "description": "Treat everyone with dignity and courtesy"
+        },
+        "inclusive": {
+          "title": "Be Inclusive",
+          "description": "Welcome dancers of all levels and backgrounds"
+        },
+        "authentic": {
+          "title": "Be Authentic",
+          "description": "Use your real identity and honest information"
+        },
+        "consent": {
+          "title": "Respect Consent",
+          "description": "Always ask before dancing and respect boundaries"
+        },
+        "noHarassment": {
+          "title": "No Harassment",
+          "description": "Zero tolerance for harassment or bullying"
+        },
+        "noSpam": {
+          "title": "No Spam",
+          "description": "Don't send unsolicited promotions"
+        },
+        "noDiscrimination": {
+          "title": "No Discrimination",
+          "description": "We don't tolerate discrimination of any kind"
+        },
+        "privacy": {
+          "title": "Protect Privacy",
+          "description": "Don't share others' information without consent"
+        },
+        "safety": {
+          "title": "Prioritize Safety",
+          "description": "Report any unsafe behavior immediately"
+        },
+        "laws": {
+          "title": "Follow Laws",
+          "description": "Comply with all applicable laws"
+        },
+        "report": {
+          "title": "Report Issues",
+          "description": "Help us by reporting violations"
+        },
+        "support": {
+          "title": "Support Each Other",
+          "description": "Help fellow dancers grow"
+        }
+      },
+      "acceptAll": "Accept All & Continue",
+      "accepting": "Accepting...",
+      "incompleteAlert": "Please accept all required terms",
+      "success": {
+        "title": "Welcome!",
+        "description": "You've accepted our community guidelines"
+      },
+      "errors": {
+        "failed": "Failed to save. Please try again."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Waitlist",
+      "seoTitle": "You're on the Waitlist - Mundo Tango",
+      "seoDescription": "Your account is pending activation",
+      "title": "You're on the Waitlist!",
+      "welcomeMessage": "Welcome, {{name}}!",
+      "defaultName": "Dancer",
+      "profileComplete": "Profile Complete",
+      "profileCompleteDesc": "Your profile is ready and waiting",
+      "emailNotice": "We'll email you at {{email}} when your account is ready",
+      "whenReady": "when your account is ready.",
+      "whileYouWait": "While you wait, help us grow:",
+      "volunteerButton": "Become a Volunteer",
+      "supportButton": "Support Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "Guided Tour",
+      "seoTitle": "Explore Mundo Tango",
+      "seoDescription": "Learn how to use Mundo Tango",
+      "skipTour": "Skip Tour",
+      "finish": "Finish Tour",
+      "steps": {
+        "feed": "Discover posts from the tango community",
+        "events": "Find milongas, classes, and festivals",
+        "groups": "Join groups for your city or interests",
+        "messages": "Connect directly with other dancers",
+        "profile": "Customize your tango profile",
+        "createPost": "Share your tango moments"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Upgrade Your Experience",
+        "subtitle": "Get the most out of Mundo Tango",
+        "limitedOffer": "Limited Time Offer",
+        "getStarted": "Get Started",
+        "features": {
+          "connect": {
+            "title": "Connect",
+            "description": "Message any dancer directly"
+          },
+          "visibility": {
+            "title": "Visibility",
+            "description": "Get featured in search results"
+          },
+          "events": {
+            "title": "Events",
+            "description": "Priority access to popular events"
+          },
+          "grow": {
+            "title": "Grow",
+            "description": "Advanced analytics for your profile"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Exclusive premium features"
+          }
+        }
+      }
+    },
+    "navigation": {
+      "back": "Back",
+      "next": "Next",
+      "skip": "Skip",
+      "finish": "Finish",
+      "saving": "Saving..."
+    }
+  },
   "login": {
     "pageName": "Login",
     "seo": {
