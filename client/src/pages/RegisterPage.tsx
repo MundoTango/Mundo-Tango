@@ -17,8 +17,8 @@ import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.j
 import { TalentMatchModal } from "@/components/TalentMatchModal";
 
 export default function RegisterPage() {
-  // Use ready flag to only render when translations are loaded
-  const { t, i18n, ready } = useTranslation(['pages', 'common']);
+  // Simple pattern - let react-i18next handle re-renders automatically
+  const { t } = useTranslation('pages');
   const [, navigate] = useLocation();
   
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
@@ -117,10 +117,6 @@ export default function RegisterPage() {
     }
   }, [email]);
   
-  // Don't render until translations are ready to avoid English fallbacks
-  if (!ready) {
-    return null;
-  }
   
   const getCsrfToken = () => {
     const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
@@ -130,8 +126,8 @@ export default function RegisterPage() {
   const handleVerify = async () => {
     if (!verificationCode || verificationCode.length !== 6) {
       toast({
-        title: t('pages:register.toast.invalidCode.title', 'Invalid code'),
-        description: t('pages:register.toast.invalidCode.description', 'Please enter a valid 6-digit verification code.'),
+        title: t('register.toast.invalidCode.title', 'Invalid code'),
+        description: t('register.toast.invalidCode.description', 'Please enter a valid 6-digit verification code.'),
         variant: "destructive",
       });
       return;
@@ -163,8 +159,8 @@ export default function RegisterPage() {
         }
         
         toast({
-          title: t('pages:register.toast.verified.title', 'Email verified!'),
-          description: t('pages:register.toast.verified.description', 'Welcome to Mundo Tango! Starting your onboarding...'),
+          title: t('register.toast.verified.title', 'Email verified!'),
+          description: t('register.toast.verified.description', 'Welcome to Mundo Tango! Starting your onboarding...'),
         });
         
         // Full page reload to /onboarding/welcome (modular flow) so AuthContext re-initializes with new token
@@ -172,15 +168,15 @@ export default function RegisterPage() {
       } else {
         console.error("[RegisterPage] Verify-email error - step:", data.step, "error:", data.error, "message:", data.message);
         toast({
-          title: t('pages:register.toast.verifyError.title', 'Verification failed'),
-          description: data.message || t('pages:register.toast.verifyError.description', 'Invalid or expired code. Please try again.'),
+          title: t('register.toast.verifyError.title', 'Verification failed'),
+          description: data.message || t('register.toast.verifyError.description', 'Invalid or expired code. Please try again.'),
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: t('pages:register.toast.error.title', 'Error'),
-        description: t('pages:register.toast.error.description', 'Failed to verify email. Please try again.'),
+        title: t('register.toast.error.title', 'Error'),
+        description: t('register.toast.error.description', 'Failed to verify email. Please try again.'),
         variant: "destructive",
       });
     } finally {
@@ -209,23 +205,23 @@ export default function RegisterPage() {
       
       if (response.status === 429) {
         toast({
-          title: t('pages:register.toast.tooMany.title', 'Too many requests'),
-          description: t('pages:register.toast.tooMany.description', 'Please wait a few minutes before trying again.'),
+          title: t('register.toast.tooMany.title', 'Too many requests'),
+          description: t('register.toast.tooMany.description', 'Please wait a few minutes before trying again.'),
           variant: "destructive",
         });
       } else {
         setResendSuccess(true);
         setVerificationCode("");
         toast({
-          title: t('pages:register.toast.codeSent.title', 'Code sent!'),
-          description: t('pages:register.toast.codeSent.description', 'Please check your inbox for a new code.'),
+          title: t('register.toast.codeSent.title', 'Code sent!'),
+          description: t('register.toast.codeSent.description', 'Please check your inbox for a new code.'),
         });
         setTimeout(() => setResendSuccess(false), 5000);
       }
     } catch (error) {
       toast({
-        title: t('pages:register.toast.error.title', 'Error'),
-        description: t('pages:register.toast.resendError.description', 'Failed to resend code. Please try again.'),
+        title: t('register.toast.error.title', 'Error'),
+        description: t('register.toast.resendError.description', 'Failed to resend code. Please try again.'),
         variant: "destructive",
       });
     } finally {
@@ -244,10 +240,10 @@ export default function RegisterPage() {
   };
 
   const getPasswordStrengthLabel = (score: number): string => {
-    if (score <= 2) return t('pages:register.passwordStrength.weak', 'Weak');
-    if (score <= 4) return t('pages:register.passwordStrength.medium', 'Medium');
-    if (score <= 5) return t('pages:register.passwordStrength.strong', 'Strong');
-    return t('pages:register.passwordStrength.veryStrong', 'Very Strong');
+    if (score <= 2) return t('register.passwordStrength.weak', 'Weak');
+    if (score <= 4) return t('register.passwordStrength.medium', 'Medium');
+    if (score <= 5) return t('register.passwordStrength.strong', 'Strong');
+    return t('register.passwordStrength.veryStrong', 'Very Strong');
   };
 
   const calculatePasswordStrength = (pwd: string): { score: number; label: string; color: string } => {
@@ -274,8 +270,8 @@ export default function RegisterPage() {
 
     if (!termsAccepted) {
       toast({
-        title: t('pages:register.toast.termsRequired.title', 'Terms required'),
-        description: t('pages:register.toast.termsRequired.description', 'Please accept the Terms & Conditions'),
+        title: t('register.toast.termsRequired.title', 'Terms required'),
+        description: t('register.toast.termsRequired.description', 'Please accept the Terms & Conditions'),
         variant: "destructive",
       });
       return;
@@ -283,8 +279,8 @@ export default function RegisterPage() {
 
     if (!passwordsMatch) {
       toast({
-        title: t('pages:register.toast.passwordMismatch.title', "Passwords don't match"),
-        description: t('pages:register.toast.passwordMismatch.description', 'Please ensure both passwords are identical'),
+        title: t('register.toast.passwordMismatch.title', "Passwords don't match"),
+        description: t('register.toast.passwordMismatch.description', 'Please ensure both passwords are identical'),
         variant: "destructive",
       });
       return;
@@ -292,8 +288,8 @@ export default function RegisterPage() {
 
     if (passwordStrength && passwordStrength.score < 50) {
       toast({
-        title: t('pages:register.toast.weakPassword.title', 'Weak password'),
-        description: t('pages:register.toast.weakPassword.description', 'Please choose a stronger password'),
+        title: t('register.toast.weakPassword.title', 'Weak password'),
+        description: t('register.toast.weakPassword.description', 'Please choose a stronger password'),
         variant: "destructive",
       });
       return;
@@ -312,8 +308,8 @@ export default function RegisterPage() {
       
       if (result.requiresVerification) {
         toast({
-          title: t('pages:register.toast.checkEmail.title', 'Check your email'),
-          description: t('pages:register.toast.checkEmail.description', 'We sent you a 6-digit verification code. Please check your inbox.'),
+          title: t('register.toast.checkEmail.title', 'Check your email'),
+          description: t('register.toast.checkEmail.description', 'We sent you a 6-digit verification code. Please check your inbox.'),
         });
         setVerificationEmail(result.email);
         setShowVerificationSection(true);
@@ -321,9 +317,9 @@ export default function RegisterPage() {
     } catch (error: any) {
       toast({
         title: isCodeValid 
-          ? t('pages:register.toast.registrationFailed.title', 'Registration failed') 
-          : t('pages:register.toast.signupFailed.title', "Couldn't complete signup"),
-        description: error.message || t('pages:register.toast.tryAgain', 'Please try again'),
+          ? t('register.toast.registrationFailed.title', 'Registration failed') 
+          : t('register.toast.signupFailed.title', "Couldn't complete signup"),
+        description: error.message || t('register.toast.tryAgain', 'Please try again'),
         variant: "destructive",
       });
     } finally {
@@ -334,8 +330,8 @@ export default function RegisterPage() {
   return (
       <PublicLayout>
         <SEO
-          title={t('pages:register.seo.title', 'Join Mundo Tango - Create Your Account')}
-          description={t('pages:register.seo.description', 'Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango.')}
+          title={t('register.seo.title', 'Join Mundo Tango - Create Your Account')}
+          description={t('register.seo.description', 'Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango.')}
         />
 
         <div className="relative min-h-screen w-full overflow-hidden" data-testid="hero-register">
@@ -354,22 +350,22 @@ export default function RegisterPage() {
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
                   <Sparkles className="w-3 h-3 mr-1" />
                   {waitlistSuccess 
-                    ? t('pages:register.badge.welcomeFamily', 'Welcome to the Family') 
+                    ? t('register.badge.welcomeFamily', 'Welcome to the Family') 
                     : isCodeValid 
-                      ? t('pages:register.badge.beginJourney', 'Begin Your Journey') 
-                      : t('pages:register.badge.joinCommunity', 'Join the Community')}
+                      ? t('register.badge.beginJourney', 'Begin Your Journey') 
+                      : t('register.badge.joinCommunity', 'Join the Community')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight leading-tight" data-testid="heading-hero">
                   {waitlistSuccess 
-                    ? t('pages:register.hero.youreIn', "You're In!") 
-                    : t('pages:register.hero.joinMundoTango', 'Join Mundo Tango')}
+                    ? t('register.hero.youreIn', "You're In!") 
+                    : t('register.hero.joinMundoTango', 'Join Mundo Tango')}
                 </h1>
                 
                 <p className="text-lg text-white/80 max-w-md mx-auto mb-8">
                   {waitlistSuccess 
-                    ? t('pages:register.hero.waitlistDescription', "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!")
-                    : t('pages:register.hero.description', 'Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango')}
+                    ? t('register.hero.waitlistDescription', "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!")
+                    : t('register.hero.description', 'Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango')}
                 </p>
 
                 {!waitlistSuccess && (stats?.dancers || stats?.events || stats?.cities) && (
@@ -377,19 +373,19 @@ export default function RegisterPage() {
                     {stats?.dancers && (
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
-                        <span>{t('pages:register.stats.dancers', '{{count}}+ dancers', { count: stats.dancers })}</span>
+                        <span>{t('register.stats.dancers', '{{count}}+ dancers', { count: stats.dancers })}</span>
                       </div>
                     )}
                     {stats?.events && (
                       <div className="flex items-center gap-2">
                         <Sparkles className="w-4 h-4" />
-                        <span>{t('pages:register.stats.events', '{{count}}+ events', { count: stats.events })}</span>
+                        <span>{t('register.stats.events', '{{count}}+ events', { count: stats.events })}</span>
                       </div>
                     )}
                     {stats?.cities && (
                       <div className="flex items-center gap-2">
                         <Globe className="w-4 h-4" />
-                        <span>{t('pages:register.stats.cities', '{{count}} cities', { count: stats.cities })}</span>
+                        <span>{t('register.stats.cities', '{{count}} cities', { count: stats.cities })}</span>
                       </div>
                     )}
                   </div>
@@ -409,15 +405,15 @@ export default function RegisterPage() {
                       <PartyPopper className="w-10 h-10 text-green-400" />
                     </div>
                     <h3 className="text-2xl font-semibold text-white mb-2">
-                      {t('pages:register.waitlist.welcomeUser', 'Welcome, {{name}}!', { name: name || t('pages:register.waitlist.defaultName', 'Dancer') })}
+                      {t('register.waitlist.welcomeUser', 'Welcome, {{name}}!', { name: name || t('register.waitlist.defaultName', 'Dancer') })}
                     </h3>
                     <p className="text-white/70 mb-8">
-                      {t('pages:register.waitlist.onTheList', "You're on the list. We'll email you at")} <span className="text-white font-medium">{email}</span> {t('pages:register.waitlist.whenReady', 'when your account is ready.')}
+                      {t('register.waitlist.onTheList', "You're on the list. We'll email you at")} <span className="text-white font-medium">{email}</span> {t('register.waitlist.whenReady', 'when your account is ready.')}
                     </p>
                     
                     <div className="space-y-4">
                       <p className="text-sm text-white/60 font-medium uppercase tracking-wide">
-                        {t('pages:register.waitlist.helpUsGrow', 'While you wait, help us grow')}
+                        {t('register.waitlist.helpUsGrow', 'While you wait, help us grow')}
                       </p>
                       <div className="flex flex-col gap-3">
                         <Button 
@@ -427,7 +423,7 @@ export default function RegisterPage() {
                           data-testid="button-volunteer-cta"
                         >
                           <HandHeart className="mr-2 h-5 w-5" />
-                          {t('pages:register.waitlist.volunteerWithUs', 'Volunteer with us')}
+                          {t('register.waitlist.volunteerWithUs', 'Volunteer with us')}
                           <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
                         <Link href="/crowdfunding">
@@ -438,7 +434,7 @@ export default function RegisterPage() {
                             data-testid="button-support-cta"
                           >
                             <CreditCard className="mr-2 h-5 w-5" />
-                            {t('pages:register.waitlist.supportMundoTango', 'Support Mundo Tango')}
+                            {t('register.waitlist.supportMundoTango', 'Support Mundo Tango')}
                             <ArrowRight className="ml-2 h-5 w-5" />
                           </Button>
                         </Link>
@@ -465,13 +461,13 @@ export default function RegisterPage() {
                     <div className="space-y-3">
                       <Label htmlFor="inviteCode" className="text-sm font-medium text-white flex items-center gap-2">
                         <KeyRound className="w-4 h-4" />
-                        {t('pages:register.inviteCode.label', 'Have an invite code? (Optional)')}
+                        {t('register.inviteCode.label', 'Have an invite code? (Optional)')}
                       </Label>
                       <div className="relative">
                         <Input
                           id="inviteCode"
                           type="text"
-                          placeholder={t('pages:register.inviteCode.placeholder', 'Enter your invite code for immediate access')}
+                          placeholder={t('register.inviteCode.placeholder', 'Enter your invite code for immediate access')}
                           value={inviteCode}
                           onChange={(e) => handleCodeChange(e.target.value)}
                           data-testid="input-invite-code"
@@ -487,12 +483,12 @@ export default function RegisterPage() {
                       </div>
                       {isCodeValid && (
                         <p className="text-sm text-green-400 flex items-center gap-1">
-                          <Check className="h-3 w-3" /> {t('pages:register.inviteCode.accepted', 'Code accepted! Your account will be activated immediately.')}
+                          <Check className="h-3 w-3" /> {t('register.inviteCode.accepted', 'Code accepted! Your account will be activated immediately.')}
                         </p>
                       )}
                       {inviteCode && !isCodeValid && (
                         <p className="text-sm text-amber-400/80">
-                          {t('pages:register.inviteCode.noWorries', 'No worries! Complete the form below to join our waitlist.')}
+                          {t('register.inviteCode.noWorries', 'No worries! Complete the form below to join our waitlist.')}
                         </p>
                       )}
                     </div>
@@ -510,7 +506,7 @@ export default function RegisterPage() {
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 mb-6">
                         <Lock className="w-5 h-5 text-white/60 flex-shrink-0" />
                         <p className="text-sm text-white/70">
-                          {t('pages:register.form.inviteOnlyNotice', "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.")}
+                          {t('register.form.inviteOnlyNotice', "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.")}
                         </p>
                       </div>
                     )}
@@ -519,12 +515,12 @@ export default function RegisterPage() {
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="name" className="text-sm font-medium text-white">
-                            {t('pages:register.form.fullName', 'Full Name')}
+                            {t('register.form.fullName', 'Full Name')}
                           </Label>
                           <Input
                             id="name"
                             type="text"
-                            placeholder={t('pages:register.form.fullNamePlaceholder', 'Maria Rodriguez')}
+                            placeholder={t('register.form.fullNamePlaceholder', 'Maria Rodriguez')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -536,13 +532,13 @@ export default function RegisterPage() {
 
                         <div className="space-y-2">
                           <Label htmlFor="email" className="text-sm font-medium text-white">
-                            {t('pages:register.form.email', 'Email')}
+                            {t('register.form.email', 'Email')}
                           </Label>
                           <div className="relative">
                             <Input
                               id="email"
                               type="email"
-                              placeholder={t('pages:register.form.emailPlaceholder', 'maria@example.com')}
+                              placeholder={t('register.form.emailPlaceholder', 'maria@example.com')}
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
                               required
@@ -562,12 +558,12 @@ export default function RegisterPage() {
                           </div>
                           {emailAvailable === false && (
                             <p className="text-sm text-red-400">
-                              {t('pages:register.validation.emailTaken', 'This email is already registered')}
+                              {t('register.validation.emailTaken', 'This email is already registered')}
                             </p>
                           )}
                           {emailAvailable === true && (
                             <p className="text-sm text-green-400">
-                              {t('pages:register.validation.emailAvailable', 'Email available!')}
+                              {t('register.validation.emailAvailable', 'Email available!')}
                             </p>
                           )}
                         </div>
@@ -575,13 +571,13 @@ export default function RegisterPage() {
 
                       <div className="space-y-2">
                         <Label htmlFor="username" className="text-sm font-medium text-white">
-                          {t('pages:register.form.username', 'Username')}
+                          {t('register.form.username', 'Username')}
                         </Label>
                         <div className="relative">
                           <Input
                             id="username"
                             type="text"
-                            placeholder={t('pages:register.form.usernamePlaceholder', 'maria_tango')}
+                            placeholder={t('register.form.usernamePlaceholder', 'maria_tango')}
                             value={username}
                             onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
                             required
@@ -603,12 +599,12 @@ export default function RegisterPage() {
                         </div>
                         {usernameAvailable === false && (
                           <p className="text-sm text-red-400">
-                            {t('pages:register.validation.usernameTaken', 'Username taken. Try {{suggestion}}', { suggestion: `${username}_2025` })}
+                            {t('register.validation.usernameTaken', 'Username taken. Try {{suggestion}}', { suggestion: `${username}_2025` })}
                           </p>
                         )}
                         {usernameAvailable === true && (
                           <p className="text-sm text-green-400">
-                            {t('pages:register.validation.usernameAvailable', 'Username available!')}
+                            {t('register.validation.usernameAvailable', 'Username available!')}
                           </p>
                         )}
                       </div>
@@ -616,7 +612,7 @@ export default function RegisterPage() {
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="password" className="text-sm font-medium text-white">
-                            {t('pages:register.form.password', 'Password')}
+                            {t('register.form.password', 'Password')}
                           </Label>
                           <div className="relative">
                             <Input
@@ -657,7 +653,7 @@ export default function RegisterPage() {
 
                         <div className="space-y-2">
                           <Label htmlFor="confirmPassword" className="text-sm font-medium text-white">
-                            {t('pages:register.form.confirmPassword', 'Confirm Password')}
+                            {t('register.form.confirmPassword', 'Confirm Password')}
                           </Label>
                           <div className="relative">
                             <Input
@@ -682,12 +678,12 @@ export default function RegisterPage() {
                           </div>
                           {passwordsMatch && (
                             <p className="text-sm text-green-400 flex items-center gap-1">
-                              <Check className="h-3 w-3" /> {t('pages:register.validation.passwordsMatch', 'Passwords match')}
+                              <Check className="h-3 w-3" /> {t('register.validation.passwordsMatch', 'Passwords match')}
                             </p>
                           )}
                           {passwordsDontMatch && (
                             <p className="text-sm text-red-400 flex items-center gap-1">
-                              <X className="h-3 w-3" /> {t('pages:register.validation.passwordsDontMatch', "Passwords don't match")}
+                              <X className="h-3 w-3" /> {t('register.validation.passwordsDontMatch', "Passwords don't match")}
                             </p>
                           )}
                         </div>
@@ -703,12 +699,12 @@ export default function RegisterPage() {
                           className="border-white/30 data-[state=checked]:bg-white data-[state=checked]:text-black"
                         />
                         <label htmlFor="terms" className="text-sm leading-tight cursor-pointer text-white/90">
-                          {t('pages:register.form.acceptTermsPrefix', 'I accept the')}{" "}
+                          {t('register.form.acceptTermsPrefix', 'I accept the')}{" "}
                           <Link 
                             href="/terms"
                             className="text-white hover:underline font-medium"
                           >
-                            {t('pages:register.form.termsAndConditions', 'Terms & Conditions')}
+                            {t('register.form.termsAndConditions', 'Terms & Conditions')}
                           </Link>
                         </label>
                       </div>
@@ -724,15 +720,15 @@ export default function RegisterPage() {
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             {isCodeValid 
-                              ? t('pages:register.button.creatingAccount', 'Creating your account...') 
-                              : t('pages:register.button.joining', 'Joining...')}
+                              ? t('register.button.creatingAccount', 'Creating your account...') 
+                              : t('register.button.joining', 'Joining...')}
                           </>
                         ) : (
                           <>
                             <Heart className="mr-2 h-4 w-4" />
                             {isCodeValid 
-                              ? t('pages:register.button.createAccount', 'Create Account') 
-                              : t('pages:register.button.joinMundoTango', 'Join Mundo Tango')}
+                              ? t('register.button.createAccount', 'Create Account') 
+                              : t('register.button.joinMundoTango', 'Join Mundo Tango')}
                           </>
                         )}
                       </Button>
@@ -747,13 +743,13 @@ export default function RegisterPage() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className={`text-sm text-center text-white/70 mt-6 ${showVerificationSection ? 'pointer-events-none select-none' : ''}`}
               >
-                {t('pages:register.alreadyHaveAccount', 'Already have an account?')}{" "}
+                {t('register.alreadyHaveAccount', 'Already have an account?')}{" "}
                 <Link 
                   href="/login" 
                   className="text-white hover:underline font-medium" 
                   data-testid="link-login"
                 >
-                  {t('pages:register.signIn', 'Sign in')}
+                  {t('register.signIn', 'Sign in')}
                 </Link>
               </motion.p>
 
@@ -771,16 +767,16 @@ export default function RegisterPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-white text-lg">
-                        {t('pages:register.verification.title', 'Enter Verification Code')}
+                        {t('register.verification.title', 'Enter Verification Code')}
                       </h3>
                       <p className="text-sm text-white/70">
-                        {t('pages:register.verification.subtitle', 'Code sent to:')} {verificationEmail}
+                        {t('register.verification.subtitle', 'Code sent to:')} {verificationEmail}
                       </p>
                     </div>
                   </div>
                   
                   <p className="text-sm text-white/80 mb-4">
-                    {t('pages:register.verification.instructions', 'Enter the 6-digit code from your email to verify your account.')}
+                    {t('register.verification.instructions', 'Enter the 6-digit code from your email to verify your account.')}
                   </p>
                   
                   <div className="space-y-4">
@@ -808,12 +804,12 @@ export default function RegisterPage() {
                       ) : (
                         <CheckCircle className="h-4 w-4" />
                       )}
-                      {t('pages:register.verification.verifyButton', 'Verify Email')}
+                      {t('register.verification.verifyButton', 'Verify Email')}
                     </Button>
                     
                     <div className="text-center">
                       <p className="text-white/60 text-sm mb-2">
-                        {t('pages:register.verification.didntReceive', "Didn't receive the code?")}
+                        {t('register.verification.didntReceive', "Didn't receive the code?")}
                       </p>
                       <Button 
                         variant="ghost" 
@@ -830,8 +826,8 @@ export default function RegisterPage() {
                           <RefreshCw className="h-4 w-4" />
                         )}
                         {resendSuccess 
-                          ? t('pages:register.verification.codeResent', 'Code Resent!')
-                          : t('pages:register.verification.resendButton', 'Resend Code')
+                          ? t('register.verification.codeResent', 'Code Resent!')
+                          : t('register.verification.resendButton', 'Resend Code')
                         }
                       </Button>
                     </div>
@@ -850,15 +846,15 @@ export default function RegisterPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-white">
-                        {t('pages:register.volunteer.title', 'Want to volunteer?')}
+                        {t('register.volunteer.title', 'Want to volunteer?')}
                       </h3>
                       <p className="text-sm text-white/70">
-                        {t('pages:register.volunteer.subtitle', 'Help build the tango community')}
+                        {t('register.volunteer.subtitle', 'Help build the tango community')}
                       </p>
                     </div>
                   </div>
                   <p className="text-sm text-white/80 mb-4">
-                    {t('pages:register.volunteer.description', 'Join our volunteer team and use your skills to make an impact. Our AI will match you with the perfect role.')}
+                    {t('register.volunteer.description', 'Join our volunteer team and use your skills to make an impact. Our AI will match you with the perfect role.')}
                   </p>
                   <Button
                     variant="outline"
@@ -867,7 +863,7 @@ export default function RegisterPage() {
                     data-testid="button-start-talent-match"
                   >
                     <Sparkles className="h-4 w-4 mr-2" />
-                    {t('pages:register.volunteer.startTalentMatch', 'Start Talent Match')}
+                    {t('register.volunteer.startTalentMatch', 'Start Talent Match')}
                   </Button>
                 </motion.div>
               )}

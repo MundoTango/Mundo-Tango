@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Tentang Kami",
-    "title": "Tentang Mundo Tango",
-    "subtitle": "Menghubungkan komunitas tango global, satu tarian pada satu waktu",
-    "missionTitle": "Misi Kami",
-    "missionDescription": "Mundo Tango didedikasikan untuk membangun koneksi dalam komunitas tango global. Kami percaya pada kekuatan tari untuk menyatukan orang-orang dari berbagai budaya, bahasa, dan batasan.",
-    "valuesTitle": "Nilai-nilai Kami",
-    "valueCommunityTitle": "Komunitas Pertama",
-    "valueCommunityDescription": "Kami memprioritaskan koneksi yang autentik dan interaksi yang bermakna.",
-    "valueAuthenticityTitle": "Keaslian",
-    "valueAuthenticityDescription": "Kami menghormati tradisi tango Argentina sambil merangkul evolusinya.",
-    "valueInclusivityTitle": "Inklusivitas",
-    "valueInclusivityDescription": "Semua orang diterima di komunitas kami."
   }
 }

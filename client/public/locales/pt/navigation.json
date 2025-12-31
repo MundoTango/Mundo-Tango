@@ -1,84 +1,32 @@
 {
-  "social": {
-    "title": "Social",
-    "memories": "Memórias",
-    "feed": "Feed",
-    "profile": "Perfil",
-    "discover": "Descobrir"
-  },
-  "community": {
-    "title": "Comunidade",
-    "friends": "Amigos",
-    "recommendations": "Recomendações",
-    "invitations": "Convites",
-    "notifications": "Notificações",
-    "groups": "Grupos",
-    "messages": "Mensagens"
-  },
-  "events": {
-    "title": "Eventos",
-    "events": "Eventos",
-    "calendar": "Calendário",
-    "myEvents": "Meus Eventos",
-    "workshops": "Workshops"
-  },
-  "tango": {
-    "title": "Recursos de Tango",
-    "teachers": "Professores",
-    "venues": "Locais",
-    "tutorials": "Tutoriais",
-    "musicLibrary": "Biblioteca Musical",
-    "danceStyles": "Estilos de Dança"
-  },
-  "resources": {
-    "title": "Recursos",
-    "communityMap": "Mapa da Comunidade",
-    "blog": "Blog",
-    "newsletter": "Newsletter",
-    "faq": "FAQ",
-    "help": "Ajuda"
-  },
-  "tools": {
-    "title": "IA e Ferramentas",
-    "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue IA",
-    "marketplace": "Marketplace",
-    "travelPlanner": "Planejador de Viagens"
-  },
-  "personal": {
-    "title": "Pessoal",
-    "savedPosts": "Posts Salvos",
-    "favorites": "Favoritos",
-    "settings": "Configurações",
-    "bookmarks": "Marcadores",
-    "activity": "Registro de Atividades"
-  },
-  "admin": {
-    "title": "Admin",
-    "dashboard": "Painel Admin",
-    "platform": "Plataforma",
-    "users": "Gerenciamento de Usuários",
-    "content": "Moderação de Conteúdo",
-    "reports": "Relatórios de Usuários",
-    "analytics": "Análises"
-  },
-  "esa": {
-    "title": "Framework ESA",
-    "dashboard": "Painel ESA",
-    "tasks": "Tarefas ESA",
-    "communications": "Comunicações ESA"
-  },
-  "footer": {
-    "company": "Empresa",
-    "about": "Sobre Nós",
-    "contact": "Contato",
-    "careers": "Carreiras",
-    "volunteer": "Voluntariado",
-    "legal": "Legal",
-    "terms": "Termos de Serviço",
-    "privacy": "Política de Privacidade",
-    "guidelines": "Diretrizes da Comunidade",
-    "support": "Suporte",
-    "pricing": "Preços"
-  }
+  "home": "Início",
+  "events": "Eventos",
+  "cities": "Cidades",
+  "groups": "Grupos",
+  "explore": "Explorar",
+  "discover": "Descobrir",
+  "feed": "Feed",
+  "profile": "Perfil",
+  "settings": "Configurações",
+  "notifications": "Notificações",
+  "messages": "Mensagens",
+  "login": "Entrar",
+  "signup": "Cadastrar",
+  "logout": "Sair",
+  "proDiscovery": "Descobrir PRO",
+  "teachers": "Professores",
+  "djs": "DJs e Músicos",
+  "photographers": "Fotógrafos",
+  "performers": "Artistas",
+  "organizers": "Organizadores",
+  "venues": "Locais",
+  "artists": "Artistas",
+  "bloggers": "Blogueiros",
+  "about": "Sobre",
+  "contact": "Contato",
+  "help": "Ajuda e Suporte",
+  "community": "Comunidade",
+  "careers": "Carreiras",
+  "press": "Imprensa",
+  "donate": "Doar"
 }

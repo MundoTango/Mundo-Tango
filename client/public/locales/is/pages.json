@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Um okkur",
-    "title": "Um Mundo Tango",
-    "subtitle": "Tengja alþjóðlega tango samfélagið, einn dans í einu.",
-    "missionTitle": "Okkar verkefni",
-    "missionDescription": "Mundo Tango er helgað því að efla tengsl innan alþjóðlegu tango samfélagsins. Við trúum á kraft dansins til að sameina fólk yfir menningar, tungumála og landamæra.",
-    "valuesTitle": "Vörðurnar okkar",
-    "valueCommunityTitle": "Samfélagið fyrst",
-    "valueCommunityDescription": "Við leggjum áherslu á raunveruleg tengsl og merkingarbær samskipti.",
-    "valueAuthenticityTitle": "Fagurfræði",
-    "valueAuthenticityDescription": "Við heiðrum hefðir argentínska tangósins á meðan við fögnum þróun þess.",
-    "valueInclusivityTitle": "Innlitni",
-    "valueInclusivityDescription": "Allir eru velkomnir í okkar samfélag."
   }
 }

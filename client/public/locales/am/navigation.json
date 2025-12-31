@@ -1,84 +1,45 @@
 {
-  "social": {
-    "title": "ማህበረሰብ",
-    "memories": "እንደማስታወሻዎች",
-    "feed": "እንቁላል",
-    "profile": "መገለጫ",
-    "discover": "እንደምን አውቀው ይገናኙ"
-  },
-  "community": {
-    "title": "አካባቢ",
-    "friends": "ጓደኞች",
-    "recommendations": "መነሻዎች",
-    "invitations": "ግብዣዎች",
-    "notifications": "ማስታወቂያዎች",
-    "groups": "ቡድኖች",
-    "messages": "መልእክቶች"
-  },
-  "events": {
-    "title": "ክስተቶች",
-    "events": "ክስተቶች",
-    "calendar": "የቀን ዝርዝር",
-    "myEvents": "የእኔ ዝግጅቶች",
-    "workshops": "የስራ ስርዓቶች"
-  },
-  "tango": {
-    "title": "ታንጎ ምንጮች",
-    "teachers": "መምህራን",
-    "venues": "ቦታዎች",
-    "tutorials": "መማር መመሪያዎች",
-    "musicLibrary": "ሙዚቃ ቤተ መዝሙር",
-    "danceStyles": "እንቅስቃሴ ዘይት ዓይነቶች"
-  },
-  "resources": {
-    "title": "ምንጮች",
-    "communityMap": "አካባቢ ካርታ",
-    "blog": "ብሎግ",
-    "newsletter": "የዜና ዋነኛ ገጽ",
-    "faq": "እንደ አስተያየት ጥያቄዎች",
-    "help": "እባኮትን ይረዱ።"
-  },
-  "tools": {
-    "title": "አይ እና መሣሪያዎች",
-    "lifeCEO": "የእንቅስቃሴ ዋና አስተዳደር",
-    "mrBlue": "አቶ ቡሉ ኤይአይ",
-    "marketplace": "ገበያ",
-    "travelPlanner": "ጉዞ እቅድ አዘጋጅ"
-  },
-  "personal": {
-    "title": "ግለሰቦች",
-    "savedPosts": "የተያዙ ጽሁፎች",
-    "favorites": "የወደዳቸው",
-    "settings": "ቅንብሮች",
-    "bookmarks": "መዝገቦች",
-    "activity": "እንቅስቃሴ መዝገብ"
-  },
-  "admin": {
-    "title": "አስተዳደር",
-    "dashboard": "አድሚን ዳሽቦርድ",
-    "platform": "መድረክ",
-    "users": "ተጠቃሚ አስተዳደር",
-    "content": "የይዘት መቆጣጠር",
-    "reports": "ተጠቃሚ ዘገባዎች",
-    "analytics": "ትንበያ"
-  },
-  "esa": {
-    "title": "ESA አውድ ወቅት",
-    "dashboard": "ESA ዳሽቦርድ",
-    "tasks": "የኢንተርነት ሥራዎች",
-    "communications": "ኤሳ ኮሙኒኬሽንስ"
-  },
-  "footer": {
-    "company": "ኩባንያ",
-    "about": "እኛን ስለ እኛ",
-    "contact": "ያግኙ",
-    "careers": "ስራዎች",
-    "volunteer": "እንቅስቃሴ",
-    "legal": "ሕጋዊ",
-    "terms": "አገልግሎት ውል",
-    "privacy": "የግለሰቦች መረጃ የደህንነት ፖሊሲ",
-    "guidelines": "አካባቢ መመሪያዎች",
-    "support": "ድጋፍ",
-    "pricing": "ዋጋ እንደገና"
-  }
+  "home": "Home",
+  "events": "Events",
+  "cities": "Cities",
+  "groups": "Groups",
+  "explore": "Explore",
+  "discover": "Discover",
+  "feed": "Feed",
+  "profile": "Profile",
+  "settings": "Settings",
+  "notifications": "Notifications",
+  "messages": "Messages",
+  "login": "Login",
+  "signup": "Sign Up",
+  "logout": "Logout",
+  "proDiscovery": "PRO Discovery",
+  "teachers": "Teachers",
+  "djs": "DJs & Musicians",
+  "photographers": "Photographers",
+  "performers": "Performers",
+  "organizers": "Organizers",
+  "venues": "Venues",
+  "artists": "Artists",
+  "bloggers": "Bloggers",
+  "about": "About",
+  "contact": "Contact",
+  "help": "Help & Support",
+  "community": "Community",
+  "careers": "Careers",
+  "press": "Press",
+  "donate": "Donate",
+  "volunteer": "Volunteer",
+  "ambassadors": "Ambassadors",
+  "whoItsFor": "Who It's For",
+  "forDancers": "For Dancers",
+  "forTeachers": "For Teachers",
+  "forOrganizers": "For Organizers",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source",
+  "supportUs": "Support Us",
+  "joinFree": "Join Free",
+  "watchDemo": "Watch Demo",
+  "getStarted": "Get Started",
+  "learnMore": "Learn More"
 }

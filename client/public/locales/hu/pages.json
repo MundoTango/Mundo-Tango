@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Rólunk",
-    "title": "A Mundo Tango-ról",
-    "subtitle": "Összekötve a globális tangó közösséget, egy tánconként.",
-    "missionTitle": "Küldetésünk",
-    "missionDescription": "A Mundo Tango elkötelezett amellett, hogy kapcsolatokat építsen a globális tango közösségen belül. Hiszünk a tánc erejében, amely képes összekötni az embereket kultúrák, nyelvek és határok felett.",
-    "valuesTitle": "Értékeink",
-    "valueCommunityTitle": "Közösség Először",
-    "valueCommunityDescription": "Prioritáljuk az autentikus kapcsolatokat és a jelentőségteljes interakciókat.",
-    "valueAuthenticityTitle": "Autentikusság",
-    "valueAuthenticityDescription": "Tiszteljük az argentin tango hagyományait, miközben öleljük az evolúcióját.",
-    "valueInclusivityTitle": "Inkluzivitás",
-    "valueInclusivityDescription": "Mindenki szívesen látott a közösségünkben."
   }
 }

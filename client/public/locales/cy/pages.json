@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Amdanom Ni",
-    "title": "Ynglŷn â Mundo Tango",
-    "subtitle": "Cysylltu cymuned tango byd-eang, un dawns ar y tro",
-    "missionTitle": "Ein Gorchwyl",
-    "missionDescription": "Mae Mundo Tango yn ymroddedig i hybu cysylltiadau yn y gymuned tango fyd-eang. Credwn yn nerth y dawns i ddod â phobl at ei gilydd ar draws diwylliannau, ieithoedd a ffiniau.",
-    "valuesTitle": "Ein Gwerthoedd",
-    "valueCommunityTitle": "Cymuned yn Gyntaf",
-    "valueCommunityDescription": "Rydym yn rhoi blaenoriaeth i gysylltiadau dilys a rhyngweithiadau ystyrlon.",
-    "valueAuthenticityTitle": "Dilysrwydd",
-    "valueAuthenticityDescription": "Rydym yn anrhydeddu traddodiadau tango yr Ariannin tra'n croesawu ei esblygiad.",
-    "valueInclusivityTitle": "Cynhwysiant",
-    "valueInclusivityDescription": "Mae pawb yn cael eu croesawu yn ein cymuned."
   }
 }

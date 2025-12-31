@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "हमारे बारे में",
-    "title": "मुंडो टेंगो के बारे में",
-    "subtitle": "वैश्विक टैंगो समुदाय को एक नृत्य के माध्यम से जोड़ना",
-    "missionTitle": "हमारा मिशन",
-    "missionDescription": "मुंडो टैंगो वैश्विक टैंगो समुदाय के भीतर संबंधों को बढ़ावा देने के लिए समर्पित है। हम मानते हैं कि नृत्य की शक्ति लोगों को संस्कृतियों, भाषाओं और सीमाओं के पार एक साथ लाने में है।",
-    "valuesTitle": "हमारे मूल्य",
-    "valueCommunityTitle": "समुदाय पहले",
-    "valueCommunityDescription": "हम प्रामाणिक संबंधों और महत्वपूर्ण इंटरैक्शन को प्राथमिकता देते हैं।",
-    "valueAuthenticityTitle": "प्रामाणिकता",
-    "valueAuthenticityDescription": "हम अर्जेंटीनी टैंगो की परंपराओं का सम्मान करते हैं जबकि इसके विकास को अपनाते हैं।",
-    "valueInclusivityTitle": "समावेशिता",
-    "valueInclusivityDescription": "हमारे समुदाय में सभी का स्वागत है।"
   }
 }

@@ -82,3 +82,13 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Email:** Replit Resend Connector
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
 - **Internationalization:** i18next
+
+### Internationalization System (Updated Dec 31, 2025)
+- **Translation Files Location**: `client/public/locales/{lang}/*.json` - This is where Vite serves static files from
+- **IMPORTANT**: Do NOT edit files in `public/locales/` - Vite does not serve from that directory
+- **Namespaces**: common, navigation, pages, errors
+- **Supported Languages**: 68 languages including regional variants (es-ar, pt-br, zh-tw, zh-hk)
+- **Fallback Chain**: Regional variants fall back to base language (es-ar → es → en)
+- **URL Language Param**: Use `?lng=es` to set language via URL (config: `lookupQuerystring: "lng"`)
+- **Pattern**: Use `const { t } = useTranslation('pages')` with single namespace string
+- **Dec 31 Fix**: Synced all translation files from `public/locales/` to `client/public/locales/` to fix RegisterPage Spanish translations

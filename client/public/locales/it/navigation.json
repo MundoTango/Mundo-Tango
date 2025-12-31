@@ -1,84 +1,32 @@
 {
-  "social": {
-    "title": "Social",
-    "memories": "Ricordi",
-    "feed": "Feed",
-    "profile": "Profilo",
-    "discover": "Scopri"
-  },
-  "community": {
-    "title": "Comunità",
-    "friends": "Amici",
-    "recommendations": "Raccomandazioni",
-    "invitations": "Inviti",
-    "notifications": "Notifiche",
-    "groups": "Gruppi",
-    "messages": "Messaggi"
-  },
-  "events": {
-    "title": "Eventi",
-    "events": "Eventi",
-    "calendar": "Calendario",
-    "myEvents": "I Miei Eventi",
-    "workshops": "Workshop"
-  },
-  "tango": {
-    "title": "Risorse Tango",
-    "teachers": "Insegnanti",
-    "venues": "Luoghi",
-    "tutorials": "Tutorial",
-    "musicLibrary": "Libreria Musicale",
-    "danceStyles": "Stili di Ballo"
-  },
-  "resources": {
-    "title": "Risorse",
-    "communityMap": "Mappa della Comunità",
-    "blog": "Blog",
-    "newsletter": "Newsletter",
-    "faq": "FAQ",
-    "help": "Aiuto"
-  },
-  "tools": {
-    "title": "IA e Strumenti",
-    "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue IA",
-    "marketplace": "Marketplace",
-    "travelPlanner": "Pianificatore di Viaggi"
-  },
-  "personal": {
-    "title": "Personale",
-    "savedPosts": "Post Salvati",
-    "favorites": "Preferiti",
-    "settings": "Impostazioni",
-    "bookmarks": "Segnalibri",
-    "activity": "Registro Attività"
-  },
-  "admin": {
-    "title": "Admin",
-    "dashboard": "Dashboard Admin",
-    "platform": "Piattaforma",
-    "users": "Gestione Utenti",
-    "content": "Moderazione Contenuti",
-    "reports": "Segnalazioni Utenti",
-    "analytics": "Analisi"
-  },
-  "esa": {
-    "title": "Framework ESA",
-    "dashboard": "Dashboard ESA",
-    "tasks": "Attività ESA",
-    "communications": "Comunicazioni ESA"
-  },
-  "footer": {
-    "company": "Azienda",
-    "about": "Chi Siamo",
-    "contact": "Contatti",
-    "careers": "Carriere",
-    "volunteer": "Volontariato",
-    "legal": "Legale",
-    "terms": "Termini di Servizio",
-    "privacy": "Informativa sulla Privacy",
-    "guidelines": "Linee Guida della Comunità",
-    "support": "Supporto",
-    "pricing": "Prezzi"
-  }
+  "home": "Home",
+  "events": "Eventi",
+  "cities": "Città",
+  "groups": "Gruppi",
+  "explore": "Esplora",
+  "discover": "Scopri",
+  "feed": "Feed",
+  "profile": "Profilo",
+  "settings": "Impostazioni",
+  "notifications": "Notifiche",
+  "messages": "Messaggi",
+  "login": "Accedi",
+  "signup": "Registrati",
+  "logout": "Esci",
+  "proDiscovery": "Scopri PRO",
+  "teachers": "Insegnanti",
+  "djs": "DJ e Musicisti",
+  "photographers": "Fotografi",
+  "performers": "Artisti",
+  "organizers": "Organizzatori",
+  "venues": "Locali",
+  "artists": "Artisti",
+  "bloggers": "Blogger",
+  "about": "Chi siamo",
+  "contact": "Contatti",
+  "help": "Aiuto e Supporto",
+  "community": "Community",
+  "careers": "Carriere",
+  "press": "Stampa",
+  "donate": "Dona"
 }

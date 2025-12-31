@@ -1,84 +1,32 @@
 {
-  "social": {
-    "title": "Social",
-    "memories": "Recuerdos",
-    "feed": "Noticias",
-    "profile": "Perfil",
-    "discover": "Descubrir"
-  },
-  "community": {
-    "title": "Comunidad",
-    "friends": "Amigos",
-    "recommendations": "Recomendaciones",
-    "invitations": "Invitaciones",
-    "notifications": "Notificaciones",
-    "groups": "Grupos",
-    "messages": "Mensajes"
-  },
-  "events": {
-    "title": "Eventos",
-    "events": "Eventos",
-    "calendar": "Calendario",
-    "myEvents": "Mis Eventos",
-    "workshops": "Talleres"
-  },
-  "tango": {
-    "title": "Recursos de Tango",
-    "teachers": "Profesores",
-    "venues": "Lugares",
-    "tutorials": "Tutoriales",
-    "musicLibrary": "Biblioteca Musical",
-    "danceStyles": "Estilos de Baile"
-  },
-  "resources": {
-    "title": "Recursos",
-    "communityMap": "Mapa de la Comunidad",
-    "blog": "Blog",
-    "newsletter": "Boletín",
-    "faq": "Preguntas Frecuentes",
-    "help": "Ayuda"
-  },
-  "tools": {
-    "title": "IA y Herramientas",
-    "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue IA",
-    "marketplace": "Mercado",
-    "travelPlanner": "Planificador de Viajes"
-  },
-  "personal": {
-    "title": "Personal",
-    "savedPosts": "Publicaciones Guardadas",
-    "favorites": "Favoritos",
-    "settings": "Configuración",
-    "bookmarks": "Marcadores",
-    "activity": "Registro de Actividad"
-  },
-  "admin": {
-    "title": "Administración",
-    "dashboard": "Panel de Administración",
-    "platform": "Plataforma",
-    "users": "Gestión de Usuarios",
-    "content": "Moderación de Contenido",
-    "reports": "Reportes de Usuarios",
-    "analytics": "Analíticas"
-  },
-  "esa": {
-    "title": "Marco ESA",
-    "dashboard": "Panel ESA",
-    "tasks": "Tareas ESA",
-    "communications": "Comunicaciones ESA"
-  },
-  "footer": {
-    "company": "Empresa",
-    "about": "Sobre Nosotros",
-    "contact": "Contacto",
-    "careers": "Carreras",
-    "volunteer": "Voluntariado",
-    "legal": "Legal",
-    "terms": "Términos de Servicio",
-    "privacy": "Política de Privacidad",
-    "guidelines": "Directrices de la Comunidad",
-    "support": "Soporte",
-    "pricing": "Precios"
-  }
+  "home": "Inicio",
+  "events": "Eventos",
+  "cities": "Ciudades",
+  "groups": "Grupos",
+  "explore": "Explorar",
+  "discover": "Descubrir",
+  "feed": "Feed",
+  "profile": "Perfil",
+  "settings": "Configuración",
+  "notifications": "Notificaciones",
+  "messages": "Mensajes",
+  "login": "Iniciar sesión",
+  "signup": "Registrarse",
+  "logout": "Cerrar sesión",
+  "proDiscovery": "Descubrir PRO",
+  "teachers": "Profesores",
+  "djs": "DJs y Músicos",
+  "photographers": "Fotógrafos",
+  "performers": "Artistas",
+  "organizers": "Organizadores",
+  "venues": "Lugares",
+  "artists": "Artistas",
+  "bloggers": "Bloggers",
+  "about": "Acerca de",
+  "contact": "Contacto",
+  "help": "Ayuda y Soporte",
+  "community": "Comunidad",
+  "careers": "Carreras",
+  "press": "Prensa",
+  "donate": "Donar"
 }

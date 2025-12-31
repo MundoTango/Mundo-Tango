@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "เกี่ยวกับเรา",
-    "title": "เกี่ยวกับมุนโดแท็งโก",
-    "subtitle": "เชื่อมโยงชุมชนแทงโก้ทั่วโลก ทีละการเต้น",
-    "missionTitle": "ภารกิจของเรา",
-    "missionDescription": "Mundo Tango มุ่งมั่นที่จะสร้างความเชื่อมโยงภายในชุมชนแทงโก้ทั่วโลก เราเชื่อในพลังของการเต้นรำที่สามารถนำผู้คนมารวมกันข้ามวัฒนธรรม ภาษา และพรมแดน",
-    "valuesTitle": "ค่านิยมของเรา",
-    "valueCommunityTitle": "ชุมชนมาก่อน",
-    "valueCommunityDescription": "เรามุ่งเน้นการเชื่อมต่อที่แท้จริงและการมีปฏิสัมพันธ์ที่มีความหมาย",
-    "valueAuthenticityTitle": "ความเป็นของแท้",
-    "valueAuthenticityDescription": "เรานับถือประเพณีของทังโกอาร์เจนตินาในขณะที่ยอมรับการพัฒนาของมัน",
-    "valueInclusivityTitle": "ความครอบคลุม",
-    "valueInclusivityDescription": "ทุกคนยินดีต้อนรับในชุมชนของเรา。"
   }
 }

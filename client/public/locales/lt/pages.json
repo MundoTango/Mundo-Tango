@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Apie mus",
-    "title": "Apie Mundo Tango",
-    "subtitle": "Jungiant pasaulinę tango bendruomenę, po vieną šokį vienu metu.",
-    "missionTitle": "Mūsų misija",
-    "missionDescription": "Mundo Tango skiria savo veiklą ryšių kūrimui pasaulinėje tango bendruomenėje. Mes tikime šokio galia sujungti žmones per kultūras, kalbas ir sienas.",
-    "valuesTitle": "Mūsų vertybės",
-    "valueCommunityTitle": "Pirmiausia bendruomenė",
-    "valueCommunityDescription": "Mes teikiame pirmenybę autentiškiems ryšiams ir prasmingiems sąveikoms.",
-    "valueAuthenticityTitle": "Autentiškumas",
-    "valueAuthenticityDescription": "Mes gerbiame Argentinos tango tradicijas, tuo pačiu priimdami jo evoliuciją.",
-    "valueInclusivityTitle": "Įtrauktis",
-    "valueInclusivityDescription": "Visi yra laukiami mūsų bendruomenėje."
   }
 }

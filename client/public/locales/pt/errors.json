@@ -1,84 +1,25 @@
 {
-  "auth": {
-    "invalidCredentials": "E-mail ou senha inválidos",
-    "emailRequired": "E-mail é obrigatório",
-    "passwordRequired": "Senha é obrigatória",
-    "passwordTooShort": "A senha deve ter pelo menos 8 caracteres",
-    "emailInvalid": "Por favor, insira um e-mail válido",
-    "userNotFound": "Usuário não encontrado",
-    "emailAlreadyExists": "Este e-mail já está cadastrado",
-    "usernameAlreadyExists": "Este nome de usuário já está em uso",
-    "sessionExpired": "Sua sessão expirou. Por favor, faça login novamente",
-    "unauthorized": "Você não está autorizado a realizar esta ação",
-    "loginRequired": "Por favor, faça login para continuar",
-    "tokenExpired": "Seu token de sessão expirou",
-    "invalidToken": "Token de autenticação inválido"
-  },
+  "generic": "Algo deu errado. Por favor, tente novamente.",
+  "network": "Erro de rede. Por favor, verifique sua conexão.",
+  "notFound": "Página não encontrada",
+  "unauthorized": "Você precisa estar logado para acessar esta página",
+  "forbidden": "Você não tem permissão para acessar esta página",
   "validation": {
     "required": "Este campo é obrigatório",
-    "invalidEmail": "Formato de e-mail inválido",
-    "invalidPhone": "Número de telefone inválido",
-    "invalidDate": "Formato de data inválido",
-    "invalidUrl": "Formato de URL inválido",
-    "tooShort": "O valor é muito curto",
-    "tooLong": "O valor é muito longo",
-    "invalidFormat": "Formato inválido",
-    "numberRequired": "Deve ser um número",
-    "positiveNumber": "Deve ser um número positivo"
+    "email": "Por favor, insira um email válido",
+    "password": "A senha deve ter pelo menos 8 caracteres",
+    "passwordMatch": "As senhas não coincidem",
+    "username": "O nome de usuário só pode conter letras, números e underscores"
   },
-  "network": {
-    "connectionError": "Erro de conexão. Por favor, verifique sua conexão com a internet",
-    "timeout": "Tempo de requisição esgotado. Por favor, tente novamente",
-    "serverError": "Erro no servidor. Por favor, tente novamente mais tarde",
-    "notFound": "Recurso não encontrado",
-    "forbidden": "Acesso negado",
-    "badRequest": "Requisição inválida. Por favor, verifique sua entrada",
-    "rateLimitExceeded": "Muitas requisições. Por favor, tente novamente mais tarde"
+  "auth": {
+    "invalidCredentials": "Email ou senha inválidos",
+    "emailInUse": "Este email já está registrado",
+    "usernameInUse": "Este nome de usuário já está em uso",
+    "accountDisabled": "Sua conta foi desativada"
   },
-  "form": {
-    "saveFailed": "Falha ao salvar. Por favor, tente novamente",
-    "uploadFailed": "Falha no envio do arquivo",
-    "deleteFailed": "Falha ao excluir. Por favor, tente novamente",
-    "updateFailed": "Falha ao atualizar. Por favor, tente novamente",
-    "invalidFile": "Formato de arquivo inválido",
-    "fileTooLarge": "O tamanho do arquivo é muito grande",
-    "requiredFields": "Por favor, preencha todos os campos obrigatórios"
-  },
-  "general": {
-    "somethingWrong": "Algo deu errado. Por favor, tente novamente",
-    "pageNotFound": "Página não encontrada",
-    "accessDenied": "Acesso negado",
-    "featureUnavailable": "Este recurso está indisponível no momento",
-    "maintenanceMode": "O sistema está em manutenção. Por favor, tente novamente mais tarde",
-    "unknownError": "Ocorreu um erro desconhecido"
-  },
-  "posts": {
-    "createFailed": "Falha ao criar publicação",
-    "updateFailed": "Falha ao atualizar publicação",
-    "deleteFailed": "Falha ao excluir publicação",
-    "loadFailed": "Falha ao carregar publicações",
-    "commentFailed": "Falha ao publicar comentário",
-    "likeFailed": "Falha ao curtir publicação"
-  },
-  "events": {
-    "loadFailed": "Falha ao carregar eventos",
-    "bookingFailed": "Falha ao reservar evento",
-    "cancelFailed": "Falha ao cancelar reserva",
-    "eventFull": "Este evento está lotado",
-    "eventPast": "Este evento já passou",
-    "alreadyBooked": "Você já reservou este evento"
-  },
-  "messages": {
-    "sendFailed": "Falha ao enviar mensagem",
-    "loadFailed": "Falha ao carregar mensagens",
-    "deleteFailed": "Falha ao excluir mensagem",
-    "connectionLost": "Conexão perdida. Tentando reconectar..."
-  },
-  "friends": {
-    "requestFailed": "Falha ao enviar solicitação de amizade",
-    "acceptFailed": "Falha ao aceitar solicitação de amizade",
-    "removeFailed": "Falha ao remover amigo",
-    "blockFailed": "Falha ao bloquear usuário",
-    "alreadyFriends": "Você já é amigo deste usuário"
+  "upload": {
+    "fileTooLarge": "O arquivo é muito grande. O tamanho máximo é 10MB",
+    "invalidType": "Tipo de arquivo inválido",
+    "uploadFailed": "O upload falhou. Por favor, tente novamente"
   }
 }

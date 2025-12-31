@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Over ons",
-    "title": "Over Mundo Tango",
-    "subtitle": "De wereldwijde tango gemeenschap verbinden, één dans tegelijk.",
-    "missionTitle": "Onze Missie",
-    "missionDescription": "Mundo Tango is toegewijd aan het bevorderen van verbindingen binnen de wereldwijde tango gemeenschap. Wij geloven in de kracht van dans om mensen samen te brengen over culturen, talen en grenzen heen.",
-    "valuesTitle": "Onze Waarden",
-    "valueCommunityTitle": "Gemeenschap Eerst",
-    "valueCommunityDescription": "We geven prioriteit aan authentieke verbindingen en betekenisvolle interacties.",
-    "valueAuthenticityTitle": "Authenticiteit",
-    "valueAuthenticityDescription": "We eren de tradities van de Argentijnse tango terwijl we de evolutie ervan omarmen.",
-    "valueInclusivityTitle": "Inclusiviteit",
-    "valueInclusivityDescription": "Iedereen is welkom in onze gemeenschap."
   }
 }

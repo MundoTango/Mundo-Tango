@@ -1,231 +1,61 @@
 {
-  "login": {
-    "pageName": "Iniciar sesión",
-    "seo": {
-      "title": "Iniciar sesión - Mundo Tango",
-      "description": "Ingresá a tu cuenta de Mundo Tango para conectarte con la comunidad global de tango, descubrir eventos y compartir tu pasión por el tango argentino."
-    },
-    "badge": "Bienvenido de vuelta",
-    "hero": {
-      "heading": "Tu viaje tanguero continúa",
-      "paragraph": "Ingresá para conectarte con milongueros de todo el mundo, descubrir eventos y compartir tu pasión"
-    },
-    "stats": {
-      "dancers": "milongueros",
-      "events": "eventos"
-    },
-    "form": {
-      "email": "Correo electrónico",
-      "password": "Contraseña",
-      "signIn": "Iniciar sesión",
-      "signingIn": "Ingresando...",
-      "forgotPassword": "¿Te olvidaste la contraseña?"
-    },
-    "noAccount": "¿No tenés cuenta?",
-    "createAccount": "Creá una ahora",
-    "toast": {
-      "successTitle": "¡Bienvenido de vuelta!",
-      "successDescription": "Ingresaste correctamente.",
-      "errorTitle": "Error al ingresar",
-      "errorDescription": "Credenciales inválidas"
-    }
-  },
   "home": {
-    "pageName": "Inicio",
-    "pageLayoutTitle": "Donde el Tango se Encuentra con la Comunidad",
-    "seo": {
-      "title": "Mundo Tango - Conectate con la Comunidad Global de Tango",
-      "description": "Sumate a miles de milongueros en todo el mundo. Descubrí eventos, encontrá maestros, conectate con bailarines y sumergite en el apasionante mundo del tango argentino."
-    },
-    "hero": {
-      "badge": "Bienvenido a la Comunidad Global de Tango",
-      "heading": "Donde el Tango se Encuentra con la Comunidad",
-      "paragraph": "Compartí recuerdos, encontrá milongas y ayudanos a construir el futuro del tango. Sumate a miles de milongueros apasionados conectándose en todo el mundo.",
-      "getStarted": "Empezá Gratis",
-      "volunteer": "Sumate como voluntario"
-    },
-    "howItWorks": {
-      "heading": "Cómo Funciona",
-      "description": "Empezá tu viaje tanguero en tres simples pasos",
-      "step1": {
-        "title": "Creá tu Perfil",
-        "description": "Registrate gratis y contanos sobre tu experiencia en el tango, nivel y preferencias de baile"
-      },
-      "step2": {
-        "title": "Descubrí y Conectate",
-        "description": "Encontrá milongas, maestros y lugares cerca tuyo. Conectate con milongueros que comparten tu pasión"
-      },
-      "step3": {
-        "title": "Bailá y Crecé",
-        "description": "Asistí a milongas, tomá clases, hacé amigos y formá parte de la comunidad global de tango"
-      }
-    },
-    "features": {
-      "heading": "Todo lo que Necesitás",
-      "description": "Conectate, descubrí y hacé crecer tu viaje tanguero con funciones poderosas",
-      "community": {
-        "badge": "Comunidad",
-        "heading": "Conectate con Milongueros de Todo el Mundo",
-        "description": "Sumate a una vibrante comunidad global de apasionados del tango. Conectate con milongueros, maestros y organizadores desde Buenos Aires hasta Tokio.",
-        "items": {
-          "follow": "Seguí a milongueros y armá tu red",
-          "groups": "Unite a grupos según intereses y ubicación",
-          "messaging": "Mensajería en tiempo real y chat",
-          "discover": "Descubrí milongueros que visitan tu ciudad"
-        }
-      },
-      "events": {
-        "badge": "Eventos",
-        "heading": "Descubrí Milongas en Todos Lados",
-        "description": "Nunca te pierdas una milonga, festival o clase. Nuestra plataforma te conecta con miles de eventos de tango globalmente.",
-        "items": {
-          "calendar": "Calendario completo de milongas",
-          "rsvp": "Reserva y compra de entradas",
-          "notifications": "Notificaciones y recordatorios",
-          "map": "Mapa interactivo de milongas"
-        }
-      },
-      "cards": {
-        "liveStreaming": {
-          "title": "Transmisión en Vivo",
-          "description": "Mirá milongas de todo el mundo en vivo"
-        },
-        "musicLibrary": {
-          "title": "Biblioteca Musical",
-          "description": "Playlists de tango seleccionadas"
-        },
-        "verifiedTeachers": {
-          "title": "Maestros Verificados",
-          "description": "Aprendé con maestros certificados"
-        },
-        "travelPlanner": {
-          "title": "Planificador de Viajes",
-          "description": "Planificá viajes y encontrá anfitriones"
-        }
-      }
-    },
-    "testimonials": {
-      "heading": "Lo que Dicen los Milongueros",
-      "description": "Sumate a miles de milongueros satisfechos en todo el mundo",
-      "items": {
-        "testimonial1": {
-          "name": "María Rodríguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango me ayudó a encontrar mi familia tanguera en una nueva ciudad. La comunidad es cálida, acogedora y verdaderamente apasionada por el tango."
-        },
-        "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, EE.UU.",
-          "text": "Descubrí milongas y clases increíbles a través de esta plataforma. Se volvió esencial para mi viaje tanguero."
-        },
-        "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscú, Rusia",
-          "text": "El directorio de maestros me ayudó a encontrar instructores increíbles. ¡Mi baile mejoró muchísimo!"
-        }
-      }
-    },
-    "cta": {
-      "heading": "¿Listo para Empezar tu Viaje?",
-      "description": "Sumate a miles de milongueros apasionados y empezá a explorar el mundo del tango hoy",
-      "button": "Empezá Gratis"
-    },
-    "footer": {
-      "copyright": "Mundo Tango. Todos los derechos reservados.",
-      "terms": "Términos de Servicio",
-      "privacy": "Política de Privacidad",
-      "contact": "Contacto"
-    }
-  },
-  "register": {
-    "pageName": "Registro",
-    "seo": {
-      "title": "Crear Cuenta - Mundo Tango",
-      "description": "Sumate a la comunidad global de tango. Creá tu cuenta gratis para conectarte con milongueros, descubrir eventos y compartir tu pasión por el tango argentino."
-    },
-    "badge": "Sumate a la Comunidad",
-    "hero": {
-      "heading": "Empezá tu Viaje Tanguero",
-      "paragraph": "Creá tu cuenta para conectarte con milongueros de todo el mundo y descubrir eventos"
-    },
-    "form": {
-      "username": "Nombre de usuario",
-      "email": "Correo electrónico",
-      "password": "Contraseña",
-      "confirmPassword": "Confirmar contraseña",
-      "register": "Crear Cuenta",
-      "registering": "Creando cuenta..."
-    },
-    "hasAccount": "¿Ya tenés cuenta?",
-    "signIn": "Ingresá acá",
-    "toast": {
-      "successTitle": "¡Cuenta creada!",
-      "successDescription": "Bienvenido a Mundo Tango.",
-      "errorTitle": "Error en el registro",
-      "errorDescription": "No se pudo crear la cuenta"
-    }
+    "title": "Bienvenido a Mundo Tango",
+    "subtitle": "Conéctate con la comunidad global del tango",
+    "cta": "Comenzar"
   },
   "events": {
-    "pageName": "Eventos",
-    "seo": {
-      "title": "Eventos de Tango - Mundo Tango",
-      "description": "Descubrí milongas y eventos de tango cerca tuyo y en todo el mundo. Encontrá festivales, clases y prácticas."
-    },
-    "heading": "Descubrí Milongas y Eventos",
-    "description": "Encontrá y asistí a eventos de tango cerca tuyo",
-    "filters": {
-      "all": "Todos los Eventos",
-      "milonga": "Milongas",
-      "festival": "Festivales",
-      "workshop": "Clases",
-      "practica": "Prácticas"
-    },
-    "noEvents": "No se encontraron eventos",
-    "loadMore": "Cargar Más"
+    "title": "Eventos de Tango",
+    "subtitle": "Descubre milongas, festivales y talleres",
+    "filterByCity": "Filtrar por ciudad",
+    "filterByType": "Filtrar por tipo",
+    "noEvents": "No se encontraron eventos"
   },
   "cities": {
-    "pageName": "Ciudades",
-    "seo": {
-      "title": "Ciudades Tangueras - Mundo Tango",
-      "description": "Explorá comunidades de tango en ciudades de todo el mundo. Encontrá milongas locales, maestros y milongueros."
-    },
-    "heading": "Explorá Ciudades Tangueras",
-    "description": "Descubrí vibrantes comunidades de tango en todo el mundo",
-    "searchPlaceholder": "Buscar ciudades...",
-    "noCities": "No se encontraron ciudades"
+    "title": "Ciudades de Tango",
+    "subtitle": "Explora comunidades de tango en todo el mundo",
+    "members": "miembros",
+    "events": "eventos",
+    "viewCity": "Ver Ciudad"
   },
-  "about": {
-    "badge": "Sobre Nosotros",
-    "title": "Acerca de Mundo Tango",
-    "subtitle": "Conectando a la comunidad global del tango, un baile a la vez.",
-    "missionTitle": "Nuestra Misión",
-    "missionDescription": "Mundo Tango está dedicado a fomentar conexiones dentro de la comunidad global del tango. Creemos en el poder de la danza para unir a las personas a través de culturas, idiomas y fronteras.",
-    "valuesTitle": "Nuestros Valores",
-    "valueCommunityTitle": "Comunidad Primero",
-    "valueCommunityDescription": "Priorizamos conexiones auténticas e interacciones significativas.",
-    "valueAuthenticityTitle": "Autenticidad",
-    "valueAuthenticityDescription": "Honramos las tradiciones del tango argentino mientras abrazamos su evolución.",
-    "valueInclusivityTitle": "Inclusividad",
-    "valueInclusivityDescription": "Todos son bienvenidos en nuestra comunidad."
+  "groups": {
+    "title": "Grupos de Tango",
+    "subtitle": "Únete a comunidades locales y de interés",
+    "join": "Unirse al Grupo",
+    "leave": "Salir del Grupo",
+    "members": "Miembros",
+    "posts": "Publicaciones"
   },
   "profile": {
-    "pageName": "Perfil",
-    "seo": {
-      "title": "Mi Perfil - Mundo Tango",
-      "description": "Administrá tu perfil de Mundo Tango, conectate con milongueros y seguí tu viaje tanguero."
-    },
-    "heading": "Mi Perfil",
-    "tabs": {
-      "overview": "Resumen",
-      "events": "Eventos",
-      "connections": "Conexiones",
-      "settings": "Configuración"
-    }
+    "title": "Perfil",
+    "editProfile": "Editar Perfil",
+    "followers": "Seguidores",
+    "following": "Siguiendo",
+    "posts": "Publicaciones",
+    "about": "Acerca de"
   },
-  "notFound": {
-    "pageName": "Página No Encontrada",
-    "heading": "Página No Encontrada",
-    "description": "La página que buscás no existe o fue movida.",
-    "backHome": "Volver al Inicio"
+  "login": {
+    "title": "Iniciar Sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes cuenta?",
+    "signUp": "Regístrate"
+  },
+  "signup": {
+    "title": "Crear Cuenta",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "login": "Iniciar sesión"
+  },
+  "proDiscovery": {
+    "title": "Descubre Profesionales del Tango",
+    "subtitle": "Encuentra profesores, DJs, artistas y más",
+    "search": "Buscar profesionales...",
+    "filterByRole": "Filtrar por rol",
+    "filterByCity": "Filtrar por ciudad"
   }
 }

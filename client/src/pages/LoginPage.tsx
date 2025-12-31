@@ -17,7 +17,7 @@ import tangoHeroImage from "@assets/stock_images/elegant_professional_29e89c1e.j
 
 export default function LoginPage() {
   // Simple pattern - let react-i18next handle re-renders automatically
-  const { t } = useTranslation(['pages', 'common']);
+  const { t } = useTranslation('pages');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [inviteCode, setInviteCode] = useState("");
@@ -44,8 +44,8 @@ export default function LoginPage() {
       const result = await login(email, password, inviteCode || undefined);
       if (result?.requiresVerification) {
         toast({
-          title: t('pages:login.toast.verificationRequired.title', 'Email verification required'),
-          description: t('pages:login.toast.verificationRequired.description', 'Please check your inbox and verify your email first.'),
+          title: t('login.toast.verificationRequired.title', 'Email verification required'),
+          description: t('login.toast.verificationRequired.description', 'Please check your inbox and verify your email first.'),
           variant: "destructive",
         });
         setLocation(`/email-verification?email=${encodeURIComponent(result.verificationEmail || email)}`);
@@ -53,13 +53,13 @@ export default function LoginPage() {
       }
       if (result?.upgraded) {
         toast({
-          title: t('pages:login.toast.upgradedTitle', 'Account Upgraded!'),
-          description: t('pages:login.toast.upgradedDescription', "Welcome! You now have full access to Mundo Tango."),
+          title: t('login.toast.upgradedTitle', 'Account Upgraded!'),
+          description: t('login.toast.upgradedDescription', "Welcome! You now have full access to Mundo Tango."),
         });
       } else {
         toast({
-          title: t('pages:login.toast.successTitle', 'Welcome back!'),
-          description: t('pages:login.toast.successDescription', "You've successfully logged in."),
+          title: t('login.toast.successTitle', 'Welcome back!'),
+          description: t('login.toast.successDescription', "You've successfully logged in."),
         });
       }
       setTimeout(() => {
@@ -67,8 +67,8 @@ export default function LoginPage() {
       }, 100);
     } catch (error: any) {
       toast({
-        title: t('pages:login.toast.errorTitle', 'Login failed'),
-        description: error.message || t('pages:login.toast.errorDescription', 'Invalid credentials'),
+        title: t('login.toast.errorTitle', 'Login failed'),
+        description: error.message || t('login.toast.errorDescription', 'Invalid credentials'),
         variant: "destructive",
       });
     } finally {
@@ -77,11 +77,11 @@ export default function LoginPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName={t('pages:login.pageName', 'Login')} fallbackRoute="/">
+    <SelfHealingErrorBoundary pageName={t('login.pageName', 'Login')} fallbackRoute="/">
       <PublicLayout>
         <SEO
-          title={t('pages:login.seo.title', 'Sign In - Mundo Tango')}
-          description={t('pages:login.seo.description', 'Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango.')}
+          title={t('login.seo.title', 'Sign In - Mundo Tango')}
+          description={t('login.seo.description', 'Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango.')}
         />
         <div className="relative h-screen w-full overflow-hidden" data-testid="hero-login">
           <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${tangoHeroImage})`}}>
@@ -97,26 +97,26 @@ export default function LoginPage() {
               <div className="text-center mb-8">
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
                   <Heart className="w-3 h-3 mr-1" />
-                  {t('pages:login.badge', 'Welcome Back')}
+                  {t('login.badge', 'Welcome Back')}
                 </Badge>
                 <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight leading-tight" data-testid="heading-hero">
-                  {t('pages:login.hero.heading', 'Your Tango Journey Continues')}
+                  {t('login.hero.heading', 'Your Tango Journey Continues')}
                 </h1>
                 <p className="text-lg text-white/80 max-w-md mx-auto mb-8">
-                  {t('pages:login.hero.paragraph', 'Sign in to connect with dancers worldwide, discover events, and share your passion')}
+                  {t('login.hero.paragraph', 'Sign in to connect with dancers worldwide, discover events, and share your passion')}
                 </p>
                 {(stats?.dancers || stats?.events) && (
                   <div className="flex gap-6 justify-center mb-8 text-white/70 text-sm">
                     {stats?.dancers && (
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
-                        <span>{stats.dancers}+ {t('pages:login.stats.dancers', 'dancers')}</span>
+                        <span>{stats.dancers}+ {t('login.stats.dancers', 'dancers')}</span>
                       </div>
                     )}
                     {stats?.events && (
                       <div className="flex items-center gap-2">
                         <Sparkles className="w-4 h-4" />
-                        <span>{stats.events}+ {t('pages:login.stats.events', 'events')}</span>
+                        <span>{stats.events}+ {t('login.stats.events', 'events')}</span>
                       </div>
                     )}
                   </div>
@@ -132,7 +132,7 @@ export default function LoginPage() {
               >
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-white">{t('pages:login.form.email', 'Email')}</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-white">{t('login.form.email', 'Email')}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -146,7 +146,7 @@ export default function LoginPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium text-white">{t('pages:login.form.password', 'Password')}</Label>
+                    <Label htmlFor="password" className="text-sm font-medium text-white">{t('login.form.password', 'Password')}</Label>
                     <Input
                       id="password"
                       type="password"
@@ -167,14 +167,14 @@ export default function LoginPage() {
                       data-testid="button-toggle-invite-code"
                     >
                       <KeyRound className="w-4 h-4" />
-                      {t('pages:login.form.haveInviteCode', 'Have an invite code?')}
+                      {t('login.form.haveInviteCode', 'Have an invite code?')}
                     </button>
                     {showInviteCode && (
                       <div className="relative">
                         <Input
                           id="inviteCode"
                           type="text"
-                          placeholder={t('pages:login.form.inviteCodePlaceholder', 'Enter invite code')}
+                          placeholder={t('login.form.inviteCodePlaceholder', 'Enter invite code')}
                           value={inviteCode}
                           onChange={(e) => setInviteCode(e.target.value)}
                           disabled={isLoading}
@@ -192,7 +192,7 @@ export default function LoginPage() {
                         )}
                         {inviteCode.toLowerCase().trim() === "nomad" && (
                           <p className="text-xs text-green-400 mt-1" data-testid="text-upgrade-message">
-                            {t('pages:login.form.upgradeMessage', 'Your account will be upgraded from waitlist!')}
+                            {t('login.form.upgradeMessage', 'Your account will be upgraded from waitlist!')}
                           </p>
                         )}
                       </div>
@@ -205,14 +205,14 @@ export default function LoginPage() {
                     data-testid="button-login"
                     size="lg"
                   >
-                    {isLoading ? t('pages:login.form.signingIn', 'Signing in...') : t('pages:login.form.signIn', 'Sign In')}
+                    {isLoading ? t('login.form.signingIn', 'Signing in...') : t('login.form.signIn', 'Sign In')}
                   </Button>
                   <Link 
                     href="/password-reset" 
                     className="block text-center text-sm text-white/80 hover:text-white mt-4 transition-colors" 
                     data-testid="link-forgot-password"
                   >
-                    {t('pages:login.form.forgotPassword', 'Forgot password?')}
+                    {t('login.form.forgotPassword', 'Forgot password?')}
                   </Link>
                 </div>
               </motion.form>
@@ -222,13 +222,13 @@ export default function LoginPage() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="text-sm text-center text-white/70 mt-6"
               >
-                {t('pages:login.noAccount', "Don't have an account?")}{" "}
+                {t('login.noAccount', "Don't have an account?")}{" "}
                 <Link 
                   href="/register" 
                   className="text-white hover:underline font-medium" 
                   data-testid="link-register"
                 >
-                  {t('pages:login.createAccount', 'Create one now')}
+                  {t('login.createAccount', 'Create one now')}
                 </Link>
               </motion.p>
             </motion.div>

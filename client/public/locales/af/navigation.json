@@ -1,84 +1,45 @@
 {
-  "social": {
-    "title": "Sosiaal",
-    "memories": "Herinneringe",
-    "feed": "Voer",
-    "profile": "Profiel",
-    "discover": "Ontdek"
-  },
-  "community": {
-    "title": "Gemeenskap",
-    "friends": "Vriende",
-    "recommendations": "Aanbevelings",
-    "invitations": "Uitnodigings",
-    "notifications": "Kennisgewings",
-    "groups": "Groepies",
-    "messages": "Boodskappe"
-  },
-  "events": {
-    "title": "Gebeure",
-    "events": "Gebeure",
-    "calendar": "Kalender",
-    "myEvents": "My Gebeure",
-    "workshops": "Werkswinkels"
-  },
-  "tango": {
-    "title": "Tango Hulpbronne",
-    "teachers": "Onderwysers",
-    "venues": "Plekke",
-    "tutorials": "Tuislesings",
-    "musicLibrary": "Musiekbiblioteek",
-    "danceStyles": "Dansstyle"
-  },
-  "resources": {
-    "title": "Hulpbronne",
-    "communityMap": "Gemeenskapskaart",
-    "blog": "Blog",
-    "newsletter": "Nuusbrief",
-    "faq": "Gereelde Vrae",
-    "help": "Help"
-  },
-  "tools": {
-    "title": "KI & Gereedskap",
-    "lifeCEO": "Lewe CEO",
-    "mrBlue": "Mnr Blou KI",
-    "marketplace": "Markplek",
-    "travelPlanner": "Reisbeplanner"
-  },
-  "personal": {
-    "title": "Persoonlik",
-    "savedPosts": "Gesteekte Plakke",
-    "favorites": "Gunstelinge",
-    "settings": "Instellings",
-    "bookmarks": "Merkers",
-    "activity": "Aktiwiteitslogboek"
-  },
-  "admin": {
-    "title": "Admin",
-    "dashboard": "Admin Paneel",
-    "platform": "Platform",
-    "users": "Gebruikersbestuur",
-    "content": "Inhoudsmoderering",
-    "reports": "Gebruikersverslae",
-    "analytics": "Analise"
-  },
-  "esa": {
-    "title": "ESA-raamwerk",
-    "dashboard": "ESA Dashboard",
-    "tasks": "ESA Take.",
-    "communications": "ESA Kommunikasie"
-  },
-  "footer": {
-    "company": "Maatskappy",
-    "about": "Oor Ons",
-    "contact": "Kontak",
-    "careers": "Loopbane",
-    "volunteer": "Vrywilliger",
-    "legal": "Regtelik",
-    "terms": "Diensvoorwaardes",
-    "privacy": "Privaatheidsbeleid",
-    "guidelines": "Gemeenskapsriglyne",
-    "support": "Ondersteuning",
-    "pricing": "Prysstelling"
-  }
+  "home": "Home",
+  "events": "Events",
+  "cities": "Cities",
+  "groups": "Groups",
+  "explore": "Explore",
+  "discover": "Discover",
+  "feed": "Feed",
+  "profile": "Profile",
+  "settings": "Settings",
+  "notifications": "Notifications",
+  "messages": "Messages",
+  "login": "Login",
+  "signup": "Sign Up",
+  "logout": "Logout",
+  "proDiscovery": "PRO Discovery",
+  "teachers": "Teachers",
+  "djs": "DJs & Musicians",
+  "photographers": "Photographers",
+  "performers": "Performers",
+  "organizers": "Organizers",
+  "venues": "Venues",
+  "artists": "Artists",
+  "bloggers": "Bloggers",
+  "about": "About",
+  "contact": "Contact",
+  "help": "Help & Support",
+  "community": "Community",
+  "careers": "Careers",
+  "press": "Press",
+  "donate": "Donate",
+  "volunteer": "Volunteer",
+  "ambassadors": "Ambassadors",
+  "whoItsFor": "Who It's For",
+  "forDancers": "For Dancers",
+  "forTeachers": "For Teachers",
+  "forOrganizers": "For Organizers",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source",
+  "supportUs": "Support Us",
+  "joinFree": "Join Free",
+  "watchDemo": "Watch Demo",
+  "getStarted": "Get Started",
+  "learnMore": "Learn More"
 }

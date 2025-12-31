@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Mayelana Nathi",
-    "title": "Mayelana neMundo Tango",
-    "subtitle": "Uxhumana umphakathi we-tango womhlaba, umdanso ngamunye ngasikhathi.",
-    "missionTitle": "Umsebenzi wethu",
-    "missionDescription": "UMundo Tango uzinikele ekwakheni ubudlelwano phakathi komphakathi we-tango womhlaba. Sikholelwa emandleni okudansa ukuhlanganisa abantu ngezamasiko, ngezilimi, nasezikhungweni.",
-    "valuesTitle": "Izindinganiso Zethu",
-    "valueCommunityTitle": "Umphakathi Okokuqala",
-    "valueCommunityDescription": "Sigqoka ubudlelwano bokwenyani kanye nokuxhumana okunomthelela.",
-    "valueAuthenticityTitle": "Ubukhona bokwenyani",
-    "valueAuthenticityDescription": "Sihlonipha amasiko e-Argentine tango ngenkathi sithokozisa ukuthuthuka kwawo.",
-    "valueInclusivityTitle": "Ukufaka bonke abantu",
-    "valueInclusivityDescription": "Wonke umuntu uyamukelwa emphakathini wethu."
   }
 }

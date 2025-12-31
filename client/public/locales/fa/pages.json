@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "درباره ما",
-    "title": "درباره‌ی موندو تانگو",
-    "subtitle": "اتصال جامعه جهانی تانگو، یک رقص در یک زمان",
-    "missionTitle": "ماموریت ما",
-    "missionDescription": "موندو تانگو به ترویج ارتباطات در جامعه جهانی تانگو اختصاص دارد. ما به قدرت رقص برای نزدیک کردن مردم از فرهنگ‌ها، زبان‌ها و مرزهای مختلف ایمان داریم.",
-    "valuesTitle": "ارزش‌های ما",
-    "valueCommunityTitle": "اول جامعه",
-    "valueCommunityDescription": "ما ارتباطات واقعی و تعاملات معنادار را در اولویت قرار می‌دهیم.",
-    "valueAuthenticityTitle": "اصالت",
-    "valueAuthenticityDescription": "ما به سنت‌های تانگوی آرژانتینی احترام می‌گذاریم در حالی که به تکامل آن نیز روی خوش نشان می‌دهیم.",
-    "valueInclusivityTitle": "شمولیت",
-    "valueInclusivityDescription": "همه در جامعه ما خوش آمدید."
   }
 }

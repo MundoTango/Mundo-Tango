@@ -1,84 +1,25 @@
 {
-  "auth": {
-    "invalidCredentials": "잘못된 이메일 또는 비밀번호",
-    "emailRequired": "이메일을 입력하세요",
-    "passwordRequired": "비밀번호를 입력하세요",
-    "passwordTooShort": "비밀번호는 최소 8자 이상이어야 합니다",
-    "emailInvalid": "유효한 이메일 주소를 입력하세요",
-    "userNotFound": "사용자를 찾을 수 없습니다",
-    "emailAlreadyExists": "이 이메일은 이미 등록되어 있습니다",
-    "usernameAlreadyExists": "이 사용자 이름은 이미 사용 중입니다",
-    "sessionExpired": "세션이 만료되었습니다. 다시 로그인하세요",
-    "unauthorized": "이 작업을 수행할 권한이 없습니다",
-    "loginRequired": "계속하려면 로그인하세요",
-    "tokenExpired": "세션 토큰이 만료되었습니다",
-    "invalidToken": "잘못된 인증 토큰"
-  },
+  "generic": "오류가 발생했습니다. 다시 시도해 주세요.",
+  "network": "네트워크 오류. 연결을 확인해 주세요.",
+  "notFound": "페이지를 찾을 수 없습니다",
+  "unauthorized": "이 페이지에 접근하려면 로그인이 필요합니다",
+  "forbidden": "이 페이지에 접근할 권한이 없습니다",
   "validation": {
-    "required": "이 필드는 필수입니다",
-    "invalidEmail": "잘못된 이메일 형식",
-    "invalidPhone": "잘못된 전화번호",
-    "invalidDate": "잘못된 날짜 형식",
-    "invalidUrl": "잘못된 URL 형식",
-    "tooShort": "값이 너무 짧습니다",
-    "tooLong": "값이 너무 깁니다",
-    "invalidFormat": "잘못된 형식",
-    "numberRequired": "숫자여야 합니다",
-    "positiveNumber": "양수여야 합니다"
+    "required": "이 항목은 필수입니다",
+    "email": "유효한 이메일 주소를 입력해 주세요",
+    "password": "비밀번호는 8자 이상이어야 합니다",
+    "passwordMatch": "비밀번호가 일치하지 않습니다",
+    "username": "사용자 이름은 영문자, 숫자, 밑줄만 사용할 수 있습니다"
   },
-  "network": {
-    "connectionError": "연결 오류. 인터넷 연결을 확인하세요",
-    "timeout": "요청 시간 초과. 다시 시도하세요",
-    "serverError": "서버 오류. 나중에 다시 시도하세요",
-    "notFound": "리소스를 찾을 수 없습니다",
-    "forbidden": "접근이 금지되었습니다",
-    "badRequest": "잘못된 요청. 입력을 확인하세요",
-    "rateLimitExceeded": "요청이 너무 많습니다. 나중에 다시 시도하세요"
+  "auth": {
+    "invalidCredentials": "이메일 또는 비밀번호가 올바르지 않습니다",
+    "emailInUse": "이 이메일은 이미 등록되어 있습니다",
+    "usernameInUse": "이 사용자 이름은 이미 사용 중입니다",
+    "accountDisabled": "계정이 비활성화되었습니다"
   },
-  "form": {
-    "saveFailed": "저장 실패. 다시 시도하세요",
-    "uploadFailed": "파일 업로드 실패",
-    "deleteFailed": "삭제 실패. 다시 시도하세요",
-    "updateFailed": "업데이트 실패. 다시 시도하세요",
-    "invalidFile": "잘못된 파일 형식",
-    "fileTooLarge": "파일 크기가 너무 큽니다",
-    "requiredFields": "모든 필수 필드를 입력하세요"
-  },
-  "general": {
-    "somethingWrong": "문제가 발생했습니다. 다시 시도하세요",
-    "pageNotFound": "페이지를 찾을 수 없습니다",
-    "accessDenied": "접근이 거부되었습니다",
-    "featureUnavailable": "이 기능은 현재 사용할 수 없습니다",
-    "maintenanceMode": "시스템 점검 중입니다. 나중에 다시 시도하세요",
-    "unknownError": "알 수 없는 오류가 발생했습니다"
-  },
-  "posts": {
-    "createFailed": "게시물 작성 실패",
-    "updateFailed": "게시물 업데이트 실패",
-    "deleteFailed": "게시물 삭제 실패",
-    "loadFailed": "게시물 로드 실패",
-    "commentFailed": "댓글 작성 실패",
-    "likeFailed": "좋아요 실패"
-  },
-  "events": {
-    "loadFailed": "이벤트 로드 실패",
-    "bookingFailed": "이벤트 예약 실패",
-    "cancelFailed": "예약 취소 실패",
-    "eventFull": "이 이벤트는 예약이 마감되었습니다",
-    "eventPast": "이 이벤트는 이미 종료되었습니다",
-    "alreadyBooked": "이미 이 이벤트를 예약하셨습니다"
-  },
-  "messages": {
-    "sendFailed": "메시지 전송 실패",
-    "loadFailed": "메시지 로드 실패",
-    "deleteFailed": "메시지 삭제 실패",
-    "connectionLost": "연결이 끊어졌습니다. 재연결 시도 중..."
-  },
-  "friends": {
-    "requestFailed": "친구 요청 실패",
-    "acceptFailed": "친구 요청 수락 실패",
-    "removeFailed": "친구 삭제 실패",
-    "blockFailed": "사용자 차단 실패",
-    "alreadyFriends": "이미 친구입니다"
+  "upload": {
+    "fileTooLarge": "파일이 너무 큽니다. 최대 크기는 10MB입니다",
+    "invalidType": "유효하지 않은 파일 형식입니다",
+    "uploadFailed": "업로드에 실패했습니다. 다시 시도해 주세요"
   }
 }

@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Hakkımızda",
-    "title": "Mundo Tango Hakkında",
-    "subtitle": "Küresel tango topluluğunu, bir dansla birleştiriyoruz.",
-    "missionTitle": "Bizim Misyonumuz",
-    "missionDescription": "Mundo Tango, dünya tango topluluğu içinde bağlantılar kurmaya adanmıştır. Dansın, kültürler, diller ve sınırlar arasında insanları bir araya getirme gücüne inanmaktayız.",
-    "valuesTitle": "Değerlerimiz",
-    "valueCommunityTitle": "Önce Topluluk",
-    "valueCommunityDescription": "Gerçek bağlantılara ve anlamlı etkileşimlere öncelik veriyoruz.",
-    "valueAuthenticityTitle": "Otantiklik",
-    "valueAuthenticityDescription": "Arjantin tango geleneklerini onurlandırırken, evrimini de kucaklıyoruz.",
-    "valueInclusivityTitle": "Kapsayıcılık",
-    "valueInclusivityDescription": "Herkes topluluğumuza hoş geldin."
   }
 }

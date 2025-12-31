@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Về Chúng Tôi",
-    "title": "Về Mundo Tango",
-    "subtitle": "Kết nối cộng đồng tango toàn cầu, từng điệu nhảy một.",
-    "missionTitle": "Sứ mệnh của chúng tôi",
-    "missionDescription": "Mundo Tango cam kết thúc đẩy các mối liên kết trong cộng đồng tango toàn cầu. Chúng tôi tin vào sức mạnh của điệu nhảy để gắn kết mọi người qua các nền văn hóa, ngôn ngữ và biên giới.",
-    "valuesTitle": "Giá trị của chúng tôi",
-    "valueCommunityTitle": "Cộng đồng lên đầu tiên",
-    "valueCommunityDescription": "Chúng tôi ưu tiên những kết nối chân thật và những tương tác có ý nghĩa.",
-    "valueAuthenticityTitle": "Tính xác thực",
-    "valueAuthenticityDescription": "Chúng tôi tôn vinh các truyền thống của tango Argentina trong khi đón nhận sự phát triển của nó.",
-    "valueInclusivityTitle": "Tính bao gồm",
-    "valueInclusivityDescription": "Mọi người đều được chào đón trong cộng đồng của chúng tôi."
   }
 }

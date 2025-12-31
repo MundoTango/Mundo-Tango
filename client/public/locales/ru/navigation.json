@@ -1,84 +1,32 @@
 {
-  "social": {
-    "title": "Социальное",
-    "memories": "Воспоминания",
-    "feed": "Лента",
-    "profile": "Профиль",
-    "discover": "Открыть"
-  },
-  "community": {
-    "title": "Сообщество",
-    "friends": "Друзья",
-    "recommendations": "Рекомендации",
-    "invitations": "Приглашения",
-    "notifications": "Уведомления",
-    "groups": "Группы",
-    "messages": "Сообщения"
-  },
-  "events": {
-    "title": "Мероприятия",
-    "events": "Мероприятия",
-    "calendar": "Календарь",
-    "myEvents": "Мои мероприятия",
-    "workshops": "Мастер-классы"
-  },
-  "tango": {
-    "title": "Ресурсы танго",
-    "teachers": "Преподаватели",
-    "venues": "Площадки",
-    "tutorials": "Уроки",
-    "musicLibrary": "Музыкальная библиотека",
-    "danceStyles": "Стили танца"
-  },
-  "resources": {
-    "title": "Ресурсы",
-    "communityMap": "Карта сообщества",
-    "blog": "Блог",
-    "newsletter": "Рассылка",
-    "faq": "Вопросы и ответы",
-    "help": "Помощь"
-  },
-  "tools": {
-    "title": "ИИ и инструменты",
-    "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue AI",
-    "marketplace": "Маркетплейс",
-    "travelPlanner": "Планировщик поездок"
-  },
-  "personal": {
-    "title": "Личное",
-    "savedPosts": "Сохранённые записи",
-    "favorites": "Избранное",
-    "settings": "Настройки",
-    "bookmarks": "Закладки",
-    "activity": "Журнал активности"
-  },
-  "admin": {
-    "title": "Админ",
-    "dashboard": "Панель администратора",
-    "platform": "Платформа",
-    "users": "Управление пользователями",
-    "content": "Модерация контента",
-    "reports": "Жалобы пользователей",
-    "analytics": "Аналитика"
-  },
-  "esa": {
-    "title": "Фреймворк ESA",
-    "dashboard": "Панель ESA",
-    "tasks": "Задачи ESA",
-    "communications": "Коммуникации ESA"
-  },
-  "footer": {
-    "company": "Компания",
-    "about": "О нас",
-    "contact": "Контакты",
-    "careers": "Карьера",
-    "volunteer": "Волонтёрство",
-    "legal": "Юридическая информация",
-    "terms": "Условия использования",
-    "privacy": "Политика конфиденциальности",
-    "guidelines": "Правила сообщества",
-    "support": "Поддержка",
-    "pricing": "Цены"
-  }
+  "home": "Главная",
+  "events": "События",
+  "cities": "Города",
+  "groups": "Группы",
+  "explore": "Исследовать",
+  "discover": "Открыть",
+  "feed": "Лента",
+  "profile": "Профиль",
+  "settings": "Настройки",
+  "notifications": "Уведомления",
+  "messages": "Сообщения",
+  "login": "Войти",
+  "signup": "Регистрация",
+  "logout": "Выйти",
+  "proDiscovery": "PRO Открытие",
+  "teachers": "Учителя",
+  "djs": "DJ и Музыканты",
+  "photographers": "Фотографы",
+  "performers": "Артисты",
+  "organizers": "Организаторы",
+  "venues": "Площадки",
+  "artists": "Художники",
+  "bloggers": "Блогеры",
+  "about": "О нас",
+  "contact": "Контакты",
+  "help": "Помощь и поддержка",
+  "community": "Сообщество",
+  "careers": "Карьера",
+  "press": "Пресса",
+  "donate": "Пожертвовать"
 }

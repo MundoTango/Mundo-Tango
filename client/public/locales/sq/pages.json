@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Rreth Nesh",
-    "title": "Rreth Mundo Tango",
-    "subtitle": "Duke lidhur komunitetin global të tangos, një vallëzim në një kohë.",
-    "missionTitle": "Misioni Ynë",
-    "missionDescription": "Mundo Tango është e përkushtuar për të nxitur lidhjet brenda komunitetit global të tangos. Ne besojmë në fuqinë e vallëzimit për të bashkuar njerëzit përtej kulturave, gjuhëve dhe kufijve.",
-    "valuesTitle": "Vlerat tona",
-    "valueCommunityTitle": "Komuniteti i Parë",
-    "valueCommunityDescription": "Ne i japim përparësi lidhjeve autentike dhe ndërveprimeve me kuptim.",
-    "valueAuthenticityTitle": "Autenticiteti",
-    "valueAuthenticityDescription": "Ne nderojmë traditat e tangos argjentinase ndërsa përqafojmë evolucionin e saj.",
-    "valueInclusivityTitle": "Inkluziviteti",
-    "valueInclusivityDescription": "Të gjithë janë të mirëpritur në komunitetin tonë."
   }
 }

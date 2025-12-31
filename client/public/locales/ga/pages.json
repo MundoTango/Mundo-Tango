@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Fúinn",
-    "title": "Faoi Mundo Tango",
-    "subtitle": "Ag ceangal le pobal domhanda an tango, laige amháin ag an am.",
-    "missionTitle": "Ár gCúram",
-    "missionDescription": "Tá Mundo Tango tiomanta do naisc a chothú laistigh den phobal tango domhanda. Creidimid i gcumhacht an rince chun daoine a thabhairt le chéile trasna cultúr, teangacha, agus teorainneacha.",
-    "valuesTitle": "Ár gCríocha",
-    "valueCommunityTitle": "Pobal ar dtús",
-    "valueCommunityDescription": "Cuireann muid tús áite le conneachtaí fíor agus idirghníomhachtaí bríomhar.",
-    "valueAuthenticityTitle": "Duineacht",
-    "valueAuthenticityDescription": "Cuireann muid onóir ar thraidisiúin an tango Airgintín agus muid ag glacadh lena fhorbairt.",
-    "valueInclusivityTitle": "Cuimsitheacht",
-    "valueInclusivityDescription": "Tá fáilte roimh gach duine inár bpobal."
   }
 }

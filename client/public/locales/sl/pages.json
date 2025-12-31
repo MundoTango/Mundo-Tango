@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "O nas",
-    "title": "O Mundu Tangu",
-    "subtitle": "Povezovanje globalne tango skupnosti, en ples naenkrat",
-    "missionTitle": "Naša misija",
-    "missionDescription": "Mundo Tango je posvečen spodbujanju povezav znotraj globalne tango skupnosti. Verjamemo v moč plesa, da združuje ljudi čez kulture, jezike in meje.",
-    "valuesTitle": "Naše vrednote",
-    "valueCommunityTitle": "Skupnost na prvem mestu",
-    "valueCommunityDescription": "Prioritiziramo avtentične povezave in smiselne interakcije.",
-    "valueAuthenticityTitle": "Avtentičnost",
-    "valueAuthenticityDescription": "Častimo tradicije argentinskega tanga, hkrati pa sprejemamo njegovo evolucijo.",
-    "valueInclusivityTitle": "Vključenost",
-    "valueInclusivityDescription": "V naši skupnosti je vsakdo dobrodošel."
   }
 }

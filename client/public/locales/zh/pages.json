@@ -1,231 +1,468 @@
 {
-  "login": {
-    "pageName": "登录",
-    "seo": {
-      "title": "登录 - Mundo Tango",
-      "description": "登录您的Mundo Tango账户，与全球探戈社区建立联系，发现活动，分享您对阿根廷探戈的热情。"
-    },
-    "badge": "欢迎回来",
-    "hero": {
-      "heading": "您的探戈之旅继续",
-      "paragraph": "登录以与世界各地的舞者建立联系，发现活动，分享您的热情"
-    },
-    "stats": {
-      "dancers": "舞者",
-      "events": "活动"
-    },
-    "form": {
-      "email": "电子邮件",
-      "password": "密码",
-      "signIn": "登录",
-      "signingIn": "登录中...",
-      "forgotPassword": "忘记密码？"
-    },
-    "noAccount": "还没有账户？",
-    "createAccount": "立即创建",
-    "toast": {
-      "successTitle": "欢迎回来！",
-      "successDescription": "您已成功登录。",
-      "errorTitle": "登录失败",
-      "errorDescription": "凭证无效"
-    }
-  },
-  "home": {
-    "pageName": "首页",
-    "pageLayoutTitle": "探戈与社区的交汇点",
-    "seo": {
-      "title": "Mundo Tango - 与全球探戈社区建立联系",
-      "description": "加入全球数千名探戈舞者。发现活动，找到教师，与舞者建立联系，沉浸在阿根廷探戈的热情世界中。"
-    },
-    "hero": {
-      "badge": "欢迎来到全球探戈社区",
-      "heading": "探戈与社区的交汇点",
-      "paragraph": "分享回忆，寻找活动，帮助我们构建探戈科技的未来。加入全球数千名热情的舞者。",
-      "getStarted": "免费开始",
-      "volunteer": "志愿帮助建设MT"
-    },
-    "howItWorks": {
-      "heading": "如何运作",
-      "description": "通过三个简单步骤开始您的探戈之旅",
-      "step1": {
-        "title": "创建您的个人资料",
-        "description": "免费加入，告诉我们您的探戈之旅、经验水平和舞蹈偏好"
-      },
-      "step2": {
-        "title": "发现与联系",
-        "description": "找到您附近的活动、教师和场地。与分享您热情的舞者建立联系"
-      },
-      "step3": {
-        "title": "跳舞与成长",
-        "description": "参加活动、上课、结交朋友，成为全球探戈社区的一部分"
-      }
-    },
-    "features": {
-      "heading": "您需要的一切",
-      "description": "通过强大的功能连接、发现和发展您的探戈之旅",
-      "community": {
-        "badge": "社区",
-        "heading": "与全球舞者建立联系",
-        "description": "加入充满活力的全球探戈爱好者社区。与来自布宜诺斯艾利斯到东京的舞者、教师和组织者建立联系。",
-        "items": {
-          "follow": "关注舞者并建立您的网络",
-          "groups": "根据兴趣和位置加入群组",
-          "messaging": "实时消息和聊天功能",
-          "discover": "发现访问您城市的舞者"
-        }
-      },
-      "events": {
-        "badge": "活动",
-        "heading": "发现各地活动",
-        "description": "永不错过任何米隆加、节日或工作坊。我们的平台连接您与全球数千个探戈活动。",
-        "items": {
-          "calendar": "全面的活动日历",
-          "rsvp": "预约和购票",
-          "notifications": "活动通知和提醒",
-          "map": "场地互动地图"
-        }
-      },
-      "cards": {
-        "liveStreaming": {
-          "title": "直播",
-          "description": "实时观看全球米隆加"
-        },
-        "musicLibrary": {
-          "title": "音乐库",
-          "description": "精选探戈播放列表和指南"
-        },
-        "verifiedTeachers": {
-          "title": "认证教师",
-          "description": "向认证讲师学习"
-        },
-        "travelPlanner": {
-          "title": "旅行规划",
-          "description": "规划旅行并在全球找到房东"
-        }
-      }
-    },
-    "testimonials": {
-      "heading": "舞者们的评价",
-      "description": "加入全球数千名满意的舞者",
-      "items": {
-        "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "阿根廷布宜诺斯艾利斯",
-          "text": "Mundo Tango帮助我在新城市找到了我的舞蹈家庭。这个社区温暖、热情，真正热爱探戈。"
-        },
-        "testimonial2": {
-          "name": "James Chen",
-          "location": "美国旧金山",
-          "text": "通过这个平台，我发现了令人惊叹的米隆加和工作坊。它已成为我探戈之旅的必需品。"
-        },
-        "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "俄罗斯莫斯科",
-          "text": "教师目录帮助我找到了出色的讲师。我的舞技进步巨大！"
-        }
-      }
-    },
-    "cta": {
-      "heading": "准备好开始您的旅程了吗？",
-      "description": "加入数千名热情的舞者，今天就开始探索探戈的世界",
-      "button": "免费开始"
-    },
-    "footer": {
-      "copyright": "Mundo Tango。保留所有权利。",
-      "terms": "服务条款",
-      "privacy": "隐私政策",
-      "contact": "联系我们"
-    }
-  },
   "register": {
     "pageName": "注册",
     "seo": {
-      "title": "创建账户 - Mundo Tango",
-      "description": "加入全球探戈社区。创建您的免费账户以与舞者建立联系，发现活动，分享您对阿根廷探戈的热情。"
+      "title": "加入 Mundo Tango - 创建账户",
+      "description": "创建您的 Mundo Tango 账户，加入全球阿根廷探戈社区。与舞者建立联系，发现活动，分享您对探戈的热情。"
     },
-    "badge": "加入社区",
+    "badge": {
+      "welcomeFamily": "欢迎加入大家庭",
+      "beginJourney": "开始您的旅程",
+      "joinCommunity": "加入社区"
+    },
     "hero": {
-      "heading": "开始您的探戈之旅",
-      "paragraph": "创建您的账户以与全球舞者建立联系并发现活动"
+      "youreIn": "您已加入！",
+      "joinMundoTango": "加入 Mundo Tango",
+      "description": "与世界各地的舞者建立联系，发现米隆加，沉浸在阿根廷探戈的热情世界中",
+      "waitlistDescription": "欢迎来到 Mundo Tango 社区。我们正在准备您的账户，稍后会通知您！"
+    },
+    "stats": {
+      "dancers": "{{count}}+ 位舞者",
+      "events": "{{count}}+ 场活动",
+      "cities": "{{count}} 个城市"
     },
     "form": {
+      "fullName": "姓名",
+      "fullNamePlaceholder": "张三",
+      "email": "邮箱",
+      "emailPlaceholder": "zhangsan@example.com",
       "username": "用户名",
-      "email": "电子邮件",
+      "usernamePlaceholder": "zhangsan_tango",
       "password": "密码",
       "confirmPassword": "确认密码",
-      "register": "创建账户",
-      "registering": "创建中..."
+      "inviteOnlyNotice": "目前仅限邀请注册。填写此表单加入我们的等候名单，账户准备就绪后我们会通知您。",
+      "acceptTermsPrefix": "我同意",
+      "termsAndConditions": "条款和条件"
     },
-    "hasAccount": "已有账户？",
-    "signIn": "在此登录",
+    "validation": {
+      "emailTaken": "此邮箱已被注册",
+      "emailAvailable": "邮箱可用！",
+      "usernameTaken": "用户名已被使用。试试 {{suggestion}}",
+      "usernameAvailable": "用户名可用！",
+      "passwordsMatch": "密码匹配",
+      "passwordsDontMatch": "密码不匹配"
+    },
+    "passwordStrength": {
+      "weak": "弱",
+      "medium": "中等",
+      "strong": "强",
+      "veryStrong": "非常强"
+    },
+    "inviteCode": {
+      "label": "有邀请码？（可选）",
+      "placeholder": "输入邀请码立即获得访问权限",
+      "accepted": "邀请码已接受！您的账户将立即激活。",
+      "noWorries": "别担心！填写下面的表单加入我们的等候名单。"
+    },
+    "waitlist": {
+      "welcomeUser": "欢迎，{{name}}！",
+      "defaultName": "舞者",
+      "onTheList": "您已在名单上。账户准备就绪后，我们会发送邮件到",
+      "whenReady": "通知您。",
+      "helpUsGrow": "在等待期间，帮助我们成长",
+      "volunteerWithUs": "成为志愿者",
+      "supportMundoTango": "支持 Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "正在创建账户...",
+      "joining": "正在加入...",
+      "createAccount": "创建账户",
+      "joinMundoTango": "加入 Mundo Tango"
+    },
+    "alreadyHaveAccount": "已有账户？",
+    "signIn": "登录",
     "toast": {
-      "successTitle": "账户已创建！",
-      "successDescription": "欢迎来到Mundo Tango。",
-      "errorTitle": "注册失败",
-      "errorDescription": "无法创建账户"
+      "invalidCode": {
+        "title": "无效的验证码",
+        "description": "请输入有效的6位验证码。"
+      },
+      "verified": {
+        "title": "邮箱验证成功！",
+        "description": "欢迎来到 Mundo Tango！正在开始引导流程..."
+      },
+      "verifyError": {
+        "title": "验证失败",
+        "description": "验证码无效或已过期。请重试。"
+      },
+      "error": {
+        "title": "错误",
+        "description": "邮箱验证失败。请重试。"
+      },
+      "tooMany": {
+        "title": "请求过多",
+        "description": "请等待几分钟后再试。"
+      },
+      "codeSent": {
+        "title": "验证码已发送！",
+        "description": "请查看收件箱获取新验证码。"
+      },
+      "resendError": {
+        "description": "重新发送验证码失败。请重试。"
+      },
+      "termsRequired": {
+        "title": "需要同意条款",
+        "description": "请接受条款和条件"
+      },
+      "passwordMismatch": {
+        "title": "密码不匹配",
+        "description": "请确保两次输入的密码相同"
+      },
+      "weakPassword": {
+        "title": "密码太弱",
+        "description": "请选择更强的密码"
+      },
+      "checkEmail": {
+        "title": "请查看邮箱",
+        "description": "我们已发送6位验证码。请查看收件箱。"
+      },
+      "registrationFailed": {
+        "title": "注册失败"
+      },
+      "signupFailed": {
+        "title": "无法完成注册"
+      },
+      "tryAgain": "请重试"
     }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "欢迎",
+      "seoTitle": "欢迎来到 Mundo Tango",
+      "seoDescription": "在 Mundo Tango 开始您的探戈之旅",
+      "badge": "快速设置",
+      "title": "欢迎来到 Mundo Tango",
+      "subtitle": "让我们设置您的个人资料，以便您与全球探戈社区建立联系",
+      "duration": "大约需要2分钟",
+      "stepIndicator": "步骤 {{current}} / {{total}}",
+      "getStarted": "开始",
+      "profileTitle": "您的探戈之旅开始了",
+      "profileSubtitle": "告诉我们一些关于您的信息",
+      "features": {
+        "city": {
+          "title": "选择您的城市",
+          "description": "与当地探戈社区建立联系"
+        },
+        "roles": {
+          "title": "告诉我们您的角色",
+          "description": "舞者、老师、DJ、组织者，还是全部？"
+        },
+        "events": {
+          "title": "发现活动",
+          "description": "查找附近的米隆加、课程和节日"
+        },
+        "journey": {
+          "title": "分享您的旅程",
+          "description": "与同级别的舞者建立联系"
+        }
+      }
+    },
+    "city": {
+      "pageTitle": "城市选择",
+      "seoTitle": "选择您的城市 - Mundo Tango",
+      "seoDescription": "选择您的所在城市以与当地探戈舞者建立联系",
+      "step": "步骤 1 / 6",
+      "title": "您在哪里跳舞？",
+      "subtitle": "与您所在地区的舞者建立联系",
+      "cardTitle": "您的所在城市",
+      "cardDescription": "这有助于我们向您展示当地的活动和舞者",
+      "searchLabel": "搜索城市",
+      "searchPlaceholder": "输入城市名称...",
+      "eventSite": {
+        "help": "从热门探戈目的地中选择"
+      },
+      "errors": {
+        "required": "需要选择城市",
+        "selectCity": "请选择您的所在城市"
+      }
+    },
+    "photo": {
+      "pageTitle": "上传照片",
+      "seoTitle": "添加个人头像 - Mundo Tango",
+      "seoDescription": "上传您的个人头像",
+      "step": "步骤 3 / 6",
+      "title": "添加您的个人头像",
+      "subtitle": "帮助社区中的其他人认出您",
+      "cardTitle": "您的个人头像",
+      "cardDescription": "帮助其他人认出您（您可以跳过此步骤）",
+      "previewAlt": "头像预览",
+      "dropHere": "将照片拖放到此处",
+      "or": "或",
+      "browseFiles": "浏览文件",
+      "fileTypes": "PNG、JPG，最大5MB",
+      "photoSelected": "照片已选择！",
+      "uploading": "正在上传...",
+      "errors": {
+        "invalidFile": "无效的文件",
+        "selectImage": "请选择图片文件",
+        "fileTooLarge": "文件太大",
+        "sizeLimit": "请选择小于5MB的图片",
+        "uploadFailed": "上传失败",
+        "tryAgain": "照片上传失败。请重试。",
+        "skipFailed": "跳过失败。请重试。"
+      }
+    },
+    "languages": {
+      "pageTitle": "语言",
+      "seoTitle": "您的语言 - Mundo Tango",
+      "seoDescription": "告诉我们您会说什么语言",
+      "step": "步骤 5 / 6",
+      "title": "您会说什么语言？",
+      "subtitle": "用您的语言与舞者建立联系",
+      "cardTitle": "您的语言",
+      "cardDescription": "选择您的主要语言和其他您会说的语言",
+      "primaryLabel": "主要语言",
+      "primaryHint": "这也将设置为网站的显示语言",
+      "primaryPlaceholder": "选择您的主要语言",
+      "additionalLabel": "其他语言（可选）",
+      "errors": {
+        "required": "需要主要语言",
+        "selectPrimary": "请选择您的主要语言",
+        "saveFailed": "保存语言失败",
+        "saveFailedTitle": "语言保存失败"
+      }
+    },
+    "roles": {
+      "pageTitle": "探戈角色",
+      "seoTitle": "您的探戈角色 - Mundo Tango",
+      "seoDescription": "告诉我们您的探戈之旅",
+      "step": "步骤 2 / 6",
+      "title": "您扮演什么角色？",
+      "subtitle": "选择所有适用的选项",
+      "cardTitle": "您的探戈身份",
+      "cardDescription": "让其他人了解您如何参与探戈世界"
+    },
+    "experience": {
+      "pageTitle": "舞蹈经验",
+      "seoTitle": "您的舞蹈经验 - Mundo Tango",
+      "seoDescription": "分享您的舞蹈经验水平",
+      "step": "步骤 4 / 6",
+      "title": "您的舞蹈经验",
+      "subtitle": "帮助我们为您匹配合适的舞者"
+    },
+    "hobbies": {
+      "pageTitle": "兴趣爱好",
+      "seoTitle": "您的兴趣爱好 - Mundo Tango",
+      "seoDescription": "告诉我们您的兴趣爱好",
+      "step": "步骤 6 / 6",
+      "title": "您有什么兴趣？",
+      "subtitle": "选择您感兴趣的话题",
+      "helpText": "选择至少3个兴趣来个性化您的动态",
+      "selectedCount": "已选择 {{count}} 个",
+      "finishing": "正在完成...",
+      "completeSetup": "完成设置",
+      "success": {
+        "completeTitle": "欢迎来到 Mundo Tango！",
+        "completeDesc": "您的个人资料已准备就绪。开始探索吧！",
+        "waitlistTitle": "个人资料已完成！",
+        "waitlistDesc": "账户激活后我们会通知您"
+      },
+      "errors": {
+        "saveFailed": "保存失败。请重试。"
+      }
+    },
+    "legal": {
+      "title": "社区准则",
+      "subtitle": "请查看并接受我们的条款",
+      "legalDocsTitle": "法律文件",
+      "legalDocsDescription": "查看我们的服务条款和隐私政策",
+      "termsOfService": {
+        "label": "我接受服务条款",
+        "description": "我们的条款规定了您对 Mundo Tango 的使用",
+        "link": "阅读服务条款"
+      },
+      "privacyPolicy": {
+        "label": "我接受隐私政策",
+        "description": "我们如何处理您的数据",
+        "link": "阅读隐私政策"
+      },
+      "cocTitle": "社区行为准则",
+      "cocDescription": "帮助我们维护一个尊重的社区",
+      "coc": {
+        "respectful": {
+          "title": "尊重他人",
+          "description": "以尊严和礼貌对待每个人"
+        },
+        "inclusive": {
+          "title": "包容开放",
+          "description": "欢迎各种水平和背景的舞者"
+        },
+        "authentic": {
+          "title": "真实可信",
+          "description": "使用您的真实身份和诚实信息"
+        },
+        "consent": {
+          "title": "尊重同意",
+          "description": "跳舞前总是先询问并尊重边界"
+        },
+        "noHarassment": {
+          "title": "禁止骚扰",
+          "description": "对骚扰或欺凌零容忍"
+        },
+        "noSpam": {
+          "title": "禁止垃圾信息",
+          "description": "不要发送未经请求的促销信息"
+        },
+        "noDiscrimination": {
+          "title": "禁止歧视",
+          "description": "我们不容忍任何形式的歧视"
+        },
+        "privacy": {
+          "title": "保护隐私",
+          "description": "未经同意不要分享他人的信息"
+        },
+        "safety": {
+          "title": "安全第一",
+          "description": "立即报告任何不安全的行为"
+        },
+        "laws": {
+          "title": "遵守法律",
+          "description": "遵守所有适用的法律"
+        },
+        "report": {
+          "title": "报告问题",
+          "description": "通过报告违规行为来帮助我们"
+        },
+        "support": {
+          "title": "相互支持",
+          "description": "帮助舞友共同成长"
+        }
+      },
+      "acceptAll": "全部接受并继续",
+      "accepting": "正在接受...",
+      "incompleteAlert": "请接受所有必需的条款",
+      "success": {
+        "title": "欢迎！",
+        "description": "您已接受我们的社区准则"
+      },
+      "errors": {
+        "failed": "保存失败。请重试。"
+      }
+    },
+    "waitlist": {
+      "pageTitle": "等候名单",
+      "seoTitle": "您在等候名单上 - Mundo Tango",
+      "seoDescription": "您的账户正在等待激活",
+      "title": "您在等候名单上！",
+      "welcomeMessage": "欢迎，{{name}}！",
+      "defaultName": "舞者",
+      "profileComplete": "个人资料已完成",
+      "profileCompleteDesc": "您的个人资料已准备就绪",
+      "emailNotice": "账户准备就绪后，我们会发送邮件到 {{email}} 通知您",
+      "whenReady": "账户准备就绪后通知您。",
+      "whileYouWait": "在等待期间，帮助我们成长：",
+      "volunteerButton": "成为志愿者",
+      "supportButton": "支持 Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "引导之旅",
+      "seoTitle": "探索 Mundo Tango",
+      "seoDescription": "了解如何使用 Mundo Tango",
+      "skipTour": "跳过引导",
+      "finish": "完成引导",
+      "steps": {
+        "feed": "发现探戈社区的帖子",
+        "events": "查找米隆加、课程和节日",
+        "groups": "加入您所在城市或兴趣的群组",
+        "messages": "直接与其他舞者联系",
+        "profile": "自定义您的探戈个人资料",
+        "createPost": "分享您的探戈时刻"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "升级您的体验",
+        "subtitle": "充分利用 Mundo Tango",
+        "limitedOffer": "限时优惠",
+        "getStarted": "开始",
+        "features": {
+          "connect": {
+            "title": "连接",
+            "description": "直接向任何舞者发送消息"
+          },
+          "visibility": {
+            "title": "可见性",
+            "description": "在搜索结果中获得推荐"
+          },
+          "events": {
+            "title": "活动",
+            "description": "优先访问热门活动"
+          },
+          "grow": {
+            "title": "成长",
+            "description": "个人资料高级分析"
+          },
+          "premium": {
+            "title": "高级版",
+            "description": "专属高级功能"
+          }
+        }
+      }
+    },
+    "navigation": {
+      "back": "返回",
+      "next": "下一步",
+      "skip": "跳过",
+      "finish": "完成",
+      "saving": "保存中..."
+    }
+  },
+  "login": {
+    "title": "登录",
+    "email": "邮箱",
+    "password": "密码",
+    "forgotPassword": "忘记密码？",
+    "noAccount": "没有账号？",
+    "signUp": "注册"
+  },
+  "home": {
+    "title": "欢迎来到 Mundo Tango",
+    "subtitle": "与全球探戈社区连接",
+    "cta": "开始使用"
   },
   "events": {
-    "pageName": "活动",
-    "seo": {
-      "title": "探戈活动 - Mundo Tango",
-      "description": "发现您附近和全球的探戈活动。找到米隆加、节日、工作坊和练习课。"
-    },
-    "heading": "发现探戈活动",
-    "description": "找到并参加您附近的探戈活动",
-    "filters": {
-      "all": "所有活动",
-      "milonga": "米隆加",
-      "festival": "节日",
-      "workshop": "工作坊",
-      "practica": "练习课"
-    },
-    "noEvents": "未找到活动",
-    "loadMore": "加载更多"
+    "title": "探戈活动",
+    "subtitle": "发现米隆加、节日和工作坊",
+    "filterByCity": "按城市筛选",
+    "filterByType": "按类型筛选",
+    "noEvents": "未找到活动"
   },
   "cities": {
-    "pageName": "城市",
-    "seo": {
-      "title": "探戈城市 - Mundo Tango",
-      "description": "探索全球各地城市的探戈社区。找到当地活动、教师和舞者。"
-    },
-    "heading": "探索探戈城市",
-    "description": "发现全球充满活力的探戈社区",
-    "searchPlaceholder": "搜索城市...",
-    "noCities": "未找到城市"
+    "title": "探戈城市",
+    "subtitle": "探索世界各地的探戈社区",
+    "members": "成员",
+    "events": "活动",
+    "viewCity": "查看城市"
   },
-  "about": {
-    "badge": "关于我们",
-    "title": "关于世界探戈",
-    "subtitle": "连接全球探戈社区，一次舞蹈一个舞蹈",
-    "missionTitle": "我们的使命",
-    "missionDescription": "Mundo Tango致力于促进全球探戈社区内的联系。我们相信舞蹈的力量能够跨越文化、语言和国界，将人们团结在一起。",
-    "valuesTitle": "Nuestros Valores",
-    "valueCommunityTitle": "社区优先",
-    "valueCommunityDescription": "我们优先考虑真实的联系和有意义的互动。",
-    "valueAuthenticityTitle": "真实性",
-    "valueAuthenticityDescription": "我们尊重阿根廷探戈的传统，同时也拥抱它的发展。",
-    "valueInclusivityTitle": "包容性",
-    "valueInclusivityDescription": "每个人都欢迎加入我们的社区。"
+  "groups": {
+    "title": "探戈群组",
+    "subtitle": "加入本地和兴趣社区",
+    "join": "加入群组",
+    "leave": "离开群组",
+    "members": "成员",
+    "posts": "帖子"
   },
   "profile": {
-    "pageName": "个人资料",
-    "seo": {
-      "title": "我的个人资料 - Mundo Tango",
-      "description": "管理您的Mundo Tango个人资料，与舞者建立联系，追踪您的探戈之旅。"
-    },
-    "heading": "我的个人资料",
-    "tabs": {
-      "overview": "概览",
-      "events": "活动",
-      "connections": "联系人",
-      "settings": "设置"
-    }
+    "title": "个人资料",
+    "editProfile": "编辑资料",
+    "followers": "粉丝",
+    "following": "关注",
+    "posts": "帖子",
+    "about": "关于"
   },
-  "notFound": {
-    "pageName": "页面未找到",
-    "heading": "页面未找到",
-    "description": "您查找的页面不存在或已被移动。",
-    "backHome": "返回首页"
+  "signup": {
+    "title": "创建账号",
+    "name": "姓名",
+    "email": "邮箱",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "hasAccount": "已有账号？",
+    "login": "登录"
+  },
+  "proDiscovery": {
+    "title": "发现探戈专业人士",
+    "subtitle": "寻找老师、DJ、表演者等",
+    "search": "搜索专业人士...",
+    "filterByRole": "按角色筛选",
+    "filterByCity": "按城市筛选"
   }
 }

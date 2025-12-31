@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "עלינו",
-    "title": "על מונדו טנגו",
-    "subtitle": "מחברים את קהילת הטנגו הגלובלית, ריקוד אחד בכל פעם",
-    "missionTitle": "המשימה שלנו",
-    "missionDescription": "מונדו טנגו מתמקדת בקידום קשרים בתוך הקהילה הגלובלית של הטנגו. אנחנו מאמינים בכוח של הריקוד לאחד אנשים מעבר לתרבויות, שפות וגבולות.",
-    "valuesTitle": "הערכים שלנו",
-    "valueCommunityTitle": "קהילה קודם כל",
-    "valueCommunityDescription": "אנחנו נותנים עדיפות לקשרים אותנטיים ואינטראקציות משמעותיות.",
-    "valueAuthenticityTitle": "אותנטיות",
-    "valueAuthenticityDescription": "אנחנו מכבדים את המסורות של הטנגו הארגנטינאי תוך כדי שאנחנו מקבלים את ההתפתחות שלו.",
-    "valueInclusivityTitle": "כוללות",
-    "valueInclusivityDescription": "כולם מוזמנים לקהילה שלנו."
   }
 }

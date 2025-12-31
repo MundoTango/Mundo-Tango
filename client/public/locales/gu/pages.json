@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "અમારા વિશે",
-    "title": "મુંડો ટાંગો વિશે",
-    "subtitle": "વિશ્વવ્યાપી ટાંગો સમુદાયને એક નૃત્ય દ્વારા જોડવું",
-    "missionTitle": "અમારી મિશન",
-    "missionDescription": "મુંડો ટાંગો વૈશ્વિક ટાંગો સમુદાયમાં જોડાણોને પ્રોત્સાહન આપવા માટે સમર્પિત છે. અમે માનીએ છીએ કે નૃત્યની શક્તિ સંસ્કૃતિઓ, ભાષાઓ અને સીમાઓને પાર કરીને લોકોને એકત્રિત કરવા માટે છે.",
-    "valuesTitle": "અમારા મૂલ્યો",
-    "valueCommunityTitle": "સમુદાય પ્રથમ",
-    "valueCommunityDescription": "અમે પ્રામાણિક જોડાણો અને અર્થપૂર્ણ પરસ્પર ક્રિયાઓને પ્રાથમિકતા આપીએ છીએ.",
-    "valueAuthenticityTitle": "પ્રામાણિકતા",
-    "valueAuthenticityDescription": "અમે આર્જેન્ટિનાના ટાંગોના પરંપરાઓને માન આપીએ છીએ જ્યારે તેની વિકાસને સ્વીકારીએ છીએ.",
-    "valueInclusivityTitle": "સમાવેશિતા",
-    "valueInclusivityDescription": "અમારી સમુદાયમાં દરેકનું સ્વાગત છે."
   }
 }

@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "ਸਾਡੇ ਬਾਰੇ",
-    "title": "ਮੁੰਡੋ ਟੈਂਗੋ ਬਾਰੇ",
-    "subtitle": "ਗਲੋਬਲ ਟੈਂਗੋ ਸਮੁਦਾਇ ਨੂੰ ਇੱਕ ਨੱਚ ਦੇ ਨਾਲ ਜੋੜਨਾ",
-    "missionTitle": "ਸਾਡਾ ਮਿਸ਼ਨ",
-    "missionDescription": "ਮੁੰਡੋ ਟੈਂਗੋ ਵਿਸ਼ਵ ਟੈਂਗੋ ਸਮੁਦਾਇ ਵਿੱਚ ਸੰਪਰਕਾਂ ਨੂੰ ਵਧਾਉਣ ਲਈ ਸਮਰਪਿਤ ਹੈ। ਸਾਨੂੰ ਵਿਸ਼ਵਾਸ ਹੈ ਕਿ ਨੱਚਣ ਦੀ ਸ਼ਕਤੀ ਲੋਕਾਂ ਨੂੰ ਸਭਿਆਚਾਰਾਂ, ਭਾਸ਼ਾਵਾਂ ਅਤੇ ਸਰਹਦਾਂ ਦੇ ਪਾਰ ਇਕੱਠੇ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰਦੀ ਹੈ।",
-    "valuesTitle": "ਸਾਡੇ ਮੁੱਲ",
-    "valueCommunityTitle": "ਕਮਿਊਨਿਟੀ ਪਹਿਲਾਂ",
-    "valueCommunityDescription": "ਅਸੀਂ ਅਸਲੀ ਸੰਪਰਕਾਂ ਅਤੇ ਮਹੱਤਵਪੂਰਨ ਇੰਟਰੈਕਸ਼ਨਾਂ ਨੂੰ ਪਹਿਲ ਦੇਂਦੇ ਹਾਂ।",
-    "valueAuthenticityTitle": "ਅਸਲੀਅਤ",
-    "valueAuthenticityDescription": "ਅਸੀਂ ਅਰਜਨਟੀਨ ਟੈਂਗੋ ਦੀਆਂ ਪਰੰਪਰਾਵਾਂ ਦਾ ਸਮਾਨ ਕਰਦੇ ਹਾਂ ਜਦੋਂ ਕਿ ਇਸ ਦੇ ਵਿਕਾਸ ਨੂੰ ਗਲੇ ਲਗਾਉਂਦੇ ਹਾਂ।",
-    "valueInclusivityTitle": "ਸਮਾਵੇਸ਼ਤਾ",
-    "valueInclusivityDescription": "ਸਾਡੇ ਸਮੁਦਾਇ ਵਿੱਚ ਹਰ ਕੋਈ ਸੁਆਗਤ ਹੈ।"
   }
 }

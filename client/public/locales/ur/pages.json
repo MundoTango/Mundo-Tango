@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "ہمارے بارے میں",
-    "title": "مُنڈو ٹینگو کے بارے میں",
-    "subtitle": "دنیا بھر کی ٹینگو کمیونٹی کو ایک رقص کے ذریعے جوڑنا",
-    "missionTitle": "ہماری مشن",
-    "missionDescription": "مُنڈو ٹینگو عالمی ٹینگو کمیونٹی کے اندر روابط کو فروغ دینے کے لیے وقف ہے۔ ہم یقین رکھتے ہیں کہ رقص کی طاقت لوگوں کو ثقافتوں، زبانوں اور سرحدوں کے پار اکٹھا کرنے میں مدد دیتی ہے۔",
-    "valuesTitle": "ہمارے اقدار",
-    "valueCommunityTitle": "کمیونٹی پہلے",
-    "valueCommunityDescription": "ہم حقیقی روابط اور معنی خیز تعاملات کو ترجیح دیتے ہیں۔",
-    "valueAuthenticityTitle": "اصلیت",
-    "valueAuthenticityDescription": "ہم ارجنٹائن کے ٹینگو کی روایات کی عزت کرتے ہیں جبکہ اس کی ترقی کو بھی اپناتے ہیں۔",
-    "valueInclusivityTitle": "شمولیت",
-    "valueInclusivityDescription": "ہمارے معاشرے میں سب کا خیرمقدم ہے۔"
   }
 }

@@ -1,84 +1,32 @@
 {
-  "social": {
-    "title": "소셜",
-    "memories": "추억",
-    "feed": "피드",
-    "profile": "프로필",
-    "discover": "발견"
-  },
-  "community": {
-    "title": "커뮤니티",
-    "friends": "친구",
-    "recommendations": "추천",
-    "invitations": "초대",
-    "notifications": "알림",
-    "groups": "그룹",
-    "messages": "메시지"
-  },
-  "events": {
-    "title": "이벤트",
-    "events": "이벤트",
-    "calendar": "캘린더",
-    "myEvents": "내 이벤트",
-    "workshops": "워크샵"
-  },
-  "tango": {
-    "title": "탱고 리소스",
-    "teachers": "선생님",
-    "venues": "장소",
-    "tutorials": "튜토리얼",
-    "musicLibrary": "음악 라이브러리",
-    "danceStyles": "춤 스타일"
-  },
-  "resources": {
-    "title": "리소스",
-    "communityMap": "커뮤니티 지도",
-    "blog": "블로그",
-    "newsletter": "뉴스레터",
-    "faq": "FAQ",
-    "help": "도움말"
-  },
-  "tools": {
-    "title": "AI & 도구",
-    "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue AI",
-    "marketplace": "마켓플레이스",
-    "travelPlanner": "여행 플래너"
-  },
-  "personal": {
-    "title": "개인",
-    "savedPosts": "저장된 게시물",
-    "favorites": "즐겨찾기",
-    "settings": "설정",
-    "bookmarks": "북마크",
-    "activity": "활동 로그"
-  },
-  "admin": {
-    "title": "관리자",
-    "dashboard": "관리자 대시보드",
-    "platform": "플랫폼",
-    "users": "사용자 관리",
-    "content": "콘텐츠 관리",
-    "reports": "사용자 신고",
-    "analytics": "분석"
-  },
-  "esa": {
-    "title": "ESA 프레임워크",
-    "dashboard": "ESA 대시보드",
-    "tasks": "ESA 작업",
-    "communications": "ESA 커뮤니케이션"
-  },
-  "footer": {
-    "company": "회사",
-    "about": "소개",
-    "contact": "연락처",
-    "careers": "채용",
-    "volunteer": "자원봉사",
-    "legal": "법적 고지",
-    "terms": "이용약관",
-    "privacy": "개인정보 보호정책",
-    "guidelines": "커뮤니티 가이드라인",
-    "support": "지원",
-    "pricing": "가격"
-  }
+  "home": "홈",
+  "events": "이벤트",
+  "cities": "도시",
+  "groups": "그룹",
+  "explore": "탐색",
+  "discover": "발견",
+  "feed": "피드",
+  "profile": "프로필",
+  "settings": "설정",
+  "notifications": "알림",
+  "messages": "메시지",
+  "login": "로그인",
+  "signup": "회원가입",
+  "logout": "로그아웃",
+  "proDiscovery": "PRO 발견",
+  "teachers": "선생님",
+  "djs": "DJ & 뮤지션",
+  "photographers": "사진작가",
+  "performers": "공연자",
+  "organizers": "주최자",
+  "venues": "장소",
+  "artists": "아티스트",
+  "bloggers": "블로거",
+  "about": "소개",
+  "contact": "연락처",
+  "help": "도움말 & 지원",
+  "community": "커뮤니티",
+  "careers": "채용",
+  "press": "언론",
+  "donate": "기부"
 }

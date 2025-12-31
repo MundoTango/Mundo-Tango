@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Kuhusu Sisi",
-    "title": "Kuhusu Mundo Tango",
-    "subtitle": "Kuunganisha jamii ya tango duniani, dansi moja kwa wakati.",
-    "missionTitle": "Misheni Yetu",
-    "missionDescription": "Mundo Tango imejikita katika kukuza uhusiano ndani ya jamii ya tango duniani. Tunaamini katika nguvu ya dansi kuwaleta watu pamoja kupitia tamaduni, lugha, na mipaka.",
-    "valuesTitle": "Madhara Yetu",
-    "valueCommunityTitle": "Jamii Kwanza",
-    "valueCommunityDescription": "Tunapendelea uhusiano wa kweli na mwingiliano wenye maana.",
-    "valueAuthenticityTitle": "Uhalisia",
-    "valueAuthenticityDescription": "Tunasherehekea mila za tango la Argentina huku tukikumbatia mabadiliko yake.",
-    "valueInclusivityTitle": "Ujumuishaji",
-    "valueInclusivityDescription": "Kila mtu anakaribishwa katika jamii yetu."
   }
 }

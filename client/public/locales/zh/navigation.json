@@ -1,84 +1,32 @@
 {
-  "social": {
-    "title": "社交",
-    "memories": "回忆",
-    "feed": "动态",
-    "profile": "个人资料",
-    "discover": "发现"
-  },
-  "community": {
-    "title": "社区",
-    "friends": "好友",
-    "recommendations": "推荐",
-    "invitations": "邀请",
-    "notifications": "通知",
-    "groups": "群组",
-    "messages": "消息"
-  },
-  "events": {
-    "title": "活动",
-    "events": "活动",
-    "calendar": "日历",
-    "myEvents": "我的活动",
-    "workshops": "工作坊"
-  },
-  "tango": {
-    "title": "探戈资源",
-    "teachers": "教师",
-    "venues": "场地",
-    "tutorials": "教程",
-    "musicLibrary": "音乐库",
-    "danceStyles": "舞蹈风格"
-  },
-  "resources": {
-    "title": "资源",
-    "communityMap": "社区地图",
-    "blog": "博客",
-    "newsletter": "通讯",
-    "faq": "常见问题",
-    "help": "帮助"
-  },
-  "tools": {
-    "title": "AI与工具",
-    "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue AI",
-    "marketplace": "市场",
-    "travelPlanner": "旅行规划"
-  },
-  "personal": {
-    "title": "个人",
-    "savedPosts": "已保存帖子",
-    "favorites": "收藏",
-    "settings": "设置",
-    "bookmarks": "书签",
-    "activity": "活动日志"
-  },
-  "admin": {
-    "title": "管理",
-    "dashboard": "管理面板",
-    "platform": "平台",
-    "users": "用户管理",
-    "content": "内容审核",
-    "reports": "用户报告",
-    "analytics": "分析"
-  },
-  "esa": {
-    "title": "ESA框架",
-    "dashboard": "ESA面板",
-    "tasks": "ESA任务",
-    "communications": "ESA通讯"
-  },
-  "footer": {
-    "company": "公司",
-    "about": "关于我们",
-    "contact": "联系",
-    "careers": "招聘",
-    "volunteer": "志愿者",
-    "legal": "法律",
-    "terms": "服务条款",
-    "privacy": "隐私政策",
-    "guidelines": "社区准则",
-    "support": "支持",
-    "pricing": "定价"
-  }
+  "home": "首页",
+  "events": "活动",
+  "cities": "城市",
+  "groups": "群组",
+  "explore": "探索",
+  "discover": "发现",
+  "feed": "动态",
+  "profile": "个人资料",
+  "settings": "设置",
+  "notifications": "通知",
+  "messages": "消息",
+  "login": "登录",
+  "signup": "注册",
+  "logout": "退出",
+  "proDiscovery": "发现专业人士",
+  "teachers": "老师",
+  "djs": "DJ和音乐人",
+  "photographers": "摄影师",
+  "performers": "表演者",
+  "organizers": "组织者",
+  "venues": "场地",
+  "artists": "艺术家",
+  "bloggers": "博主",
+  "about": "关于",
+  "contact": "联系",
+  "help": "帮助与支持",
+  "community": "社区",
+  "careers": "招聘",
+  "press": "新闻",
+  "donate": "捐赠"
 }

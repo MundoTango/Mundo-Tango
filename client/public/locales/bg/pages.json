@@ -1,167 +1,167 @@
 {
   "login": {
-    "pageName": "Вход",
+    "pageName": "Login",
     "seo": {
-      "title": "Вход - Mundo Tango",
-      "description": "Влезте в своя акаунт Mundo Tango, за да се свържете с глобалната танго общност, да откриете събития и да споделите своята страст към аржентинското танго."
+      "title": "Sign In - Mundo Tango",
+      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
     },
-    "badge": "Добре дошъл обратно",
+    "badge": "Welcome Back",
     "hero": {
-      "heading": "Вашето танго пътешествие продължава.",
-      "paragraph": "Влезте, за да се свържете с танцьори от цял свят, да откриете събития и да споделите своята страст."
+      "heading": "Your Tango Journey Continues",
+      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
     },
     "stats": {
-      "dancers": "танцьори",
-      "events": "събития"
+      "dancers": "dancers",
+      "events": "events"
     },
     "form": {
-      "email": "Имейл",
-      "password": "Парола",
-      "signIn": "Вход",
-      "signingIn": "Влизане...",
-      "forgotPassword": "Забравена парола?"
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot password?"
     },
-    "noAccount": "Нямате акаунт?",
-    "createAccount": "Създай един сега.",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one now",
     "toast": {
-      "successTitle": "Добре дошъл обратно!",
-      "successDescription": "Влязохте успешно.",
-      "errorTitle": "Входът не бе успешен.",
-      "errorDescription": "Невалидни идентификационни данни"
+      "successTitle": "Welcome back!",
+      "successDescription": "You've successfully logged in.",
+      "errorTitle": "Login failed",
+      "errorDescription": "Invalid credentials"
     }
   },
   "home": {
-    "pageName": "Дом",
-    "pageLayoutTitle": "Където тангото среща общността",
+    "pageName": "Home",
+    "pageLayoutTitle": "Where Tango Meets Community",
     "seo": {
-      "title": "Mundo Tango - Свържете се с глобалната танго общност",
-      "description": "Присъединете се към хиляди танго танцьори по целия свят. Открийте събития, намерете учители, свържете се с танцьори и се потопете в страстния свят на аржентинското танго."
+      "title": "Mundo Tango - Connect with the Global Tango Community",
+      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
     },
     "hero": {
-      "badge": "Добре дошли в Глобалната танго общност.",
-      "heading": "Където тангото среща общността",
-      "paragraph": "Споделете спомени, намерете събития и ни помогнете да изградим бъдещето на танго технологиите. Присъединете се към хиляди страстни танцьори, които се свързват по целия свят.",
-      "getStarted": "Започнете безплатно",
-      "volunteer": "Доброволец за помощ при изграждане на MT"
+      "badge": "Welcome to the Global Tango Community",
+      "heading": "Where Tango Meets Community",
+      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
+      "getStarted": "Get Started Free",
+      "volunteer": "Volunteer to Help Build MT"
     },
     "howItWorks": {
-      "heading": "Как работи",
-      "description": "Започнете своето танго пътешествие в три лесни стъпки.",
+      "heading": "How It Works",
+      "description": "Start your tango journey in three simple steps",
       "step1": {
-        "title": "Създайте своя профил",
-        "description": "Присъединете се безплатно и ни разкажете за вашето танго пътуване, ниво на опит и предпочитания за танц."
+        "title": "Create Your Profile",
+        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
       },
       "step2": {
-        "title": "Открийте и свържете се",
-        "description": "Намерете събития, учители и места близо до вас. Свържете се с танцьори, които споделят вашата страст."
+        "title": "Discover & Connect",
+        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
       },
       "step3": {
-        "title": "Танцувай и Расти",
-        "description": "Посещавайте събития, вземайте уроци, създавайте приятелства и станете част от световната танго общност."
+        "title": "Dance & Grow",
+        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
       }
     },
     "features": {
-      "heading": "Всичко, от което се нуждаеш",
-      "description": "Свържете се, открийте и развийте своето танго пътешествие с мощни функции.",
+      "heading": "Everything You Need",
+      "description": "Connect, discover, and grow your tango journey with powerful features",
       "community": {
-        "badge": "Общност",
-        "heading": "Свържете се с танцьори по целия свят",
-        "description": "Присъединете се към оживена глобална общност от ентусиасти на тангото. Свържете се с танцьори, преподаватели и организатори от Буенос Айрес до Токио.",
+        "badge": "Community",
+        "heading": "Connect with Dancers Worldwide",
+        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
         "items": {
-          "follow": "Следвайте танцьори и изградете своята мрежа.",
-          "groups": "Присъедини се към групи въз основа на интереси и местоположение.",
-          "messaging": "Функции за съобщения и чат в реално време",
-          "discover": "Открийте танцьори, които посещават вашия град."
+          "follow": "Follow dancers and build your network",
+          "groups": "Join groups based on interests and location",
+          "messaging": "Real-time messaging and chat features",
+          "discover": "Discover dancers visiting your city"
         }
       },
       "events": {
-        "badge": "Събития",
-        "heading": "Открий събития навсякъде",
-        "description": "Никога не пропускайте милонга, фестивал или работилница. Нашата платформа ви свързва с хиляди танго събития, които се случват по целия свят.",
+        "badge": "Events",
+        "heading": "Discover Events Everywhere",
+        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
         "items": {
-          "calendar": "Изчерпателен календар на събитията",
-          "rsvp": "RSVP и резервация на билети",
-          "notifications": "Известия и напомняния за събития",
-          "map": "Интерактивна карта на местата"
+          "calendar": "Comprehensive event calendar",
+          "rsvp": "RSVP and ticket booking",
+          "notifications": "Event notifications and reminders",
+          "map": "Interactive map of venues"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Предаване на живо",
-          "description": "Гледай милонги в реално време по целия свят."
+          "title": "Live Streaming",
+          "description": "Watch milongas worldwide in real-time"
         },
         "musicLibrary": {
-          "title": "Музикална библиотека",
-          "description": "Подбрани плейлисти и ръководства за танго"
+          "title": "Music Library",
+          "description": "Curated tango playlists and guides"
         },
         "verifiedTeachers": {
-          "title": "Проверени учители",
-          "description": "Учете се от сертифицирани инструктори."
+          "title": "Verified Teachers",
+          "description": "Learn from certified instructors"
         },
         "travelPlanner": {
-          "title": "Планировчик на пътувания",
-          "description": "Планирайте пътувания и намерете домакини по целия свят."
+          "title": "Travel Planner",
+          "description": "Plan trips and find hosts globally"
         }
       }
     },
     "testimonials": {
-      "heading": "Какво казват танцьорите",
-      "description": "Присъединете се към хиляди доволни танцьори по целия свят.",
+      "heading": "What Dancers Say",
+      "description": "Join thousands of satisfied dancers worldwide",
       "items": {
         "testimonial1": {
-          "name": "Мария Родригес",
-          "location": "Буенос Айрес, Аржентина",
-          "text": "Mundo Tango ми помогна да намеря моята танцова фамилия в новия град. Общността е топла, гостоприемна и наистина запалена по тангото."
+          "name": "Maria Rodriguez",
+          "location": "Buenos Aires, Argentina",
+          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
         },
         "testimonial2": {
-          "name": "Джеймс Чен",
-          "location": "Сан Франциско, САЩ",
-          "text": "Открих невероятни милонги и работилници чрез тази платформа. Тя стана съществена част от моето танго пътешествие."
+          "name": "James Chen",
+          "location": "San Francisco, USA",
+          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
         },
         "testimonial3": {
-          "name": "Елена Волков",
-          "location": "Москва, Русия",
-          "text": "Каталогът на учителите ми помогна да намеря невероятни инструктори. Танците ми се подобриха значително!"
+          "name": "Elena Volkov",
+          "location": "Moscow, Russia",
+          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
         }
       }
     },
     "faq": {
-      "heading": "Често задавани въпроси",
-      "description": "Всичко, което трябва да знаете за Mundo Tango",
+      "heading": "Frequently Asked Questions",
+      "description": "Everything you need to know about Mundo Tango",
       "items": {
         "q1": {
-          "question": "Какво е Mundo Tango?",
-          "answer": "Mundo Tango е глобална платформа, свързваща танцьори на танго, учители и организатори. Ние ви помагаме да откриете събития, да намерите партньори за танци, да се учите от най-добрите инструктори и да се потопите в оживената танго общност по целия свят."
+          "question": "What is Mundo Tango?",
+          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
         },
         "q2": {
-          "question": "Mundo Tango безплатен ли е за ползване?",
-          "answer": "Да! Предлагаме безплатен план, който включва създаване на основен профил, откриване на събития и съобщения. Премиум функции като неограничени съобщения, съвпадение с партньор за танци с помощта на изкуствен интелект и приоритетни известия за събития са достъпни с нашия Pro абонамент."
+          "question": "Is Mundo Tango free to use?",
+          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
         },
         "q3": {
-          "question": "Как да намеря събития за танго близо до мен?",
-          "answer": "Просто използвайте нашия Календар на събитията или функциите за търсене, за да филтрирате по град, дата и тип събитие. Можете да откриете милонги, фестивали, уъркшопи и практики, които се провеждат във вашия район или навсякъде по света."
+          "question": "How do I find tango events near me?",
+          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
         },
         "q4": {
-          "question": "Мога ли да се свържа с други танцьори?",
-          "answer": "Абсолютно! Следвайте танцьори, присъединявайте се към групи, изпращайте покани за приятелство и чатете с общността. Нашата платформа е създадена да насърчава автентични връзки в света на тангото."
+          "question": "Can I connect with other dancers?",
+          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
         },
         "q5": {
-          "question": "Как да намеря учители по танго?",
-          "answer": "Посетете нашия Учителски указател, за да разгледате проверени инструктори по целия свят. Филтрирайте по местоположение, специалност и ниво на опит. Прочетете отзиви от други ученици и резервирайте частни уроци директно през платформата."
+          "question": "How do I find tango teachers?",
+          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
         },
         "q6": {
-          "question": "Какво прави Mundo Tango различен?",
-          "answer": "Създадени сме от танцьори на танго, за танцьори на танго. Нашият фокус е върху изграждането на автентична общност, качественото организиране на събития и свързването ви с глобалното танго семейство - не просто още една социална мрежа."
+          "question": "What makes Mundo Tango different?",
+          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
         }
       }
     },
     "cta": {
-      "heading": "Готови ли сте да се присъедините към общността?",
-      "description": "Създайте своя безплатен акаунт днес и започнете да се свързвате със страстни танцьори на танго по целия свят. Не е необходима кредитна карта.",
-      "button": "Присъедини се към Mundo Tango безплатно",
-      "freeForever": "Безплатно завинаги",
-      "noCreditCard": "Няма кредитна карта",
-      "cancelAnytime": "Отмени по всяко време."
+      "heading": "Ready to Join the Community?",
+      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
+      "button": "Join Mundo Tango Free",
+      "freeForever": "Free forever",
+      "noCreditCard": "No credit card",
+      "cancelAnytime": "Cancel anytime"
     }
   },
   "feed": {
@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "За нас",
-    "title": "За Мундо Танго",
-    "subtitle": "Свързвайки глобалната танго общност, едно танцуване в даден момент.",
-    "missionTitle": "Нашата мисия",
-    "missionDescription": "Мундо Танго е посветен на насърчаването на връзките в глобалната танго общност. Вярваме в силата на танца да събира хора от различни култури, езици и граници.",
-    "valuesTitle": "Нашите ценности",
-    "valueCommunityTitle": "Общността на първо място",
-    "valueCommunityDescription": "Ние приоритизираме автентичните връзки и значимите взаимодействия.",
-    "valueAuthenticityTitle": "Автентичност",
-    "valueAuthenticityDescription": "Честваме традициите на аржентинското танго, докато приемаме неговата еволюция.",
-    "valueInclusivityTitle": "Инклузивност",
-    "valueInclusivityDescription": "Всеки е добре дошъл в нашата общност."
   }
 }

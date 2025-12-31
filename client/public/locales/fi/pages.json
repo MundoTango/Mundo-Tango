@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Meistä",
-    "title": "Mundo Tangosta",
-    "subtitle": "Yhdistämme globaalin tangoyhteisön, yksi tanssi kerrallaan.",
-    "missionTitle": "Meidän tehtävämme",
-    "missionDescription": "Mundo Tango on omistautunut luomaan yhteyksiä globaalissa tangoyhteisössä. Uskomme tanssin voimaan tuoda ihmisiä yhteen kulttuurien, kielten ja rajojen yli.",
-    "valuesTitle": "Arvomme",
-    "valueCommunityTitle": "Yhteisö ensin",
-    "valueCommunityDescription": "Asetamme etusijalle aitoja yhteyksiä ja merkityksellisiä vuorovaikutuksia.",
-    "valueAuthenticityTitle": "Aitoisuus",
-    "valueAuthenticityDescription": "Kunnioitamme argentiinalaisen tangon perinteitä samalla kun omaksumme sen kehityksen.",
-    "valueInclusivityTitle": "Osallistavuus",
-    "valueInclusivityDescription": "Kaikki ovat tervetulleita yhteisöömme."
   }
 }

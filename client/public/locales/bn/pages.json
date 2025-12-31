@@ -1,167 +1,167 @@
 {
   "login": {
-    "pageName": "লগইন",
+    "pageName": "Login",
     "seo": {
-      "title": "সাইন ইন - মুন্ডো ট্যাঙ্গো",
-      "description": "আপনার মুনডো ট্যাঙ্গো অ্যাকাউন্টে সাইন ইন করুন বিশ্বব্যাপী ট্যাঙ্গো সম্প্রদায়ের সাথে সংযোগ স্থাপন করতে, ইভেন্টগুলি আবিষ্কার করতে এবং আর্জেন্টাইন ট্যাঙ্গোর প্রতি আপনার আবেগ ভাগ করে নিতে।"
+      "title": "Sign In - Mundo Tango",
+      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
     },
-    "badge": "স্বাগতম ফিরে আসার জন্য।",
+    "badge": "Welcome Back",
     "hero": {
-      "heading": "তোমার ট্যাঙ্গো যাত্রা অব্যাহত থাকুক",
-      "paragraph": "নৃত্যশিল্পীদের সাথে বিশ্বব্যাপী সংযোগ স্থাপন করতে সাইন ইন করুন, ইভেন্টগুলি আবিষ্কার করুন এবং আপনার আবেগ শেয়ার করুন।"
+      "heading": "Your Tango Journey Continues",
+      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
     },
     "stats": {
-      "dancers": "নৃত্যশিল্পীরা",
-      "events": "ইভেন্টস"
+      "dancers": "dancers",
+      "events": "events"
     },
     "form": {
-      "email": "ইমেইল",
-      "password": "পাসওয়ার্ড",
-      "signIn": "সাইন ইন করুন",
-      "signingIn": "সাইন ইন করা হচ্ছে...",
-      "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন?"
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot password?"
     },
-    "noAccount": "একটি অ্যাকাউন্ট নেই?",
-    "createAccount": "এখনই একটি তৈরি করুন।",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one now",
     "toast": {
-      "successTitle": "স্বাগতম ফিরে!",
-      "successDescription": "আপনি সফলভাবে লগ ইন করেছেন।",
-      "errorTitle": "লগইন ব্যর্থ হয়েছে",
-      "errorDescription": "অবৈধ শংসাপত্র"
+      "successTitle": "Welcome back!",
+      "successDescription": "You've successfully logged in.",
+      "errorTitle": "Login failed",
+      "errorDescription": "Invalid credentials"
     }
   },
   "home": {
-    "pageName": "বাড়ি",
-    "pageLayoutTitle": "যেখানে ট্যাঙ্গো সম্প্রদায়ের সাথে মিলিত হয়",
+    "pageName": "Home",
+    "pageLayoutTitle": "Where Tango Meets Community",
     "seo": {
-      "title": "মুন্ডো ট্যাঙ্গো - গ্লোবাল ট্যাঙ্গো সম্প্রদায়ের সাথে সংযোগ করুন",
-      "description": "বিশ্বব্যাপী হাজার হাজার ট্যাঙ্গো নৃত্যশিল্পীর সাথে যোগ দিন। ইভেন্টগুলি আবিষ্কার করুন, শিক্ষক খুঁজুন, নৃত্যশিল্পীদের সাথে সংযোগ করুন এবং আর্জেন্টাইন ট্যাঙ্গোর আবেগময় জগতে নিজেকে নিমজ্জিত করুন।"
+      "title": "Mundo Tango - Connect with the Global Tango Community",
+      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
     },
     "hero": {
-      "badge": "গ্লোবাল ট্যাঙ্গো কমিউনিটিতে স্বাগতম।",
-      "heading": "যেখানে ট্যাঙ্গো সম্প্রদায়ের সাথে মিলিত হয়",
-      "paragraph": "স্মৃতিগুলি ভাগ করুন, ইভেন্টগুলি খুঁজুন এবং আমাদের ট্যাঙ্গো প্রযুক্তির ভবিষ্যৎ গড়তে সাহায্য করুন। বিশ্বব্যাপী হাজার হাজার উত্সাহী নৃত্যশিল্পীর সাথে যোগ দিন।",
-      "getStarted": "বিনামূল্যে শুরু করুন",
-      "volunteer": "স্বেচ্ছাসেবক হয়ে এমটি নির্মাণে সহায়তা করুন।"
+      "badge": "Welcome to the Global Tango Community",
+      "heading": "Where Tango Meets Community",
+      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
+      "getStarted": "Get Started Free",
+      "volunteer": "Volunteer to Help Build MT"
     },
     "howItWorks": {
-      "heading": "এটি কীভাবে কাজ করে",
-      "description": "তোমার টাঙ্গো যাত্রা শুরু করো তিনটি সহজ ধাপে।",
+      "heading": "How It Works",
+      "description": "Start your tango journey in three simple steps",
       "step1": {
-        "title": "আপনার প্রোফাইল তৈরি করুন",
-        "description": "বিনামূল্যে যোগদান করুন এবং আমাদের আপনার ট্যাঙ্গো যাত্রা, অভিজ্ঞতার স্তর, এবং নৃত্যের পছন্দ সম্পর্কে বলুন।"
+        "title": "Create Your Profile",
+        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
       },
       "step2": {
-        "title": "আবিষ্কার করুন ও সংযোগ স্থাপন করুন",
-        "description": "আপনার কাছাকাছি ইভেন্ট, শিক্ষক এবং স্থান খুঁজুন। আপনার আবেগ ভাগ করে নেওয়া নৃত্যশিল্পীদের সাথে সংযোগ করুন।"
+        "title": "Discover & Connect",
+        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
       },
       "step3": {
-        "title": "নাচো ও বেড়ে ওঠো",
-        "description": "ইভেন্টে যোগ দিন, পাঠ নিন, বন্ধু তৈরি করুন এবং গ্লোবাল ট্যাঙ্গো সম্প্রদায়ের অংশ হয়ে উঠুন।"
+        "title": "Dance & Grow",
+        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
       }
     },
     "features": {
-      "heading": "আপনার যা কিছু প্রয়োজন",
-      "description": "শক্তিশালী বৈশিষ্ট্যগুলির সাথে আপনার ট্যাঙ্গো যাত্রা সংযুক্ত করুন, আবিষ্কার করুন এবং বৃদ্ধি করুন।",
+      "heading": "Everything You Need",
+      "description": "Connect, discover, and grow your tango journey with powerful features",
       "community": {
-        "badge": "সম্প্রদায়",
-        "heading": "বিশ্বব্যাপী নৃত্যশিল্পীদের সাথে সংযোগ করুন",
-        "description": "একটি প্রাণবন্ত বৈশ্বিক ট্যাঙ্গো উত্সাহীদের সম্প্রদায়ের সাথে যোগ দিন। বুয়েনস আয়ার্স থেকে টোকিও পর্যন্ত নৃত্যশিল্পী, শিক্ষক এবং আয়োজকদের সাথে সংযোগ স্থাপন করুন।",
+        "badge": "Community",
+        "heading": "Connect with Dancers Worldwide",
+        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
         "items": {
-          "follow": "নৃত্যশিল্পীদের অনুসরণ করুন এবং আপনার নেটওয়ার্ক গড়ে তুলুন।",
-          "groups": "রুচি এবং অবস্থানের উপর ভিত্তি করে গোষ্ঠীগুলিতে যোগ দিন।",
-          "messaging": "রিয়েল-টাইম মেসেজিং এবং চ্যাট ফিচারসমূহ",
-          "discover": "আপনার শহরে আগত নৃত্যশিল্পীদের আবিষ্কার করুন।"
+          "follow": "Follow dancers and build your network",
+          "groups": "Join groups based on interests and location",
+          "messaging": "Real-time messaging and chat features",
+          "discover": "Discover dancers visiting your city"
         }
       },
       "events": {
-        "badge": "ইভেন্টসমূহ",
-        "heading": "সর্বত্র ইভেন্ট আবিষ্কার করুন",
-        "description": "কখনো কোনো মিলঙ্গা, উৎসব, বা কর্মশালা মিস করবেন না। আমাদের প্ল্যাটফর্ম আপনাকে বিশ্বব্যাপী ঘটে যাওয়া হাজার হাজার ট্যাঙ্গো ইভেন্টের সাথে সংযুক্ত করে।",
+        "badge": "Events",
+        "heading": "Discover Events Everywhere",
+        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
         "items": {
-          "calendar": "বিস্তৃত ইভেন্ট ক্যালেন্ডার",
-          "rsvp": "আরএসভিপি এবং টিকিট বুকিং",
-          "notifications": "ইভেন্ট বিজ্ঞপ্তি এবং অনুস্মারক",
-          "map": "স্থানগুলির ইন্টারেক্টিভ মানচিত্র"
+          "calendar": "Comprehensive event calendar",
+          "rsvp": "RSVP and ticket booking",
+          "notifications": "Event notifications and reminders",
+          "map": "Interactive map of venues"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "লাইভ স্ট্রিমিং",
-          "description": "বিশ্বব্যাপী মিলঙ্গা সরাসরি দেখুন"
+          "title": "Live Streaming",
+          "description": "Watch milongas worldwide in real-time"
         },
         "musicLibrary": {
-          "title": "মিউজিক লাইব্রেরি",
-          "description": "কিউরেটেড ট্যাঙ্গো প্লেলিস্ট এবং গাইডস"
+          "title": "Music Library",
+          "description": "Curated tango playlists and guides"
         },
         "verifiedTeachers": {
-          "title": "যাচাইকৃত শিক্ষকগণ",
-          "description": "সার্টিফায়েড প্রশিক্ষকদের থেকে শিখুন।"
+          "title": "Verified Teachers",
+          "description": "Learn from certified instructors"
         },
         "travelPlanner": {
-          "title": "ভ্রমণ পরিকল্পনাকারী",
-          "description": "বিশ্বব্যাপী ভ্রমণের পরিকল্পনা করুন এবং আতিথেয়তা খুঁজুন।"
+          "title": "Travel Planner",
+          "description": "Plan trips and find hosts globally"
         }
       }
     },
     "testimonials": {
-      "heading": "নৃত্যশিল্পীরা যা বলে",
-      "description": "বিশ্বব্যাপী হাজার হাজার সন্তুষ্ট নৃত্যশিল্পীর সাথে যোগ দিন।",
+      "heading": "What Dancers Say",
+      "description": "Join thousands of satisfied dancers worldwide",
       "items": {
         "testimonial1": {
-          "name": "মারিয়া রদ্রিগেজ",
-          "location": "বুয়েনোস আইরেস, আর্জেন্টিনা",
-          "text": "মুন্ডো ট্যাঙ্গো আমাকে নতুন শহরে আমার নৃত্য পরিবার খুঁজে পেতে সাহায্য করেছে। এই সম্প্রদায়টি উষ্ণ, স্বাগতপূর্ণ এবং সত্যিই ট্যাঙ্গোর প্রতি উত্সাহী।"
+          "name": "Maria Rodriguez",
+          "location": "Buenos Aires, Argentina",
+          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
         },
         "testimonial2": {
-          "name": "জেমস চেন",
-          "location": "সান ফ্রান্সিসকো, যুক্তরাষ্ট্র",
-          "text": "এই প্ল্যাটফর্মের মাধ্যমে আমি অসাধারণ মিলঙ্গা এবং কর্মশালা আবিষ্কার করেছি। এটি আমার ট্যাঙ্গো যাত্রার একটি অপরিহার্য অংশ হয়ে উঠেছে।"
+          "name": "James Chen",
+          "location": "San Francisco, USA",
+          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
         },
         "testimonial3": {
-          "name": "এলেনা ভলকভ",
-          "location": "মস্কো, রাশিয়া",
-          "text": "শিক্ষকদের ডিরেক্টরি আমাকে অসাধারণ শিক্ষকদের খুঁজে পেতে সাহায্য করেছে। আমার নাচ অনেক উন্নতি করেছে!"
+          "name": "Elena Volkov",
+          "location": "Moscow, Russia",
+          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
         }
       }
     },
     "faq": {
-      "heading": "প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী",
-      "description": "মুন্ডো ট্যাঙ্গো সম্পর্কে আপনার যা কিছু জানা প্রয়োজন",
+      "heading": "Frequently Asked Questions",
+      "description": "Everything you need to know about Mundo Tango",
       "items": {
         "q1": {
-          "question": "মুন্ডো ট্যাঙ্গো কী?",
-          "answer": "মুন্ডো ট্যাঙ্গো একটি বৈশ্বিক প্ল্যাটফর্ম যা ট্যাঙ্গো নর্তকী, শিক্ষক এবং আয়োজকদের সংযুক্ত করে। আমরা আপনাকে ইভেন্ট আবিষ্কার করতে, নৃত্য সঙ্গী খুঁজে পেতে, শীর্ষ প্রশিক্ষকদের থেকে শিখতে এবং বিশ্বব্যাপী উজ্জ্বল ট্যাঙ্গো সম্প্রদায়ের সাথে সম্পৃক্ত হতে সাহায্য করি।"
+          "question": "What is Mundo Tango?",
+          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
         },
         "q2": {
-          "question": "মুন্ডো ট্যাঙ্গো কি ব্যবহারের জন্য বিনামূল্যে?",
-          "answer": "হ্যাঁ! আমরা একটি বিনামূল্যের স্তর অফার করি যা মৌলিক প্রোফাইল তৈরি, ইভেন্ট আবিষ্কার এবং মেসেজিং অন্তর্ভুক্ত করে। প্রিমিয়াম বৈশিষ্ট্যগুলি যেমন সীমাহীন মেসেজিং, এআই নৃত্য সঙ্গী মিল, এবং অগ্রাধিকার ইভেন্ট বিজ্ঞপ্তি আমাদের প্রো সাবস্ক্রিপশনের সাথে উপলব্ধ।"
+          "question": "Is Mundo Tango free to use?",
+          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
         },
         "q3": {
-          "question": "কীভাবে আমি আমার আশেপাশে ট্যাঙ্গো ইভেন্ট খুঁজে পাব?",
-          "answer": "সহজেই আমাদের ইভেন্ট ক্যালেন্ডার বা অনুসন্ধান বৈশিষ্ট্যগুলি ব্যবহার করে শহর, তারিখ এবং ইভেন্টের ধরন অনুযায়ী ফিল্টার করুন। আপনি আপনার এলাকা বা বিশ্বের যেকোনো স্থানে অনুষ্ঠিত মিলোঙ্গা, উৎসব, কর্মশালা এবং অনুশীলন সেশন আবিষ্কার করতে পারেন।"
+          "question": "How do I find tango events near me?",
+          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
         },
         "q4": {
-          "question": "আমি কি অন্য নৃত্যশিল্পীদের সাথে যোগাযোগ করতে পারি?",
-          "answer": "অবশ্যই! নৃত্যশিল্পীদের অনুসরণ করুন, গোষ্ঠীতে যোগ দিন, বন্ধু অনুরোধ পাঠান এবং সম্প্রদায়ের সাথে চ্যাট করুন। আমাদের প্ল্যাটফর্মটি ট্যাঙ্গো জগতের মধ্যে সত্যিকারের সংযোগ গড়ে তোলার জন্য ডিজাইন করা হয়েছে।"
+          "question": "Can I connect with other dancers?",
+          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
         },
         "q5": {
-          "question": "কিভাবে আমি ট্যাঙ্গো শিক্ষক খুঁজে পাবো?",
-          "answer": "আমাদের শিক্ষক ডিরেক্টরি ভিজিট করুন বিশ্বব্যাপী যাচাইকৃত প্রশিক্ষকদের ব্রাউজ করার জন্য। অবস্থান, বিশেষত্ব এবং অভিজ্ঞতার স্তর অনুযায়ী ফিল্টার করুন। অন্যান্য শিক্ষার্থীদের রিভিউ পড়ুন এবং সরাসরি প্ল্যাটফর্মের মাধ্যমে ব্যক্তিগত পাঠ বুক করুন।"
+          "question": "How do I find tango teachers?",
+          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
         },
         "q6": {
-          "question": "কী মুণ্ডো ট্যাঙ্গোকে আলাদা করে তোলে?",
-          "answer": "আমরা ট্যাঙ্গো নৃত্যশিল্পীদের দ্বারা নির্মিত, ট্যাঙ্গো নৃত্যশিল্পীদের জন্য। আমাদের লক্ষ্য হল প্রকৃত সম্প্রদায় গঠন, মানসম্পন্ন ইভেন্টের কিউরেশন এবং আপনাকে বৈশ্বিক ট্যাঙ্গো পরিবারের সাথে সংযুক্ত করা - শুধুমাত্র আরেকটি সামাজিক নেটওয়ার্ক নয়।"
+          "question": "What makes Mundo Tango different?",
+          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
         }
       }
     },
     "cta": {
-      "heading": "সম্প্রদায়ে যোগ দিতে প্রস্তুত?",
-      "description": "আজই আপনার বিনামূল্যে অ্যাকাউন্ট তৈরি করুন এবং সারা বিশ্বের উত্সাহী ট্যাঙ্গো নৃত্যশিল্পীদের সাথে সংযোগ স্থাপন শুরু করুন। কোনো ক্রেডিট কার্ডের প্রয়োজন নেই।",
-      "button": "মুন্ডো ট্যাঙ্গোতে বিনামূল্যে যোগ দিন।",
-      "freeForever": "চিরতরে মুক্ত",
-      "noCreditCard": "কোনো ক্রেডিট কার্ড নেই।",
-      "cancelAnytime": "যেকোনো সময় বাতিল করুন।"
+      "heading": "Ready to Join the Community?",
+      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
+      "button": "Join Mundo Tango Free",
+      "freeForever": "Free forever",
+      "noCreditCard": "No credit card",
+      "cancelAnytime": "Cancel anytime"
     }
   },
   "feed": {
@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "আমাদের সম্পর্কে",
-    "title": "মুন্ডো টাঙ্গো সম্পর্কে",
-    "subtitle": "বিশ্বব্যাপী টাঙ্গো সম্প্রদায়কে একে অপরের সাথে সংযুক্ত করা, এক নাচে একবারে",
-    "missionTitle": "আমাদের মিশন",
-    "missionDescription": "মুন্ডো ট্যাঙ্গো বিশ্বব্যাপী ট্যাঙ্গো সম্প্রদায়ের মধ্যে সংযোগ স্থাপনকে উৎসর্গিত। আমরা বিশ্বাস করি যে নাচের শক্তি সংস্কৃতি, ভাষা এবং সীমানা অতিক্রম করে মানুষকে একত্রিত করতে পারে।",
-    "valuesTitle": "আমাদের মূল্যবোধ",
-    "valueCommunityTitle": "কমিউনিটি প্রথম",
-    "valueCommunityDescription": "আমরা প্রকৃত সংযোগ এবং অর্থপূর্ণ মিথস্ক্রিয়াকে অগ্রাধিকার দিই।",
-    "valueAuthenticityTitle": "প্রামাণিকতা",
-    "valueAuthenticityDescription": "আমরা আর্জেন্টিনার ট্যাঙ্গোর ঐতিহ্যকে সম্মান করি এবং এর বিবর্তনকে গ্রহণ করি।",
-    "valueInclusivityTitle": "সমন্বয়িতা",
-    "valueInclusivityDescription": "আমাদের সম্প্রদায়ে সবাই স্বাগতম।"
   }
 }

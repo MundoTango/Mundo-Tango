@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "អំពី​ពួក​យើង",
-    "title": "អំពីមុនដូតង់កូ",
-    "subtitle": "ភ្ជាប់សហគមន៍តង់ហ្គូពិភពលោកមួយនាក់នៅពេលរាំមួយ។",
-    "missionTitle": "បេសកកម្មរបស់យើង",
-    "missionDescription": "Mundo Tango មានគោលបំណងក្នុងការជួយបង្កើតការតភ្ជាប់នៅក្នុងសហគមន៍តង់ហ្គូជុំវិញពិភពលោក។ យើងជឿថាការរាំមានអំណាចក្នុងការប្រមូលផ្តុំមនុស្សជុំវិញវប្បធម៌ ភាសា និងព្រំដែន។",
-    "valuesTitle": "តម្លៃរបស់យើង",
-    "valueCommunityTitle": "សហគមន៍ជាលើកដំបូង",
-    "valueCommunityDescription": "យើងអាទិភាពការតភ្ជាប់ដ៏ពិតប្រាកដ និងអន្តរកម្មដែលមានអត្ថន័យ។",
-    "valueAuthenticityTitle": "អត្តសញ្ញាណ",
-    "valueAuthenticityDescription": "យើងគោរពប្រពៃណីនៃតង់ហ្គោអាហ្សង់ទីន ខណៈដែលយើងទទួលយកការប្រែប្រួលរបស់វា។",
-    "valueInclusivityTitle": "ការរួមបញ្ចូល",
-    "valueInclusivityDescription": "គ្រប់គ្នាត្រូវបានស្វាគមន៍ក្នុងសហគមន៍របស់យើង។"
   }
 }

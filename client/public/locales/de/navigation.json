@@ -1,84 +1,32 @@
 {
-  "social": {
-    "title": "Soziales",
-    "memories": "Erinnerungen",
-    "feed": "Feed",
-    "profile": "Profil",
-    "discover": "Entdecken"
-  },
-  "community": {
-    "title": "Community",
-    "friends": "Freunde",
-    "recommendations": "Empfehlungen",
-    "invitations": "Einladungen",
-    "notifications": "Benachrichtigungen",
-    "groups": "Gruppen",
-    "messages": "Nachrichten"
-  },
-  "events": {
-    "title": "Veranstaltungen",
-    "events": "Veranstaltungen",
-    "calendar": "Kalender",
-    "myEvents": "Meine Veranstaltungen",
-    "workshops": "Workshops"
-  },
-  "tango": {
-    "title": "Tango-Ressourcen",
-    "teachers": "Lehrer",
-    "venues": "Locations",
-    "tutorials": "Tutorials",
-    "musicLibrary": "Musikbibliothek",
-    "danceStyles": "Tanzstile"
-  },
-  "resources": {
-    "title": "Ressourcen",
-    "communityMap": "Community-Karte",
-    "blog": "Blog",
-    "newsletter": "Newsletter",
-    "faq": "FAQ",
-    "help": "Hilfe"
-  },
-  "tools": {
-    "title": "KI & Tools",
-    "lifeCEO": "Life CEO",
-    "mrBlue": "Mr Blue KI",
-    "marketplace": "Marktplatz",
-    "travelPlanner": "Reiseplaner"
-  },
-  "personal": {
-    "title": "Persönlich",
-    "savedPosts": "Gespeicherte Beiträge",
-    "favorites": "Favoriten",
-    "settings": "Einstellungen",
-    "bookmarks": "Lesezeichen",
-    "activity": "Aktivitätsprotokoll"
-  },
-  "admin": {
-    "title": "Admin",
-    "dashboard": "Admin-Dashboard",
-    "platform": "Plattform",
-    "users": "Benutzerverwaltung",
-    "content": "Inhaltsmoderation",
-    "reports": "Benutzerberichte",
-    "analytics": "Analysen"
-  },
-  "esa": {
-    "title": "ESA-Framework",
-    "dashboard": "ESA-Dashboard",
-    "tasks": "ESA-Aufgaben",
-    "communications": "ESA-Kommunikation"
-  },
-  "footer": {
-    "company": "Unternehmen",
-    "about": "Über uns",
-    "contact": "Kontakt",
-    "careers": "Karriere",
-    "volunteer": "Freiwillige",
-    "legal": "Rechtliches",
-    "terms": "Nutzungsbedingungen",
-    "privacy": "Datenschutzrichtlinie",
-    "guidelines": "Community-Richtlinien",
-    "support": "Support",
-    "pricing": "Preise"
-  }
+  "home": "Startseite",
+  "events": "Veranstaltungen",
+  "cities": "Städte",
+  "groups": "Gruppen",
+  "explore": "Entdecken",
+  "discover": "Entdecken",
+  "feed": "Feed",
+  "profile": "Profil",
+  "settings": "Einstellungen",
+  "notifications": "Benachrichtigungen",
+  "messages": "Nachrichten",
+  "login": "Anmelden",
+  "signup": "Registrieren",
+  "logout": "Abmelden",
+  "proDiscovery": "PRO Entdecken",
+  "teachers": "Lehrer",
+  "djs": "DJs & Musiker",
+  "photographers": "Fotografen",
+  "performers": "Künstler",
+  "organizers": "Organisatoren",
+  "venues": "Locations",
+  "artists": "Künstler",
+  "bloggers": "Blogger",
+  "about": "Über uns",
+  "contact": "Kontakt",
+  "help": "Hilfe & Support",
+  "community": "Community",
+  "careers": "Karriere",
+  "press": "Presse",
+  "donate": "Spenden"
 }

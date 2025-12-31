@@ -1,84 +1,25 @@
 {
-  "auth": {
-    "invalidCredentials": "Ungültige E-Mail oder Passwort",
-    "emailRequired": "E-Mail ist erforderlich",
-    "passwordRequired": "Passwort ist erforderlich",
-    "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen haben",
-    "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
-    "userNotFound": "Benutzer nicht gefunden",
-    "emailAlreadyExists": "Diese E-Mail ist bereits registriert",
-    "usernameAlreadyExists": "Dieser Benutzername ist bereits vergeben",
-    "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an",
-    "unauthorized": "Sie sind nicht berechtigt, diese Aktion durchzuführen",
-    "loginRequired": "Bitte melden Sie sich an, um fortzufahren",
-    "tokenExpired": "Ihr Sitzungstoken ist abgelaufen",
-    "invalidToken": "Ungültiger Authentifizierungstoken"
-  },
+  "generic": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+  "network": "Netzwerkfehler. Bitte überprüfe deine Verbindung.",
+  "notFound": "Seite nicht gefunden",
+  "unauthorized": "Du musst angemeldet sein, um auf diese Seite zuzugreifen",
+  "forbidden": "Du hast keine Berechtigung, auf diese Seite zuzugreifen",
   "validation": {
     "required": "Dieses Feld ist erforderlich",
-    "invalidEmail": "Ungültiges E-Mail-Format",
-    "invalidPhone": "Ungültige Telefonnummer",
-    "invalidDate": "Ungültiges Datumsformat",
-    "invalidUrl": "Ungültiges URL-Format",
-    "tooShort": "Der Wert ist zu kurz",
-    "tooLong": "Der Wert ist zu lang",
-    "invalidFormat": "Ungültiges Format",
-    "numberRequired": "Muss eine Zahl sein",
-    "positiveNumber": "Muss eine positive Zahl sein"
+    "email": "Bitte gib eine gültige E-Mail-Adresse ein",
+    "password": "Das Passwort muss mindestens 8 Zeichen haben",
+    "passwordMatch": "Die Passwörter stimmen nicht überein",
+    "username": "Der Benutzername darf nur Buchstaben, Zahlen und Unterstriche enthalten"
   },
-  "network": {
-    "connectionError": "Verbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung",
-    "timeout": "Zeitüberschreitung der Anfrage. Bitte versuchen Sie es erneut",
-    "serverError": "Serverfehler. Bitte versuchen Sie es später erneut",
-    "notFound": "Ressource nicht gefunden",
-    "forbidden": "Zugriff verboten",
-    "badRequest": "Ungültige Anfrage. Bitte überprüfen Sie Ihre Eingabe",
-    "rateLimitExceeded": "Zu viele Anfragen. Bitte versuchen Sie es später erneut"
+  "auth": {
+    "invalidCredentials": "Ungültige E-Mail oder Passwort",
+    "emailInUse": "Diese E-Mail ist bereits registriert",
+    "usernameInUse": "Dieser Benutzername ist bereits vergeben",
+    "accountDisabled": "Dein Konto wurde deaktiviert"
   },
-  "form": {
-    "saveFailed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut",
-    "uploadFailed": "Datei-Upload fehlgeschlagen",
-    "deleteFailed": "Löschen fehlgeschlagen. Bitte versuchen Sie es erneut",
-    "updateFailed": "Aktualisierung fehlgeschlagen. Bitte versuchen Sie es erneut",
-    "invalidFile": "Ungültiges Dateiformat",
-    "fileTooLarge": "Die Datei ist zu groß",
-    "requiredFields": "Bitte füllen Sie alle erforderlichen Felder aus"
-  },
-  "general": {
-    "somethingWrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut",
-    "pageNotFound": "Seite nicht gefunden",
-    "accessDenied": "Zugriff verweigert",
-    "featureUnavailable": "Diese Funktion ist derzeit nicht verfügbar",
-    "maintenanceMode": "Das System wird gewartet. Bitte versuchen Sie es später erneut",
-    "unknownError": "Ein unbekannter Fehler ist aufgetreten"
-  },
-  "posts": {
-    "createFailed": "Beitrag konnte nicht erstellt werden",
-    "updateFailed": "Beitrag konnte nicht aktualisiert werden",
-    "deleteFailed": "Beitrag konnte nicht gelöscht werden",
-    "loadFailed": "Beiträge konnten nicht geladen werden",
-    "commentFailed": "Kommentar konnte nicht gepostet werden",
-    "likeFailed": "Beitrag konnte nicht geliked werden"
-  },
-  "events": {
-    "loadFailed": "Veranstaltungen konnten nicht geladen werden",
-    "bookingFailed": "Veranstaltung konnte nicht gebucht werden",
-    "cancelFailed": "Buchung konnte nicht storniert werden",
-    "eventFull": "Diese Veranstaltung ist ausgebucht",
-    "eventPast": "Diese Veranstaltung hat bereits stattgefunden",
-    "alreadyBooked": "Sie haben diese Veranstaltung bereits gebucht"
-  },
-  "messages": {
-    "sendFailed": "Nachricht konnte nicht gesendet werden",
-    "loadFailed": "Nachrichten konnten nicht geladen werden",
-    "deleteFailed": "Nachricht konnte nicht gelöscht werden",
-    "connectionLost": "Verbindung verloren. Versuche, erneut zu verbinden..."
-  },
-  "friends": {
-    "requestFailed": "Freundschaftsanfrage konnte nicht gesendet werden",
-    "acceptFailed": "Freundschaftsanfrage konnte nicht angenommen werden",
-    "removeFailed": "Freund konnte nicht entfernt werden",
-    "blockFailed": "Benutzer konnte nicht blockiert werden",
-    "alreadyFriends": "Sie sind bereits mit diesem Benutzer befreundet"
+  "upload": {
+    "fileTooLarge": "Die Datei ist zu groß. Die maximale Größe beträgt 10MB",
+    "invalidType": "Ungültiger Dateityp",
+    "uploadFailed": "Upload fehlgeschlagen. Bitte versuche es erneut"
   }
 }

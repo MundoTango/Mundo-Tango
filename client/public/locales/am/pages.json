@@ -1,167 +1,167 @@
 {
   "login": {
-    "pageName": "መግቢያ",
+    "pageName": "Login",
     "seo": {
-      "title": "መግባት - ሙንዶ ታንጎ",
-      "description": "ወደ ሙንዶ ታንጎ መለያህ ግባ ከአለም አቀፍ ታንጎ ማህበረሰብ ጋር ለመገናኘት፣ ክስተቶችን ለማግኘት እና ለአርጀንቲን ታንጎ  passion ለማካፈል።"
+      "title": "Sign In - Mundo Tango",
+      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
     },
-    "badge": "እንኳን ደህና መጡ",
+    "badge": "Welcome Back",
     "hero": {
-      "heading": "የእርስዎ ታንጎ ጉዞ ይቀጥላል",
-      "paragraph": "ወደ ዓለም አቀፍ የዳንስ አስተዋዮች ለመገናኘት ይግቡ፣ ክስተቶችን ያግኙ፣ እና እርስዎን ያስደስት የሆነውን ነገር ያካፍሉ።"
+      "heading": "Your Tango Journey Continues",
+      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
     },
     "stats": {
-      "dancers": "ደንሰኞች",
-      "events": "ክስተቶች"
+      "dancers": "dancers",
+      "events": "events"
     },
     "form": {
-      "email": "ኢሜል",
-      "password": "የሚስጥር ቃል",
-      "signIn": "መግባት",
-      "signingIn": "መግባት በሂደት ላይ...",
-      "forgotPassword": "የይለፍ ቃል ረሱ?"
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot password?"
     },
-    "noAccount": "መለያ የለህም?",
-    "createAccount": "አንዱን አሁን ፍጠር",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one now",
     "toast": {
-      "successTitle": "እንኳን ደህና መጣህ!",
-      "successDescription": "እርስዎ በተሳካ ሁኔታ ገብተዋል።",
-      "errorTitle": "መግባት አልተሳካም",
-      "errorDescription": "የተሳሳተ መለያ መረጃ"
+      "successTitle": "Welcome back!",
+      "successDescription": "You've successfully logged in.",
+      "errorTitle": "Login failed",
+      "errorDescription": "Invalid credentials"
     }
   },
   "home": {
-    "pageName": "ቤት",
-    "pageLayoutTitle": "በታንጎ የማርቆ ማህበረሰብ በሚገኝበት ቦታ",
+    "pageName": "Home",
+    "pageLayoutTitle": "Where Tango Meets Community",
     "seo": {
-      "title": "ዓለም ታንጎ - ከዓለም አቀፍ ታንጎ ማህበረሰብ ጋር ይገናኙ",
-      "description": "ከሺዎች የታንጎ ተዋዋቂዎች ጋር ተቀላቅሉ በአለም አቀፍ ደረጃ። ክስተቶችን ያግኙ፣ አስተማሪዎችን ያግኙ፣ ከተዋዋቂዎች ጋር ይገናኙ፣ እና በአርጀንቲና ታንጎ ዓለም ውስጥ ሙሉ በሙሉ ይገባበጡ።"
+      "title": "Mundo Tango - Connect with the Global Tango Community",
+      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
     },
     "hero": {
-      "badge": "እንኳን ወደ ዓለም አቀፍ ታንጎ ማህበረሰብ በሰላም መጡ",
-      "heading": "የታንጎ እና ማህበረሰብ የሚገናኙበት ቦታ",
-      "paragraph": "ማህደር አጋር, ክስተቶችን ፈልግ, እና የታንጎ ቴክኖሎጂን ወደ ፊት ለማድረግ እንረዳ። በዓለም አቀፍ የተገናኙ በርቱ የታንጎ ተወዳዳሪዎች አቶች ተቀላቅለው።",
-      "getStarted": "ነፃ ጀምር",
-      "volunteer": "የእንቅስቃሴ ተሳታፊ ሆነህ ለMT ማንበር ይርዱ"
+      "badge": "Welcome to the Global Tango Community",
+      "heading": "Where Tango Meets Community",
+      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
+      "getStarted": "Get Started Free",
+      "volunteer": "Volunteer to Help Build MT"
     },
     "howItWorks": {
-      "heading": "እንዴት እንደሚሰራ",
-      "description": "በሶስት ቀላል እርምጃዎች የታንጎ ጉዞዎትን ጀምሩ።",
+      "heading": "How It Works",
+      "description": "Start your tango journey in three simple steps",
       "step1": {
-        "title": "መገለጫህን ፍጠር",
-        "description": "ነጻ ይቀላቀሉ እና ስለ ታንጎ ጉዞዎ, የሙያ ደረጃዎ እና የዳንስ ምርጫዎች ይነግሩን።"
+        "title": "Create Your Profile",
+        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
       },
       "step2": {
-        "title": "ማግኘት እና መገናኘት",
-        "description": "ከእርስዎ ጋር ቅርብ ያሉ ክስተቶችን፣ አስተማሪዎችን እና ቦታዎችን ያግኙ። እንደ እርስዎ ያሉ እንቅስቃሴ ያላቸውን ተወዳዳሪዎች ያገናኙ።"
+        "title": "Discover & Connect",
+        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
       },
       "step3": {
-        "title": "ዘፈን እና እድገት",
-        "description": "ክስተቶችን ይሳተፉ፣ ትምህርቶችን ይውሰዱ፣ ጓደኞችን ያድርጉ፣ እና የዓለም አቀፍ ታንጎ ማህበረሰብ አካል ይሁኑ።"
+        "title": "Dance & Grow",
+        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
       }
     },
     "features": {
-      "heading": "ሁሉንም ያስፈልጎት ነገር",
-      "description": "በኃይለኛ ባህሪያት ጋር የታንጎ ጉዞዎን ያገናኙ፣ ያግኙ እና ያሳድጉ።",
+      "heading": "Everything You Need",
+      "description": "Connect, discover, and grow your tango journey with powerful features",
       "community": {
-        "badge": "ማህበረሰብ",
-        "heading": "ከዓለም አቀፍ ዳንሰሮች ጋር ያገናኙ",
-        "description": "ከታንጎ እናመምንቶች ከተለያዩ አገራት የተሰበሰበ ዕውቅና ማህበር ተቀላቅለህ ይገናኙ። ከበዌኖስ አይረስ እስከ ቶክዮ ድረስ ከእንቅስቃሴ ተሳታፊዎች፣ አስተማሪዎች እና አደራጅነት ጋር ይገናኙ።",
+        "badge": "Community",
+        "heading": "Connect with Dancers Worldwide",
+        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
         "items": {
-          "follow": "ደንሰኞችን ተከተል እና ኔትወርክህን አንጋግር።",
-          "groups": "በፍላጎትና ቦታ ላይ ያተኩሩ ቡድኖችን ይቀላቀሉ።",
-          "messaging": "የቀን ሰዓት መልእክት መላኪያ እና ውይይት ባህሪያት",
-          "discover": "ከከተማዎ የሚጎበኙ የዳንስ አስፈላጊዎችን ያግኙ"
+          "follow": "Follow dancers and build your network",
+          "groups": "Join groups based on interests and location",
+          "messaging": "Real-time messaging and chat features",
+          "discover": "Discover dancers visiting your city"
         }
       },
       "events": {
-        "badge": "ክስተቶች",
-        "heading": "ክስተቶችን በሁሉም ቦታ ያግኙ",
-        "description": "ከቶም ሚሎንጋ፣ በዓል፣ ወይም የሥልጠና ክፍል አትተው። መድረካችን ከዓለም አቀፍ በሚካሄዱ በሺዎች የታንጎ ዝግጅቶች ጋር ያገናኛል።",
+        "badge": "Events",
+        "heading": "Discover Events Everywhere",
+        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
         "items": {
-          "calendar": "አጠቃላይ የክስተት ቀን መቁጠሪያ",
-          "rsvp": "አር ኤስ ቪ ፒ እና ቲኬት ቦኪንግ",
-          "notifications": "ክስተቶች ማሳወቂያዎች እና አስታዋሽዎች",
-          "map": "ተዋዋይ ካርታ የቦታዎች አቀማመጥ"
+          "calendar": "Comprehensive event calendar",
+          "rsvp": "RSVP and ticket booking",
+          "notifications": "Event notifications and reminders",
+          "map": "Interactive map of venues"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "ቀጥታ ስርጭት",
-          "description": "አለም አቀፍ ሚሎንጋዎችን በቀጥታ ይመልከቱ"
+          "title": "Live Streaming",
+          "description": "Watch milongas worldwide in real-time"
         },
         "musicLibrary": {
-          "title": "የሙዚቃ ቤተ-መጻሕፍት",
-          "description": "በተወሰነ ሁኔታ የተዘጋጀ ታንጎ ዝርዝር መዝናኛ እና መመሪያዎች"
+          "title": "Music Library",
+          "description": "Curated tango playlists and guides"
         },
         "verifiedTeachers": {
-          "title": "ማረጋገጫ ያገኙ አስተማሪዎች",
-          "description": "ከምሉእ ሥልጠኞች ይማሩ"
+          "title": "Verified Teachers",
+          "description": "Learn from certified instructors"
         },
         "travelPlanner": {
-          "title": "ጉዞ እቅፍ አያያዝ",
-          "description": "የጉዞ እቅድ ያውጡ እና እንደ አለም አቀፍ አስተናጋጆች ያግኙ።"
+          "title": "Travel Planner",
+          "description": "Plan trips and find hosts globally"
         }
       }
     },
     "testimonials": {
-      "heading": "የዳንሰሮች የሚሉት ነገር",
-      "description": "በዓለም አቀፍ ደረጃ እንደሚገኙ በሚገኙ ሺዎች ደስ የሚላቸውን ዳንሰሮች ይቀላቀሉ።",
+      "heading": "What Dancers Say",
+      "description": "Join thousands of satisfied dancers worldwide",
       "items": {
         "testimonial1": {
-          "name": "ማሪያ ሮድሪጉዝ",
-          "location": "ቡኖስ አይሬስ፣ አርጀንቲና",
-          "text": "የታንጎ ዓለም በአዲስ ከተማ ውስጥ የዳንስ ቤተሰቤን ማግኘት እንዲቻለኝ እርዳታ አደረገልኝ። ማህበሩ ሞቅ ያለ እና እንኳን ደህና መጡ የሚል ሲሆን በታንጎ በጣም የተዋሰ ነው።"
+          "name": "Maria Rodriguez",
+          "location": "Buenos Aires, Argentina",
+          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
         },
         "testimonial2": {
-          "name": "ጄምስ ቼን",
-          "location": "ሳን ፍራንሲስኮ፣ አሜሪካ ዩናይትድ ስቴትስ",
-          "text": "በዚህ መድረክ በኩራት ድንቅ ሚሎንጋዎችን እና የስልጠና ክፍሎችን ማግኘቴ አስደናቂ ነው። እንደ ታንጎ ጉዞዬ አካል ሆኗል።"
+          "name": "James Chen",
+          "location": "San Francisco, USA",
+          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
         },
         "testimonial3": {
-          "name": "ኤሌና ቮልኮቭ",
-          "location": "ሞስኮ፣ ሩሲያ",
-          "text": "አስተማሪዎች ማውጫ እግዚአብሔር ያለው አስተማሪዎችን ማግኘት ረዳኝ። ዳንሲንጌ በአስፈላጊነት ተሻሽሏል!"
+          "name": "Elena Volkov",
+          "location": "Moscow, Russia",
+          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
         }
       }
     },
     "faq": {
-      "heading": "ተደጋጋሚ የሚጠየቁ ጥያቄዎች",
-      "description": "ስለ ሙንዶ ታንጎ ማስፈለግዎት ያለው ሁሉ ነገር",
+      "heading": "Frequently Asked Questions",
+      "description": "Everything you need to know about Mundo Tango",
       "items": {
         "q1": {
-          "question": "ምንድር ታንጎ ነው?",
-          "answer": "የዓለም ባህርይ ታንጎ የታንጎ ደንበኞችን፣ አስተማሪዎችን እና አደራጅነት የሚያገናኝ ዓለም አቀፍ መድረክ ነው። ክስተቶችን እንድታገኙ፣ የዳንስ ባልደረባ እንድታገኙ፣ ከከፍተኛ አስተማሪዎች እንድትማሩ እና በዓለም አቀፍ ታንጎ ማህበረሰብ ውስጥ እንድትገነቡ እንረዳዎታለን።"
+          "question": "What is Mundo Tango?",
+          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
         },
         "q2": {
-          "question": "መንዶ ታንጎ ለመጠቀም ነፃ ነው?",
-          "answer": "አዎ! የመጀመሪያ ደረጃ የመጠቀም እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈልጉ እንደሚፈል"
+          "question": "Is Mundo Tango free to use?",
+          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
         },
         "q3": {
-          "question": "ከእኔ አቅራቢያ ያሉ ታንጎ ክስተቶችን እንዴት ልቀርብ?",
-          "answer": "በከተማ፣ ቀን፣ እና የክስተት አይነት ማጣሪያ በመጠቀም እንደ እንቅስቃሴ ቀን መለያ ወይም ፍለጋ ባህሪዎች ቀላል ማድረግ ይቻላል። በአካባቢዎ ወይም የዓለም ማንኛውም ቦታ ላይ ሚሎንጋዎች፣ በዓላት፣ የስልጠና ክፍሎች፣ እና የልምምድ ክፍሎች ማግኘት ይችላሉ።"
+          "question": "How do I find tango events near me?",
+          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
         },
         "q4": {
-          "question": "ከሌሎች ዳንሰሮች ጋር መገናኘት እችላለሁ?",
-          "answer": "እርግጠኛ ነኝ! የዳንሰኞችን ተከተል፣ ቡድኖችን ተቀላቅለህ፣ የጓደኞች ጥያቄ ላክ፣ ከማህበሩ ጋር ተወያይ። መድረካችን በታንጎ ዓለም ውስጥ እውነተኛ ግንኙነቶችን ለማበረታታት ተዘጋጅቷል።"
+          "question": "Can I connect with other dancers?",
+          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
         },
         "q5": {
-          "question": "እንዴት የታንጎ አስተማሪዎችን ማግኘት እችላለሁ?",
-          "answer": "ዓለም አቀፍ የሆኑ የአስተማሪዎች ማውጫ ለመመልከት የአስተማሪዎች ማውጫችንን ይጎብኙ። በአካባቢ፣ በልዩነት፣ እና በልምድ ደረጃ ያጣሩ። ከሌሎች ተማሪዎች ጋር እቅፍ ያነቡ እና በመድረክ ላይ በቀጥታ የግል ትምህርቶችን ይያዙ።"
+          "question": "How do I find tango teachers?",
+          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
         },
         "q6": {
-          "question": "ምን ነገር ማንዱ ታንጎን የሚለይ ያደርገዋል?",
-          "answer": "እኛ በታንጎ ተወዳዳሪዎች የተገኙ ነን፣ ለታንጎ ተወዳዳሪዎች። ትኩረታችን በእውነተኛ ማህበረሰብ ማቋቋም፣ በጥራት የተዘጋጀ ዝግጅት ማቅረብ፣ እና ከዓለም አቀፍ የታንጎ ቤተሰብ ጋር ማገናኘት ላይ ነው - ተጨማሪ ማህበራዊ መረብ ብቻ አይደለም።"
+          "question": "What makes Mundo Tango different?",
+          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
         }
       }
     },
     "cta": {
-      "heading": "ወጣት ማህበረሰቡን ለመቀላቀል ዝግጁ ነህ?",
-      "description": "ዛሬ ነፃ መለያህን ፍጠር እና ከአለም አቀፍ የታንጎ ዳንሰሮች ጋር መገናኘት ጀምር። የክሬዲት ካርድ አያስፈልግም።",
-      "button": "በነጻ Mundo Tango ይቀላቀሉ",
-      "freeForever": "ነፃ ለዘላለም",
-      "noCreditCard": "ካርድ አይደለም",
-      "cancelAnytime": "እያንዳንዱን ጊዜ ማግደል ይቻላል"
+      "heading": "Ready to Join the Community?",
+      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
+      "button": "Join Mundo Tango Free",
+      "freeForever": "Free forever",
+      "noCreditCard": "No credit card",
+      "cancelAnytime": "Cancel anytime"
     }
   },
   "feed": {

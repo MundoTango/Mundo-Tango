@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "మన గురించి",
-    "title": "ముందో టాంగో గురించి",
-    "subtitle": "ప్రపంచ టాంగో సమాజాన్ని, ఒక్క నాట్యం ద్వారా కలుపుతూ",
-    "missionTitle": "మా లక్ష్యం",
-    "missionDescription": "ముందో టాంగో ప్రపంచ టాంగో సమాజంలో సంబంధాలను పెంపొందించడంలో నిబద్ధంగా ఉంది. సంస్కృతులు, భాషలు మరియు సరిహద్దుల మధ్య ప్రజలను కలుపడానికి నృత్యం శక్తి ఉన్నదని మేము నమ్ముతున్నాము.",
-    "valuesTitle": "మా విలువలు",
-    "valueCommunityTitle": "సమాజం ముందు",
-    "valueCommunityDescription": "మేము నిజమైన సంబంధాలు మరియు ప్రాముఖ్యమైన పరస్పర చర్యలను ప్రాధాన్యం ఇస్తాము.",
-    "valueAuthenticityTitle": "అసలితనం",
-    "valueAuthenticityDescription": "మేము అర్జెంటీనా టాంగో యొక్క సంప్రదాయాలను గౌరవిస్తాము, అలాగే దాని అభివృద్ధిని స్వీకరిస్తాము.",
-    "valueInclusivityTitle": "సమావేశం",
-    "valueInclusivityDescription": "మన సమాజంలో అందరికి స్వాగతం."
   }
 }

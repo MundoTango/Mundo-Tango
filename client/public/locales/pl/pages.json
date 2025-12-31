@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "O nas",
-    "title": "O Mundo Tango",
-    "subtitle": "Łącząc globalną społeczność tanga, jeden taniec na raz",
-    "missionTitle": "Nasza Misja",
-    "missionDescription": "Mundo Tango jest poświęcone budowaniu więzi w globalnej społeczności tango. Wierzymy w moc tańca, która łączy ludzi ponad kulturami, językami i granicami.",
-    "valuesTitle": "Nasze Wartości",
-    "valueCommunityTitle": "Społeczność na pierwszym miejscu",
-    "valueCommunityDescription": "Priorytetem są dla nas autentyczne połączenia i znaczące interakcje.",
-    "valueAuthenticityTitle": "Autentyczność",
-    "valueAuthenticityDescription": "Cenimy tradycje argentyńskiego tanga, jednocześnie przyjmując jego ewolucję.",
-    "valueInclusivityTitle": "Inkluzyjność",
-    "valueInclusivityDescription": "Wszyscy są mile widziani w naszej społeczności."
   }
 }

@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "आमच्याबद्दल",
-    "title": "मुंडो टांगोबद्दल",
-    "subtitle": "जागतिक तांगा समुदायाला एक नृत्य एकत्र जोडत आहे.",
-    "missionTitle": "आमचा उद्देश",
-    "missionDescription": "मुंडो टांगो जागतिक टांगो समुदायामध्ये संबंध निर्माण करण्यासाठी समर्पित आहे. आम्हाला विश्वास आहे की नृत्याच्या शक्तीने लोकांना संस्कृती, भाषा आणि सीमांमधून एकत्र आणता येते.",
-    "valuesTitle": "आमच्या मूल्ये",
-    "valueCommunityTitle": "समुदाय प्रथम",
-    "valueCommunityDescription": "आम्ही प्रामाणिक संबंध आणि अर्थपूर्ण संवादांना प्राधान्य देतो.",
-    "valueAuthenticityTitle": "प्रामाणिकता",
-    "valueAuthenticityDescription": "आम्ही अर्जेंटिनाच्या तांगा परंपरांचा सन्मान करतो आणि त्याच्या विकासाला स्वीकारतो.",
-    "valueInclusivityTitle": "समावेशिता",
-    "valueInclusivityDescription": "आमच्या समुदायात सर्वांचे स्वागत आहे."
   }
 }

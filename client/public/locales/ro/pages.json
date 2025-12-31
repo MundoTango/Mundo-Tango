@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Despre noi",
-    "title": "Despre Mundo Tango",
-    "subtitle": "Conectând comunitatea globală de tango, un dans la un moment dat.",
-    "missionTitle": "Misiunea noastră",
-    "missionDescription": "Mundo Tango este dedicat promovării conexiunilor în cadrul comunității globale de tango. Credem în puterea dansului de a aduce oamenii împreună dincolo de culturi, limbi și granițe.",
-    "valuesTitle": "Valorile Noastre",
-    "valueCommunityTitle": "Comunitatea pe primul loc",
-    "valueCommunityDescription": "Prioritizăm conexiuni autentice și interacțiuni semnificative.",
-    "valueAuthenticityTitle": "Autenticitate",
-    "valueAuthenticityDescription": "Onorăm tradițiile tango-ului argentinian în timp ce îmbrățișăm evoluția sa.",
-    "valueInclusivityTitle": "Inclusivitate",
-    "valueInclusivityDescription": "Toți sunt bineveniți în comunitatea noastră."
   }
 }

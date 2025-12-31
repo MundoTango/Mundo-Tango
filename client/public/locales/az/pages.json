@@ -1,167 +1,167 @@
 {
   "login": {
-    "pageName": "Daxil ol",
+    "pageName": "Login",
     "seo": {
-      "title": "Daxil ol - Mundo Tango",
-      "description": "Mundo Tango hesabınıza daxil olun ki, qlobal tango icması ilə əlaqə qurun, tədbirləri kəşf edin və Argentina tangosuna olan ehtirasınızı paylaşın."
+      "title": "Sign In - Mundo Tango",
+      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
     },
-    "badge": "Xoş gəldin geri",
+    "badge": "Welcome Back",
     "hero": {
-      "heading": "Tango Səyahətiniz Davam Edir",
-      "paragraph": "Dünyadakı rəqqaslarla əlaqə qurmaq, tədbirləri kəşf etmək və ehtirasını paylaşmaq üçün daxil ol"
+      "heading": "Your Tango Journey Continues",
+      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
     },
     "stats": {
-      "dancers": "rəqqaslar",
-      "events": "tədbirlər"
+      "dancers": "dancers",
+      "events": "events"
     },
     "form": {
-      "email": "E-poçt",
-      "password": "Şifrə",
-      "signIn": "Daxil ol",
-      "signingIn": "Daxil olunur...",
-      "forgotPassword": "Şifrəni unutmusunuz?"
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot password?"
     },
-    "noAccount": "Hesabınız yoxdur?",
-    "createAccount": "İndi birini yarat.",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one now",
     "toast": {
-      "successTitle": "Xoş gəldin!",
-      "successDescription": "Uğurla daxil oldunuz.",
-      "errorTitle": "Giriş uğursuz oldu",
-      "errorDescription": "Etibarsız giriş məlumatları"
+      "successTitle": "Welcome back!",
+      "successDescription": "You've successfully logged in.",
+      "errorTitle": "Login failed",
+      "errorDescription": "Invalid credentials"
     }
   },
   "home": {
-    "pageName": "Ev",
-    "pageLayoutTitle": "Tango ilə İcmanın Qovuşduğu Yer",
+    "pageName": "Home",
+    "pageLayoutTitle": "Where Tango Meets Community",
     "seo": {
-      "title": "Mundo Tango - Qlobal Tango İcması ilə Əlaqə Qurun",
-      "description": "Dünyada minlərlə tango rəqqasına qoşulun. Tədbirləri kəşf edin, müəllimlər tapın, rəqqaslarla əlaqə qurun və Argentina tangosunun ehtiraslı dünyasına dalın."
+      "title": "Mundo Tango - Connect with the Global Tango Community",
+      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
     },
     "hero": {
-      "badge": "Qlobal Tango İcmasına xoş gəlmisiniz",
-      "heading": "Tango ilə Cəmiyyətin Görüşdüyü Yer",
-      "paragraph": "Xatirələri paylaşın, tədbirləri tapın və tango texnologiyasının gələcəyini qurmağımıza kömək edin. Dünyanın hər yerindən minlərlə ehtiraslı rəqqaslarla əlaqə qurun.",
-      "getStarted": "Ödənişsiz Başla",
-      "volunteer": "Könüllü olaraq MT qurulmasına kömək edin"
+      "badge": "Welcome to the Global Tango Community",
+      "heading": "Where Tango Meets Community",
+      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
+      "getStarted": "Get Started Free",
+      "volunteer": "Volunteer to Help Build MT"
     },
     "howItWorks": {
-      "heading": "Necə işləyir",
-      "description": "Tango səyahətinizə üç sadə addımla başlayın",
+      "heading": "How It Works",
+      "description": "Start your tango journey in three simple steps",
       "step1": {
-        "title": "Profilinizi Yaradın",
-        "description": "Pulsuz qoşulun və bizə tango səyahətiniz, təcrübə səviyyəniz və rəqs seçimləriniz haqqında danışın."
+        "title": "Create Your Profile",
+        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
       },
       "step2": {
-        "title": "Kəşf et və Əlaqə qur",
-        "description": "Yaxınlığınızdakı tədbirləri, müəllimləri və məkanları tapın. Sizinlə eyni ehtirası paylaşan rəqqaslarla əlaqə qurun."
+        "title": "Discover & Connect",
+        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
       },
       "step3": {
-        "title": "Rəqs et və böyü",
-        "description": "Tədbirlərə qatıl, dərslər al, dostlar qazan və qlobal tango icmasının bir hissəsi ol."
+        "title": "Dance & Grow",
+        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
       }
     },
     "features": {
-      "heading": "Hər Şeyə Ehtiyacınız Var",
-      "description": "Güclü xüsusiyyətlərlə tango səyahətinizi birləşdirin, kəşf edin və inkişaf etdirin.",
+      "heading": "Everything You Need",
+      "description": "Connect, discover, and grow your tango journey with powerful features",
       "community": {
-        "badge": "İcma",
-        "heading": "Dünyanın hər yerindən rəqqaslarla əlaqə saxla",
-        "description": "Canlı bir qlobal tango həvəskarları icmasına qoşulun. Buenos Airesdən Tokyoya qədər rəqqaslar, müəllimlər və təşkilatçılarla əlaqə qurun.",
+        "badge": "Community",
+        "heading": "Connect with Dancers Worldwide",
+        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
         "items": {
-          "follow": "Rəqqasları izləyin və şəbəkənizi qurun.",
-          "groups": "Maraqlar və yerə əsasən qruplara qoşulun",
-          "messaging": "Reallıqda mesajlaşma və söhbət xüsusiyyətləri",
-          "discover": "Şəhərinizi ziyarət edən rəqqasları kəşf edin"
+          "follow": "Follow dancers and build your network",
+          "groups": "Join groups based on interests and location",
+          "messaging": "Real-time messaging and chat features",
+          "discover": "Discover dancers visiting your city"
         }
       },
       "events": {
-        "badge": "Tədbirlər",
-        "heading": "Hər yerdə tədbirləri kəşf et",
-        "description": "Heç vaxt milonga, festival və ya seminari qaçırmayın. Platformamız sizi dünya üzrə baş verən minlərlə tango tədbiri ilə əlaqələndirir.",
+        "badge": "Events",
+        "heading": "Discover Events Everywhere",
+        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
         "items": {
-          "calendar": "Əhatəli tədbir təqvimi",
-          "rsvp": "RSVP və bilet sifarişi",
-          "notifications": "Tədbir bildirişləri və xatırlatmalar",
-          "map": "Məkanların interaktiv xəritəsi"
+          "calendar": "Comprehensive event calendar",
+          "rsvp": "RSVP and ticket booking",
+          "notifications": "Event notifications and reminders",
+          "map": "Interactive map of venues"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Canlı Yayım",
-          "description": "Dünyada milongaları real vaxtda izləyin"
+          "title": "Live Streaming",
+          "description": "Watch milongas worldwide in real-time"
         },
         "musicLibrary": {
-          "title": "Musiqi Kitabxanası",
-          "description": "Seçilmiş tango pleylistləri və bələdçilər"
+          "title": "Music Library",
+          "description": "Curated tango playlists and guides"
         },
         "verifiedTeachers": {
-          "title": "Təsdiqlənmiş Müəllimlər",
-          "description": "Sertifikatlı təlimçilərdən öyrənin"
+          "title": "Verified Teachers",
+          "description": "Learn from certified instructors"
         },
         "travelPlanner": {
-          "title": "Səyahət Planlayıcısı",
-          "description": "Səyahətləri planlaşdır və qlobal miqyasda ev sahibləri tap"
+          "title": "Travel Planner",
+          "description": "Plan trips and find hosts globally"
         }
       }
     },
     "testimonials": {
-      "heading": "Rəqqasların Dedikləri",
-      "description": "Dünyada minlərlə məmnun rəqqasa qoşulun.",
+      "heading": "What Dancers Say",
+      "description": "Join thousands of satisfied dancers worldwide",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Ayres, Argentina",
-          "text": "Mundo Tango mənə yeni şəhərdə rəqs ailəmi tapmağa kömək etdi. İcma isti, qonaqpərvər və həqiqətən tango ehtirası ilə doludur."
+          "location": "Buenos Aires, Argentina",
+          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
         },
         "testimonial2": {
-          "name": "Ceyms Çen",
-          "location": "San-Fransisko, ABŞ",
-          "text": "Bu platform vasitəsilə möhtəşəm milonqalar və seminarlar kəşf etmişəm. Bu, mənim tango səyahətim üçün vacib olub."
+          "name": "James Chen",
+          "location": "San Francisco, USA",
+          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moskva, Rusiya",
-          "text": "Müəllimlər kataloqu mənə inanılmaz təlimçilər tapmağa kömək etdi. Rəqsim çox yaxşılaşdı!"
+          "location": "Moscow, Russia",
+          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
         }
       }
     },
     "faq": {
-      "heading": "Tez-tez verilən suallar",
-      "description": "Mundo Tango haqqında bilməli olduğunuz hər şey",
+      "heading": "Frequently Asked Questions",
+      "description": "Everything you need to know about Mundo Tango",
       "items": {
         "q1": {
-          "question": "Mundo Tango nədir?",
-          "answer": "Mundo Tango, tango rəqqasları, müəllimlər və təşkilatçıları birləşdirən qlobal platformadır. Biz sizə tədbirləri kəşf etməyə, rəqs partnyorları tapmağa, ən yaxşı təlimçilərdən öyrənməyə və dünya üzrə canlı tango icmasına dalmağa kömək edirik."
+          "question": "What is Mundo Tango?",
+          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
         },
         "q2": {
-          "question": "Mundo Tango istifadəsi pulsuzdurmu?",
-          "answer": "Bəli! Biz əsas profil yaratma, tədbirlərin kəşfi və mesajlaşma daxil olan pulsuz bir səviyyə təklif edirik. Limitsiz mesajlaşma, AI rəqs partnyoru uyğunlaşdırması və prioritet tədbir bildirişləri kimi premium xüsusiyyətlər Pro abunəliyimizlə mövcuddur."
+          "question": "Is Mundo Tango free to use?",
+          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
         },
         "q3": {
-          "question": "Mənim yaxınlığımda tango tədbirlərini necə tapa bilərəm?",
-          "answer": "Sadəcə olaraq Tədbirlər Təqvimimizdən və ya Axtarış funksiyalarımızdan istifadə edərək şəhərə, tarixə və tədbir növünə görə filtr edin. Bölgənizdə və ya dünyanın hər hansı bir yerində baş verən milongaları, festivalları, seminarları və məşq sessiyalarını kəşf edə bilərsiniz."
+          "question": "How do I find tango events near me?",
+          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
         },
         "q4": {
-          "question": "Başqa rəqqaslarla əlaqə qura bilərəmmi?",
-          "answer": "Əlbəttə! Rəqqasları izləyin, qruplara qoşulun, dostluq sorğuları göndərin və icma ilə söhbət edin. Platformamız tango dünyasında orijinal əlaqələr qurmaq üçün nəzərdə tutulub."
+          "question": "Can I connect with other dancers?",
+          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
         },
         "q5": {
-          "question": "Tango müəllimlərini necə tapa bilərəm?",
-          "answer": "Müəllimlər Kataloqumuza baxaraq dünya üzrə təsdiqlənmiş təlimatçıları araşdırın. Məkan, ixtisas və təcrübə səviyyəsinə görə süzün. Digər tələbələrin rəylərini oxuyun və dərsləri birbaşa platforma vasitəsilə sifariş edin."
+          "question": "How do I find tango teachers?",
+          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
         },
         "q6": {
-          "question": "Mundo Tango-nu fərqləndirən nədir?",
-          "answer": "Biz tango rəqqasları tərəfindən, tango rəqqasları üçün qurulmuşuq. Diqqətimiz orijinal icma quruculuğu, keyfiyyətli tədbir təşkilatçılığı və sizi qlobal tango ailəsi ilə əlaqələndirmək üzərindədir - sadəcə başqa bir sosial şəbəkə deyil."
+          "question": "What makes Mundo Tango different?",
+          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
         }
       }
     },
     "cta": {
-      "heading": "İcma qoşulmağa hazırsınız?",
-      "description": "Bu gün pulsuz hesabınızı yaradın və dünya üzrə ehtiraslı tango rəqqasları ilə əlaqə qurmağa başlayın. Kredit kartı tələb olunmur.",
-      "button": "Mundo Tango-ya Pulsuz Qoşulun",
-      "freeForever": "Əbədi pulsuz",
-      "noCreditCard": "Kredit kartı yoxdur",
-      "cancelAnytime": "İstənilən vaxt ləğv edin."
+      "heading": "Ready to Join the Community?",
+      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
+      "button": "Join Mundo Tango Free",
+      "freeForever": "Free forever",
+      "noCreditCard": "No credit card",
+      "cancelAnytime": "Cancel anytime"
     }
   },
   "feed": {
@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Haqqımızda",
-    "title": "Mundo Tango haqqında",
-    "subtitle": "Qlobal tango icmasını bir rəqs ilə birləşdirir.",
-    "missionTitle": "Bizim Missiyamız",
-    "missionDescription": "Mundo Tango, qlobal tango icması içində əlaqələri gücləndirməyə həsr olunub. Biz rəqsin mədəniyyətlər, dillər və sərhədlər arasında insanları bir araya gətirmək gücünə inanırrıq.",
-    "valuesTitle": "Bizim Dəyərlərimiz",
-    "valueCommunityTitle": "İlk növbədə icma",
-    "valueCommunityDescription": "Biz həqiqi əlaqələri və mənalı qarşılıqlı təsirləri prioritetləşdiririk.",
-    "valueAuthenticityTitle": "Həqiqilik",
-    "valueAuthenticityDescription": "Biz Argentina tangosunun ənənələrini şərəfləndirir, eyni zamanda onun inkişafını qəbul edirik.",
-    "valueInclusivityTitle": "Daxil etməçilik",
-    "valueInclusivityDescription": "Hər kəs icmamıza xoş gəlmisiniz."
   }
 }

@@ -1,84 +1,25 @@
 {
-  "auth": {
-    "invalidCredentials": "Email o password non validi",
-    "emailRequired": "L'email è obbligatoria",
-    "passwordRequired": "La password è obbligatoria",
-    "passwordTooShort": "La password deve avere almeno 8 caratteri",
-    "emailInvalid": "Inserisci un indirizzo email valido",
-    "userNotFound": "Utente non trovato",
-    "emailAlreadyExists": "Questa email è già registrata",
-    "usernameAlreadyExists": "Questo nome utente è già in uso",
-    "sessionExpired": "La tua sessione è scaduta. Effettua nuovamente l'accesso",
-    "unauthorized": "Non sei autorizzato a eseguire questa azione",
-    "loginRequired": "Effettua l'accesso per continuare",
-    "tokenExpired": "Il tuo token di sessione è scaduto",
-    "invalidToken": "Token di autenticazione non valido"
-  },
+  "generic": "Qualcosa è andato storto. Per favore riprova.",
+  "network": "Errore di rete. Verifica la tua connessione.",
+  "notFound": "Pagina non trovata",
+  "unauthorized": "Devi accedere per visualizzare questa pagina",
+  "forbidden": "Non hai il permesso di accedere a questa pagina",
   "validation": {
     "required": "Questo campo è obbligatorio",
-    "invalidEmail": "Formato email non valido",
-    "invalidPhone": "Numero di telefono non valido",
-    "invalidDate": "Formato data non valido",
-    "invalidUrl": "Formato URL non valido",
-    "tooShort": "Il valore è troppo corto",
-    "tooLong": "Il valore è troppo lungo",
-    "invalidFormat": "Formato non valido",
-    "numberRequired": "Deve essere un numero",
-    "positiveNumber": "Deve essere un numero positivo"
+    "email": "Inserisci un indirizzo email valido",
+    "password": "La password deve contenere almeno 8 caratteri",
+    "passwordMatch": "Le password non corrispondono",
+    "username": "Il nome utente può contenere solo lettere, numeri e underscore"
   },
-  "network": {
-    "connectionError": "Errore di connessione. Controlla la tua connessione internet",
-    "timeout": "Timeout della richiesta. Riprova",
-    "serverError": "Errore del server. Riprova più tardi",
-    "notFound": "Risorsa non trovata",
-    "forbidden": "Accesso negato",
-    "badRequest": "Richiesta non valida. Controlla i tuoi dati",
-    "rateLimitExceeded": "Troppe richieste. Riprova più tardi"
+  "auth": {
+    "invalidCredentials": "Email o password non validi",
+    "emailInUse": "Questa email è già registrata",
+    "usernameInUse": "Questo nome utente è già in uso",
+    "accountDisabled": "Il tuo account è stato disabilitato"
   },
-  "form": {
-    "saveFailed": "Salvataggio fallito. Riprova",
-    "uploadFailed": "Caricamento file fallito",
-    "deleteFailed": "Eliminazione fallita. Riprova",
-    "updateFailed": "Aggiornamento fallito. Riprova",
-    "invalidFile": "Formato file non valido",
-    "fileTooLarge": "Il file è troppo grande",
-    "requiredFields": "Compila tutti i campi obbligatori"
-  },
-  "general": {
-    "somethingWrong": "Qualcosa è andato storto. Riprova",
-    "pageNotFound": "Pagina non trovata",
-    "accessDenied": "Accesso negato",
-    "featureUnavailable": "Questa funzione non è attualmente disponibile",
-    "maintenanceMode": "Il sistema è in manutenzione. Riprova più tardi",
-    "unknownError": "Si è verificato un errore sconosciuto"
-  },
-  "posts": {
-    "createFailed": "Impossibile creare il post",
-    "updateFailed": "Impossibile aggiornare il post",
-    "deleteFailed": "Impossibile eliminare il post",
-    "loadFailed": "Impossibile caricare i post",
-    "commentFailed": "Impossibile pubblicare il commento",
-    "likeFailed": "Impossibile mettere mi piace al post"
-  },
-  "events": {
-    "loadFailed": "Impossibile caricare gli eventi",
-    "bookingFailed": "Impossibile prenotare l'evento",
-    "cancelFailed": "Impossibile annullare la prenotazione",
-    "eventFull": "Questo evento è al completo",
-    "eventPast": "Questo evento è già passato",
-    "alreadyBooked": "Hai già prenotato questo evento"
-  },
-  "messages": {
-    "sendFailed": "Impossibile inviare il messaggio",
-    "loadFailed": "Impossibile caricare i messaggi",
-    "deleteFailed": "Impossibile eliminare il messaggio",
-    "connectionLost": "Connessione persa. Tentativo di riconnessione..."
-  },
-  "friends": {
-    "requestFailed": "Impossibile inviare la richiesta di amicizia",
-    "acceptFailed": "Impossibile accettare la richiesta di amicizia",
-    "removeFailed": "Impossibile rimuovere l'amico",
-    "blockFailed": "Impossibile bloccare l'utente",
-    "alreadyFriends": "Sei già amico di questo utente"
+  "upload": {
+    "fileTooLarge": "Il file è troppo grande. La dimensione massima è 10MB",
+    "invalidType": "Tipo di file non valido",
+    "uploadFailed": "Caricamento fallito. Per favore riprova"
   }
 }

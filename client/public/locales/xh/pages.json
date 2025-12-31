@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Ngathi",
-    "title": "Ngokuphathelele iMundo Tango",
-    "subtitle": "Uxhulumanisa uluntu lwezango lwehlabathi, umdaniso omnye ngexesha.",
-    "missionTitle": "Umsebenzi wethu",
-    "missionDescription": "UMundo Tango uzinikele ekwakheni iintsebenziswano phakathi komphakathi we-tango wamazwe ngamazwe. Sikholelwa kumandla omdaniso okuhlanganisa abantu kwiinkcubeko, iilwimi, kunye nemida.",
-    "valuesTitle": "Iimveliso zethu",
-    "valueCommunityTitle": "Umphakathi kuqala",
-    "valueCommunityDescription": "Sibeka phambili ubudlelwane bokwenene kunye nezenzo ezinomdla.",
-    "valueAuthenticityTitle": "Ubulungisa",
-    "valueAuthenticityDescription": "Sihlonipha iitraditions ze-Argentine tango ngelixa sithabatha utshintsho lwayo.",
-    "valueInclusivityTitle": "Ubulungisa bokufaka wonke umntu.",
-    "valueInclusivityDescription": "Wonke umntu wamkelekile kuluntu lwethu."
   }
 }

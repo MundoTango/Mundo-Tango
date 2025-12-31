@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Про нас",
-    "title": "Про Мундо Танго",
-    "subtitle": "З'єднуючи глобальну танго-спільноту, один танець за раз",
-    "missionTitle": "Наша місія",
-    "missionDescription": "Mundo Tango присвячено сприянню зв'язкам у глобальній танго-спільноті. Ми віримо в силу танцю, яка здатна об'єднувати людей через культури, мови та кордони.",
-    "valuesTitle": "Наші цінності",
-    "valueCommunityTitle": "Спочатку громада",
-    "valueCommunityDescription": "Ми надаємо пріоритет автентичним зв'язкам та значущим взаємодіям.",
-    "valueAuthenticityTitle": "Автентичність",
-    "valueAuthenticityDescription": "Ми вшановуємо традиції аргентинського танго, водночас приймаючи його еволюцію.",
-    "valueInclusivityTitle": "Інклюзивність",
-    "valueInclusivityDescription": "У нашій спільноті всі вітаються."
   }
 }

@@ -1,84 +1,25 @@
 {
+  "generic": "Algo salió mal. Por favor, intenta de nuevo.",
+  "network": "Error de red. Por favor, verifica tu conexión.",
+  "notFound": "Página no encontrada",
+  "unauthorized": "Debes iniciar sesión para acceder a esta página",
+  "forbidden": "No tienes permiso para acceder a esta página",
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "email": "Por favor, ingresa un correo electrónico válido",
+    "password": "La contraseña debe tener al menos 8 caracteres",
+    "passwordMatch": "Las contraseñas no coinciden",
+    "username": "El nombre de usuario solo puede contener letras, números y guiones bajos"
+  },
   "auth": {
     "invalidCredentials": "Correo electrónico o contraseña inválidos",
-    "emailRequired": "El correo electrónico es requerido",
-    "passwordRequired": "La contraseña es requerida",
-    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
-    "emailInvalid": "Por favor ingresa un correo electrónico válido",
-    "userNotFound": "Usuario no encontrado",
-    "emailAlreadyExists": "Este correo electrónico ya está registrado",
-    "usernameAlreadyExists": "Este nombre de usuario ya está en uso",
-    "sessionExpired": "Tu sesión ha expirado. Por favor inicia sesión de nuevo",
-    "unauthorized": "No estás autorizado para realizar esta acción",
-    "loginRequired": "Por favor inicia sesión para continuar",
-    "tokenExpired": "Tu token de sesión ha expirado",
-    "invalidToken": "Token de autenticación inválido"
+    "emailInUse": "Este correo electrónico ya está registrado",
+    "usernameInUse": "Este nombre de usuario ya está en uso",
+    "accountDisabled": "Tu cuenta ha sido deshabilitada"
   },
-  "validation": {
-    "required": "Este campo es requerido",
-    "invalidEmail": "Formato de correo electrónico inválido",
-    "invalidPhone": "Número de teléfono inválido",
-    "invalidDate": "Formato de fecha inválido",
-    "invalidUrl": "Formato de URL inválido",
-    "tooShort": "El valor es muy corto",
-    "tooLong": "El valor es muy largo",
-    "invalidFormat": "Formato inválido",
-    "numberRequired": "Debe ser un número",
-    "positiveNumber": "Debe ser un número positivo"
-  },
-  "network": {
-    "connectionError": "Error de conexión. Por favor verifica tu conexión a internet",
-    "timeout": "Tiempo de espera agotado. Por favor intenta de nuevo",
-    "serverError": "Error del servidor. Por favor intenta más tarde",
-    "notFound": "Recurso no encontrado",
-    "forbidden": "Acceso prohibido",
-    "badRequest": "Solicitud incorrecta. Por favor verifica tu entrada",
-    "rateLimitExceeded": "Demasiadas solicitudes. Por favor intenta más tarde"
-  },
-  "form": {
-    "saveFailed": "Error al guardar. Por favor intenta de nuevo",
-    "uploadFailed": "Error al subir el archivo",
-    "deleteFailed": "Error al eliminar. Por favor intenta de nuevo",
-    "updateFailed": "Error al actualizar. Por favor intenta de nuevo",
-    "invalidFile": "Formato de archivo inválido",
-    "fileTooLarge": "El archivo es demasiado grande",
-    "requiredFields": "Por favor completa todos los campos requeridos"
-  },
-  "general": {
-    "somethingWrong": "Algo salió mal. Por favor intenta de nuevo",
-    "pageNotFound": "Página no encontrada",
-    "accessDenied": "Acceso denegado",
-    "featureUnavailable": "Esta función no está disponible actualmente",
-    "maintenanceMode": "El sistema está en mantenimiento. Por favor intenta más tarde",
-    "unknownError": "Ocurrió un error desconocido"
-  },
-  "posts": {
-    "createFailed": "Error al crear la publicación",
-    "updateFailed": "Error al actualizar la publicación",
-    "deleteFailed": "Error al eliminar la publicación",
-    "loadFailed": "Error al cargar las publicaciones",
-    "commentFailed": "Error al publicar el comentario",
-    "likeFailed": "Error al dar me gusta"
-  },
-  "events": {
-    "loadFailed": "Error al cargar los eventos",
-    "bookingFailed": "Error al reservar el evento",
-    "cancelFailed": "Error al cancelar la reserva",
-    "eventFull": "Este evento está lleno",
-    "eventPast": "Este evento ya pasó",
-    "alreadyBooked": "Ya tienes una reserva para este evento"
-  },
-  "messages": {
-    "sendFailed": "Error al enviar el mensaje",
-    "loadFailed": "Error al cargar los mensajes",
-    "deleteFailed": "Error al eliminar el mensaje",
-    "connectionLost": "Conexión perdida. Intentando reconectar..."
-  },
-  "friends": {
-    "requestFailed": "Error al enviar la solicitud de amistad",
-    "acceptFailed": "Error al aceptar la solicitud de amistad",
-    "removeFailed": "Error al eliminar al amigo",
-    "blockFailed": "Error al bloquear al usuario",
-    "alreadyFriends": "Ya eres amigo de este usuario"
+  "upload": {
+    "fileTooLarge": "El archivo es demasiado grande. El tamaño máximo es 10MB",
+    "invalidType": "Tipo de archivo inválido",
+    "uploadFailed": "La carga falló. Por favor, intenta de nuevo"
   }
 }

@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Tungkol sa Amin",
-    "title": "Tungkol sa Mundo Tango",
-    "subtitle": "Konektado ang pandaigdigang komunidad ng tango, isang sayaw sa isang pagkakataon.",
-    "missionTitle": "Ang Aming Misyon",
-    "missionDescription": "Ang Mundo Tango ay nakatuon sa pagpapalakas ng koneksyon sa loob ng pandaigdigang komunidad ng tango. Naniniwala kami sa kapangyarihan ng sayaw na pag-isahin ang mga tao sa kabila ng mga kultura, wika, at hangganan.",
-    "valuesTitle": "Ang Aming Mga Halaga",
-    "valueCommunityTitle": "Komunidad Una",
-    "valueCommunityDescription": "Pinapahalagahan namin ang mga tunay na koneksyon at makabuluhang interaksyon.",
-    "valueAuthenticityTitle": "Katutuhanan",
-    "valueAuthenticityDescription": "Pinapahalagahan namin ang mga tradisyon ng Argentine tango habang tinatanggap ang kanyang ebolusyon.",
-    "valueInclusivityTitle": "Kabilang ang lahat",
-    "valueInclusivityDescription": "Lahat ay malugod na tinatanggap sa aming komunidad."
   }
 }

@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "Dwarna",
-    "title": "Dwar Mundo Tango",
-    "subtitle": "Inkonnettijiet il-komunità globali tat-tango, waħda żewġ passijiet kull darba.",
-    "missionTitle": "Il-Missjoni Tagħna",
-    "missionDescription": "Mundo Tango huwa ddedikat li jippromwovi l-konnessjonijiet fil-komunità globali tat-tango. Aħna nemmnu fil-qawwa tal-ballet biex jiġbor lin-nies flimkien minn kulturi, lingwi, u fruntieri differenti.",
-    "valuesTitle": "Il-Valuri Tagħna",
-    "valueCommunityTitle": "Komunità L-ewwel",
-    "valueCommunityDescription": "Aħna nagħtu prijorità lill-konnessjonijiet awtentiċi u lill-interazzjonijiet sinifikanti.",
-    "valueAuthenticityTitle": "Awtorità",
-    "valueAuthenticityDescription": "Aħna nħarsu l-tradizzjonijiet tat-tango Arġentin waqt li nħaddnu l-evoluzzjoni tiegħu.",
-    "valueInclusivityTitle": "Inklużività",
-    "valueInclusivityDescription": "Kulħadd huwa milqugħ fil-komunità tagħna."
   }
 }

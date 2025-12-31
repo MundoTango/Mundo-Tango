@@ -287,19 +287,5 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
-  },
-  "about": {
-    "badge": "අපි ගැන",
-    "title": "මුන්ඩෝ ටැංගෝ පිළිබඳ",
-    "subtitle": "ගෝලීය ටැංගෝ සමාජය සම්බන්ධ කරමින්, එක් නර්තනයක් එක්ක.",
-    "missionTitle": "අපගේ මෙහෙවර",
-    "missionDescription": "මුණ්ඩෝ ටැංගෝ යනු ජාත්‍යන්තර ටැංගෝ සමාජය තුළ සම්බන්ධතා වර්ධනය කිරීමට කැපවී ඇත. අපි නර්තනයේ ශක්තියේ පිළිබඳ විශ්වාස කරනවා, එය සංස්කෘතික, භාෂා සහ සීමා හරහා මිනිසුන් එකට එකතු කරයි.",
-    "valuesTitle": "අපේ අගයයන්",
-    "valueCommunityTitle": "සමාජය පළමුව",
-    "valueCommunityDescription": "අපි සත්‍ය සම්බන්ධතා සහ අර්ථවත් අන්තර්ක්‍රියා ප්‍රමුඛතාවය දෙනවා.",
-    "valueAuthenticityTitle": "සත්‍යතාවය",
-    "valueAuthenticityDescription": "අපි ආර්ජන්ටීන ටැංගෝයේ සම්ප්‍රදායන් ගෞරව කරමින් එහි සංවර්ධනය පිළිගනිමු.",
-    "valueInclusivityTitle": "සමාරම්භය",
-    "valueInclusivityDescription": "අපේ සමාජයට සෑම කෙනෙකුටම සාදරයෙන් පිළිගනිමු."
   }
 }
