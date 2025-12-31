@@ -395,11 +395,11 @@ function detectToolIntent(message: string): {
     };
   }
 
-  // Directory list patterns
+  // Directory list patterns - handle "list files in X directory" and "list directory X"
   const dirMatch = msg.match(
-    /(?:list|show|what'?s?\s+in)\s+(?:the\s+)?(?:directory\s+|folder\s+)?([a-zA-Z0-9_.\-\/]+)/i,
+    /(?:list|show|what'?s?\s+in)\s+(?:the\s+)?(?:files\s+in\s+(?:the\s+)?)?(?:directory\s+|folder\s+)?([a-zA-Z0-9_.\-\/]+)(?:\s+directory|\s+folder)?/i,
   );
-  if (dirMatch && dirMatch[1] && !dirMatch[1].includes(".")) {
+  if (dirMatch && dirMatch[1] && !dirMatch[1].includes(".") && dirMatch[1] !== "files") {
     return {
       hasTool: true,
       tool: "listDirectory",
