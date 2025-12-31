@@ -76,6 +76,18 @@ export const allLangs = [
   "mn",
 ];
 
+// Map regional variants to base language codes that match our locale folders
+function normalizeToBaseLanguage(lng: string): string {
+  const lower = lng.toLowerCase();
+  // Keep es-ar as is (we have a specific folder for it)
+  if (lower === 'es-ar') return 'es-ar';
+  // Extract base language code from regional variants like fr-FR -> fr
+  const base = lower.split('-')[0];
+  // If the base is in our supported list, use it
+  if (allLangs.includes(base)) return base;
+  return lower;
+}
+
 if (!i18n.isInitialized) {
   i18n
     .use(Backend)
@@ -89,7 +101,7 @@ if (!i18n.isInitialized) {
       fallbackLng: {
         default: ["en"],
       },
-      nonExplicitSupportedLngs: true,
+      nonExplicitSupportedLngs: false,
       cleanCode: false,
       lowerCaseLng: true,
       interpolation: { escapeValue: false },
@@ -102,8 +114,8 @@ if (!i18n.isInitialized) {
         lookupLocalStorage: "i18nextLng",
         caches: ["localStorage"],
         excludeCacheFor: ["cimode"],
-        // Normalize language codes to lowercase to match our locale folder names
-        convertDetectedLanguage: (lng: string) => lng.toLowerCase(),
+        // Normalize regional codes to base language codes that match our locale folders
+        convertDetectedLanguage: normalizeToBaseLanguage,
       },
     });
 }
@@ -118,8 +130,17 @@ export function isRTLLanguage(lang: string): boolean {
 export async function changeLanguageWithRegionalSupport(
   languageCode: string,
 ): Promise<void> {
-  // Normalize to lowercase to match our locale folder names
-  const normalizedCode = languageCode.toLowerCase();
+  // Normalize regional codes to base language codes that match our locale folders
+  const lower = languageCode.toLowerCase();
+  // Keep es-ar as is (we have a specific folder for it)
+  let normalizedCode = lower;
+  if (lower !== 'es-ar' && lower.includes('-')) {
+    const base = lower.split('-')[0];
+    if (allLangs.includes(base)) {
+      normalizedCode = base;
+    }
+  }
+  
   console.log(
     "[i18n] changeLanguageWithRegionalSupport called with:",
     languageCode,
@@ -127,8 +148,10 @@ export async function changeLanguageWithRegionalSupport(
     normalizedCode,
   );
 
-  // Simply call changeLanguage - i18next should load resources naturally
-  // since we have supportedLngs configured with the full locale codes
+  // Update localStorage with normalized code
+  localStorage.setItem('i18nextLng', normalizedCode);
+  
+  // Change language with normalized code
   await i18n.changeLanguage(normalizedCode);
 
   console.log(
@@ -138,15 +161,13 @@ export async function changeLanguageWithRegionalSupport(
     i18n.resolvedLanguage,
   );
 
-  // For regional variants, force reload resources to ensure they're fetched
-  if (normalizedCode.includes("-")) {
-    const namespaces = ["common", "navigation", "pages", "errors"];
-    try {
-      await i18n.reloadResources(normalizedCode, namespaces);
-      console.log("[i18n] Resources reloaded for:", normalizedCode);
-    } catch (err) {
-      console.error("[i18n] Error reloading resources:", err);
-    }
+  // Reload resources to ensure they're fetched
+  const namespaces = ["common", "navigation", "pages", "errors"];
+  try {
+    await i18n.reloadResources(normalizedCode, namespaces);
+    console.log("[i18n] Resources reloaded for:", normalizedCode);
+  } catch (err) {
+    console.error("[i18n] Error reloading resources:", err);
   }
 }
 

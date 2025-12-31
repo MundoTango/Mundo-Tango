@@ -40,8 +40,8 @@ export default function WelcomePage() {
     },
     {
       icon: Globe,
-      title: "Connect Facebook",
-      description: "Link your Facebook profile to find friends in the community"
+      title: t('pages:onboarding.welcome.features.facebook.title', 'Connect Facebook'),
+      description: t('pages:onboarding.welcome.features.facebook.description', 'Link your Facebook profile to find friends in the community')
     },
     {
       icon: Calendar,

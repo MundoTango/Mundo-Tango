@@ -48,8 +48,8 @@ export default function SocialConnectPage() {
       navigate("/onboarding/photo");
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save profile information",
+        title: t('pages:onboarding.social.toast.errorTitle', 'Error'),
+        description: t('pages:onboarding.social.toast.errorDescription', 'Failed to save profile information'),
         variant: "destructive",
       });
     } finally {
@@ -61,8 +61,8 @@ export default function SocialConnectPage() {
     <SelfHealingErrorBoundary pageName="OnboardingSocialConnect" fallbackRoute="/onboarding/welcome">
       <>
         <SEO 
-          title="Connect Your Social World - Mundo Tango" 
-          description="Link your social profiles to find friends in the tango community." 
+          title={t('pages:onboarding.social.seoTitle', 'Connect Your Social World - Mundo Tango')} 
+          description={t('pages:onboarding.social.seoDescription', 'Link your social profiles to find friends in the tango community.')} 
         />
       
       <div className="relative h-[40vh] w-full overflow-hidden">
@@ -80,13 +80,13 @@ export default function SocialConnectPage() {
             transition={{ duration: 0.4 }}
           >
             <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-              Step 2 of 6
+              {t('pages:onboarding.social.step', 'Step 2 of 6')}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-serif text-white font-bold leading-tight mb-4">
-              Connect Your Social World
+              {t('pages:onboarding.social.title', 'Connect Your Social World')}
             </h1>
             <p className="text-lg text-white/80 max-w-2xl mx-auto italic">
-              "Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections."
+              {t('pages:onboarding.social.quote', '"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections."')}
             </p>
           </motion.div>
         </div>
@@ -104,24 +104,24 @@ export default function SocialConnectPage() {
                 <div className="p-3 rounded-xl bg-primary/10">
                   <Facebook className="h-6 w-6 text-primary" />
                 </div>
-                <h2 className="text-2xl font-serif font-bold">Find Your Friends</h2>
+                <h2 className="text-2xl font-serif font-bold">{t('pages:onboarding.social.cardTitle', 'Find Your Friends')}</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.
+                {t('pages:onboarding.social.cardDescription', 'Your Facebook helps us match you with dancers you may already know, so you\'re not starting from scratch.')}
               </p>
             </CardHeader>
 
             <CardContent className="p-8 space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Facebook Profile URL (Optional)</label>
+                <label className="text-sm font-medium uppercase tracking-widest text-muted-foreground">{t('pages:onboarding.social.facebookLabel', 'Facebook Profile URL (Optional)')}</label>
                 <Input
-                  placeholder="https://www.facebook.com/your.profile"
+                  placeholder={t('pages:onboarding.social.facebookPlaceholder', 'https://www.facebook.com/your.profile')}
                   value={facebookUrl}
                   onChange={(e) => setFacebookUrl(e.target.value)}
                   className="h-12"
                 />
                 <p className="text-xs text-muted-foreground italic mt-2">
-                  We use this as a bridge to other communities and to match you with dancers you might know.
+                  {t('pages:onboarding.social.helperText', 'We use this as a bridge to other communities and to match you with dancers you might know.')}
                 </p>
               </div>
             </CardContent>
@@ -133,14 +133,14 @@ export default function SocialConnectPage() {
                 disabled={isLoading}
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                Back
+                {t('pages:onboarding.navigation.back', 'Back')}
               </Button>
               <Button
                 onClick={handleContinue}
                 disabled={isLoading}
                 className="gap-2"
               >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Continue <ChevronRight className="h-4 w-4" /></>}
+                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t('pages:onboarding.navigation.continue', 'Continue')} <ChevronRight className="h-4 w-4" /></>}
               </Button>
             </CardFooter>
           </Card>

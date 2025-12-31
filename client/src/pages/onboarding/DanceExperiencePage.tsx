@@ -63,274 +63,49 @@ interface HobbyCategory {
   subcategories: SubHobby[];
 }
 
-const HOBBIES_WITH_SUBCATEGORIES: HobbyCategory[] = [
-  { 
-    id: "fitness", 
-    label: "Fitness & Sports", 
-    icon: Dumbbell, 
-    color: "#EF4444",
-    subcategories: [
-      { id: "fitness_gym", label: "Gym & Weights" },
-      { id: "fitness_running", label: "Running" },
-      { id: "fitness_crossfit", label: "CrossFit" },
-      { id: "fitness_martial_arts", label: "Martial Arts" },
-      { id: "fitness_tennis", label: "Tennis" },
-      { id: "fitness_soccer", label: "Soccer/Football" },
-      { id: "fitness_basketball", label: "Basketball" },
-      { id: "fitness_fencing", label: "Fencing" },
-    ]
-  },
-  {
-    id: "tech",
-    label: "Tech & Innovation",
-    icon: Globe,
-    color: "#3B82F6",
-    subcategories: [
-      { id: "tech_coding", label: "Coding & Dev" },
-      { id: "tech_ai", label: "AI & Future Tech" },
-      { id: "tech_crypto", label: "Web3 & Crypto" },
-      { id: "tech_gaming", label: "Gaming Culture" },
-    ]
-  },
-  {
-    id: "spirituality",
-    label: "Spirituality & Growth",
-    icon: Moon,
-    color: "#8B5CF6",
-    subcategories: [
-      { id: "spirit_meditation", label: "Meditation" },
-      { id: "spirit_astrology", label: "Astrology" },
-      { id: "spirit_philosophy", label: "Philosophy" },
-      { id: "spirit_community", label: "Community Building" },
-    ]
-  },
-  { 
-    id: "yoga", 
-    label: "Yoga & Wellness", 
-    icon: Heart, 
-    color: "#8B5CF6",
-    subcategories: [
-      { id: "yoga_hatha", label: "Hatha Yoga" },
-      { id: "yoga_vinyasa", label: "Vinyasa Flow" },
-      { id: "yoga_meditation", label: "Meditation" },
-      { id: "yoga_pilates", label: "Pilates" },
-      { id: "yoga_breathwork", label: "Breathwork" },
-    ]
-  },
-  { 
-    id: "music", 
-    label: "Music", 
-    icon: Music, 
-    color: "#3B82F6",
-    subcategories: [
-      { id: "music_listening", label: "Music Listening" },
-      { id: "music_concerts", label: "Live Concerts" },
-      { id: "music_piano", label: "Piano" },
-      { id: "music_guitar", label: "Guitar" },
-      { id: "music_singing", label: "Singing" },
-      { id: "music_dj", label: "DJing" },
-      { id: "music_production", label: "Music Production" },
-    ]
-  },
-  { 
-    id: "photography", 
-    label: "Photography & Video", 
-    icon: Camera, 
-    color: "#F59E0B",
-    subcategories: [
-      { id: "photo_portrait", label: "Portrait Photography" },
-      { id: "photo_landscape", label: "Landscape Photography" },
-      { id: "photo_street", label: "Street Photography" },
-      { id: "photo_video", label: "Videography" },
-      { id: "photo_editing", label: "Photo Editing" },
-    ]
-  },
-  { 
-    id: "art", 
-    label: "Art & Creativity", 
-    icon: PaletteIcon, 
-    color: "#EC4899",
-    subcategories: [
-      { id: "art_painting", label: "Painting" },
-      { id: "art_drawing", label: "Drawing" },
-      { id: "art_sculpture", label: "Sculpture" },
-      { id: "art_digital", label: "Digital Art" },
-      { id: "art_crafts", label: "Crafts & DIY" },
-      { id: "art_pottery", label: "Pottery" },
-    ]
-  },
-  { 
-    id: "reading", 
-    label: "Reading & Writing", 
-    icon: BookOpen, 
-    color: "#10B981",
-    subcategories: [
-      { id: "reading_fiction", label: "Fiction" },
-      { id: "reading_nonfiction", label: "Non-Fiction" },
-      { id: "reading_poetry", label: "Poetry" },
-      { id: "reading_writing", label: "Creative Writing" },
-      { id: "reading_journals", label: "Journaling" },
-    ]
-  },
-  { 
-    id: "travel", 
-    label: "Travel & Adventure", 
-    icon: Plane, 
-    color: "#06B6D4",
-    subcategories: [
-      { id: "travel_backpacking", label: "Backpacking" },
-      { id: "travel_luxury", label: "Luxury Travel" },
-      { id: "travel_cultural", label: "Cultural Tourism" },
-      { id: "travel_road_trips", label: "Road Trips" },
-      { id: "travel_solo", label: "Solo Travel" },
-    ]
-  },
-  { 
-    id: "cooking", 
-    label: "Cooking & Food", 
-    icon: UtensilsCrossed, 
-    color: "#F97316",
-    subcategories: [
-      { id: "cooking_home", label: "Home Cooking" },
-      { id: "cooking_baking", label: "Baking" },
-      { id: "cooking_gourmet", label: "Gourmet Cuisine" },
-      { id: "cooking_international", label: "International Cuisine" },
-      { id: "cooking_healthy", label: "Healthy Eating" },
-    ]
-  },
-  { 
-    id: "wine", 
-    label: "Wine & Beverages", 
-    icon: Wine, 
-    color: "#7C3AED",
-    subcategories: [
-      { id: "wine_tasting", label: "Wine Tasting" },
-      { id: "wine_cocktails", label: "Cocktails" },
-      { id: "wine_coffee", label: "Coffee Appreciation" },
-      { id: "wine_tea", label: "Tea Culture" },
-      { id: "wine_brewing", label: "Home Brewing" },
-    ]
-  },
-  { 
-    id: "gaming", 
-    label: "Gaming", 
-    icon: Gamepad2, 
-    color: "#6366F1",
-    subcategories: [
-      { id: "gaming_video", label: "Video Games" },
-      { id: "gaming_board", label: "Board Games" },
-      { id: "gaming_card", label: "Card Games" },
-      { id: "gaming_tabletop", label: "Tabletop RPGs" },
-      { id: "gaming_esports", label: "eSports" },
-    ]
-  },
-  { 
-    id: "outdoors", 
-    label: "Outdoor Activities", 
-    icon: Mountain, 
-    color: "#059669",
-    subcategories: [
-      { id: "outdoor_hiking", label: "Hiking" },
-      { id: "outdoor_camping", label: "Camping" },
-      { id: "outdoor_climbing", label: "Rock Climbing" },
-      { id: "outdoor_fishing", label: "Fishing" },
-      { id: "outdoor_kayaking", label: "Kayaking" },
-      { id: "outdoor_surfing", label: "Surfing" },
-    ]
-  },
-  { 
-    id: "snow", 
-    label: "Snow Sports", 
-    icon: Sun, 
-    color: "#38BDF8",
-    subcategories: [
-      { id: "snow_skiing", label: "Skiing" },
-      { id: "snow_snowboard", label: "Snowboarding" },
-      { id: "snow_crosscountry", label: "Cross-Country Skiing" },
-      { id: "snow_ice_skating", label: "Ice Skating" },
-      { id: "snow_sledding", label: "Sledding" },
-      { id: "snow_snowshoeing", label: "Snowshoeing" },
-    ]
-  },
-  { 
-    id: "cycling", 
-    label: "Cycling", 
-    icon: Bike, 
-    color: "#0EA5E9",
-    subcategories: [
-      { id: "cycling_road", label: "Road Cycling" },
-      { id: "cycling_mountain", label: "Mountain Biking" },
-      { id: "cycling_urban", label: "Urban Cycling" },
-      { id: "cycling_touring", label: "Bike Touring" },
-    ]
-  },
-  { 
-    id: "water", 
-    label: "Water Sports", 
-    icon: Waves, 
-    color: "#0284C7",
-    subcategories: [
-      { id: "water_swimming", label: "Swimming" },
-      { id: "water_scuba", label: "Scuba Diving" },
-      { id: "water_snorkel", label: "Snorkeling" },
-      { id: "water_sailing", label: "Sailing" },
-      { id: "water_paddleboard", label: "Paddleboarding" },
-    ]
-  },
-  { 
-    id: "nature", 
-    label: "Nature & Gardening", 
-    icon: TreePine, 
-    color: "#16A34A",
-    subcategories: [
-      { id: "nature_gardening", label: "Gardening" },
-      { id: "nature_birdwatching", label: "Bird Watching" },
-      { id: "nature_botany", label: "Plant Collecting" },
-      { id: "nature_wildlife", label: "Wildlife Photography" },
-    ]
-  },
-  { 
-    id: "movies", 
-    label: "Movies & Entertainment", 
-    icon: Film, 
-    color: "#DC2626",
-    subcategories: [
-      { id: "movies_cinema", label: "Cinema" },
-      { id: "movies_tv", label: "TV Series" },
-      { id: "movies_documentary", label: "Documentaries" },
-      { id: "movies_theater", label: "Theater" },
-      { id: "movies_standup", label: "Stand-up Comedy" },
-    ]
-  },
-  { 
-    id: "pets", 
-    label: "Pets & Animals", 
-    icon: Dog, 
-    color: "#A855F7",
-    subcategories: [
-      { id: "pets_dogs", label: "Dogs" },
-      { id: "pets_cats", label: "Cats" },
-      { id: "pets_exotic", label: "Exotic Pets" },
-      { id: "pets_horses", label: "Horse Riding" },
-      { id: "pets_rescue", label: "Animal Rescue" },
-    ]
-  },
-  { 
-    id: "social", 
-    label: "Social & Community", 
-    icon: Globe, 
-    color: "#CA8A04",
-    subcategories: [
-      { id: "social_volunteering", label: "Volunteering" },
-      { id: "social_meetups", label: "Meetups" },
-      { id: "social_networking", label: "Networking" },
-      { id: "social_languages", label: "Language Exchange" },
-    ]
-  },
+interface HobbyCategoryConfig {
+  id: string;
+  icon: LucideIcon;
+  color: string;
+  subcategoryIds: string[];
+}
+
+const HOBBY_CATEGORY_CONFIG: HobbyCategoryConfig[] = [
+  { id: "fitness", icon: Dumbbell, color: "#EF4444", subcategoryIds: ["fitness_gym", "fitness_running", "fitness_crossfit", "fitness_martial_arts", "fitness_tennis", "fitness_soccer", "fitness_basketball", "fitness_fencing"] },
+  { id: "tech", icon: Globe, color: "#3B82F6", subcategoryIds: ["tech_coding", "tech_ai", "tech_crypto", "tech_gaming"] },
+  { id: "spirituality", icon: Moon, color: "#8B5CF6", subcategoryIds: ["spirit_meditation", "spirit_astrology", "spirit_philosophy", "spirit_community"] },
+  { id: "yoga", icon: Heart, color: "#8B5CF6", subcategoryIds: ["yoga_hatha", "yoga_vinyasa", "yoga_meditation", "yoga_pilates", "yoga_breathwork"] },
+  { id: "music", icon: Music, color: "#3B82F6", subcategoryIds: ["music_listening", "music_concerts", "music_piano", "music_guitar", "music_singing", "music_dj", "music_production"] },
+  { id: "photography", icon: Camera, color: "#F59E0B", subcategoryIds: ["photo_portrait", "photo_landscape", "photo_street", "photo_video", "photo_editing"] },
+  { id: "art", icon: PaletteIcon, color: "#EC4899", subcategoryIds: ["art_painting", "art_drawing", "art_sculpture", "art_digital", "art_crafts", "art_pottery"] },
+  { id: "reading", icon: BookOpen, color: "#10B981", subcategoryIds: ["reading_fiction", "reading_nonfiction", "reading_poetry", "reading_writing", "reading_journals"] },
+  { id: "travel", icon: Plane, color: "#06B6D4", subcategoryIds: ["travel_backpacking", "travel_luxury", "travel_cultural", "travel_road_trips", "travel_solo"] },
+  { id: "cooking", icon: UtensilsCrossed, color: "#F97316", subcategoryIds: ["cooking_home", "cooking_baking", "cooking_gourmet", "cooking_international", "cooking_healthy"] },
+  { id: "wine", icon: Wine, color: "#7C3AED", subcategoryIds: ["wine_tasting", "wine_cocktails", "wine_coffee", "wine_tea", "wine_brewing"] },
+  { id: "gaming", icon: Gamepad2, color: "#6366F1", subcategoryIds: ["gaming_video", "gaming_board", "gaming_card", "gaming_tabletop", "gaming_esports"] },
+  { id: "outdoors", icon: Mountain, color: "#059669", subcategoryIds: ["outdoor_hiking", "outdoor_camping", "outdoor_climbing", "outdoor_fishing", "outdoor_kayaking", "outdoor_surfing"] },
+  { id: "snow", icon: Sun, color: "#38BDF8", subcategoryIds: ["snow_skiing", "snow_snowboard", "snow_crosscountry", "snow_ice_skating", "snow_sledding", "snow_snowshoeing"] },
+  { id: "cycling", icon: Bike, color: "#0EA5E9", subcategoryIds: ["cycling_road", "cycling_mountain", "cycling_urban", "cycling_touring"] },
+  { id: "water", icon: Waves, color: "#0284C7", subcategoryIds: ["water_swimming", "water_scuba", "water_snorkel", "water_sailing", "water_paddleboard"] },
+  { id: "nature", icon: TreePine, color: "#16A34A", subcategoryIds: ["nature_gardening", "nature_birdwatching", "nature_botany", "nature_wildlife"] },
+  { id: "movies", icon: Film, color: "#DC2626", subcategoryIds: ["movies_cinema", "movies_tv", "movies_documentary", "movies_theater", "movies_standup"] },
+  { id: "pets", icon: Dog, color: "#A855F7", subcategoryIds: ["pets_dogs", "pets_cats", "pets_exotic", "pets_horses", "pets_rescue"] },
+  { id: "social", icon: Globe, color: "#CA8A04", subcategoryIds: ["social_volunteering", "social_meetups", "social_networking", "social_languages"] },
 ];
 
 export default function DanceExperiencePage() {
   const { t } = useTranslation(["pages", "common"]);
+  
+  const HOBBIES_WITH_SUBCATEGORIES: HobbyCategory[] = useMemo(() => HOBBY_CATEGORY_CONFIG.map(config => ({
+    id: config.id,
+    label: t(`pages:onboarding.hobbies.categories.${config.id}.label`, config.id),
+    icon: config.icon,
+    color: config.color,
+    subcategories: config.subcategoryIds.map(subId => ({
+      id: subId,
+      label: t(`pages:onboarding.hobbies.items.${subId}`, subId),
+    })),
+  })), [t]);
   const [, navigate] = useLocation();
   const { user, refreshCurrentUser } = useAuth();
   const { toast } = useToast();
@@ -535,7 +310,7 @@ export default function DanceExperiencePage() {
                       <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
-                          placeholder="Search communities or add a new one..."
+                          placeholder={t('pages:onboarding.hobbies.searchPlaceholder', 'Search communities or add a new one...')}
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="pl-10"

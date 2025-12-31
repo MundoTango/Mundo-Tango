@@ -51,23 +51,23 @@ interface Testimonial {
   rating: number;
 }
 
-const TESTIMONIALS: Testimonial[] = [
+const getTestimonials = (t: (key: string, fallback: string) => string): Testimonial[] => [
   {
-    name: "Maria Garcia",
-    location: "Buenos Aires, Argentina",
-    text: "Mundo Tango Pro helped me connect with dancers worldwide and find amazing milongas. The AI matching is incredible!",
+    name: t('pages:onboarding.subscription.testimonials.maria.name', 'Maria Garcia'),
+    location: t('pages:onboarding.subscription.testimonials.maria.location', 'Buenos Aires, Argentina'),
+    text: t('pages:onboarding.subscription.testimonials.maria.text', 'Mundo Tango Pro helped me connect with dancers worldwide and find amazing milongas. The AI matching is incredible!'),
     rating: 5,
   },
   {
-    name: "John Smith",
-    location: "New York, USA",
-    text: "Best investment for my tango journey. The Premium features are worth every penny. Mr. Blue is like having a personal tango assistant!",
+    name: t('pages:onboarding.subscription.testimonials.john.name', 'John Smith'),
+    location: t('pages:onboarding.subscription.testimonials.john.location', 'New York, USA'),
+    text: t('pages:onboarding.subscription.testimonials.john.text', 'Best investment for my tango journey. The Premium features are worth every penny. Mr. Blue is like having a personal tango assistant!'),
     rating: 5,
   },
   {
-    name: "Sophie Laurent",
-    location: "Paris, France",
-    text: "The event organization tools save me hours every week. Can't imagine running my milongas without it!",
+    name: t('pages:onboarding.subscription.testimonials.sophie.name', 'Sophie Laurent'),
+    location: t('pages:onboarding.subscription.testimonials.sophie.location', 'Paris, France'),
+    text: t('pages:onboarding.subscription.testimonials.sophie.text', 'The event organization tools save me hours every week. Can\'t imagine running my milongas without it!'),
     rating: 5,
   },
 ];
@@ -196,7 +196,7 @@ function WelcomeStep({ onNext, t }: { onNext: () => void; t: (key: string, fallb
 
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto text-sm">
-          {TESTIMONIALS.map((testimonial, i) => (
+          {getTestimonials(t).map((testimonial, i) => (
             <Card key={i} className="hover-elevate">
               <CardContent className="pt-6 space-y-3">
                 <div className="flex gap-1">

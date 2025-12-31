@@ -82,18 +82,20 @@ export default function CitySelectionPage() {
       } catch (e) { /* fallback to generic text */ }
       
       toast({
-        title: isAutoApproved ? "Source added!" : "Submitted for review",
+        title: isAutoApproved 
+          ? t('pages:onboarding.city.toast.sourceAdded', 'Source added!') 
+          : t('pages:onboarding.city.toast.submittedForReview', 'Submitted for review'),
         description: isAutoApproved 
-          ? `We'll start tracking events from ${hostname}`
-          : "Thank you! Your suggestion has been sent for review.",
+          ? t('pages:onboarding.city.toast.trackingEvents', `We'll start tracking events from ${hostname}`)
+          : t('pages:onboarding.city.toast.thankYou', 'Thank you! Your suggestion has been sent for review.'),
       });
       setNewUrl("");
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
+        title: t('pages:onboarding.city.toast.errorTitle', 'Error'),
         variant: "destructive",
-        description: error.message || "Failed to submit suggestion",
+        description: error.message || t('pages:onboarding.city.toast.suggestionFailed', 'Failed to submit suggestion'),
       });
     }
   });
@@ -165,8 +167,8 @@ export default function CitySelectionPage() {
       navigate("/onboarding/social");
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save cities",
+        title: t('pages:onboarding.city.toast.errorTitle', 'Error'),
+        description: t('pages:onboarding.city.toast.saveFailed', 'Failed to save cities'),
         variant: "destructive",
       });
     } finally {
