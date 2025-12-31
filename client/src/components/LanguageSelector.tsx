@@ -152,8 +152,6 @@ function LanguageSelectorComponent() {
       }
     }
     
-    // Force page reload to ensure all translations are applied correctly
-    window.location.reload();
   }, [user?.id]);
 
   return (
@@ -250,8 +248,6 @@ function LanguageSelectorButtonComponent() {
       }
     }
     
-    // Force page reload to ensure all translations are applied correctly
-    window.location.reload();
   }, [user?.id]);
 
   return (
