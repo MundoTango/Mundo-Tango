@@ -35,6 +35,16 @@ import {
 import * as VibeCodingTools from "../services/mrBlue/VibeCodingToolService";
 import { vibeCodingMasterLoop } from "../services/mrBlue/VibeCodingMasterLoop";
 
+
+// MB.MD GOD COMMAND #7: Timeout wrapper for auto-fix retry logic
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, operation: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => 
+      setTimeout(() => reject(new Error(`${operation} timed out after ${timeoutMs}ms`)), timeoutMs)
+    )
+  ]);
+}
 const router = Router();
 const elevenlabsService = new ElevenLabsVoiceService();
 
@@ -399,11 +409,12 @@ function detectToolIntent(message: string): {
   const dirMatch = msg.match(
     /(?:list|show|what'?s?\s+in)\s+(?:the\s+)?(?:files\s+in\s+(?:the\s+)?)?(?:directory\s+|folder\s+)?([a-zA-Z0-9_.\-\/]+)(?:\s+directory|\s+folder)?/i,
   );
-  if (dirMatch && dirMatch[1] && !dirMatch[1].includes(".") && dirMatch[1] !== "files") {
+  if (dirMatch) {
+    const dirPath = dirMatch[1] !== "files" ? dirMatch[1] : ".";
     return {
       hasTool: true,
       tool: "listDirectory",
-      args: { dirPath: dirMatch[1] },
+      args: { dirPath },
       confidence: 0.8,
     };
   }
@@ -669,6 +680,7 @@ router.post("/api/mrblue/chat", authenticateToken, async (req, res) => {
 
     // MB.MD Pattern 65: VibeCoding Code Generation for God-Level Users
     const vibeCodingIntent = detectVibeCodingIntent(message);
+                                                                                          console.log('[Mr. Blue] VibeCoding intent detection:', { isVibeCoding: vibeCodingIntent.isVibeCoding, confidence: vibeCodingIntent.confidence, tool: vibeCodingIntent.tool });
 
     if (
       isGodLevel &&
@@ -683,7 +695,7 @@ router.post("/api/mrblue/chat", authenticateToken, async (req, res) => {
       const streamRequested = req.headers.accept?.includes("text/event-stream");
 
       if (streamRequested) {
-        // SSE streaming response for VibeCodingMasterLoop
+        // SSE streaming response
         res.setHeader("Content-Type", "text/event-stream");
         res.setHeader("Cache-Control", "no-cache");
         res.setHeader("Connection", "keep-alive");
@@ -728,27 +740,41 @@ router.post("/api/mrblue/chat", authenticateToken, async (req, res) => {
         return;
       }
 
-      // Non-streaming VibeCodingMasterLoop execution
+      // Non-streaming execution
       try {
         const streamEvents: Array<{ type: string; content: string; phase?: string }> = [];
         
-        const result = await vibeCodingMasterLoop.executeVibeCoding(
-          {
-            goal: message,
-            userId,
-            sessionId: sessionContext?.sessionId || `vibe_${Date.now()}`,
-            context: {
-              currentPage: sessionContext?.currentPage || context?.currentPage,
-              projectPath: process.cwd(),
-              relevantFiles: sessionContext?.recentActions?.filter(
-                (a: string) => a.includes(".ts") || a.includes(".tsx"),
-              ),
+        console.log(`[Mr. Blue] ===== VIBECODING EXECUTION START =====`);
+        console.log(`[Mr. Blue] Goal: "${message.substring(0, 100)}..."`);
+        console.log(`[Mr. Blue] User: ${userEmail}, isGodLevel: ${isGodLevel}`);
+        console.log(`[Mr. Blue] Session: ${sessionContext?.sessionId || 'none'}`);
+
+        const result = await withTimeout(
+          vibeCodingMasterLoop.executeVibeCoding(
+            {
+              goal: message,
+              userId,
+              sessionId: sessionContext?.sessionId || `vibe_${Date.now()}`,
+              context: {
+                currentPage: sessionContext?.currentPage || context?.currentPage,
+                projectPath: process.cwd(),
+                relevantFiles: sessionContext?.recentActions?.filter(
+                  (a: string) => a.includes(".ts") || a.includes(".tsx"),
+                ),
+              },
             },
-          },
-          (event) => {
-            streamEvents.push({ type: event.type, content: event.content, phase: event.phase });
-          }
+            (event) => {
+              streamEvents.push({ type: event.type, content: event.content, phase: event.phase });
+            }
+          ),
+          30000, // 30 second timeout
+          "VibeCoding Master Loop (Streaming)"
         );
+
+        console.log(`[Mr. Blue] ===== VIBECODING EXECUTION COMPLETE =====`);
+        console.log(`[Mr. Blue] Success: ${result.success}, Files Modified: ${result.filesModified?.length || 0}`);
+        console.log(`[Mr. Blue] Duration: ${result.durationMs || 'unknown'}ms`);
+
 
         // Build conversational response from execution
         const phasesSummary = streamEvents
@@ -776,6 +802,10 @@ router.post("/api/mrblue/chat", authenticateToken, async (req, res) => {
         });
       } catch (vibeError: any) {
         console.error("[Mr. Blue] VibeCoding error:", vibeError);
+        console.error("[Mr. Blue] ===== VIBECODING EXECUTION FAILED =====");
+        console.error("[Mr. Blue] Error:", vibeError);
+        console.error("[Mr. Blue] Stack:", vibeError.stack);
+
         return res.json({
           role: "assistant",
           content: `I encountered an issue executing your request: ${vibeError.message}. Please try again with more specific instructions.`,
