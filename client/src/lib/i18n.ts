@@ -76,14 +76,13 @@ export const allLangs = [
   "mn",
 ];
 
-// Map regional variants to base language codes that match our locale folders
+// Normalize language codes for detection - only standardize formatting, preserve regional variants
 function normalizeToBaseLanguage(lng: string): string {
   const lower = lng.toLowerCase();
-  // Keep es-ar as is (we have a specific folder for it)
-  if (lower === 'es-ar') return 'es-ar';
-  // Extract base language code from regional variants like fr-FR -> fr
+  // Keep regional variants like es-ar, pt-br, zh-tw as they are distinct locales
+  if (allLangs.includes(lower)) return lower;
+  // For unknown regional codes like fr-FR, extract base language
   const base = lower.split('-')[0];
-  // If the base is in our supported list, use it
   if (allLangs.includes(base)) return base;
   return lower;
 }
@@ -97,7 +96,8 @@ if (!i18n.isInitialized) {
       defaultNS: "common",
       ns: ["common", "navigation", "pages", "errors"],
       debug: false,
-      load: "languageOnly",
+      // Use "all" to load fallback languages so missing keys in es-ar fall back to es
+      load: "all",
       fallbackLng: {
         'es-ar': ['es', 'en'],
         'pt-br': ['pt', 'en'],
@@ -105,6 +105,7 @@ if (!i18n.isInitialized) {
         'zh-hk': ['zh', 'en'],
         default: ['en'],
       },
+      partialBundledLanguages: true,
       nonExplicitSupportedLngs: false,
       cleanCode: false,
       lowerCaseLng: true,
@@ -134,15 +135,16 @@ export function isRTLLanguage(lang: string): boolean {
   return RTL_LANGUAGES.includes(lang);
 }
 
-// Helper function to properly change language, handling regional variants
+// Helper function to properly change language, preserving regional variants
 export async function changeLanguageWithRegionalSupport(
   languageCode: string,
 ): Promise<void> {
-  // Normalize regional codes to base language codes that match our locale folders
+  // Preserve regional variants like es-ar (Argentine Spanish is distinct from generic Spanish)
+  // Fallback chain es-ar → es → en handles missing keys automatically
   const lower = languageCode.toLowerCase();
-  // Keep es-ar as is (we have a specific folder for it)
   let normalizedCode = lower;
-  if (lower !== 'es-ar' && lower.includes('-')) {
+  // Only normalize if it's an unknown regional code not in our supported list
+  if (lower.includes('-') && !allLangs.includes(lower)) {
     const base = lower.split('-')[0];
     if (allLangs.includes(base)) {
       normalizedCode = base;
