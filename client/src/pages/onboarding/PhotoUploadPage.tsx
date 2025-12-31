@@ -172,8 +172,8 @@ export default function PhotoUploadPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
               >
-                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-2">
-                  {t('pages:onboarding.photo.step', 'Step 2 of 5')}
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-3">
+                  {t('pages:onboarding.photo.step', 'Step 3 of 5')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">

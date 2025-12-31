@@ -35,19 +35,34 @@ export default function CitySelectionPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation(['pages', 'common']);
+  const [favoriteCities, setFavoriteCities] = useState<SelectedCity[]>([]);
   const [citySearch, setCitySearch] = useState("");
+  const [favoriteSearch, setFavoriteSearch] = useState("");
   const [selectedCity, setSelectedCity] = useState<SelectedCity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [newUrl, setNewUrl] = useState("");
 
-  const { data: scrapers, isLoading: isLoadingScrapers } = useQuery<CityScrapers>({
-    queryKey: ["/api/cities", selectedCity?.name, "scrapers"],
+  // Combine scrapers for all cities
+  const { data: allScrapers, isLoading: isLoadingScrapers } = useQuery({
+    queryKey: ["/api/cities", "multi-scrapers", selectedCity?.name, favoriteCities.map(c => c.name)],
     queryFn: async () => {
-      const res = await fetch(`/api/cities/${encodeURIComponent(selectedCity!.name)}/scrapers?country=${encodeURIComponent(selectedCity!.country)}`);
-      if (!res.ok) throw new Error("Failed to fetch scrapers");
-      return res.json();
+      const citiesToFetch = [];
+      if (selectedCity) citiesToFetch.push(selectedCity);
+      citiesToFetch.push(...favoriteCities);
+
+      const results = await Promise.all(
+        citiesToFetch.map(city => 
+          fetch(`/api/cities/${encodeURIComponent(city.name)}/scrapers?country=${encodeURIComponent(city.country)}`)
+            .then(res => res.json())
+        )
+      );
+
+      return {
+        websites: results.flatMap(r => r.websites || []),
+        scrapers: results.flatMap(r => r.scrapers || [])
+      };
     },
-    enabled: !!selectedCity && !!selectedCity.name,
+    enabled: !!selectedCity || favoriteCities.length > 0,
   });
 
   const suggestMutation = useMutation({
@@ -104,7 +119,9 @@ export default function CitySelectionPage() {
     setIsLoading(true);
     try {
       const accessToken = localStorage.getItem("accessToken");
-      const response = await fetch("/api/users/me", {
+      
+      // Update primary city
+      await fetch("/api/users/me", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -117,13 +134,23 @@ export default function CitySelectionPage() {
         }),
       });
 
-      if (!response.ok) {
-        const errorMessage = await extractApiError(response, { context: "City selection" });
-        throw new Error(errorMessage);
-      }
+      // Follow all cities
+      const citiesToFollow = [selectedCity, ...favoriteCities];
+      await Promise.all(citiesToFollow.map(async (city) => {
+        const cityRes = await fetch(`/api/cities/search?q=${encodeURIComponent(city.name)}&country=${encodeURIComponent(city.country)}`);
+        const cityData = await cityRes.json();
+        const cityId = cityData[0]?.id;
+        
+        if (cityId) {
+          await fetch(`/api/cities/${cityId}/follow`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${accessToken}` }
+          });
+        }
+      }));
 
-      // Trigger location change effects (auto-join city group, create if needed)
-      const autoJoinResponse = await fetch("/api/location/change-effects", {
+      // Trigger effects for primary
+      await fetch("/api/location/change-effects", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -135,16 +162,11 @@ export default function CitySelectionPage() {
         }),
       });
 
-      if (!autoJoinResponse.ok) {
-        console.warn("[CitySelection] Auto-join failed, continuing with onboarding");
-      }
-
-      navigate("/onboarding/photo");
+      navigate("/onboarding/social");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : t('pages:onboarding.city.errors.saveFailed', 'Failed to save city');
       toast({
-        title: t('pages:onboarding.city.errors.selectionFailed', 'City Selection Failed'),
-        description: errorMessage,
+        title: "Error",
+        description: "Failed to save cities",
         variant: "destructive",
       });
     } finally {
@@ -156,8 +178,8 @@ export default function CitySelectionPage() {
     <SelfHealingErrorBoundary pageName="OnboardingCitySelection" fallbackRoute="/onboarding/welcome">
       <>
         <SEO 
-          title={t('pages:onboarding.city.seoTitle', 'Select Your City - Mundo Tango')} 
-          description={t('pages:onboarding.city.seoDescription', 'Choose your city and join your local tango community')} 
+          title={t('pages:onboarding.city.seoTitle', 'Connect with Cities - Mundo Tango')} 
+          description={t('pages:onboarding.city.seoDescription', 'Connect with your tango cities and join the local community')} 
         />
       
       <div className="relative h-[50vh] w-full overflow-hidden">
@@ -183,7 +205,7 @@ export default function CitySelectionPage() {
             </h1>
             
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
-              {t('pages:onboarding.city.subtitle', 'Connect with your local tango community')}
+              {t('pages:onboarding.city.subtitle', 'Follow your local and favorite tango communities')}
             </p>
           </motion.div>
         </div>
@@ -202,16 +224,18 @@ export default function CitySelectionPage() {
                   <div className="p-3 rounded-xl bg-primary/10">
                     <MapPin className="h-6 w-6 text-primary" />
                   </div>
-                  <h2 className="text-2xl font-serif font-bold">{t('pages:onboarding.city.cardTitle', 'Your City')}</h2>
+                  <h2 className="text-2xl font-serif font-bold">{t('pages:onboarding.city.cardTitle', 'Your Cities')}</h2>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">
-                  {t('pages:onboarding.city.cardDescription', "We'll automatically connect you with your local tango community and nearby events")}
+                  {t('pages:onboarding.city.cardDescription', "We'll connect you with your primary community and any other cities you follow.")}
                 </p>
               </CardHeader>
 
-              <CardContent className="p-8 space-y-6">
-                <div className="space-y-3">
-                  <Label htmlFor="city" className="text-base font-medium">{t('pages:onboarding.city.searchLabel', 'Search for the city you connect with the most')}</Label>
+              <CardContent className="p-8 space-y-8">
+                <div className="space-y-4">
+                  <Label htmlFor="city" className="text-base font-semibold">
+                    {t('pages:onboarding.city.searchLabel', 'Search for the city you connect with the most')}
+                  </Label>
                   <UnifiedLocationPicker
                     mode="city"
                     value={citySearch}
@@ -223,30 +247,74 @@ export default function CitySelectionPage() {
                       });
                       setCitySearch(loc);
                     }}
-                    placeholder={t('pages:onboarding.city.searchPlaceholder', 'Search for your city...')}
+                    placeholder={t('pages:onboarding.city.searchPlaceholder', 'Primary city...')}
                   />
 
                   {selectedCity && selectedCity.name && (
                     <motion.div 
-                      className="flex items-center gap-2 p-4 rounded-xl bg-primary/10 border border-primary/20"
+                      className="flex items-center justify-between p-4 rounded-xl bg-primary/10 border border-primary/20"
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                     >
-                      <MapPin className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium">{selectedCity.name}</p>
-                        <p className="text-sm text-muted-foreground">{selectedCity.country}</p>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="font-medium">{selectedCity.name}</p>
+                          <p className="text-sm text-muted-foreground">{selectedCity.country}</p>
+                        </div>
                       </div>
+                      <Badge variant="secondary">Primary</Badge>
                     </motion.div>
                   )}
                 </div>
 
-                {selectedCity && selectedCity.name && (
+                <div className="space-y-4 pt-4 border-t">
+                  <Label className="text-base font-semibold">My other favorite cities</Label>
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <UnifiedLocationPicker
+                        mode="city"
+                        value={favoriteSearch}
+                        onChange={(loc, coords, parsed) => {
+                          if (parsed?.city && !favoriteCities.some(c => c.name === parsed.city)) {
+                            setFavoriteCities([...favoriteCities, {
+                              display_name: loc,
+                              name: parsed.city,
+                              country: parsed.country || ''
+                            }]);
+                          }
+                          setFavoriteSearch("");
+                        }}
+                        placeholder="Search for other cities..."
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {favoriteCities.map((city, idx) => (
+                      <Badge 
+                        key={`${city.name}-${idx}`} 
+                        variant="outline" 
+                        className="flex items-center gap-1.5 py-1.5 px-3 bg-muted/30"
+                      >
+                        <MapPin className="h-3 w-3" />
+                        {city.name}
+                        <button 
+                          onClick={() => setFavoriteCities(favoriteCities.filter((_, i) => i !== idx))}
+                          className="ml-1 hover:text-destructive transition-colors"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                {(selectedCity || favoriteCities.length > 0) && (
                   <motion.div 
-                    className="space-y-6 pt-4 border-t border-border"
+                    className="space-y-6 pt-6 border-t border-border"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
                   >
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-sm font-semibold">
@@ -257,63 +325,51 @@ export default function CitySelectionPage() {
                       {isLoadingScrapers ? (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          Checking for active scrapers...
+                          Checking for sources...
                         </div>
-                      ) : scrapers && (scrapers.scrapers.length > 0 || scrapers.websites.length > 0) ? (
+                      ) : allScrapers && (allScrapers.scrapers.length > 0 || allScrapers.websites.length > 0) ? (
                         <div className="space-y-3">
                           <p className="text-sm text-muted-foreground">
-                            We already collect events from these local sources:
+                            Collected sources from all selected cities:
                           </p>
                           <div className="flex flex-wrap gap-2">
-                            {scrapers.scrapers.map((s) => {
-                              const displayUrl = s.url || "local source";
-                              return (
-                                <a 
-                                  key={`s-${s.id}`}
-                                  href={s.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors max-w-full group"
-                                  data-testid={`link-scraper-source-${s.id}`}
-                                >
-                                  <Globe className="h-3.5 w-3.5 shrink-0" />
-                                  <span className="truncate inline-block max-w-[200px] sm:max-w-[400px] underline decoration-primary/30 underline-offset-2 group-hover:decoration-primary">
-                                    {displayUrl}
-                                  </span>
-                                </a>
-                              );
-                            })}
-                            {scrapers.websites.map((w) => {
-                              const displayUrl = w.websiteUrl || "event website";
-                              return (
-                                <a 
-                                  key={`w-${w.id}`} 
-                                  href={w.websiteUrl} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors max-w-full group"
-                                  data-testid={`link-event-source-${w.id}`}
-                                >
-                                  <Globe className="h-3.5 w-3.5 shrink-0" />
-                                  <span className="truncate inline-block max-w-[200px] sm:max-w-[400px] underline decoration-primary/30 underline-offset-2 group-hover:decoration-primary">
-                                    {displayUrl}
-                                  </span>
-                                </a>
-                              );
-                            })}
+                            {allScrapers.scrapers.map((s) => (
+                              <a 
+                                key={`s-${s.id}`}
+                                href={s.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                              >
+                                <Globe className="h-3.5 w-3.5" />
+                                <span className="truncate max-w-[150px]">{s.url || "Source"}</span>
+                              </a>
+                            ))}
+                            {allScrapers.websites.map((w) => (
+                              <a 
+                                key={`w-${w.id}`} 
+                                href={w.websiteUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                              >
+                                <Globe className="h-3.5 w-3.5" />
+                                <span className="truncate max-w-[150px]">{w.websiteUrl || "Source"}</span>
+                              </a>
+                            ))}
                           </div>
                         </div>
                       ) : (
                         <div className="bg-muted/50 rounded-lg p-4 border border-dashed">
                           <p className="text-sm text-muted-foreground italic">
-                            Looks like we don't have a website for local events for this city.
+                            No event sources found for these cities yet.
                           </p>
                         </div>
                       )}
 
                       <div className="pt-4 space-y-4">
                         <Label htmlFor="event-site-url" className="text-sm font-medium">
-                          {t('pages:onboarding.city.eventSite.question', 'Know a local tango website we should track?')}
+                          Know a local tango website we should track?
                         </Label>
                         <div className="flex gap-2">
                           <Input
@@ -323,18 +379,13 @@ export default function CitySelectionPage() {
                             onChange={(e) => setNewUrl(e.target.value)}
                             placeholder="https://local-tango-site.com"
                             className="flex-1"
-                            data-testid="input-event-site-url"
                           />
                           <Button 
                             size="sm" 
                             onClick={() => suggestMutation.mutate(newUrl)}
                             disabled={!newUrl || suggestMutation.isPending}
                           >
-                            {suggestMutation.isPending ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Plus className="h-4 w-4" />
-                            )}
+                            {suggestMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                             <span className="ml-2">Submit</span>
                           </Button>
                         </div>

@@ -239,6 +239,20 @@ const HOBBIES_WITH_SUBCATEGORIES: HobbyCategory[] = [
     ]
   },
   { 
+    id: "snow", 
+    label: "Snow Sports", 
+    icon: Sun, 
+    color: "#38BDF8",
+    subcategories: [
+      { id: "snow_skiing", label: "Skiing" },
+      { id: "snow_snowboard", label: "Snowboarding" },
+      { id: "snow_crosscountry", label: "Cross-Country Skiing" },
+      { id: "snow_ice_skating", label: "Ice Skating" },
+      { id: "snow_sledding", label: "Sledding" },
+      { id: "snow_snowshoeing", label: "Snowshoeing" },
+    ]
+  },
+  { 
     id: "cycling", 
     label: "Cycling", 
     icon: Bike, 
@@ -524,19 +538,10 @@ export default function DanceExperiencePage() {
                         value={user?.facebookUrl || ""}
                         onChange={async (e) => {
                           const val = e.target.value;
-                          const accessToken = localStorage.getItem("accessToken");
-                          await fetch("/api/users/me", {
-                            method: "PATCH",
-                            headers: {
-                              "Content-Type": "application/json",
-                              Authorization: `Bearer ${accessToken}`,
-                            },
-                            body: JSON.stringify({ facebookUrl: val }),
-                          });
+                          // Facebook URL removed - moved to SocialConnectPage
                         }}
-                        data-testid="input-facebook-url"
+                        className="hidden"
                       />
-                      <p className="text-xs text-muted-foreground italic">We use this to match you with other dancers you might know.</p>
                     </div>
 
                     <div className="flex gap-2">

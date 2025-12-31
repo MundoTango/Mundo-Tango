@@ -8,6 +8,7 @@ const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
 const WelcomeTourPage = lazy(() => import("@/pages/WelcomeTourPage"));
 const WelcomePage = lazy(() => import("@/pages/onboarding/WelcomePage"));
 const CitySelectionPage = lazy(() => import("@/pages/onboarding/CitySelectionPage"));
+const SocialConnectPage = lazy(() => import("@/pages/onboarding/SocialConnectPage"));
 const PhotoUploadPage = lazy(() => import("@/pages/onboarding/PhotoUploadPage"));
 const TangoRolesPage = lazy(() => import("@/pages/onboarding/TangoRolesPage"));
 const LanguagesPage = lazy(() => import("@/pages/onboarding/LanguagesPage"));
@@ -48,6 +49,13 @@ export function OnboardingRoutes() {
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
             <CitySelectionPage />
+          </Suspense>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/onboarding/social">
+        <ProtectedRoute>
+          <Suspense fallback={<LoadingFallback />}>
+            <SocialConnectPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
