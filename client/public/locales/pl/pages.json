@@ -1,41 +1,4 @@
 {
-  "login": {
-    "pageName": "Logowanie",
-    "seo": {
-      "title": "Zaloguj się - Mundo Tango",
-      "description": "Zaloguj się do swojego konta Mundo Tango, aby połączyć się ze światową społecznością tanga, odkrywać wydarzenia i dzielić się swoją pasją do argentyńskiego tanga."
-    },
-    "badge": "Witamy ponownie",
-    "hero": {
-      "heading": "Twoja podróż z tangiem trwa",
-      "paragraph": "Zaloguj się, aby połączyć się z tancerzami na całym świecie, odkrywać wydarzenia i dzielić się swoją pasją"
-    },
-    "stats": {
-      "dancers": "tancerzy",
-      "events": "wydarzeń"
-    },
-    "form": {
-      "email": "Email",
-      "password": "Hasło",
-      "signIn": "Zaloguj się",
-      "signingIn": "Logowanie...",
-      "forgotPassword": "Zapomniałeś hasła?"
-    },
-    "noAccount": "Nie masz konta?",
-    "createAccount": "Utwórz teraz",
-    "toast": {
-      "successTitle": "Witamy ponownie!",
-      "successDescription": "Pomyślnie się zalogowałeś.",
-      "errorTitle": "Błąd logowania",
-      "errorDescription": "Nieprawidłowe dane logowania",
-      "verificationRequired": {
-        "title": "Wymagana weryfikacja email",
-        "description": "Sprawdź swoją skrzynkę pocztową i potwierdź swój email."
-      },
-      "upgradedTitle": "Konto zaktualizowane!",
-      "upgradedDescription": "Witamy! Masz teraz pełny dostęp do Mundo Tango."
-    }
-  },
   "register": {
     "pageName": "Rejestracja",
     "seo": {
@@ -327,27 +290,274 @@
       "completeSetup": "Zakończ konfigurację",
       "searchPlaceholder": "Szukaj społeczności lub dodaj nową...",
       "categories": {
-        "fitness": { "label": "Fitness i sport" },
-        "tech": { "label": "Technologia i innowacje" },
-        "spirituality": { "label": "Duchowość i rozwój" },
-        "yoga": { "label": "Joga i wellness" },
-        "music": { "label": "Muzyka" },
-        "photography": { "label": "Fotografia i wideo" },
-        "art": { "label": "Sztuka i kreatywność" },
-        "reading": { "label": "Czytanie i pisanie" },
-        "travel": { "label": "Podróże i przygody" },
-        "cooking": { "label": "Gotowanie i jedzenie" },
-        "wine": { "label": "Wino i napoje" },
-        "gaming": { "label": "Gry" },
-        "outdoors": { "label": "Aktywności na świeżym powietrzu" },
-        "snow": { "label": "Sporty zimowe" },
-        "cycling": { "label": "Kolarstwo" },
-        "water": { "label": "Sporty wodne" },
-        "nature": { "label": "Przyroda i ogrodnictwo" },
-        "movies": { "label": "Filmy i rozrywka" },
-        "pets": { "label": "Zwierzęta" },
-        "social": { "label": "Społeczność" }
+        "fitness": {
+          "label": "Fitness i sport"
+        },
+        "tech": {
+          "label": "Technologia i innowacje"
+        },
+        "spirituality": {
+          "label": "Duchowość i rozwój"
+        },
+        "yoga": {
+          "label": "Joga i wellness"
+        },
+        "music": {
+          "label": "Muzyka"
+        },
+        "photography": {
+          "label": "Fotografia i wideo"
+        },
+        "art": {
+          "label": "Sztuka i kreatywność"
+        },
+        "reading": {
+          "label": "Czytanie i pisanie"
+        },
+        "travel": {
+          "label": "Podróże i przygody"
+        },
+        "cooking": {
+          "label": "Gotowanie i jedzenie"
+        },
+        "wine": {
+          "label": "Wino i napoje"
+        },
+        "gaming": {
+          "label": "Gry"
+        },
+        "outdoors": {
+          "label": "Aktywności na świeżym powietrzu"
+        },
+        "snow": {
+          "label": "Sporty zimowe"
+        },
+        "cycling": {
+          "label": "Kolarstwo"
+        },
+        "water": {
+          "label": "Sporty wodne"
+        },
+        "nature": {
+          "label": "Przyroda i ogrodnictwo"
+        },
+        "movies": {
+          "label": "Filmy i rozrywka"
+        },
+        "pets": {
+          "label": "Zwierzęta"
+        },
+        "social": {
+          "label": "Społeczność"
+        }
+      },
+      "items": {
+        "fitness_gym": "Gym & Weights",
+        "fitness_running": "Running",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Martial Arts",
+        "fitness_tennis": "Tennis",
+        "fitness_soccer": "Soccer/Football",
+        "fitness_basketball": "Basketball",
+        "fitness_fencing": "Fencing",
+        "tech_coding": "Coding & Dev",
+        "tech_ai": "AI & Future Tech",
+        "tech_crypto": "Web3 & Crypto",
+        "tech_gaming": "Gaming Culture",
+        "spirit_meditation": "Meditation",
+        "spirit_astrology": "Astrology",
+        "spirit_philosophy": "Philosophy",
+        "spirit_community": "Community Building",
+        "yoga_hatha": "Hatha Yoga",
+        "yoga_vinyasa": "Vinyasa Flow",
+        "yoga_meditation": "Meditation",
+        "yoga_pilates": "Pilates",
+        "yoga_breathwork": "Breathwork",
+        "music_listening": "Music Listening",
+        "music_concerts": "Live Concerts",
+        "music_piano": "Piano",
+        "music_guitar": "Guitar",
+        "music_singing": "Singing",
+        "music_dj": "DJing",
+        "music_production": "Music Production",
+        "photo_portrait": "Portrait Photography",
+        "photo_landscape": "Landscape Photography",
+        "photo_street": "Street Photography",
+        "photo_video": "Videography",
+        "photo_editing": "Photo Editing",
+        "art_painting": "Painting",
+        "art_drawing": "Drawing",
+        "art_sculpture": "Sculpture",
+        "art_digital": "Digital Art",
+        "art_crafts": "Crafts & DIY",
+        "art_pottery": "Pottery",
+        "reading_fiction": "Fiction",
+        "reading_nonfiction": "Non-Fiction",
+        "reading_poetry": "Poetry",
+        "reading_writing": "Creative Writing",
+        "reading_journals": "Journaling",
+        "travel_backpacking": "Backpacking",
+        "travel_luxury": "Luxury Travel",
+        "travel_cultural": "Cultural Tourism",
+        "travel_road_trips": "Road Trips",
+        "travel_solo": "Solo Travel",
+        "cooking_home": "Home Cooking",
+        "cooking_baking": "Baking",
+        "cooking_gourmet": "Gourmet Cuisine",
+        "cooking_international": "International Cuisine",
+        "cooking_healthy": "Healthy Eating",
+        "wine_tasting": "Wine Tasting",
+        "wine_cocktails": "Cocktails",
+        "wine_coffee": "Coffee Appreciation",
+        "wine_tea": "Tea Culture",
+        "wine_brewing": "Home Brewing",
+        "gaming_video": "Video Games",
+        "gaming_board": "Board Games",
+        "gaming_card": "Card Games",
+        "gaming_tabletop": "Tabletop RPGs",
+        "gaming_esports": "eSports",
+        "outdoor_hiking": "Hiking",
+        "outdoor_camping": "Camping",
+        "outdoor_climbing": "Rock Climbing",
+        "outdoor_fishing": "Fishing",
+        "outdoor_kayaking": "Kayaking",
+        "outdoor_surfing": "Surfing",
+        "snow_skiing": "Skiing",
+        "snow_snowboard": "Snowboarding",
+        "snow_crosscountry": "Cross-Country Skiing",
+        "snow_ice_skating": "Ice Skating",
+        "snow_sledding": "Sledding",
+        "snow_snowshoeing": "Snowshoeing",
+        "cycling_road": "Road Cycling",
+        "cycling_mountain": "Mountain Biking",
+        "cycling_urban": "Urban Cycling",
+        "cycling_touring": "Bike Touring",
+        "water_swimming": "Swimming",
+        "water_scuba": "Scuba Diving",
+        "water_snorkel": "Snorkeling",
+        "water_sailing": "Sailing",
+        "water_paddleboard": "Paddleboarding",
+        "nature_gardening": "Gardening",
+        "nature_birdwatching": "Bird Watching",
+        "nature_botany": "Plant Collecting",
+        "nature_wildlife": "Wildlife Photography",
+        "movies_cinema": "Cinema",
+        "movies_tv": "TV Series",
+        "movies_documentary": "Documentaries",
+        "movies_theater": "Theater",
+        "movies_standup": "Stand-up Comedy",
+        "pets_dogs": "Dogs",
+        "pets_cats": "Cats",
+        "pets_exotic": "Exotic Pets",
+        "pets_horses": "Horse Riding",
+        "pets_rescue": "Animal Rescue",
+        "social_volunteering": "Volunteering",
+        "social_meetups": "Meetups",
+        "social_networking": "Networking",
+        "social_languages": "Language Exchange"
+      },
+      "success": {
+        "completeTitle": "Welcome to Mundo Tango!",
+        "completeDesc": "Your profile is ready. Start exploring!",
+        "waitlistTitle": "Profile Complete!",
+        "waitlistDesc": "We'll notify you when your account is activated"
+      },
+      "errors": {
+        "saveFailed": "Failed to save. Please try again."
       }
+    },
+    "legal": {
+      "title": "Community Guidelines",
+      "subtitle": "Please review and accept our terms",
+      "legalDocsTitle": "Legal Documents",
+      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "termsOfService": {
+        "label": "I accept the Terms of Service",
+        "description": "Our terms govern your use of Mundo Tango",
+        "link": "Read Terms of Service"
+      },
+      "privacyPolicy": {
+        "label": "I accept the Privacy Policy",
+        "description": "How we handle your data",
+        "link": "Read Privacy Policy"
+      },
+      "cocTitle": "Community Code of Conduct",
+      "cocDescription": "Help us maintain a respectful community",
+      "coc": {
+        "respectful": {
+          "title": "Be Respectful",
+          "description": "Treat everyone with dignity and courtesy"
+        },
+        "inclusive": {
+          "title": "Be Inclusive",
+          "description": "Welcome dancers of all levels and backgrounds"
+        },
+        "authentic": {
+          "title": "Be Authentic",
+          "description": "Use your real identity and honest information"
+        },
+        "consent": {
+          "title": "Respect Consent",
+          "description": "Always ask before dancing and respect boundaries"
+        },
+        "noHarassment": {
+          "title": "No Harassment",
+          "description": "Zero tolerance for harassment or bullying"
+        },
+        "noSpam": {
+          "title": "No Spam",
+          "description": "Don't send unsolicited promotions"
+        },
+        "noDiscrimination": {
+          "title": "No Discrimination",
+          "description": "We don't tolerate discrimination of any kind"
+        },
+        "privacy": {
+          "title": "Protect Privacy",
+          "description": "Don't share others' information without consent"
+        },
+        "safety": {
+          "title": "Prioritize Safety",
+          "description": "Report any unsafe behavior immediately"
+        },
+        "laws": {
+          "title": "Follow Laws",
+          "description": "Comply with all applicable laws"
+        },
+        "report": {
+          "title": "Report Issues",
+          "description": "Help us by reporting violations"
+        },
+        "support": {
+          "title": "Support Each Other",
+          "description": "Help fellow dancers grow"
+        }
+      },
+      "acceptAll": "Accept All & Continue",
+      "accepting": "Accepting...",
+      "incompleteAlert": "Please accept all required terms",
+      "success": {
+        "title": "Welcome!",
+        "description": "You've accepted our community guidelines"
+      },
+      "errors": {
+        "failed": "Failed to save. Please try again."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Waitlist",
+      "seoTitle": "You're on the Waitlist - Mundo Tango",
+      "seoDescription": "Your account is pending activation",
+      "title": "You're on the Waitlist!",
+      "welcomeMessage": "Welcome, {{name}}!",
+      "defaultName": "Dancer",
+      "profileComplete": "Profile Complete",
+      "profileCompleteDesc": "Your profile is ready and waiting",
+      "emailNotice": "We'll email you at {{email}} when your account is ready",
+      "whenReady": "when your account is ready.",
+      "whileYouWait": "While you wait, help us grow:",
+      "volunteerButton": "Become a Volunteer",
+      "supportButton": "Support Mundo Tango"
     },
     "tour": {
       "pageTitle": "Wycieczka",
@@ -393,6 +603,43 @@
           }
         }
       }
+    }
+  },
+  "login": {
+    "pageName": "Logowanie",
+    "seo": {
+      "title": "Zaloguj się - Mundo Tango",
+      "description": "Zaloguj się do swojego konta Mundo Tango, aby połączyć się ze światową społecznością tanga, odkrywać wydarzenia i dzielić się swoją pasją do argentyńskiego tanga."
+    },
+    "badge": "Witamy ponownie",
+    "hero": {
+      "heading": "Twoja podróż z tangiem trwa",
+      "paragraph": "Zaloguj się, aby połączyć się z tancerzami na całym świecie, odkrywać wydarzenia i dzielić się swoją pasją"
+    },
+    "stats": {
+      "dancers": "tancerzy",
+      "events": "wydarzeń"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Hasło",
+      "signIn": "Zaloguj się",
+      "signingIn": "Logowanie...",
+      "forgotPassword": "Zapomniałeś hasła?"
+    },
+    "noAccount": "Nie masz konta?",
+    "createAccount": "Utwórz teraz",
+    "toast": {
+      "successTitle": "Witamy ponownie!",
+      "successDescription": "Pomyślnie się zalogowałeś.",
+      "errorTitle": "Błąd logowania",
+      "errorDescription": "Nieprawidłowe dane logowania",
+      "verificationRequired": {
+        "title": "Wymagana weryfikacja email",
+        "description": "Sprawdź swoją skrzynkę pocztową i potwierdź swój email."
+      },
+      "upgradedTitle": "Konto zaktualizowane!",
+      "upgradedDescription": "Witamy! Masz teraz pełny dostęp do Mundo Tango."
     }
   },
   "home": {

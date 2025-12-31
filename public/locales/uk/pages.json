@@ -1,291 +1,863 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "Вхід",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Увійти - Mundo Tango",
+      "description": "Увійдіть до свого облікового запису Mundo Tango, щоб приєднатися до світової спільноти танго, відкривати події та ділитися своєю пристрастю до аргентинського танго."
     },
-    "badge": "Welcome Back",
+    "badge": "З поверненням",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Ваша подорож танго продовжується",
+      "paragraph": "Увійдіть, щоб з'єднатися з танцюристами по всьому світу, відкривати події та ділитися своєю пристрастю"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "танцюристів",
+      "events": "подій"
     },
     "form": {
       "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "password": "Пароль",
+      "signIn": "Увійти",
+      "signingIn": "Вхід...",
+      "forgotPassword": "Забули пароль?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Немає облікового запису?",
+    "createAccount": "Створіть зараз",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "З поверненням!",
+      "successDescription": "Ви успішно увійшли.",
+      "errorTitle": "Помилка входу",
+      "errorDescription": "Невірні облікові дані",
+      "verificationRequired": {
+        "title": "Потрібна верифікація email",
+        "description": "Перевірте свою поштову скриньку та підтвердіть свій email."
+      },
+      "upgradedTitle": "Обліковий запис оновлено!",
+      "upgradedDescription": "Ласкаво просимо! Тепер у вас є повний доступ до Mundo Tango."
+    }
+  },
+  "register": {
+    "pageName": "Реєстрація",
+    "seo": {
+      "title": "Приєднуйтесь до Mundo Tango - Створіть обліковий запис",
+      "description": "Створіть обліковий запис Mundo Tango та приєднайтесь до світової спільноти аргентинського танго. З'єднуйтесь з танцюристами, відкривайте події та діліться своєю пристрастю до танго."
+    },
+    "badge": {
+      "welcomeFamily": "Ласкаво просимо до родини",
+      "beginJourney": "Почніть свою подорож",
+      "joinCommunity": "Приєднайтесь до спільноти"
+    },
+    "hero": {
+      "youreIn": "Ви в грі!",
+      "joinMundoTango": "Приєднайтесь до Mundo Tango",
+      "description": "З'єднуйтесь з танцюристами по всьому світу, відкривайте мілонги та зануртесь у пристрасний світ аргентинського танго",
+      "waitlistDescription": "Ласкаво просимо до спільноти Mundo Tango. Ми готуємо ваш обліковий запис і незабаром повідомимо вас!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ танцюристів",
+      "events": "{{count}}+ подій",
+      "cities": "{{count}} міст"
+    },
+    "form": {
+      "fullName": "Повне ім'я",
+      "fullNamePlaceholder": "Марія Родрігес",
+      "email": "Email",
+      "emailPlaceholder": "maria@example.com",
+      "username": "Ім'я користувача",
+      "usernamePlaceholder": "maria_tango",
+      "password": "Пароль",
+      "confirmPassword": "Підтвердіть пароль",
+      "inviteOnlyNotice": "Реєстрація зараз тільки за запрошенням. Заповніть форму, щоб приєднатися до списку очікування, і ми повідомимо вас, коли ваш обліковий запис буде готовий.",
+      "acceptTermsPrefix": "Я приймаю",
+      "termsAndConditions": "Умови використання"
+    },
+    "validation": {
+      "emailTaken": "Цей email вже зареєстрований",
+      "emailAvailable": "Email доступний!",
+      "usernameTaken": "Ім'я зайняте. Спробуйте {{suggestion}}",
+      "usernameAvailable": "Ім'я доступне!",
+      "passwordsMatch": "Паролі співпадають",
+      "passwordsDontMatch": "Паролі не співпадають"
+    },
+    "passwordStrength": {
+      "weak": "Слабкий",
+      "medium": "Середній",
+      "strong": "Сильний",
+      "veryStrong": "Дуже сильний"
+    },
+    "inviteCode": {
+      "label": "Маєте код запрошення? (Необов'язково)",
+      "placeholder": "Введіть код для миттєвого доступу",
+      "accepted": "Код прийнято! Ваш обліковий запис буде негайно активовано.",
+      "noWorries": "Не хвилюйтесь! Заповніть форму нижче, щоб приєднатися до списку очікування."
+    },
+    "waitlist": {
+      "welcomeUser": "Ласкаво просимо, {{name}}!",
+      "defaultName": "Танцюристе",
+      "onTheList": "Ви в списку. Ми надішлемо email на",
+      "whenReady": "коли ваш обліковий запис буде готовий.",
+      "helpUsGrow": "Поки чекаєте, допоможіть нам рости",
+      "volunteerWithUs": "Станьте волонтером",
+      "supportMundoTango": "Підтримайте Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Створення облікового запису...",
+      "joining": "Приєднання...",
+      "createAccount": "Створити обліковий запис",
+      "joinMundoTango": "Приєднатися до Mundo Tango"
+    },
+    "alreadyHaveAccount": "Вже маєте обліковий запис?",
+    "signIn": "Увійдіть",
+    "toast": {
+      "invalidCode": {
+        "title": "Невірний код",
+        "description": "Введіть дійсний 6-значний код підтвердження."
+      },
+      "verified": {
+        "title": "Email підтверджено!",
+        "description": "Ласкаво просимо до Mundo Tango! Починаємо реєстрацію..."
+      },
+      "verifyError": {
+        "title": "Підтвердження не вдалося",
+        "description": "Невірний або прострочений код. Спробуйте ще раз."
+      },
+      "error": {
+        "title": "Помилка",
+        "description": "Не вдалося підтвердити email. Спробуйте ще раз."
+      },
+      "tooMany": {
+        "title": "Забагато спроб",
+        "description": "Зачекайте кілька хвилин і спробуйте ще раз."
+      },
+      "codeSent": {
+        "title": "Код надіслано!",
+        "description": "Перевірте свою скриньку для нового коду."
+      },
+      "resendError": {
+        "description": "Не вдалося надіслати код. Спробуйте ще раз."
+      },
+      "termsRequired": {
+        "title": "Потрібні умови",
+        "description": "Прийміть Умови використання"
+      },
+      "passwordMismatch": {
+        "title": "Паролі не співпадають",
+        "description": "Переконайтеся, що обидва паролі однакові"
+      },
+      "weakPassword": {
+        "title": "Слабкий пароль",
+        "description": "Виберіть сильніший пароль"
+      },
+      "checkEmail": {
+        "title": "Перевірте email",
+        "description": "Ми надіслали вам 6-значний код підтвердження. Перевірте свою скриньку."
+      },
+      "registrationFailed": {
+        "title": "Реєстрація не вдалася"
+      },
+      "signupFailed": {
+        "title": "Не вдалося завершити реєстрацію"
+      },
+      "tryAgain": "Спробуйте ще раз"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Ласкаво просимо",
+      "seoTitle": "Ласкаво просимо до Mundo Tango",
+      "seoDescription": "Почніть свою подорож танго з Mundo Tango",
+      "badge": "Швидке налаштування",
+      "title": "Ласкаво просимо до Mundo Tango",
+      "subtitle": "Налаштуймо ваш профіль, щоб ви могли з'єднатися зі світовою спільнотою танго",
+      "duration": "Займе близько 2 хвилин",
+      "stepIndicator": "Крок {{current}} з {{total}}",
+      "getStarted": "Почати",
+      "profileTitle": "Ваша подорож танго починається",
+      "profileSubtitle": "Розкажіть нам трохи про себе",
+      "features": {
+        "city": {
+          "title": "Виберіть своє місто",
+          "description": "З'єднайтесь з місцевою спільнотою танго"
+        },
+        "roles": {
+          "title": "Розкажіть про свої ролі",
+          "description": "Танцюрист, вчитель, DJ, організатор, чи все разом?"
+        },
+        "events": {
+          "title": "Відкривайте події",
+          "description": "Знаходьте мілонги, заняття та фестивалі поблизу"
+        },
+        "journey": {
+          "title": "Поділіться своїм шляхом",
+          "description": "З'єднайтесь з танцюристами вашого рівня"
+        },
+        "facebook": {
+          "title": "Підключіть Facebook",
+          "description": "Підключіть свій профіль Facebook, щоб знайти друзів у спільноті"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "Соціальне підключення",
+      "seoTitle": "Підключіть свій соціальний світ - Mundo Tango",
+      "seoDescription": "Підключіть свої соціальні профілі, щоб знайти друзів у спільноті танго.",
+      "step": "Крок 2 з 6",
+      "title": "Підключіть свій соціальний світ",
+      "quote": "\"Багато танцюристів танго вже знають одне одного через Facebook. Підключивши свій профіль, ми покажемо вам, хто з танцюристів вашої мережі вже тут - полегшуючи пошук знайомих облич на мілонгах та побудову глибших зв'язків.\"",
+      "cardTitle": "Знайдіть друзів",
+      "cardDescription": "Ваш Facebook допоможе нам з'єднати вас з танцюристами, яких ви можете вже знати.",
+      "facebookLabel": "Посилання на профіль Facebook (Необов'язково)",
+      "facebookPlaceholder": "https://www.facebook.com/ваш.профіль",
+      "helperText": "Ми використовуємо це як місток до інших спільнот та для пошуку танцюристів, яких ви можете знати.",
+      "toast": {
+        "errorTitle": "Помилка",
+        "errorDescription": "Не вдалося зберегти інформацію профілю"
+      }
+    },
+    "navigation": {
+      "back": "Назад",
+      "next": "Далі",
+      "skip": "Пропустити",
+      "finish": "Завершити",
+      "saving": "Збереження...",
+      "continue": "Продовжити"
+    },
+    "city": {
+      "pageTitle": "Вибір міста",
+      "seoTitle": "Виберіть місто - Mundo Tango",
+      "seoDescription": "Виберіть своє місто для з'єднання з місцевими танцюристами танго",
+      "step": "Крок 1 з 6",
+      "title": "Де ви танцюєте?",
+      "subtitle": "З'єднайтесь з танцюристами у вашому регіоні",
+      "cardTitle": "Ваше місто",
+      "cardDescription": "Це допоможе нам показати місцеві події та танцюристів",
+      "searchLabel": "Знайдіть своє місто",
+      "searchPlaceholder": "Введіть назву міста...",
+      "eventSite": {
+        "help": "Виберіть з популярних танго-напрямків"
+      },
+      "errors": {
+        "required": "Місто обов'язкове",
+        "selectCity": "Виберіть своє місто"
+      },
+      "toast": {
+        "sourceAdded": "Джерело додано!",
+        "submittedForReview": "Надіслано на перевірку",
+        "trackingEvents": "Ми почнемо відстежувати події з цього сайту",
+        "thankYou": "Дякуємо! Вашу пропозицію надіслано на перевірку.",
+        "errorTitle": "Помилка",
+        "suggestionFailed": "Не вдалося надіслати пропозицію",
+        "saveFailed": "Не вдалося зберегти міста"
+      }
+    },
+    "photo": {
+      "pageTitle": "Завантаження фото",
+      "seoTitle": "Додайте фото профілю - Mundo Tango",
+      "seoDescription": "Завантажте своє фото профілю",
+      "step": "Крок 3 з 6",
+      "title": "Додайте фото профілю",
+      "subtitle": "Допоможіть іншим впізнати вас у спільноті",
+      "cardTitle": "Ваше фото профілю",
+      "cardDescription": "Допоможіть іншим вас впізнати (можете пропустити цей крок)",
+      "previewAlt": "Попередній перегляд профілю",
+      "dropHere": "Перетягніть фото сюди",
+      "or": "або",
+      "browseFiles": "Обрати файли",
+      "fileTypes": "PNG, JPG до 5МБ",
+      "photoSelected": "Фото вибрано!",
+      "uploading": "Завантаження...",
+      "errors": {
+        "invalidFile": "Невірний файл",
+        "selectImage": "Виберіть файл зображення",
+        "fileTooLarge": "Файл занадто великий",
+        "sizeLimit": "Виберіть зображення до 5МБ",
+        "uploadFailed": "Завантаження не вдалося",
+        "tryAgain": "Не вдалося завантажити фото. Спробуйте ще раз.",
+        "skipFailed": "Не вдалося пропустити. Спробуйте ще раз."
+      }
+    },
+    "languages": {
+      "pageTitle": "Мови",
+      "seoTitle": "Ваші мови - Mundo Tango",
+      "seoDescription": "Розкажіть нам, якими мовами ви розмовляєте",
+      "step": "Крок 5 з 6",
+      "title": "Якими мовами ви розмовляєте?",
+      "subtitle": "З'єднайтесь з танцюристами вашою мовою",
+      "cardTitle": "Ваші мови",
+      "cardDescription": "Виберіть основну мову та додаткові мови, якими ви розмовляєте",
+      "primaryLabel": "Основна мова",
+      "primaryHint": "Це також встановить мову відображення сайту",
+      "primaryPlaceholder": "Виберіть основну мову",
+      "additionalLabel": "Додаткові мови (Необов'язково)",
+      "errors": {
+        "required": "Основна мова обов'язкова",
+        "selectPrimary": "Виберіть основну мову",
+        "saveFailed": "Не вдалося зберегти мови",
+        "saveFailedTitle": "Помилка збереження мов"
+      }
+    },
+    "roles": {
+      "pageTitle": "Ролі танго",
+      "seoTitle": "Ваші ролі танго - Mundo Tango",
+      "seoDescription": "Розкажіть нам про свою подорож танго",
+      "step": "Крок 2 з 6",
+      "title": "Які ролі ви виконуєте?",
+      "subtitle": "Виберіть усе, що вас стосується",
+      "cardTitle": "Ваша танго-ідентичність",
+      "cardDescription": "Допоможіть іншим зрозуміти, як ви берете участь у світі танго"
+    },
+    "experience": {
+      "pageTitle": "Танцювальний досвід",
+      "seoTitle": "Ваш танцювальний досвід - Mundo Tango",
+      "seoDescription": "Поділіться своїм рівнем танцювального досвіду",
+      "step": "Крок 4 з 6",
+      "title": "Ваш танцювальний досвід",
+      "subtitle": "Допоможіть нам з'єднати вас з правильними танцюристами"
+    },
+    "hobbies": {
+      "pageTitle": "Інтереси",
+      "seoTitle": "Ваші інтереси - Mundo Tango",
+      "seoDescription": "Розкажіть нам про свої інтереси",
+      "step": "Крок 6 з 6",
+      "title": "Які ваші інтереси?",
+      "subtitle": "Виберіть теми, які вас цікавлять",
+      "helpText": "Виберіть принаймні 3 інтереси для персоналізації стрічки",
+      "selectedCount": "{{count}} вибрано",
+      "finishing": "Завершення...",
+      "completeSetup": "Завершити налаштування",
+      "searchPlaceholder": "Шукайте спільноти або додайте нову...",
+      "categories": {
+        "fitness": { "label": "Фітнес і спорт" },
+        "tech": { "label": "Технології та інновації" },
+        "spirituality": { "label": "Духовність і розвиток" },
+        "yoga": { "label": "Йога і wellness" },
+        "music": { "label": "Музика" },
+        "photography": { "label": "Фотографія і відео" },
+        "art": { "label": "Мистецтво і творчість" },
+        "reading": { "label": "Читання і письмо" },
+        "travel": { "label": "Подорожі та пригоди" },
+        "cooking": { "label": "Кулінарія та їжа" },
+        "wine": { "label": "Вино і напої" },
+        "gaming": { "label": "Ігри" },
+        "outdoors": { "label": "Активний відпочинок" },
+        "snow": { "label": "Зимові види спорту" },
+        "cycling": { "label": "Велоспорт" },
+        "water": { "label": "Водні види спорту" },
+        "nature": { "label": "Природа і садівництво" },
+        "movies": { "label": "Фільми і розваги" },
+        "pets": { "label": "Тварини" },
+        "social": { "label": "Спільнота" }
+      },
+      "items": {
+        "fitness_gym": "Тренажерний зал",
+        "fitness_running": "Біг",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Бойові мистецтва",
+        "fitness_tennis": "Теніс",
+        "fitness_soccer": "Футбол",
+        "fitness_basketball": "Баскетбол",
+        "fitness_fencing": "Фехтування",
+        "tech_coding": "Програмування",
+        "tech_ai": "ШІ та майбутні технології",
+        "tech_crypto": "Web3 і крипто",
+        "tech_gaming": "Ігрова культура",
+        "spirit_meditation": "Медитація",
+        "spirit_astrology": "Астрологія",
+        "spirit_philosophy": "Філософія",
+        "spirit_community": "Побудова спільноти",
+        "yoga_hatha": "Хатха йога",
+        "yoga_vinyasa": "Віньяса флоу",
+        "yoga_meditation": "Медитація",
+        "yoga_pilates": "Пілатес",
+        "yoga_breathwork": "Дихальні практики",
+        "music_listening": "Слухання музики",
+        "music_concerts": "Живі концерти",
+        "music_piano": "Фортепіано",
+        "music_guitar": "Гітара",
+        "music_singing": "Спів",
+        "music_dj": "DJing",
+        "music_production": "Музична продукція",
+        "photo_portrait": "Портретна фотографія",
+        "photo_landscape": "Пейзажна фотографія",
+        "photo_street": "Вулична фотографія",
+        "photo_video": "Відеографія",
+        "photo_editing": "Обробка фото",
+        "art_painting": "Живопис",
+        "art_drawing": "Малювання",
+        "art_sculpture": "Скульптура",
+        "art_digital": "Цифрове мистецтво",
+        "art_crafts": "Рукоділля",
+        "art_pottery": "Кераміка",
+        "reading_fiction": "Художня література",
+        "reading_nonfiction": "Нон-фікшн",
+        "reading_poetry": "Поезія",
+        "reading_writing": "Творче письмо",
+        "reading_journals": "Ведення щоденника",
+        "travel_backpacking": "Бекпекінг",
+        "travel_luxury": "Розкішні подорожі",
+        "travel_cultural": "Культурний туризм",
+        "travel_road_trips": "Автоподорожі",
+        "travel_solo": "Самостійні подорожі",
+        "cooking_home": "Домашня кулінарія",
+        "cooking_baking": "Випічка",
+        "cooking_gourmet": "Вишукана кухня",
+        "cooking_international": "Міжнародна кухня",
+        "cooking_healthy": "Здорове харчування",
+        "wine_tasting": "Дегустація вина",
+        "wine_cocktails": "Коктейлі",
+        "wine_coffee": "Кава",
+        "wine_tea": "Чайна культура",
+        "wine_brewing": "Домашнє пивоваріння",
+        "gaming_video": "Відеоігри",
+        "gaming_board": "Настільні ігри",
+        "gaming_card": "Карткові ігри",
+        "gaming_tabletop": "Настільні RPG",
+        "gaming_esports": "Кіберспорт",
+        "outdoor_hiking": "Піші походи",
+        "outdoor_camping": "Кемпінг",
+        "outdoor_climbing": "Скелелазіння",
+        "outdoor_fishing": "Риболовля",
+        "outdoor_kayaking": "Каякінг",
+        "outdoor_surfing": "Серфінг",
+        "snow_skiing": "Гірські лижі",
+        "snow_snowboard": "Сноубординг",
+        "snow_crosscountry": "Бігові лижі",
+        "snow_ice_skating": "Ковзанярство",
+        "snow_sledding": "Санки",
+        "snow_snowshoeing": "Снігоступи",
+        "cycling_road": "Шосейний велоспорт",
+        "cycling_mountain": "Гірський велосипед",
+        "cycling_urban": "Міський велоспорт",
+        "cycling_touring": "Велотуризм",
+        "water_swimming": "Плавання",
+        "water_scuba": "Дайвінг",
+        "water_snorkel": "Снорклінг",
+        "water_sailing": "Вітрильний спорт",
+        "water_paddleboard": "Падлбордінг",
+        "nature_gardening": "Садівництво",
+        "nature_birdwatching": "Спостереження за птахами",
+        "nature_botany": "Колекціонування рослин",
+        "nature_wildlife": "Фотографія дикої природи",
+        "movies_cinema": "Кіно",
+        "movies_tv": "Серіали",
+        "movies_documentary": "Документальні фільми",
+        "movies_theater": "Театр",
+        "movies_standup": "Стендап-комедія",
+        "pets_dogs": "Собаки",
+        "pets_cats": "Коти",
+        "pets_exotic": "Екзотичні тварини",
+        "pets_horses": "Кінний спорт",
+        "pets_rescue": "Порятунок тварин",
+        "social_volunteering": "Волонтерство",
+        "social_meetups": "Зустрічі",
+        "social_networking": "Нетворкінг",
+        "social_languages": "Мовний обмін"
+      },
+      "success": {
+        "completeTitle": "Ласкаво просимо до Mundo Tango!",
+        "completeDesc": "Ваш профіль готовий. Починайте досліджувати!",
+        "waitlistTitle": "Профіль завершено!",
+        "waitlistDesc": "Ми повідомимо вас, коли ваш обліковий запис буде активовано"
+      },
+      "errors": {
+        "saveFailed": "Не вдалося зберегти. Спробуйте ще раз."
+      }
+    },
+    "legal": {
+      "title": "Правила спільноти",
+      "subtitle": "Перегляньте та прийміть наші умови",
+      "legalDocsTitle": "Юридичні документи",
+      "legalDocsDescription": "Перегляньте наші умови використання та політику конфіденційності",
+      "termsOfService": {
+        "label": "Я приймаю Умови використання",
+        "description": "Наші умови регулюють використання Mundo Tango",
+        "link": "Прочитати Умови використання"
+      },
+      "privacyPolicy": {
+        "label": "Я приймаю Політику конфіденційності",
+        "description": "Як ми обробляємо ваші дані",
+        "link": "Прочитати Політику конфіденційності"
+      },
+      "cocTitle": "Кодекс поведінки спільноти",
+      "cocDescription": "Допоможіть нам підтримувати поважну спільноту",
+      "coc": {
+        "respectful": {
+          "title": "Будьте поважними",
+          "description": "Ставтесь до всіх з гідністю та ввічливістю"
+        },
+        "inclusive": {
+          "title": "Будьте інклюзивними",
+          "description": "Вітайте танцюристів усіх рівнів та походжень"
+        },
+        "authentic": {
+          "title": "Будьте автентичними",
+          "description": "Використовуйте свою справжню особистість та правдиву інформацію"
+        },
+        "consent": {
+          "title": "Поважайте згоду",
+          "description": "Завжди питайте перед танцем та поважайте межі"
+        },
+        "noHarassment": {
+          "title": "Без переслідувань",
+          "description": "Нульова толерантність до переслідувань або цькування"
+        },
+        "noSpam": {
+          "title": "Без спаму",
+          "description": "Не надсилайте небажані рекламні повідомлення"
+        },
+        "noDiscrimination": {
+          "title": "Без дискримінації",
+          "description": "Ми не толеруємо дискримінацію будь-якого роду"
+        },
+        "privacy": {
+          "title": "Захищайте приватність",
+          "description": "Не поширюйте інформацію інших без згоди"
+        },
+        "safety": {
+          "title": "Безпека - пріоритет",
+          "description": "Повідомляйте про небезпечну поведінку негайно"
+        },
+        "laws": {
+          "title": "Дотримуйтесь законів",
+          "description": "Дотримуйтесь усіх чинних законів"
+        },
+        "report": {
+          "title": "Повідомляйте про проблеми",
+          "description": "Допомагайте нам, повідомляючи про порушення"
+        },
+        "support": {
+          "title": "Підтримуйте одне одного",
+          "description": "Допомагайте іншим танцюристам рости"
+        }
+      },
+      "acceptAll": "Прийняти все та продовжити",
+      "accepting": "Приймання...",
+      "incompleteAlert": "Прийміть усі обов'язкові умови",
+      "success": {
+        "title": "Ласкаво просимо!",
+        "description": "Ви прийняли наші правила спільноти"
+      },
+      "errors": {
+        "failed": "Не вдалося зберегти. Спробуйте ще раз."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Список очікування",
+      "seoTitle": "Ви в списку очікування - Mundo Tango",
+      "seoDescription": "Ваш обліковий запис очікує на активацію",
+      "title": "Ви в списку очікування!",
+      "welcomeMessage": "Ласкаво просимо, {{name}}!",
+      "defaultName": "Танцюристе",
+      "profileComplete": "Профіль завершено",
+      "profileCompleteDesc": "Ваш профіль готовий і чекає",
+      "emailNotice": "Ми надішлемо вам email на {{email}}, коли ваш обліковий запис буде готовий",
+      "whenReady": "коли ваш обліковий запис буде готовий.",
+      "whileYouWait": "Поки чекаєте, допоможіть нам рости:",
+      "volunteerButton": "Станьте волонтером",
+      "supportButton": "Підтримайте Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "Екскурсія",
+      "seoTitle": "Дослідіть Mundo Tango",
+      "seoDescription": "Дізнайтесь, як користуватися Mundo Tango",
+      "skipTour": "Пропустити екскурсію",
+      "finish": "Завершити екскурсію",
+      "steps": {
+        "feed": "Відкривайте пости зі спільноти танго",
+        "events": "Знаходьте мілонги, заняття та фестивалі",
+        "groups": "Приєднуйтесь до груп за містом або інтересами",
+        "messages": "Спілкуйтесь напряму з іншими танцюристами",
+        "profile": "Налаштуйте свій профіль танго",
+        "createPost": "Діліться своїми танго-моментами"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Покращте свій досвід",
+        "subtitle": "Отримайте максимум від Mundo Tango",
+        "limitedOffer": "Обмежена пропозиція",
+        "getStarted": "Почати",
+        "features": {
+          "connect": {
+            "title": "З'єднання",
+            "description": "Пишіть безпосередньо будь-якому танцюристу"
+          },
+          "visibility": {
+            "title": "Видимість",
+            "description": "Показуйтесь на перших місцях у результатах"
+          },
+          "events": {
+            "title": "Події",
+            "description": "Пріоритетний доступ до популярних подій"
+          },
+          "grow": {
+            "title": "Зростання",
+            "description": "Просунута аналітика профілю"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Ексклюзивні преміум-функції"
+          }
+        }
+      }
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Головна",
+    "pageLayoutTitle": "Де танго зустрічає спільноту",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - З'єднайтесь зі світовою спільнотою танго",
+      "description": "Приєднуйтесь до тисяч танцюристів танго по всьому світу. Відкривайте події, знаходьте вчителів, з'єднуйтесь з танцюристами та зануртесь у пристрасний світ аргентинського танго."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Ласкаво просимо до світової спільноти танго",
+      "heading": "Де танго зустрічає спільноту",
+      "paragraph": "Діліться спогадами, знаходьте події та допомагайте нам будувати майбутнє танго-технологій. Приєднуйтесь до тисяч пристрасних танцюристів, що з'єднуються по всьому світу.",
+      "getStarted": "Почати безкоштовно",
+      "volunteer": "Волонтер для MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Як це працює",
+      "description": "Почніть свою подорож танго у три прості кроки",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Створіть профіль",
+        "description": "Приєднуйтесь безкоштовно та розкажіть нам про свою подорож танго, рівень досвіду та танцювальні вподобання"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Відкривайте та з'єднуйтесь",
+        "description": "Знаходьте події, вчителів та місця поблизу. З'єднуйтесь з танцюристами, що розділяють вашу пристрасть"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Танцюйте та розвивайтесь",
+        "description": "Відвідуйте події, беріть уроки, заводьте друзів та станьте частиною глобальної спільноти танго"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Все, що вам потрібно",
+      "description": "З'єднуйтесь, відкривайте та розвивайте свою подорож танго з потужними функціями",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Спільнота",
+        "heading": "З'єднайтесь з танцюристами по всьому світу",
+        "description": "Приєднуйтесь до живої глобальної спільноти ентузіастів танго. З'єднуйтесь з танцюристами, вчителями та організаторами від Буенос-Айреса до Токіо.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Слідкуйте за танцюристами та будуйте свою мережу",
+          "groups": "Приєднуйтесь до груп за інтересами та місцезнаходженням",
+          "messaging": "Обмін повідомленнями в реальному часі та чат",
+          "discover": "Знаходьте танцюристів, що відвідують ваше місто"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Події",
+        "heading": "Відкривайте події скрізь",
+        "description": "Ніколи не пропустіть мілонгу, фестиваль чи воркшоп. Наша платформа з'єднує вас з тисячами танго-подій по всьому світу.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Комплексний календар подій",
+          "rsvp": "RSVP та бронювання квитків",
+          "notifications": "Сповіщення та нагадування про події",
+          "map": "Інтерактивна карта місць"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Прямі трансляції",
+          "description": "Дивіться мілонги по всьому світу в реальному часі"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Музична бібліотека",
+          "description": "Підібрані плейлисти танго та гіди"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Перевірені вчителі",
+          "description": "Навчайтесь у сертифікованих інструкторів"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Планувальник подорожей",
+          "description": "Плануйте поїздки та знаходьте хостів глобально"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Що кажуть танцюристи",
+      "description": "Приєднуйтесь до тисяч задоволених танцюристів по всьому світу",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "Марія Родрігес",
+          "location": "Буенос-Айрес, Аргентина",
+          "text": "Mundo Tango допоміг мені знайти мою танцювальну родину в новому місті. Спільнота тепла, привітна і справді пристрасна до танго."
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "Джеймс Чен",
+          "location": "Сан-Франциско, США",
+          "text": "Я відкрив неймовірні мілонги та воркшопи завдяки цій платформі. Вона стала незамінною в моїй подорожі танго."
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "Олена Волкова",
+          "location": "Москва, Росія",
+          "text": "Каталог вчителів допоміг мені знайти неймовірних інструкторів. Моє танцювання значно покращилось!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Часті запитання",
+      "description": "Все, що вам потрібно знати про Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Що таке Mundo Tango?",
+          "answer": "Mundo Tango - це глобальна платформа, що з'єднує танцюристів, вчителів та організаторів танго. Ми допомагаємо вам відкривати події, знаходити танцювальних партнерів, навчатись у кращих інструкторів та зануритись у живу спільноту танго по всьому світу."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Чи безкоштовний Mundo Tango?",
+          "answer": "Так! Ми пропонуємо безкоштовну версію, що включає базове створення профілю, відкриття подій та обмін повідомленнями. Преміум-функції, такі як необмежені повідомлення, AI-підбір танцювальних партнерів та пріоритетні сповіщення про події, доступні з підпискою Pro."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Як знайти події танго поблизу?",
+          "answer": "Просто використовуйте наш Календар подій або функції Пошуку для фільтрації за містом, датою та типом події. Ви можете знаходити мілонги, фестивалі, воркшопи та практики у вашому регіоні чи будь-де у світі."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Чи можу я з'єднатись з іншими танцюристами?",
+          "answer": "Безумовно! Слідкуйте за танцюристами, приєднуйтесь до груп, надсилайте запити на дружбу та спілкуйтесь зі спільнотою. Наша платформа створена для підтримки автентичних зв'язків у світі танго."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Як знайти вчителів танго?",
+          "answer": "Відвідайте наш Каталог вчителів, щоб переглянути перевірених інструкторів по всьому світу. Фільтруйте за місцезнаходженням, спеціалізацією та рівнем досвіду. Читайте відгуки від інших студентів та бронюйте приватні уроки безпосередньо через платформу."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Чим Mundo Tango особливий?",
+          "answer": "Ми створені танцюристами танго для танцюристів танго. Наш фокус на автентичній побудові спільноти, якісній курації подій та з'єднанні вас з глобальною родиною танго - а не просто ще одна соціальна мережа."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Готові приєднатись до спільноти?",
+      "description": "Створіть безкоштовний обліковий запис сьогодні та почніть з'єднуватись з пристрасними танцюристами танго по всьому світу. Кредитна картка не потрібна.",
+      "button": "Приєднатись до Mundo Tango безкоштовно",
+      "freeForever": "Назавжди безкоштовно",
+      "noCreditCard": "Без кредитної картки",
+      "cancelAnytime": "Скасуйте будь-коли"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Стрічка",
+    "description": "Будьте в курсі останніх новин зі спільноти танго",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Усі пости",
+      "following": "Підписки",
+      "popular": "Популярне",
+      "recent": "Нещодавнє"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Що у вас на думці?",
+    "noPost": "Немає постів для показу"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Події",
+    "description": "Відкрийте танго-події поблизу",
+    "upcoming": "Майбутні події",
+    "past": "Минулі події",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "Усі події",
+      "milongas": "Мілонги",
+      "workshops": "Воркшопи",
+      "festivals": "Фестивалі",
+      "classes": "Заняття"
     },
-    "noEvents": "No events found"
+    "noEvents": "Подій не знайдено"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Профіль",
+    "description": "Переглянути та редагувати свій профіль",
+    "editProfile": "Редагувати профіль",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Пости",
+      "photos": "Фото",
+      "videos": "Відео",
+      "events": "Події",
+      "friends": "Друзі"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Пости",
+      "followers": "Підписники",
+      "following": "Підписки",
+      "events": "Відвідані події"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Повідомлення",
+    "description": "Спілкуйтесь з вашими танго-контактами",
+    "newMessage": "Нове повідомлення",
+    "searchConversations": "Пошук розмов",
+    "noMessages": "Поки немає повідомлень",
+    "startConversation": "Почати розмову"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Вчителі танго",
+    "description": "Знайдіть та з'єднайтесь з вчителями танго",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Усі вчителі",
+      "featured": "Рекомендовані",
+      "nearby": "Поблизу"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Переглянути профіль",
+    "bookLesson": "Забронювати урок"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Місця танго",
+    "description": "Відкрийте танго-місця по всьому світу",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Усі місця",
+      "milongas": "Мілонги",
+      "schools": "Танцювальні школи",
+      "theaters": "Театри"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Прокласти маршрут"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Налаштування",
+    "description": "Керуйте налаштуваннями облікового запису",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Налаштування облікового запису",
+      "profile": "Профіль",
+      "privacy": "Приватність",
+      "notifications": "Сповіщення",
+      "security": "Безпека",
+      "billing": "Платежі",
+      "preferences": "Налаштування"
     }
   },
   "lifeCEO": {
     "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "description": "Ваш особистий AI-асистент для управління життям",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Агент здоров'я",
+      "fitness": "Агент фітнесу",
+      "nutrition": "Агент харчування",
+      "finance": "Агент фінансів",
+      "career": "Агент кар'єри",
+      "productivity": "Агент продуктивності",
+      "relationships": "Агент стосунків",
+      "learning": "Агент навчання"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Маркетплейс",
+    "description": "Купуйте та продавайте танго-товари",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Танцювальне взуття",
+      "clothing": "Одяг",
+      "music": "Музика",
+      "accessories": "Аксесуари",
+      "other": "Інше"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Адмін-панель",
+    "description": "Адміністрування та управління платформою",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Огляд",
+      "users": "Користувачі",
+      "content": "Контент",
+      "reports": "Звіти",
+      "analytics": "Аналітика",
+      "settings": "Налаштування"
     }
   }
 }

@@ -153,8 +153,37 @@
         "journey": {
           "title": "Compartilhe sua jornada",
           "description": "Conecte-se com dançarinos do seu nível"
+        },
+        "facebook": {
+          "title": "Conectar Facebook",
+          "description": "Vincule seu perfil do Facebook para encontrar amigos na comunidade"
         }
       }
+    },
+    "social": {
+      "pageTitle": "Conexão Social",
+      "seoTitle": "Conecte seu Mundo Social - Mundo Tango",
+      "seoDescription": "Vincule seus perfis sociais para encontrar amigos na comunidade do tango.",
+      "step": "Passo 2 de 6",
+      "title": "Conecte seu Mundo Social",
+      "quote": "\"Muitos dançarinos de tango já se conhecem pelo Facebook. Ao vincular seu perfil, podemos mostrar quais dançarinos da sua rede já estão aqui - facilitando encontrar rostos conhecidos nas milongas e criar conexões mais profundas.\"",
+      "cardTitle": "Encontre seus Amigos",
+      "cardDescription": "Seu Facebook nos ajuda a conectar você com dançarinos que você talvez já conheça, para você não começar do zero.",
+      "facebookLabel": "URL do Perfil do Facebook (Opcional)",
+      "facebookPlaceholder": "https://www.facebook.com/seu.perfil",
+      "helperText": "Usamos isso como uma ponte para outras comunidades e para conectar você com dançarinos que você pode conhecer.",
+      "toast": {
+        "errorTitle": "Erro",
+        "errorDescription": "Falha ao salvar informações do perfil"
+      }
+    },
+    "navigation": {
+      "back": "Voltar",
+      "next": "Próximo",
+      "skip": "Pular",
+      "finish": "Finalizar",
+      "saving": "Salvando...",
+      "continue": "Continuar"
     },
     "city": {
       "pageTitle": "Seleção de cidade",
@@ -173,6 +202,15 @@
       "errors": {
         "required": "Cidade obrigatória",
         "selectCity": "Por favor, selecione sua cidade"
+      },
+      "toast": {
+        "sourceAdded": "Fonte adicionada!",
+        "submittedForReview": "Enviado para revisão",
+        "trackingEvents": "Vamos começar a rastrear eventos do site",
+        "thankYou": "Obrigado! Sua sugestão foi enviada para revisão.",
+        "errorTitle": "Erro",
+        "suggestionFailed": "Falha ao enviar sugestão",
+        "saveFailed": "Falha ao salvar cidades"
       }
     },
     "photo": {
@@ -250,6 +288,174 @@
       "selectedCount": "{{count}} selecionados",
       "finishing": "Finalizando...",
       "completeSetup": "Concluir configuração",
+      "searchPlaceholder": "Busque comunidades ou adicione uma nova...",
+      "categories": {
+        "fitness": {
+          "label": "Fitness e Desportos"
+        },
+        "tech": {
+          "label": "Tecnologia e Inovação"
+        },
+        "spirituality": {
+          "label": "Espiritualidade e Crescimento"
+        },
+        "yoga": {
+          "label": "Yoga e Bem-estar"
+        },
+        "music": {
+          "label": "Música"
+        },
+        "photography": {
+          "label": "Fotografia e Vídeo"
+        },
+        "art": {
+          "label": "Arte e Criatividade"
+        },
+        "reading": {
+          "label": "Leitura e Escrita"
+        },
+        "travel": {
+          "label": "Viagem e Aventura"
+        },
+        "cooking": {
+          "label": "Culinária e Gastronomia"
+        },
+        "wine": {
+          "label": "Vinhos e Bebidas"
+        },
+        "gaming": {
+          "label": "Gaming"
+        },
+        "outdoors": {
+          "label": "Atividades ao Ar Livre"
+        },
+        "snow": {
+          "label": "Desportos de Inverno"
+        },
+        "cycling": {
+          "label": "Ciclismo"
+        },
+        "water": {
+          "label": "Desportos Aquáticos"
+        },
+        "nature": {
+          "label": "Natureza e Jardinagem"
+        },
+        "movies": {
+          "label": "Filmes e Entretenimento"
+        },
+        "pets": {
+          "label": "Animais de Estimação"
+        },
+        "social": {
+          "label": "Social e Comunidade"
+        }
+      },
+      "items": {
+        "fitness_gym": "Ginásio e Musculação",
+        "fitness_running": "Corrida",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Artes Marciais",
+        "fitness_tennis": "Ténis",
+        "fitness_soccer": "Futebol",
+        "fitness_basketball": "Basquetebol",
+        "fitness_fencing": "Esgrima",
+        "tech_coding": "Programação",
+        "tech_ai": "IA e Tecnologia do Futuro",
+        "tech_crypto": "Web3 e Crypto",
+        "tech_gaming": "Cultura Gaming",
+        "spirit_meditation": "Meditação",
+        "spirit_astrology": "Astrologia",
+        "spirit_philosophy": "Filosofia",
+        "spirit_community": "Construção de Comunidade",
+        "yoga_hatha": "Hatha Yoga",
+        "yoga_vinyasa": "Vinyasa Flow",
+        "yoga_meditation": "Meditação",
+        "yoga_pilates": "Pilates",
+        "yoga_breathwork": "Respiração",
+        "music_listening": "Ouvir Música",
+        "music_concerts": "Concertos ao Vivo",
+        "music_piano": "Piano",
+        "music_guitar": "Guitarra",
+        "music_singing": "Canto",
+        "music_dj": "DJing",
+        "music_production": "Produção Musical",
+        "photo_portrait": "Retratos",
+        "photo_landscape": "Paisagens",
+        "photo_street": "Fotografia de Rua",
+        "photo_video": "Videografia",
+        "photo_editing": "Edição de Fotos",
+        "art_painting": "Pintura",
+        "art_drawing": "Desenho",
+        "art_sculpture": "Escultura",
+        "art_digital": "Arte Digital",
+        "art_crafts": "Artesanato e Bricolage",
+        "art_pottery": "Cerâmica",
+        "reading_fiction": "Ficção",
+        "reading_nonfiction": "Não-Ficção",
+        "reading_poetry": "Poesia",
+        "reading_writing": "Escrita Criativa",
+        "reading_journals": "Diários",
+        "travel_backpacking": "Mochilão",
+        "travel_luxury": "Viagens de Luxo",
+        "travel_cultural": "Turismo Cultural",
+        "travel_road_trips": "Viagens de Carro",
+        "travel_solo": "Viagens a Solo",
+        "cooking_home": "Culinária Caseira",
+        "cooking_baking": "Pastelaria",
+        "cooking_gourmet": "Cozinha Gourmet",
+        "cooking_international": "Cozinha Internacional",
+        "cooking_healthy": "Alimentação Saudável",
+        "wine_tasting": "Prova de Vinhos",
+        "wine_cocktails": "Cocktails",
+        "wine_coffee": "Café",
+        "wine_tea": "Cultura do Chá",
+        "wine_brewing": "Cerveja Artesanal",
+        "gaming_video": "Videojogos",
+        "gaming_board": "Jogos de Tabuleiro",
+        "gaming_card": "Jogos de Cartas",
+        "gaming_tabletop": "RPGs de Mesa",
+        "gaming_esports": "eSports",
+        "outdoor_hiking": "Caminhadas",
+        "outdoor_camping": "Campismo",
+        "outdoor_climbing": "Escalada",
+        "outdoor_fishing": "Pesca",
+        "outdoor_kayaking": "Caiaque",
+        "outdoor_surfing": "Surf",
+        "snow_skiing": "Esqui",
+        "snow_snowboard": "Snowboard",
+        "snow_crosscountry": "Esqui de Fundo",
+        "snow_ice_skating": "Patinagem no Gelo",
+        "snow_sledding": "Trenó",
+        "snow_snowshoeing": "Raquetes de Neve",
+        "cycling_road": "Ciclismo de Estrada",
+        "cycling_mountain": "BTT",
+        "cycling_urban": "Ciclismo Urbano",
+        "cycling_touring": "Cicloturismo",
+        "water_swimming": "Natação",
+        "water_scuba": "Mergulho",
+        "water_snorkel": "Snorkeling",
+        "water_sailing": "Vela",
+        "water_paddleboard": "Paddleboard",
+        "nature_gardening": "Jardinagem",
+        "nature_birdwatching": "Observação de Aves",
+        "nature_botany": "Coleção de Plantas",
+        "nature_wildlife": "Fotografia de Vida Selvagem",
+        "movies_cinema": "Cinema",
+        "movies_tv": "Séries de TV",
+        "movies_documentary": "Documentários",
+        "movies_theater": "Teatro",
+        "movies_standup": "Comédia Stand-up",
+        "pets_dogs": "Cães",
+        "pets_cats": "Gatos",
+        "pets_exotic": "Animais Exóticos",
+        "pets_horses": "Equitação",
+        "pets_rescue": "Resgate de Animais",
+        "social_volunteering": "Voluntariado",
+        "social_meetups": "Meetups",
+        "social_networking": "Networking",
+        "social_languages": "Intercâmbio de Línguas"
+      },
       "success": {
         "completeTitle": "Bem-vindo ao Mundo Tango!",
         "completeDesc": "Seu perfil está pronto. Comece a explorar!",
@@ -397,49 +603,7 @@
           }
         }
       }
-    },
-    "navigation": {
-      "back": "Voltar",
-      "next": "Próximo",
-      "skip": "Pular",
-      "finish": "Finalizar",
-      "saving": "Salvando..."
     }
-  },
-  "home": {
-    "title": "Bem-vindo ao Mundo Tango",
-    "subtitle": "Conecte-se com a comunidade global do tango",
-    "cta": "Começar"
-  },
-  "events": {
-    "title": "Eventos de Tango",
-    "subtitle": "Descubra milongas, festivais e workshops",
-    "filterByCity": "Filtrar por cidade",
-    "filterByType": "Filtrar por tipo",
-    "noEvents": "Nenhum evento encontrado"
-  },
-  "cities": {
-    "title": "Cidades de Tango",
-    "subtitle": "Explore comunidades de tango pelo mundo",
-    "members": "membros",
-    "events": "eventos",
-    "viewCity": "Ver Cidade"
-  },
-  "groups": {
-    "title": "Grupos de Tango",
-    "subtitle": "Junte-se a comunidades locais e de interesse",
-    "join": "Entrar no Grupo",
-    "leave": "Sair do Grupo",
-    "members": "Membros",
-    "posts": "Publicações"
-  },
-  "profile": {
-    "title": "Perfil",
-    "editProfile": "Editar Perfil",
-    "followers": "Seguidores",
-    "following": "Seguindo",
-    "posts": "Publicações",
-    "about": "Sobre"
   },
   "login": {
     "pageName": "Entrar",
@@ -477,6 +641,281 @@
       "upgradedTitle": "Conta atualizada!",
       "upgradedDescription": "Bem-vindo! Você agora tem acesso completo ao Mundo Tango."
     }
+  },
+  "home": {
+    "pageName": "Home",
+    "pageLayoutTitle": "Where Tango Meets Community",
+    "seo": {
+      "title": "Mundo Tango - Connect with the Global Tango Community",
+      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+    },
+    "hero": {
+      "badge": "Welcome to the Global Tango Community",
+      "heading": "Where Tango Meets Community",
+      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
+      "getStarted": "Get Started Free",
+      "volunteer": "Volunteer to Help Build MT"
+    },
+    "howItWorks": {
+      "heading": "How It Works",
+      "description": "Start your tango journey in three simple steps",
+      "step1": {
+        "title": "Create Your Profile",
+        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+      },
+      "step2": {
+        "title": "Discover & Connect",
+        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+      },
+      "step3": {
+        "title": "Dance & Grow",
+        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+      }
+    },
+    "features": {
+      "heading": "Everything You Need",
+      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "community": {
+        "badge": "Community",
+        "heading": "Connect with Dancers Worldwide",
+        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "items": {
+          "follow": "Follow dancers and build your network",
+          "groups": "Join groups based on interests and location",
+          "messaging": "Real-time messaging and chat features",
+          "discover": "Discover dancers visiting your city"
+        }
+      },
+      "events": {
+        "badge": "Events",
+        "heading": "Discover Events Everywhere",
+        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "items": {
+          "calendar": "Comprehensive event calendar",
+          "rsvp": "RSVP and ticket booking",
+          "notifications": "Event notifications and reminders",
+          "map": "Interactive map of venues"
+        }
+      },
+      "cards": {
+        "liveStreaming": {
+          "title": "Live Streaming",
+          "description": "Watch milongas worldwide in real-time"
+        },
+        "musicLibrary": {
+          "title": "Music Library",
+          "description": "Curated tango playlists and guides"
+        },
+        "verifiedTeachers": {
+          "title": "Verified Teachers",
+          "description": "Learn from certified instructors"
+        },
+        "travelPlanner": {
+          "title": "Travel Planner",
+          "description": "Plan trips and find hosts globally"
+        }
+      }
+    },
+    "testimonials": {
+      "heading": "What Dancers Say",
+      "description": "Join thousands of satisfied dancers worldwide",
+      "items": {
+        "testimonial1": {
+          "name": "Maria Rodriguez",
+          "location": "Buenos Aires, Argentina",
+          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+        },
+        "testimonial2": {
+          "name": "James Chen",
+          "location": "San Francisco, USA",
+          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+        },
+        "testimonial3": {
+          "name": "Elena Volkov",
+          "location": "Moscow, Russia",
+          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+        }
+      }
+    },
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "description": "Everything you need to know about Mundo Tango",
+      "items": {
+        "q1": {
+          "question": "What is Mundo Tango?",
+          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+        },
+        "q2": {
+          "question": "Is Mundo Tango free to use?",
+          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+        },
+        "q3": {
+          "question": "How do I find tango events near me?",
+          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+        },
+        "q4": {
+          "question": "Can I connect with other dancers?",
+          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+        },
+        "q5": {
+          "question": "How do I find tango teachers?",
+          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+        },
+        "q6": {
+          "question": "What makes Mundo Tango different?",
+          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+        }
+      }
+    },
+    "cta": "Começar",
+    "title": "Bem-vindo ao Mundo Tango",
+    "subtitle": "Conecte-se com a comunidade global do tango"
+  },
+  "feed": {
+    "title": "Feed",
+    "description": "Stay updated with the latest from the tango community",
+    "filters": {
+      "all": "All Posts",
+      "following": "Following",
+      "popular": "Popular",
+      "recent": "Recent"
+    },
+    "createPost": "What's on your mind?",
+    "noPost": "No posts to display"
+  },
+  "events": {
+    "title": "Eventos de Tango",
+    "description": "Discover tango events near you",
+    "upcoming": "Upcoming Events",
+    "past": "Past Events",
+    "filters": {
+      "all": "All Events",
+      "milongas": "Milongas",
+      "workshops": "Workshops",
+      "festivals": "Festivals",
+      "classes": "Classes"
+    },
+    "noEvents": "Nenhum evento encontrado",
+    "subtitle": "Descubra milongas, festivais e workshops",
+    "filterByCity": "Filtrar por cidade",
+    "filterByType": "Filtrar por tipo"
+  },
+  "profile": {
+    "title": "Perfil",
+    "description": "View and edit your profile",
+    "editProfile": "Editar Perfil",
+    "tabs": {
+      "posts": "Posts",
+      "photos": "Photos",
+      "videos": "Videos",
+      "events": "Events",
+      "friends": "Friends"
+    },
+    "stats": {
+      "posts": "Posts",
+      "followers": "Followers",
+      "following": "Following",
+      "events": "Events Attended"
+    },
+    "followers": "Seguidores",
+    "following": "Seguindo",
+    "posts": "Publicações",
+    "about": "Sobre"
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Chat with your tango connections",
+    "newMessage": "New Message",
+    "searchConversations": "Search conversations",
+    "noMessages": "No messages yet",
+    "startConversation": "Start a conversation"
+  },
+  "teachers": {
+    "title": "Tango Teachers",
+    "description": "Find and connect with tango teachers",
+    "filters": {
+      "all": "All Teachers",
+      "featured": "Featured",
+      "nearby": "Nearby"
+    },
+    "viewProfile": "View Profile",
+    "bookLesson": "Book a Lesson"
+  },
+  "venues": {
+    "title": "Tango Venues",
+    "description": "Discover tango venues worldwide",
+    "filters": {
+      "all": "All Venues",
+      "milongas": "Milongas",
+      "schools": "Dance Schools",
+      "theaters": "Theaters"
+    },
+    "getDirections": "Get Directions"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account settings",
+    "sections": {
+      "account": "Account Settings",
+      "profile": "Profile",
+      "privacy": "Privacy",
+      "notifications": "Notifications",
+      "security": "Security",
+      "billing": "Billing",
+      "preferences": "Preferences"
+    }
+  },
+  "lifeCEO": {
+    "title": "Life CEO Dashboard",
+    "description": "Your personal AI assistant for life management",
+    "agents": {
+      "health": "Health Agent",
+      "fitness": "Fitness Agent",
+      "nutrition": "Nutrition Agent",
+      "finance": "Finance Agent",
+      "career": "Career Agent",
+      "productivity": "Productivity Agent",
+      "relationships": "Relationship Agent",
+      "learning": "Learning Agent"
+    }
+  },
+  "marketplace": {
+    "title": "Marketplace",
+    "description": "Buy and sell tango-related items",
+    "categories": {
+      "shoes": "Dance Shoes",
+      "clothing": "Clothing",
+      "music": "Music",
+      "accessories": "Accessories",
+      "other": "Other"
+    }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "description": "Platform administration and management",
+    "sections": {
+      "overview": "Overview",
+      "users": "Users",
+      "content": "Content",
+      "reports": "Reports",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    }
+  },
+  "cities": {
+    "title": "Cidades de Tango",
+    "subtitle": "Explore comunidades de tango pelo mundo",
+    "members": "membros",
+    "events": "eventos",
+    "viewCity": "Ver Cidade"
+  },
+  "groups": {
+    "title": "Grupos de Tango",
+    "subtitle": "Junte-se a comunidades locais e de interesse",
+    "join": "Entrar no Grupo",
+    "leave": "Sair do Grupo",
+    "members": "Membros",
+    "posts": "Publicações"
   },
   "signup": {
     "title": "Criar Conta",

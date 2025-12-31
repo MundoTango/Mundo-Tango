@@ -1,291 +1,857 @@
 {
-  "login": {
-    "pageName": "Login",
+  "register": {
+    "pageName": "הרשמה",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "הצטרפו ל-Mundo Tango - צרו חשבון",
+      "description": "צרו את חשבון ה-Mundo Tango שלכם והצטרפו לקהילת הטנגו הארגנטינאית העולמית. התחברו עם רקדנים, גלו אירועים, ושתפו את האהבה שלכם לטנגו."
     },
-    "badge": "Welcome Back",
+    "badge": {
+      "welcomeFamily": "ברוכים הבאים למשפחה",
+      "beginJourney": "התחילו את המסע שלכם",
+      "joinCommunity": "הצטרפו לקהילה"
+    },
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "youreIn": "אתם בפנים!",
+      "joinMundoTango": "הצטרפו ל-Mundo Tango",
+      "description": "התחברו עם רקדנים ברחבי העולם, גלו מילונגות, והיכנסו לעולם הנלהב של הטנגו הארגנטינאי",
+      "waitlistDescription": "ברוכים הבאים לקהילת Mundo Tango. אנחנו מכינים את החשבון שלכם ונעדכן אתכם בקרוב!"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "{{count}}+ רקדנים",
+      "events": "{{count}}+ אירועים",
+      "cities": "{{count}} ערים"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "fullName": "שם מלא",
+      "fullNamePlaceholder": "דוד כהן",
+      "email": "אימייל",
+      "emailPlaceholder": "david@example.com",
+      "username": "שם משתמש",
+      "usernamePlaceholder": "david_tango",
+      "password": "סיסמה",
+      "confirmPassword": "אישור סיסמה",
+      "inviteOnlyNotice": "ההרשמה כרגע בהזמנה בלבד. מלאו את הטופס כדי להצטרף לרשימת ההמתנה ונעדכן אתכם כשהחשבון שלכם יהיה מוכן.",
+      "acceptTermsPrefix": "אני מסכים/ה ל",
+      "termsAndConditions": "תנאים והגבלות"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "validation": {
+      "emailTaken": "האימייל הזה כבר רשום",
+      "emailAvailable": "האימייל פנוי!",
+      "usernameTaken": "שם המשתמש תפוס. נסו {{suggestion}}",
+      "usernameAvailable": "שם המשתמש פנוי!",
+      "passwordsMatch": "הסיסמאות תואמות",
+      "passwordsDontMatch": "הסיסמאות לא תואמות"
+    },
+    "passwordStrength": {
+      "weak": "חלשה",
+      "medium": "בינונית",
+      "strong": "חזקה",
+      "veryStrong": "חזקה מאוד"
+    },
+    "inviteCode": {
+      "label": "יש לכם קוד הזמנה? (אופציונלי)",
+      "placeholder": "הזינו את קוד ההזמנה לגישה מיידית",
+      "accepted": "הקוד התקבל! החשבון שלכם יופעל מיד.",
+      "noWorries": "אל דאגה! מלאו את הטופס למטה כדי להצטרף לרשימת ההמתנה."
+    },
+    "waitlist": {
+      "welcomeUser": "ברוכים הבאים, {{name}}!",
+      "defaultName": "רקדן/ית",
+      "onTheList": "אתם ברשימה. נשלח לכם אימייל אל",
+      "whenReady": "כשהחשבון שלכם יהיה מוכן.",
+      "helpUsGrow": "בזמן שאתם מחכים, עזרו לנו לצמוח",
+      "volunteerWithUs": "התנדבו איתנו",
+      "supportMundoTango": "תמכו ב-Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "יוצרים את החשבון שלכם...",
+      "joining": "מצטרפים...",
+      "createAccount": "יצירת חשבון",
+      "joinMundoTango": "הצטרפו ל-Mundo Tango"
+    },
+    "alreadyHaveAccount": "כבר יש לכם חשבון?",
+    "signIn": "התחברו",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "invalidCode": {
+        "title": "קוד לא תקין",
+        "description": "אנא הזינו קוד אימות תקין בן 6 ספרות."
+      },
+      "verified": {
+        "title": "האימייל אומת!",
+        "description": "ברוכים הבאים ל-Mundo Tango! מתחילים את ההגדרות..."
+      },
+      "verifyError": {
+        "title": "האימות נכשל",
+        "description": "קוד לא תקין או שפג תוקפו. אנא נסו שוב."
+      },
+      "error": {
+        "title": "שגיאה",
+        "description": "אימות האימייל נכשל. אנא נסו שוב."
+      },
+      "tooMany": {
+        "title": "יותר מדי בקשות",
+        "description": "אנא המתינו מספר דקות לפני שתנסו שוב."
+      },
+      "codeSent": {
+        "title": "הקוד נשלח!",
+        "description": "אנא בדקו את תיבת הדואר הנכנס לקבלת קוד חדש."
+      },
+      "resendError": {
+        "description": "שליחת הקוד מחדש נכשלה. אנא נסו שוב."
+      },
+      "termsRequired": {
+        "title": "נדרש לאשר את התנאים",
+        "description": "אנא אשרו את התנאים וההגבלות"
+      },
+      "passwordMismatch": {
+        "title": "הסיסמאות לא תואמות",
+        "description": "אנא ודאו ששתי הסיסמאות זהות"
+      },
+      "weakPassword": {
+        "title": "סיסמה חלשה",
+        "description": "אנא בחרו סיסמה חזקה יותר"
+      },
+      "checkEmail": {
+        "title": "בדקו את האימייל שלכם",
+        "description": "שלחנו לכם קוד אימות בן 6 ספרות. אנא בדקו את תיבת הדואר הנכנס."
+      },
+      "registrationFailed": {
+        "title": "ההרשמה נכשלה"
+      },
+      "signupFailed": {
+        "title": "לא ניתן להשלים את ההרשמה"
+      },
+      "tryAgain": "אנא נסו שוב"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "ברוכים הבאים",
+      "seoTitle": "ברוכים הבאים ל-Mundo Tango",
+      "seoDescription": "התחילו את מסע הטנגו שלכם עם Mundo Tango",
+      "badge": "הגדרה מהירה",
+      "title": "ברוכים הבאים ל-Mundo Tango",
+      "subtitle": "בואו נגדיר את הפרופיל שלכם כדי שתוכלו להתחבר לקהילת הטנגו העולמית",
+      "duration": "לוקח כ-2 דקות",
+      "stepIndicator": "שלב {{current}} מתוך {{total}}",
+      "getStarted": "בואו נתחיל",
+      "profileTitle": "מסע הטנגו שלכם מתחיל",
+      "profileSubtitle": "ספרו לנו קצת על עצמכם",
+      "features": {
+        "city": {
+          "title": "בחרו את העיר שלכם",
+          "description": "התחברו לקהילת הטנגו המקומית שלכם"
+        },
+        "roles": {
+          "title": "ספרו לנו על התפקידים שלכם",
+          "description": "רקדן/ית, מורה, DJ, מארגן/ת, או הכל?"
+        },
+        "events": {
+          "title": "גלו אירועים",
+          "description": "מצאו מילונגות, שיעורים ופסטיבלים בקרבתכם"
+        },
+        "journey": {
+          "title": "שתפו את המסע שלכם",
+          "description": "התחברו עם רקדנים ברמה שלכם"
+        },
+        "facebook": {
+          "title": "חברו פייסבוק",
+          "description": "קשרו את הפרופיל בפייסבוק כדי למצוא חברים בקהילה"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "חיבור חברתי",
+      "seoTitle": "חברו את העולם החברתי שלכם - Mundo Tango",
+      "seoDescription": "קשרו את הפרופילים החברתיים שלכם כדי למצוא חברים בקהילת הטנגו.",
+      "step": "שלב 2 מתוך 6",
+      "title": "חברו את העולם החברתי שלכם",
+      "quote": "\"רקדני טנגו רבים כבר מכירים זה את זה דרך פייסבוק. על ידי קישור הפרופיל שלכם, נוכל להראות לכם אילו רקדנים מהרשת שלכם כבר כאן - מה שמקל על מציאת פנים מוכרות במילונגות ובניית קשרים עמוקים יותר.\"",
+      "cardTitle": "מצאו את החברים שלכם",
+      "cardDescription": "פייסבוק שלכם עוזר לנו לקשר אתכם עם רקדנים שאולי אתם כבר מכירים, כך שלא תתחילו מאפס.",
+      "facebookLabel": "כתובת פרופיל פייסבוק (אופציונלי)",
+      "facebookPlaceholder": "https://www.facebook.com/your.profile",
+      "helperText": "אנחנו משתמשים בזה כגשר לקהילות אחרות וכדי לקשר אתכם עם רקדנים שאולי אתם מכירים.",
+      "toast": {
+        "errorTitle": "שגיאה",
+        "errorDescription": "שמירת פרטי הפרופיל נכשלה"
+      }
+    },
+    "navigation": {
+      "back": "חזרה",
+      "continue": "המשך",
+      "skip": "דלג",
+      "next": "הבא",
+      "finish": "סיום",
+      "saving": "שומר..."
+    },
+    "city": {
+      "pageTitle": "בחירת עיר",
+      "seoTitle": "בחרו את העיר שלכם - Mundo Tango",
+      "seoDescription": "בחרו את עיר המגורים שלכם כדי להתחבר לרקדני טנגו מקומיים",
+      "step": "שלב 1 מתוך 6",
+      "title": "איפה אתם רוקדים?",
+      "subtitle": "התחברו עם רקדנים באזור שלכם",
+      "cardTitle": "העיר שלכם",
+      "cardDescription": "זה עוזר לנו להציג לכם אירועים ורקדנים מקומיים",
+      "searchLabel": "חפשו את העיר שלכם",
+      "searchPlaceholder": "הקלידו את שם העיר...",
+      "eventSite": {
+        "help": "בחרו מיעדי טנגו פופולריים"
+      },
+      "errors": {
+        "required": "נדרשת עיר",
+        "selectCity": "אנא בחרו את העיר שלכם"
+      },
+      "toast": {
+        "sourceAdded": "המקור נוסף!",
+        "submittedForReview": "נשלח לבדיקה",
+        "trackingEvents": "נתחיל לעקוב אחרי אירועים מהאתר",
+        "thankYou": "תודה! ההצעה שלכם נשלחה לבדיקה.",
+        "errorTitle": "שגיאה",
+        "suggestionFailed": "שליחת ההצעה נכשלה",
+        "saveFailed": "שמירת הערים נכשלה"
+      }
+    },
+    "photo": {
+      "pageTitle": "העלאת תמונה",
+      "seoTitle": "הוסיפו תמונת פרופיל - Mundo Tango",
+      "seoDescription": "העלו את תמונת הפרופיל שלכם",
+      "step": "שלב 3 מתוך 6",
+      "title": "הוסיפו את תמונת הפרופיל שלכם",
+      "subtitle": "עזרו לאחרים לזהות אתכם בקהילה",
+      "cardTitle": "תמונת הפרופיל שלכם",
+      "cardDescription": "עזרו לאחרים לזהות אתכם (אפשר לדלג על שלב זה)",
+      "previewAlt": "תצוגה מקדימה של הפרופיל",
+      "dropHere": "גררו את התמונה לכאן",
+      "or": "או",
+      "browseFiles": "עיינו בקבצים",
+      "fileTypes": "PNG, JPG עד 5MB",
+      "photoSelected": "התמונה נבחרה!",
+      "uploading": "מעלה...",
+      "errors": {
+        "invalidFile": "קובץ לא תקין",
+        "selectImage": "אנא בחרו קובץ תמונה",
+        "fileTooLarge": "הקובץ גדול מדי",
+        "sizeLimit": "אנא בחרו תמונה קטנה מ-5MB",
+        "uploadFailed": "ההעלאה נכשלה",
+        "tryAgain": "העלאת התמונה נכשלה. אנא נסו שוב.",
+        "skipFailed": "הדילוג נכשל. אנא נסו שוב."
+      }
+    },
+    "languages": {
+      "pageTitle": "שפות",
+      "seoTitle": "השפות שלכם - Mundo Tango",
+      "seoDescription": "ספרו לנו באילו שפות אתם מדברים",
+      "step": "שלב 5 מתוך 6",
+      "title": "באילו שפות אתם מדברים?",
+      "subtitle": "התחברו עם רקדנים בשפה שלכם",
+      "cardTitle": "השפות שלכם",
+      "cardDescription": "בחרו את השפה הראשית שלכם ושפות נוספות שאתם מדברים",
+      "primaryLabel": "שפה ראשית",
+      "primaryHint": "זה גם יקבע את שפת התצוגה של האתר",
+      "primaryPlaceholder": "בחרו את השפה הראשית שלכם",
+      "additionalLabel": "שפות נוספות (אופציונלי)",
+      "errors": {
+        "required": "נדרשת שפה ראשית",
+        "selectPrimary": "אנא בחרו את השפה הראשית שלכם",
+        "saveFailed": "שמירת השפות נכשלה",
+        "saveFailedTitle": "שמירת השפה נכשלה"
+      }
+    },
+    "roles": {
+      "pageTitle": "תפקידי טנגו",
+      "seoTitle": "תפקידי הטנגו שלכם - Mundo Tango",
+      "seoDescription": "ספרו לנו על מסע הטנגו שלכם",
+      "step": "שלב 2 מתוך 6",
+      "title": "אילו תפקידים אתם ממלאים?",
+      "subtitle": "בחרו את כל מה שמתאים לכם",
+      "cardTitle": "הזהות הטנגואית שלכם",
+      "cardDescription": "עזרו לאחרים לדעת איך אתם משתתפים בעולם הטנגו"
+    },
+    "experience": {
+      "pageTitle": "ניסיון בריקוד",
+      "seoTitle": "הניסיון שלכם בריקוד - Mundo Tango",
+      "seoDescription": "שתפו את רמת הניסיון שלכם בריקוד",
+      "step": "שלב 4 מתוך 6",
+      "title": "הניסיון שלכם בריקוד",
+      "subtitle": "עזרו לנו לחבר אתכם עם הרקדנים המתאימים"
+    },
+    "hobbies": {
+      "pageTitle": "תחומי עניין",
+      "seoTitle": "תחומי העניין שלכם - Mundo Tango",
+      "seoDescription": "ספרו לנו על תחומי העניין שלכם",
+      "step": "שלב 6 מתוך 6",
+      "title": "מה מעניין אתכם?",
+      "subtitle": "בחרו נושאים שמעניינים אתכם",
+      "helpText": "בחרו לפחות 3 תחומי עניין כדי להתאים אישית את הפיד שלכם",
+      "selectedCount": "{{count}} נבחרו",
+      "finishing": "מסיימים...",
+      "completeSetup": "השלמת ההגדרה",
+      "searchPlaceholder": "חפשו קהילות או הוסיפו חדשה...",
+      "categories": {
+        "fitness": { "label": "כושר וספורט" },
+        "tech": { "label": "טכנולוגיה וחדשנות" },
+        "spirituality": { "label": "רוחניות וצמיחה" },
+        "yoga": { "label": "יוגה ובריאות" },
+        "music": { "label": "מוזיקה" },
+        "photography": { "label": "צילום ווידאו" },
+        "art": { "label": "אמנות ויצירתיות" },
+        "reading": { "label": "קריאה וכתיבה" },
+        "travel": { "label": "טיולים והרפתקאות" },
+        "cooking": { "label": "בישול ואוכל" },
+        "wine": { "label": "יין ומשקאות" },
+        "gaming": { "label": "משחקים" },
+        "outdoors": { "label": "פעילויות בחוץ" },
+        "snow": { "label": "ספורט שלג" },
+        "cycling": { "label": "רכיבה על אופניים" },
+        "water": { "label": "ספורט מים" },
+        "nature": { "label": "טבע וגינון" },
+        "movies": { "label": "סרטים ובידור" },
+        "pets": { "label": "חיות מחמד" },
+        "social": { "label": "חברתי וקהילתי" }
+      },
+      "items": {
+        "fitness_gym": "חדר כושר ומשקולות",
+        "fitness_running": "ריצה",
+        "fitness_crossfit": "קרוספיט",
+        "fitness_martial_arts": "אומנויות לחימה",
+        "fitness_tennis": "טניס",
+        "fitness_soccer": "כדורגל",
+        "fitness_basketball": "כדורסל",
+        "fitness_fencing": "סיוף",
+        "tech_coding": "תכנות ופיתוח",
+        "tech_ai": "בינה מלאכותית",
+        "tech_crypto": "קריפטו ווב3",
+        "tech_gaming": "תרבות גיימינג",
+        "spirit_meditation": "מדיטציה",
+        "spirit_astrology": "אסטרולוגיה",
+        "spirit_philosophy": "פילוסופיה",
+        "spirit_community": "בניית קהילה",
+        "yoga_hatha": "יוגה האטה",
+        "yoga_vinyasa": "וינייאסה פלואו",
+        "yoga_meditation": "מדיטציה",
+        "yoga_pilates": "פילאטיס",
+        "yoga_breathwork": "עבודת נשימה",
+        "music_listening": "האזנה למוזיקה",
+        "music_concerts": "הופעות חיות",
+        "music_piano": "פסנתר",
+        "music_guitar": "גיטרה",
+        "music_singing": "שירה",
+        "music_dj": "DJ",
+        "music_production": "הפקת מוזיקה",
+        "photo_portrait": "צילום פורטרט",
+        "photo_landscape": "צילום נוף",
+        "photo_street": "צילום רחוב",
+        "photo_video": "צילום וידאו",
+        "photo_editing": "עריכת תמונות",
+        "art_painting": "ציור",
+        "art_drawing": "רישום",
+        "art_sculpture": "פיסול",
+        "art_digital": "אמנות דיגיטלית",
+        "art_crafts": "מלאכת יד",
+        "art_pottery": "קדרות",
+        "reading_fiction": "בדיון",
+        "reading_nonfiction": "עיון",
+        "reading_poetry": "שירה",
+        "reading_writing": "כתיבה יצירתית",
+        "reading_journals": "כתיבת יומן",
+        "travel_backpacking": "טיולי תרמיל",
+        "travel_luxury": "נסיעות יוקרה",
+        "travel_cultural": "תיירות תרבותית",
+        "travel_road_trips": "טיולי כביש",
+        "travel_solo": "טיול יחיד",
+        "cooking_home": "בישול ביתי",
+        "cooking_baking": "אפייה",
+        "cooking_gourmet": "מטבח גורמה",
+        "cooking_international": "מטבח בינלאומי",
+        "cooking_healthy": "אכילה בריאה",
+        "wine_tasting": "טעימות יין",
+        "wine_cocktails": "קוקטיילים",
+        "wine_coffee": "קפה",
+        "wine_tea": "תרבות התה",
+        "wine_brewing": "בישול בירה ביתי",
+        "gaming_video": "משחקי וידאו",
+        "gaming_board": "משחקי לוח",
+        "gaming_card": "משחקי קלפים",
+        "gaming_tabletop": "משחקי תפקידים",
+        "gaming_esports": "ספורט אלקטרוני",
+        "outdoor_hiking": "הליכות",
+        "outdoor_camping": "קמפינג",
+        "outdoor_climbing": "טיפוס סלעים",
+        "outdoor_fishing": "דיג",
+        "outdoor_kayaking": "קייאקים",
+        "outdoor_surfing": "גלישה",
+        "snow_skiing": "סקי",
+        "snow_snowboard": "סנובורד",
+        "snow_crosscountry": "סקי קרוס קאנטרי",
+        "snow_ice_skating": "החלקה על קרח",
+        "snow_sledding": "מזחלות",
+        "snow_snowshoeing": "הליכה בשלג",
+        "cycling_road": "רכיבה על כביש",
+        "cycling_mountain": "רכיבה בהרים",
+        "cycling_urban": "רכיבה עירונית",
+        "cycling_touring": "סיורי אופניים",
+        "water_swimming": "שחייה",
+        "water_scuba": "צלילה",
+        "water_snorkel": "שנורקל",
+        "water_sailing": "שיט",
+        "water_paddleboard": "סאפ",
+        "nature_gardening": "גינון",
+        "nature_birdwatching": "צפרות",
+        "nature_botany": "אסיפת צמחים",
+        "nature_wildlife": "צילום טבע",
+        "movies_cinema": "קולנוע",
+        "movies_tv": "סדרות טלוויזיה",
+        "movies_documentary": "סרטים תיעודיים",
+        "movies_theater": "תיאטרון",
+        "movies_standup": "סטנדאפ",
+        "pets_dogs": "כלבים",
+        "pets_cats": "חתולים",
+        "pets_exotic": "חיות אקזוטיות",
+        "pets_horses": "רכיבה על סוסים",
+        "pets_rescue": "הצלת בעלי חיים",
+        "social_volunteering": "התנדבות",
+        "social_meetups": "מפגשים",
+        "social_networking": "נטוורקינג",
+        "social_languages": "החלפת שפות"
+      },
+      "success": {
+        "completeTitle": "ברוכים הבאים ל-Mundo Tango!",
+        "completeDesc": "הפרופיל שלכם מוכן. התחילו לחקור!",
+        "waitlistTitle": "הפרופיל הושלם!",
+        "waitlistDesc": "נעדכן אתכם כשהחשבון שלכם יופעל"
+      },
+      "errors": {
+        "saveFailed": "השמירה נכשלה. אנא נסו שוב."
+      }
+    },
+    "legal": {
+      "title": "הנחיות קהילה",
+      "subtitle": "אנא עיינו ואשרו את התנאים שלנו",
+      "legalDocsTitle": "מסמכים משפטיים",
+      "legalDocsDescription": "עיינו בתנאי השירות ומדיניות הפרטיות",
+      "termsOfService": {
+        "label": "אני מסכים/ה לתנאי השירות",
+        "description": "התנאים שלנו מסדירים את השימוש שלכם ב-Mundo Tango",
+        "link": "קראו את תנאי השירות"
+      },
+      "privacyPolicy": {
+        "label": "אני מסכים/ה למדיניות הפרטיות",
+        "description": "כיצד אנחנו מטפלים במידע שלכם",
+        "link": "קראו את מדיניות הפרטיות"
+      },
+      "cocTitle": "קוד התנהגות קהילתי",
+      "cocDescription": "עזרו לנו לשמור על קהילה מכבדת",
+      "coc": {
+        "respectful": {
+          "title": "היו מכבדים",
+          "description": "התייחסו לכולם בכבוד ובאדיבות"
+        },
+        "inclusive": {
+          "title": "היו מכילים",
+          "description": "קבלו רקדנים מכל הרמות והרקעים"
+        },
+        "authentic": {
+          "title": "היו אותנטיים",
+          "description": "השתמשו בזהות האמיתית שלכם ובמידע כנה"
+        },
+        "consent": {
+          "title": "כבדו הסכמה",
+          "description": "תמיד שאלו לפני ריקוד וכבדו גבולות"
+        },
+        "noHarassment": {
+          "title": "ללא הטרדה",
+          "description": "אפס סובלנות להטרדה או בריונות"
+        },
+        "noSpam": {
+          "title": "ללא ספאם",
+          "description": "אל תשלחו פרסומות לא רצויות"
+        },
+        "noDiscrimination": {
+          "title": "ללא אפליה",
+          "description": "אנחנו לא סובלים אפליה מכל סוג"
+        },
+        "privacy": {
+          "title": "הגנו על פרטיות",
+          "description": "אל תשתפו מידע של אחרים ללא הסכמה"
+        },
+        "safety": {
+          "title": "העדיפו בטיחות",
+          "description": "דווחו על התנהגות לא בטוחה מיד"
+        },
+        "laws": {
+          "title": "ציית לחוקים",
+          "description": "ציית לכל החוקים הרלוונטיים"
+        },
+        "report": {
+          "title": "דווחו על בעיות",
+          "description": "עזרו לנו על ידי דיווח על הפרות"
+        },
+        "support": {
+          "title": "תמכו זה בזה",
+          "description": "עזרו לרקדנים אחרים לצמוח"
+        }
+      },
+      "acceptAll": "אישור הכל והמשך",
+      "accepting": "מאשר...",
+      "incompleteAlert": "אנא אשרו את כל התנאים הנדרשים",
+      "success": {
+        "title": "ברוכים הבאים!",
+        "description": "אישרתם את הנחיות הקהילה שלנו"
+      },
+      "errors": {
+        "failed": "השמירה נכשלה. אנא נסו שוב."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "רשימת המתנה",
+      "seoTitle": "אתם ברשימת ההמתנה - Mundo Tango",
+      "seoDescription": "החשבון שלכם ממתין להפעלה",
+      "title": "אתם ברשימת ההמתנה!",
+      "welcomeMessage": "ברוכים הבאים, {{name}}!",
+      "defaultName": "רקדן/ית",
+      "profileComplete": "הפרופיל הושלם",
+      "profileCompleteDesc": "הפרופיל שלכם מוכן וממתין",
+      "emailNotice": "נשלח לכם אימייל אל {{email}} כשהחשבון שלכם יהיה מוכן",
+      "whenReady": "כשהחשבון שלכם יהיה מוכן.",
+      "whileYouWait": "בזמן שאתם מחכים, עזרו לנו לצמוח:",
+      "volunteerButton": "הפכו למתנדבים",
+      "supportButton": "תמכו ב-Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "סיור מודרך",
+      "seoTitle": "גלו את Mundo Tango",
+      "seoDescription": "למדו כיצד להשתמש ב-Mundo Tango",
+      "skipTour": "דלג על הסיור",
+      "finish": "סיום הסיור",
+      "steps": {
+        "feed": "גלו פוסטים מקהילת הטנגו",
+        "events": "מצאו מילונגות, שיעורים ופסטיבלים",
+        "groups": "הצטרפו לקבוצות לעיר שלכם או לתחומי עניין",
+        "messages": "התחברו ישירות עם רקדנים אחרים",
+        "profile": "התאימו אישית את פרופיל הטנגו שלכם",
+        "createPost": "שתפו את רגעי הטנגו שלכם"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "שדרגו את החוויה שלכם",
+        "subtitle": "הפיקו את המירב מ-Mundo Tango",
+        "limitedOffer": "הצעה לזמן מוגבל",
+        "getStarted": "בואו נתחיל",
+        "features": {
+          "connect": {
+            "title": "התחברו",
+            "description": "שלחו הודעות לכל רקדן ישירות"
+          },
+          "visibility": {
+            "title": "נראות",
+            "description": "קבלו מקום מובלט בתוצאות החיפוש"
+          },
+          "events": {
+            "title": "אירועים",
+            "description": "גישה מועדפת לאירועים פופולריים"
+          },
+          "grow": {
+            "title": "צמיחה",
+            "description": "אנליטיקס מתקדמת לפרופיל שלכם"
+          },
+          "premium": {
+            "title": "פרימיום",
+            "description": "תכונות פרימיום בלעדיות"
+          }
+        }
+      }
+    }
+  },
+  "login": {
+    "pageName": "התחברות",
+    "seo": {
+      "title": "התחברות - Mundo Tango",
+      "description": "התחברו לחשבון ה-Mundo Tango שלכם כדי להתחבר לקהילת הטנגו העולמית, לגלות אירועים, ולשתף את האהבה שלכם לטנגו ארגנטינאי."
+    },
+    "badge": "ברוכים השבים",
+    "hero": {
+      "heading": "מסע הטנגו שלכם ממשיך",
+      "paragraph": "התחברו כדי להתחבר עם רקדנים ברחבי העולם, לגלות אירועים, ולשתף את האהבה שלכם"
+    },
+    "stats": {
+      "dancers": "רקדנים",
+      "events": "אירועים"
+    },
+    "form": {
+      "email": "אימייל",
+      "password": "סיסמה",
+      "signIn": "התחברות",
+      "signingIn": "מתחבר...",
+      "forgotPassword": "שכחתם את הסיסמה?"
+    },
+    "noAccount": "אין לכם חשבון?",
+    "createAccount": "צרו חשבון עכשיו",
+    "toast": {
+      "successTitle": "ברוכים השבים!",
+      "successDescription": "התחברתם בהצלחה.",
+      "errorTitle": "ההתחברות נכשלה",
+      "errorDescription": "פרטי התחברות שגויים"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "בית",
+    "pageLayoutTitle": "איפה הטנגו פוגש קהילה",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - התחברו לקהילת הטנגו העולמית",
+      "description": "הצטרפו לאלפי רקדני טנגו ברחבי העולם. גלו אירועים, מצאו מורים, התחברו עם רקדנים, והיכנסו לעולם הנלהב של הטנגו הארגנטינאי."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "ברוכים הבאים לקהילת הטנגו העולמית",
+      "heading": "איפה הטנגו פוגש קהילה",
+      "paragraph": "שתפו זיכרונות, מצאו אירועים, ועזרו לנו לבנות את עתיד הטכנולוגיה של הטנגו. הצטרפו לאלפי רקדנים נלהבים המתחברים ברחבי העולם.",
+      "getStarted": "התחילו בחינם",
+      "volunteer": "התנדבו לעזור לבנות את MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "איך זה עובד",
+      "description": "התחילו את מסע הטנגו שלכם בשלושה צעדים פשוטים",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "צרו את הפרופיל שלכם",
+        "description": "הצטרפו בחינם וספרו לנו על מסע הטנגו שלכם, רמת הניסיון, והעדפות הריקוד שלכם"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "גלו והתחברו",
+        "description": "מצאו אירועים, מורים ומקומות בקרבתכם. התחברו עם רקדנים שחולקים את האהבה שלכם"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "רקדו וצמחו",
+        "description": "השתתפו באירועים, קחו שיעורים, צרו חברויות, והפכו לחלק מקהילת הטנגו העולמית"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "כל מה שאתם צריכים",
+      "description": "התחברו, גלו, וצמחו במסע הטנגו שלכם עם תכונות עוצמתיות",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "קהילה",
+        "heading": "התחברו עם רקדנים ברחבי העולם",
+        "description": "הצטרפו לקהילה עולמית תוססת של חובבי טנגו. התחברו עם רקדנים, מורים ומארגנים מבואנוס איירס ועד טוקיו.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "עקבו אחרי רקדנים ובנו את הרשת שלכם",
+          "groups": "הצטרפו לקבוצות על פי תחומי עניין ומיקום",
+          "messaging": "הודעות וצ'אט בזמן אמת",
+          "discover": "גלו רקדנים שמבקרים בעיר שלכם"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "אירועים",
+        "heading": "גלו אירועים בכל מקום",
+        "description": "אל תפספסו מילונגה, פסטיבל או סדנה. הפלטפורמה שלנו מחברת אתכם לאלפי אירועי טנגו ברחבי העולם.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "לוח אירועים מקיף",
+          "rsvp": "אישור הגעה והזמנת כרטיסים",
+          "notifications": "התראות ותזכורות על אירועים",
+          "map": "מפה אינטראקטיבית של מקומות"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "שידור חי",
+          "description": "צפו במילונגות ברחבי העולם בזמן אמת"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "ספריית מוזיקה",
+          "description": "פלייליסטים ומדריכי טנגו נבחרים"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "מורים מאומתים",
+          "description": "למדו ממדריכים מוסמכים"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "מתכנן נסיעות",
+          "description": "תכננו טיולים ומצאו מארחים ברחבי העולם"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "מה הרקדנים אומרים",
+      "description": "הצטרפו לאלפי רקדנים מרוצים ברחבי העולם",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "מריה רודריגז",
+          "location": "בואנוס איירס, ארגנטינה",
+          "text": "Mundo Tango עזר לי למצוא את משפחת הריקוד שלי בעיר חדשה. הקהילה חמה, מקבלת, ונלהבת באמת מטנגו."
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "ג'יימס צ'ן",
+          "location": "סן פרנסיסקו, ארה\"ב",
+          "text": "גיליתי מילונגות וסדנאות מדהימות דרך הפלטפורמה הזו. היא הפכה לחיונית למסע הטנגו שלי."
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "אלנה וולקוב",
+          "location": "מוסקבה, רוסיה",
+          "text": "מדריך המורים עזר לי למצוא מדריכים מדהימים. הריקוד שלי השתפר מאוד!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "שאלות נפוצות",
+      "description": "כל מה שאתם צריכים לדעת על Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "מה זה Mundo Tango?",
+          "answer": "Mundo Tango היא פלטפורמה עולמית המחברת רקדני טנגו, מורים ומארגנים. אנחנו עוזרים לכם לגלות אירועים, למצוא שותפים לריקוד, ללמוד מהמדריכים הטובים ביותר, ולהיכנס לקהילת הטנגו התוססת ברחבי העולם."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "האם Mundo Tango בחינם?",
+          "answer": "כן! אנחנו מציעים רמה חינמית הכוללת יצירת פרופיל בסיסי, גילוי אירועים והודעות. תכונות פרימיום כמו הודעות ללא הגבלה, התאמת שותף ריקוד עם AI, והתראות אירועים מועדפות זמינות עם מנוי Pro."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "איך אני מוצא אירועי טנגו בקרבתי?",
+          "answer": "פשוט השתמשו בלוח האירועים או בתכונות החיפוש כדי לסנן לפי עיר, תאריך וסוג אירוע. תוכלו לגלות מילונגות, פסטיבלים, סדנאות ומפגשי תרגול באזור שלכם או בכל מקום בעולם."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "האם אני יכול/ה להתחבר עם רקדנים אחרים?",
+          "answer": "בהחלט! עקבו אחרי רקדנים, הצטרפו לקבוצות, שלחו בקשות חברות, ושוחחו עם הקהילה. הפלטפורמה שלנו מתוכננת לטפח קשרים אותנטיים בתוך עולם הטנגו."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "איך אני מוצא מורי טנגו?",
+          "answer": "בקרו במדריך המורים כדי לעיין במדריכים מאומתים ברחבי העולם. סננו לפי מיקום, התמחות ורמת ניסיון. קראו ביקורות מתלמידים אחרים והזמינו שיעורים פרטיים ישירות דרך הפלטפורמה."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "מה מייחד את Mundo Tango?",
+          "answer": "אנחנו נבנינו על ידי רקדני טנגו, עבור רקדני טנגו. המיקוד שלנו הוא בבניית קהילה אותנטית, אוצרות אירועים איכותיים, וחיבורכם למשפחת הטנגו העולמית - לא רק עוד רשת חברתית."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "מוכנים להצטרף לקהילה?",
+      "description": "צרו את החשבון החינמי שלכם היום והתחילו להתחבר עם רקדני טנגו נלהבים ברחבי העולם. לא נדרש כרטיס אשראי.",
+      "button": "הצטרפו ל-Mundo Tango בחינם",
+      "freeForever": "חינם לנצח",
+      "noCreditCard": "ללא כרטיס אשראי",
+      "cancelAnytime": "ביטול בכל עת"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "פיד",
+    "description": "הישארו מעודכנים עם החדשות האחרונות מקהילת הטנגו",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "כל הפוסטים",
+      "following": "עוקבים",
+      "popular": "פופולרי",
+      "recent": "אחרון"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "מה בראש שלכם?",
+    "noPost": "אין פוסטים להצגה"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "אירועים",
+    "description": "גלו אירועי טנגו בקרבתכם",
+    "upcoming": "אירועים קרובים",
+    "past": "אירועים קודמים",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "כל האירועים",
+      "milongas": "מילונגות",
+      "workshops": "סדנאות",
+      "festivals": "פסטיבלים",
+      "classes": "שיעורים"
     },
-    "noEvents": "No events found"
+    "noEvents": "לא נמצאו אירועים"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "פרופיל",
+    "description": "צפו וערכו את הפרופיל שלכם",
+    "editProfile": "עריכת פרופיל",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "פוסטים",
+      "photos": "תמונות",
+      "videos": "סרטונים",
+      "events": "אירועים",
+      "friends": "חברים"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "פוסטים",
+      "followers": "עוקבים",
+      "following": "עוקב אחרי",
+      "events": "אירועים שהשתתפתי"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "הודעות",
+    "description": "שוחחו עם הקשרים שלכם בטנגו",
+    "newMessage": "הודעה חדשה",
+    "searchConversations": "חפשו שיחות",
+    "noMessages": "אין הודעות עדיין",
+    "startConversation": "התחילו שיחה"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "מורי טנגו",
+    "description": "מצאו והתחברו עם מורי טנגו",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "כל המורים",
+      "featured": "מובלטים",
+      "nearby": "בקרבת מקום"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "צפו בפרופיל",
+    "bookLesson": "הזמינו שיעור"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "מקומות טנגו",
+    "description": "גלו מקומות טנגו ברחבי העולם",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "כל המקומות",
+      "milongas": "מילונגות",
+      "schools": "בתי ספר לריקוד",
+      "theaters": "תיאטראות"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "קבלו הוראות הגעה"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "הגדרות",
+    "description": "נהלו את הגדרות החשבון שלכם",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "הגדרות חשבון",
+      "profile": "פרופיל",
+      "privacy": "פרטיות",
+      "notifications": "התראות",
+      "security": "אבטחה",
+      "billing": "חיוב",
+      "preferences": "העדפות"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "לוח בקרה Life CEO",
+    "description": "העוזר האישי שלכם מבוסס AI לניהול חיים",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "סוכן בריאות",
+      "fitness": "סוכן כושר",
+      "nutrition": "סוכן תזונה",
+      "finance": "סוכן פיננסים",
+      "career": "סוכן קריירה",
+      "productivity": "סוכן פרודוקטיביות",
+      "relationships": "סוכן יחסים",
+      "learning": "סוכן למידה"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "שוק",
+    "description": "קנו ומכרו פריטים הקשורים לטנגו",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "נעלי ריקוד",
+      "clothing": "ביגוד",
+      "music": "מוזיקה",
+      "accessories": "אביזרים",
+      "other": "אחר"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "לוח בקרה ניהול",
+    "description": "ניהול ובקרת הפלטפורמה",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "סקירה",
+      "users": "משתמשים",
+      "content": "תוכן",
+      "reports": "דוחות",
+      "analytics": "אנליטיקס",
+      "settings": "הגדרות"
     }
   }
 }

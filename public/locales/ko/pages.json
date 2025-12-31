@@ -1,15 +1,900 @@
 {
+  "register": {
+    "pageName": "회원가입",
+    "seo": {
+      "title": "Mundo Tango 가입 - 계정 만들기",
+      "description": "Mundo Tango 계정을 만들고 전 세계 아르헨티나 탱고 커뮤니티에 합류하세요. 댄서들과 연결하고, 이벤트를 발견하고, 탱고에 대한 열정을 공유하세요."
+    },
+    "badge": {
+      "welcomeFamily": "가족이 되신 것을 환영합니다",
+      "beginJourney": "여정을 시작하세요",
+      "joinCommunity": "커뮤니티에 가입"
+    },
+    "hero": {
+      "youreIn": "가입 완료!",
+      "joinMundoTango": "Mundo Tango 가입",
+      "description": "전 세계 댄서들과 연결하고, 밀롱가를 발견하고, 아르헨티나 탱고의 열정적인 세계에 빠져보세요",
+      "waitlistDescription": "Mundo Tango 커뮤니티에 오신 것을 환영합니다. 계정을 준비 중이며 곧 알려드리겠습니다!"
+    },
+    "stats": {
+      "dancers": "{{count}}명 이상의 댄서",
+      "events": "{{count}}개 이상의 이벤트",
+      "cities": "{{count}}개 도시"
+    },
+    "form": {
+      "fullName": "이름",
+      "fullNamePlaceholder": "김민수",
+      "email": "이메일",
+      "emailPlaceholder": "minsu@example.com",
+      "username": "사용자명",
+      "usernamePlaceholder": "minsu_tango",
+      "password": "비밀번호",
+      "confirmPassword": "비밀번호 확인",
+      "inviteOnlyNotice": "현재 초대제로 운영됩니다. 대기자 명단에 가입하려면 이 양식을 작성해 주세요. 계정이 준비되면 알려드립니다.",
+      "acceptTermsPrefix": "동의합니다:",
+      "termsAndConditions": "이용약관"
+    },
+    "validation": {
+      "emailTaken": "이미 등록된 이메일입니다",
+      "emailAvailable": "사용 가능한 이메일입니다!",
+      "usernameTaken": "이미 사용 중인 사용자명입니다. {{suggestion}}을(를) 시도해 보세요",
+      "usernameAvailable": "사용 가능한 사용자명입니다!",
+      "passwordsMatch": "비밀번호가 일치합니다",
+      "passwordsDontMatch": "비밀번호가 일치하지 않습니다"
+    },
+    "passwordStrength": {
+      "weak": "약함",
+      "medium": "보통",
+      "strong": "강함",
+      "veryStrong": "매우 강함"
+    },
+    "inviteCode": {
+      "label": "초대 코드가 있으신가요? (선택사항)",
+      "placeholder": "초대 코드를 입력하여 즉시 액세스",
+      "accepted": "코드가 승인되었습니다! 계정이 즉시 활성화됩니다.",
+      "noWorries": "걱정 마세요! 아래 양식을 작성하여 대기자 명단에 가입하세요."
+    },
+    "waitlist": {
+      "welcomeUser": "환영합니다, {{name}}님!",
+      "defaultName": "댄서",
+      "onTheList": "명단에 등록되었습니다. 계정이 준비되면",
+      "whenReady": "이메일로 알려드립니다.",
+      "helpUsGrow": "기다리시는 동안 성장에 도움을 주세요",
+      "volunteerWithUs": "자원봉사에 참여",
+      "supportMundoTango": "Mundo Tango 지원"
+    },
+    "button": {
+      "creatingAccount": "계정 생성 중...",
+      "joining": "가입 중...",
+      "createAccount": "계정 만들기",
+      "joinMundoTango": "Mundo Tango 가입"
+    },
+    "alreadyHaveAccount": "이미 계정이 있으신가요?",
+    "signIn": "로그인",
+    "toast": {
+      "invalidCode": {
+        "title": "유효하지 않은 코드",
+        "description": "유효한 6자리 인증 코드를 입력해 주세요."
+      },
+      "verified": {
+        "title": "이메일 인증 완료!",
+        "description": "Mundo Tango에 오신 것을 환영합니다! 온보딩을 시작합니다..."
+      },
+      "verifyError": {
+        "title": "인증 실패",
+        "description": "유효하지 않거나 만료된 코드입니다. 다시 시도해 주세요."
+      },
+      "error": {
+        "title": "오류",
+        "description": "이메일 인증에 실패했습니다. 다시 시도해 주세요."
+      },
+      "tooMany": {
+        "title": "요청이 너무 많습니다",
+        "description": "몇 분 후에 다시 시도해 주세요."
+      },
+      "codeSent": {
+        "title": "코드 전송됨!",
+        "description": "받은 편지함에서 새 코드를 확인해 주세요."
+      },
+      "resendError": {
+        "description": "코드 재전송에 실패했습니다. 다시 시도해 주세요."
+      },
+      "termsRequired": {
+        "title": "약관 동의 필요",
+        "description": "이용약관에 동의해 주세요"
+      },
+      "passwordMismatch": {
+        "title": "비밀번호 불일치",
+        "description": "두 비밀번호가 동일한지 확인해 주세요"
+      },
+      "weakPassword": {
+        "title": "약한 비밀번호",
+        "description": "더 강력한 비밀번호를 선택해 주세요"
+      },
+      "checkEmail": {
+        "title": "이메일을 확인하세요",
+        "description": "6자리 인증 코드를 보냈습니다. 받은 편지함을 확인해 주세요."
+      },
+      "registrationFailed": {
+        "title": "등록 실패"
+      },
+      "signupFailed": {
+        "title": "가입을 완료할 수 없습니다"
+      },
+      "tryAgain": "다시 시도해 주세요"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "환영합니다",
+      "seoTitle": "Mundo Tango에 오신 것을 환영합니다",
+      "seoDescription": "Mundo Tango에서 탱고 여정을 시작하세요",
+      "badge": "빠른 설정",
+      "title": "Mundo Tango에 오신 것을 환영합니다",
+      "subtitle": "글로벌 탱고 커뮤니티와 연결할 수 있도록 프로필을 설정해 보세요",
+      "duration": "약 2분 소요",
+      "stepIndicator": "{{current}} / {{total}} 단계",
+      "getStarted": "시작하기",
+      "profileTitle": "탱고 여정이 시작됩니다",
+      "profileSubtitle": "자신에 대해 알려주세요",
+      "features": {
+        "city": {
+          "title": "도시 선택",
+          "description": "지역 탱고 커뮤니티와 연결"
+        },
+        "roles": {
+          "title": "역할 알려주기",
+          "description": "댄서, 선생님, DJ, 주최자, 또는 모두?"
+        },
+        "events": {
+          "title": "이벤트 발견",
+          "description": "근처의 밀롱가, 수업, 축제 찾기"
+        },
+        "journey": {
+          "title": "여정 공유",
+          "description": "같은 수준의 댄서들과 연결"
+        },
+        "facebook": {
+          "title": "Facebook 연결",
+          "description": "Facebook 프로필을 연결하여 커뮤니티 친구 찾기"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "소셜 연결",
+      "seoTitle": "소셜 세계 연결 - Mundo Tango",
+      "seoDescription": "소셜 프로필을 연결하여 탱고 커뮤니티에서 친구를 찾으세요.",
+      "step": "2 / 6 단계",
+      "title": "소셜 세계를 연결하세요",
+      "quote": "\"많은 탱고 댄서들이 이미 Facebook을 통해 서로 알고 있습니다. 프로필을 연결하면 네트워크 내의 댄서가 여기 있는지 보여줄 수 있어 밀롱가에서 익숙한 얼굴을 찾고 더 깊은 관계를 구축하기가 더 쉬워집니다.\"",
+      "cardTitle": "친구 찾기",
+      "cardDescription": "Facebook은 이미 알고 있는 댄서와 매칭하는 데 도움이 되어 처음부터 시작할 필요가 없습니다.",
+      "facebookLabel": "Facebook 프로필 URL (선택사항)",
+      "facebookPlaceholder": "https://www.facebook.com/your.profile",
+      "helperText": "다른 커뮤니티와의 다리 역할을 하고 알고 있는 댄서와 매칭하는 데 사용합니다.",
+      "toast": {
+        "errorTitle": "오류",
+        "errorDescription": "프로필 정보 저장에 실패했습니다"
+      }
+    },
+    "navigation": {
+      "back": "뒤로",
+      "next": "다음",
+      "skip": "건너뛰기",
+      "finish": "완료",
+      "saving": "저장 중...",
+      "continue": "계속"
+    },
+    "city": {
+      "pageTitle": "도시 선택",
+      "seoTitle": "도시 선택 - Mundo Tango",
+      "seoDescription": "지역 탱고 댄서와 연결하기 위해 홈 도시를 선택하세요",
+      "step": "1 / 6 단계",
+      "title": "어디서 춤을 추시나요?",
+      "subtitle": "지역 댄서들과 연결하세요",
+      "cardTitle": "홈 도시",
+      "cardDescription": "지역 이벤트와 댄서를 보여주는 데 도움이 됩니다",
+      "searchLabel": "도시 검색",
+      "searchPlaceholder": "도시 이름 입력...",
+      "eventSite": {
+        "help": "인기 탱고 목적지에서 선택"
+      },
+      "errors": {
+        "required": "도시가 필요합니다",
+        "selectCity": "홈 도시를 선택해 주세요"
+      },
+      "toast": {
+        "sourceAdded": "소스 추가됨!",
+        "submittedForReview": "검토를 위해 제출됨",
+        "trackingEvents": "해당 사이트의 이벤트 추적을 시작합니다",
+        "thankYou": "감사합니다! 제안이 검토를 위해 제출되었습니다.",
+        "errorTitle": "오류",
+        "suggestionFailed": "제안 제출에 실패했습니다",
+        "saveFailed": "도시 저장에 실패했습니다"
+      }
+    },
+    "photo": {
+      "pageTitle": "사진 업로드",
+      "seoTitle": "프로필 사진 추가 - Mundo Tango",
+      "seoDescription": "프로필 사진을 업로드하세요",
+      "step": "3 / 6 단계",
+      "title": "프로필 사진 추가",
+      "subtitle": "커뮤니티에서 다른 사람들이 알아볼 수 있게 해주세요",
+      "cardTitle": "프로필 사진",
+      "cardDescription": "다른 사람들이 알아볼 수 있게 해줍니다 (이 단계는 건너뛸 수 있습니다)",
+      "previewAlt": "프로필 미리보기",
+      "dropHere": "여기에 사진을 놓으세요",
+      "or": "또는",
+      "browseFiles": "파일 찾아보기",
+      "fileTypes": "PNG, JPG (최대 5MB)",
+      "photoSelected": "사진이 선택되었습니다!",
+      "uploading": "업로드 중...",
+      "errors": {
+        "invalidFile": "유효하지 않은 파일",
+        "selectImage": "이미지 파일을 선택해 주세요",
+        "fileTooLarge": "파일이 너무 큽니다",
+        "sizeLimit": "5MB 미만의 이미지를 선택해 주세요",
+        "uploadFailed": "업로드 실패",
+        "tryAgain": "사진 업로드에 실패했습니다. 다시 시도해 주세요.",
+        "skipFailed": "건너뛰기에 실패했습니다. 다시 시도해 주세요."
+      }
+    },
+    "languages": {
+      "pageTitle": "언어",
+      "seoTitle": "사용 언어 - Mundo Tango",
+      "seoDescription": "어떤 언어를 사용하는지 알려주세요",
+      "step": "5 / 6 단계",
+      "title": "어떤 언어를 사용하시나요?",
+      "subtitle": "자신의 언어로 댄서들과 연결하세요",
+      "cardTitle": "사용 언어",
+      "cardDescription": "주 언어와 추가 언어를 선택해 주세요",
+      "primaryLabel": "주 언어",
+      "primaryHint": "사이트 표시 언어로도 설정됩니다",
+      "primaryPlaceholder": "주 언어를 선택하세요",
+      "additionalLabel": "추가 언어 (선택사항)",
+      "errors": {
+        "required": "주 언어가 필요합니다",
+        "selectPrimary": "주 언어를 선택해 주세요",
+        "saveFailed": "언어 저장에 실패했습니다",
+        "saveFailedTitle": "언어 저장 실패"
+      }
+    },
+    "roles": {
+      "pageTitle": "탱고 역할",
+      "seoTitle": "탱고 역할 - Mundo Tango",
+      "seoDescription": "탱고 여정에 대해 알려주세요",
+      "step": "2 / 6 단계",
+      "title": "어떤 역할을 하시나요?",
+      "subtitle": "해당하는 모든 것을 선택하세요",
+      "cardTitle": "탱고 정체성",
+      "cardDescription": "탱고 세계에 어떻게 참여하는지 알려주세요"
+    },
+    "experience": {
+      "pageTitle": "춤 경험",
+      "seoTitle": "춤 경험 - Mundo Tango",
+      "seoDescription": "춤 경험 수준을 공유하세요",
+      "step": "4 / 6 단계",
+      "title": "춤 경험",
+      "subtitle": "적합한 댄서와 매칭하는 데 도움이 됩니다"
+    },
+    "hobbies": {
+      "pageTitle": "관심사",
+      "seoTitle": "관심사 - Mundo Tango",
+      "seoDescription": "관심사에 대해 알려주세요",
+      "step": "6 / 6 단계",
+      "title": "관심사가 무엇인가요?",
+      "subtitle": "관심 있는 주제를 선택하세요",
+      "helpText": "피드를 개인화하려면 3개 이상의 관심사를 선택하세요",
+      "selectedCount": "{{count}}개 선택됨",
+      "finishing": "완료 중...",
+      "completeSetup": "설정 완료",
+      "searchPlaceholder": "커뮤니티 검색 또는 새로 추가...",
+      "categories": {
+        "fitness": {
+          "label": "피트니스 & 스포츠"
+        },
+        "tech": {
+          "label": "테크 & 혁신"
+        },
+        "spirituality": {
+          "label": "영성 & 성장"
+        },
+        "yoga": {
+          "label": "요가 & 웰니스"
+        },
+        "music": {
+          "label": "음악"
+        },
+        "photography": {
+          "label": "사진 & 영상"
+        },
+        "art": {
+          "label": "예술 & 창작"
+        },
+        "reading": {
+          "label": "독서 & 글쓰기"
+        },
+        "travel": {
+          "label": "여행 & 모험"
+        },
+        "cooking": {
+          "label": "요리 & 음식"
+        },
+        "wine": {
+          "label": "와인 & 음료"
+        },
+        "gaming": {
+          "label": "게임"
+        },
+        "outdoors": {
+          "label": "야외 활동"
+        },
+        "snow": {
+          "label": "설상 스포츠"
+        },
+        "cycling": {
+          "label": "사이클링"
+        },
+        "water": {
+          "label": "수상 스포츠"
+        },
+        "nature": {
+          "label": "자연 & 정원"
+        },
+        "movies": {
+          "label": "영화 & 엔터테인먼트"
+        },
+        "pets": {
+          "label": "반려동물"
+        },
+        "social": {
+          "label": "소셜 & 커뮤니티"
+        }
+      },
+      "items": {
+        "fitness_gym": "헬스 & 웨이트",
+        "fitness_running": "러닝",
+        "fitness_crossfit": "크로스핏",
+        "fitness_martial_arts": "무술",
+        "fitness_tennis": "테니스",
+        "fitness_soccer": "축구",
+        "fitness_basketball": "농구",
+        "fitness_fencing": "펜싱",
+        "tech_coding": "코딩 & 개발",
+        "tech_ai": "AI & 미래 기술",
+        "tech_crypto": "Web3 & 암호화폐",
+        "tech_gaming": "게임 문화",
+        "spirit_meditation": "명상",
+        "spirit_astrology": "점성술",
+        "spirit_philosophy": "철학",
+        "spirit_community": "커뮤니티 빌딩",
+        "yoga_hatha": "하타 요가",
+        "yoga_vinyasa": "빈야사 플로우",
+        "yoga_meditation": "명상",
+        "yoga_pilates": "필라테스",
+        "yoga_breathwork": "호흡법",
+        "music_listening": "음악 감상",
+        "music_concerts": "라이브 콘서트",
+        "music_piano": "피아노",
+        "music_guitar": "기타",
+        "music_singing": "노래",
+        "music_dj": "DJ",
+        "music_production": "음악 제작",
+        "photo_portrait": "인물 사진",
+        "photo_landscape": "풍경 사진",
+        "photo_street": "스트리트 사진",
+        "photo_video": "영상 촬영",
+        "photo_editing": "사진 편집",
+        "art_painting": "회화",
+        "art_drawing": "드로잉",
+        "art_sculpture": "조각",
+        "art_digital": "디지털 아트",
+        "art_crafts": "공예 & DIY",
+        "art_pottery": "도예",
+        "reading_fiction": "소설",
+        "reading_nonfiction": "논픽션",
+        "reading_poetry": "시",
+        "reading_writing": "창작 글쓰기",
+        "reading_journals": "저널링",
+        "travel_backpacking": "배낭여행",
+        "travel_luxury": "럭셔리 여행",
+        "travel_cultural": "문화 관광",
+        "travel_road_trips": "로드 트립",
+        "travel_solo": "혼자 여행",
+        "cooking_home": "가정 요리",
+        "cooking_baking": "베이킹",
+        "cooking_gourmet": "고급 요리",
+        "cooking_international": "세계 요리",
+        "cooking_healthy": "건강식",
+        "wine_tasting": "와인 테이스팅",
+        "wine_cocktails": "칵테일",
+        "wine_coffee": "커피",
+        "wine_tea": "차 문화",
+        "wine_brewing": "홈 브루잉",
+        "gaming_video": "비디오 게임",
+        "gaming_board": "보드 게임",
+        "gaming_card": "카드 게임",
+        "gaming_tabletop": "테이블탑 RPG",
+        "gaming_esports": "e스포츠",
+        "outdoor_hiking": "하이킹",
+        "outdoor_camping": "캠핑",
+        "outdoor_climbing": "암벽 등반",
+        "outdoor_fishing": "낚시",
+        "outdoor_kayaking": "카약",
+        "outdoor_surfing": "서핑",
+        "snow_skiing": "스키",
+        "snow_snowboard": "스노보드",
+        "snow_crosscountry": "크로스컨트리 스키",
+        "snow_ice_skating": "아이스 스케이팅",
+        "snow_sledding": "썰매",
+        "snow_snowshoeing": "스노슈잉",
+        "cycling_road": "로드 사이클링",
+        "cycling_mountain": "산악 자전거",
+        "cycling_urban": "도시 자전거",
+        "cycling_touring": "자전거 투어링",
+        "water_swimming": "수영",
+        "water_scuba": "스쿠버 다이빙",
+        "water_snorkel": "스노클링",
+        "water_sailing": "세일링",
+        "water_paddleboard": "패들보드",
+        "nature_gardening": "정원 가꾸기",
+        "nature_birdwatching": "새 관찰",
+        "nature_botany": "식물 수집",
+        "nature_wildlife": "야생 동물 사진",
+        "movies_cinema": "영화",
+        "movies_tv": "TV 시리즈",
+        "movies_documentary": "다큐멘터리",
+        "movies_theater": "연극",
+        "movies_standup": "스탠드업 코미디",
+        "pets_dogs": "강아지",
+        "pets_cats": "고양이",
+        "pets_exotic": "이국적인 반려동물",
+        "pets_horses": "승마",
+        "pets_rescue": "동물 구조",
+        "social_volunteering": "자원봉사",
+        "social_meetups": "밋업",
+        "social_networking": "네트워킹",
+        "social_languages": "언어 교환"
+      },
+      "success": {
+        "completeTitle": "Mundo Tango에 오신 것을 환영합니다!",
+        "completeDesc": "프로필이 준비되었습니다. 탐험을 시작하세요!",
+        "waitlistTitle": "프로필 완료!",
+        "waitlistDesc": "계정이 활성화되면 알려드립니다"
+      },
+      "errors": {
+        "saveFailed": "저장에 실패했습니다. 다시 시도해 주세요."
+      }
+    },
+    "legal": {
+      "title": "커뮤니티 가이드라인",
+      "subtitle": "약관을 검토하고 동의해 주세요",
+      "legalDocsTitle": "법적 문서",
+      "legalDocsDescription": "이용약관과 개인정보 보호정책을 검토해 주세요",
+      "termsOfService": {
+        "label": "이용약관에 동의합니다",
+        "description": "Mundo Tango 이용에 관한 약관",
+        "link": "이용약관 읽기"
+      },
+      "privacyPolicy": {
+        "label": "개인정보 보호정책에 동의합니다",
+        "description": "데이터 처리 방법",
+        "link": "개인정보 보호정책 읽기"
+      },
+      "cocTitle": "커뮤니티 행동 강령",
+      "cocDescription": "존중하는 커뮤니티 유지에 도움을 주세요",
+      "coc": {
+        "respectful": {
+          "title": "존중하기",
+          "description": "모든 사람을 존엄과 예의로 대하세요"
+        },
+        "inclusive": {
+          "title": "포용하기",
+          "description": "모든 수준과 배경의 댄서를 환영하세요"
+        },
+        "authentic": {
+          "title": "진정성 있게",
+          "description": "실명과 정확한 정보를 사용하세요"
+        },
+        "consent": {
+          "title": "동의 존중",
+          "description": "춤을 추기 전에 항상 물어보고 경계를 존중하세요"
+        },
+        "noHarassment": {
+          "title": "괴롭힘 금지",
+          "description": "괴롭힘이나 따돌림은 무관용"
+        },
+        "noSpam": {
+          "title": "스팸 금지",
+          "description": "원치 않는 홍보를 보내지 마세요"
+        },
+        "noDiscrimination": {
+          "title": "차별 금지",
+          "description": "어떤 종류의 차별도 용납하지 않습니다"
+        },
+        "privacy": {
+          "title": "개인정보 보호",
+          "description": "동의 없이 다른 사람의 정보를 공유하지 마세요"
+        },
+        "safety": {
+          "title": "안전 우선",
+          "description": "안전하지 않은 행동은 즉시 신고하세요"
+        },
+        "laws": {
+          "title": "법률 준수",
+          "description": "모든 관련 법률을 준수하세요"
+        },
+        "report": {
+          "title": "문제 신고",
+          "description": "위반 사항을 신고하여 도와주세요"
+        },
+        "support": {
+          "title": "서로 지원",
+          "description": "동료 댄서의 성장을 도와주세요"
+        }
+      },
+      "acceptAll": "모두 동의하고 계속",
+      "accepting": "동의 중...",
+      "incompleteAlert": "모든 필수 약관에 동의해 주세요",
+      "success": {
+        "title": "환영합니다!",
+        "description": "커뮤니티 가이드라인에 동의하셨습니다"
+      },
+      "errors": {
+        "failed": "저장에 실패했습니다. 다시 시도해 주세요."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "대기자 명단",
+      "seoTitle": "대기자 명단에 있습니다 - Mundo Tango",
+      "seoDescription": "계정 활성화 대기 중입니다",
+      "title": "대기자 명단에 있습니다!",
+      "welcomeMessage": "환영합니다, {{name}}님!",
+      "defaultName": "댄서",
+      "profileComplete": "프로필 완료",
+      "profileCompleteDesc": "프로필이 준비되었습니다",
+      "emailNotice": "계정이 준비되면 {{email}}로 이메일을 보내드립니다",
+      "whenReady": "계정이 준비되면 알려드립니다.",
+      "whileYouWait": "기다리시는 동안 성장에 도움을 주세요:",
+      "volunteerButton": "자원봉사자 되기",
+      "supportButton": "Mundo Tango 지원"
+    },
+    "tour": {
+      "pageTitle": "가이드 투어",
+      "seoTitle": "Mundo Tango 탐험",
+      "seoDescription": "Mundo Tango 사용법 배우기",
+      "skipTour": "투어 건너뛰기",
+      "finish": "투어 완료",
+      "steps": {
+        "feed": "탱고 커뮤니티의 게시물 발견",
+        "events": "밀롱가, 수업, 축제 찾기",
+        "groups": "도시나 관심사별 그룹 가입",
+        "messages": "다른 댄서들과 직접 연결",
+        "profile": "탱고 프로필 커스터마이즈",
+        "createPost": "탱고 순간 공유"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "경험 업그레이드",
+        "subtitle": "Mundo Tango를 최대한 활용하세요",
+        "limitedOffer": "한정 제안",
+        "getStarted": "시작하기",
+        "features": {
+          "connect": {
+            "title": "연결",
+            "description": "모든 댄서에게 직접 메시지"
+          },
+          "visibility": {
+            "title": "가시성",
+            "description": "검색 결과에서 추천"
+          },
+          "events": {
+            "title": "이벤트",
+            "description": "인기 이벤트 우선 액세스"
+          },
+          "grow": {
+            "title": "성장",
+            "description": "프로필 고급 분석"
+          },
+          "premium": {
+            "title": "프리미엄",
+            "description": "독점 프리미엄 기능"
+          }
+        }
+      }
+    }
+  },
+  "login": {
+    "pageName": "로그인",
+    "seo": {
+      "title": "로그인 - Mundo Tango",
+      "description": "Mundo Tango 계정에 로그인하여 글로벌 탱고 커뮤니티와 연결하고, 이벤트를 발견하고, 아르헨티나 탱고에 대한 열정을 공유하세요."
+    },
+    "badge": "다시 오신 것을 환영합니다",
+    "hero": {
+      "heading": "탱고 여정을 계속하세요",
+      "paragraph": "로그인하여 전 세계 댄서들과 연결하고, 이벤트를 발견하고, 열정을 공유하세요"
+    },
+    "stats": {
+      "dancers": "댄서",
+      "events": "이벤트"
+    },
+    "form": {
+      "email": "이메일",
+      "password": "비밀번호",
+      "signIn": "로그인",
+      "signingIn": "로그인 중...",
+      "forgotPassword": "비밀번호를 잊으셨나요?"
+    },
+    "noAccount": "계정이 없으신가요?",
+    "createAccount": "지금 만들기",
+    "toast": {
+      "successTitle": "다시 오신 것을 환영합니다!",
+      "successDescription": "성공적으로 로그인했습니다.",
+      "errorTitle": "로그인 실패",
+      "errorDescription": "잘못된 자격 증명입니다"
+    }
+  },
   "home": {
+    "pageName": "Home",
+    "pageLayoutTitle": "Where Tango Meets Community",
+    "seo": {
+      "title": "Mundo Tango - Connect with the Global Tango Community",
+      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+    },
+    "hero": {
+      "badge": "Welcome to the Global Tango Community",
+      "heading": "Where Tango Meets Community",
+      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
+      "getStarted": "Get Started Free",
+      "volunteer": "Volunteer to Help Build MT"
+    },
+    "howItWorks": {
+      "heading": "How It Works",
+      "description": "Start your tango journey in three simple steps",
+      "step1": {
+        "title": "Create Your Profile",
+        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+      },
+      "step2": {
+        "title": "Discover & Connect",
+        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+      },
+      "step3": {
+        "title": "Dance & Grow",
+        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+      }
+    },
+    "features": {
+      "heading": "Everything You Need",
+      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "community": {
+        "badge": "Community",
+        "heading": "Connect with Dancers Worldwide",
+        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "items": {
+          "follow": "Follow dancers and build your network",
+          "groups": "Join groups based on interests and location",
+          "messaging": "Real-time messaging and chat features",
+          "discover": "Discover dancers visiting your city"
+        }
+      },
+      "events": {
+        "badge": "Events",
+        "heading": "Discover Events Everywhere",
+        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "items": {
+          "calendar": "Comprehensive event calendar",
+          "rsvp": "RSVP and ticket booking",
+          "notifications": "Event notifications and reminders",
+          "map": "Interactive map of venues"
+        }
+      },
+      "cards": {
+        "liveStreaming": {
+          "title": "Live Streaming",
+          "description": "Watch milongas worldwide in real-time"
+        },
+        "musicLibrary": {
+          "title": "Music Library",
+          "description": "Curated tango playlists and guides"
+        },
+        "verifiedTeachers": {
+          "title": "Verified Teachers",
+          "description": "Learn from certified instructors"
+        },
+        "travelPlanner": {
+          "title": "Travel Planner",
+          "description": "Plan trips and find hosts globally"
+        }
+      }
+    },
+    "testimonials": {
+      "heading": "What Dancers Say",
+      "description": "Join thousands of satisfied dancers worldwide",
+      "items": {
+        "testimonial1": {
+          "name": "Maria Rodriguez",
+          "location": "Buenos Aires, Argentina",
+          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+        },
+        "testimonial2": {
+          "name": "James Chen",
+          "location": "San Francisco, USA",
+          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+        },
+        "testimonial3": {
+          "name": "Elena Volkov",
+          "location": "Moscow, Russia",
+          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+        }
+      }
+    },
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "description": "Everything you need to know about Mundo Tango",
+      "items": {
+        "q1": {
+          "question": "What is Mundo Tango?",
+          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+        },
+        "q2": {
+          "question": "Is Mundo Tango free to use?",
+          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+        },
+        "q3": {
+          "question": "How do I find tango events near me?",
+          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+        },
+        "q4": {
+          "question": "Can I connect with other dancers?",
+          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+        },
+        "q5": {
+          "question": "How do I find tango teachers?",
+          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+        },
+        "q6": {
+          "question": "What makes Mundo Tango different?",
+          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+        }
+      }
+    },
+    "cta": "시작하기",
     "title": "Mundo Tango에 오신 것을 환영합니다",
-    "subtitle": "글로벌 탱고 커뮤니티와 연결하세요",
-    "cta": "시작하기"
+    "subtitle": "글로벌 탱고 커뮤니티와 연결하세요"
+  },
+  "feed": {
+    "title": "Feed",
+    "description": "Stay updated with the latest from the tango community",
+    "filters": {
+      "all": "All Posts",
+      "following": "Following",
+      "popular": "Popular",
+      "recent": "Recent"
+    },
+    "createPost": "What's on your mind?",
+    "noPost": "No posts to display"
   },
   "events": {
     "title": "탱고 이벤트",
+    "description": "Discover tango events near you",
+    "upcoming": "Upcoming Events",
+    "past": "Past Events",
+    "filters": {
+      "all": "All Events",
+      "milongas": "Milongas",
+      "workshops": "Workshops",
+      "festivals": "Festivals",
+      "classes": "Classes"
+    },
+    "noEvents": "이벤트가 없습니다",
     "subtitle": "밀롱가, 페스티벌, 워크샵 발견",
     "filterByCity": "도시로 필터",
-    "filterByType": "유형으로 필터",
-    "noEvents": "이벤트가 없습니다"
+    "filterByType": "유형으로 필터"
+  },
+  "profile": {
+    "title": "프로필",
+    "description": "View and edit your profile",
+    "editProfile": "프로필 편집",
+    "tabs": {
+      "posts": "Posts",
+      "photos": "Photos",
+      "videos": "Videos",
+      "events": "Events",
+      "friends": "Friends"
+    },
+    "stats": {
+      "posts": "Posts",
+      "followers": "Followers",
+      "following": "Following",
+      "events": "Events Attended"
+    },
+    "followers": "팔로워",
+    "following": "팔로잉",
+    "posts": "게시물",
+    "about": "소개"
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Chat with your tango connections",
+    "newMessage": "New Message",
+    "searchConversations": "Search conversations",
+    "noMessages": "No messages yet",
+    "startConversation": "Start a conversation"
+  },
+  "teachers": {
+    "title": "Tango Teachers",
+    "description": "Find and connect with tango teachers",
+    "filters": {
+      "all": "All Teachers",
+      "featured": "Featured",
+      "nearby": "Nearby"
+    },
+    "viewProfile": "View Profile",
+    "bookLesson": "Book a Lesson"
+  },
+  "venues": {
+    "title": "Tango Venues",
+    "description": "Discover tango venues worldwide",
+    "filters": {
+      "all": "All Venues",
+      "milongas": "Milongas",
+      "schools": "Dance Schools",
+      "theaters": "Theaters"
+    },
+    "getDirections": "Get Directions"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account settings",
+    "sections": {
+      "account": "Account Settings",
+      "profile": "Profile",
+      "privacy": "Privacy",
+      "notifications": "Notifications",
+      "security": "Security",
+      "billing": "Billing",
+      "preferences": "Preferences"
+    }
+  },
+  "lifeCEO": {
+    "title": "Life CEO Dashboard",
+    "description": "Your personal AI assistant for life management",
+    "agents": {
+      "health": "Health Agent",
+      "fitness": "Fitness Agent",
+      "nutrition": "Nutrition Agent",
+      "finance": "Finance Agent",
+      "career": "Career Agent",
+      "productivity": "Productivity Agent",
+      "relationships": "Relationship Agent",
+      "learning": "Learning Agent"
+    }
+  },
+  "marketplace": {
+    "title": "Marketplace",
+    "description": "Buy and sell tango-related items",
+    "categories": {
+      "shoes": "Dance Shoes",
+      "clothing": "Clothing",
+      "music": "Music",
+      "accessories": "Accessories",
+      "other": "Other"
+    }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "description": "Platform administration and management",
+    "sections": {
+      "overview": "Overview",
+      "users": "Users",
+      "content": "Content",
+      "reports": "Reports",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    }
   },
   "cities": {
     "title": "탱고 도시",
@@ -25,22 +910,6 @@
     "leave": "그룹 탈퇴",
     "members": "멤버",
     "posts": "게시물"
-  },
-  "profile": {
-    "title": "프로필",
-    "editProfile": "프로필 편집",
-    "followers": "팔로워",
-    "following": "팔로잉",
-    "posts": "게시물",
-    "about": "소개"
-  },
-  "login": {
-    "title": "로그인",
-    "email": "이메일",
-    "password": "비밀번호",
-    "forgotPassword": "비밀번호를 잊으셨나요?",
-    "noAccount": "계정이 없으신가요?",
-    "signUp": "회원가입"
   },
   "signup": {
     "title": "계정 만들기",

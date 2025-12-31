@@ -1,33 +1,639 @@
 {
-  "login": {
-    "pageName": "Login",
+  "register": {
+    "pageName": "Đăng ký",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Tham gia Mundo Tango - Tạo tài khoản",
+      "description": "Tạo tài khoản Mundo Tango và tham gia cộng đồng tango Argentina toàn cầu. Kết nối với các vũ công, khám phá sự kiện và chia sẻ đam mê với tango."
     },
-    "badge": "Welcome Back",
+    "badge": {
+      "welcomeFamily": "Chào mừng đến với gia đình",
+      "beginJourney": "Bắt đầu hành trình của bạn",
+      "joinCommunity": "Tham gia cộng đồng"
+    },
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "youreIn": "Bạn đã tham gia!",
+      "joinMundoTango": "Tham gia Mundo Tango",
+      "description": "Kết nối với vũ công trên toàn thế giới, khám phá milonga và đắm chìm trong thế giới đầy đam mê của tango Argentina",
+      "waitlistDescription": "Chào mừng đến với cộng đồng Mundo Tango. Chúng tôi đang chuẩn bị tài khoản và sẽ thông báo cho bạn sớm!"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "{{count}}+ vũ công",
+      "events": "{{count}}+ sự kiện",
+      "cities": "{{count}} thành phố"
+    },
+    "form": {
+      "fullName": "Họ tên",
+      "fullNamePlaceholder": "Nguyễn Văn A",
+      "email": "Email",
+      "emailPlaceholder": "nguyenvana@example.com",
+      "username": "Tên người dùng",
+      "usernamePlaceholder": "nguyenvana_tango",
+      "password": "Mật khẩu",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "inviteOnlyNotice": "Hiện tại chỉ đăng ký theo lời mời. Hoàn thành biểu mẫu này để tham gia danh sách chờ và chúng tôi sẽ thông báo khi tài khoản sẵn sàng.",
+      "acceptTermsPrefix": "Tôi đồng ý với",
+      "termsAndConditions": "Điều khoản & Điều kiện"
+    },
+    "validation": {
+      "emailTaken": "Email này đã được đăng ký",
+      "emailAvailable": "Email có thể sử dụng!",
+      "usernameTaken": "Tên người dùng đã được sử dụng. Thử {{suggestion}}",
+      "usernameAvailable": "Tên người dùng có thể sử dụng!",
+      "passwordsMatch": "Mật khẩu khớp",
+      "passwordsDontMatch": "Mật khẩu không khớp"
+    },
+    "passwordStrength": {
+      "weak": "Yếu",
+      "medium": "Trung bình",
+      "strong": "Mạnh",
+      "veryStrong": "Rất mạnh"
+    },
+    "inviteCode": {
+      "label": "Có mã mời? (Tùy chọn)",
+      "placeholder": "Nhập mã mời để truy cập ngay",
+      "accepted": "Mã đã được chấp nhận! Tài khoản sẽ được kích hoạt ngay.",
+      "noWorries": "Đừng lo! Hoàn thành biểu mẫu bên dưới để tham gia danh sách chờ."
+    },
+    "waitlist": {
+      "welcomeUser": "Chào mừng, {{name}}!",
+      "defaultName": "Vũ công",
+      "onTheList": "Bạn đã có trong danh sách. Chúng tôi sẽ email đến",
+      "whenReady": "khi tài khoản sẵn sàng.",
+      "helpUsGrow": "Trong khi chờ đợi, hãy giúp chúng tôi phát triển",
+      "volunteerWithUs": "Tình nguyện với chúng tôi",
+      "supportMundoTango": "Ủng hộ Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Đang tạo tài khoản...",
+      "joining": "Đang tham gia...",
+      "createAccount": "Tạo tài khoản",
+      "joinMundoTango": "Tham gia Mundo Tango"
+    },
+    "alreadyHaveAccount": "Đã có tài khoản?",
+    "signIn": "Đăng nhập",
+    "toast": {
+      "invalidCode": {
+        "title": "Mã không hợp lệ",
+        "description": "Vui lòng nhập mã xác minh 6 chữ số hợp lệ."
+      },
+      "verified": {
+        "title": "Email đã xác minh!",
+        "description": "Chào mừng đến Mundo Tango! Đang bắt đầu hướng dẫn..."
+      },
+      "verifyError": {
+        "title": "Xác minh thất bại",
+        "description": "Mã không hợp lệ hoặc đã hết hạn. Vui lòng thử lại."
+      },
+      "error": {
+        "title": "Lỗi",
+        "description": "Xác minh email thất bại. Vui lòng thử lại."
+      },
+      "tooMany": {
+        "title": "Quá nhiều yêu cầu",
+        "description": "Vui lòng đợi vài phút trước khi thử lại."
+      },
+      "codeSent": {
+        "title": "Đã gửi mã!",
+        "description": "Vui lòng kiểm tra hộp thư để nhận mã mới."
+      },
+      "resendError": {
+        "description": "Gửi lại mã thất bại. Vui lòng thử lại."
+      },
+      "termsRequired": {
+        "title": "Cần chấp nhận điều khoản",
+        "description": "Vui lòng chấp nhận Điều khoản & Điều kiện"
+      },
+      "passwordMismatch": {
+        "title": "Mật khẩu không khớp",
+        "description": "Vui lòng đảm bảo cả hai mật khẩu giống nhau"
+      },
+      "weakPassword": {
+        "title": "Mật khẩu yếu",
+        "description": "Vui lòng chọn mật khẩu mạnh hơn"
+      },
+      "checkEmail": {
+        "title": "Kiểm tra email",
+        "description": "Chúng tôi đã gửi mã xác minh 6 chữ số. Vui lòng kiểm tra hộp thư."
+      },
+      "registrationFailed": {
+        "title": "Đăng ký thất bại"
+      },
+      "signupFailed": {
+        "title": "Không thể hoàn tất đăng ký"
+      },
+      "tryAgain": "Vui lòng thử lại"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Chào mừng",
+      "seoTitle": "Chào mừng đến Mundo Tango",
+      "seoDescription": "Bắt đầu hành trình tango với Mundo Tango",
+      "badge": "Thiết lập nhanh",
+      "title": "Chào mừng đến Mundo Tango",
+      "subtitle": "Hãy thiết lập hồ sơ để bạn có thể kết nối với cộng đồng tango toàn cầu",
+      "duration": "Mất khoảng 2 phút",
+      "stepIndicator": "Bước {{current}} / {{total}}",
+      "getStarted": "Bắt đầu",
+      "profileTitle": "Hành trình tango của bạn bắt đầu",
+      "profileSubtitle": "Hãy cho chúng tôi biết về bạn",
+      "features": {
+        "city": {
+          "title": "Chọn thành phố",
+          "description": "Kết nối với cộng đồng tango địa phương"
+        },
+        "roles": {
+          "title": "Cho chúng tôi biết vai trò của bạn",
+          "description": "Vũ công, giáo viên, DJ, tổ chức, hay tất cả?"
+        },
+        "events": {
+          "title": "Khám phá sự kiện",
+          "description": "Tìm milonga, lớp học và lễ hội gần bạn"
+        },
+        "journey": {
+          "title": "Chia sẻ hành trình",
+          "description": "Kết nối với vũ công cùng trình độ"
+        },
+        "facebook": {
+          "title": "Kết nối Facebook",
+          "description": "Liên kết hồ sơ Facebook để tìm bạn bè trong cộng đồng"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "Kết nối mạng xã hội",
+      "seoTitle": "Kết nối thế giới xã hội - Mundo Tango",
+      "seoDescription": "Liên kết hồ sơ mạng xã hội để tìm bạn bè trong cộng đồng tango.",
+      "step": "Bước 2 / 6",
+      "title": "Kết nối thế giới xã hội của bạn",
+      "quote": "\"Nhiều vũ công tango đã biết nhau qua Facebook. Bằng cách liên kết hồ sơ, chúng tôi có thể hiển thị những vũ công trong mạng lưới của bạn đã có mặt ở đây - giúp bạn dễ dàng tìm thấy những gương mặt quen thuộc tại milonga và xây dựng kết nối sâu hơn.\"",
+      "cardTitle": "Tìm bạn bè của bạn",
+      "cardDescription": "Facebook giúp chúng tôi kết nối bạn với những vũ công bạn có thể đã biết, để bạn không phải bắt đầu từ đầu.",
+      "facebookLabel": "URL hồ sơ Facebook (Tùy chọn)",
+      "facebookPlaceholder": "https://www.facebook.com/your.profile",
+      "helperText": "Chúng tôi sử dụng điều này như cầu nối đến các cộng đồng khác và kết nối bạn với những vũ công bạn có thể biết.",
+      "toast": {
+        "errorTitle": "Lỗi",
+        "errorDescription": "Lưu thông tin hồ sơ thất bại"
+      }
+    },
+    "navigation": {
+      "back": "Quay lại",
+      "next": "Tiếp theo",
+      "skip": "Bỏ qua",
+      "finish": "Hoàn thành",
+      "saving": "Đang lưu...",
+      "continue": "Tiếp tục"
+    },
+    "city": {
+      "pageTitle": "Chọn thành phố",
+      "seoTitle": "Chọn thành phố - Mundo Tango",
+      "seoDescription": "Chọn thành phố của bạn để kết nối với vũ công tango địa phương",
+      "step": "Bước 1 / 6",
+      "title": "Bạn nhảy ở đâu?",
+      "subtitle": "Kết nối với vũ công trong khu vực của bạn",
+      "cardTitle": "Thành phố của bạn",
+      "cardDescription": "Điều này giúp chúng tôi hiển thị sự kiện và vũ công địa phương",
+      "searchLabel": "Tìm thành phố",
+      "searchPlaceholder": "Nhập tên thành phố...",
+      "eventSite": {
+        "help": "Chọn từ các điểm đến tango phổ biến"
+      },
+      "errors": {
+        "required": "Cần chọn thành phố",
+        "selectCity": "Vui lòng chọn thành phố của bạn"
+      },
+      "toast": {
+        "sourceAdded": "Đã thêm nguồn!",
+        "submittedForReview": "Đã gửi để xem xét",
+        "trackingEvents": "Chúng tôi sẽ bắt đầu theo dõi sự kiện từ trang web đó",
+        "thankYou": "Cảm ơn! Đề xuất của bạn đã được gửi để xem xét.",
+        "errorTitle": "Lỗi",
+        "suggestionFailed": "Gửi đề xuất thất bại",
+        "saveFailed": "Lưu thành phố thất bại"
+      }
+    },
+    "photo": {
+      "pageTitle": "Tải ảnh lên",
+      "seoTitle": "Thêm ảnh đại diện - Mundo Tango",
+      "seoDescription": "Tải lên ảnh đại diện của bạn",
+      "step": "Bước 3 / 6",
+      "title": "Thêm ảnh đại diện",
+      "subtitle": "Giúp người khác trong cộng đồng nhận ra bạn",
+      "cardTitle": "Ảnh đại diện",
+      "cardDescription": "Giúp người khác nhận ra bạn (bạn có thể bỏ qua bước này)",
+      "previewAlt": "Xem trước ảnh đại diện",
+      "dropHere": "Thả ảnh vào đây",
+      "or": "hoặc",
+      "browseFiles": "Duyệt tệp",
+      "fileTypes": "PNG, JPG tối đa 5MB",
+      "photoSelected": "Đã chọn ảnh!",
+      "uploading": "Đang tải lên...",
+      "errors": {
+        "invalidFile": "Tệp không hợp lệ",
+        "selectImage": "Vui lòng chọn tệp hình ảnh",
+        "fileTooLarge": "Tệp quá lớn",
+        "sizeLimit": "Vui lòng chọn hình ảnh dưới 5MB",
+        "uploadFailed": "Tải lên thất bại",
+        "tryAgain": "Tải ảnh thất bại. Vui lòng thử lại.",
+        "skipFailed": "Bỏ qua thất bại. Vui lòng thử lại."
+      }
+    },
+    "languages": {
+      "pageTitle": "Ngôn ngữ",
+      "seoTitle": "Ngôn ngữ của bạn - Mundo Tango",
+      "seoDescription": "Cho chúng tôi biết bạn nói ngôn ngữ nào",
+      "step": "Bước 5 / 6",
+      "title": "Bạn nói ngôn ngữ nào?",
+      "subtitle": "Kết nối với vũ công bằng ngôn ngữ của bạn",
+      "cardTitle": "Ngôn ngữ của bạn",
+      "cardDescription": "Chọn ngôn ngữ chính và các ngôn ngữ bổ sung bạn nói",
+      "primaryLabel": "Ngôn ngữ chính",
+      "primaryHint": "Điều này cũng sẽ đặt ngôn ngữ hiển thị trang web",
+      "primaryPlaceholder": "Chọn ngôn ngữ chính",
+      "additionalLabel": "Ngôn ngữ bổ sung (Tùy chọn)",
+      "errors": {
+        "required": "Cần ngôn ngữ chính",
+        "selectPrimary": "Vui lòng chọn ngôn ngữ chính",
+        "saveFailed": "Lưu ngôn ngữ thất bại",
+        "saveFailedTitle": "Lưu ngôn ngữ thất bại"
+      }
+    },
+    "roles": {
+      "pageTitle": "Vai trò tango",
+      "seoTitle": "Vai trò tango của bạn - Mundo Tango",
+      "seoDescription": "Cho chúng tôi biết về hành trình tango của bạn",
+      "step": "Bước 2 / 6",
+      "title": "Bạn đảm nhận vai trò nào?",
+      "subtitle": "Chọn tất cả những gì áp dụng cho bạn",
+      "cardTitle": "Bản sắc tango của bạn",
+      "cardDescription": "Giúp người khác biết bạn tham gia thế giới tango như thế nào"
+    },
+    "experience": {
+      "pageTitle": "Kinh nghiệm nhảy",
+      "seoTitle": "Kinh nghiệm nhảy của bạn - Mundo Tango",
+      "seoDescription": "Chia sẻ trình độ kinh nghiệm nhảy của bạn",
+      "step": "Bước 4 / 6",
+      "title": "Kinh nghiệm nhảy của bạn",
+      "subtitle": "Giúp chúng tôi kết nối bạn với vũ công phù hợp"
+    },
+    "hobbies": {
+      "pageTitle": "Sở thích",
+      "seoTitle": "Sở thích của bạn - Mundo Tango",
+      "seoDescription": "Cho chúng tôi biết về sở thích của bạn",
+      "step": "Bước 6 / 6",
+      "title": "Sở thích của bạn là gì?",
+      "subtitle": "Chọn các chủ đề bạn quan tâm",
+      "helpText": "Chọn ít nhất 3 sở thích để cá nhân hóa bảng tin của bạn",
+      "selectedCount": "Đã chọn {{count}}",
+      "finishing": "Đang hoàn thành...",
+      "completeSetup": "Hoàn tất thiết lập",
+      "searchPlaceholder": "Tìm cộng đồng hoặc thêm mới...",
+      "categories": {
+        "fitness": {
+          "label": "Thể dục & Thể thao"
+        },
+        "tech": {
+          "label": "Công nghệ & Đổi mới"
+        },
+        "spirituality": {
+          "label": "Tâm linh & Phát triển"
+        },
+        "yoga": {
+          "label": "Yoga & Sức khỏe"
+        },
+        "music": {
+          "label": "Âm nhạc"
+        },
+        "photography": {
+          "label": "Nhiếp ảnh & Video"
+        },
+        "art": {
+          "label": "Nghệ thuật & Sáng tạo"
+        },
+        "reading": {
+          "label": "Đọc & Viết"
+        },
+        "travel": {
+          "label": "Du lịch & Phiêu lưu"
+        },
+        "cooking": {
+          "label": "Nấu ăn & Ẩm thực"
+        },
+        "wine": {
+          "label": "Rượu & Đồ uống"
+        },
+        "gaming": {
+          "label": "Game"
+        },
+        "outdoors": {
+          "label": "Hoạt động ngoài trời"
+        },
+        "snow": {
+          "label": "Thể thao tuyết"
+        },
+        "cycling": {
+          "label": "Đạp xe"
+        },
+        "water": {
+          "label": "Thể thao dưới nước"
+        },
+        "nature": {
+          "label": "Thiên nhiên & Làm vườn"
+        },
+        "movies": {
+          "label": "Phim & Giải trí"
+        },
+        "pets": {
+          "label": "Thú cưng & Động vật"
+        },
+        "social": {
+          "label": "Xã hội & Cộng đồng"
+        }
+      },
+      "items": {
+        "fitness_gym": "Phòng gym & Tập tạ",
+        "fitness_running": "Chạy bộ",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Võ thuật",
+        "fitness_tennis": "Tennis",
+        "fitness_soccer": "Bóng đá",
+        "fitness_basketball": "Bóng rổ",
+        "fitness_fencing": "Đấu kiếm",
+        "tech_coding": "Lập trình & Phát triển",
+        "tech_ai": "AI & Công nghệ tương lai",
+        "tech_crypto": "Web3 & Tiền điện tử",
+        "tech_gaming": "Văn hóa game",
+        "spirit_meditation": "Thiền",
+        "spirit_astrology": "Chiêm tinh",
+        "spirit_philosophy": "Triết học",
+        "spirit_community": "Xây dựng cộng đồng",
+        "yoga_hatha": "Hatha Yoga",
+        "yoga_vinyasa": "Vinyasa Flow",
+        "yoga_meditation": "Thiền",
+        "yoga_pilates": "Pilates",
+        "yoga_breathwork": "Kỹ thuật thở",
+        "music_listening": "Nghe nhạc",
+        "music_concerts": "Hòa nhạc trực tiếp",
+        "music_piano": "Piano",
+        "music_guitar": "Guitar",
+        "music_singing": "Hát",
+        "music_dj": "DJ",
+        "music_production": "Sản xuất âm nhạc",
+        "photo_portrait": "Chụp chân dung",
+        "photo_landscape": "Chụp phong cảnh",
+        "photo_street": "Chụp đường phố",
+        "photo_video": "Quay video",
+        "photo_editing": "Chỉnh sửa ảnh",
+        "art_painting": "Vẽ tranh",
+        "art_drawing": "Vẽ",
+        "art_sculpture": "Điêu khắc",
+        "art_digital": "Nghệ thuật số",
+        "art_crafts": "Thủ công & DIY",
+        "art_pottery": "Gốm",
+        "reading_fiction": "Tiểu thuyết",
+        "reading_nonfiction": "Phi hư cấu",
+        "reading_poetry": "Thơ",
+        "reading_writing": "Viết sáng tạo",
+        "reading_journals": "Viết nhật ký",
+        "travel_backpacking": "Du lịch ba lô",
+        "travel_luxury": "Du lịch sang trọng",
+        "travel_cultural": "Du lịch văn hóa",
+        "travel_road_trips": "Chuyến đi đường",
+        "travel_solo": "Du lịch một mình",
+        "cooking_home": "Nấu ăn tại nhà",
+        "cooking_baking": "Làm bánh",
+        "cooking_gourmet": "Ẩm thực cao cấp",
+        "cooking_international": "Ẩm thực quốc tế",
+        "cooking_healthy": "Ăn uống lành mạnh",
+        "wine_tasting": "Nếm rượu",
+        "wine_cocktails": "Cocktail",
+        "wine_coffee": "Thưởng thức cà phê",
+        "wine_tea": "Văn hóa trà",
+        "wine_brewing": "Tự ủ bia",
+        "gaming_video": "Video game",
+        "gaming_board": "Board game",
+        "gaming_card": "Card game",
+        "gaming_tabletop": "Tabletop RPG",
+        "gaming_esports": "eSports",
+        "outdoor_hiking": "Leo núi",
+        "outdoor_camping": "Cắm trại",
+        "outdoor_climbing": "Leo đá",
+        "outdoor_fishing": "Câu cá",
+        "outdoor_kayaking": "Chèo kayak",
+        "outdoor_surfing": "Lướt sóng",
+        "snow_skiing": "Trượt tuyết",
+        "snow_snowboard": "Trượt ván tuyết",
+        "snow_crosscountry": "Trượt tuyết băng đồng",
+        "snow_ice_skating": "Trượt băng",
+        "snow_sledding": "Trượt xe tuyết",
+        "snow_snowshoeing": "Đi giày tuyết",
+        "cycling_road": "Đạp xe đường",
+        "cycling_mountain": "Đạp xe leo núi",
+        "cycling_urban": "Đạp xe đô thị",
+        "cycling_touring": "Du lịch xe đạp",
+        "water_swimming": "Bơi",
+        "water_scuba": "Lặn biển",
+        "water_snorkel": "Lặn với ống thở",
+        "water_sailing": "Chèo thuyền buồm",
+        "water_paddleboard": "Ván chèo",
+        "nature_gardening": "Làm vườn",
+        "nature_birdwatching": "Ngắm chim",
+        "nature_botany": "Sưu tập thực vật",
+        "nature_wildlife": "Chụp ảnh động vật hoang dã",
+        "movies_cinema": "Điện ảnh",
+        "movies_tv": "Phim truyền hình",
+        "movies_documentary": "Phim tài liệu",
+        "movies_theater": "Sân khấu",
+        "movies_standup": "Hài độc thoại",
+        "pets_dogs": "Chó",
+        "pets_cats": "Mèo",
+        "pets_exotic": "Thú cưng lạ",
+        "pets_horses": "Cưỡi ngựa",
+        "pets_rescue": "Cứu hộ động vật",
+        "social_volunteering": "Tình nguyện",
+        "social_meetups": "Gặp gỡ",
+        "social_networking": "Kết nối mạng",
+        "social_languages": "Trao đổi ngôn ngữ"
+      },
+      "success": {
+        "completeTitle": "Chào mừng đến Mundo Tango!",
+        "completeDesc": "Hồ sơ của bạn đã sẵn sàng. Bắt đầu khám phá!",
+        "waitlistTitle": "Hồ sơ đã hoàn thành!",
+        "waitlistDesc": "Chúng tôi sẽ thông báo khi tài khoản được kích hoạt"
+      },
+      "errors": {
+        "saveFailed": "Lưu thất bại. Vui lòng thử lại."
+      }
+    },
+    "legal": {
+      "title": "Hướng dẫn cộng đồng",
+      "subtitle": "Vui lòng xem xét và chấp nhận các điều khoản của chúng tôi",
+      "legalDocsTitle": "Tài liệu pháp lý",
+      "legalDocsDescription": "Xem điều khoản dịch vụ và chính sách bảo mật của chúng tôi",
+      "termsOfService": {
+        "label": "Tôi chấp nhận Điều khoản Dịch vụ",
+        "description": "Điều khoản chi phối việc sử dụng Mundo Tango của bạn",
+        "link": "Đọc Điều khoản Dịch vụ"
+      },
+      "privacyPolicy": {
+        "label": "Tôi chấp nhận Chính sách Bảo mật",
+        "description": "Cách chúng tôi xử lý dữ liệu của bạn",
+        "link": "Đọc Chính sách Bảo mật"
+      },
+      "cocTitle": "Quy tắc Ứng xử Cộng đồng",
+      "cocDescription": "Giúp chúng tôi duy trì một cộng đồng tôn trọng",
+      "coc": {
+        "respectful": {
+          "title": "Tôn trọng",
+          "description": "Đối xử với mọi người bằng sự tôn trọng và lịch sự"
+        },
+        "inclusive": {
+          "title": "Hòa nhập",
+          "description": "Chào đón vũ công mọi trình độ và xuất thân"
+        },
+        "authentic": {
+          "title": "Chân thực",
+          "description": "Sử dụng danh tính thật và thông tin trung thực"
+        },
+        "consent": {
+          "title": "Tôn trọng sự đồng ý",
+          "description": "Luôn hỏi trước khi nhảy và tôn trọng ranh giới"
+        },
+        "noHarassment": {
+          "title": "Không quấy rối",
+          "description": "Không khoan dung với quấy rối hoặc bắt nạt"
+        },
+        "noSpam": {
+          "title": "Không spam",
+          "description": "Không gửi quảng cáo không mong muốn"
+        },
+        "noDiscrimination": {
+          "title": "Không phân biệt đối xử",
+          "description": "Chúng tôi không dung thứ bất kỳ hình thức phân biệt đối xử nào"
+        },
+        "privacy": {
+          "title": "Bảo vệ quyền riêng tư",
+          "description": "Không chia sẻ thông tin người khác mà không có sự đồng ý"
+        },
+        "safety": {
+          "title": "Ưu tiên an toàn",
+          "description": "Báo cáo ngay bất kỳ hành vi không an toàn nào"
+        },
+        "laws": {
+          "title": "Tuân thủ luật pháp",
+          "description": "Tuân thủ tất cả các luật áp dụng"
+        },
+        "report": {
+          "title": "Báo cáo vấn đề",
+          "description": "Giúp chúng tôi bằng cách báo cáo vi phạm"
+        },
+        "support": {
+          "title": "Hỗ trợ lẫn nhau",
+          "description": "Giúp các vũ công đồng nghiệp phát triển"
+        }
+      },
+      "acceptAll": "Chấp nhận tất cả & Tiếp tục",
+      "accepting": "Đang chấp nhận...",
+      "incompleteAlert": "Vui lòng chấp nhận tất cả các điều khoản bắt buộc",
+      "success": {
+        "title": "Chào mừng!",
+        "description": "Bạn đã chấp nhận hướng dẫn cộng đồng của chúng tôi"
+      },
+      "errors": {
+        "failed": "Lưu thất bại. Vui lòng thử lại."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Danh sách chờ",
+      "seoTitle": "Bạn đang trong danh sách chờ - Mundo Tango",
+      "seoDescription": "Tài khoản của bạn đang chờ kích hoạt",
+      "title": "Bạn đang trong danh sách chờ!",
+      "welcomeMessage": "Chào mừng, {{name}}!",
+      "defaultName": "Vũ công",
+      "profileComplete": "Hồ sơ đã hoàn thành",
+      "profileCompleteDesc": "Hồ sơ của bạn đã sẵn sàng",
+      "emailNotice": "Chúng tôi sẽ email đến {{email}} khi tài khoản sẵn sàng",
+      "whenReady": "khi tài khoản của bạn sẵn sàng.",
+      "whileYouWait": "Trong khi chờ đợi, hãy giúp chúng tôi phát triển:",
+      "volunteerButton": "Trở thành tình nguyện viên",
+      "supportButton": "Ủng hộ Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "Hướng dẫn",
+      "seoTitle": "Khám phá Mundo Tango",
+      "seoDescription": "Tìm hiểu cách sử dụng Mundo Tango",
+      "skipTour": "Bỏ qua hướng dẫn",
+      "finish": "Hoàn thành hướng dẫn",
+      "steps": {
+        "feed": "Khám phá bài đăng từ cộng đồng tango",
+        "events": "Tìm milonga, lớp học và lễ hội",
+        "groups": "Tham gia nhóm theo thành phố hoặc sở thích",
+        "messages": "Kết nối trực tiếp với vũ công khác",
+        "profile": "Tùy chỉnh hồ sơ tango của bạn",
+        "createPost": "Chia sẻ khoảnh khắc tango của bạn"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Nâng cấp trải nghiệm",
+        "subtitle": "Tận dụng tối đa Mundo Tango",
+        "limitedOffer": "Ưu đãi có hạn",
+        "getStarted": "Bắt đầu",
+        "features": {
+          "connect": {
+            "title": "Kết nối",
+            "description": "Nhắn tin trực tiếp cho bất kỳ vũ công nào"
+          },
+          "visibility": {
+            "title": "Khả năng hiển thị",
+            "description": "Được nổi bật trong kết quả tìm kiếm"
+          },
+          "events": {
+            "title": "Sự kiện",
+            "description": "Ưu tiên truy cập sự kiện phổ biến"
+          },
+          "grow": {
+            "title": "Phát triển",
+            "description": "Phân tích nâng cao cho hồ sơ của bạn"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Tính năng premium độc quyền"
+          }
+        }
+      }
+    }
+  },
+  "login": {
+    "pageName": "Đăng nhập",
+    "seo": {
+      "title": "Đăng nhập - Mundo Tango",
+      "description": "Đăng nhập vào tài khoản Mundo Tango để kết nối với cộng đồng tango toàn cầu, khám phá sự kiện và chia sẻ đam mê với tango Argentina."
+    },
+    "badge": "Chào mừng trở lại",
+    "hero": {
+      "heading": "Tiếp tục hành trình tango của bạn",
+      "paragraph": "Đăng nhập để kết nối với vũ công trên toàn thế giới, khám phá sự kiện và chia sẻ đam mê của bạn"
+    },
+    "stats": {
+      "dancers": "vũ công",
+      "events": "sự kiện"
     },
     "form": {
       "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "password": "Mật khẩu",
+      "signIn": "Đăng nhập",
+      "signingIn": "Đang đăng nhập...",
+      "forgotPassword": "Quên mật khẩu?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Chưa có tài khoản?",
+    "createAccount": "Tạo ngay",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Chào mừng trở lại!",
+      "successDescription": "Bạn đã đăng nhập thành công.",
+      "errorTitle": "Đăng nhập thất bại",
+      "errorDescription": "Thông tin đăng nhập không hợp lệ"
     }
   },
   "home": {
@@ -155,14 +761,9 @@
         }
       }
     },
-    "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
-    }
+    "cta": "Bắt đầu",
+    "title": "Chào mừng đến Mundo Tango",
+    "subtitle": "Kết nối với cộng đồng tango toàn cầu"
   },
   "feed": {
     "title": "Feed",
@@ -177,7 +778,7 @@
     "noPost": "No posts to display"
   },
   "events": {
-    "title": "Events",
+    "title": "Sự kiện Tango",
     "description": "Discover tango events near you",
     "upcoming": "Upcoming Events",
     "past": "Past Events",
@@ -188,12 +789,15 @@
       "festivals": "Festivals",
       "classes": "Classes"
     },
-    "noEvents": "No events found"
+    "noEvents": "Không tìm thấy sự kiện",
+    "subtitle": "Khám phá milonga, lễ hội và workshop",
+    "filterByCity": "Lọc theo thành phố",
+    "filterByType": "Lọc theo loại"
   },
   "profile": {
-    "title": "Profile",
+    "title": "Hồ sơ",
     "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "editProfile": "Chỉnh sửa hồ sơ",
     "tabs": {
       "posts": "Posts",
       "photos": "Photos",
@@ -206,7 +810,11 @@
       "followers": "Followers",
       "following": "Following",
       "events": "Events Attended"
-    }
+    },
+    "followers": "Người theo dõi",
+    "following": "Đang theo dõi",
+    "posts": "Bài đăng",
+    "about": "Giới thiệu"
   },
   "messages": {
     "title": "Messages",
@@ -287,5 +895,36 @@
       "analytics": "Analytics",
       "settings": "Settings"
     }
+  },
+  "cities": {
+    "title": "Thành phố Tango",
+    "subtitle": "Khám phá cộng đồng tango trên toàn thế giới",
+    "members": "Thành viên",
+    "events": "Sự kiện",
+    "viewCity": "Xem thành phố"
+  },
+  "groups": {
+    "title": "Nhóm Tango",
+    "subtitle": "Tham gia cộng đồng địa phương và theo sở thích",
+    "join": "Tham gia nhóm",
+    "leave": "Rời nhóm",
+    "members": "Thành viên",
+    "posts": "Bài đăng"
+  },
+  "signup": {
+    "title": "Tạo tài khoản",
+    "name": "Tên",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "hasAccount": "Đã có tài khoản?",
+    "login": "Đăng nhập"
+  },
+  "proDiscovery": {
+    "title": "Khám phá chuyên gia Tango",
+    "subtitle": "Tìm giáo viên, DJ, nghệ sĩ biểu diễn và hơn thế nữa",
+    "search": "Tìm chuyên gia...",
+    "filterByRole": "Lọc theo vai trò",
+    "filterByCity": "Lọc theo thành phố"
   }
 }

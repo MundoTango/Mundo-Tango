@@ -1,291 +1,863 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "Přihlášení",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Přihlásit se - Mundo Tango",
+      "description": "Přihlaste se ke svému účtu Mundo Tango a připojte se ke světové komunitě tanga, objevujte události a sdílejte svou vášeň pro argentinské tango."
     },
-    "badge": "Welcome Back",
+    "badge": "Vítejte zpět",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Vaše tangová cesta pokračuje",
+      "paragraph": "Přihlaste se a spojte se s tanečníky po celém světě, objevujte události a sdílejte svou vášeň"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "tanečníků",
+      "events": "událostí"
     },
     "form": {
       "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "password": "Heslo",
+      "signIn": "Přihlásit se",
+      "signingIn": "Přihlašování...",
+      "forgotPassword": "Zapomněli jste heslo?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Nemáte účet?",
+    "createAccount": "Vytvořte si jej",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Vítejte zpět!",
+      "successDescription": "Úspěšně jste se přihlásili.",
+      "errorTitle": "Přihlášení selhalo",
+      "errorDescription": "Neplatné přihlašovací údaje",
+      "verificationRequired": {
+        "title": "Vyžadováno ověření emailu",
+        "description": "Zkontrolujte svou emailovou schránku a potvrďte svůj email."
+      },
+      "upgradedTitle": "Účet upgradován!",
+      "upgradedDescription": "Vítejte! Nyní máte plný přístup k Mundo Tango."
+    }
+  },
+  "register": {
+    "pageName": "Registrace",
+    "seo": {
+      "title": "Připojte se k Mundo Tango - Vytvořte si účet",
+      "description": "Vytvořte si účet Mundo Tango a připojte se ke světové komunitě argentinského tanga. Spojte se s tanečníky, objevujte události a sdílejte svou vášeň pro tango."
+    },
+    "badge": {
+      "welcomeFamily": "Vítejte v rodině",
+      "beginJourney": "Začněte svou cestu",
+      "joinCommunity": "Připojte se ke komunitě"
+    },
+    "hero": {
+      "youreIn": "Jste v tom!",
+      "joinMundoTango": "Připojte se k Mundo Tango",
+      "description": "Spojte se s tanečníky po celém světě, objevujte milongy a ponořte se do vášnivého světa argentinského tanga",
+      "waitlistDescription": "Vítejte v komunitě Mundo Tango. Připravujeme váš účet a brzy vás upozorníme!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ tanečníků",
+      "events": "{{count}}+ událostí",
+      "cities": "{{count}} měst"
+    },
+    "form": {
+      "fullName": "Celé jméno",
+      "fullNamePlaceholder": "Maria Rodriguez",
+      "email": "Email",
+      "emailPlaceholder": "maria@example.com",
+      "username": "Uživatelské jméno",
+      "usernamePlaceholder": "maria_tango",
+      "password": "Heslo",
+      "confirmPassword": "Potvrďte heslo",
+      "inviteOnlyNotice": "Registrace je nyní pouze na pozvání. Vyplňte formulář pro přidání na čekací listinu a upozorníme vás, až bude váš účet připraven.",
+      "acceptTermsPrefix": "Přijímám",
+      "termsAndConditions": "Obchodní podmínky"
+    },
+    "validation": {
+      "emailTaken": "Tento email je již registrován",
+      "emailAvailable": "Email je dostupný!",
+      "usernameTaken": "Uživatelské jméno je obsazené. Zkuste {{suggestion}}",
+      "usernameAvailable": "Uživatelské jméno je dostupné!",
+      "passwordsMatch": "Hesla se shodují",
+      "passwordsDontMatch": "Hesla se neshodují"
+    },
+    "passwordStrength": {
+      "weak": "Slabé",
+      "medium": "Střední",
+      "strong": "Silné",
+      "veryStrong": "Velmi silné"
+    },
+    "inviteCode": {
+      "label": "Máte kód pozvánky? (Volitelné)",
+      "placeholder": "Zadejte kód pro okamžitý přístup",
+      "accepted": "Kód přijat! Váš účet bude ihned aktivován.",
+      "noWorries": "Nevadí! Vyplňte formulář níže pro přidání na čekací listinu."
+    },
+    "waitlist": {
+      "welcomeUser": "Vítejte, {{name}}!",
+      "defaultName": "Tanečníku",
+      "onTheList": "Jste na seznamu. Pošleme email na",
+      "whenReady": "až bude váš účet připraven.",
+      "helpUsGrow": "Mezitím nám pomozte růst",
+      "volunteerWithUs": "Staňte se dobrovolníkem",
+      "supportMundoTango": "Podpořte Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Vytváření účtu...",
+      "joining": "Připojování...",
+      "createAccount": "Vytvořit účet",
+      "joinMundoTango": "Připojit se k Mundo Tango"
+    },
+    "alreadyHaveAccount": "Již máte účet?",
+    "signIn": "Přihlaste se",
+    "toast": {
+      "invalidCode": {
+        "title": "Neplatný kód",
+        "description": "Zadejte platný 6místný ověřovací kód."
+      },
+      "verified": {
+        "title": "Email ověřen!",
+        "description": "Vítejte v Mundo Tango! Spouštíme registraci..."
+      },
+      "verifyError": {
+        "title": "Ověření selhalo",
+        "description": "Neplatný nebo vypršelý kód. Zkuste to znovu."
+      },
+      "error": {
+        "title": "Chyba",
+        "description": "Nepodařilo se ověřit email. Zkuste to znovu."
+      },
+      "tooMany": {
+        "title": "Příliš mnoho pokusů",
+        "description": "Počkejte několik minut a zkuste to znovu."
+      },
+      "codeSent": {
+        "title": "Kód odeslán!",
+        "description": "Zkontrolujte svou schránku pro nový kód."
+      },
+      "resendError": {
+        "description": "Nepodařilo se odeslat kód. Zkuste to znovu."
+      },
+      "termsRequired": {
+        "title": "Vyžadovány podmínky",
+        "description": "Přijměte Obchodní podmínky"
+      },
+      "passwordMismatch": {
+        "title": "Hesla se neshodují",
+        "description": "Ujistěte se, že obě hesla jsou stejná"
+      },
+      "weakPassword": {
+        "title": "Slabé heslo",
+        "description": "Zvolte silnější heslo"
+      },
+      "checkEmail": {
+        "title": "Zkontrolujte email",
+        "description": "Poslali jsme vám 6místný ověřovací kód. Zkontrolujte svou schránku."
+      },
+      "registrationFailed": {
+        "title": "Registrace selhala"
+      },
+      "signupFailed": {
+        "title": "Nepodařilo se dokončit registraci"
+      },
+      "tryAgain": "Zkuste to znovu"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Vítejte",
+      "seoTitle": "Vítejte v Mundo Tango",
+      "seoDescription": "Začněte svou tangovou cestu s Mundo Tango",
+      "badge": "Rychlé nastavení",
+      "title": "Vítejte v Mundo Tango",
+      "subtitle": "Nastavme váš profil, abyste se mohli spojit se světovou komunitou tanga",
+      "duration": "Zabere asi 2 minuty",
+      "stepIndicator": "Krok {{current}} z {{total}}",
+      "getStarted": "Začít",
+      "profileTitle": "Vaše tangová cesta začíná",
+      "profileSubtitle": "Řekněte nám něco o sobě",
+      "features": {
+        "city": {
+          "title": "Vyberte své město",
+          "description": "Spojte se s místní tangovou komunitou"
+        },
+        "roles": {
+          "title": "Řekněte nám o svých rolích",
+          "description": "Tanečník, učitel, DJ, organizátor, nebo vše dohromady?"
+        },
+        "events": {
+          "title": "Objevujte události",
+          "description": "Najděte milongy, lekce a festivaly ve vašem okolí"
+        },
+        "journey": {
+          "title": "Sdílejte svou cestu",
+          "description": "Spojte se s tanečníky na vaší úrovni"
+        },
+        "facebook": {
+          "title": "Propojte Facebook",
+          "description": "Propojte svůj profil na Facebooku a najděte přátele v komunitě"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "Sociální propojení",
+      "seoTitle": "Propojte svůj sociální svět - Mundo Tango",
+      "seoDescription": "Propojte své sociální profily a najděte přátele v tangové komunitě.",
+      "step": "Krok 2 z 6",
+      "title": "Propojte svůj sociální svět",
+      "quote": "\"Mnoho tanečníků tanga se již zná přes Facebook. Propojením svého profilu vám ukážeme, kteří tanečníci z vaší sítě jsou již zde - usnadňuje to nalezení známých tváří na milongách a budování hlubších vztahů.\"",
+      "cardTitle": "Najděte přátele",
+      "cardDescription": "Váš Facebook nám pomůže propojit vás s tanečníky, které možná již znáte.",
+      "facebookLabel": "Odkaz na Facebook profil (Volitelné)",
+      "facebookPlaceholder": "https://www.facebook.com/vas.profil",
+      "helperText": "Používáme to jako most k jiným komunitám a k nalezení tanečníků, které možná znáte.",
+      "toast": {
+        "errorTitle": "Chyba",
+        "errorDescription": "Nepodařilo se uložit informace o profilu"
+      }
+    },
+    "navigation": {
+      "back": "Zpět",
+      "next": "Další",
+      "skip": "Přeskočit",
+      "finish": "Dokončit",
+      "saving": "Ukládání...",
+      "continue": "Pokračovat"
+    },
+    "city": {
+      "pageTitle": "Výběr města",
+      "seoTitle": "Vyberte město - Mundo Tango",
+      "seoDescription": "Vyberte své město pro spojení s místními tanečníky tanga",
+      "step": "Krok 1 z 6",
+      "title": "Kde tančíte?",
+      "subtitle": "Spojte se s tanečníky ve vašem okolí",
+      "cardTitle": "Vaše město",
+      "cardDescription": "Pomůže nám to zobrazit místní události a tanečníky",
+      "searchLabel": "Vyhledejte své město",
+      "searchPlaceholder": "Zadejte název města...",
+      "eventSite": {
+        "help": "Vyberte z oblíbených tangových destinací"
+      },
+      "errors": {
+        "required": "Město je povinné",
+        "selectCity": "Vyberte své město"
+      },
+      "toast": {
+        "sourceAdded": "Zdroj přidán!",
+        "submittedForReview": "Odesláno ke kontrole",
+        "trackingEvents": "Začneme sledovat události z tohoto webu",
+        "thankYou": "Děkujeme! Váš návrh byl odeslán ke kontrole.",
+        "errorTitle": "Chyba",
+        "suggestionFailed": "Nepodařilo se odeslat návrh",
+        "saveFailed": "Nepodařilo se uložit města"
+      }
+    },
+    "photo": {
+      "pageTitle": "Nahrání fotky",
+      "seoTitle": "Přidejte profilovou fotku - Mundo Tango",
+      "seoDescription": "Nahrajte svou profilovou fotku",
+      "step": "Krok 3 z 6",
+      "title": "Přidejte profilovou fotku",
+      "subtitle": "Pomozte ostatním vás rozpoznat v komunitě",
+      "cardTitle": "Vaše profilová fotka",
+      "cardDescription": "Pomozte ostatním vás rozpoznat (můžete tento krok přeskočit)",
+      "previewAlt": "Náhled profilu",
+      "dropHere": "Přetáhněte fotku sem",
+      "or": "nebo",
+      "browseFiles": "Procházet soubory",
+      "fileTypes": "PNG, JPG do 5MB",
+      "photoSelected": "Fotka vybrána!",
+      "uploading": "Nahrávání...",
+      "errors": {
+        "invalidFile": "Neplatný soubor",
+        "selectImage": "Vyberte obrazový soubor",
+        "fileTooLarge": "Soubor je příliš velký",
+        "sizeLimit": "Vyberte obrázek do 5MB",
+        "uploadFailed": "Nahrávání selhalo",
+        "tryAgain": "Nepodařilo se nahrát fotku. Zkuste to znovu.",
+        "skipFailed": "Nepodařilo se přeskočit. Zkuste to znovu."
+      }
+    },
+    "languages": {
+      "pageTitle": "Jazyky",
+      "seoTitle": "Vaše jazyky - Mundo Tango",
+      "seoDescription": "Řekněte nám, jakými jazyky mluvíte",
+      "step": "Krok 5 z 6",
+      "title": "Jakými jazyky mluvíte?",
+      "subtitle": "Spojte se s tanečníky ve vašem jazyce",
+      "cardTitle": "Vaše jazyky",
+      "cardDescription": "Vyberte hlavní jazyk a další jazyky, kterými mluvíte",
+      "primaryLabel": "Hlavní jazyk",
+      "primaryHint": "Toto také nastaví jazyk zobrazení webu",
+      "primaryPlaceholder": "Vyberte hlavní jazyk",
+      "additionalLabel": "Další jazyky (Volitelné)",
+      "errors": {
+        "required": "Hlavní jazyk je povinný",
+        "selectPrimary": "Vyberte hlavní jazyk",
+        "saveFailed": "Nepodařilo se uložit jazyky",
+        "saveFailedTitle": "Chyba ukládání jazyků"
+      }
+    },
+    "roles": {
+      "pageTitle": "Tangové role",
+      "seoTitle": "Vaše tangové role - Mundo Tango",
+      "seoDescription": "Řekněte nám o své tangové cestě",
+      "step": "Krok 2 z 6",
+      "title": "Jaké role zastáváte?",
+      "subtitle": "Vyberte vše, co se vás týká",
+      "cardTitle": "Vaše tangová identita",
+      "cardDescription": "Pomozte ostatním pochopit, jak se účastníte světa tanga"
+    },
+    "experience": {
+      "pageTitle": "Taneční zkušenosti",
+      "seoTitle": "Vaše taneční zkušenosti - Mundo Tango",
+      "seoDescription": "Sdílejte svou úroveň tanečních zkušeností",
+      "step": "Krok 4 z 6",
+      "title": "Vaše taneční zkušenosti",
+      "subtitle": "Pomozte nám spojit vás se správnými tanečníky"
+    },
+    "hobbies": {
+      "pageTitle": "Zájmy",
+      "seoTitle": "Vaše zájmy - Mundo Tango",
+      "seoDescription": "Řekněte nám o svých zájmech",
+      "step": "Krok 6 z 6",
+      "title": "Jaké máte zájmy?",
+      "subtitle": "Vyberte témata, která vás zajímají",
+      "helpText": "Vyberte alespoň 3 zájmy pro personalizaci kanálu",
+      "selectedCount": "{{count}} vybráno",
+      "finishing": "Dokončování...",
+      "completeSetup": "Dokončit nastavení",
+      "searchPlaceholder": "Hledejte komunity nebo přidejte novou...",
+      "categories": {
+        "fitness": { "label": "Fitness a sport" },
+        "tech": { "label": "Technologie a inovace" },
+        "spirituality": { "label": "Duchovnost a růst" },
+        "yoga": { "label": "Jóga a wellness" },
+        "music": { "label": "Hudba" },
+        "photography": { "label": "Fotografie a video" },
+        "art": { "label": "Umění a kreativita" },
+        "reading": { "label": "Čtení a psaní" },
+        "travel": { "label": "Cestování a dobrodružství" },
+        "cooking": { "label": "Vaření a jídlo" },
+        "wine": { "label": "Víno a nápoje" },
+        "gaming": { "label": "Hry" },
+        "outdoors": { "label": "Venkovní aktivity" },
+        "snow": { "label": "Zimní sporty" },
+        "cycling": { "label": "Cyklistika" },
+        "water": { "label": "Vodní sporty" },
+        "nature": { "label": "Příroda a zahradničení" },
+        "movies": { "label": "Filmy a zábava" },
+        "pets": { "label": "Zvířata" },
+        "social": { "label": "Komunita" }
+      },
+      "items": {
+        "fitness_gym": "Posilovna",
+        "fitness_running": "Běhání",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Bojové sporty",
+        "fitness_tennis": "Tenis",
+        "fitness_soccer": "Fotbal",
+        "fitness_basketball": "Basketbal",
+        "fitness_fencing": "Šerm",
+        "tech_coding": "Programování",
+        "tech_ai": "AI a budoucí technologie",
+        "tech_crypto": "Web3 a krypto",
+        "tech_gaming": "Herní kultura",
+        "spirit_meditation": "Meditace",
+        "spirit_astrology": "Astrologie",
+        "spirit_philosophy": "Filozofie",
+        "spirit_community": "Budování komunity",
+        "yoga_hatha": "Hatha jóga",
+        "yoga_vinyasa": "Vinyasa flow",
+        "yoga_meditation": "Meditace",
+        "yoga_pilates": "Pilates",
+        "yoga_breathwork": "Dýchací cvičení",
+        "music_listening": "Poslech hudby",
+        "music_concerts": "Živé koncerty",
+        "music_piano": "Klavír",
+        "music_guitar": "Kytara",
+        "music_singing": "Zpěv",
+        "music_dj": "DJing",
+        "music_production": "Hudební produkce",
+        "photo_portrait": "Portrétní fotografie",
+        "photo_landscape": "Krajinářská fotografie",
+        "photo_street": "Pouliční fotografie",
+        "photo_video": "Videografie",
+        "photo_editing": "Úprava fotek",
+        "art_painting": "Malování",
+        "art_drawing": "Kreslení",
+        "art_sculpture": "Sochařství",
+        "art_digital": "Digitální umění",
+        "art_crafts": "Ruční práce",
+        "art_pottery": "Keramika",
+        "reading_fiction": "Beletrie",
+        "reading_nonfiction": "Naučná literatura",
+        "reading_poetry": "Poezie",
+        "reading_writing": "Tvůrčí psaní",
+        "reading_journals": "Psaní deníku",
+        "travel_backpacking": "Baťůžkaření",
+        "travel_luxury": "Luxusní cestování",
+        "travel_cultural": "Kulturní turismus",
+        "travel_road_trips": "Výlety autem",
+        "travel_solo": "Cestování o samotě",
+        "cooking_home": "Domácí vaření",
+        "cooking_baking": "Pečení",
+        "cooking_gourmet": "Gurmánská kuchyně",
+        "cooking_international": "Mezinárodní kuchyně",
+        "cooking_healthy": "Zdravé stravování",
+        "wine_tasting": "Degustace vína",
+        "wine_cocktails": "Koktejly",
+        "wine_coffee": "Káva",
+        "wine_tea": "Čajová kultura",
+        "wine_brewing": "Domácí vaření piva",
+        "gaming_video": "Videohry",
+        "gaming_board": "Deskové hry",
+        "gaming_card": "Karetní hry",
+        "gaming_tabletop": "Stolní RPG",
+        "gaming_esports": "eSporty",
+        "outdoor_hiking": "Turistika",
+        "outdoor_camping": "Kempování",
+        "outdoor_climbing": "Horolezectví",
+        "outdoor_fishing": "Rybaření",
+        "outdoor_kayaking": "Kajakování",
+        "outdoor_surfing": "Surfování",
+        "snow_skiing": "Lyžování",
+        "snow_snowboard": "Snowboarding",
+        "snow_crosscountry": "Běžky",
+        "snow_ice_skating": "Bruslení",
+        "snow_sledding": "Sáňkování",
+        "snow_snowshoeing": "Sněžnice",
+        "cycling_road": "Silniční cyklistika",
+        "cycling_mountain": "Horská cyklistika",
+        "cycling_urban": "Městská cyklistika",
+        "cycling_touring": "Cykloturistika",
+        "water_swimming": "Plavání",
+        "water_scuba": "Potápění",
+        "water_snorkel": "Šnorchlování",
+        "water_sailing": "Plachtění",
+        "water_paddleboard": "Paddleboarding",
+        "nature_gardening": "Zahradničení",
+        "nature_birdwatching": "Pozorování ptáků",
+        "nature_botany": "Sbírání rostlin",
+        "nature_wildlife": "Fotografování přírody",
+        "movies_cinema": "Kino",
+        "movies_tv": "TV seriály",
+        "movies_documentary": "Dokumenty",
+        "movies_theater": "Divadlo",
+        "movies_standup": "Stand-up komedie",
+        "pets_dogs": "Psi",
+        "pets_cats": "Kočky",
+        "pets_exotic": "Exotická zvířata",
+        "pets_horses": "Jízda na koni",
+        "pets_rescue": "Záchrana zvířat",
+        "social_volunteering": "Dobrovolnictví",
+        "social_meetups": "Setkání",
+        "social_networking": "Networking",
+        "social_languages": "Jazyková výměna"
+      },
+      "success": {
+        "completeTitle": "Vítejte v Mundo Tango!",
+        "completeDesc": "Váš profil je připraven. Začněte objevovat!",
+        "waitlistTitle": "Profil dokončen!",
+        "waitlistDesc": "Upozorníme vás, až bude váš účet aktivován"
+      },
+      "errors": {
+        "saveFailed": "Nepodařilo se uložit. Zkuste to znovu."
+      }
+    },
+    "legal": {
+      "title": "Pravidla komunity",
+      "subtitle": "Přečtěte si a přijměte naše podmínky",
+      "legalDocsTitle": "Právní dokumenty",
+      "legalDocsDescription": "Přečtěte si naše obchodní podmínky a zásady ochrany osobních údajů",
+      "termsOfService": {
+        "label": "Přijímám Obchodní podmínky",
+        "description": "Naše podmínky upravují používání Mundo Tango",
+        "link": "Přečíst Obchodní podmínky"
+      },
+      "privacyPolicy": {
+        "label": "Přijímám Zásady ochrany osobních údajů",
+        "description": "Jak zacházíme s vašimi údaji",
+        "link": "Přečíst Zásady ochrany osobních údajů"
+      },
+      "cocTitle": "Kodex chování komunity",
+      "cocDescription": "Pomozte nám udržovat respektující komunitu",
+      "coc": {
+        "respectful": {
+          "title": "Buďte ohleduplní",
+          "description": "Zacházejte se všemi s důstojností a zdvořilostí"
+        },
+        "inclusive": {
+          "title": "Buďte inkluzivní",
+          "description": "Vítejte tanečníky všech úrovní a původů"
+        },
+        "authentic": {
+          "title": "Buďte autentičtí",
+          "description": "Používejte svou skutečnou identitu a pravdivé informace"
+        },
+        "consent": {
+          "title": "Respektujte souhlas",
+          "description": "Vždy se ptejte před tancem a respektujte hranice"
+        },
+        "noHarassment": {
+          "title": "Žádné obtěžování",
+          "description": "Nulová tolerance k obtěžování nebo šikaně"
+        },
+        "noSpam": {
+          "title": "Žádný spam",
+          "description": "Neposílejte nevyžádané reklamy"
+        },
+        "noDiscrimination": {
+          "title": "Žádná diskriminace",
+          "description": "Netolerujeme diskriminaci jakéhokoli druhu"
+        },
+        "privacy": {
+          "title": "Chraňte soukromí",
+          "description": "Nesdílejte informace ostatních bez souhlasu"
+        },
+        "safety": {
+          "title": "Prioritou je bezpečnost",
+          "description": "Hlaste jakékoli nebezpečné chování ihned"
+        },
+        "laws": {
+          "title": "Dodržujte zákony",
+          "description": "Dodržujte všechny platné zákony"
+        },
+        "report": {
+          "title": "Hlaste problémy",
+          "description": "Pomozte nám hlášením porušení"
+        },
+        "support": {
+          "title": "Podporujte se navzájem",
+          "description": "Pomozte ostatním tanečníkům růst"
+        }
+      },
+      "acceptAll": "Přijmout vše a pokračovat",
+      "accepting": "Přijímání...",
+      "incompleteAlert": "Přijměte všechny požadované podmínky",
+      "success": {
+        "title": "Vítejte!",
+        "description": "Přijali jste naše pravidla komunity"
+      },
+      "errors": {
+        "failed": "Nepodařilo se uložit. Zkuste to znovu."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Čekací listina",
+      "seoTitle": "Jste na čekací listině - Mundo Tango",
+      "seoDescription": "Váš účet čeká na aktivaci",
+      "title": "Jste na čekací listině!",
+      "welcomeMessage": "Vítejte, {{name}}!",
+      "defaultName": "Tanečníku",
+      "profileComplete": "Profil dokončen",
+      "profileCompleteDesc": "Váš profil je připraven a čeká",
+      "emailNotice": "Pošleme vám email na {{email}}, až bude váš účet připraven",
+      "whenReady": "až bude váš účet připraven.",
+      "whileYouWait": "Mezitím nám pomozte růst:",
+      "volunteerButton": "Staňte se dobrovolníkem",
+      "supportButton": "Podpořte Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "Prohlídka",
+      "seoTitle": "Prozkoumejte Mundo Tango",
+      "seoDescription": "Naučte se používat Mundo Tango",
+      "skipTour": "Přeskočit prohlídku",
+      "finish": "Dokončit prohlídku",
+      "steps": {
+        "feed": "Objevujte příspěvky z tangové komunity",
+        "events": "Najděte milongy, lekce a festivaly",
+        "groups": "Připojte se ke skupinám podle města nebo zájmů",
+        "messages": "Spojte se přímo s ostatními tanečníky",
+        "profile": "Přizpůsobte svůj tangový profil",
+        "createPost": "Sdílejte své tangové momenty"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Vylepšete svůj zážitek",
+        "subtitle": "Získejte maximum z Mundo Tango",
+        "limitedOffer": "Omezená nabídka",
+        "getStarted": "Začít",
+        "features": {
+          "connect": {
+            "title": "Propojení",
+            "description": "Pište přímo jakémukoli tanečníkovi"
+          },
+          "visibility": {
+            "title": "Viditelnost",
+            "description": "Objevujte se na předních místech ve výsledcích"
+          },
+          "events": {
+            "title": "Události",
+            "description": "Prioritní přístup k oblíbeným událostem"
+          },
+          "grow": {
+            "title": "Růst",
+            "description": "Pokročilá analytika profilu"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Exkluzivní prémiové funkce"
+          }
+        }
+      }
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Domů",
+    "pageLayoutTitle": "Kde se tango setkává s komunitou",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Spojte se se světovou tangovou komunitou",
+      "description": "Připojte se k tisícům tanečníků tanga po celém světě. Objevujte události, nacházejte učitele, spojujte se s tanečníky a ponořte se do vášnivého světa argentinského tanga."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Vítejte ve světové tangové komunitě",
+      "heading": "Kde se tango setkává s komunitou",
+      "paragraph": "Sdílejte vzpomínky, nacházejte události a pomozte nám budovat budoucnost tangových technologií. Připojte se k tisícům vášnivých tanečníků spojujících se po celém světě.",
+      "getStarted": "Začít zdarma",
+      "volunteer": "Dobrovolník pro MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Jak to funguje",
+      "description": "Začněte svou tangovou cestu ve třech jednoduchých krocích",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Vytvořte si profil",
+        "description": "Připojte se zdarma a řekněte nám o své tangové cestě, úrovni zkušeností a tanečních preferencích"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Objevujte a spojujte se",
+        "description": "Najděte události, učitele a místa ve vašem okolí. Spojte se s tanečníky, kteří sdílejí vaši vášeň"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Tančete a rozvíjejte se",
+        "description": "Účastněte se událostí, berte lekce, navazujte přátelství a staňte se součástí globální tangové komunity"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Vše, co potřebujete",
+      "description": "Spojujte se, objevujte a rozvíjejte svou tangovou cestu s výkonnými funkcemi",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Komunita",
+        "heading": "Spojte se s tanečníky po celém světě",
+        "description": "Připojte se k živé globální komunitě nadšenců tanga. Spojte se s tanečníky, učiteli a organizátory od Buenos Aires po Tokio.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Sledujte tanečníky a budujte svou síť",
+          "groups": "Připojte se ke skupinám podle zájmů a lokality",
+          "messaging": "Zprávy v reálném čase a chatové funkce",
+          "discover": "Objevte tanečníky navštěvující vaše město"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Události",
+        "heading": "Objevujte události všude",
+        "description": "Nikdy nezmeškejte milongu, festival nebo workshop. Naše platforma vás propojí s tisíci tangových událostí po celém světě.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Komplexní kalendář událostí",
+          "rsvp": "RSVP a rezervace vstupenek",
+          "notifications": "Oznámení a připomínky událostí",
+          "map": "Interaktivní mapa míst"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Živé vysílání",
+          "description": "Sledujte milongy po celém světě v reálném čase"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Hudební knihovna",
+          "description": "Kurátorované tangové playlisty a průvodce"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Ověření učitelé",
+          "description": "Učte se od certifikovaných instruktorů"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Plánovač cest",
+          "description": "Plánujte výlety a najděte hostitele globálně"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Co říkají tanečníci",
+      "description": "Připojte se k tisícům spokojených tanečníků po celém světě",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
           "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "text": "Mundo Tango mi pomohlo najít mou taneční rodinu v novém městě. Komunita je vřelá, přátelská a skutečně vášnivá pro tango."
         },
         "testimonial2": {
           "name": "James Chen",
           "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "text": "Objevil jsem úžasné milongy a workshopy díky této platformě. Stala se nepostradatelnou pro mou tangovou cestu."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moskva, Rusko",
+          "text": "Adresář učitelů mi pomohl najít neuvěřitelné instruktory. Moje tancování se enormně zlepšilo!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Často kladené otázky",
+      "description": "Vše, co potřebujete vědět o Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Co je Mundo Tango?",
+          "answer": "Mundo Tango je globální platforma spojující tanečníky, učitele a organizátory tanga. Pomáháme vám objevovat události, nacházet taneční partnery, učit se od špičkových instruktorů a ponořit se do živé tangové komunity po celém světě."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Je Mundo Tango zdarma?",
+          "answer": "Ano! Nabízíme bezplatnou verzi, která zahrnuje základní vytvoření profilu, objevování událostí a zprávy. Prémiové funkce jako neomezené zprávy, AI párování tanečních partnerů a prioritní oznámení událostí jsou dostupné s naším Pro předplatným."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Jak najdu tangové události v mém okolí?",
+          "answer": "Jednoduše použijte náš Kalendář událostí nebo funkce Vyhledávání pro filtrování podle města, data a typu události. Můžete objevit milongy, festivaly, workshopy a cvičební seance ve vašem okolí nebo kdekoli na světě."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Mohu se spojit s jinými tanečníky?",
+          "answer": "Rozhodně! Sledujte tanečníky, připojte se ke skupinám, posílejte žádosti o přátelství a chatujte s komunitou. Naše platforma je navržena k podpoře autentických spojení ve světě tanga."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Jak najdu učitele tanga?",
+          "answer": "Navštivte náš Adresář učitelů a procházejte ověřené instruktory po celém světě. Filtrujte podle lokality, specializace a úrovně zkušeností. Čtěte recenze od jiných studentů a rezervujte si soukromé lekce přímo přes platformu."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Čím je Mundo Tango výjimečné?",
+          "answer": "Jsme vytvořeni tanečníky tanga pro tanečníky tanga. Zaměřujeme se na autentické budování komunity, kvalitní kurátorství událostí a propojení vás s globální tangovou rodinou - nejen další sociální síť."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Připraveni se připojit ke komunitě?",
+      "description": "Vytvořte si bezplatný účet ještě dnes a začněte se spojovat s vášnivými tanečníky tanga po celém světě. Není vyžadována kreditní karta.",
+      "button": "Připojte se k Mundo Tango zdarma",
+      "freeForever": "Navždy zdarma",
+      "noCreditCard": "Bez kreditní karty",
+      "cancelAnytime": "Zrušte kdykoli"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Příspěvky",
+    "description": "Buďte v obraze s nejnovějšími zprávami z tangové komunity",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Všechny příspěvky",
+      "following": "Sledovaní",
+      "popular": "Oblíbené",
+      "recent": "Nedávné"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Co máte na mysli?",
+    "noPost": "Žádné příspěvky k zobrazení"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Události",
+    "description": "Objevte tangové události ve vašem okolí",
+    "upcoming": "Nadcházející události",
+    "past": "Minulé události",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "Všechny události",
+      "milongas": "Milongy",
+      "workshops": "Workshopy",
+      "festivals": "Festivaly",
+      "classes": "Lekce"
     },
-    "noEvents": "No events found"
+    "noEvents": "Žádné události nenalezeny"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Profil",
+    "description": "Zobrazit a upravit svůj profil",
+    "editProfile": "Upravit profil",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Příspěvky",
+      "photos": "Fotky",
+      "videos": "Videa",
+      "events": "Události",
+      "friends": "Přátelé"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Příspěvky",
+      "followers": "Sledující",
+      "following": "Sledovaní",
+      "events": "Navštívené události"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Zprávy",
+    "description": "Chatujte se svými tangovými kontakty",
+    "newMessage": "Nová zpráva",
+    "searchConversations": "Hledat konverzace",
+    "noMessages": "Zatím žádné zprávy",
+    "startConversation": "Zahájit konverzaci"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Učitelé tanga",
+    "description": "Najděte a spojte se s učiteli tanga",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Všichni učitelé",
+      "featured": "Doporučení",
+      "nearby": "V okolí"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Zobrazit profil",
+    "bookLesson": "Rezervovat lekci"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Tangová místa",
+    "description": "Objevte tangová místa po celém světě",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Všechna místa",
+      "milongas": "Milongy",
+      "schools": "Taneční školy",
+      "theaters": "Divadla"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Navigovat"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Nastavení",
+    "description": "Spravujte nastavení svého účtu",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Nastavení účtu",
+      "profile": "Profil",
+      "privacy": "Soukromí",
+      "notifications": "Oznámení",
+      "security": "Zabezpečení",
+      "billing": "Fakturace",
+      "preferences": "Preference"
     }
   },
   "lifeCEO": {
     "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "description": "Váš osobní AI asistent pro správu života",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Agent zdraví",
+      "fitness": "Agent fitness",
+      "nutrition": "Agent výživy",
+      "finance": "Agent financí",
+      "career": "Agent kariéry",
+      "productivity": "Agent produktivity",
+      "relationships": "Agent vztahů",
+      "learning": "Agent učení"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Tržiště",
+    "description": "Kupujte a prodávejte tangové předměty",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Taneční boty",
+      "clothing": "Oblečení",
+      "music": "Hudba",
+      "accessories": "Doplňky",
+      "other": "Ostatní"
     }
   },
   "admin": {
     "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "description": "Administrace a správa platformy",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Přehled",
+      "users": "Uživatelé",
+      "content": "Obsah",
+      "reports": "Zprávy",
+      "analytics": "Analytika",
+      "settings": "Nastavení"
     }
   }
 }
