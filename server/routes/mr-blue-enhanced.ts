@@ -33,6 +33,7 @@ import {
   isGodLevelUser,
 } from "../services/mrBlue/TaskExecutorService";
 import * as VibeCodingTools from "../services/mrBlue/VibeCodingToolService";
+import { vibeCodingMasterLoop } from "../services/mrBlue/VibeCodingMasterLoop";
 
 const router = Router();
 const elevenlabsService = new ElevenLabsVoiceService();
@@ -396,9 +397,9 @@ function detectToolIntent(message: string): {
 
   // Directory list patterns
   const dirMatch = msg.match(
-    /(?:list|show|what'?s?\s+in)\s+(?:the\s+)?(?:directory\s+|folder\s+)?(a-zA-Z0-9_.\-\/]+)/i,
+    /(?:list|show|what'?s?\s+in)\s+(?:the\s+)?(?:directory\s+|folder\s+)?([a-zA-Z0-9_.\-\/]+)/i,
   );
-  if (dirMatch && !dirMatch[1].includes(".")) {
+  if (dirMatch && dirMatch[1] && !dirMatch[1].includes(".")) {
     return {
       hasTool: true,
       tool: "listDirectory",
@@ -678,27 +679,100 @@ router.post("/api/mrblue/chat", authenticateToken, async (req, res) => {
         `[Mr. Blue] VibeCoding request from god-level user (${userEmail}): "${message.substring(0, 50)}..."`,
       );
 
+      // Check if streaming is requested
+      const streamRequested = req.headers.accept?.includes("text/event-stream");
+
+      if (streamRequested) {
+        // SSE streaming response for VibeCodingMasterLoop
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+        res.flushHeaders();
+
+        try {
+          const result = await vibeCodingMasterLoop.executeVibeCoding(
+            {
+              goal: message,
+              userId,
+              sessionId: sessionContext?.sessionId || `vibe_${Date.now()}`,
+              context: {
+                currentPage: sessionContext?.currentPage || context?.currentPage,
+                projectPath: process.cwd(),
+                relevantFiles: sessionContext?.recentActions?.filter(
+                  (a: string) => a.includes(".ts") || a.includes(".tsx"),
+                ),
+              },
+            },
+            (event) => {
+              // Stream each event to client
+              res.write(`data: ${JSON.stringify(event)}\n\n`);
+            }
+          );
+
+          // Send final result
+          res.write(`data: ${JSON.stringify({
+            type: "complete",
+            content: JSON.stringify(result),
+            timestamp: Date.now(),
+          })}\n\n`);
+          res.end();
+        } catch (vibeError: any) {
+          console.error("[Mr. Blue] VibeCoding stream error:", vibeError);
+          res.write(`data: ${JSON.stringify({
+            type: "error",
+            content: vibeError.message,
+            timestamp: Date.now(),
+          })}\n\n`);
+          res.end();
+        }
+        return;
+      }
+
+      // Non-streaming VibeCodingMasterLoop execution
       try {
-        const result = await taskExecutorService.executeVibeCoding(
-          message,
-          userEmail || userRoleLevel,
+        const streamEvents: Array<{ type: string; content: string; phase?: string }> = [];
+        
+        const result = await vibeCodingMasterLoop.executeVibeCoding(
           {
-            currentPage: sessionContext?.currentPage || context?.currentPage,
-            relevantFiles: sessionContext?.recentActions?.filter(
-              (a: string) => a.includes(".ts") || a.includes(".tsx"),
-            ),
-            sessionContext,
+            goal: message,
+            userId,
+            sessionId: sessionContext?.sessionId || `vibe_${Date.now()}`,
+            context: {
+              currentPage: sessionContext?.currentPage || context?.currentPage,
+              projectPath: process.cwd(),
+              relevantFiles: sessionContext?.recentActions?.filter(
+                (a: string) => a.includes(".ts") || a.includes(".tsx"),
+              ),
+            },
           },
+          (event) => {
+            streamEvents.push({ type: event.type, content: event.content, phase: event.phase });
+          }
         );
+
+        // Build conversational response from execution
+        const phasesSummary = streamEvents
+          .filter(e => e.type === "phase" || e.type === "thought" || e.type === "action")
+          .map(e => `[${e.phase || e.type}] ${e.content}`)
+          .join("\n");
+
+        const responseContent = result.success
+          ? `VibeCoding completed successfully.\n\n${phasesSummary}\n\nFiles modified: ${result.filesModified.length > 0 ? result.filesModified.join(", ") : "None"}\nFiles created: ${result.filesCreated.length > 0 ? result.filesCreated.join(", ") : "None"}\nTests: ${result.testsRun ? (result.testsPassed ? "Passed" : "Failed") : "Not run"}\nDuration: ${result.duration}ms`
+          : `VibeCoding encountered an issue: ${result.error}`;
 
         return res.json({
           role: "assistant",
-          content: result.response,
+          content: responseContent,
           timestamp: new Date().toISOString(),
           vibeCoding: true,
           success: result.success,
           filesModified: result.filesModified,
+          filesCreated: result.filesCreated,
+          testsRun: result.testsRun,
+          testsPassed: result.testsPassed,
+          duration: result.duration,
           godLevelExecution: true,
+          executionLog: streamEvents,
         });
       } catch (vibeError: any) {
         console.error("[Mr. Blue] VibeCoding error:", vibeError);
