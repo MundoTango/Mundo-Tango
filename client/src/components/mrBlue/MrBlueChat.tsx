@@ -156,8 +156,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     return "Hi! I'm Mr. Blue, your AI companion. I can help you navigate the platform, answer questions, and provide personalized recommendations. What can I help you with today?";
   };
 
-         695
-           messages, setMessages] = useState<Message[]>([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       role: "assistant",
@@ -422,7 +421,8 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
       }
       return;
     }
-    isVibecodingTask    setIsLoading(true);
+
+    setIsLoading(true);
 
     // Check if this is a VibeCoding task and user might be god-level
     // Try streaming first, fall back to regular chat if not authorized
