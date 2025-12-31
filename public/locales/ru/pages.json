@@ -35,12 +35,41 @@
     "about": "О себе"
   },
   "login": {
-    "title": "Вход",
-    "email": "Email",
-    "password": "Пароль",
-    "forgotPassword": "Забыли пароль?",
+    "pageName": "Вход",
+    "seo": {
+      "title": "Войти - Mundo Tango",
+      "description": "Войдите в свой аккаунт Mundo Tango, чтобы связаться с мировым танго-сообществом, найти события и поделиться своей страстью к аргентинскому танго."
+    },
+    "badge": "С возвращением",
+    "hero": {
+      "heading": "Ваше танго-путешествие продолжается",
+      "paragraph": "Войдите, чтобы связаться с танцорами по всему миру, найти события и поделиться своей страстью"
+    },
+    "stats": {
+      "dancers": "танцоров",
+      "events": "событий"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Пароль",
+      "signIn": "Войти",
+      "signingIn": "Выполняется вход...",
+      "forgotPassword": "Забыли пароль?"
+    },
     "noAccount": "Нет аккаунта?",
-    "signUp": "Зарегистрируйтесь"
+    "createAccount": "Создайте сейчас",
+    "toast": {
+      "successTitle": "С возвращением!",
+      "successDescription": "Вы успешно вошли в систему.",
+      "errorTitle": "Ошибка входа",
+      "errorDescription": "Неверные учётные данные",
+      "verificationRequired": {
+        "title": "Требуется подтверждение email",
+        "description": "Пожалуйста, проверьте почту и подтвердите свой email."
+      },
+      "upgradedTitle": "Аккаунт обновлён!",
+      "upgradedDescription": "Добро пожаловать! Теперь у вас полный доступ к Mundo Tango."
+    }
   },
   "signup": {
     "title": "Создать аккаунт",
@@ -50,6 +79,131 @@
     "confirmPassword": "Подтвердить пароль",
     "hasAccount": "Уже есть аккаунт?",
     "login": "Войти"
+  },
+  "register": {
+    "pageName": "Регистрация",
+    "seo": {
+      "title": "Присоединяйтесь к Mundo Tango - Создайте аккаунт",
+      "description": "Создайте аккаунт Mundo Tango и присоединитесь к мировому сообществу аргентинского танго. Общайтесь с танцорами, находите события и делитесь своей страстью к танго."
+    },
+    "badge": {
+      "welcomeFamily": "Добро пожаловать в семью",
+      "beginJourney": "Начните своё путешествие",
+      "joinCommunity": "Присоединяйтесь к сообществу"
+    },
+    "hero": {
+      "youreIn": "Вы в игре!",
+      "joinMundoTango": "Присоединяйтесь к Mundo Tango",
+      "description": "Общайтесь с танцорами по всему миру, открывайте милонги и погружайтесь в страстный мир аргентинского танго",
+      "waitlistDescription": "Добро пожаловать в сообщество Mundo Tango. Мы готовим ваш аккаунт и скоро уведомим вас!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ танцоров",
+      "events": "{{count}}+ событий",
+      "cities": "{{count}} городов"
+    },
+    "form": {
+      "fullName": "Полное имя",
+      "fullNamePlaceholder": "Мария Родригес",
+      "email": "Email",
+      "emailPlaceholder": "maria@example.com",
+      "username": "Имя пользователя",
+      "usernamePlaceholder": "maria_tango",
+      "password": "Пароль",
+      "confirmPassword": "Подтвердить пароль",
+      "inviteOnlyNotice": "Регистрация сейчас только по приглашениям. Заполните форму, чтобы встать в очередь, и мы уведомим вас, когда ваш аккаунт будет готов.",
+      "acceptTermsPrefix": "Я принимаю",
+      "termsAndConditions": "Условия использования"
+    },
+    "validation": {
+      "emailTaken": "Этот email уже зарегистрирован",
+      "emailAvailable": "Email доступен!",
+      "usernameTaken": "Имя занято. Попробуйте {{suggestion}}",
+      "usernameAvailable": "Имя доступно!",
+      "passwordsMatch": "Пароли совпадают",
+      "passwordsDontMatch": "Пароли не совпадают"
+    },
+    "passwordStrength": {
+      "weak": "Слабый",
+      "medium": "Средний",
+      "strong": "Сильный",
+      "veryStrong": "Очень сильный"
+    },
+    "inviteCode": {
+      "label": "Есть код приглашения? (Необязательно)",
+      "placeholder": "Введите код для немедленного доступа",
+      "accepted": "Код принят! Ваш аккаунт будет активирован сразу.",
+      "noWorries": "Не беспокойтесь! Заполните форму ниже, чтобы встать в очередь."
+    },
+    "waitlist": {
+      "welcomeUser": "Добро пожаловать, {{name}}!",
+      "defaultName": "Танцор",
+      "onTheList": "Вы в списке. Мы отправим письмо на",
+      "whenReady": "когда ваш аккаунт будет готов.",
+      "helpUsGrow": "Пока ждёте, помогите нам развиваться",
+      "volunteerWithUs": "Станьте волонтёром",
+      "supportMundoTango": "Поддержите Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Создаём ваш аккаунт...",
+      "joining": "Присоединение...",
+      "createAccount": "Создать аккаунт",
+      "joinMundoTango": "Присоединиться к Mundo Tango"
+    },
+    "alreadyHaveAccount": "Уже есть аккаунт?",
+    "signIn": "Войти",
+    "toast": {
+      "invalidCode": {
+        "title": "Неверный код",
+        "description": "Пожалуйста, введите корректный 6-значный код подтверждения."
+      },
+      "verified": {
+        "title": "Email подтверждён!",
+        "description": "Добро пожаловать в Mundo Tango! Начинаем регистрацию..."
+      },
+      "verifyError": {
+        "title": "Ошибка подтверждения",
+        "description": "Неверный или просроченный код. Попробуйте снова."
+      },
+      "error": {
+        "title": "Ошибка",
+        "description": "Не удалось подтвердить email. Попробуйте снова."
+      },
+      "tooMany": {
+        "title": "Слишком много запросов",
+        "description": "Пожалуйста, подождите несколько минут перед повторной попыткой."
+      },
+      "codeSent": {
+        "title": "Код отправлен!",
+        "description": "Проверьте почту для получения нового кода."
+      },
+      "resendError": {
+        "description": "Не удалось отправить код. Попробуйте снова."
+      },
+      "termsRequired": {
+        "title": "Требуются условия",
+        "description": "Пожалуйста, примите Условия использования"
+      },
+      "passwordMismatch": {
+        "title": "Пароли не совпадают",
+        "description": "Убедитесь, что оба пароля одинаковы"
+      },
+      "weakPassword": {
+        "title": "Слабый пароль",
+        "description": "Выберите более надёжный пароль"
+      },
+      "checkEmail": {
+        "title": "Проверьте почту",
+        "description": "Мы отправили 6-значный код подтверждения. Проверьте входящие."
+      },
+      "registrationFailed": {
+        "title": "Ошибка регистрации"
+      },
+      "signupFailed": {
+        "title": "Не удалось завершить регистрацию"
+      },
+      "tryAgain": "Попробуйте снова"
+    }
   },
   "proDiscovery": {
     "title": "Откройте танго-профессионалов",
