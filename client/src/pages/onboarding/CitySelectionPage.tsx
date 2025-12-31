@@ -179,7 +179,7 @@ export default function CitySelectionPage() {
             </Badge>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4">
-              {t('pages:onboarding.city.title', 'Where Are You Based?')}
+              {t('pages:onboarding.city.title', 'Which cities do you connect with?')}
             </h1>
             
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
