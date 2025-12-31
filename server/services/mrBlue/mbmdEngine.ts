@@ -914,7 +914,7 @@ Return valid JSON with mainTask, complexity, subtasks array, recommendedApproach
 
     while (current) {
       path.unshift(current);
-      current = predecessors.get(current) || null;
+      current = (predecessors.get(current) as string | null) || null;
     }
 
     return path;

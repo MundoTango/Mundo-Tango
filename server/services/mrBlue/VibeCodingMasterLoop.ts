@@ -16,6 +16,7 @@ import { planExecuteLoopService } from './PlanExecuteLoop';
 import { safetyConfirmationService } from './SafetyConfirmation';
 import { checkpointManager } from './CheckpointManager';
 import { vibeCodingToolService } from './VibeCodingToolService';
+import { godCommandEnforcer } from './brain/GodCommandEnforcer';
 
 export interface VibeCodingRequest {
   goal: string;
@@ -46,14 +47,24 @@ class VibeCodingMasterLoopService {
       onStream?.({ type, content, timestamp: Date.now(), phase });
     
     emit('phase', 'Starting VibeCoding Master Loop', 'INIT');
-    const filesModified: string[] = [];
-    const filesCreated: string[] = [];
     
     try {
+      // #0 AUTO-INVOKE God Command
+      await godCommandEnforcer.autoInvoke(req.sessionId, req.userId);
+      
+      const filesModified: string[] = [];
+      const filesCreated: string[] = [];
+      
       // PHASE 1: CLARIFY
       emit('phase', 'Clarifying requirements and constraints', 'CLARIFY');
-      const clarified = await this.phaseClarify(req, emit);
+      const clarified = await godCommandEnforcer.executeWithAutoFix(
+        () => this.phaseClarify(req, emit),
+        "Phase Clarify"
+      );
       
+      // #5 DOCS FIRST God Command
+      await godCommandEnforcer.enforceDocsFirst(req.goal);
+
       // PHASE 2: PLAN  
       emit('phase', 'Creating execution plan', 'PLAN');
       const plan = await this.phasePlan(clarified, emit);
@@ -65,13 +76,22 @@ class VibeCodingMasterLoopService {
       // PHASE 4: EXECUTE
       emit('phase', 'Executing code changes', 'EXECUTE');
       const checkpoint = await checkpointManager.createCheckpoint(req.sessionId, req.userId, 'pre-vibecoding', []);
-      const execution = await this.phaseExecute(plan, research, req, emit);
+      
+      // #7 AUTO-FIX God Command applied to execution
+      const execution = await godCommandEnforcer.executeWithAutoFix(
+        () => this.phaseExecute(plan, research, req, emit),
+        "Phase Execute"
+      );
+      
       filesModified.push(...(execution.filesModified || []));
       filesCreated.push(...(execution.filesCreated || []));
       
       // PHASE 5: VERIFY
       emit('phase', 'Running tests and validation', 'VERIFY');
       const verification = await this.phaseVerify(execution, req, emit);
+      
+      // #1 TEST BEFORE COMPLETING God Command
+      await godCommandEnforcer.enforceTestBeforeComplete("final-verification", verification);
       
       // PHASE 6: REPORT
       emit('phase', 'Generating final report', 'REPORT');
