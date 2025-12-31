@@ -1,4 +1,419 @@
 {
+  "register": {
+    "pageName": "新規登録",
+    "seo": {
+      "title": "Mundo Tangoに参加 - アカウント作成",
+      "description": "Mundo Tangoアカウントを作成して、世界中のアルゼンチンタンゴコミュニティに参加しましょう。ダンサーとつながり、イベントを発見し、タンゴへの情熱を共有しましょう。"
+    },
+    "badge": {
+      "welcomeFamily": "ファミリーへようこそ",
+      "beginJourney": "旅を始めましょう",
+      "joinCommunity": "コミュニティに参加"
+    },
+    "hero": {
+      "youreIn": "参加完了！",
+      "joinMundoTango": "Mundo Tangoに参加",
+      "description": "世界中のダンサーとつながり、ミロンガを発見し、アルゼンチンタンゴの情熱的な世界に浸りましょう",
+      "waitlistDescription": "Mundo Tangoコミュニティへようこそ。アカウントを準備中です。まもなくお知らせします！"
+    },
+    "stats": {
+      "dancers": "{{count}}人以上のダンサー",
+      "events": "{{count}}以上のイベント",
+      "cities": "{{count}}都市"
+    },
+    "form": {
+      "fullName": "氏名",
+      "fullNamePlaceholder": "山田 花子",
+      "email": "メールアドレス",
+      "emailPlaceholder": "hanako@example.com",
+      "username": "ユーザー名",
+      "usernamePlaceholder": "hanako_tango",
+      "password": "パスワード",
+      "confirmPassword": "パスワード確認",
+      "inviteOnlyNotice": "現在、招待制での登録となっています。このフォームに記入してウェイトリストに参加してください。アカウントの準備ができ次第、お知らせします。",
+      "acceptTermsPrefix": "同意します：",
+      "termsAndConditions": "利用規約"
+    },
+    "validation": {
+      "emailTaken": "このメールアドレスは既に登録されています",
+      "emailAvailable": "メールアドレスは使用可能です！",
+      "usernameTaken": "ユーザー名は使用済みです。{{suggestion}}をお試しください",
+      "usernameAvailable": "ユーザー名は使用可能です！",
+      "passwordsMatch": "パスワードが一致しました",
+      "passwordsDontMatch": "パスワードが一致しません"
+    },
+    "passwordStrength": {
+      "weak": "弱い",
+      "medium": "普通",
+      "strong": "強い",
+      "veryStrong": "非常に強い"
+    },
+    "inviteCode": {
+      "label": "招待コードをお持ちですか？（任意）",
+      "placeholder": "招待コードを入力して即時アクセス",
+      "accepted": "コードが承認されました！アカウントはすぐに有効になります。",
+      "noWorries": "ご心配なく！以下のフォームに記入してウェイトリストに参加してください。"
+    },
+    "waitlist": {
+      "welcomeUser": "ようこそ、{{name}}さん！",
+      "defaultName": "ダンサー",
+      "onTheList": "リストに登録されました。アカウントの準備ができ次第、",
+      "whenReady": "にメールでお知らせします。",
+      "helpUsGrow": "お待ちいただく間、成長にご協力ください",
+      "volunteerWithUs": "ボランティアに参加",
+      "supportMundoTango": "Mundo Tangoを支援"
+    },
+    "button": {
+      "creatingAccount": "アカウント作成中...",
+      "joining": "参加中...",
+      "createAccount": "アカウント作成",
+      "joinMundoTango": "Mundo Tangoに参加"
+    },
+    "alreadyHaveAccount": "すでにアカウントをお持ちですか？",
+    "signIn": "ログイン",
+    "toast": {
+      "invalidCode": {
+        "title": "無効なコード",
+        "description": "有効な6桁の認証コードを入力してください。"
+      },
+      "verified": {
+        "title": "メール認証完了！",
+        "description": "Mundo Tangoへようこそ！オンボーディングを開始します..."
+      },
+      "verifyError": {
+        "title": "認証失敗",
+        "description": "無効または期限切れのコードです。もう一度お試しください。"
+      },
+      "error": {
+        "title": "エラー",
+        "description": "メールの認証に失敗しました。もう一度お試しください。"
+      },
+      "tooMany": {
+        "title": "リクエストが多すぎます",
+        "description": "数分待ってから再度お試しください。"
+      },
+      "codeSent": {
+        "title": "コードを送信しました！",
+        "description": "受信トレイで新しいコードをご確認ください。"
+      },
+      "resendError": {
+        "description": "コードの再送信に失敗しました。もう一度お試しください。"
+      },
+      "termsRequired": {
+        "title": "利用規約への同意が必要です",
+        "description": "利用規約に同意してください"
+      },
+      "passwordMismatch": {
+        "title": "パスワードが一致しません",
+        "description": "両方のパスワードが同じであることを確認してください"
+      },
+      "weakPassword": {
+        "title": "パスワードが弱い",
+        "description": "より強力なパスワードを選択してください"
+      },
+      "checkEmail": {
+        "title": "メールをご確認ください",
+        "description": "6桁の認証コードを送信しました。受信トレイをご確認ください。"
+      },
+      "registrationFailed": {
+        "title": "登録に失敗しました"
+      },
+      "signupFailed": {
+        "title": "登録を完了できませんでした"
+      },
+      "tryAgain": "もう一度お試しください"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "ようこそ",
+      "seoTitle": "Mundo Tangoへようこそ",
+      "seoDescription": "Mundo Tangoでタンゴの旅を始めましょう",
+      "badge": "クイックセットアップ",
+      "title": "Mundo Tangoへようこそ",
+      "subtitle": "世界中のタンゴコミュニティとつながるためにプロフィールを設定しましょう",
+      "duration": "約2分で完了",
+      "stepIndicator": "ステップ {{current}} / {{total}}",
+      "getStarted": "始める",
+      "profileTitle": "タンゴの旅が始まります",
+      "profileSubtitle": "あなたについて教えてください",
+      "features": {
+        "city": {
+          "title": "都市を選択",
+          "description": "地元のタンゴコミュニティとつながる"
+        },
+        "roles": {
+          "title": "役割を教えてください",
+          "description": "ダンサー、講師、DJ、オーガナイザー、またはすべて？"
+        },
+        "events": {
+          "title": "イベントを発見",
+          "description": "近くのミロンガ、クラス、フェスティバルを見つける"
+        },
+        "journey": {
+          "title": "あなたの旅を共有",
+          "description": "同じレベルのダンサーとつながる"
+        }
+      }
+    },
+    "city": {
+      "pageTitle": "都市選択",
+      "seoTitle": "都市を選択 - Mundo Tango",
+      "seoDescription": "地元のタンゴダンサーとつながるためにホーム都市を選択してください",
+      "step": "ステップ 1 / 6",
+      "title": "どこで踊りますか？",
+      "subtitle": "お住まいの地域のダンサーとつながりましょう",
+      "cardTitle": "ホーム都市",
+      "cardDescription": "地元のイベントやダンサーを表示するのに役立ちます",
+      "searchLabel": "都市を検索",
+      "searchPlaceholder": "都市名を入力...",
+      "eventSite": {
+        "help": "人気のタンゴスポットから選択"
+      },
+      "errors": {
+        "required": "都市が必要です",
+        "selectCity": "ホーム都市を選択してください"
+      }
+    },
+    "photo": {
+      "pageTitle": "写真アップロード",
+      "seoTitle": "プロフィール写真を追加 - Mundo Tango",
+      "seoDescription": "プロフィール写真をアップロード",
+      "step": "ステップ 3 / 6",
+      "title": "プロフィール写真を追加",
+      "subtitle": "コミュニティであなたを認識できるようにしましょう",
+      "cardTitle": "プロフィール写真",
+      "cardDescription": "他の人があなたを認識できるようにします（このステップはスキップできます）",
+      "previewAlt": "プロフィールプレビュー",
+      "dropHere": "ここに写真をドロップ",
+      "or": "または",
+      "browseFiles": "ファイルを参照",
+      "fileTypes": "PNG、JPG（最大5MB）",
+      "photoSelected": "写真が選択されました！",
+      "uploading": "アップロード中...",
+      "errors": {
+        "invalidFile": "無効なファイル",
+        "selectImage": "画像ファイルを選択してください",
+        "fileTooLarge": "ファイルが大きすぎます",
+        "sizeLimit": "5MB以下の画像を選択してください",
+        "uploadFailed": "アップロード失敗",
+        "tryAgain": "写真のアップロードに失敗しました。もう一度お試しください。",
+        "skipFailed": "スキップに失敗しました。もう一度お試しください。"
+      }
+    },
+    "languages": {
+      "pageTitle": "言語",
+      "seoTitle": "使用言語 - Mundo Tango",
+      "seoDescription": "話せる言語を教えてください",
+      "step": "ステップ 5 / 6",
+      "title": "どの言語を話しますか？",
+      "subtitle": "あなたの言語でダンサーとつながりましょう",
+      "cardTitle": "使用言語",
+      "cardDescription": "主要言語と追加の言語を選択してください",
+      "primaryLabel": "主要言語",
+      "primaryHint": "これはサイトの表示言語にも設定されます",
+      "primaryPlaceholder": "主要言語を選択",
+      "additionalLabel": "追加の言語（任意）",
+      "errors": {
+        "required": "主要言語が必要です",
+        "selectPrimary": "主要言語を選択してください",
+        "saveFailed": "言語の保存に失敗しました",
+        "saveFailedTitle": "言語の保存に失敗"
+      }
+    },
+    "roles": {
+      "pageTitle": "タンゴの役割",
+      "seoTitle": "タンゴの役割 - Mundo Tango",
+      "seoDescription": "タンゴの旅について教えてください",
+      "step": "ステップ 2 / 6",
+      "title": "どのような役割ですか？",
+      "subtitle": "該当するものをすべて選択してください",
+      "cardTitle": "タンゴのアイデンティティ",
+      "cardDescription": "タンゴの世界でどのように参加しているかを伝えましょう"
+    },
+    "experience": {
+      "pageTitle": "ダンス経験",
+      "seoTitle": "ダンス経験 - Mundo Tango",
+      "seoDescription": "ダンス経験レベルを共有",
+      "step": "ステップ 4 / 6",
+      "title": "あなたのダンス経験",
+      "subtitle": "適切なダンサーとマッチングするのに役立ちます"
+    },
+    "hobbies": {
+      "pageTitle": "興味・関心",
+      "seoTitle": "興味・関心 - Mundo Tango",
+      "seoDescription": "興味・関心について教えてください",
+      "step": "ステップ 6 / 6",
+      "title": "興味のあることは？",
+      "subtitle": "興味のあるトピックを選択してください",
+      "helpText": "フィードをパーソナライズするために3つ以上の興味を選択してください",
+      "selectedCount": "{{count}}件選択中",
+      "finishing": "完了処理中...",
+      "completeSetup": "セットアップ完了",
+      "success": {
+        "completeTitle": "Mundo Tangoへようこそ！",
+        "completeDesc": "プロフィールの準備が完了しました。探索を始めましょう！",
+        "waitlistTitle": "プロフィール完了！",
+        "waitlistDesc": "アカウントが有効になり次第お知らせします"
+      },
+      "errors": {
+        "saveFailed": "保存に失敗しました。もう一度お試しください。"
+      }
+    },
+    "legal": {
+      "title": "コミュニティガイドライン",
+      "subtitle": "利用規約をご確認のうえ、同意してください",
+      "legalDocsTitle": "法的文書",
+      "legalDocsDescription": "利用規約とプライバシーポリシーをご確認ください",
+      "termsOfService": {
+        "label": "利用規約に同意します",
+        "description": "Mundo Tangoのご利用に関する規約",
+        "link": "利用規約を読む"
+      },
+      "privacyPolicy": {
+        "label": "プライバシーポリシーに同意します",
+        "description": "お客様のデータの取り扱いについて",
+        "link": "プライバシーポリシーを読む"
+      },
+      "cocTitle": "コミュニティ行動規範",
+      "cocDescription": "敬意あるコミュニティの維持にご協力ください",
+      "coc": {
+        "respectful": {
+          "title": "敬意を持つ",
+          "description": "すべての人を尊厳と礼儀を持って扱う"
+        },
+        "inclusive": {
+          "title": "包括的である",
+          "description": "あらゆるレベルや背景のダンサーを歓迎する"
+        },
+        "authentic": {
+          "title": "本物である",
+          "description": "実名と正確な情報を使用する"
+        },
+        "consent": {
+          "title": "同意を尊重",
+          "description": "踊る前に必ず尋ね、境界を尊重する"
+        },
+        "noHarassment": {
+          "title": "ハラスメント禁止",
+          "description": "ハラスメントやいじめは一切容認しません"
+        },
+        "noSpam": {
+          "title": "スパム禁止",
+          "description": "無断の宣伝を送らない"
+        },
+        "noDiscrimination": {
+          "title": "差別禁止",
+          "description": "いかなる差別も容認しません"
+        },
+        "privacy": {
+          "title": "プライバシーを保護",
+          "description": "同意なく他者の情報を共有しない"
+        },
+        "safety": {
+          "title": "安全を優先",
+          "description": "危険な行動は直ちに報告"
+        },
+        "laws": {
+          "title": "法律を遵守",
+          "description": "すべての適用法を遵守する"
+        },
+        "report": {
+          "title": "問題を報告",
+          "description": "違反を報告してご協力ください"
+        },
+        "support": {
+          "title": "互いに支え合う",
+          "description": "仲間のダンサーの成長を助ける"
+        }
+      },
+      "acceptAll": "すべて同意して続行",
+      "accepting": "同意処理中...",
+      "incompleteAlert": "すべての必須項目に同意してください",
+      "success": {
+        "title": "ようこそ！",
+        "description": "コミュニティガイドラインに同意しました"
+      },
+      "errors": {
+        "failed": "保存に失敗しました。もう一度お試しください。"
+      }
+    },
+    "waitlist": {
+      "pageTitle": "ウェイトリスト",
+      "seoTitle": "ウェイトリストに登録されました - Mundo Tango",
+      "seoDescription": "アカウントは有効化待ちです",
+      "title": "ウェイトリストに登録されました！",
+      "welcomeMessage": "ようこそ、{{name}}さん！",
+      "defaultName": "ダンサー",
+      "profileComplete": "プロフィール完了",
+      "profileCompleteDesc": "プロフィールの準備が完了しました",
+      "emailNotice": "アカウントの準備ができ次第、{{email}}にメールでお知らせします",
+      "whenReady": "アカウントの準備ができ次第お知らせします。",
+      "whileYouWait": "お待ちいただく間、成長にご協力ください：",
+      "volunteerButton": "ボランティアになる",
+      "supportButton": "Mundo Tangoを支援"
+    },
+    "tour": {
+      "pageTitle": "ガイドツアー",
+      "seoTitle": "Mundo Tangoを探索",
+      "seoDescription": "Mundo Tangoの使い方を学ぶ",
+      "skipTour": "ツアーをスキップ",
+      "finish": "ツアーを終了",
+      "steps": {
+        "feed": "タンゴコミュニティの投稿を発見",
+        "events": "ミロンガ、クラス、フェスティバルを見つける",
+        "groups": "都市や興味に基づくグループに参加",
+        "messages": "他のダンサーと直接つながる",
+        "profile": "タンゴプロフィールをカスタマイズ",
+        "createPost": "タンゴの瞬間を共有"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "体験をアップグレード",
+        "subtitle": "Mundo Tangoを最大限に活用",
+        "limitedOffer": "期間限定オファー",
+        "getStarted": "始める",
+        "features": {
+          "connect": {
+            "title": "つながる",
+            "description": "どのダンサーにも直接メッセージ"
+          },
+          "visibility": {
+            "title": "可視性",
+            "description": "検索結果で注目される"
+          },
+          "events": {
+            "title": "イベント",
+            "description": "人気イベントへの優先アクセス"
+          },
+          "grow": {
+            "title": "成長",
+            "description": "プロフィールの詳細分析"
+          },
+          "premium": {
+            "title": "プレミアム",
+            "description": "限定プレミアム機能"
+          }
+        }
+      }
+    },
+    "navigation": {
+      "back": "戻る",
+      "next": "次へ",
+      "skip": "スキップ",
+      "finish": "完了",
+      "saving": "保存中..."
+    }
+  },
+  "login": {
+    "title": "ログイン",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "noAccount": "アカウントをお持ちでないですか？",
+    "signUp": "新規登録"
+  },
   "home": {
     "title": "Mundo Tangoへようこそ",
     "subtitle": "世界中のタンゴコミュニティとつながろう",
@@ -33,14 +448,6 @@
     "following": "フォロー中",
     "posts": "投稿",
     "about": "について"
-  },
-  "login": {
-    "title": "ログイン",
-    "email": "メールアドレス",
-    "password": "パスワード",
-    "forgotPassword": "パスワードをお忘れですか？",
-    "noAccount": "アカウントをお持ちでないですか？",
-    "signUp": "新規登録"
   },
   "signup": {
     "title": "アカウント作成",
