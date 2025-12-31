@@ -420,12 +420,41 @@
     "about": "À propos"
   },
   "login": {
-    "title": "Connexion",
-    "email": "Email",
-    "password": "Mot de passe",
-    "forgotPassword": "Mot de passe oublié?",
-    "noAccount": "Vous n'avez pas de compte?",
-    "signUp": "S'inscrire"
+    "pageName": "Connexion",
+    "seo": {
+      "title": "Se connecter - Mundo Tango",
+      "description": "Connectez-vous à votre compte Mundo Tango pour rejoindre la communauté mondiale du tango, découvrir des événements et partager votre passion pour le tango argentin."
+    },
+    "badge": "Bon retour",
+    "hero": {
+      "heading": "Votre voyage tango continue",
+      "paragraph": "Connectez-vous pour rencontrer des danseurs du monde entier, découvrir des événements et partager votre passion"
+    },
+    "stats": {
+      "dancers": "danseurs",
+      "events": "événements"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Mot de passe",
+      "signIn": "Se connecter",
+      "signingIn": "Connexion en cours...",
+      "forgotPassword": "Mot de passe oublié ?"
+    },
+    "noAccount": "Vous n'avez pas de compte ?",
+    "createAccount": "Créez-en un maintenant",
+    "toast": {
+      "successTitle": "Bon retour !",
+      "successDescription": "Vous êtes connecté avec succès.",
+      "errorTitle": "Échec de connexion",
+      "errorDescription": "Identifiants invalides",
+      "verificationRequired": {
+        "title": "Vérification d'email requise",
+        "description": "Veuillez vérifier votre boîte mail et confirmer votre email."
+      },
+      "upgradedTitle": "Compte mis à jour !",
+      "upgradedDescription": "Bienvenue ! Vous avez maintenant un accès complet à Mundo Tango."
+    }
   },
   "signup": {
     "title": "Créer un Compte",
