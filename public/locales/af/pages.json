@@ -892,5 +892,86 @@
       "analytics": "Analise",
       "settings": "Instellings"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Kunstmatige Intelligensie Onderhoud - Mundo Tango Talent Wedstryd",
+        "description": "Voltooi jou vrywilliger onderhoud met Mnr Blou KI om met die perfekte geleenthede gekoppel te word."
+      },
+      "pageTitle": "Kunstmatige Intelligensie Onderhoud",
+      "phases": {
+        "resume": "Fase 1: CV Diep-Duik",
+        "work": "Fase 2: Werkopdrag Wedstryd",
+        "complete": "Onderhoud Voltooi!"
+      },
+      "phaseLabels": {
+        "resume": "CV",
+        "workAssignment": "Werkopdrag"
+      },
+      "progress": {
+        "questionOf": "Vraag {{current}} van {{total}}",
+        "allQuestionsAnswered": "Alle vrae beantwoord"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Ongeldige lêertipe",
+          "description": "Laai asseblief PDF, DOCX, of TXT op"
+        },
+        "resumeParsed": {
+          "title": "CV verwerk!",
+          "description": "Mnr. Blou kan nou jou CV-inhoud lees."
+        },
+        "uploadFailed": {
+          "title": "Oplaai het misluk",
+          "description": "Probeer asseblief weer"
+        },
+        "missingSession": {
+          "title": "Ontbrekende sessie",
+          "description": "Begin asseblief vanaf die Talent Match-bladsy"
+        },
+        "error": {
+          "title": "Fout",
+          "description": "Kon nie jou antwoord verwerk nie"
+        }
+      },
+      "resumeBanner": {
+        "title": "CV-inhoud nie beskikbaar nie",
+        "description": "Laai jou CV weer op sodat Mnr. Blou jou ervaring kan lees en verwys.",
+        "parsing": "Verwerking...",
+        "reupload": "Laai weer op"
+      },
+      "buttons": {
+        "viewDashboard": "Besoek H2AC Dashboard",
+        "goHome": "Gaan Tuis"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Hallo daar! Ek het jou agtergrond hersien. Wat sou jy sê is die tegniese vaardigheid waarin jy die meeste selfvertroue het?",
+          "q2": "Watter tegnologieë of gereedskap geniet jy die meeste om mee te werk?",
+          "q3": "Is daar enige vaardighede op jou CV wat jy graag meer in vrywilligerswerk wil gebruik?",
+          "q4": "Watter areas van sagtewareontwikkeling interesseer jou die meeste op hierdie oomblik?",
+          "q5": "Het jy al voorheen aan enige oopbronprojekte of gemeenskapsinisiatiewe gewerk?",
+          "q6": "Wat is jou verkiesde werksstyl - hou jy van onafhanklike werk of samewerking?",
+          "q7": "Hoe benader jy gewoonlik die leer van nuwe tegnologieë?",
+          "q8": "Watter soort impak hoop jy om te maak deur vrywilligerswerk?",
+          "q9": "Wonderlik! Voordat ons oor spesifieke geleenthede praat, is daar iets anders oor jou agtergrond wat jy graag wil beklemtoon?"
+        },
+        "work": {
+          "q1": "Kom ons praat oor hoe jy by Mundo Tango kan bydra! Watter area interesseer jou die meeste: frontend, backend, KI/ML, of iets anders?",
+          "q2": "Mundo Tango verbind die globale tango-gemeenskap. Watter funksies sou jy opgewonde wees om te help bou?",
+          "q3": "Ons het beide tegniese en nie-tegniese vrywilligersgeleenthede. Watter tipe werk gee jou die meeste energie?",
+          "q4": "Hoeveel tyd per week kan jy realisties aan vrywilligerswerk toewy?",
+          "q5": "Verkies jy om onafhanklik te werk of as deel van 'n span?",
+          "q6": "Is jy gemaklik met paarprogrammering of kode-oorsigte?",
+          "q7": "Wat is jou ervaring met agile/sprint-gebaseerde ontwikkeling?",
+          "q8": "Ons gebruik GitHub vir samewerking. Is jy gemaklik met Git-werkvloei?",
+          "q9": "Sou jy verkies om aan nuwe funksies, foutoplossings of dokumentasie te werk?",
+          "q10": "Laastens, wat is die beste manier om met jou te kommunikeer - Slack, e-pos, of ons platformboodskappe?"
+        },
+        "phaseTransition": "Uitstekend! Ek het nou 'n goeie begrip van jou agtergrond en ervaring. Kom ons beweeg na Fase 2 waar ons spesifieke maniere sal bespreek hoe jy by Mundo Tango kan bydra.",
+        "processingError": "Ek vra om verskoning, maar ek het probleme gehad om dit te verwerk. Kan jy asseblief weer probeer?"
+      }
+    }
   }
 }

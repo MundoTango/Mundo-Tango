@@ -96,7 +96,11 @@ export default function TalentMatchInterviewPage() {
     
     const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
     if (!validTypes.includes(file.type)) {
-      toast({ title: "Invalid file type", description: "Please upload PDF, DOCX, or TXT", variant: "destructive" });
+      toast({ 
+        title: t("pages:talentMatch.interview.toast.invalidFileType.title"), 
+        description: t("pages:talentMatch.interview.toast.invalidFileType.description"), 
+        variant: "destructive" 
+      });
       return;
     }
     
@@ -120,16 +124,27 @@ export default function TalentMatchInterviewPage() {
         });
         
         await queryClient.invalidateQueries({ queryKey: ['/api/v1/volunteers', volunteerId, 'resume'] });
-        toast({ title: "Resume parsed!", description: "Mr. Blue can now read your resume content." });
+        toast({ 
+          title: t("pages:talentMatch.interview.toast.resumeParsed.title"), 
+          description: t("pages:talentMatch.interview.toast.resumeParsed.description") 
+        });
         setIsUploadingResume(false);
       };
       reader.onerror = () => {
-        toast({ title: "Upload failed", description: "Please try again", variant: "destructive" });
+        toast({ 
+          title: t("pages:talentMatch.interview.toast.uploadFailed.title"), 
+          description: t("pages:talentMatch.interview.toast.uploadFailed.description"), 
+          variant: "destructive" 
+        });
         setIsUploadingResume(false);
       };
       reader.readAsArrayBuffer(file);
     } catch (error) {
-      toast({ title: "Upload failed", description: "Please try again", variant: "destructive" });
+      toast({ 
+        title: t("pages:talentMatch.interview.toast.uploadFailed.title"), 
+        description: t("pages:talentMatch.interview.toast.uploadFailed.description"), 
+        variant: "destructive" 
+      });
       setIsUploadingResume(false);
     }
   };
@@ -283,8 +298,8 @@ If question ${TOTAL_WORK_QUESTIONS}, ask about their availability and preferred 
   useEffect(() => {
     if (!sessionId || !volunteerId) {
       toast({
-        title: "Missing session",
-        description: "Please start from the Talent Match page",
+        title: t("pages:talentMatch.interview.toast.missingSession.title"),
+        description: t("pages:talentMatch.interview.toast.missingSession.description"),
         variant: "destructive"
       });
       setLocation("/talent-match");
@@ -493,15 +508,15 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
       }
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to process your response",
+        title: t("pages:talentMatch.interview.toast.error.title"),
+        description: error.message || t("pages:talentMatch.interview.toast.error.description"),
         variant: "destructive"
       });
 
       const fallbackMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "I apologize, but I had trouble processing that. Could you please try again?",
+        content: t("pages:talentMatch.interview.fallbackQuestions.processingError"),
         timestamp: new Date()
       };
       setMessages(prev => [...prev, fallbackMessage]);
@@ -512,24 +527,30 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
 
   const getPhaseLabel = () => {
     switch (interviewState.phase) {
-      case "resume": return "Phase 1: Resume Deep-Dive";
-      case "work": return "Phase 2: Work Assignment Matching";
-      case "complete": return "Interview Complete!";
+      case "resume": return t("pages:talentMatch.interview.phases.resume");
+      case "work": return t("pages:talentMatch.interview.phases.work");
+      case "complete": return t("pages:talentMatch.interview.phases.complete");
     }
   };
 
   const getPhaseDescription = () => {
     switch (interviewState.phase) {
-      case "resume": return `Question ${Math.min(interviewState.resumeQuestionsAsked, TOTAL_RESUME_QUESTIONS)} of ${TOTAL_RESUME_QUESTIONS}`;
-      case "work": return `Question ${Math.min(interviewState.workQuestionsAsked, TOTAL_WORK_QUESTIONS)} of ${TOTAL_WORK_QUESTIONS}`;
-      case "complete": return "All questions answered";
+      case "resume": return t("pages:talentMatch.interview.progress.questionOf", { 
+        current: Math.min(interviewState.resumeQuestionsAsked, TOTAL_RESUME_QUESTIONS), 
+        total: TOTAL_RESUME_QUESTIONS 
+      });
+      case "work": return t("pages:talentMatch.interview.progress.questionOf", { 
+        current: Math.min(interviewState.workQuestionsAsked, TOTAL_WORK_QUESTIONS), 
+        total: TOTAL_WORK_QUESTIONS 
+      });
+      case "complete": return t("pages:talentMatch.interview.progress.allQuestionsAnswered");
     }
   };
 
   const phases: PhaseConfig[] = [
     {
       name: "resume",
-      label: "Resume",
+      label: t("pages:talentMatch.interview.phaseLabels.resume"),
       current: Math.min(interviewState.resumeQuestionsAsked, TOTAL_RESUME_QUESTIONS),
       total: TOTAL_RESUME_QUESTIONS,
       isActive: interviewState.phase === "resume",
@@ -537,7 +558,7 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
     },
     {
       name: "work",
-      label: "Work Assignment",
+      label: t("pages:talentMatch.interview.phaseLabels.workAssignment"),
       current: Math.min(interviewState.workQuestionsAsked, TOTAL_WORK_QUESTIONS),
       total: TOTAL_WORK_QUESTIONS,
       isActive: interviewState.phase === "work",
@@ -550,8 +571,8 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
       <div className="flex items-center gap-3">
         <Upload className="h-5 w-5 text-amber-500" />
         <div className="flex-1">
-          <p className="text-sm font-medium">Resume content not available</p>
-          <p className="text-xs text-muted-foreground">Re-upload your resume so Mr. Blue can read and reference your experience.</p>
+          <p className="text-sm font-medium">{t("pages:talentMatch.interview.resumeBanner.title")}</p>
+          <p className="text-xs text-muted-foreground">{t("pages:talentMatch.interview.resumeBanner.description")}</p>
         </div>
         <input 
           type="file" 
@@ -568,7 +589,7 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
           data-testid="button-resume-reupload"
         >
           {isUploadingResume ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 mr-1" />}
-          {isUploadingResume ? "Parsing..." : "Re-upload"}
+          {isUploadingResume ? t("pages:talentMatch.interview.resumeBanner.parsing") : t("pages:talentMatch.interview.resumeBanner.reupload")}
         </Button>
       </div>
     </div>
@@ -581,7 +602,7 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
         className="gap-2"
         data-testid="button-view-dashboard"
       >
-        View H2AC Dashboard
+        {t("pages:talentMatch.interview.buttons.viewDashboard")}
         <ArrowRight className="h-4 w-4" />
       </Button>
       <Button
@@ -591,17 +612,17 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
         data-testid="button-go-home"
       >
         <Home className="h-4 w-4" />
-        Go Home
+        {t("pages:talentMatch.interview.buttons.goHome")}
       </Button>
     </div>
   );
 
   return (
     <SelfHealingErrorBoundary pageName="Talent Match Interview" fallbackRoute="/talent-match">
-      <PageLayout title="AI Interview" showBreadcrumbs>
+      <PageLayout title={t("pages:talentMatch.interview.pageTitle")} showBreadcrumbs>
         <SEO
-          title="AI Interview - Mundo Tango Talent Match"
-          description="Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+          title={t("pages:talentMatch.interview.seo.title")}
+          description={t("pages:talentMatch.interview.seo.description")}
         />
 
         <div className="h-full flex flex-col" data-testid="page-talent-match-interview">
