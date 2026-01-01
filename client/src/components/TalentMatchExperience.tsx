@@ -652,11 +652,13 @@ export function TalentMatchExperience({
         const extension = doc.file.name.toLowerCase().split('.').pop();
         const isBinaryFile = extension === 'pdf' || extension === 'docx';
         
+        // Always send parsedText if we have it - frontend already parsed the file
+        // Also send fileBuffer for binary files as fallback for server-side parsing
         await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/resume`, {
           filename: doc.file.name,
           fileUrl: "",
           fileBuffer: isBinaryFile ? doc.base64Buffer : undefined,
-          parsedText: isBinaryFile ? undefined : doc.text,
+          parsedText: doc.text || undefined,
           links: []
         });
       }

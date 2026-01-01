@@ -130,7 +130,13 @@ export function createTalentMatchRoutes(storage: IStorage) {
       let links: string[] = [];
       let signals: string[] = [];
 
-      if (fileBuffer) {
+      // Prefer frontend-parsed text (already processed) over server-side parsing
+      if (req.body.parsedText) {
+        parsedText = req.body.parsedText;
+        skills = req.body.skills || [];
+        links = req.body.links || [];
+      } else if (fileBuffer) {
+        // Fallback to server-side parsing if frontend didn't parse
         const buffer = Buffer.from(fileBuffer, "base64");
         const parsed = await resumeParser.parseResume(buffer, filename);
         
@@ -138,10 +144,6 @@ export function createTalentMatchRoutes(storage: IStorage) {
         skills = parsed.skills;
         links = parsed.links;
         signals = parsed.signals;
-      } else if (req.body.parsedText) {
-        parsedText = req.body.parsedText;
-        skills = req.body.skills || [];
-        links = req.body.links || [];
       }
 
       const skillSignals = detectSkillSignals(parsedText, skills);
