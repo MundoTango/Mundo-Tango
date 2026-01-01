@@ -514,7 +514,7 @@ function UnifiedTopBar({
                       color: '#40E0D0',
                     }}
                   >
-                    {t('common.admin')}
+                    {t('common:admin', 'Admin')}
                   </Badge>
                 )}
               </div>
@@ -522,12 +522,12 @@ function UnifiedTopBar({
               {/* Profile Actions */}
               <DropdownMenuItem onClick={() => setLocation('/profile')} data-testid="menu-item-profile">
                 <User className="mr-3 h-4 w-4" />
-                {t('navigation.profile')}
+                {t('navigation:profile')}
               </DropdownMenuItem>
               
               <DropdownMenuItem onClick={() => setLocation('/settings')} data-testid="menu-item-settings">
                 <Settings className="mr-3 h-4 w-4" />
-                {t('navigation.settings')}
+                {t('navigation:settings')}
               </DropdownMenuItem>
               
               {hasAdminAccess && (
@@ -535,7 +535,7 @@ function UnifiedTopBar({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => setLocation('/admin')} data-testid="menu-item-admin">
                     <Shield className="mr-3 h-4 w-4" />
-                    {t('navigation.adminAccess')}
+                    {t('navigation:adminAccess', 'Admin Access')}
                   </DropdownMenuItem>
                 </>
               )}
@@ -545,7 +545,7 @@ function UnifiedTopBar({
               {/* Help & Support */}
               <DropdownMenuItem onClick={() => setLocation('/help')} data-testid="menu-item-help">
                 <HelpCircle className="mr-3 h-4 w-4" />
-                Help & Support
+                {t('navigation:help')}
               </DropdownMenuItem>
               
               <DropdownMenuSeparator />
@@ -557,7 +557,7 @@ function UnifiedTopBar({
                 data-testid="menu-item-logout"
               >
                 <LogOut className="mr-3 h-4 w-4" />
-                {t('navigation.logout')}
+                {t('navigation:logout')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

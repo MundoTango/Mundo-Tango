@@ -681,7 +681,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">{t('navigation:community.title')}</h3>
+              <h3 className="font-semibold mb-4">{t('navigation:community')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link

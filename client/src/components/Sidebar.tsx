@@ -123,11 +123,11 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
 
   // Main Navigation (Core Features)
   const mainRoutes = [
-    { icon: Heart, title: t('navigation.memories'), link: "/" },
-    { icon: UsersRound, title: t('navigation.tangoCommunity'), link: "/community-world-map" },
-    { icon: Calendar, title: t('navigation.events'), link: "/events" },
-    { icon: MessageCircle, title: t('navigation.messages'), link: "/messages" },
-    { icon: UserCheck, title: t('navigation.friends'), link: "/friends-list" },
+    { icon: Heart, title: t('navigation:home', 'Home'), link: "/" },
+    { icon: UsersRound, title: t('navigation:community', 'Community'), link: "/community-world-map" },
+    { icon: Calendar, title: t('navigation:events', 'Events'), link: "/events" },
+    { icon: MessageCircle, title: t('navigation:messages', 'Messages'), link: "/messages" },
+    { icon: UserCheck, title: t('common:friends', 'Friends'), link: "/friends-list" },
   ];
 
   // Discover Section
@@ -165,28 +165,28 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
     { icon: CreditCard, title: "Subscriptions", link: "/subscriptions" },
     { icon: Plane, title: "Travel Planner", link: "/travel-planner" },
     { icon: Phone, title: "Contact", link: "/contact" },
-    { icon: Mail, title: t('navigation.roleInvitations'), link: "/invitations" },
+    { icon: Mail, title: t('common:invitations', 'Invitations'), link: "/invitations" },
   ];
 
   // Global statistics (4 stats)
   const globalStats = [
     {
-      title: t('community.globalDancers'),
+      title: t('common:globalDancers', 'Global Dancers'),
       count: formatStatNumber(stats?.totalUsers, "3.2K", i18n.language),
       icon: Sparkles,
     },
     {
-      title: t('community.activeEvents'), 
+      title: t('common:activeEvents', 'Active Events'), 
       count: formatStatNumber(stats?.totalEvents, "945", i18n.language),
       icon: Calendar,
     },
     {
-      title: t('community.communities'),
+      title: t('common:communities', 'Communities'),
       count: formatStatNumber(stats?.totalGroups, "6.8K", i18n.language),
       icon: UsersRound,
     },
     {
-      title: t('community.yourCity'),
+      title: t('common:yourCity', 'Your City'),
       count: formatStatNumber(stats?.userCityMembers, "184", i18n.language),
       icon: MapPin,
     },
@@ -418,7 +418,7 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
               className="text-xs font-semibold uppercase tracking-wide mb-3 px-3"
               style={{ color: '#64748B' }}
             >
-              {t('community.globalStatistics')}
+              {t('common:globalStatistics', 'Global Statistics')}
             </div>
             
             <div className="grid grid-cols-2 gap-2">
@@ -479,7 +479,7 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
               Mundo Tango
             </div>
             <div className="text-xs text-gray-600 dark:text-ocean-muted">
-              {t('community.globalCommunity')}
+              {t('common:globalCommunity', 'Global Tango Community')}
             </div>
           </div>
         </div>

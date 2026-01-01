@@ -95,7 +95,7 @@ export function PublicNavbar() {
                 className={communityItems.some(item => isActive(item.path)) ? "bg-accent" : ""}
                 data-testid="nav-community"
               >
-                {t('navigation:community.title')}
+                {t('navigation:community')}
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
