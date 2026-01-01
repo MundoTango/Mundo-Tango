@@ -23,7 +23,7 @@
     },
     "form": {
       "fullName": "Puno ime",
-      "fullNamePlaceholder": "Maria Rodriguez",
+      "fullNamePlaceholder": "Marija Rodriguez",
       "email": "Email",
       "emailPlaceholder": "maria@example.com",
       "username": "Korisničko ime",
@@ -896,81 +896,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI Intervju - Mundo Tango Talent Match",
+        "description": "Završite svoj volonterski intervju sa gospodinom Blue AI kako biste se spojili sa savršenim prilikama."
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI Intervju",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "Faza 1: Dubinska analiza CV-a",
+        "work": "Faza 2: Usklađivanje radnih zadataka",
+        "complete": "Intervju završen!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "CV",
+        "workAssignment": "Radni zadatak"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Pitanje {{current}} od {{total}}",
+        "allQuestionsAnswered": "Sva pitanja su odgovorena"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Nevažeći tip datoteke",
+          "description": "Molimo vas da otpremite PDF, DOCX ili TXT"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "Životopis je obrađen!",
+          "description": "Gospodin Blue sada može čitati sadržaj vašeg životopisa."
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Otpremanje nije uspjelo",
+          "description": "Molimo pokušajte ponovo"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Nedostaje sesija",
+          "description": "Molimo započnite sa stranice Talent Match"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Greška",
+          "description": "Nije uspjelo obraditi vaš odgovor"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Sadržaj životopisa nije dostupan",
+        "description": "Ponovo otpremite svoj životopis kako bi gospodin Blue mogao čitati i referencirati vaše iskustvo.",
+        "parsing": "Obrada...",
+        "reupload": "Ponovo otpremi"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "Pogledajte H2AC kontrolnu tablu",
+        "goHome": "Idi na početnu stranicu"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Zdravo! Pregledao sam vašu pozadinu. Šta biste rekli da je tehnička vještina u kojoj ste najpouzdaniji?",
+          "q2": "Koje tehnologije ili alati vam najviše odgovaraju?",
+          "q3": "Postoje li vještine u vašem životopisu koje biste željeli više koristiti u volonterskom radu?",
+          "q4": "Koja područja razvoja softvera vas trenutno najviše zanimaju?",
+          "q5": "Da li ste ranije radili na nekim projektima otvorenog koda ili inicijativama zajednice?",
+          "q6": "Koji je vaš preferirani stil rada - da li volite samostalni rad ili saradnju?",
+          "q7": "Kako obično pristupate učenju novih tehnologija?",
+          "q8": "Kakav uticaj se nadate da ćete ostvariti kroz volonterski rad?",
+          "q9": "Odlično! Prije nego što pređemo na raspravu o specifičnim prilikama, postoji li nešto drugo o vašem iskustvu što biste željeli istaknuti?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Sada razgovarajmo o tome kako možete doprinijeti Mundo Tango! Koje područje vas najviše zanima: frontend, backend, AI/ML ili nešto drugo?",
+          "q2": "Mundo Tango povezuje globalnu tango zajednicu. Koje funkcionalnosti biste bili uzbuđeni da pomognete izgraditi?",
+          "q3": "Imamo tehničke i netehničke volonterske prilike. Koja vrsta posla vas najviše energizira?",
+          "q4": "Koliko vremena tjedno biste realno mogli posvetiti volonterskom radu?",
+          "q5": "Da li više volite raditi samostalno ili kao dio tima?",
+          "q6": "Da li se osjećate ugodno s pair programmingom ili pregledima koda?",
+          "q7": "Kakvo je vaše iskustvo s agilnim/sprint temeljenim razvojem?",
+          "q8": "Koristimo GitHub za suradnju. Da li se osjećate ugodno s Git radnim tokovima?",
+          "q9": "Da li biste radije radili na novim funkcionalnostima, ispravkama grešaka ili dokumentaciji?",
+          "q10": "Na kraju, koji je najbolji način da komunicirate s vama - Slack, email ili poruke na našoj platformi?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Izvrsno! Sada imam odlično razumijevanje vašeg iskustva i pozadine. Pređimo na Fazu 2 gdje ćemo razgovarati o specifičnim načinima na koje možete doprinijeti Mundo Tango.",
+        "processingError": "Izvinjavam se, ali sam imao problema s obradom toga. Možete li pokušati ponovo?"
       }
     }
   }

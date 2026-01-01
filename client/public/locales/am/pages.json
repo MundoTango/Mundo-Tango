@@ -896,81 +896,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI መግቢያ - Mundo Tango ተወዳዳሪ ማቅረብ",
+        "description": "ከአቶ ቡሉ ኤይ ጋር የተመለከተ የእንቅስቃሴ ጥያቄዎችዎን ይሙሉ እና ከተመራጭ እንደሚሆኑ ዕድሎች ጋር ይያዙ።"
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI መግቢያ",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "ደረጃ 1: የሪዞም ጥምረት",
+        "work": "ደረጃ 2: የሥራ ተመራጭ ማቅረብ",
+        "complete": "የጥያቄ ግንባር ተጠናቀቀ!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "የሪዞም",
+        "workAssignment": "የሥራ ተመራጭ"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "ጥያቄ {{current}} ከ {{total}}",
+        "allQuestionsAnswered": "ሁሉም ጥያቄዎች ተመልሰዋል"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "የተሳሳተ ፋይል ዓይነት",
+          "description": "እባኮትን PDF, DOCX, ወይም TXT ይጫኑ"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "የሪዞም ተቀባ!",
+          "description": "አቶ ቡሉ አሁን የሪዞም ይዘትዎን ይችላል።"
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "የጫን ሂደት ተቋርጧል",
+          "description": "እባኮትን ድጋፍ ይሞክሩ"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "የሚገኝ ስብስብ አለም",
+          "description": "እባኮትን ከተወዳዳሪ ማቅረብ ገፅ ይጀምሩ"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "ስህተት",
+          "description": "የእንቅስቃሴዎን መልስ ማስተካከል አልቻልኩም"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "የሪዞም ይዘት አልተገኘም",
+        "description": "የእርስዎን የራስ መግለጫ ወደ እንደ አባል በሚስተዋወቅ ይዘው ይወዳድሩ ወይም ይመለከቱ ይችላሉ።",
+        "parsing": "በመረጃ ማቅረብ...",
+        "reupload": "ይደግፉ"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "H2AC ዳሽቦርድ ይመልከቱ",
+        "goHome": "ወደ ቤት ይመለሱ"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "ሰላም! የእርስዎን የታሪክ እንደ ተመለከተ እንዴት ይቀርባሉ? በጣም የተረጋገጠ የቴክኒክ ክህሎት ምንድነው?",
+          "q2": "በጣም የምትወዱት ቴክኖሎጂዎች ወይም መሣሪያዎች ምንድነው?",
+          "q3": "በየእርስዎ የራስ መግለጫ ውስጥ በተጨማሪ የምትጠቀሙት ክህሎት አለ?",
+          "q4": "በሶፍትዌር ልምድ የምትወዱት የምን ዘርፍ ነው?",
+          "q5": "በዚህ በፊት በአንዳንድ ክፍል የክፍል ስራዎች ወይም የማህበረሰብ እቅዶች ላይ ስራ አድርገዋል?",
+          "q6": "የምትምር ዘዴ ምንድነው - የእርስዎን የራስ ስራ ወይም የቡድን ስራ ይወዳሉ?",
+          "q7": "አዲስ ቴክኖሎጂዎች ማማር የምትምር ዘዴ ምንድነው?",
+          "q8": "በተገናኝ ስራ የምትፈልጉት የተገናኝ ውጤት ምንድነው?",
+          "q9": "ጥሩ! ወደ ዝርዝር ዕድል ማወያይ በፊት የእርስዎን የታሪክ ምንም ይገልጹ?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "አሁን ወደ Mundo Tango የምትለዋወጡ ዘርፍ እንዴት ይወዳሉ? የምትወዱት ዘርፍ የፊት ወይም የኋላ ወይም AI/ML ወይም ሌላ ነው?",
+          "q2": "Mundo Tango የዓለም ታንጎ ማህበረሰብን ይገናኛል። የምትወዱት የምርት ይህ ይወዳሉ?",
+          "q3": "የቴክኒክ እና ያልነበረ የተገናኝ ዕድል አለን። የምትወዱት የስራ ዓይነት ምንድነው?",
+          "q4": "በሳምንት ምን ያንዳንድ ጊዜ ወደ ተገናኝ ስራ ማስተናገድ ይችላሉ?",
+          "q5": "የምትወዱት የራስ ስራ ወይም የቡድን ስራ ነው?",
+          "q6": "በጋራ ፕሮግራሚንግ ወይም የኮድ ግምገማ ይቀበሉ?",
+          "q7": "በአግይል/ስፕሪንት መልክ ላይ የምትምር ምንድነው?",
+          "q8": "ለአንድ ላይ የመስርያ ዕድል ይገናኛሉ? የGit የስራ አይነት ይቀበሉ?",
+          "q9": "አዲስ ባለቤት ወይም የተገናኝ ይህ ይወዳሉ?",
+          "q10": "መጨረሻ የምትለዋወጡ የምን መንገድ ነው - Slack, ኢሜይል, ወይም የእኛ መድረክ መልእክት?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "አስደሳች! የእርስዎን የታሪክ እና የምርት በጣም ይረዳል። ወደ የሁለተኛ ደረጃ ይሂዱ ወይም የምትለዋወጡ ዕድል ይወዳሉ።",
+        "processingError": "እቅፍ ነኝ፣ ነገር ግን ይህን ማስተካከል አልቻልኩም። እባኮትን ድጋፍ እንደገና ይሞክሩ።"
       }
     }
   }

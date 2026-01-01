@@ -1,6 +1,7 @@
 import { db } from '@shared/db';
 import { eq, desc, and } from 'drizzle-orm';
 import { chromium, Page, Browser } from 'playwright';
+import { getAppUrl } from '../utils/getAppUrl';
 
 /**
  * BLOCKER 5: Self-Healing System Service
@@ -57,9 +58,7 @@ export class SelfHealingService {
     });
 
     try {
-      const baseUrl = process.env.REPL_SLUG 
-        ? `https://${process.env.REPL_SLUG}.${process.env.REPLIT_DEV_DOMAIN}`
-        : 'http://localhost:5000';
+      const baseUrl = getAppUrl();
       
       await page.goto(`${baseUrl}${pagePath}`, { waitUntil: 'networkidle', timeout: 30000 });
 

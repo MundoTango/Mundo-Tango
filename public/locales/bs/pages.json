@@ -23,7 +23,7 @@
     },
     "form": {
       "fullName": "Puno ime",
-      "fullNamePlaceholder": "Maria Rodriguez",
+      "fullNamePlaceholder": "Marija Rodriguez",
       "email": "Email",
       "emailPlaceholder": "maria@example.com",
       "username": "Korisničko ime",
@@ -891,6 +891,87 @@
       "reports": "Izvještaji",
       "analytics": "Analitika",
       "settings": "Postavke"
+    }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Intervju - Mundo Tango Talent Match",
+        "description": "Završite svoj volonterski intervju sa gospodinom Blue AI kako biste se spojili sa savršenim prilikama."
+      },
+      "pageTitle": "AI Intervju",
+      "phases": {
+        "resume": "Faza 1: Dubinska analiza CV-a",
+        "work": "Faza 2: Usklađivanje radnih zadataka",
+        "complete": "Intervju završen!"
+      },
+      "phaseLabels": {
+        "resume": "CV",
+        "workAssignment": "Radni zadatak"
+      },
+      "progress": {
+        "questionOf": "Pitanje {{current}} od {{total}}",
+        "allQuestionsAnswered": "Sva pitanja su odgovorena"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Nevažeći tip datoteke",
+          "description": "Molimo vas da otpremite PDF, DOCX ili TXT"
+        },
+        "resumeParsed": {
+          "title": "Životopis je obrađen!",
+          "description": "Gospodin Blue sada može čitati sadržaj vašeg životopisa."
+        },
+        "uploadFailed": {
+          "title": "Otpremanje nije uspjelo",
+          "description": "Molimo pokušajte ponovo"
+        },
+        "missingSession": {
+          "title": "Nedostaje sesija",
+          "description": "Molimo započnite sa stranice Talent Match"
+        },
+        "error": {
+          "title": "Greška",
+          "description": "Nije uspjelo obraditi vaš odgovor"
+        }
+      },
+      "resumeBanner": {
+        "title": "Sadržaj životopisa nije dostupan",
+        "description": "Ponovo otpremite svoj životopis kako bi gospodin Blue mogao čitati i referencirati vaše iskustvo.",
+        "parsing": "Obrada...",
+        "reupload": "Ponovo otpremi"
+      },
+      "buttons": {
+        "viewDashboard": "Pogledajte H2AC kontrolnu tablu",
+        "goHome": "Idi na početnu stranicu"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Zdravo! Pregledao sam vašu pozadinu. Šta biste rekli da je tehnička vještina u kojoj ste najpouzdaniji?",
+          "q2": "Koje tehnologije ili alati vam najviše odgovaraju?",
+          "q3": "Postoje li vještine u vašem životopisu koje biste željeli više koristiti u volonterskom radu?",
+          "q4": "Koja područja razvoja softvera vas trenutno najviše zanimaju?",
+          "q5": "Da li ste ranije radili na nekim projektima otvorenog koda ili inicijativama zajednice?",
+          "q6": "Koji je vaš preferirani stil rada - da li volite samostalni rad ili saradnju?",
+          "q7": "Kako obično pristupate učenju novih tehnologija?",
+          "q8": "Kakav uticaj se nadate da ćete ostvariti kroz volonterski rad?",
+          "q9": "Odlično! Prije nego što pređemo na raspravu o specifičnim prilikama, postoji li nešto drugo o vašem iskustvu što biste željeli istaknuti?"
+        },
+        "work": {
+          "q1": "Sada razgovarajmo o tome kako možete doprinijeti Mundo Tango! Koje područje vas najviše zanima: frontend, backend, AI/ML ili nešto drugo?",
+          "q2": "Mundo Tango povezuje globalnu tango zajednicu. Koje funkcionalnosti biste bili uzbuđeni da pomognete izgraditi?",
+          "q3": "Imamo tehničke i netehničke volonterske prilike. Koja vrsta posla vas najviše energizira?",
+          "q4": "Koliko vremena tjedno biste realno mogli posvetiti volonterskom radu?",
+          "q5": "Da li više volite raditi samostalno ili kao dio tima?",
+          "q6": "Da li se osjećate ugodno s pair programmingom ili pregledima koda?",
+          "q7": "Kakvo je vaše iskustvo s agilnim/sprint temeljenim razvojem?",
+          "q8": "Koristimo GitHub za suradnju. Da li se osjećate ugodno s Git radnim tokovima?",
+          "q9": "Da li biste radije radili na novim funkcionalnostima, ispravkama grešaka ili dokumentaciji?",
+          "q10": "Na kraju, koji je najbolji način da komunicirate s vama - Slack, email ili poruke na našoj platformi?"
+        },
+        "phaseTransition": "Izvrsno! Sada imam odlično razumijevanje vašeg iskustva i pozadine. Pređimo na Fazu 2 gdje ćemo razgovarati o specifičnim načinima na koje možete doprinijeti Mundo Tango.",
+        "processingError": "Izvinjavam se, ali sam imao problema s obradom toga. Možete li pokušati ponovo?"
+      }
     }
   }
 }

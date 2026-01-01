@@ -4,6 +4,7 @@ import { db } from "@shared/db";
 import { users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import { getAppUrl } from "../utils/getAppUrl";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -409,7 +410,7 @@ router.get("/customer-portal", authenticateToken, async (req: AuthRequest, res: 
 
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
-      return_url: `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/settings/billing`,
+      return_url: `${getAppUrl()}/settings/billing`,
     });
 
     res.json({ url: session.url });

@@ -932,5 +932,86 @@
     "search": "Cercar professionals...",
     "filterByRole": "Filtrar per rol",
     "filterByCity": "Filtrar per ciutat"
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Entrevista AI - Mundo Tango Talent Match",
+        "description": "Completa la teva entrevista de voluntariat amb el Sr. Blue AI per ser emparellat amb les oportunitats perfectes."
+      },
+      "pageTitle": "Entrevista AI",
+      "phases": {
+        "resume": "Fase 1: Anàlisi del currículum",
+        "work": "Fase 2: Emparellament de tasques laborals",
+        "complete": "Entrevista completada!"
+      },
+      "phaseLabels": {
+        "resume": "Currículum",
+        "workAssignment": "Tasques laborals"
+      },
+      "progress": {
+        "questionOf": "Pregunta {{current}} de {{total}}",
+        "allQuestionsAnswered": "Totes les preguntes contestades"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Tipus de fitxer no vàlid",
+          "description": "Si us plau, puja PDF, DOCX o TXT"
+        },
+        "resumeParsed": {
+          "title": "Currículum analitzat!",
+          "description": "El Sr. Blue ara pot llegir el contingut del teu currículum."
+        },
+        "uploadFailed": {
+          "title": "Error en la càrrega",
+          "description": "Si us plau, torna-ho a intentar"
+        },
+        "missingSession": {
+          "title": "Sessió perduda",
+          "description": "Si us plau, comença des de la pàgina de Talent Match"
+        },
+        "error": {
+          "title": "Error",
+          "description": "No s'ha pogut processar la teva resposta"
+        }
+      },
+      "resumeBanner": {
+        "title": "Contingut del currículum no disponible",
+        "description": "Torna a pujar el teu currículum perquè el Sr. Blue pugui llegir i referenciar la teva experiència.",
+        "parsing": "Analitzant...",
+        "reupload": "Torna a pujar"
+      },
+      "buttons": {
+        "viewDashboard": "Veure el tauler H2AC",
+        "goHome": "Anar a Inici"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Hola! He revisat el teu historial. Quina seria la habilitat tècnica en la qual et sents més segur?",
+          "q2": "Quines tecnologies o eines t'agrada més utilitzar?",
+          "q3": "Hi ha alguna habilitat del teu currículum que t'agradaria utilitzar més en treballs voluntaris?",
+          "q4": "Quines àrees del desenvolupament de programari t'interessen més ara mateix?",
+          "q5": "Has treballat abans en projectes de codi obert o iniciatives comunitàries?",
+          "q6": "Quin és el teu estil de treball preferit - t'agrada treballar de manera independent o en col·laboració?",
+          "q7": "Com acostumes a abordar l'aprenentatge de noves tecnologies?",
+          "q8": "Quin tipus d'impacte esperes aconseguir a través del treball voluntari?",
+          "q9": "Fantàstic! Abans de passar a discutir oportunitats específiques, hi ha alguna altra cosa sobre el teu historial que t'agradaria destacar?"
+        },
+        "work": {
+          "q1": "Ara parlem de com pots contribuir a Mundo Tango! Quina àrea t'interessa més: frontend, backend, IA/ML, o alguna altra cosa?",
+          "q2": "Mundo Tango connecta la comunitat global de tango. Quines funcions t'agradaria ajudar a construir?",
+          "q3": "Tenim oportunitats de voluntariat tant tècniques com no tècniques. Quin tipus de treball et motiva més?",
+          "q4": "Quanta estona per setmana podries comprometre't realment a treballar com a voluntari?",
+          "q5": "Prefereixes treballar de manera independent o com a part d'un equip?",
+          "q6": "Et sents còmode amb la programació en parella o les revisions de codi?",
+          "q7": "Quina és la teva experiència amb el desenvolupament àgil/basat en sprints?",
+          "q8": "Fem servir GitHub per a la col·laboració. Et sents còmode amb els fluxos de treball de Git?",
+          "q9": "Preferiries treballar en noves funcions, correccions d'errors o documentació?",
+          "q10": "Finalment, quina és la millor manera de comunicar-te amb tu - Slack, correu electrònic o missatgeria de la nostra plataforma?"
+        },
+        "phaseTransition": "Excel·lent! Ara tinc una gran comprensió del teu historial i experiència. Passarem a la Fase 2 on discutirem maneres específiques en què pots contribuir a Mundo Tango.",
+        "processingError": "Em disculpo, però he tingut problemes per processar això. Podries intentar-ho de nou?"
+      }
+    }
   }
 }

@@ -892,5 +892,86 @@
       "analytics": "Dadansoddi",
       "settings": "Gosodiadau"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Cyfweliad AI - Cyfateb Talent Mundo Tango",
+        "description": "Cwblhau eich cyfweliad gwirfoddol gyda Mr Blue AI i gael eich cyfateb â'r cyfleoedd perffaith."
+      },
+      "pageTitle": "Cyfweliad AI",
+      "phases": {
+        "resume": "Cam 1: Adfer Dychweliad",
+        "work": "Cam 2: Cyfateb Tasgau Gwaith",
+        "complete": "Cyfweliad wedi'i gwblhau!"
+      },
+      "phaseLabels": {
+        "resume": "Dychweliad",
+        "workAssignment": "Tasg Gwaith"
+      },
+      "progress": {
+        "questionOf": "Cwestiwn {{current}} o {{total}}",
+        "allQuestionsAnswered": "Pob cwestiwn wedi'i ateb"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Math ffeil annilys",
+          "description": "Os gwelwch yn dda, llwythwch PDF, DOCX, neu TXT"
+        },
+        "resumeParsed": {
+          "title": "Dychweliad wedi'i ddadansoddi!",
+          "description": "Gall Mr. Blue nawr ddarllen cynnwys eich dychweliad."
+        },
+        "uploadFailed": {
+          "title": "Methwyd â llwytho",
+          "description": "Os gwelwch yn dda, rhowch gynnig arall"
+        },
+        "missingSession": {
+          "title": "Sesiwn ar goll",
+          "description": "Os gwelwch yn dda, dechreuwch o'r dudalen Cyfateb Talent"
+        },
+        "error": {
+          "title": "Gwall",
+          "description": "Methwyd â phrosesu eich ymateb"
+        }
+      },
+      "resumeBanner": {
+        "title": "Cynnwys dychweliad ar gael",
+        "description": "Ail-lwythwch eich dychweliad fel y gall Mr. Blue ddarllen a chyfeirio at eich profiad.",
+        "parsing": "Dadansoddi...",
+        "reupload": "Ail-lwytho"
+      },
+      "buttons": {
+        "viewDashboard": "Gweld Dangosfa H2AC",
+        "goHome": "Ewch adref"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Helo! Rwyf wedi adolygu eich cefndir. Beth fyddech chi'n ei ddweud yw'r sgil dechnegol rydych chi'n fwyaf hyderus ynddi?",
+          "q2": "Pa dechnolegau neu offer ydych chi'n mwynhau gweithio gyda nhw fwyaf?",
+          "q3": "A oes unrhyw sgiliau ar eich CV yr hoffech eu defnyddio mwy mewn gwaith gwirfoddol?",
+          "q4": "Pa ardaloedd o ddatblygu meddalwedd sy'n eich diddori fwyaf ar hyn o bryd?",
+          "q5": "A ydych wedi gweithio ar unrhyw brosiectau cod agored neu fentrau cymunedol o'r blaen?",
+          "q6": "Beth yw eich steil gwaith a ffefrir - a ydych yn hoffi gweithio'n annibynnol neu gydweithio?",
+          "q7": "Sut ydych fel arfer yn mynd ati i ddysgu technolegau newydd?",
+          "q8": "Pa fath o effaith ydych yn gobeithio ei gwneud trwy waith gwirfoddol?",
+          "q9": "Gwych! Cyn i ni symud ymlaen i drafod cyfleoedd penodol, oes unrhyw beth arall am eich cefndir yr hoffech ei amlygu?"
+        },
+        "work": {
+          "q1": "Nawr gadewch i ni siarad am sut y gallwch gyfrannu at Mundo Tango! Pa ardal sy'n eich diddori fwyaf: frontend, backend, AI/ML, neu rywbeth arall?",
+          "q2": "Mae Mundo Tango yn cysylltu cymuned tango byd-eang. Pa nodweddion fyddai'n eich cyffroi i helpu i'w hadeiladu?",
+          "q3": "Mae gennym gyfleoedd gwirfoddol technegol a non-technegol. Pa fath o waith sy'n rhoi egni i chi fwyaf?",
+          "q4": "Faint o amser y gallech ei ymrwymo'n realistig i waith gwirfoddol bob wythnos?",
+          "q5": "A ydych yn well gennych weithio'n annibynnol neu fel rhan o dîm?",
+          "q6": "A ydych yn gyfforddus gyda phrogramu yn y parau neu adolygiadau cod?",
+          "q7": "Beth yw eich profiad gyda datblygu agile/sprint?",
+          "q8": "Rydym yn defnyddio GitHub ar gyfer cydweithio. A ydych yn gyfforddus gyda llif gwaith Git?",
+          "q9": "A fyddech yn well gennych weithio ar nodweddion newydd, atgyweiriadau difeithwch, neu ddogfennaeth?",
+          "q10": "Yn olaf, beth yw'r ffordd orau i gysylltu â chi - Slack, e-bost, neu negeseuon ar ein platfform?"
+        },
+        "phaseTransition": "Perffaith! Mae gennyf nawr ddealltwriaeth wych o'ch cefndir a'ch profiad. Gadewch i ni symud i Ffasiwn 2 lle byddwn yn trafod ffyrdd penodol y gallwch gyfrannu at Mundo Tango.",
+        "processingError": "Mae'n ddrwg gennyf, ond roedd gennyf broblem gyda hynny. A allech chi geisio eto?"
+      }
+    }
   }
 }

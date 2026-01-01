@@ -635,7 +635,7 @@
             "description": "Pokročilá analytika profilu"
           },
           "premium": {
-            "title": "Premium",
+            "title": "Prémiový",
             "description": "Exkluzivní prémiové funkce"
           }
         }
@@ -864,7 +864,7 @@
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
+    "title": "Dashboard CEO života",
     "description": "Váš osobní AI asistent pro správu života",
     "agents": {
       "health": "Agent zdraví",
@@ -903,81 +903,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI Pohovor - Mundo Tango Talent Match",
+        "description": "Dokončete svůj dobrovolnický pohovor s panem Blue AI, abyste se spojili s dokonalými příležitostmi."
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI Pohovor",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "Fáze 1: Hluboké prozkoumání životopisu",
+        "work": "Fáze 2: Shoda pracovních úkolů",
+        "complete": "Pohovor dokončen!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "Životopis",
+        "workAssignment": "Pracovní úkol"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Otázka {{current}} z {{total}}",
+        "allQuestionsAnswered": "Všechny otázky zodpovězeny"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Neplatný typ souboru",
+          "description": "Prosím, nahrajte PDF, DOCX nebo TXT"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "Životopis byl zpracován!",
+          "description": "Pan Blue nyní může číst obsah vašeho životopisu."
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Nahrání se nezdařilo",
+          "description": "Prosím, zkuste to znovu"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Chybějící relace",
+          "description": "Prosím, začněte na stránce Talent Match"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Chyba",
+          "description": "Nepodařilo se zpracovat vaši odpověď"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Obsah životopisu není k dispozici",
+        "description": "Znovu nahrajte svůj životopis, aby pan Blue mohl číst a odkazovat na vaše zkušenosti.",
+        "parsing": "Zpracovávám...",
+        "reupload": "Znovu nahrát"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "Zobrazit H2AC Dashboard",
+        "goHome": "Jít domů"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Ahoj! Přezkoumal jsem vaše pozadí. Jakou technickou dovednost považujete za svou nejsilnější?",
+          "q2": "S jakými technologiemi nebo nástroji se vám nejlépe pracuje?",
+          "q3": "Existují nějaké dovednosti ve vašem životopisu, které byste chtěli více využít v dobrovolnické práci?",
+          "q4": "Jaké oblasti vývoje softwaru vás v současnosti nejvíce zajímají?",
+          "q5": "Pracovali jste někdy na nějakých projektech s otevřeným zdrojovým kódem nebo komunitních iniciativách?",
+          "q6": "Jaký je váš preferovaný pracovní styl - máte rádi nezávislou práci nebo spolupráci?",
+          "q7": "Jak obvykle přistupujete k učení nových technologií?",
+          "q8": "Jaký dopad doufáte, že uděláte prostřednictvím dobrovolnické práce?",
+          "q9": "Skvělé! Než přejdeme k diskusi o konkrétních příležitostech, je něco jiného ohledně vašeho pozadí, co byste chtěli zdůraznit?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Teď si promluvme o tom, jak můžete přispět k Mundo Tango! Která oblast vás nejvíce zajímá: frontend, backend, AI/ML, nebo něco jiného?",
+          "q2": "Mundo Tango spojuje globální tango komunitu. Jaké funkce byste byli nadšeni pomoci vybudovat?",
+          "q3": "Máme jak technické, tak netechnické dobrovolnické příležitosti. Jaký typ práce vás nejvíce energizuje?",
+          "q4": "Kolik času týdně byste realisticky mohli věnovat dobrovolnické práci?",
+          "q5": "Dáváte přednost práci nezávisle nebo jako součást týmu?",
+          "q6": "Jste pohodlní s párovým programováním nebo revizemi kódu?",
+          "q7": "Jaké máte zkušenosti s agilním/sprintovým vývojem?",
+          "q8": "Používáme GitHub pro spolupráci. Jste pohodlní s Git pracovními postupy?",
+          "q9": "Dávali byste přednost práci na nových funkcích, opravách chyb nebo dokumentaci?",
+          "q10": "Nakonec, jaký je nejlepší způsob, jak s vámi komunikovat - Slack, e-mail nebo zprávy na naší platformě?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Výborně! Nyní mám skvělou představu o vašem pozadí a zkušenostech. Přejděme k fázi 2, kde budeme diskutovat o konkrétních způsobech, jak můžete přispět k Mundo Tango.",
+        "processingError": "Omlouvám se, ale měl jsem potíže s tímto zpracováním. Můžete to prosím zkusit znovu?"
       }
     }
   }

@@ -2,6 +2,7 @@ import { Resend } from 'resend';
 import { db } from '@shared/db';
 import { emailQueue, emailPreferences, emailLogs } from '@shared/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
+import { getAppUrl } from '../utils/getAppUrl';
 
 // Resend integration using Replit connector
 // Reference: Resend connector (connection:conn_resend_01KD7MY1R1YM7PJRHZQJAFXCA6)
@@ -660,13 +661,7 @@ export class EmailService {
   // Helper: Send password reset email (direct send, not queued - time-sensitive)
   static async sendPasswordResetEmail(email: string, name: string, resetToken: string): Promise<boolean> {
     try {
-      let appUrl = process.env.APP_URL;
-      if (!appUrl && process.env.REPLIT_DEV_DOMAIN) {
-        appUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
-      }
-      if (!appUrl) {
-        appUrl = 'http://localhost:5000';
-      }
+      const appUrl = getAppUrl();
       const resetUrl = `${appUrl}/reset-password/${resetToken}`;
       
       const html = this.renderTemplate('passwordReset', {
@@ -699,13 +694,7 @@ export class EmailService {
   // Helper: Send email verification email (direct send, not queued - time-sensitive)
   static async sendVerificationEmail(email: string, name: string, verificationToken: string): Promise<boolean> {
     try {
-      let appUrl = process.env.APP_URL;
-      if (!appUrl && process.env.REPLIT_DEV_DOMAIN) {
-        appUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
-      }
-      if (!appUrl) {
-        appUrl = 'http://localhost:5000';
-      }
+      const appUrl = getAppUrl();
       const verifyUrl = `${appUrl}/verify-email/${verificationToken}`;
       
       const html = this.renderTemplate('emailVerification', {
@@ -772,14 +761,7 @@ export class EmailService {
   // Helper: Send waitlist invite email with TANGO code (direct send, not queued)
   static async sendWaitlistInvite(email: string, name: string): Promise<boolean> {
     try {
-      let appUrl = process.env.APP_URL;
-      if (!appUrl && process.env.REPLIT_DEV_DOMAIN) {
-        appUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
-      }
-      if (!appUrl) {
-        appUrl = 'https://mundotango.life';
-      }
-      
+      const appUrl = getAppUrl();
       const signupUrl = `${appUrl}/signup?code=tango`;
       
       const html = this.renderTemplate('waitlistInvite', {

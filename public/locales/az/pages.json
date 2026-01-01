@@ -892,5 +892,86 @@
       "analytics": "Analitika",
       "settings": "Ayarlar"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Müsahibə - Mundo Tango Talent Match",
+        "description": "Mükəmməl imkanlarla uyğunlaşmaq üçün cənab Blue AI ilə könüllü müsahibənizi tamamlayın."
+      },
+      "pageTitle": "AI Müsahibə",
+      "phases": {
+        "resume": "Faza 1: CV Dərin Araşdırma",
+        "work": "Faza 2: İş Tapşırığı Uyğunlaşdırma",
+        "complete": "Müsahibə Tamamlandı!"
+      },
+      "phaseLabels": {
+        "resume": "Təqdimat",
+        "workAssignment": "İş Tapşırığı"
+      },
+      "progress": {
+        "questionOf": "Sual {{current}} / {{total}}",
+        "allQuestionsAnswered": "Bütün suallar cavablandırılıb"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Yanlış fayl növü",
+          "description": "Zəhmət olmasa PDF, DOCX və ya TXT yükləyin"
+        },
+        "resumeParsed": {
+          "title": "Təqdimat analiz edildi!",
+          "description": "Cənab Mavi indi sizin təqdimat məzmununuzu oxuya bilər."
+        },
+        "uploadFailed": {
+          "title": "Yükləmə uğursuz oldu",
+          "description": "Zəhmət olmasa yenidən cəhd edin"
+        },
+        "missingSession": {
+          "title": "Seans itkin",
+          "description": "Zəhmət olmasa Talent Match səhifəsindən başlayın"
+        },
+        "error": {
+          "title": "Xəta",
+          "description": "Cavabınızı emal etmək mümkün olmadı"
+        }
+      },
+      "resumeBanner": {
+        "title": "Təqdimat məzmunu mövcud deyil",
+        "description": "Təqdimatınızı yenidən yükləyin ki, Cənab Mavi sizin təcrübənizi oxuya və istinad edə bilsin.",
+        "parsing": "Analiz edilir...",
+        "reupload": "Yenidən yüklə"
+      },
+      "buttons": {
+        "viewDashboard": "H2AC İdarəetmə Panelini Gör",
+        "goHome": "Evə Get"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Salam! Mən sizin arxa planınızı nəzərdən keçirdim. Hansı texniki bacarıqla ən çox əmin olduğunuzu söyləyərdiniz?",
+          "q2": "Hansı texnologiya və ya alətlərlə işləməyi ən çox sevirsiniz?",
+          "q3": "Təqdimatınızdakı hansı bacarıqları könüllü işdə daha çox istifadə etmək istərdiniz?",
+          "q4": "Hal-hazırda proqram təminatı inkişafında sizi ən çox maraqlandıran sahələr hansılardır?",
+          "q5": "Daha əvvəl hər hansı açıq mənbə layihələrində və ya icma təşəbbüslərində çalışmısınızmı?",
+          "q6": "Sizin üçün hansı iş üslubu daha uyğundur - müstəqil işimi, yoxsa əməkdaşlıqmi sevirsiniz?",
+          "q7": "Yeni texnologiyaları öyrənməyə necə yanaşırsınız?",
+          "q8": "Könüllü iş vasitəsilə hansı cür təsir göstərmək istəyirsiniz?",
+          "q9": "Əla! İndi konkret imkanları müzakirə etməyə keçməzdən əvvəl, arxa planınızla bağlı vurğulamaq istədiyiniz başqa bir şey varmı?"
+        },
+        "work": {
+          "q1": "İndi Mundo Tango-ya necə töhfə verə biləcəyinizdən danışaq! Hansı sahə sizi daha çox maraqlandırır: frontend, backend, AI/ML, yoxsa başqa bir şey?",
+          "q2": "Mundo Tango qlobal tango icmasını birləşdirir. Hangi xüsusiyyətləri yaratmağa kömək etməyə həyəcanlanarsınız?",
+          "q3": "Bizim həm texniki, həm də qeyri-texniki könüllü imkanlarımız var. Hangi növ iş sizi daha çox enerji ilə doldurur?",
+          "q4": "Həftədə nə qədər vaxtı könüllü işə realist şəkildə ayıra bilərsiniz?",
+          "q5": "Müstəqil işləməyi, yoxsa komanda şəklində işləməyi üstün tutursunuz?",
+          "q6": "Cüt proqramlaşdırma və ya kod icmalları ilə rahatdırmısınız?",
+          "q7": "Agile/sprint əsaslı inkişafla bağlı təcrübəniz nədir?",
+          "q8": "Biz əməkdaşlıq üçün GitHub-dan istifadə edirik. Git iş axınları ilə rahatdırmısınız?",
+          "q9": "Yeni xüsusiyyətlər, səhv düzəlişləri, yoxsa sənədləşmə üzərində işləməyi üstün tutarsınız?",
+          "q10": "Nəhayət, sizinlə ünsiyyət qurmağın ən yaxşı yolu nədir - Slack, e-poçt, yoxsa platformamızın mesajlaşması?"
+        },
+        "phaseTransition": "Mükəmməl! İndi sizin arxa planınız və təcrübəniz haqqında yaxşı bir anlayışım var. İndi Mundo Tango-ya necə töhfə verə biləcəyinizi müzakirə edəcəyimiz 2-ci mərhələyə keçək.",
+        "processingError": "Bağışlayın, amma bunu işləməkdə çətinlik çəkdim. Zəhmət olmasa, yenidən cəhd edə bilərsinizmi?"
+      }
+    }
   }
 }
