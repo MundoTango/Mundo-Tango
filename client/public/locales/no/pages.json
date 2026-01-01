@@ -81,7 +81,7 @@
     },
     "passwordStrength": {
       "weak": "Svak",
-      "medium": "Medium",
+      "medium": "Moderat",
       "strong": "Sterk",
       "veryStrong": "Veldig sterk"
     },
@@ -327,26 +327,66 @@
       "completeSetup": "Fullfør oppsett",
       "searchPlaceholder": "Søk fellesskap eller legg til et nytt...",
       "categories": {
-        "fitness": { "label": "Fitness og sport" },
-        "tech": { "label": "Teknologi og innovasjon" },
-        "spirituality": { "label": "Spiritualitet og vekst" },
-        "yoga": { "label": "Yoga og velvære" },
-        "music": { "label": "Musikk" },
-        "photography": { "label": "Fotografi og video" },
-        "art": { "label": "Kunst og kreativitet" },
-        "reading": { "label": "Lesing og skriving" },
-        "travel": { "label": "Reise og eventyr" },
-        "cooking": { "label": "Matlaging og mat" },
-        "wine": { "label": "Vin og drikker" },
-        "gaming": { "label": "Gaming" },
-        "outdoors": { "label": "Utendørsaktiviteter" },
-        "snow": { "label": "Vintersport" },
-        "cycling": { "label": "Sykling" },
-        "water": { "label": "Vannsport" },
-        "nature": { "label": "Natur og hage" },
-        "movies": { "label": "Film og underholdning" },
-        "pets": { "label": "Kjæledyr og dyr" },
-        "social": { "label": "Sosialt og fellesskap" }
+        "fitness": {
+          "label": "Fitness og sport"
+        },
+        "tech": {
+          "label": "Teknologi og innovasjon"
+        },
+        "spirituality": {
+          "label": "Spiritualitet og vekst"
+        },
+        "yoga": {
+          "label": "Yoga og velvære"
+        },
+        "music": {
+          "label": "Musikk"
+        },
+        "photography": {
+          "label": "Fotografi og video"
+        },
+        "art": {
+          "label": "Kunst og kreativitet"
+        },
+        "reading": {
+          "label": "Lesing og skriving"
+        },
+        "travel": {
+          "label": "Reise og eventyr"
+        },
+        "cooking": {
+          "label": "Matlaging og mat"
+        },
+        "wine": {
+          "label": "Vin og drikker"
+        },
+        "gaming": {
+          "label": "Gaming"
+        },
+        "outdoors": {
+          "label": "Utendørsaktiviteter"
+        },
+        "snow": {
+          "label": "Vintersport"
+        },
+        "cycling": {
+          "label": "Sykling"
+        },
+        "water": {
+          "label": "Vannsport"
+        },
+        "nature": {
+          "label": "Natur og hage"
+        },
+        "movies": {
+          "label": "Film og underholdning"
+        },
+        "pets": {
+          "label": "Kjæledyr og dyr"
+        },
+        "social": {
+          "label": "Sosialt og fellesskap"
+        }
       },
       "items": {
         "fitness_gym": "Treningsstudio og vekter",
@@ -411,7 +451,7 @@
         "gaming_video": "Videospill",
         "gaming_board": "Brettspill",
         "gaming_card": "Kortspill",
-        "gaming_tabletop": "Tabletop RPGs",
+        "gaming_tabletop": "Bordrollespill",
         "gaming_esports": "eSports",
         "outdoor_hiking": "Fotturer",
         "outdoor_camping": "Camping",
@@ -449,7 +489,7 @@
         "pets_horses": "Ridning",
         "pets_rescue": "Dyreberging",
         "social_volunteering": "Frivillig arbeid",
-        "social_meetups": "Meetups",
+        "social_meetups": "Møter",
         "social_networking": "Nettverking",
         "social_languages": "Språkutveksling"
       },
@@ -659,7 +699,7 @@
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
+          "title": "Direktesending",
           "description": "Se milongaer verden over i sanntid"
         },
         "musicLibrary": {
@@ -737,7 +777,7 @@
     }
   },
   "feed": {
-    "title": "Feed",
+    "title": "Fôr",
     "description": "Hold deg oppdatert med det siste fra tango-fellesskapet",
     "filters": {
       "all": "Alle innlegg",
@@ -824,7 +864,7 @@
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
+    "title": "Liv CEO Dashboard",
     "description": "Din personlige AI-assistent for livsstyring",
     "agents": {
       "health": "Helseagent",

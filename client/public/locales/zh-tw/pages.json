@@ -354,7 +354,7 @@
       "items": {
         "fitness_gym": "健身房與重量訓練",
         "fitness_running": "跑步",
-        "fitness_crossfit": "CrossFit",
+        "fitness_crossfit": "交叉健身",
         "fitness_martial_arts": "武術",
         "fitness_tennis": "網球",
         "fitness_soccer": "足球",
@@ -637,127 +637,127 @@
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "首頁",
+    "pageLayoutTitle": "探戈與社區的交匯處",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - 與全球探戈社區連接",
+      "description": "加入全球成千上萬的探戈舞者。發現活動，尋找老師，與舞者聯繫，沉浸在阿根廷探戈的熱情世界中。"
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "歡迎來到全球探戈社區",
+      "heading": "探戈與社區的交匯處",
+      "paragraph": "分享回憶，尋找活動，幫助我們建立探戈科技的未來。加入成千上萬的熱情舞者，與全球連接。",
+      "getStarted": "免費開始",
+      "volunteer": "志願者幫助建立MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "運作方式",
+      "description": "用三個簡單步驟開始你的探戈之旅",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "創建你的個人資料",
+        "description": "免費加入並告訴我們你的探戈旅程、經驗水平和舞蹈偏好"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "發現與連接",
+        "description": "尋找你附近的活動、老師和場地。與分享你熱情的舞者聯繫"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "舞蹈與成長",
+        "description": "參加活動、上課、交朋友，成為全球探戈社區的一部分"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "你所需的一切",
+      "description": "連接、發現，並利用強大的功能來成長你的探戈之旅",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "社區",
+        "heading": "與全球舞者連接",
+        "description": "加入一個充滿活力的全球探戈愛好者社區。與從布宜諾斯艾利斯到東京的舞者、老師和組織者聯繫。",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "關注舞者並建立你的網絡",
+          "groups": "根據興趣和地點加入小組",
+          "messaging": "實時消息和聊天功能",
+          "discover": "發現訪問你城市的舞者"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "活動",
+        "heading": "隨處發現活動",
+        "description": "永遠不會錯過任何米隆加、節慶或工作坊。我們的平台將您與全球數千個探戈活動連接起來。",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "全面的活動日曆",
+          "rsvp": "RSVP 和票務預訂",
+          "notifications": "活動通知和提醒",
+          "map": "場地互動地圖"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "直播",
+          "description": "實時觀看全球的米隆加"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "音樂庫",
+          "description": "精選的探戈播放列表和指南"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "經過驗證的教師",
+          "description": "向認證的教練學習"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "旅行計劃工具",
+          "description": "計劃旅行並在全球尋找寄宿者"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "舞者的心聲",
+      "description": "加入全球數千名滿意的舞者",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "瑪麗亞·羅德里格斯",
+          "location": "阿根廷布宜諾斯艾利斯",
+          "text": "Mundo Tango 幫助我在新城市找到我的舞蹈家庭。這個社區熱情友好，對探戈充滿熱情。"
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "詹姆斯·陳",
+          "location": "美國舊金山",
+          "text": "我通過這個平台發現了驚人的米隆加和工作坊。它已成為我探戈旅程中不可或缺的一部分。"
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "艾琳娜·沃爾科夫",
+          "location": "俄羅斯莫斯科",
+          "text": "教師名錄幫助我找到令人驚嘆的教練。我的舞技有了巨大的提升！"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "常見問題",
+      "description": "有關 Mundo Tango 的所有信息",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "什麼是 Mundo Tango？",
+          "answer": "Mundo Tango 是一個全球平台，連接探戈舞者、教師和組織者。我們幫助您發現活動、尋找舞伴、向頂尖教練學習，並沉浸在全球充滿活力的探戈社區中。"
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Mundo Tango 是免費使用的嗎？",
+          "answer": "是的！我們提供一個免費層級，包括基本的個人資料創建、活動發現和消息傳遞。像無限消息傳遞、AI 舞伴匹配和優先活動通知等高級功能可通過我們的專業訂閱獲得。"
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "如何找到我附近的探戈活動？",
+          "answer": "只需使用我們的活動日曆或搜索功能，按城市、日期和活動類型進行篩選。您可以發現您所在區域或世界各地的米隆加、節慶、工作坊和練習課程。"
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "我可以與其他舞者聯繫嗎？",
+          "answer": "當然可以！關注舞者、加入群組、發送好友請求，並與社區聊天。我們的平台旨在促進探戈世界中的真實聯繫。"
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "我如何找到探戈老師？",
+          "answer": "訪問我們的教師名錄，瀏覽全球經過驗證的教練。按地點、專業和經驗水平篩選。閱讀其他學生的評論，並通過平台直接預訂私人課程。"
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Mundo Tango 有什麼不同之處？",
+          "answer": "我們是由探戈舞者為探戈舞者建立的。我們專注於真實的社區建設、高品質的活動策劃，並將您與全球探戈家庭聯繫起來，而不僅僅是另一個社交網絡。"
         }
       }
     },
@@ -766,28 +766,28 @@
     "subtitle": "與全球探戈社群連接"
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "動態",
+    "description": "隨時了解探戈社區的最新消息",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "所有帖子",
+      "following": "關注中",
+      "popular": "熱門",
+      "recent": "最近"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "你在想什麼？",
+    "noPost": "沒有帖子可顯示"
   },
   "events": {
     "title": "探戈活動",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "description": "發現您附近的探戈活動",
+    "upcoming": "即將舉行的活動",
+    "past": "過去的活動",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "所有活動",
+      "milongas": "米隆加",
+      "workshops": "工作坊",
+      "festivals": "節慶",
+      "classes": "課程"
     },
     "noEvents": "未找到活動",
     "subtitle": "發現米隆加、節日和工作坊",
@@ -796,20 +796,20 @@
   },
   "profile": {
     "title": "個人資料",
-    "description": "View and edit your profile",
+    "description": "查看和編輯您的個人資料",
     "editProfile": "編輯資料",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "帖子",
+      "photos": "照片",
+      "videos": "影片",
+      "events": "活動",
+      "friends": "朋友"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "貼文",
+      "followers": "追隨者",
+      "following": "正在追隨",
+      "events": "參加的活動"
     },
     "followers": "粉絲",
     "following": "追蹤中",
@@ -817,83 +817,83 @@
     "about": "關於"
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "訊息",
+    "description": "與你的探戈聯繫人聊天",
+    "newMessage": "新訊息",
+    "searchConversations": "搜尋對話",
+    "noMessages": "尚未有訊息",
+    "startConversation": "開始對話"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "探戈教師",
+    "description": "尋找並聯繫探戈教師",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "所有教師",
+      "featured": "精選",
+      "nearby": "附近"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "查看個人資料",
+    "bookLesson": "預約課程"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "探戈場地",
+    "description": "發現全球的探戈場地",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "所有場地",
+      "milongas": "米隆加",
+      "schools": "舞蹈學校",
+      "theaters": "劇院"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "獲取方向"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "設定",
+    "description": "管理你的帳戶設定",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "帳戶設定",
+      "profile": "個人資料",
+      "privacy": "隱私",
+      "notifications": "通知",
+      "security": "安全",
+      "billing": "帳單",
+      "preferences": "偏好設定"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "生活 CEO 儀表板",
+    "description": "您個人的 AI 助手，用於生活管理",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "健康代理",
+      "fitness": "健身代理",
+      "nutrition": "營養代理",
+      "finance": "財務代理",
+      "career": "職業代理",
+      "productivity": "生產力代理",
+      "relationships": "關係代理",
+      "learning": "學習代理"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "市場",
+    "description": "買賣與探戈相關的物品",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "舞鞋",
+      "clothing": "服裝",
+      "music": "音樂",
+      "accessories": "配件",
+      "other": "其他"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "管理儀表板",
+    "description": "平台管理與運營",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "概覽",
+      "users": "用戶",
+      "content": "內容",
+      "reports": "報告",
+      "analytics": "分析",
+      "settings": "設定"
     }
   },
   "cities": {

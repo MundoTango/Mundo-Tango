@@ -155,26 +155,26 @@
           "description": "تواصل مع راقصين في مستواك"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "اتصل بفيسبوك",
+          "description": "قم بربط ملفك الشخصي على فيسبوك للعثور على أصدقاء في المجتمع"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "الاتصال الاجتماعي",
+      "seoTitle": "اتصل بعالمك الاجتماعي - موندوتانغو",
+      "seoDescription": "قم بربط ملفاتك الاجتماعية للعثور على أصدقاء في مجتمع التانغو.",
+      "step": "الخطوة 2 من 6",
+      "title": "اتصل بعالمك الاجتماعي",
+      "quote": "\"الكثير من راقصي التانغو يعرفون بعضهم البعض بالفعل من خلال فيسبوك. من خلال ربط ملفك الشخصي، يمكننا أن نعرض لك أي الراقصين في شبكتك موجودون هنا بالفعل - مما يسهل العثور على وجوه مألوفة في الميلونغاس وبناء علاقات أعمق.\"",
+      "cardTitle": "ابحث عن أصدقائك",
+      "cardDescription": "يساعدنا فيسبوك في مطابقتك مع الراقصين الذين قد تعرفهم بالفعل، لذا فأنت لا تبدأ من الصفر.",
+      "facebookLabel": "رابط ملف فيسبوك (اختياري)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "نستخدم هذا كجسر إلى مجتمعات أخرى ولتطابقك مع الراقصين الذين قد تعرفهم.",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "خطأ",
+        "errorDescription": "فشل في حفظ معلومات الملف الشخصي"
       }
     },
     "navigation": {
@@ -203,13 +203,13 @@
         "selectCity": "يرجى اختيار مدينتك"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "تمت إضافة المصدر!",
+        "submittedForReview": "تم تقديمه للمراجعة",
+        "trackingEvents": "سنبدأ في تتبع الأحداث من الموقع",
+        "thankYou": "شكراً لك! تم إرسال اقتراحك للمراجعة.",
+        "errorTitle": "خطأ",
+        "suggestionFailed": "فشل في تقديم الاقتراح",
+        "saveFailed": "فشل في حفظ المدن"
       }
     },
     "photo": {
@@ -287,173 +287,173 @@
       "selectedCount": "{{count}} مختار",
       "finishing": "جارٍ الإنهاء...",
       "completeSetup": "إكمال الإعداد",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "searchPlaceholder": "ابحث عن المجتمعات أو أضف واحدة جديدة...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "اللياقة البدنية والرياضة"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "التكنولوجيا والابتكار"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "الروحانية والنمو"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "اليوغا والعافية"
         },
         "music": {
-          "label": "Music"
+          "label": "الموسيقى"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "التصوير الفوتوغرافي والفيديو"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "الفن والإبداع"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "القراءة والكتابة"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "السفر والمغامرة"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "الطبخ والطعام"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "النبيذ والمشروبات"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "الألعاب"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "الأنشطة الخارجية"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "رياضات الثلج"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "ركوب الدراجات"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "رياضات مائية"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "الطبيعة والبستنة"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "الأفلام والترفيه"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "الحيوانات الأليفة والحيوانات"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "الاجتماعية والمجتمع"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
-        "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
-        "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
-        "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
-        "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
-        "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "fitness_gym": "الصالة الرياضية والأثقال",
+        "fitness_running": "الجري",
+        "fitness_crossfit": "كروس فيت",
+        "fitness_martial_arts": "الفنون القتالية",
+        "fitness_tennis": "التنس",
+        "fitness_soccer": "كرة القدم",
+        "fitness_basketball": "كرة السلة",
+        "fitness_fencing": "المبارزة",
+        "tech_coding": "البرمجة والتطوير",
+        "tech_ai": "الذكاء الاصطناعي والتكنولوجيا المستقبلية",
+        "tech_crypto": "ويب 3 والعملات المشفرة",
+        "tech_gaming": "ثقافة الألعاب",
+        "spirit_meditation": "التأمل",
+        "spirit_astrology": "علم الفلك",
+        "spirit_philosophy": "الفلسفة",
+        "spirit_community": "بناء المجتمع",
+        "yoga_hatha": "هاثا يوغا",
+        "yoga_vinyasa": "Vinyasa Flow|||فينياسا فلو",
+        "yoga_meditation": "Meditation|||تأمل",
+        "yoga_pilates": "Pilates|||بيلاتس",
+        "yoga_breathwork": "Breathwork|||تمارين التنفس",
+        "music_listening": "Music Listening|||استماع للموسيقى",
+        "music_concerts": "Live Concerts|||حفلات مباشرة",
+        "music_piano": "Piano|||بيانو",
+        "music_guitar": "Guitar|||غيتار",
+        "music_singing": "Singing|||غناء",
+        "music_dj": "DJing|||دي جي",
+        "music_production": "Music Production|||إنتاج الموسيقى",
+        "photo_portrait": "Portrait Photography|||تصوير البورتريه",
+        "photo_landscape": "Landscape Photography|||تصوير المناظر الطبيعية",
+        "photo_street": "Street Photography|||تصوير الشارع",
+        "photo_video": "Videography|||تصوير الفيديو",
+        "photo_editing": "Photo Editing|||تحرير الصور",
+        "art_painting": "Painting|||رسم",
+        "art_drawing": "Drawing|||رسم",
+        "art_sculpture": "Sculpture|||نحت",
+        "art_digital": "Digital Art|||فن رقمي",
+        "art_crafts": "Crafts & DIY|||الحرف اليدوية واصنعها بنفسك",
+        "art_pottery": "Pottery|||الفخار",
+        "reading_fiction": "Fiction|||خيال",
+        "reading_nonfiction": "Non-Fiction|||غير خيالي",
+        "reading_poetry": "Poetry|||شعر",
+        "reading_writing": "Creative Writing|||كتابة إبداعية",
+        "reading_journals": "Journaling|||تدوين",
+        "travel_backpacking": "Backpacking|||التخييم",
+        "travel_luxury": "Luxury Travel|||السفر الفاخر",
+        "travel_cultural": "Cultural Tourism|||السياحة الثقافية",
+        "travel_road_trips": "رحلات الطريق",
+        "travel_solo": "السفر المنفرد",
+        "cooking_home": "الطبخ المنزلي",
+        "cooking_baking": "الخبز",
+        "cooking_gourmet": "المأكولات الراقية",
+        "cooking_international": "المأكولات العالمية",
+        "cooking_healthy": "الأكل الصحي",
+        "wine_tasting": "تذوق النبيذ",
+        "wine_cocktails": "الكوكتيلات",
+        "wine_coffee": "تقدير القهوة",
+        "wine_tea": "ثقافة الشاي",
+        "wine_brewing": "تحضير القهوة في المنزل",
+        "gaming_video": "ألعاب الفيديو",
+        "gaming_board": "ألعاب الطاولة",
+        "gaming_card": "ألعاب الورق",
+        "gaming_tabletop": "ألعاب تقمص الأدوار على الطاولة",
+        "gaming_esports": "الرياضات الإلكترونية",
+        "outdoor_hiking": "المشي في الطبيعة",
+        "outdoor_camping": "التخييم",
+        "outdoor_climbing": "تسلق الصخور",
+        "outdoor_fishing": "الصيد",
+        "outdoor_kayaking": "التجديف",
+        "outdoor_surfing": "ركوب الأمواج",
+        "snow_skiing": "التزلج",
+        "snow_snowboard": "التزلج على الجليد",
+        "snow_crosscountry": "التزلج عبر البلاد",
+        "snow_ice_skating": "التزلج على الجليد",
+        "snow_sledding": "التزحلق على الجليد",
+        "snow_snowshoeing": "التزلج على الثلج",
+        "cycling_road": "ركوب الدراجات على الطريق",
+        "cycling_mountain": "ركوب الدراجات الجبلية",
+        "cycling_urban": "ركوب الدراجات في المدينة",
+        "cycling_touring": "جولات الدراجات",
+        "water_swimming": "السباحة",
+        "water_scuba": "الغوص",
+        "water_snorkel": "الغوص السطحي",
+        "water_sailing": "الإبحار",
+        "water_paddleboard": "التجديف",
+        "nature_gardening": "البستنة",
+        "nature_birdwatching": "مراقبة الطيور",
+        "nature_botany": "جمع النباتات",
+        "nature_wildlife": "تصوير الحياة البرية",
+        "movies_cinema": "السينما",
+        "movies_tv": "المسلسلات التلفزيونية",
+        "movies_documentary": "الأفلام الوثائقية",
+        "movies_theater": "المسرح",
+        "movies_standup": "الكوميديا الارتجالية",
+        "pets_dogs": "الكلاب",
+        "pets_cats": "القطط",
+        "pets_exotic": "الحيوانات الأليفة الغريبة",
+        "pets_horses": "ركوب الخيل",
+        "pets_rescue": "إنقاذ الحيوانات",
+        "social_volunteering": "التطوع",
+        "social_meetups": "الاجتماعات",
+        "social_networking": "بناء الشبكات",
+        "social_languages": "تبادل اللغات"
       },
       "success": {
         "completeTitle": "مرحباً بك في Mundo Tango!",

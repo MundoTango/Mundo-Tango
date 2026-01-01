@@ -1,896 +1,896 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "Bhalisela",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "Joyina iMundo Tango - Dala iAkawunti Yakho",
+      "description": "Dala i-akhawunti yakho yeMundo Tango bese ujoyina umphakathi we-Argentine tango emhlabeni jikelele. Xhuma nabagibeli, thola imicimbi, futhi wabelane ngothando lwakho lwe-tango."
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "Wamukelekile emndenini",
+      "beginJourney": "Qala Uhambo Lwakho",
+      "joinCommunity": "Joyina Umphakathi"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "Usukhona!",
+      "joinMundoTango": "Joyina iMundo Tango",
+      "description": "Xhuma nabagibeli emhlabeni jikelele, thola imilonga, futhi uzibandakanye emhlabeni onothando we-Argentine tango",
+      "waitlistDescription": "Wamukelekile emphakathini weMundo Tango. Silungiselela i-akhawunti yakho futhi sizokwazisa maduze!"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ abagibeli",
+      "events": "{{count}}+ imicimbi",
+      "cities": "{{count}} amadolobha"
     },
     "form": {
-      "fullName": "Full Name",
+      "fullName": "Igama Eliphelele",
       "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "email": "I-imeyili",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "Igama lomsebenzisi",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "Iphasiwedi",
+      "confirmPassword": "Qinisekisa Iphasiwedi",
+      "inviteOnlyNotice": "Ukubhaliswa okwamanje kusemkhankasweni wezokumema kuphela. Qedela le fomu ukuze ujoyine uhlu lokulinda futhi sizokwazisa uma i-akhawunti yakho ilungile.",
+      "acceptTermsPrefix": "Ngiyavuma",
+      "termsAndConditions": "Imigomo & Izimo"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "Le-imeyili isivele ibhalisiwe",
+      "emailAvailable": "I-imeyili iyatholakala!",
+      "usernameTaken": "Igama lomsebenzisi lithathiwe. Zama {{suggestion}}",
+      "usernameAvailable": "Igama lomsebenzisi liyatholakala!",
+      "passwordsMatch": "Iphasiwedi ziyahambisana",
+      "passwordsDontMatch": "Iphasiwedi azihambisani"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "Ubuthakathaka",
+      "medium": "Phakathi",
+      "strong": "Qinile",
+      "veryStrong": "Kakhulu Qinile"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "Unokhiye wokumema? (Kukhethwa)",
+      "placeholder": "Faka unokhiye wakho wokumema ukuze uthole ukufinyelela okusheshayo",
+      "accepted": "Ikhodi yamukelwe! I-akhawunti yakho izovulwa ngokushesha.",
+      "noWorries": "Ungakhathazeki! Qedela ifomu elingezansi ukuze ujoyine uhlu lokulinda."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "Wamkelekile, {{name}}!",
+      "defaultName": "Umjaho",
+      "onTheList": "Usembhalweni. Sizokuthumelela i-imeyili ku",
+      "whenReady": "nxa i-akhawunti yakho ilungile.",
+      "helpUsGrow": "Ngesikhathi ulinda, sisize sikhule",
+      "volunteerWithUs": "Zibandakanye nathi",
+      "supportMundoTango": "Sekela iMundo Tango"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "Ukwakha i-akhawunti yakho...",
+      "joining": "Ujoyina...",
+      "createAccount": "Dala I-akhawunti",
+      "joinMundoTango": "Joyina iMundo Tango"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "Usunayo i-akhawunti?",
+    "signIn": "Ngena",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "Ikhodi engalungile",
+        "description": "Sicela ufake ikhodi yokuhlola enezinombolo eziyisithupha ezilungile."
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "I-imeyili iqinisekisiwe!",
+        "description": "Wamkelekile kuMundo Tango! Siqala ukufaka izinhlelo zakho..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "Ukuqinisekiswa kwehlulekile",
+        "description": "Ikhodi engalungile noma iphelelwe yisikhathi. Sicela uzame futhi."
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "Iphutha",
+        "description": "Kwehlulekile ukuqinisekisa i-imeyili. Sicela uzame futhi."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "Izicelo eziningi kakhulu",
+        "description": "Sicela ulinde imizuzu embalwa ngaphambi kokuzama futhi."
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "Ikhodi ithunyelwe!",
+        "description": "Sicela uhlole ibhokisi lakho le-imeyili ukuze uthole ikhodi entsha."
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "Kwehlulekile ukuthumela ikhodi. Sicela uzame futhi."
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "Imigomo iyadingeka",
+        "description": "Sicela wamukele Imigomo & Izimo"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "Amakhodi awahambisani",
+        "description": "Sicela uqinisekise ukuthi womabili amakhodi afana"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "Ikhodi ebuthakathaka",
+        "description": "Sicela ukhethe ikhodi eqinile"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "Hlola i-imeyili yakho",
+        "description": "Sithumele ikhodi yokuhlola enezinombolo eziyi-6. Sicela uhlole ibhokisi lakho le-imeyili."
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "Ukubhaliswa kwehlulekile"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "Kwakungekho ukuqedela ukubhaliswa"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "Sicela uzame futhi"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "Wamkelekile",
+      "seoTitle": "Wamkelekile eMundo Tango",
+      "seoDescription": "Qala uhambo lwakho lwe-tango noMundo Tango",
+      "badge": "Ukusetha Okusheshayo",
+      "title": "Wamkelekile eMundo Tango",
+      "subtitle": "Masisete iphrofayela yakho ukuze ukwazi ukuhlanganyela nomphakathi we-tango womhlaba",
+      "duration": "Kuthatha cishe imizuzu emibili",
+      "stepIndicator": "Isinyathelo {{current}} se {{total}}",
+      "getStarted": "Qala",
+      "profileTitle": "Uhambo lwakho lwe-Tango luqala",
+      "profileSubtitle": "Sitshele kancane ngawe",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "Khetha Idolobha Lakho",
+          "description": "Xhuma nomphakathi wakho wendawo we-tango"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "Sitshele Izindima Zakho",
+          "description": "Umjaho, uthisha, uDJ, umhleli, noma konke okukhuluma?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "Thola Imicimbi",
+          "description": "Thola ama-milonga, izifundo, nezinsuku zokugubha ezikufuphi"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "Yabelana Ngohambo Lwakho",
+          "description": "Xhuma nabagibeli abaphakathi kwezinga lakho"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "Xhuma Facebook",
+          "description": "Xhuma iphrofayela yakho ye-Facebook ukuze uthole abangane emphakathini"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "Xhumana Ngezokuxhumana",
+      "seoTitle": "Xhuma Umhlaba Wakho Wezokuxhumana - Mundo Tango",
+      "seoDescription": "Xhuma amafayela akho wezokuxhumana ukuze uthole abangane emphakathini we-tango.",
+      "step": "Isinyathelo 2 sika 6",
+      "title": "Xhuma Umhlaba Wakho Wezokuxhumana",
+      "quote": "\"Abagibeli abaningi be-tango sebesazi omunye nomunye nge-Facebook. Ngokuxhuma iphrofayela yakho, singakukhombisa ukuthi yiziphi izigibeli ezikwenethiwekhi yakho ezivele zikhona lapha - okwenza kube lula ukuthola ubuso obujwayelekile kuma-milonga nokwakha uxhumano olujulile.\"",
+      "cardTitle": "Thola Abangane Bakho",
+      "cardDescription": "I-Facebook yakho isisiza ukufanisa nawe abagibeli ongase ube ubazi, ukuze ungabiqala phansi.",
+      "facebookLabel": "I-URL yephrofayela ye-Facebook (Kukhethwa)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "Sisebenzisa lokhu njengomgwaqo oya kwezinye izindawo futhi ukuze sikufanise nabagibeli ongase ube ubazi.",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "Iphutha",
+        "errorDescription": "Ukwamukela ulwazi lwephrofayela kuhlulekile"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "Buyela Emuva",
+      "next": "Okwesibili",
+      "skip": "Phumula",
+      "finish": "Qeda",
+      "saving": "Kugcina..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "Ukukhetha Idolobha",
+      "seoTitle": "Khetha Idolobha Lakho - Mundo Tango",
+      "seoDescription": "Khetha idolobha lakho lasekhaya ukuze uxhumane nabagibeli bendawo be-tango",
+      "step": "Isinyathelo 1 sika 6",
+      "title": "Uphakathi Kanjani?",
+      "subtitle": "Xhuma nabagibeli endaweni yakho",
+      "cardTitle": "Idolobha Lakho",
+      "cardDescription": "Lokhu kusisiza ukuthi sikhombise imicimbi yendawo kanye nez dancers",
+      "searchLabel": "Sesha idolobha lakho",
+      "searchPlaceholder": "Bhala igama ledolobha lakho...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "Khetha ezindaweni ezidumile ze-tango"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "Idolobha liyadingeka",
+        "selectCity": "Sicela ukhethe idolobha lakho"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "Umthombo wengeziwe!",
+        "submittedForReview": "Uthunyelwe ukuze ubuyekezwe",
+        "trackingEvents": "Sizokwenza ukuqapha imicimbi kusuka kusayithi",
+        "thankYou": "Ngiyabonga! Isiphakamiso sakho sithunyelwe ukuze ubuyekezwe.",
+        "errorTitle": "Iphutha",
+        "suggestionFailed": "Ukwenza isiphakamiso kuphumelele",
+        "saveFailed": "Ukwenza ukugcina amadolobha kuphumelele"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "Ukulayisha Isithombe",
+      "seoTitle": "Faka Isithombe sephrofayela - Mundo Tango",
+      "seoDescription": "Layisha isithombe sephrofayela yakho",
+      "step": "Isinyathelo 3 se-6",
+      "title": "Faka Isithombe Sakho sePhrofayela",
+      "subtitle": "Siza abanye bakwazi ukukuhlonza emphakathini",
+      "cardTitle": "Isithombe Sakho sePhrofayela",
+      "cardDescription": "Siza abanye bakwazi ukukuhlonza (ungaphuthelwa lesi sinyathelo)",
+      "previewAlt": "Ukubuka kwephrofayela",
+      "dropHere": "Phonsa isithombe sakho lapha",
+      "or": "noma",
+      "browseFiles": "Bheka Amafayela",
+      "fileTypes": "PNG, JPG kuze kube ku-5MB",
+      "photoSelected": "Isithombe sikhethiwe!",
+      "uploading": "Selayisha...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "Ifayela elingavumelekile",
+        "selectImage": "Sicela ukhethe ifayela lesithombe",
+        "fileTooLarge": "Ifayela likhulu kakhulu",
+        "sizeLimit": "Sicela ukhethe isithombe esingaphansi kwama-5MB",
+        "uploadFailed": "Ukulayisha kwehlulekile",
+        "tryAgain": "Ukulayisha isithombe kwehlulekile. Sicela uzame futhi.",
+        "skipFailed": "Ukweqa kwehlulekile. Sicela uzame futhi."
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "Izilimi",
+      "seoTitle": "Izilimi Zakho - Mundo Tango",
+      "seoDescription": "Sitshele ukuthi yiziphi izilimi ozikhulumayo",
+      "step": "Isinyathelo sesi-5 se-6",
+      "title": "Yiziphi Izilimi Ozikhulumayo?",
+      "subtitle": "Xhuma nabagibeli ngolimi lwakho",
+      "cardTitle": "Izilimi Zakho",
+      "cardDescription": "Khetha ulimi lwakho oluyinhloko nanoma yiziphi izilimi ezengeziwe ozikhulumayo",
+      "primaryLabel": "Ulimi Oluyinhloko",
+      "primaryHint": "Lokhu kuzobeka nolimi lokubonisa lesayithi lakho",
+      "primaryPlaceholder": "Khetha ulimi lwakho oluyinhloko",
+      "additionalLabel": "Izilimi Ezengeziwe (Okukhethwayo)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "Ulimi oluyinhloko luyadingeka",
+        "selectPrimary": "Sicela ukhethe ulimi lwakho oluyinhloko",
+        "saveFailed": "Ukugcina izilimi kwehlulekile",
+        "saveFailedTitle": "Ukugcina Ulimi Kwehlulekile"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "Izindima zeTango",
+      "seoTitle": "Izindima Zakho zeTango - Mundo Tango",
+      "seoDescription": "Sitshele ngehambo lakho le-tango",
+      "step": "Isinyathelo sesi-2 se-6",
+      "title": "Yiziphi Izindima Ozidlalayo?",
+      "subtitle": "Khetha zonke ezihambelana nawe",
+      "cardTitle": "Ubumfihlo Bakho beTango",
+      "cardDescription": "Siza abanye bazi ukuthi ubamba kanjani iqhaza emhlabeni we-tango"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "Ubuqotho Bokudansa",
+      "seoTitle": "Ubuqotho Bakho Bokudansa - Mundo Tango",
+      "seoDescription": "Yabelana ngezinga lakho lokudansa",
+      "step": "Isinyathelo 4 se-6",
+      "title": "Ubuqotho Bakho Bokudansa",
+      "subtitle": "Siza ukusihlanganisa nabadansi abafanele"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "Izithakazelo",
+      "seoTitle": "Izithakazelo Zakho - Mundo Tango",
+      "seoDescription": "Sitshele ngezithakazelo zakho",
+      "step": "Isinyathelo 6 se-6",
+      "title": "Yini Izithakazelo Zakho?",
+      "subtitle": "Khetha izihloko ezikuthokozisayo",
+      "helpText": "Khetha okungenani izithakazelo ezi-3 ukuze wenze kube ngokwakho",
+      "selectedCount": "{{count}} kukhethiwe",
+      "finishing": "Uqedile...",
+      "completeSetup": "Qedela Ukumisa",
+      "searchPlaceholder": "Sesha imiphakathi noma ungeze entsha...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "Ukuzivocavoca & Ezemidlalo"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "Ubuchwepheshe & Ukuqamba"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "UbuKristu & Ukukhula"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "I-Yoga & Ukuphila kahle"
         },
         "music": {
-          "label": "Music"
+          "label": "Umculo"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "Ukuthwebula & Ividiyo"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "Ubuciko & Ukudala"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "Ukufunda & Ukubhala"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "Ukuhamba & Uhambo"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "Ukupheka & Ukudla"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "Iwayini & Iziphuzo"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Imidlalo"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "Imisebenzi Yangaphandle"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "Imidlalo Yeqhwa"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "Ukugibela"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "Imidlalo Yamanzi"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "Imvelo & Ukulima"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "Amafilimu & Ukujabulela"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "Izilwane Nezithombe"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "Ubulungiswa & Umphakathi"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
-        "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
-        "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
+        "fitness_gym": "I-Gym & Izinsiza",
+        "fitness_running": "Ukugijima",
+        "fitness_crossfit": "iCrossFit",
+        "fitness_martial_arts": "Izifundo Zobuchwepheshe",
+        "fitness_tennis": "Itenisi",
+        "fitness_soccer": "Ibhola",
+        "fitness_basketball": "Ibhaskethi",
+        "fitness_fencing": "Ukwakha",
+        "tech_coding": "Ukubhala & Ukuthuthukisa",
+        "tech_ai": "I-AI & Ubuchwepheshe Obuzayo",
+        "tech_crypto": "I-Web3 & I-Crypto",
+        "tech_gaming": "Isiko Lezokudlala",
+        "spirit_meditation": "Ukuzindla",
+        "spirit_astrology": "Izinkanyezi",
+        "spirit_philosophy": "Ifilosofi",
+        "spirit_community": "Ukwakha Umphakathi",
+        "yoga_hatha": "I-Hatha Yoga",
+        "yoga_vinyasa": "I-Vinyasa Flow",
+        "yoga_meditation": "Ukuzindla",
+        "yoga_pilates": "I-Pilates",
+        "yoga_breathwork": "Umoya",
+        "music_listening": "Ukulalela Umculo",
+        "music_concerts": "Imicimbi Ephila",
+        "music_piano": "Piyano",
+        "music_guitar": "Gitare",
+        "music_singing": "Ukucula",
         "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
+        "music_production": "Ukukhiqiza Umculo",
+        "photo_portrait": "Ukuthwebula Izithombe Zobuso",
+        "photo_landscape": "Ukuthwebula Izithombe Zezindawo",
+        "photo_street": "Ukuthwebula Izithombe Zasemgwaqweni",
+        "photo_video": "Ukuthwebula Ividiyo",
+        "photo_editing": "Ukuhlela Izithombe",
+        "art_painting": "Umdwebo",
+        "art_drawing": "Umdwebo",
+        "art_sculpture": "Uhlaka",
+        "art_digital": "Ubuciko Bedijithali",
+        "art_crafts": "Imisebenzi Yezandla & DIY",
+        "art_pottery": "Ukwenza Izitsha",
+        "reading_fiction": "Izinganekwane",
+        "reading_nonfiction": "Izinganekwane ezingezona ezokwakha",
+        "reading_poetry": "Imibhalo",
+        "reading_writing": "Ukubhala Okudala",
+        "reading_journals": "Ukubhala Ijezi",
+        "travel_backpacking": "Ukuhamba Ngebhasi",
+        "travel_luxury": "Ukuhamba Kwamaholide Okubiza",
+        "travel_cultural": "Ukuhamba Kwenkolo",
+        "travel_road_trips": "Ukuhamba Ngebhasi",
+        "travel_solo": "Ukuhamba Kwenkolo",
+        "cooking_home": "Ukupheka Ekhaya",
+        "cooking_baking": "Ukubhaka",
+        "cooking_gourmet": "Ukudla Okunethezeka",
+        "cooking_international": "Ukudla Kwamazwe Ngamazwe",
+        "cooking_healthy": "Ukudla Okunempilo",
+        "wine_tasting": "Ukuhlola Iwayini",
+        "wine_cocktails": "AmaCocktail",
+        "wine_coffee": "Ukwazisa Ikhofi",
+        "wine_tea": "Isiko LeTea",
+        "wine_brewing": "Ukupheka Ekhaya",
+        "gaming_video": "Imidlalo Yevidiyo",
+        "gaming_board": "Imidlalo Yebhodi",
+        "gaming_card": "Imidlalo Yamakhadi",
+        "gaming_tabletop": "Imidlalo YeTabletop RPG",
         "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
+        "outdoor_hiking": "Ukuhamba Ngezinyawo",
+        "outdoor_camping": "Ukuhamba Ngezinsuku",
+        "outdoor_climbing": "Ukuqhuma Kwezakhamuzi",
+        "outdoor_fishing": "Ukudoba",
+        "outdoor_kayaking": "Ukukhwela I-Kayak",
+        "outdoor_surfing": "Ukuhamba NgeSuf",
+        "snow_skiing": "Ukushushuluza",
+        "snow_snowboard": "Ukushushuluza Eqhwa",
+        "snow_crosscountry": "Ukushushuluza Kwamazwe",
+        "snow_ice_skating": "Ukuhamba Ngeqhwa",
+        "snow_sledding": "Ukuhamba NgeSled",
+        "snow_snowshoeing": "Ukuhamba NgeSnowshoe",
+        "cycling_road": "Ukuhamba NgeCycling Emgwaqweni",
+        "cycling_mountain": "Ukuhamba NgeMountain Biking",
+        "cycling_urban": "Ukuhamba NgeCycling Edolobheni",
+        "cycling_touring": "Ukuhamba NgeBike Touring",
+        "water_swimming": "Ukugeza",
+        "water_scuba": "Ukuhamba NgeScuba",
+        "water_snorkel": "Ukuhamba NgeSnorkeling",
+        "water_sailing": "Ukuhamba NgeSikebhe",
         "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "nature_gardening": "Ukulima",
+        "nature_birdwatching": "Ukubuka Izinyoni",
+        "nature_botany": "Ukuqoqa Izitshalo",
+        "nature_wildlife": "Ukuthwebula Izithombe Zezilwane",
+        "movies_cinema": "Icinema",
+        "movies_tv": "Iziqephu zeTV",
+        "movies_documentary": "Izincwadi Zedokhumenti",
+        "movies_theater": "Itheatre",
+        "movies_standup": "Uhlanga Lwehlaya",
+        "pets_dogs": "Izinja",
+        "pets_cats": "Amakati",
+        "pets_exotic": "Izilwane Ezihlukahlukene",
+        "pets_horses": "Ukuhamba Ngemahhashi",
+        "pets_rescue": "Ukunqanda Izilwane",
+        "social_volunteering": "Ukuzinikela",
+        "social_meetups": "Imihlangano",
+        "social_networking": "Ukuxhumana",
+        "social_languages": "Ukwabelana Ngolimi"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "Wamukelekile eMundo Tango!",
+        "completeDesc": "Iphrofayela yakho ilungile. Qala ukuhamba!",
+        "waitlistTitle": "Iphrofayela Iphelele!",
+        "waitlistDesc": "Sizokwazi ukukwazisa uma i-akhawunti yakho ivuliwe"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "Kwehlulekile ukugcina. Sicela uzame futhi."
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "Imigomo Yomphakathi",
+      "subtitle": "Sicela ubuyekeze futhi wamukele imigomo yethu",
+      "legalDocsTitle": "Izincwadi Zomthetho",
+      "legalDocsDescription": "Bheka imigomo yethu yokusebenza kanye nenqubomgomo yobumfihlo",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "Ngiyavuma Imigomo Yokusebenza",
+        "description": "Imigomo yethu ilawula ukusetshenziswa kwakho kweMundo Tango",
+        "link": "Funda Imigomo Yokusebenzisa"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "Ngiyavuma Inqubomgomo Yobumfihlo",
+        "description": "Ngiyavuma iMigomo Yokuvikela Ubumfihlo",
+        "link": "How we handle your data"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "Indlela esiphatha ngayo idatha yakho",
+      "cocDescription": "Read Privacy Policy",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "Funda iMigomo Yokuvikela Ubumfihlo",
+          "description": "Community Code of Conduct"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "Ikhodi Yokuziphatha Komphakathi",
+          "description": "Help us maintain a respectful community"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "Sisize sigcine umphakathi ophumelelayo",
+          "description": "Be Respectful"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "Yiba Nezihlonipho",
+          "description": "Treat everyone with dignity and courtesy"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "Phatha wonke umuntu ngenhlonipho nangokuhlonipha",
+          "description": "Be Inclusive"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "Yiba Nezokubandakanya",
+          "description": "Welcome dancers of all levels and backgrounds"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "Siyakwamukela abadansi bazo zonke izinga nezizinda",
+          "description": "Be Authentic"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "Yiba Qotho",
+          "description": "Use your real identity and honest information"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "Sebenzisa ubunikazi bakho bangempela nolwazi oluqotho",
+          "description": "Respect Consent"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "Hlonipha Ukuvuma",
+          "description": "Always ask before dancing and respect boundaries"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "Hlola njalo ngaphambi kokudansa futhi uhloniphe imingcele",
+          "description": "No Harassment"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "Akukho Ukuphazamiseka",
+          "description": "Siza abanye abadansi bakhule"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "Yamukela Konke & Qhubeka",
+      "accepting": "Yamukela...",
+      "incompleteAlert": "Sicela wamukele zonke izimo ezidingekayo",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "Wamkelekile!",
+        "description": "Uyamukele imihlahlandlela yethu yomphakathi"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "Kwehlulekile ukugcina. Sicela uzame futhi."
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "Uhlu Lokulinda",
+      "seoTitle": "Use-Uhlu Lokulinda - Mundo Tango",
+      "seoDescription": "I-akhawunti yakho ilindele ukuvulwa",
+      "title": "Use-Uhlu Lokulinda!",
+      "welcomeMessage": "Wamkelekile, {{name}}!",
+      "defaultName": "Um dancer",
+      "profileComplete": "Iphrofayela Iphelele",
+      "profileCompleteDesc": "Iphrofayela yakho ilungile futhi ilindile",
+      "emailNotice": "Sizokuthumelela i-imeyili ku-{{email}} uma i-akhawunti yakho ilungile",
+      "whenReady": "uma i-akhawunti yakho ilungile.",
+      "whileYouWait": "Ngesikhathi ulinda, sisize sikhule:",
+      "volunteerButton": "Yiba Umphakathi",
+      "supportButton": "Sekela Mundo Tango"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "Uhambo Oluholwa",
+      "seoTitle": "Hlola Mundo Tango",
+      "seoDescription": "Funda ukuthi ungayisebenzisa kanjani i-Mundo Tango",
+      "skipTour": "Phuthelani Uhambo",
+      "finish": "Qeda Uhambo",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "Thola okuthunyelwe okuvela emphakathini we-tango",
+        "events": "Thola imilonga, izifundo, nez festival",
+        "groups": "Joyina amaqembu edolobha lakho noma izintshisekelo zakho",
+        "messages": "Xhuma ngqo nabanye abadansi",
+        "profile": "Lungisa iphrofayela yakho ye-tango",
+        "createPost": "Yabelana ngemizuzu yakho ye-tango"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "Thuthukisa Okuhlangenwe Nakho Kwakho",
+        "subtitle": "Thola okuningi kuMundo Tango",
+        "limitedOffer": "Isipesheli Esilinganiselwe",
+        "getStarted": "Qala",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "Xhuma",
+            "description": "Thumela umlayezo kunoma yimuphi umdansi ngqo"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "Ukubonakala",
+            "description": "Thola ukufakwa emiphumeleni yokusesha"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "Imicimbi",
+            "description": "Ukufinyelela okuphakeme emicimbini edumile"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "Khula",
+            "description": "I-analytics ethuthukile yephrofayela yakho"
           },
           "premium": {
-            "title": "Premium",
-            "description": "Exclusive premium features"
+            "title": "I-Premium",
+            "description": "Izici ezikhethekile ze-premium"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "Ngena",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Ngena - Mundo Tango",
+      "description": "Ngena ku-akhawunti yakho ye-Mundo Tango ukuze uxhumane nomphakathi we-tango womhlaba, uthole imicimbi, futhi wabelane ngenhliziyo yakho ye-tango yase-Argentina."
     },
-    "badge": "Welcome Back",
+    "badge": "Wamukelekile Emuva",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Uhambo Lwakho lwe-Tango Luqhubeka",
+      "paragraph": "Ngena ukuze uxhumane nabadansi emhlabeni jikelele, uthole imicimbi, futhi wabelane ngenhliziyo yakho"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "abadansi",
+      "events": "imicimbi"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "I-imeyili",
+      "password": "Iphasiwedi",
+      "signIn": "Ngena",
+      "signingIn": "Ugena...",
+      "forgotPassword": "Uphuthelwe iphasiwedi?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Awunayo i-akhawunti?",
+    "createAccount": "Dala eyodwa manje",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Wamkelekile emuva!",
+      "successDescription": "Uloginile ngempumelelo.",
+      "errorTitle": "Ulogin wehluleka",
+      "errorDescription": "Izincwadi ezingavumelekile"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Ikhaya",
+    "pageLayoutTitle": "Lapho iTango ihlangana nomphakathi",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Xhuma nomphakathi weTango womhlaba",
+      "description": "Joyina izinkulungwane zabagibeli beTango emhlabeni jikelele. Thola imicimbi, thola othisha, xhuma nabagibeli, futhi uzifake emhlabeni ophawulekayo weTango yase-Argentina."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Wamkelekile emphakathini weTango womhlaba",
+      "heading": "Lapho iTango ihlangana nomphakathi",
+      "paragraph": "Yabelana ngezinkumbulo, thola imicimbi, futhi usisize sakhe ikusasa lobuchwepheshe beTango. Joyina izinkulungwane zabagibeli abanesithakazelo abaxhumana emhlabeni jikelele.",
+      "getStarted": "Qala Mahhala",
+      "volunteer": "Zibandakanye ukusiza ukwakha i-MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Kusebenza Kanjani",
+      "description": "Qala uhambo lwakho lweTango ngezinyathelo ezintathu ezilula",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Dala Iphrofayela Yakho",
+        "description": "Joyina mahhala futhi usitshele ngohambo lwakho lweTango, izinga lokuhlangenwe nakho, nezintandokazi zokudansa"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Thola & Xhuma",
+        "description": "Thola imicimbi, othisha, nezindawo ezikufuphi. Xhuma nabagibeli ababelana ngesithakazelo sakho"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Dansa & Khula",
+        "description": "Hamba emicimbini, thatha izifundo, yenza abangane, futhi ube yingxenye yomphakathi weTango womhlaba"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Konke Okudingayo",
+      "description": "Xhuma, thola, futhi ukhule uhambo lwakho lweTango ngezici ezinamandla",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Umphakathi",
+        "heading": "Xhuma Nabagibeli Emhlabeni Jikelele",
+        "description": "Joyina umphakathi ophilayo weTango. Xhuma nabagibeli, othisha, nabahleli ukusuka eBuenos Aires kuya eTokyo.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Landela abagibeli futhi wakhe inethiwekhi yakho",
+          "groups": "Joyina amaqembu ngokusekelwe ezithakazelweni nasezindaweni",
+          "messaging": "Imiyalezo yesikhathi sangempela nezici zokukhuluma",
+          "discover": "Thola abagibeli visiting edolobheni lakho"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Imicimbi",
+        "heading": "Thola Imicimbi Over",
+        "description": "Ungaphuthelwa milonga, umkhosi, noma workshop. Iplatifomu yethu ixhuma wena kumawadi amaningi e-tango abanjwa emhlabeni jikelele.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Ikhalenda yemicimbi ephelele",
+          "rsvp": "RSVP nokubhuka amathikithi",
+          "notifications": "Izaziso zemicimbi nezikhumbuzo",
+          "map": "Imephu esebenzisanayo yezindawo"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Ukudluliswa Kwezimoto",
+          "description": "Bukela imilonga emhlabeni jikelele ngesikhathi sangempela"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Umgwaqo Womculo",
+          "description": "Izinhlu zomculo ze-tango ezikhethiwe nezikhombisi"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Othisha Abavunyelwe",
+          "description": "Funda kubafundisi abaqinisekisiwe"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Uhlelo Lokuhamba",
+          "description": "Hlela uhambo futhi uthole abaphathi emhlabeni jikelele"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Okukhuluma Abadansi",
+      "description": "Joyina izinkulungwane zabadansi abanelisekile emhlabeni jikelele",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "Buenos Aires, e-Argentina",
+          "text": "UMundo Tango ungisize ngathola umndeni wami wokudansa edolobheni elisha. Umphakathi unomusa, wamukela, futhi unothando lwe-tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, e-USA",
+          "text": "Ngithole imilonga emangalisayo kanye nez workshop ngale platifomu. Sekube yinto ebalulekile ohambweni lwami lwe-tango."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moscow, e-Russia",
+          "text": "I-directory yothisha ingisizile ngathola abafundisi abahle kakhulu. Ukudansa kwami kuthuthuke kakhulu!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Imibuzo Ebuzwa Njalo",
+      "description": "Konke okudingayo ukwazi mayelana neMundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Iyini iMundo Tango?",
+          "answer": "IMundo Tango iyiplatifomu yomhlaba wonke exhumanisa abadansi be-tango, othisha, nabahleli. Sikusize uthole imicimbi, uthole ozakwethu bokudansa, ufunde kubafundisi abaphezulu, futhi uzitholele emiphakathini ye-tango ejabulisayo emhlabeni jikelele."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Is Mundo Tango mahala ukuyisebenzisa?",
+          "answer": "Yebo! Sinikeza isigaba samahhala esihlanganisa ukudalwa kwephrofayela eyisisekelo, ukuthola imicimbi, nokuthumela imiyalezo. Izici ezikhethekile ezifana nokuthumela imiyalezo engapheli, ukuhlela ozakwethu bokudansa nge-AI, kanye nezaziso zemicimbi eziphakeme zikhona nge-subscription yethu ye-Pro."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Ngiyithola kanjani imicimbi ye-tango eduze kwami?",
+          "answer": "Sebenzisa kalula i-Events Calendar yethu noma izici zokusesha ukuze uhlunge ngedolobha, usuku, kanye nohlobo lwemicimbi. Ungathola ama-milongas, imikhosi, ama-workshops, nezikhathi zokuzilolonga ezenzeka endaweni yakho noma kunoma iyiphi indawo emhlabeni."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Ngiyakwazi ukuxhumana nabanye abadansi?",
+          "answer": "Impela! Landela abadansi, joyina amaqembu, thumela izicelo zobungane, futhi uxoxe nomphakathi. I-platform yethu yakhelwe ukukhuthaza ukuxhumana kweqiniso ngaphakathi kwezwe le-tango."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Ngiyithola kanjani othisha be-tango?",
+          "answer": "Vakashela ku-Teachers Directory yethu ukuze ubheke othisha abaqinisekisiwe emhlabeni jikelele. Hlungisa ngendawo, ubuchwepheshe, kanye nezinga lokuhlangenwe nakho. Funda izibuyekezo ezivela kwabanye abafundi futhi bhuka izifundo ezizimele ngqo nge-platform."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Yini eyenza i-Mundo Tango ihluke?",
+          "answer": "Sakhiwe ngabadansi be-tango, kubadansi be-tango. Ukugxila kwethu kukwakha umphakathi weqiniso, ukuhlela imicimbi yekhwalithi, nokuxhumanisa wena nomndeni we-tango womhlaba - hhayi nje enye inethiwekhi yokuxhumana."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Uselungele ukujoyina umphakathi?",
+      "description": "Dala i-akhawunti yakho yamahhala namuhla futhi uqale ukuxhumana nabadansi be-tango abanesithakazelo emhlabeni jikelele. Akukho ikhadi lesikweletu elidingekayo.",
+      "button": "Joyina i-Mundo Tango Mahala",
+      "freeForever": "Mahala phakade",
+      "noCreditCard": "Akukho khadi lesikweletu",
+      "cancelAnytime": "Cisha noma nini"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Ukudla",
+    "description": "Hlala ubuyekeziwe ngezinto zakamuva ezivela emphakathini we-tango",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Zonke Izikhala",
+      "following": "Ukulandela",
+      "popular": "Okudumile",
+      "recent": "Okwakamuva"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Yini engqondweni yakho?",
+    "noPost": "Ayikho imiyalezo yokubonisa"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Imicimbi",
+    "description": "Thola imicimbi ye-tango eduze kwakho",
+    "upcoming": "Imicimbi ezayo",
+    "past": "Imicimbi edlule",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "Zonke Imicimbi",
+      "milongas": "Ama-milongas",
+      "workshops": "Imisebenzi",
+      "festivals": "Imikhosi",
+      "classes": "Izifundo"
     },
-    "noEvents": "No events found"
+    "noEvents": "Ayikho imicimbi etholakale"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Iphrofayela",
+    "description": "Buka futhi uhlele iphrofayela yakho",
+    "editProfile": "Hlela Iphrofayela",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Izikhala",
+      "photos": "Izithombe",
+      "videos": "Amavidiyo",
+      "events": "Imicimbi",
+      "friends": "Ozakwethu"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Izikhala",
+      "followers": "Abalandeli",
+      "following": "Abalandeli",
+      "events": "Imicimbi Ethathwe"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Imiyalezo",
+    "description": "Xoxa nezixhumanisi zakho ze-tango",
+    "newMessage": "Umyalezo Omusha",
+    "searchConversations": "Sesha izingxoxo",
+    "noMessages": "Ayikho imiyalezo okwamanje",
+    "startConversation": "Qala ingxoxo"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Othisha beTango",
+    "description": "Thola futhi uxhumane nothisha be-tango",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Bonke Othisha",
+      "featured": "Okukhethiwe",
+      "nearby": "Edolobheni"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Buka Iphrofayela",
+    "bookLesson": "Bhuka Isifundo"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Izindawo zeTango",
+    "description": "Thola izindawo ze-tango emhlabeni jikelele",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Zonke Izindawo",
+      "milongas": "Imilongas",
+      "schools": "Izikole Zokudansa",
+      "theaters": "Amathiyetha"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Thola Iziqondiso"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Izilungiselelo",
+    "description": "Phatha izilungiselelo zakho ze-akhawunti",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Izilungiselelo Ze-Akhawunti",
+      "profile": "Iphrofayela",
+      "privacy": "Ubumfihlo",
+      "notifications": "Izaziso",
+      "security": "Ubumfihlo",
+      "billing": "Ukukhokha",
+      "preferences": "Izintandokazi"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "I-Dashboard ye-CEO Yempilo",
+    "description": "Usizo lwakho lomuntu siqu lwe-AI lokuphathwa kwempilo",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Umphakathi Wempilo",
+      "fitness": "Umphakathi Wokuzivocavoca",
+      "nutrition": "Umphakathi Wokudla",
+      "finance": "Umphakathi Wezimali",
+      "career": "Umphakathi Womsebenzi",
+      "productivity": "Umphakathi Wokukhiqiza",
+      "relationships": "Umphakathi Wobudlelwano",
+      "learning": "Umphakathi Wokufunda"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Imakethe",
+    "description": "Thenga futhi uthengise izinto ezihlobene ne-tango",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Izicathulo Zokudansa",
+      "clothing": "Izingubo",
+      "music": "Umculo",
+      "accessories": "Izinsiza",
+      "other": "Okunye"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "I-Dashboard yoMphakathi",
+    "description": "Ukuphathwa nokuphathwa kweplathifomu",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Uhlolojikelele",
+      "users": "Abasebenzisi",
+      "content": "Okuqukethwe",
+      "reports": "Imibiko",
+      "analytics": "I-Analytics",
+      "settings": "Izilungiselelo"
     }
   }
 }

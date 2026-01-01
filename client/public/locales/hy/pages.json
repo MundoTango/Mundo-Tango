@@ -1,526 +1,526 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "Գրանցվել",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "Միացեք Mundo Tango - Ստեղծեք Ձեր հաշիվը",
+      "description": "Ստեղծեք Ձեր Mundo Tango հաշիվը և միացեք գլոբալ Արգենտինական տանգո համայնքին: Միացեք պարողների հետ, բացահայտեք միջոցառումներ և կիսվեք Ձեր տանգոյի հանդեպ կրքով:"
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "Բարի գալուստ ընտանիք",
+      "beginJourney": "Սկսեք Ձեր ճանապարհորդությունը",
+      "joinCommunity": "Միացեք համայնքին"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "Դուք ներգրավված եք!",
+      "joinMundoTango": "Միացեք Mundo Tango",
+      "description": "Միացեք պարողների հետ ամբողջ աշխարհում, բացահայտեք միլոնգաներ և immerse եղեք Արգենտինական տանգոյի կրքոտ աշխարհում",
+      "waitlistDescription": "Բարի գալուստ Mundo Tango համայնք: Մենք պատրաստում ենք Ձեր հաշիվը և շուտով կտեղեկացնենք Ձեզ:"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ պարողներ",
+      "events": "{{count}}+ միջոցառումներ",
+      "cities": "{{count}} քաղաքներ"
     },
     "form": {
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "fullName": "Լիարժեք անուն",
+      "fullNamePlaceholder": "Մարիա Ռոդրիգես",
+      "email": "Էլ. փոստ",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "Օգտագործողի անուն",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "Գաղտնաբառ",
+      "confirmPassword": "Հաստատեք գաղտնաբառը",
+      "inviteOnlyNotice": "Գրանցումը ներկայումս միայն հրավերով է: Completer այս ձևը, որպեսզի միանաք մեր սպասման ցուցակին, և մենք կտեղեկացնենք Ձեզ, երբ Ձեր հաշիվը պատրաստ լինի:",
+      "acceptTermsPrefix": "Ես ընդունում եմ",
+      "termsAndConditions": "Պայմանները և պայմանները"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "Այս էլ. փոստը արդեն գրանցված է",
+      "emailAvailable": "Էլ. փոստը հասանելի է!",
+      "usernameTaken": "Օգտագործողի անունը զբաղեցված է: Փորձեք {{suggestion}}",
+      "usernameAvailable": "Օգտագործողի անունը հասանելի է!",
+      "passwordsMatch": "Գաղտնաբառերը համընկնում են",
+      "passwordsDontMatch": "Գաղտնաբառերը չեն համընկնում"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "Թույլ",
+      "medium": "Միջին",
+      "strong": "Ուժեղ",
+      "veryStrong": "Շատ ուժեղ"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "Ունեք հրավիրման կոդ? (Ընտրովի)",
+      "placeholder": "Մուտքագրեք ձեր հրավիրման կոդը անմիջական մուտքի համար",
+      "accepted": "Կոդը ընդունված է! Ձեր հաշիվը անմիջապես կակտիվացվի:",
+      "noWorries": "Մի անհանգստացեք! Completeness the form below to join our waitlist."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "Բարի գալուստ, {{name}}!",
+      "defaultName": "Պարող",
+      "onTheList": "Դուք ցուցակում եք: Մենք ձեզ կուղարկենք էլփոստ",
+      "whenReady": "երբ ձեր հաշիվը պատրաստ կլինի:",
+      "helpUsGrow": "Մինչ դուք սպասում եք, օգնեք մեզ աճել",
+      "volunteerWithUs": "Մասնակցեք մեզ",
+      "supportMundoTango": "Նվիրեք Mundo Tango-ին"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "Ձեր հաշվի ստեղծումը...",
+      "joining": "Միանալը...",
+      "createAccount": "Ստեղծել հաշիվ",
+      "joinMundoTango": "Միանալ Mundo Tango-ին"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "Արդեն ունեք հաշիվ?",
+    "signIn": "Մուտք գործել",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "Չի գործում կոդը",
+        "description": "Խնդրում ենք մուտքագրել վավեր 6-համարանիշի հաստատման կոդ:"
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "Էլփոստը հաստատված է!",
+        "description": "Բարի գալուստ Mundo Tango! Սկսում ենք ձեր onboarding-ը..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "Հաստատումը ձախողվեց",
+        "description": "Չի գործում կամ ժամկետը լրացած կոդ: Խնդրում ենք փորձել նորից."
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "Սխալ",
+        "description": "Էլփոստը հաստատել չի հաջողվել: Խնդրում ենք փորձել նորից."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "Շատ շատ հարցումներ",
+        "description": "Խնդրում ենք սպասել մի քանի րոպե, նախքան կրկին փորձելը։"
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "Կոդը ուղարկվեց!",
+        "description": "Խնդրում ենք ստուգել ձեր մուտքի տուփը նոր կոդի համար։"
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "Կոդը կրկին ուղարկել չհաջողվեց։ Խնդրում ենք փորձել կրկին։"
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "Պայմանները պարտադիր են",
+        "description": "Խնդրում ենք ընդունել Պայմանները և Կոնդիցիաները"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "Գաղտնաբառերը չեն համընկնում",
+        "description": "Խնդրում ենք համոզվել, որ երկու գաղտնաբառերը նույնն են"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "Թույլ գաղտնաբառ",
+        "description": "Խնդրում ենք ընտրել ավելի ուժեղ գաղտնաբառ"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "Ստուգեք ձեր էլ. փոստը",
+        "description": "Մենք ձեզ ուղարկել ենք 6-համարանիշ վավերացման կոդ։ Խնդրում ենք ստուգել ձեր մուտքի տուփը։"
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "Գրանցումը ձախողվեց"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "Չհաջողվեց ավարտել գրանցումը"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "Խնդրում ենք փորձել կրկին"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
+      "pageTitle": "Բարի գալուստ",
+      "seoTitle": "Բարի գալուստ Mundo Tango",
+      "seoDescription": "Սկսեք ձեր տանգոյի ճանապարհորդությունը Mundo Tango-ով",
+      "badge": "Արագ կարգավորում",
+      "title": "Բարի գալուստ Mundo Tango",
+      "subtitle": "Եկեք կարգավորենք ձեր պրոֆիլը, որպեսզի կարողանաք կապվել համաշխարհային տանգո համայնքի հետ",
+      "duration": "Անհրաժեշտ է մոտ 2 րոպե",
+      "stepIndicator": "Քայլ {{current}}/{{total}}",
+      "getStarted": "Սկսեք",
+      "profileTitle": "Ձեր Տանգոյի ճանապարհորդությունը սկսվում է",
       "profileSubtitle": "Tell us a bit about yourself",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "Ընտրեք ձեր քաղաքը",
+          "description": "Կապվեք ձեր տեղական տանգո համայնքի հետ"
         },
         "roles": {
           "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "description": "Ապարատ, ուսուցիչ, DJ, կազմակերպիչ, թե՞ վերոնշյալներից բոլորը։"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "Բացահայտեք միջոցառումները",
+          "description": "Գտեք միլոնգաներ, դասեր և փառատոներ ձեր մոտ"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "Կիսվեք ձեր ճանապարհորդությամբ",
+          "description": "Միացեք ձեր մակարդակի պարողների հետ"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "Միացեք Facebook",
+          "description": "Կապեք ձեր Facebook պրոֆիլը, որպեսզի գտնեք ընկերներ համայնքում"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "Սոցիալական միացում",
+      "seoTitle": "Միացեք ձեր սոցիալական աշխարհին - Mundo Tango",
+      "seoDescription": "Կապեք ձեր սոցիալական պրոֆիլները, որպեսզի գտնեք ընկերներ տանգոյի համայնքում:",
+      "step": "Քայլ 2 6-ից",
+      "title": "Միացեք ձեր սոցիալական աշխարհին",
+      "quote": "\"Շատ տանգո պարողներ արդեն միմյանց ճանաչում են Facebook-ի միջոցով: Ձեր պրոֆիլը կապելով, մենք կարող ենք ցույց տալ, թե ձեր ցանցում որոնք պարողները արդեն այստեղ են - հեշտացնելով ծանոթ դեմքերի գտնելը միլոնգաներում և ավելի խորը կապեր ստեղծելը:\"",
+      "cardTitle": "Գտեք ձեր ընկերներին",
+      "cardDescription": "Ձեր Facebook-ը օգնում է մեզ համապատասխանել ձեզ այն պարողների հետ, որոնց դուք արդեն կարող եք ճանաչել, որպեսզի դուք չսկսեք զրոյից:",
+      "facebookLabel": "Facebook պրոֆիլի URL (Ընտրովի)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "Մենք սա օգտագործում ենք որպես կամուրջ այլ համայնքների հետ և ձեզ համապատասխանելու համար պարողների հետ, որոնց դուք կարող եք ճանաչել:",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "Սխալ",
+        "errorDescription": "Պրոֆիլի տեղեկատվությունը պահպանել չի հաջողվել"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "Վերադառնալ",
+      "next": "Հաջորդ",
+      "skip": "Թողնել",
+      "finish": "Ավարտել",
+      "saving": "Պահպանվում է..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "Քաղաքի ընտրություն",
+      "seoTitle": "Ընտրեք ձեր քաղաքը - Mundo Tango",
+      "seoDescription": "Ընտրեք ձեր տնային քաղաքը, որպեսզի միանաք տեղական տանգո պարողների հետ",
+      "step": "Քայլ 1 6-ից",
+      "title": "Որտեղ եք պարում?",
+      "subtitle": "Միացեք ձեր շրջանի պարողների հետ",
+      "cardTitle": "Ձեր Տուն քաղաքը",
+      "cardDescription": "Այսը մեզ օգնում է ցույց տալ տեղական միջոցառումներ և պարողներ",
+      "searchLabel": "Որոնեք ձեր քաղաքը",
+      "searchPlaceholder": "Գրեք ձեր քաղաքի անունը...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "Ընտրեք հայտնի տանգոյի ուղղություններից"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "Քաղաքը պարտադիր է",
+        "selectCity": "Խնդրում ենք ընտրել ձեր տուն քաղաքը"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "Աղբյուրը ավելացված է!",
+        "submittedForReview": "Ներկայացված է վերանայման համար",
+        "trackingEvents": "Մենք կսկսենք միջոցառումների հետևում մնալ կայքից",
+        "thankYou": "Շնորհակալություն! Ձեր առաջարկը ուղարկվել է վերանայման համար։",
+        "errorTitle": "Սխալ",
+        "suggestionFailed": "Չհաջողվեց առաջարկը ներկայացնել",
+        "saveFailed": "Չհաջողվեց քաղաքները պահպանել"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "Լուսանկարների բեռնման",
+      "seoTitle": "Ավելացնել պրոֆիլային լուսանկար - Mundo Tango",
+      "seoDescription": "Բեռնեք ձեր պրոֆիլային լուսանկարը",
+      "step": "Քայլ 3 6-ից",
+      "title": "Ավելացրեք ձեր պրոֆիլային լուսանկարը",
+      "subtitle": "Օգնեք մյուսներին ճանաչել ձեզ համայնքում",
+      "cardTitle": "Ձեր պրոֆիլային լուսանկարը",
+      "cardDescription": "Օգնեք մյուսներին ճանաչել ձեզ (կարող եք բաց թողնել այս քայլը)",
+      "previewAlt": "Պրոֆիլի նախադիտում",
+      "dropHere": "Նետեք ձեր լուսանկարը այստեղ",
+      "or": "կամ",
+      "browseFiles": "Բրաուզել ֆայլեր",
+      "fileTypes": "PNG, JPG մինչև 5ՄԲ",
+      "photoSelected": "Լուսանկարը ընտրված է!",
+      "uploading": "Բեռնվում է...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "Չհաջողված ֆայլ",
+        "selectImage": "Խնդրում ենք ընտրել պատկեր ֆայլ",
+        "fileTooLarge": "Ֆայլը չափազանց մեծ է",
+        "sizeLimit": "Խնդրում ենք ընտրել 5MB-ից փոքր պատկեր",
+        "uploadFailed": "Բեռնումը ձախողվեց",
+        "tryAgain": "Պատկերի բեռնման գործընթացը ձախողվեց: Խնդրում ենք փորձել նորից:",
+        "skipFailed": "Դարձնելը ձախողվեց: Խնդրում ենք փորձել նորից:"
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
+      "pageTitle": "Լեզուներ",
+      "seoTitle": "Ձեր լեզուները - Mundo Tango",
       "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "step": "Քայլ 5-ից 6",
+      "title": "Որ լեզուներ եք խոսում?",
+      "subtitle": "Միացեք պարողներին ձեր լեզվով",
+      "cardTitle": "Ձեր լեզուները",
+      "cardDescription": "Ընտրեք ձեր հիմնական լեզուն և ցանկացած լրացուցիչ լեզու, որը խոսում եք",
+      "primaryLabel": "Հիմնական լեզու",
+      "primaryHint": "Այսպիսով, նաև կսահմանվի ձեր կայքի ցուցադրման լեզուն",
+      "primaryPlaceholder": "Ընտրեք ձեր հիմնական լեզուն",
+      "additionalLabel": "Լրացուցիչ լեզուներ (Ընտրովի)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "Հիմնական լեզուն պարտադիր է",
+        "selectPrimary": "Խնդրում ենք ընտրել ձեր հիմնական լեզուն",
+        "saveFailed": "Լեզուները պահպանելու գործընթացը ձախողվեց",
+        "saveFailedTitle": "Լեզվի պահպանման գործընթացը ձախողվեց"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
+      "pageTitle": "Տանգոյի դերեր",
+      "seoTitle": "Ձեր տանգոյի դերերը - Mundo Tango",
       "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "step": "Քայլ 2-ից 6",
+      "title": "Որ դերերում եք խաղում?",
+      "subtitle": "Ընտրեք բոլոր այն, որոնք վերաբերում են ձեզ",
+      "cardTitle": "Ձեր տանգոյի ինքնությունը",
+      "cardDescription": "Օգնեք մյուսներին իմանալ, թե ինչպես եք մասնակցում տանգոյի աշխարհին"
     },
     "experience": {
       "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "seoTitle": "Ձեր պարային փորձը - Mundo Tango",
+      "seoDescription": "Կիսվեք ձեր պարային փորձի մակարդակի մասին",
+      "step": "Քայլ 4 מתוך 6",
+      "title": "Ձեր պարային փորձը",
+      "subtitle": "Օգնեք մեզ կապել ձեզ ճիշտ պարողների հետ"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
+      "pageTitle": "Հետաքրքրություններ",
+      "seoTitle": "Ձեր հետաքրքրությունները - Mundo Tango",
       "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "step": "Քայլ 6 מתוך 6",
+      "title": "Որոնք են ձեր հետաքրքրությունները?",
+      "subtitle": "Ընտրեք թեմաներ, որոնք ձեզ հետաքրքրում են",
+      "helpText": "Ընտրեք առնվազն 3 հետաքրքրություն ձեր ֆիդը անձնավորելու համար",
+      "selectedCount": "{{count}} ընտրված",
+      "finishing": "Ավարտվում է...",
+      "completeSetup": "Ավարտել կարգավորումը",
+      "searchPlaceholder": "Որոնել համայնքներ կամ ավելացնել նոր...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "Ֆիզիկական պատրաստություն և սպորտ"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "Տեխնոլոգիա և նորարարություն"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "Հոգևորություն և աճ"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "Յոգա և առողջություն"
         },
         "music": {
-          "label": "Music"
+          "label": "Երաժշտություն"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "Լուսանկարչություն և տեսանյութ"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "Արվեստ և ստեղծագործություն"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "Կարդալ և գրել"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "Մեկնել և արկածներ"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "Խոհարարություն և սնունդ"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "Գինի և խմիչքներ"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Խաղեր"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "Բացօթյա գործունեություն"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "Սնոու սպորտեր"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "Կայծակ"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "Ջրային սպորտեր"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "Բնություն և այգեգործություն"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "Ֆիլմեր և ժամանց"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "Տուն կենդանիներ"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "Սոցիալական և համայնք"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
+        "fitness_gym": "Սրահ և ծանրոցներ",
+        "fitness_running": "Արժեք",
         "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
-        "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
-        "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
+        "fitness_martial_arts": "Մարտական արվեստներ",
+        "fitness_tennis": "Թենիս",
+        "fitness_soccer": "Ֆուտբոլ",
+        "fitness_basketball": "Բասկետբոլ",
+        "fitness_fencing": "Զենքի պայքար",
+        "tech_coding": "Ծածկագրում և զարգացում",
+        "tech_ai": "Արհեստական բանականություն և ապագայի տեխնոլոգիաներ",
+        "tech_crypto": "Web3 և կրիպտո",
+        "tech_gaming": "Խաղային մշակույթ",
+        "spirit_meditation": "Մեդիտացիա",
+        "spirit_astrology": "Աստղագիտություն",
+        "spirit_philosophy": "Փիլիսոփայություն",
+        "spirit_community": "Համայնքի կառուցում",
+        "yoga_hatha": "Հաթա յոգա",
+        "yoga_vinyasa": "Վինյասա հոսք",
+        "yoga_meditation": "Մեդիտացիա",
+        "yoga_pilates": "Պիլատես",
+        "yoga_breathwork": "Շնչառական աշխատանք",
+        "music_listening": "Երաժշտություն լսել",
+        "music_concerts": "Կենդանի համերգներ",
+        "music_piano": "Պիանո",
+        "music_guitar": "Գիթառ",
+        "music_singing": "երգեցողություն",
+        "music_dj": "DJ-ing",
+        "music_production": "Երաժշտական արտադրություն",
+        "photo_portrait": "Պորտրետային լուսանկարչություն",
+        "photo_landscape": "Լանդշաֆտային լուսանկարչություն",
+        "photo_street": "Փողոցային լուսանկարչություն",
+        "photo_video": "Վիդեոգրաֆիա",
+        "photo_editing": "Լուսանկարների խմբագրում",
+        "art_painting": "Նկարագրություն",
+        "art_drawing": "Նկարազարդում",
+        "art_sculpture": "Քանդակագործություն",
+        "art_digital": "Դիջիթալ արվեստ",
+        "art_crafts": "Հմտություններ և DIY",
+        "art_pottery": "Կերամիկա",
+        "reading_fiction": "Ֆիկցիա",
+        "reading_nonfiction": "Անֆիկցիա",
+        "reading_poetry": "Պոեզիա",
+        "reading_writing": "Ստեղծագործական գրություն",
+        "reading_journals": "Օրագիր վարում",
+        "travel_backpacking": "Հետախուզական ճամփորդություն",
+        "travel_luxury": "Լյուքս ճամփորդություն",
+        "travel_cultural": "Մշակութային զբոսաշրջություն",
+        "travel_road_trips": "Ճանապարհային ճամփորդություններ",
+        "travel_solo": "Մենակ ճամփորդություն",
+        "cooking_home": "Տնային խոհարարություն",
+        "cooking_baking": "Սուրճ պատրաստում",
+        "cooking_gourmet": "Գուրմե խոհանոց",
+        "cooking_international": "Միջազգային խոհանոց",
+        "cooking_healthy": "Առողջ սնունդ",
+        "wine_tasting": "Գինու համտես",
+        "wine_cocktails": "Կոկտեյլներ",
+        "wine_coffee": "Սուրճի գնահատում",
+        "wine_tea": "Թեյի մշակույթ",
+        "wine_brewing": "Տանը պատրաստում",
+        "gaming_video": "Տեսախաղեր",
+        "gaming_board": "Տախտակային խաղեր",
+        "gaming_card": "Քարտային խաղեր",
+        "gaming_tabletop": "Տախտակային RPG-ներ",
         "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
-        "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "outdoor_hiking": "Քայլարշավ",
+        "outdoor_camping": "Անվտանգություն",
+        "outdoor_climbing": "Քար climbing",
+        "outdoor_fishing": "Ձուկ որս",
+        "outdoor_kayaking": "Կայակինգ",
+        "outdoor_surfing": "Սերֆինգ",
+        "snow_skiing": "Սահադաշտ",
+        "snow_snowboard": "Սնոուբորդինգ",
+        "snow_crosscountry": "Խաչմերուկի սահադաշտ",
+        "snow_ice_skating": "Սառույցի սահք",
+        "snow_sledding": "Սլեդինգ",
+        "snow_snowshoeing": "Սնոուշուինգ",
+        "cycling_road": "Ճանապարհային հեծանվավազք",
+        "cycling_mountain": "Լեռան հեծանվավազք",
+        "cycling_urban": "Քաղաքային հեծանվավազք",
+        "cycling_touring": "Հեծանվային տուրեր",
+        "water_swimming": "Լող",
+        "water_scuba": "Սկուբա լող",
+        "water_snorkel": "Սնորկելինգ",
+        "water_sailing": "Նավարկություն",
+        "water_paddleboard": "Պեդալային սահնակ",
+        "nature_gardening": "Բուսաբուծություն",
+        "nature_birdwatching": "Թռչունների դիտում",
+        "nature_botany": "Ականջակալների հավաքում",
+        "nature_wildlife": "Բնության լուսանկարչություն",
+        "movies_cinema": "Կինո",
+        "movies_tv": "Հեռուստասերիալներ",
+        "movies_documentary": "Փաստագրեր",
+        "movies_theater": "Թատրոն",
+        "movies_standup": "Կատակերգություն",
+        "pets_dogs": "Շուներ",
+        "pets_cats": "Կատուներ",
+        "pets_exotic": "Էկզոտիկ կենդանիներ",
+        "pets_horses": "Աղեղնաձիգություն",
+        "pets_rescue": "Կենդանիների փրկություն",
+        "social_volunteering": "Մասնակցություն",
+        "social_meetups": "Հանդիպումներ",
+        "social_networking": "Կապեր",
+        "social_languages": "Լեզվային փոխանակում"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "Բարի գալուստ Mundo Tango!",
+        "completeDesc": "Ձեր պրոֆիլը պատրաստ է։ Սկսեք ուսումնասիրել!",
+        "waitlistTitle": "Պրոֆիլը լրացված է!",
+        "waitlistDesc": "Մենք ձեզ կտեղեկացնենք, երբ ձեր հաշիվը ակտիվացվի"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "Պահպանել չհաջողվեց։ Խնդրում ենք փորձել նորից։"
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "Համայնքի կանոններ",
+      "subtitle": "Խնդրում ենք վերանայել և ընդունել մեր պայմանները",
+      "legalDocsTitle": "Օրենսդրական փաստաթղթեր",
+      "legalDocsDescription": "Վերանայեք մեր ծառայությունների պայմաններն ու գաղտնիության քաղաքականությունը",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "Ես ընդունում եմ ծառայությունների պայմանները",
+        "description": "Մեր պայմանները կառավարում են ձեր օգտագործումը Mundo Tango",
+        "link": "Կարդալ Ծառայությունների պայմանները"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "Ես ընդունում եմ Գաղտնիության քաղաքականությունը",
+        "description": "Ինչպես ենք մենք վերաբերվում ձեր տվյալներին",
+        "link": "Կարդալ Գաղտնիության քաղաքականությունը"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "Համայնքի վարքագծի կանոնները",
+      "cocDescription": "Օգնեք մեզ պահպանել հարգալից համայնք",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "Հարգալից եղեք",
+          "description": "Բոլորին վերաբերվեք արժանապատվությամբ և հարգանքով"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "Ներդաշնակ եղեք",
+          "description": "Բարի գալուստ բոլոր մակարդակի և ֆոնային պարողներին"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "Աληո՛ւն եղեք",
+          "description": "Օգտագործեք ձեր իրական ինքնությունը և անկեղծ տեղեկությունները"
         },
         "consent": {
-          "title": "Respect Consent",
+          "title": "Հարգեք համաձայնությունը",
           "description": "Always ask before dancing and respect boundaries"
         },
         "noHarassment": {
-          "title": "No Harassment",
+          "title": "Ոչ հալածանք",
           "description": "Zero tolerance for harassment or bullying"
         },
         "noSpam": {
-          "title": "No Spam",
+          "title": "Ոչ սպամ",
           "description": "Don't send unsolicited promotions"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "Ոչ խտրականություն",
+          "description": "Մենք չենք հանդուրժում որևէ տեսակի խտրականություն"
         },
         "privacy": {
-          "title": "Protect Privacy",
+          "title": "Պաշտպանեք գաղտնիությունը",
           "description": "Don't share others' information without consent"
         },
         "safety": {
-          "title": "Prioritize Safety",
+          "title": "Առաջնորդեք անվտանգությունը",
           "description": "Report any unsafe behavior immediately"
         },
         "laws": {
-          "title": "Follow Laws",
+          "title": "Հետևեք օրենքներին",
           "description": "Comply with all applicable laws"
         },
         "report": {
@@ -528,369 +528,369 @@
           "description": "Help us by reporting violations"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "Օգնեք միմյանց",
+          "description": "Օգնեք գործընկեր պարողներին աճել"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "Ընդունել բոլորը և շարունակել",
+      "accepting": "Ընդունվում է...",
+      "incompleteAlert": "Խնդրում ենք ընդունել բոլոր անհրաժեշտ պայմանները",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "Բարի գալուստ!",
+        "description": "Դուք ընդունել եք մեր համայնքի ուղեցույցները"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "Պահպանել չի հաջողվել։ Խնդրում ենք փորձել կրկին։"
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "Սպասման ցուցակ",
+      "seoTitle": "Դուք սպասման ցուցակում եք - Mundo Tango",
+      "seoDescription": "Ձեր հաշիվը սպասում է ակտիվացման",
+      "title": "Դուք սպասման ցուցակում եք!",
+      "welcomeMessage": "Բարի գալուստ, {{name}}!",
+      "defaultName": "Պարող",
+      "profileComplete": "Անձնական տվյալները լրացված են",
+      "profileCompleteDesc": "Ձեր պրոֆիլը պատրաստ է և սպասում է",
+      "emailNotice": "Մենք ձեզ կուղարկենք էլեկտրոնային նամակ {{email}} հասցեին, երբ ձեր հաշիվը պատրաստ լինի",
+      "whenReady": "երբ ձեր հաշիվը պատրաստ կլինի։",
+      "whileYouWait": "Երբ սպասում եք, օգնեք մեզ աճել:",
+      "volunteerButton": "Դառնա կամավոր",
+      "supportButton": "Նպաստեք Mundo Tango-ին"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "Ուղեցույց շրջայց",
+      "seoTitle": "Հետազոտեք Mundo Tango-ն",
+      "seoDescription": "Սովորեք, թե ինչպես օգտագործել Mundo Tango-ն",
+      "skipTour": "Թողնել շրջայցը",
+      "finish": "Ավարտել շրջայցը",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "Բացահայտեք գրառումներ տանգո համայնքից",
+        "events": "Գտեք միլոնգաներ, դասեր և փառատոններ",
+        "groups": "Միացեք ձեր քաղաքի կամ հետաքրքրությունների խմբերին",
+        "messages": "Կապվեք անմիջապես այլ պարողների հետ",
+        "profile": "Անձնականացրեք ձեր տանգո պրոֆիլը",
+        "createPost": "Կիսվեք ձեր տանգո պահերով"
       }
     },
     "subscription": {
       "welcome": {
         "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "subtitle": "Maximize your Mundo Tango experience",
+        "limitedOffer": "Սահմանափակ ժամանակի առաջարկ",
+        "getStarted": "Սկսել",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "Միանալ",
+            "description": "Ուղարկեք հաղորդագրություն ցանկացած պարողին անմիջապես"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "Տեսանելիություն",
+            "description": "Գտեք առանձնացված որոնման արդյունքներում"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "Իրադարձություններ",
+            "description": "Առաջնային մուտք հանրահայտ իրադարձություններին"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "Ավելանալ",
+            "description": "Նախադրյալ վերլուծություններ ձեր պրոֆիլի համար"
           },
           "premium": {
-            "title": "Premium",
-            "description": "Exclusive premium features"
+            "title": "Պրեմիում",
+            "description": "Հատուկ պրեմիում հատկություններ"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "Մուտք",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Մուտք - Mundo Tango",
+      "description": "Մուտք գործեք ձեր Mundo Tango հաշիվը, որպեսզի միանաք գլոբալ տանգո համայնքին, բացահայտեք իրադարձություններ և կիսվեք ձեր սիրով դեպի արգենտինական տանգո։"
     },
-    "badge": "Welcome Back",
+    "badge": "Բարի վերադարձ",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Ձեր տանգո ճանապարհորդությունը շարունակվում է",
+      "paragraph": "Մուտք գործեք, որպեսզի միանաք պարողներին ամբողջ աշխարհում, բացահայտեք իրադարձություններ և կիսվեք ձեր սիրով"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "պարողներ",
+      "events": "իրադարձություններ"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "Էլ. փոստ",
+      "password": "Գաղտնաբառ",
+      "signIn": "Մուտք",
+      "signingIn": "Մուտք է գործում...",
+      "forgotPassword": "Մոռացել եք գաղտնաբառը?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Հաշիվ չունեք?",
+    "createAccount": "Ստեղծեք մեկը հիմա",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Բարի վերադարձ!",
+      "successDescription": "Դուք հաջողությամբ մուտք եք գործել:",
+      "errorTitle": "Մուտքը ձախողվեց",
+      "errorDescription": "Չի գործում հավատարմագրերը"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Տուն",
+    "pageLayoutTitle": "Որտեղ Տանգոն հանդիպում է համայնքին",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Միացեք համաշխարհային Տանգո համայնքին",
+      "description": "Միացեք հազարավոր տանգո պարողների ամբողջ աշխարհում: Պարզեք միջոցառումներ, գտեք ուսուցիչներ, միացեք պարողներին և immerse yourself in the passionate world of Argentine tango."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Բարի գալուստ Համաշխարհային Տանգո համայնք",
+      "heading": "Որտեղ Տանգոն հանդիպում է համայնքին",
+      "paragraph": "Կիսվեք հիշողություններով, գտեք միջոցառումներ և օգնեք մեզ կառուցել տանգոյի տեխնոլոգիայի ապագան: Միացեք հազարավոր կրքոտ պարողներին, որոնք միանում են ամբողջ աշխարհում:",
+      "getStarted": "Սկսեք անվճար",
+      "volunteer": "Մասնակցեք MT-ի կառուցմանը"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Ինչպես է աշխատում",
+      "description": "Սկսեք ձեր տանգո ճանապարհորդությունը երեք պարզ քայլերով",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Ստեղծեք ձեր պրոֆիլը",
+        "description": "Միացեք անվճար և պատմեք մեզ ձեր տանգո ճանապարհորդության, փորձի մակարդակի և պարելու նախասիրությունների մասին"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Պարզեք և միացեք",
+        "description": "Գտեք միջոցառումներ, ուսուցիչներ և վայրեր ձեր մոտ: Միացեք պարողներին, ովքեր կիսում են ձեր կրքը"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Պարեք և աճեք",
+        "description": "Մասնակցեք միջոցառումներին, անցեք դասեր, ընկերներ ձեռք բերեք և դառնաք համաշխարհային տանգո համայնքի մասը"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Ամեն ինչ, ինչ ձեզ հարկավոր է",
+      "description": "Միացեք, պարզեք և աճեցրեք ձեր տանգո ճանապարհորդությունը հզոր հնարավորություններով",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Համայնք",
+        "heading": "Միացեք պարողներին ամբողջ աշխարհում",
+        "description": "Միացեք աշխույժ համաշխարհային համայնքի տանգոյի սիրահարների: Միացեք պարողներին, ուսուցիչներին և կազմակերպիչներին Բուենոս Այրեսից մինչև Տոկիո:",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Հետևեք պարողներին և կառուցեք ձեր ցանցը",
+          "groups": "Միացեք խմբերի, որոնք հիմնված են հետաքրքրությունների և վայրի վրա",
+          "messaging": "Իրական ժամանակի հաղորդագրություններ և զրույցի հնարավորություններ",
+          "discover": "Պարզեք պարողներին, ովքեր այցելում են ձեր քաղաք"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Իրադարձություններ",
+        "heading": "Բացահայտեք Իրադարձություններ ամենուր",
+        "description": "Երբեք մի բաց թողեք մի միլոնգա, փառատոն կամ աշխատ坊: Մեր հարթակը ձեզ կապում է հազարավոր տանգո իրադարձությունների հետ, որոնք տեղի են ունենում ամբողջ աշխարհում:",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Լրիվ իրադարձությունների օրացույց",
+          "rsvp": "RSVP և տոմսերի ամրագրում",
+          "notifications": "Իրադարձությունների ծանուցումներ և հիշեցումներ",
+          "map": "Ինտերակտիվ քարտեզ վայրերի"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Ուղիղ հեռարձակում",
+          "description": "Դիտեք միլոնգաները ամբողջ աշխարհում իրական ժամանակում"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Երաժշտության գրադարան",
+          "description": "Ընտրված տանգո երգացանկեր և ուղեցույցներ"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Հաստատված ուսուցիչներ",
+          "description": "Սովորեք հավաստագրված ուսուցիչներից"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Մեկնումների պլանավորող",
+          "description": "Պլանավորեք ուղևորություններ և գտեք հյուրընկալողներ ամբողջ աշխարհում"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Ինչ են ասում պարողները",
+      "description": "Միացեք հազարավոր գոհ պարողներին ամբողջ աշխարհում",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "Մարիա Ռոդրիգես",
+          "location": "Բուենոս Այրես, Արգենտինա",
+          "text": "Mundo Tango-ն ինձ օգնեց գտնել իմ պարային ընտանիքը նոր քաղաքում: Համայնքը ջերմ, ընդունող և իսկապես կրքոտ է տանգոյի նկատմամբ:"
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "Ջեյմս Չեն",
+          "location": "Սան Ֆրանցիսկո, ԱՄՆ",
+          "text": "Ես այս հարթակի միջոցով բացահայտել եմ հիանալի միլոնգաներ և աշխատ坊ներ: Դա դարձել է իմ տանգոյի ճանապարհորդության անբաժանելի մասը:"
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "Էլենա Վոլկով",
+          "location": "Մոսկվա, Ռուսաստան",
+          "text": "Ուսուցիչների ցուցակը օգնեց ինձ գտնել ան Incredible instructors: Իմ պարային հմտությունները զգալիորեն բարելավվել են:"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Հաճախ տրվող հարցեր",
+      "description": "Ամեն ինչ, ինչ պետք է իմանաք Mundo Tango-ի մասին",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Ինչ է Mundo Tango-ն?",
+          "answer": "Mundo Tango-ն գլոբալ հարթակ է, որը կապում է տանգո պարողներին, ուսուցիչներին և կազմակերպիչներին: Մենք օգնում ենք ձեզ բացահայտել իրադարձություններ, գտնել պարային գործընկերներ, սովորել լավագույն ուսուցիչներից և immerse yourself in the vibrant tango community worldwide."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Արդյոք Mundo Tango-ն անվճար է օգտագործելու համար?",
+          "answer": "Այո! Մենք առաջարկում ենք անվճար մակարդակ, որը ներառում է հիմնական պրոֆիլի ստեղծում, միջոցառումների հայտնաբերում և հաղորդագրություններ: Պրեմիում հատկությունները, ինչպիսիք են անսահմանափակ հաղորդագրությունները, արհեստական բանականությամբ պարային գործընկերների համապատասխանեցումը և առաջնային միջոցառումների ծանուցումները, հասանելի են մեր Pro բաժանորդագրությամբ:"
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Ինչպես կարող եմ գտնել ինձ մոտ գտնվող տանգո միջոցառումներ?",
+          "answer": "Պարզապես օգտագործեք մեր Միջոցառումների օրացույցը կամ Հետախուզման հատկությունները՝ քաղաքով, ամսաթվով և միջոցառման տեսակով ֆիլտրելու համար: Դուք կարող եք հայտնաբերել միլոնգաներ, փառատոներ, աշխատանոցներ և պրակտիկայի նստաշրջաններ, որոնք տեղի են ունենում ձեր շրջանում կամ աշխարհի ցանկացած վայրում:"
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Կարո՞ղ եմ կապ հաստատել այլ պարողների հետ:",
+          "answer": "Իհարկե! Հետևեք պարողներին, միացեք խմբերին, ուղարկեք ընկերության խնդրանքներ և զրուցեք համայնքի հետ: Մեր հարթակը նախատեսված է տանգոյի աշխարհում իսկական կապեր ստեղծելու համար:"
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Ինչպես կարող եմ գտնել տանգո ուսուցիչներ?",
+          "answer": "Այցեք մեր Ուսուցիչների ցուցակը՝ ամբողջ աշխարհում վավերացված ուսուցիչներին դիտելու համար: Ֆիլտրեք տեղակայմամբ, մասնագիտությամբ և փորձի մակարդակով: Կարդացեք այլ ուսանողների կարծիքները և գրանցեք մասնավոր դասեր անմիջապես հարթակի միջոցով:"
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Ինչը Mundo Tango-ն տարբեր է դարձնում?",
+          "answer": "Մենք ստեղծվել ենք տանգո պարողների կողմից, տանգո պարողների համար: Մեր ուշադրությունը կենտրոնացած է իսկական համայնքի կառուցման, որակյալ միջոցառումների ընտրության և ձեզ համաշխարհային տանգո ընտանիքի հետ կապելու վրա՝ ոչ թե պարզապես մեկ այլ սոցիալական ցանց:"
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Պատրաստ եք միանալ համայնքին?",
+      "description": "Ստեղծեք ձեր անվճար հաշիվը այսօր և սկսեք կապվել կրքոտ տանգո պարողների հետ ամբողջ աշխարհում: Քրեդիտ քարտ չի պահանջվում:",
+      "button": "Միացեք Mundo Tango-ին անվճար",
+      "freeForever": "Անվճար հավերժ",
+      "noCreditCard": "Քրեդիտ քարտ չի պահանջվում",
+      "cancelAnytime": "Չեղարկել ցանկացած ժամանակ"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Հոսք",
+    "description": "Մնացեք տեղեկացված տանգո համայնքից վերջին նորություններով",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Բոլոր գրառումները",
+      "following": "Հետևում",
+      "popular": "Հանրաճանաչ",
+      "recent": "Վերջին"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Ինչ է ձեր մտքում?",
+    "noPost": "Ձեր ցուցադրելու գրառումներ չկան"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Միջոցառումներ",
+    "description": "Հայտնաբերեք ձեզ մոտ գտնվող տանգո միջոցառումները",
+    "upcoming": "Մոտեցող միջոցառումներ",
+    "past": "Մինչև անցյալ միջոցառումներ",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "Բոլոր միջոցառումները",
+      "milongas": "Միլոնգաներ",
+      "workshops": "Վարպետություններ",
+      "festivals": "Փառատոներ",
+      "classes": "Դասեր"
     },
-    "noEvents": "No events found"
+    "noEvents": "Ինքներդ միջոցառումներ չեն գտնվել"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Պրոֆիլ",
+    "description": "Դիտեք և խմբագրեք ձեր պրոֆիլը",
+    "editProfile": "Խմբագրել պրոֆիլը",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Գրառումներ",
+      "photos": "Լուսանկարներ",
+      "videos": "Տեսանյութեր",
+      "events": "Միջոցառումներ",
+      "friends": "Ընկերներ"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Գրառումներ",
+      "followers": "Հետևորդներ",
+      "following": "Հետևում",
+      "events": "Միջոցառումներ, որոնց մասնակցել եք"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Հաղորդագրություններ",
+    "description": "Զրույցներ ձեր տանգո կապերի հետ",
+    "newMessage": "Նոր հաղորդագրություն",
+    "searchConversations": "Որոնել զրույցներ",
+    "noMessages": "Հաղորդագրություններ դեռ չկան",
+    "startConversation": "Սկսել զրույց"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Տանգո ուսուցիչներ",
+    "description": "Գտնել և կապվել տանգո ուսուցիչների հետ",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Բոլոր ուսուցիչները",
+      "featured": "Ընտրյալ",
+      "nearby": "Մերձակայքում"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Դիտել պրոֆիլը",
+    "bookLesson": "Պատվիրել դաս"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Տանգո վայրեր",
+    "description": "Ապահովեք տանգոյի վայրերը ամբողջ աշխարհում",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Բոլոր վայրերը",
+      "milongas": "Միլոնգաներ",
+      "schools": "Պարային դպրոցներ",
+      "theaters": "Թատրոններ"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Ստացեք ուղղությունները"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Կարգավորումներ",
+    "description": "Կառավարեք ձեր հաշվի կարգավորումները",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Հաշվի կարգավորումներ",
+      "profile": "Պրոֆիլ",
+      "privacy": "Գաղտնիություն",
+      "notifications": "Ծանուցումներ",
+      "security": "Անվտանգություն",
+      "billing": "Վճարում",
+      "preferences": "Նախընտրություններ"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Կյանքի CEO վահանակ",
+    "description": "Ձեր անձնական AI օգնականը կյանքի կառավարման համար",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Առողջության գործակալ",
+      "fitness": "Ֆիզիկական պատրաստության գործակալ",
+      "nutrition": "Սննդի գործակալ",
+      "finance": "Ֆինանսների գործակալ",
+      "career": "Կարիերայի գործակալ",
+      "productivity": "Արդյունավետության գործակալ",
+      "relationships": "Հարաբերությունների գործակալ",
+      "learning": "Ուսման գործակալ"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Հիմնարկ",
+    "description": "Գնել և վաճառել տանգոյի հետ կապված իրեր",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Պարային կոշիկներ",
+      "clothing": "Հագուստ",
+      "music": "Երաժշտություն",
+      "accessories": "Աքսեսուարներ",
+      "other": "Այլ"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Ադմինիստրատորի վահանակ",
+    "description": "Պլատֆորմի վարչություն և կառավարում",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Ընդհանուր տեսք",
+      "users": "Օգտագործողներ",
+      "content": "Բովանդակություն",
+      "reports": "Ռեպորտներ",
+      "analytics": "Վերլուծություն",
+      "settings": "Կարգավորումներ"
     }
   }
 }

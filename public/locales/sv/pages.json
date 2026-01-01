@@ -327,26 +327,66 @@
       "completeSetup": "Slutför installation",
       "searchPlaceholder": "Sök communities eller lägg till ett nytt...",
       "categories": {
-        "fitness": { "label": "Fitness & Sport" },
-        "tech": { "label": "Tech & Innovation" },
-        "spirituality": { "label": "Spiritualitet & Tillväxt" },
-        "yoga": { "label": "Yoga & Wellness" },
-        "music": { "label": "Musik" },
-        "photography": { "label": "Fotografi & Video" },
-        "art": { "label": "Konst & Kreativitet" },
-        "reading": { "label": "Läsning & Skrivning" },
-        "travel": { "label": "Resor & Äventyr" },
-        "cooking": { "label": "Matlagning & Mat" },
-        "wine": { "label": "Vin & Drycker" },
-        "gaming": { "label": "Gaming" },
-        "outdoors": { "label": "Utomhusaktiviteter" },
-        "snow": { "label": "Vintersport" },
-        "cycling": { "label": "Cykling" },
-        "water": { "label": "Vattensport" },
-        "nature": { "label": "Natur & Trädgård" },
-        "movies": { "label": "Film & Underhållning" },
-        "pets": { "label": "Husdjur & Djur" },
-        "social": { "label": "Socialt & Community" }
+        "fitness": {
+          "label": "Fitness & Sport"
+        },
+        "tech": {
+          "label": "Teknik & Innovation"
+        },
+        "spirituality": {
+          "label": "Spiritualitet & Tillväxt"
+        },
+        "yoga": {
+          "label": "Yoga & Välbefinnande"
+        },
+        "music": {
+          "label": "Musik"
+        },
+        "photography": {
+          "label": "Fotografi & Video"
+        },
+        "art": {
+          "label": "Konst & Kreativitet"
+        },
+        "reading": {
+          "label": "Läsning & Skrivning"
+        },
+        "travel": {
+          "label": "Resor & Äventyr"
+        },
+        "cooking": {
+          "label": "Matlagning & Mat"
+        },
+        "wine": {
+          "label": "Vin & Drycker"
+        },
+        "gaming": {
+          "label": "Spelande"
+        },
+        "outdoors": {
+          "label": "Utomhusaktiviteter"
+        },
+        "snow": {
+          "label": "Vintersport"
+        },
+        "cycling": {
+          "label": "Cykling"
+        },
+        "water": {
+          "label": "Vattensport"
+        },
+        "nature": {
+          "label": "Natur & Trädgård"
+        },
+        "movies": {
+          "label": "Film & Underhållning"
+        },
+        "pets": {
+          "label": "Husdjur & Djur"
+        },
+        "social": {
+          "label": "Socialt & Community"
+        }
       },
       "items": {
         "fitness_gym": "Gym & Vikter",
@@ -359,7 +399,7 @@
         "fitness_fencing": "Fäktning",
         "tech_coding": "Kodning & Dev",
         "tech_ai": "AI & Framtidsteknologi",
-        "tech_crypto": "Web3 & Crypto",
+        "tech_crypto": "Web3 & Krypto",
         "tech_gaming": "Gaming-kultur",
         "spirit_meditation": "Meditation",
         "spirit_astrology": "Astrologi",
@@ -393,7 +433,7 @@
         "reading_poetry": "Poesi",
         "reading_writing": "Kreativt skrivande",
         "reading_journals": "Dagboksskrivande",
-        "travel_backpacking": "Backpacking",
+        "travel_backpacking": "Ryggsäcksvandring",
         "travel_luxury": "Lyxresor",
         "travel_cultural": "Kulturturism",
         "travel_road_trips": "Roadtrips",
@@ -411,7 +451,7 @@
         "gaming_video": "Videospel",
         "gaming_board": "Brädspel",
         "gaming_card": "Kortspel",
-        "gaming_tabletop": "Tabletop RPGs",
+        "gaming_tabletop": "Brädspel RPGs",
         "gaming_esports": "eSports",
         "outdoor_hiking": "Vandring",
         "outdoor_camping": "Camping",
@@ -449,7 +489,7 @@
         "pets_horses": "Ridning",
         "pets_rescue": "Djurräddning",
         "social_volunteering": "Volontärarbete",
-        "social_meetups": "Meetups",
+        "social_meetups": "Möten",
         "social_networking": "Nätverkande",
         "social_languages": "Språkutbyte"
       },
@@ -636,7 +676,7 @@
       "heading": "Allt du behöver",
       "description": "Anslut, upptäck och växa din tangoresa med kraftfulla funktioner",
       "community": {
-        "badge": "Community",
+        "badge": "Gemenskap",
         "heading": "Anslut med dansare världen över",
         "description": "Gå med i ett levande globalt community av tango-entusiaster. Anslut med dansare, lärare och arrangörer från Buenos Aires till Tokyo.",
         "items": {
@@ -755,7 +795,7 @@
     "past": "Tidigare evenemang",
     "filters": {
       "all": "Alla evenemang",
-      "milongas": "Milongas",
+      "milongas": "Milongor",
       "workshops": "Workshops",
       "festivals": "Festivaler",
       "classes": "Kurser"
@@ -804,7 +844,7 @@
     "description": "Upptäck tango-lokaler världen över",
     "filters": {
       "all": "Alla lokaler",
-      "milongas": "Milongas",
+      "milongas": "Milongor",
       "schools": "Dansskolor",
       "theaters": "Teatrar"
     },
@@ -824,7 +864,7 @@
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
+    "title": "Livs-VD Dashboard",
     "description": "Din personliga AI-assistent för livshantering",
     "agents": {
       "health": "Hälsoagent",

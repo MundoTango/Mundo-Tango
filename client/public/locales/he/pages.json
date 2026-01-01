@@ -290,26 +290,66 @@
       "completeSetup": "השלמת ההגדרה",
       "searchPlaceholder": "חפשו קהילות או הוסיפו חדשה...",
       "categories": {
-        "fitness": { "label": "כושר וספורט" },
-        "tech": { "label": "טכנולוגיה וחדשנות" },
-        "spirituality": { "label": "רוחניות וצמיחה" },
-        "yoga": { "label": "יוגה ובריאות" },
-        "music": { "label": "מוזיקה" },
-        "photography": { "label": "צילום ווידאו" },
-        "art": { "label": "אמנות ויצירתיות" },
-        "reading": { "label": "קריאה וכתיבה" },
-        "travel": { "label": "טיולים והרפתקאות" },
-        "cooking": { "label": "בישול ואוכל" },
-        "wine": { "label": "יין ומשקאות" },
-        "gaming": { "label": "משחקים" },
-        "outdoors": { "label": "פעילויות בחוץ" },
-        "snow": { "label": "ספורט שלג" },
-        "cycling": { "label": "רכיבה על אופניים" },
-        "water": { "label": "ספורט מים" },
-        "nature": { "label": "טבע וגינון" },
-        "movies": { "label": "סרטים ובידור" },
-        "pets": { "label": "חיות מחמד" },
-        "social": { "label": "חברתי וקהילתי" }
+        "fitness": {
+          "label": "כושר וספורט"
+        },
+        "tech": {
+          "label": "טכנולוגיה וחדשנות"
+        },
+        "spirituality": {
+          "label": "רוחניות וצמיחה"
+        },
+        "yoga": {
+          "label": "יוגה ובריאות"
+        },
+        "music": {
+          "label": "מוזיקה"
+        },
+        "photography": {
+          "label": "צילום ווידאו"
+        },
+        "art": {
+          "label": "אמנות ויצירתיות"
+        },
+        "reading": {
+          "label": "קריאה וכתיבה"
+        },
+        "travel": {
+          "label": "טיולים והרפתקאות"
+        },
+        "cooking": {
+          "label": "בישול ואוכל"
+        },
+        "wine": {
+          "label": "יין ומשקאות"
+        },
+        "gaming": {
+          "label": "משחקים"
+        },
+        "outdoors": {
+          "label": "פעילויות בחוץ"
+        },
+        "snow": {
+          "label": "ספורט שלג"
+        },
+        "cycling": {
+          "label": "רכיבה על אופניים"
+        },
+        "water": {
+          "label": "ספורט מים"
+        },
+        "nature": {
+          "label": "טבע וגינון"
+        },
+        "movies": {
+          "label": "סרטים ובידור"
+        },
+        "pets": {
+          "label": "חיות מחמד"
+        },
+        "social": {
+          "label": "חברתי וקהילתי"
+        }
       },
       "items": {
         "fitness_gym": "חדר כושר ומשקולות",

@@ -637,127 +637,127 @@
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "ホーム",
+    "pageLayoutTitle": "タンゴとコミュニティの出会い",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "ムンドタンゴ - 世界のタンゴコミュニティとつながろう",
+      "description": "世界中の数千人のタンゴダンサーとつながりましょう。イベントを発見し、教師を見つけ、ダンサーとつながり、アルゼンチンタンゴの情熱的な世界に浸りましょう。"
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "世界のタンゴコミュニティへようこそ",
+      "heading": "タンゴとコミュニティの出会い",
+      "paragraph": "思い出を共有し、イベントを見つけ、タンゴテクノロジーの未来を共に築きましょう。世界中の情熱的なダンサーたちとつながりましょう。",
+      "getStarted": "無料で始める",
+      "volunteer": "MTの構築を手伝うボランティア"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "使い方",
+      "description": "タンゴの旅を3つの簡単なステップで始めましょう",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "プロフィールを作成",
+        "description": "無料で参加し、あなたのタンゴの旅、経験レベル、ダンスの好みについて教えてください"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "発見とつながり",
+        "description": "近くのイベント、教師、会場を見つけましょう。あなたの情熱を共有するダンサーとつながりましょう"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "ダンスして成長",
+        "description": "イベントに参加し、レッスンを受け、友達を作り、世界のタンゴコミュニティの一員になりましょう"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "必要なすべて",
+      "description": "強力な機能でタンゴの旅をつなぎ、発見し、成長させましょう",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "コミュニティ",
+        "heading": "世界中のダンサーとつながる",
+        "description": "タンゴ愛好者の活気あるグローバルコミュニティに参加しましょう。ブエノスアイレスから東京まで、ダンサー、教師、主催者とつながりましょう。",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "ダンサーをフォローしてネットワークを構築",
+          "groups": "興味や場所に基づいてグループに参加",
+          "messaging": "リアルタイムのメッセージングとチャット機能",
+          "discover": "あなたの街を訪れるダンサーを発見"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "イベント",
+        "heading": "どこでもイベントを発見",
+        "description": "ミロンガ、フェスティバル、ワークショップを見逃さないでください。私たちのプラットフォームは、世界中で開催される数千のタンゴイベントにあなたをつなげます。",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "包括的なイベントカレンダー",
+          "rsvp": "RSVPとチケット予約",
+          "notifications": "イベント通知とリマインダー",
+          "map": "会場のインタラクティブマップ"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "ライブストリーミング",
+          "description": "世界中のミロンガをリアルタイムで視聴"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "音楽ライブラリ",
+          "description": "キュレーションされたタンゴプレイリストとガイド"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "認定教師",
+          "description": "認定インストラクターから学ぶ"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "旅行プランナー",
+          "description": "旅行を計画し、世界中のホストを見つける"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "ダンサーの声",
+      "description": "世界中の数千人の満足したダンサーに参加しましょう",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "マリア・ロドリゲス",
+          "location": "アルゼンチン、ブエノスアイレス",
+          "text": "ムンドタンゴは、新しい街で私のダンスファミリーを見つける手助けをしてくれました。コミュニティは温かく、歓迎してくれ、タンゴに対する情熱が本物です。"
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "ジェームズ・チェン",
+          "location": "アメリカ、サンフランシスコ",
+          "text": "このプラットフォームを通じて素晴らしいミロンガやワークショップを発見しました。私のタンゴの旅には欠かせない存在になりました。"
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "エレナ・ヴォルコフ",
+          "location": "モスクワ、ロシア",
+          "text": "教師ディレクトリのおかげで素晴らしいインストラクターを見つけることができました。私のダンスは大幅に向上しました！"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "よくある質問",
+      "description": "ムンドタンゴについて知っておくべきこと",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "ムンドタンゴとは何ですか？",
+          "answer": "ムンドタンゴは、タンゴダンサー、教師、主催者をつなぐグローバルプラットフォームです。イベントを発見し、ダンスパートナーを見つけ、トップインストラクターから学び、世界中の活気あるタンゴコミュニティに没入するお手伝いをします。"
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "ムンドタンゴは無料で使用できますか？",
+          "answer": "はい！基本的なプロフィール作成、イベント発見、メッセージングを含む無料プランを提供しています。無制限のメッセージング、AIダンスパートナーのマッチング、優先イベント通知などのプレミアム機能は、Proサブスクリプションで利用可能です。"
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "近くのタンゴイベントを見つけるにはどうすればよいですか？",
+          "answer": "イベントカレンダーまたは検索機能を使用して、都市、日付、イベントタイプでフィルタリングしてください。あなたの地域や世界中で行われるミロンガ、フェスティバル、ワークショップ、練習セッションを発見できます。"
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "他のダンサーとつながることはできますか？",
+          "answer": "もちろんです！ダンサーをフォローし、グループに参加し、友達リクエストを送り、コミュニティとチャットしてください。私たちのプラットフォームは、タンゴの世界での本物のつながりを育むように設計されています。"
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "タンゴ教師を見つけるにはどうすればよいですか？",
+          "answer": "教師ディレクトリを訪れて、世界中の認定インストラクターを閲覧してください。場所、専門分野、経験レベルでフィルタリングできます。他の生徒からのレビューを読み、プラットフォームを通じて直接プライベートレッスンを予約できます。"
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "ムンドタンゴの違いは何ですか？",
+          "answer": "私たちはタンゴダンサーによって、タンゴダンサーのために作られました。私たちの焦点は、本物のコミュニティ構築、質の高いイベントキュレーション、そしてあなたをグローバルなタンゴファミリーとつなぐことにあります - ただの別のソーシャルネットワークではありません。"
         }
       }
     },
@@ -766,28 +766,28 @@
     "subtitle": "世界中のタンゴコミュニティとつながろう"
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "フィード",
+    "description": "タンゴコミュニティからの最新情報を受け取る",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "すべての投稿",
+      "following": "フォロー中",
+      "popular": "人気",
+      "recent": "最近"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "あなたの考えは何ですか？",
+    "noPost": "表示する投稿はありません"
   },
   "events": {
     "title": "タンゴイベント",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "description": "近くのタンゴイベントを発見",
+    "upcoming": "今後のイベント",
+    "past": "過去のイベント",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "すべてのイベント",
+      "milongas": "ミロンガ",
+      "workshops": "ワークショップ",
+      "festivals": "フェスティバル",
+      "classes": "クラス"
     },
     "noEvents": "イベントが見つかりません",
     "subtitle": "ミロンガ、フェスティバル、ワークショップを発見",
@@ -796,20 +796,20 @@
   },
   "profile": {
     "title": "プロフィール",
-    "description": "View and edit your profile",
+    "description": "プロフィールを表示および編集",
     "editProfile": "プロフィールを編集",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "投稿",
+      "photos": "写真",
+      "videos": "動画",
+      "events": "イベント",
+      "friends": "友達"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "投稿",
+      "followers": "フォロワー",
+      "following": "フォロー中",
+      "events": "参加したイベント"
     },
     "followers": "フォロワー",
     "following": "フォロー中",
@@ -817,83 +817,83 @@
     "about": "について"
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "メッセージ",
+    "description": "タンゴのつながりとチャット",
+    "newMessage": "新しいメッセージ",
+    "searchConversations": "会話を検索",
+    "noMessages": "まだメッセージはありません",
+    "startConversation": "会話を始める"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "タンゴ教師",
+    "description": "タンゴ教師を見つけてつながる",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "すべての教師",
+      "featured": "特集",
+      "nearby": "近くの"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "プロフィールを表示",
+    "bookLesson": "レッスンを予約"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "タンゴ会場",
+    "description": "世界中のタンゴ会場を発見",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "すべての会場",
+      "milongas": "ミロンガ",
+      "schools": "ダンススクール",
+      "theaters": "劇場"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "道順を取得"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "設定",
+    "description": "アカウント設定を管理",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "アカウント設定",
+      "profile": "プロフィール",
+      "privacy": "プライバシー",
+      "notifications": "通知",
+      "security": "セキュリティ",
+      "billing": "請求",
+      "preferences": "設定"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "ライフCEOダッシュボード",
+    "description": "ライフ管理のためのあなたの個人AIアシスタント",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "健康エージェント",
+      "fitness": "フィットネスエージェント",
+      "nutrition": "栄養エージェント",
+      "finance": "ファイナンスエージェント",
+      "career": "キャリアエージェント",
+      "productivity": "生産性エージェント",
+      "relationships": "関係エージェント",
+      "learning": "学習エージェント"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "マーケットプレイス",
+    "description": "タンゴ関連アイテムの売買",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "ダンスシューズ",
+      "clothing": "衣類",
+      "music": "音楽",
+      "accessories": "アクセサリー",
+      "other": "その他"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "管理者ダッシュボード",
+    "description": "プラットフォームの管理と運営",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "概要",
+      "users": "ユーザー",
+      "content": "コンテンツ",
+      "reports": "レポート",
+      "analytics": "分析",
+      "settings": "設定"
     }
   },
   "cities": {

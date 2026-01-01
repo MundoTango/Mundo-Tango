@@ -1,896 +1,896 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "Skrá sig",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "Taktu þátt í Mundo Tango - Búðu til reikninginn þinn",
+      "description": "Búðu til reikninginn þinn hjá Mundo Tango og taktu þátt í alþjóðlegu argentínska tango samfélagi. Tengdu við dansara, uppgötvaðu viðburði og deildu ástríðu þinni fyrir tango."
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "Velkomin í fjölskylduna",
+      "beginJourney": "Byrjaðu ferðalagið þitt",
+      "joinCommunity": "Taktu þátt í samfélaginu"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "Þú ert komin(n) inn!",
+      "joinMundoTango": "Taktu þátt í Mundo Tango",
+      "description": "Tengdu við dansara um allan heim, uppgötvaðu milongas og sökkva þér niður í ástríku heimi argentínska tango",
+      "waitlistDescription": "Velkomin í Mundo Tango samfélagið. Við erum að undirbúa reikninginn þinn og munum tilkynna þér fljótlega!"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ dansarar",
+      "events": "{{count}}+ viðburðir",
+      "cities": "{{count}} borgir"
     },
     "form": {
-      "fullName": "Full Name",
+      "fullName": "Heiti",
       "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "email": "Tölvupóstur",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "Notendanafn",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "Lykilorð",
+      "confirmPassword": "Staðfesta lykilorð",
+      "inviteOnlyNotice": "Skráning er núna aðeins með boði. Fylla út þetta eyðublað til að taka þátt í biðlista okkar og við munum tilkynna þér þegar reikningurinn þinn er tilbúinn.",
+      "acceptTermsPrefix": "Ég samþykki",
+      "termsAndConditions": "Skilmála og skilyrði"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "Þessi tölvupóstur er þegar skráð",
+      "emailAvailable": "Tölvupóstur í boði!",
+      "usernameTaken": "Notendanafn er þegar tekið. Prófaðu {{suggestion}}",
+      "usernameAvailable": "Notendanafn í boði!",
+      "passwordsMatch": "Lykilorð passa",
+      "passwordsDontMatch": "Lykilorð passa ekki"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "Veikt",
+      "medium": "Miðlungs",
+      "strong": "Sterkt",
+      "veryStrong": "Mjög sterkt"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "Ertu með boðskóða? (Valfrjálst)",
+      "placeholder": "Sláðu inn boðskóðann þinn til að fá strax aðgang",
+      "accepted": "Kóði samþykktur! Reikningurinn þinn verður virkur strax.",
+      "noWorries": "Engar áhyggjur! Fylltu út eyðublaðið hér að neðan til að skrá þig á biðlista okkar."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "Velkomin, {{name}}!",
+      "defaultName": "Dansari",
+      "onTheList": "Þú ert á listanum. Við munum senda þér tölvupóst á",
+      "whenReady": "þegar reikningurinn þinn er tilbúinn.",
+      "helpUsGrow": "Á meðan þú bíður, hjálpaðu okkur að vaxa",
+      "volunteerWithUs": "Sjálfboðaliðastarf með okkur",
+      "supportMundoTango": "Stuðlaðu að Mundo Tango"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "Búum til reikninginn þinn...",
+      "joining": "Að skrá sig...",
+      "createAccount": "Búa til reikning",
+      "joinMundoTango": "Skráðu þig í Mundo Tango"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "Ertu þegar með reikning?",
+    "signIn": "Skráðu þig inn",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "Ógildur kóði",
+        "description": "Vinsamlegast sláðu inn gilt 6-stafa staðfestingarkóða."
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "Tölvupóstur staðfestur!",
+        "description": "Velkomin í Mundo Tango! Byrjum á að skrá þig..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "Staðfesting mistókst",
+        "description": "Ógildur eða útrunninn kóði. Vinsamlegast reyndu aftur."
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "Villa",
+        "description": "Mistókst að staðfesta tölvupóst. Vinsamlegast reyndu aftur."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "Of margar beiðnir",
+        "description": "Vinsamlegast bíðu í nokkrar mínútur áður en þú reynir aftur."
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "Kóðinn sendur!",
+        "description": "Vinsamlegast athugaðu pósthólfið þitt fyrir nýjan kóða."
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "Mistókst að senda kóðann aftur. Vinsamlegast reyndu aftur."
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "Skilmálar nauðsynlegir",
+        "description": "Vinsamlegast samþykktu skilmála og skilyrði"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "Lykilorðin passa ekki",
+        "description": "Vinsamlegast tryggðu að bæði lykilorðin séu eins"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "Veikt lykilorð",
+        "description": "Vinsamlegast veldu sterkara lykilorð"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "Athugaðu tölvupóstinn þinn",
+        "description": "Við sendum þér 6-stafa staðfestingarkóða. Vinsamlegast athugaðu pósthólfið þitt."
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "Skráning mistókst"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "Gat ekki lokið skráningu"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "Vinsamlegast reyndu aftur"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "Velkomin",
+      "seoTitle": "Velkomin í Mundo Tango",
+      "seoDescription": "Byrjaðu ferð þína í tango með Mundo Tango",
+      "badge": "Fljótleg uppsetning",
+      "title": "Velkomin í Mundo Tango",
+      "subtitle": "Við skulum stilla upp prófílnum þínum svo þú getir tengst alþjóðlegu tango samfélagi",
+      "duration": "Tekur um 2 mínútur",
+      "stepIndicator": "Skref {{current}} af {{total}}",
+      "getStarted": "Byrjaðu",
+      "profileTitle": "Þín tango ferð byrjar",
+      "profileSubtitle": "Segðu okkur aðeins frá þér",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "Veldu borgina þína",
+          "description": "Tengdu við þitt staðbundna tango samfélag"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "Segðu okkur hlutverk þín",
+          "description": "Dansari, kennari, DJ, skipuleggjandi, eða allt ofangreint?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "Kynntu þér viðburði",
+          "description": "Finndu milongas, tíma og hátíðir nálægt þér"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "Deildu ferðalagi þínu",
+          "description": "Tengdu við dansara á þínu stigi"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "Tengdu Facebook",
+          "description": "Tengdu Facebook prófílinn þinn til að finna vini í samfélaginu"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "Félagsleg tenging",
+      "seoTitle": "Tengdu félagslega heiminn þinn - Mundo Tango",
+      "seoDescription": "Tengdu félagslegu prófílana þína til að finna vini í tango samfélaginu.",
+      "step": "Skref 2 af 6",
+      "title": "Tengdu félagslega heiminn þinn",
+      "quote": "\"Margir tango dansarar þekkja þegar hvort annað í gegnum Facebook. Með því að tengja prófílinn þinn getum við sýnt þér hvaða dansarar í netinu þínu eru þegar hér - sem gerir það auðveldara að finna kunnugleg andlit á milongum og byggja dýrmætari tengsl.\"",
+      "cardTitle": "Finndu vini þína",
+      "cardDescription": "Facebook þinn hjálpar okkur að para þig við dansara sem þú gætir þegar þekkt, svo þú byrjar ekki frá grunni.",
+      "facebookLabel": "Facebook prófíl URL (Valfrjálst)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "Við notum þetta sem brú að öðrum samfélögum og til að para þig við dansara sem þú gætir þekkt.",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "Villa",
+        "errorDescription": "Mistókst að vista prófílupplýsingar"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "Til baka",
+      "next": "Næsta",
+      "skip": "Sleppa",
+      "finish": "Klára",
+      "saving": "Vista..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "Val á borg",
+      "seoTitle": "Veldu borgina þína - Mundo Tango",
+      "seoDescription": "Veldu heimaborgina þína til að tengjast staðbundnum tango dansurum",
+      "step": "Skref 1 af 6",
+      "title": "Hvar dansar þú?",
+      "subtitle": "Tengdu við dansara á þínu svæði",
+      "cardTitle": "Þín heimaborg",
+      "cardDescription": "Þetta hjálpar okkur að sýna þér staðbundin viðburði og dansara",
+      "searchLabel": "Leitaðu að borginni þinni",
+      "searchPlaceholder": "Sláðu inn nafn borgarinnar þinnar...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "Veldu úr vinsælum tango áfangastöðum"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "Borg nauðsynleg",
+        "selectCity": "Vinsamlegast veldu heimaborgina þína"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "Heimild bætt við!",
+        "submittedForReview": "Sent til endurskoðunar",
+        "trackingEvents": "Við munum byrja að fylgjast með viðburðum frá síðunni",
+        "thankYou": "Takk! Tillagan þín hefur verið send til endurskoðunar.",
+        "errorTitle": "Villa",
+        "suggestionFailed": "Mistókst að senda tillögu",
+        "saveFailed": "Mistókst að vista borgir"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "Myndaupplýsingar",
+      "seoTitle": "Bæta við prófílmynd - Mundo Tango",
+      "seoDescription": "Hladdu upp prófílmyndinni þinni",
+      "step": "Skref 3 af 6",
+      "title": "Bæta við prófílmyndinni þinni",
+      "subtitle": "Hjálpaðu öðrum að þekkja þig í samfélaginu",
+      "cardTitle": "Prófílmyndin þín",
+      "cardDescription": "Hjálpaðu öðrum að þekkja þig (þú getur sleppt þessu skrefi)",
+      "previewAlt": "Forskoðun prófíls",
+      "dropHere": "Dreifðu myndinni þinni hér",
+      "or": "eða",
+      "browseFiles": "Skoða skrár",
+      "fileTypes": "PNG, JPG allt að 5MB",
+      "photoSelected": "Mynd valin!",
+      "uploading": "Hladdu upp...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "Ógild skrá",
+        "selectImage": "Vinsamlegast veldu myndaskrá",
+        "fileTooLarge": "Skrá of stór",
+        "sizeLimit": "Vinsamlegast veldu mynd undir 5MB",
+        "uploadFailed": "Hlaða upp mistókst",
+        "tryAgain": "Mistókst að hlaða upp mynd. Vinsamlegast reyndu aftur.",
+        "skipFailed": "Mistókst að sleppa. Vinsamlegast reyndu aftur."
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "Tungumál",
+      "seoTitle": "Þín tungumál - Mundo Tango",
+      "seoDescription": "Segðu okkur hvaða tungumál þú talar",
+      "step": "Skref 5 af 6",
+      "title": "Hvaða tungumál talar þú?",
+      "subtitle": "Tengdu við dansara á þínu tungumáli",
+      "cardTitle": "Þín tungumál",
+      "cardDescription": "Veldu aðal tungumál þitt og önnur tungumál sem þú talar",
+      "primaryLabel": "Aðal tungumál",
+      "primaryHint": "Þetta mun einnig stilla tungumál vefsíðunnar þinnar",
+      "primaryPlaceholder": "Veldu aðal tungumál þitt",
+      "additionalLabel": "Aukatungumál (valfrjálst)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "Aðal tungumál nauðsynlegt",
+        "selectPrimary": "Vinsamlegast veldu aðal tungumál þitt",
+        "saveFailed": "Mistókst að vista tungumál",
+        "saveFailedTitle": "Vistun tungumáls mistókst"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "Tango hlutverk",
+      "seoTitle": "Þín tango hlutverk - Mundo Tango",
+      "seoDescription": "Segðu okkur frá tango ferðalagi þínu",
+      "step": "Skref 2 af 6",
+      "title": "Hvaða hlutverk leikur þú?",
+      "subtitle": "Veldu öll sem eiga við þig",
+      "cardTitle": "Þín tango auðkenni",
+      "cardDescription": "Aðstoðaðu aðra við að vita hvernig þú tekur þátt í tango heiminum"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "Dansreynsla",
+      "seoTitle": "Þín dansreynsla - Mundo Tango",
+      "seoDescription": "Deildu dansreynslustigi þínum",
+      "step": "Skref 4 af 6",
+      "title": "Þín dansreynsla",
+      "subtitle": "Hjálpaðu okkur að tengja þig við réttu dansarana"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "Áhugamál",
+      "seoTitle": "Þín áhugamál - Mundo Tango",
+      "seoDescription": "Segðu okkur frá áhugamálum þínum",
+      "step": "Skref 6 af 6",
+      "title": "Hver eru áhugamál þín?",
+      "subtitle": "Veldu efni sem vekja áhuga þinn",
+      "helpText": "Veldu að minnsta kosti 3 áhugamál til að sérsníða fóðrið þitt",
+      "selectedCount": "{{count}} valin",
+      "finishing": "Að klára...",
+      "completeSetup": "Ljúka uppsetningu",
+      "searchPlaceholder": "Leitaðu að samfélögum eða bættu nýju við...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "Heilsu- og íþróttir"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "Tækni og nýsköpun"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "Andleg þróun"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "Jóga og vellíðan"
         },
         "music": {
-          "label": "Music"
+          "label": "Tónlist"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "Myndataka og vídeó"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "List og sköpun"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "Lestrar og skrif"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "Ferðalög og ævintýri"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "Eldun og matur"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "Vín og drykkir"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Leikir"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "Utandyraferðir"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "Snjóíþróttir"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "Hjóla"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "Vatnsíþróttir"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "Náttúra & Garðyrkja"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "Kvikmyndir & Skemmtun"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "Gæludýr & Dýr"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "Samfélag & Samverustundir"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
+        "fitness_gym": "Heilsurækt & Lóðir",
+        "fitness_running": "Hlaup",
         "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
+        "fitness_martial_arts": "Bardagalistir",
         "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
+        "fitness_soccer": "Fótbolti",
+        "fitness_basketball": "Körfubolti",
+        "fitness_fencing": "Sverðfimi",
+        "tech_coding": "Forritun & Þróun",
+        "tech_ai": "Gervigreind & Framtíðar Tækni",
+        "tech_crypto": "Web3 & Krypto",
+        "tech_gaming": "Leikjamenning",
         "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
+        "spirit_astrology": "Stjörnufræði",
+        "spirit_philosophy": "Heimspeki",
+        "spirit_community": "Bygging samfélags",
+        "yoga_hatha": "Hatha Jógí",
+        "yoga_vinyasa": "Vinyasa Flæði",
         "yoga_meditation": "Meditation",
         "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
-        "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
+        "yoga_breathwork": "Andardrætti",
+        "music_listening": "Tónlistarsýning",
+        "music_concerts": "Bein tónleikar",
+        "music_piano": "Píanó",
+        "music_guitar": "Gítar",
+        "music_singing": "Söngur",
+        "music_dj": "DJ-ing",
+        "music_production": "Tónlist framleiðsla",
+        "photo_portrait": "Portrett ljósmyndun",
+        "photo_landscape": "Landslags ljósmyndun",
+        "photo_street": "Gatnamyndun",
+        "photo_video": "Myndbandagerð",
+        "photo_editing": "Myndvinnsla",
+        "art_painting": "Málun",
+        "art_drawing": "Teikning",
+        "art_sculpture": "Fyrirbæri",
+        "art_digital": "Dígitöl list",
+        "art_crafts": "Hönnun & DIY",
+        "art_pottery": "Leirlist",
+        "reading_fiction": "Skáldskapur",
+        "reading_nonfiction": "Óskáldskapur",
+        "reading_poetry": "Ljóð",
+        "reading_writing": "Skapandi skrif",
+        "reading_journals": "Dagbókarskrif",
+        "travel_backpacking": "Bakpokaferðalög",
+        "travel_luxury": "Lúxus ferðalög",
+        "travel_cultural": "Menningarferðir",
+        "travel_road_trips": "Vegferðalög",
+        "travel_solo": "Einstaklingsferðalög",
+        "cooking_home": "Heimagerð matargerð",
+        "cooking_baking": "Bökun",
+        "cooking_gourmet": "Gourmet matargerð",
+        "cooking_international": "Alþjóðleg matargerð",
+        "cooking_healthy": "Heilbrigð mataræði",
+        "wine_tasting": "Vínsmökkun",
+        "wine_cocktails": "Kokteilar",
+        "wine_coffee": "Kaffiþekking",
+        "wine_tea": "Te menning",
+        "wine_brewing": "Heimabjórgerð",
+        "gaming_video": "Videoleikir",
+        "gaming_board": "Borðleikir",
+        "gaming_card": "Spilaleikir",
+        "gaming_tabletop": "Borðtölvuleikir",
         "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
+        "outdoor_hiking": "Fjallganga",
+        "outdoor_camping": "Tjaldsvæði",
+        "outdoor_climbing": "Klettaklifur",
+        "outdoor_fishing": "Veiði",
+        "outdoor_kayaking": "Kajakróður",
         "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
+        "snow_skiing": "Skíði",
+        "snow_snowboard": "Snjóbretti",
+        "snow_crosscountry": "Fjallaskíði",
+        "snow_ice_skating": "Ísákn",
+        "snow_sledding": "Sleðakstur",
+        "snow_snowshoeing": "Snjóskór",
+        "cycling_road": "Vegaklifur",
+        "cycling_mountain": "Fjallahjól",
+        "cycling_urban": "Borgarhjól",
+        "cycling_touring": "Hjólaferð",
+        "water_swimming": "Sund",
+        "water_scuba": "Sjórsund",
+        "water_snorkel": "Snorklunar",
+        "water_sailing": "Sigling",
         "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "nature_gardening": "Garðyrkja",
+        "nature_birdwatching": "Fuglaathugun",
+        "nature_botany": "Plöntusöfnun",
+        "nature_wildlife": "Villt dýralíf ljósmyndun",
+        "movies_cinema": "Bíó",
+        "movies_tv": "Sjónvarpsseríur",
+        "movies_documentary": "Dokumentar",
+        "movies_theater": "Leikhús",
+        "movies_standup": "Stand-up grín",
+        "pets_dogs": "Hundar",
+        "pets_cats": "Kettir",
+        "pets_exotic": "Exotic gæludýr",
+        "pets_horses": "Hestamennska",
+        "pets_rescue": "Dýra björgun",
+        "social_volunteering": "Sjálfboðaliðastarf",
+        "social_meetups": "Samskipti",
+        "social_networking": "Tengslanet",
+        "social_languages": "Tungumálaskipti"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "Velkomin í Mundo Tango!",
+        "completeDesc": "Þinn prófíll er tilbúinn. Byrjaðu að kanna!",
+        "waitlistTitle": "Prófíll fullkominn!",
+        "waitlistDesc": "Við munum tilkynna þér þegar reikningurinn þinn er virkjaður"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "Mistókst að vista. Vinsamlegast reyndu aftur."
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "Leiðbeiningar um samfélagið",
+      "subtitle": "Vinsamlegast skoðaðu og samþykktu skilmála okkar",
+      "legalDocsTitle": "Lagaleg skjöl",
+      "legalDocsDescription": "Skoðaðu skilmála þjónustunnar okkar og persónuverndarstefnu",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "Ég samþykki skilmála þjónustunnar",
+        "description": "Vour skilmálar stjórna notkun þinni á Mundo Tango",
+        "link": "Lestu skilmála þjónustunnar"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "Ég samþykki persónuverndarstefnuna",
+        "description": "Hvernig við meðhöndlum gögnin þín",
+        "link": "Lestu persónuverndarstefnuna"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "Samskiptakóði samfélagsins",
+      "cocDescription": "Hjálpaðu okkur að viðhalda virðingarfullu samfélagi",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "Vertu virðingarfullur",
+          "description": "Fyrirgefðu öllum með virðingu og kurteisi"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "Vertu innifalinn",
+          "description": "Velkomin dansarar af öllum stigum og bakgrunni"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "Vertu raunverulegur",
+          "description": "Notaðu raunverulegt auðkenni þitt og heiðarlegar upplýsingar"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "Virðu samþykki",
+          "description": "Spyrðu alltaf áður en þú dansar og virðu mörk"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "Engin áreitni",
+          "description": "Engin þol fyrir áreitni eða einelti"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "Engin ruslpóstur",
+          "description": "Ekki senda óbeðnar kynningar"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "Engin mismunun",
+          "description": "Við tolerum ekki mismunun af neinu tagi"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "Verndaðu persónuvernd",
+          "description": "Deildu ekki upplýsingum annarra án samþykkis"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "Forðastu hættu",
+          "description": "Tilkynntu allar óöruggar aðgerðir strax"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "Fylgdu lögum",
+          "description": "Fylgdu öllum gildandi lögum"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "Tilkynntu vandamál",
+          "description": "Hjálpaðu okkur með því að tilkynna brot"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "Stuðlaðu að hvort öðru",
+          "description": "Aðstoðaðu aðra dansara að vaxa"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "Þiggja allt og halda áfram",
+      "accepting": "Að þiggja...",
+      "incompleteAlert": "Vinsamlegast samþykktu allar nauðsynlegar skilmála",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "Velkomin!",
+        "description": "Þú hefur samþykkt leiðbeiningar okkar um samfélagið"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "Mistókst að vista. Vinsamlegast reyndu aftur."
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "Bíðlisti",
+      "seoTitle": "Þú ert á Bíðlistanum - Mundo Tango",
+      "seoDescription": "Reikningur þinn er í bið eftir virkningu",
+      "title": "Þú ert á Bíðlistanum!",
+      "welcomeMessage": "Velkomin, {{name}}!",
+      "defaultName": "Dansari",
+      "profileComplete": "Prófíll fullkominn",
+      "profileCompleteDesc": "Prófíllinn þinn er tilbúinn og bíður",
+      "emailNotice": "Við munum senda þér tölvupóst á {{email}} þegar reikningur þinn er tilbúinn",
+      "whenReady": "þegar reikningur þinn er tilbúinn.",
+      "whileYouWait": "Á meðan þú bíður, aðstoðaðu okkur að vaxa:",
+      "volunteerButton": "Gerast sjálfboðaliði",
+      "supportButton": "Stuðla að Mundo Tango"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "Leiðsögn",
+      "seoTitle": "Kanna Mundo Tango",
+      "seoDescription": "Lærðu hvernig á að nota Mundo Tango",
+      "skipTour": "Sleppa leiðsögn",
+      "finish": "Klára leiðsögn",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "Uppgötvaðu færslur frá tango samfélaginu",
+        "events": "Finndu milongas, námskeið og hátíðir",
+        "groups": "Taktu þátt í hópum fyrir borgina þína eða áhugamál",
+        "messages": "Tengdu beint við aðra dansara",
+        "profile": "Sérsníddu tango prófílinn þinn",
+        "createPost": "Deila tango augnablikum þínum"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "Uppfæra reynslu þína",
+        "subtitle": "Fáðu sem mest út úr Mundo Tango",
+        "limitedOffer": "Takmarkað tilboð",
+        "getStarted": "Byrjaðu",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "Tengjast",
+            "description": "Senda skilaboð beint til hvers dansara"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "Sýnileiki",
+            "description": "Fáðu að vera í leitarniðurstöðum"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "Viðburðir",
+            "description": "Forgangs aðgangur að vinsælum viðburðum"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "Vaxa",
+            "description": "Fyrirliggjandi greiningar fyrir prófílinn þinn"
           },
           "premium": {
             "title": "Premium",
-            "description": "Exclusive premium features"
+            "description": "Einstakar premium eiginleikar"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "Innskráning",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Innskráning - Mundo Tango",
+      "description": "Innskráðu þig á Mundo Tango reikninginn þinn til að tengjast alþjóðlegu tango samfélagi, uppgötva viðburði og deila ástríðu þinni fyrir argentínska tango."
     },
-    "badge": "Welcome Back",
+    "badge": "Velkomin aftur",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Tango ferðalagið þitt heldur áfram",
+      "paragraph": "Innskráðu þig til að tengjast dansurum um allan heim, uppgötva viðburði og deila ástríðu þinni"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "dansarar",
+      "events": "viðburðir"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "Netfang",
+      "password": "Lykilorð",
+      "signIn": "Innskráning",
+      "signingIn": "Innskráning...",
+      "forgotPassword": "Gleymdir lykilorðinu?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Ertu ekki með reikning?",
+    "createAccount": "Búðu til einn núna",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Velkomin aftur!",
+      "successDescription": "Þú hefur skráð þig inn með góðum árangri.",
+      "errorTitle": "Innskráning mistókst",
+      "errorDescription": "Ógild auðkenni"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Heim",
+    "pageLayoutTitle": "Þar sem Tango mætir samfélaginu",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Tengdu við alþjóðlega tango samfélagið",
+      "description": "Taktu þátt í þúsundum tango dansara um allan heim. Uppgötvaðu viðburði, finndu kennara, tengdu við dansara og sökkva þér niður í ástríðufulla heim argentínska tangósins."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Velkomin í alþjóðlega tango samfélagið",
+      "heading": "Þar sem Tango mætir samfélaginu",
+      "paragraph": "Deildu minningum, finndu viðburði og hjálpaðu okkur að byggja framtíðina fyrir tango tækni. Taktu þátt í þúsundum ástríðufullra dansara sem tengjast um allan heim.",
+      "getStarted": "Byrjaðu frítt",
+      "volunteer": "Sjálfboðaliði til að hjálpa við að byggja MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Hvernig það virkar",
+      "description": "Byrjaðu þína tango ferð í þremur einföldum skrefum",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Búðu til þinn prófíl",
+        "description": "Taktu þátt ókeypis og segðu okkur frá þinni tango ferð, reynslustigi og dansvalkostum"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Uppgötvaðu & Tengdu",
+        "description": "Finndu viðburði, kennara og staði nálægt þér. Tengdu við dansara sem deila þinni ástríðu"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Dansa & Vaxa",
+        "description": "Taktu þátt í viðburðum, farðu í kennslustundir, eignastu vini og gerðu þig að hluta af alþjóðlega tango samfélaginu"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Allt sem þú þarft",
+      "description": "Tengdu, uppgötvaðu og vaxðu í þinni tango ferð með öflugum eiginleikum",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Samfélag",
+        "heading": "Tengdu við dansara um allan heim",
+        "description": "Taktu þátt í líflegu alþjóðlegu samfélagi tango áhugamanna. Tengdu við dansara, kennara og skipuleggjendur frá Buenos Aires til Tokyo.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Fylgdu dansurum og byggðu upp net þitt",
+          "groups": "Taktu þátt í hópum byggðum á áhugamálum og staðsetningu",
+          "messaging": "Rauntíma skilaboð og spjall eiginleikar",
+          "discover": "Uppgötvaðu dansara sem heimsækja borgina þína"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Atburðir",
+        "heading": "Uppgötvaðu atburði alls staðar",
+        "description": "Missir aldrei milonga, hátíð eða vinnustofu. Vettvangurinn okkar tengir þig við þúsundir tango atburða sem eiga sér stað um allan heim.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Heildstæð atburðaskrá",
+          "rsvp": "RSVP og miða bókun",
+          "notifications": "Tilkynningar um atburði og áminningar",
+          "map": "Samskiptakort yfir staði"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Bein útsending",
+          "description": "Skoðaðu milongas um allan heim í rauntíma"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Tónlistarsafn",
+          "description": "Valdar tango spilunarlistar og leiðbeiningar"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Staðfestir kennarar",
+          "description": "Lærðu af vottuðum leiðbeinendum"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Ferðaplani",
+          "description": "Skipuleggðu ferðir og finndu gestgjafa um allan heim"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Hvað dansararnir segja",
+      "description": "Taktu þátt í þúsundum ánægðra dansara um allan heim",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "Buenos Aires, Argentína",
+          "text": "Mundo Tango hjálpaði mér að finna mína dansfjölskyldu í nýjum borg. Samfélagið er hlýtt, velkomið og sannarlega ástríðufullt um tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, Bandaríkjunum",
+          "text": "Ég hef uppgötvað ótrúlegar milongas og vinnustofur í gegnum þennan vettvang. Það hefur orðið nauðsynlegt fyrir tango ferðalagið mitt."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moskvu, Rússlandi",
+          "text": "Kennaraskráin hjálpaði mér að finna ótrúlega leiðbeinendur. Dansinn minn hefur batnað gríðarlega!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Algengar spurningar",
+      "description": "Allt sem þú þarft að vita um Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Hvað er Mundo Tango?",
+          "answer": "Mundo Tango er alþjóðlegur vettvangur sem tengir tango dansara, kennara og skipuleggjendur. Við hjálpum þér að uppgötva atburði, finna dansfélaga, læra af bestu leiðbeinendum og sökkva þér niður í líflegu tango samfélagi um allan heim."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Er Mundo Tango frítt að nota?",
+          "answer": "Já! Við bjóðum upp á ókeypis stig sem felur í sér grunn prófílagerð, atburðaleit og skeytasendingar. Premium eiginleikar eins og ótakmarkaðar skeytasendingar, AI dansfélagaskipti og forgangsviðvaranir um atburði eru í boði með Pro áskrift okkar."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Hvernig finn ég tango atburði nálægt mér?",
+          "answer": "Notaðu einfaldlega atburðaskrá okkar eða leitar eiginleika til að sía eftir borg, dagsetningu og atburðategund. Þú getur uppgötvað milongas, hátíðir, vinnustofur og æfingarsessjónir sem eru í gangi á þínu svæði eða hvar sem er í heiminum."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Get ég tengst öðrum dansurum?",
+          "answer": "Algjörlega! Fylgdu dansurum, vertu með í hópum, sendu vinabeiðnir og spjallaðu við samfélagið. Vettvangur okkar er hannaður til að efla raunveruleg tengsl innan tango heimsins."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Hvernig finn ég tango kennara?",
+          "answer": "Heimsæktu kennaraskrá okkar til að skoða staðfestar leiðbeinendur um allan heim. Síaðu eftir staðsetningu, sérhæfingu og reynslustigi. Lestu umsagnir frá öðrum nemendum og bókaðu einkatíma beint í gegnum vettvanginn."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Hvað gerir Mundo Tango öðruvísi?",
+          "answer": "Við erum byggð af tango dansurum, fyrir tango dansara. Við einbeitum okkur að raunverulegri samfélagsbyggingu, gæðasköpun atburða og tengingu þín við alþjóðlegu tango fjölskylduna - ekki bara annað samfélagsnet."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Ertu tilbúin(n) að ganga í samfélagið?",
+      "description": "Búðu til ókeypis reikning í dag og byrjaðu að tengjast ástríðufullum tango dansurum um allan heim. Engin kreditkort krafist.",
+      "button": "Gakktu í Mundo Tango frítt",
+      "freeForever": "Frítt að eilífu",
+      "noCreditCard": "Engin kreditkort",
+      "cancelAnytime": "Hægt að hætta hvenær sem er"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Fyrirlestrar",
+    "description": "Vertu uppfærður með því nýjasta frá tango samfélaginu",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Öll færslur",
+      "following": "Fylgjandi",
+      "popular": "Vinsælt",
+      "recent": "Nýlegar"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Hvað er á huga þínum?",
+    "noPost": "Engar færslur til að sýna"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Atburðir",
+    "description": "Uppgötvaðu tango atburði nálægt þér",
+    "upcoming": "Komandi atburðir",
+    "past": "Fornir atburðir",
     "filters": {
-      "all": "All Events",
+      "all": "Allir atburðir",
       "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "workshops": "Vinnustofur",
+      "festivals": "Hátíðir",
+      "classes": "Tímar"
     },
-    "noEvents": "No events found"
+    "noEvents": "Engar viðburðir fundust"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Profil",
+    "description": "Skoða og breyta prófílnum þínum",
+    "editProfile": "Breyta prófílnum",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Færslur",
+      "photos": "Myndir",
+      "videos": "Víðtök",
+      "events": "Viðburðir",
+      "friends": "Vinir"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Færslur",
+      "followers": "Fylgjendur",
+      "following": "Fylgjum",
+      "events": "Heimsóknir á viðburði"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Skilaboð",
+    "description": "Spjallaðu við tengslin þín í tango",
+    "newMessage": "Ný skilaboð",
+    "searchConversations": "Leita að samtölum",
+    "noMessages": "Engin skilaboð enn",
+    "startConversation": "Byrja samtal"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Tango kennarar",
+    "description": "Finndu og tengdu við tango kennara",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Allir kennarar",
+      "featured": "Einstaklega",
+      "nearby": "Nálægt"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Skoða prófíl",
+    "bookLesson": "Bóka tíma"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Tango staðir",
+    "description": "Uppgötva tango staði um allan heim",
     "filters": {
-      "all": "All Venues",
+      "all": "Öll staðir",
       "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "schools": "Dansskólar",
+      "theaters": "Leikhús"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Fá leiðbeiningar"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Stillingar",
+    "description": "Stjórnaðu stillingum þíns reiknings",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Reikningsstillingar",
+      "profile": "Snið",
+      "privacy": "Persónuvernd",
+      "notifications": "Tilkynningar",
+      "security": "Öryggi",
+      "billing": "Reikningur",
+      "preferences": "Valkostir"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Líf CEO stjórnborð",
+    "description": "Þinn persónulegi AI aðstoðarmaður fyrir lífshald",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Heilbrigðisfulltrúi",
+      "fitness": "Hreyfingarfulltrúi",
+      "nutrition": "Næringarfulltrúi",
+      "finance": "Fjármálafulltrúi",
+      "career": "Fagfulltrúi",
+      "productivity": "Framleiðni fulltrúi",
+      "relationships": "Sambandsfulltrúi",
+      "learning": "Námsfulltrúi"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Markaður",
+    "description": "Kauptu og seldu tango tengd hlutir",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Dansskór",
+      "clothing": "Föt",
+      "music": "Tónlist",
+      "accessories": "Aukahlutir",
+      "other": "Annað"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Stjórnborð fyrir stjórnendur",
+    "description": "Stjórn og stjórnun á vettvangi",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Yfirlit",
+      "users": "Notendur",
+      "content": "Innihald",
+      "reports": "Skýrslur",
+      "analytics": "Greiningar",
+      "settings": "Stillingar"
     }
   }
 }

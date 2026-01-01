@@ -1,896 +1,896 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "Rekisteröidy",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "Liity Mundo Tangoon - Luo tilisi",
+      "description": "Luo Mundo Tango -tilisi ja liity globaaliin argentiinalaisen tangon yhteisöön. Yhdistä tanssijoihin, löydä tapahtumia ja jaa intohimosi tangoa kohtaan."
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "Tervetuloa perheeseen",
+      "beginJourney": "Aloita matkasi",
+      "joinCommunity": "Liity yhteisöön"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "Olet mukana!",
+      "joinMundoTango": "Liity Mundo Tangoon",
+      "description": "Yhdistä tanssijoihin ympäri maailmaa, löydä milongoja ja uppoudu argentiinalaisen tangon intohimoiseen maailmaan",
+      "waitlistDescription": "Tervetuloa Mundo Tango -yhteisöön. Valmistelemme tiliäsi ja ilmoitamme sinulle pian!"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ tanssijaa",
+      "events": "{{count}}+ tapahtumaa",
+      "cities": "{{count}} kaupunkia"
     },
     "form": {
-      "fullName": "Full Name",
+      "fullName": "Koko nimi",
       "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "email": "Sähköposti",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "Käyttäjänimi",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "Salasana",
+      "confirmPassword": "Vahvista salasana",
+      "inviteOnlyNotice": "Rekisteröinti on tällä hetkellä vain kutsupohjaista. Täytä tämä lomake liittyäksesi odotuslistalle, ja ilmoitamme sinulle, kun tilisi on valmis.",
+      "acceptTermsPrefix": "Hyväksyn",
+      "termsAndConditions": "Ehdot ja säännöt"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "Tämä sähköposti on jo rekisteröity",
+      "emailAvailable": "Sähköposti on käytettävissä!",
+      "usernameTaken": "Käyttäjänimi on varattu. Kokeile {{suggestion}}",
+      "usernameAvailable": "Käyttäjänimi on käytettävissä!",
+      "passwordsMatch": "Salasanat täsmäävät",
+      "passwordsDontMatch": "Salasanat eivät täsmää"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "Heikko",
+      "medium": "Keskivahva",
+      "strong": "Vahva",
+      "veryStrong": "Erittäin vahva"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "Onko sinulla kutsukoodi? (Valinnainen)",
+      "placeholder": "Syötä kutsukoodisi saadaksesi välittömän pääsyn",
+      "accepted": "Koodi hyväksytty! Tilisi aktivoidaan välittömästi.",
+      "noWorries": "Ei hätää! Täytä alla oleva lomake liittyäksesi odotuslistalle."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "Tervetuloa, {{name}}!",
+      "defaultName": "Tanssija",
+      "onTheList": "Olet listalla. Lähetämme sinulle sähköpostia osoitteeseen",
+      "whenReady": "kun tilisi on valmis.",
+      "helpUsGrow": "Kun odotat, auta meitä kasvamaan",
+      "volunteerWithUs": "Vapaaehtoisena kanssamme",
+      "supportMundoTango": "Tukee Mundo Tangoa"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "Tilisi luominen...",
+      "joining": "Liittyminen...",
+      "createAccount": "Luo tili",
+      "joinMundoTango": "Liity Mundo Tangoon"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "Onko sinulla jo tili?",
+    "signIn": "Kirjaudu sisään",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "Virheellinen koodi",
+        "description": "Ole hyvä ja syötä voimassa oleva 6-numeroinen vahvistuskoodi."
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "Sähköposti vahvistettu!",
+        "description": "Tervetuloa Mundo Tangoon! Aloitetaan perehdytys..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "Vahvistus epäonnistui",
+        "description": "Virheellinen tai vanhentunut koodi. Yritä uudelleen."
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "Virhe",
+        "description": "Sähköpostin vahvistaminen epäonnistui. Yritä uudelleen."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "Liian monta pyyntöä",
+        "description": "Ole hyvä ja odota muutama minuutti ennen kuin yrität uudelleen."
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "Koodi lähetetty!",
+        "description": "Tarkista postilaatikkosi uutta koodia varten."
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "Koodin uudelleen lähettäminen epäonnistui. Yritä uudelleen."
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "Ehdot vaaditaan",
+        "description": "Hyväksy käyttöehdot"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "Salasanat eivät täsmää",
+        "description": "Varmista, että molemmat salasanat ovat identtiset"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "Heikko salasana",
+        "description": "Valitse vahvempi salasana"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "Tarkista sähköpostisi",
+        "description": "Lähetimme sinulle 6-numeron vahvistuskoodin. Tarkista postilaatikkosi."
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "Rekisteröinti epäonnistui"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "Rekisteröintiä ei voitu suorittaa"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "Yritä uudelleen"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "Tervetuloa",
+      "seoTitle": "Tervetuloa Mundo Tangoon",
+      "seoDescription": "Aloita tango-matkaasi Mundo Tangolla",
+      "badge": "Nopea asennus",
+      "title": "Tervetuloa Mundo Tangoon",
+      "subtitle": "Asetetaan profiilisi, jotta voit yhdistyä globaalin tango-yhteisön kanssa",
+      "duration": "Kestää noin 2 minuuttia",
+      "stepIndicator": "Vaihe {{current}} / {{total}}",
+      "getStarted": "Aloita",
+      "profileTitle": "Tango-matkaasi alkaa",
+      "profileSubtitle": "Kerro meille hieman itsestäsi",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "Valitse kaupunkisi",
+          "description": "Yhdisty paikalliseen tango-yhteisöösi"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "Kerro meille roolisi",
+          "description": "Tanssija, opettaja, DJ, järjestäjä vai kaikki edellä mainitut?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "Löydä tapahtumat",
+          "description": "Etsi milongoja, tunteja ja festivaaleja lähelläsi"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "Jaa matkasi",
+          "description": "Yhdistä tanssijoihin, jotka ovat samalla tasolla kanssasi"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "Yhdistä Facebook",
+          "description": "Linkitä Facebook-profiilisi löytääksesi ystäviä yhteisöstä"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "Sosiaalinen yhteys",
+      "seoTitle": "Yhdistä sosiaalinen maailmasi - Mundo Tango",
+      "seoDescription": "Linkitä sosiaalisen median profiilisi löytääksesi ystäviä tango-yhteisöstä.",
+      "step": "Vaihe 2/6",
+      "title": "Yhdistä sosiaalinen maailmasi",
+      "quote": "\"Monet tango-tanssijat tuntevat jo toisensa Facebookin kautta. Linkittämällä profiilisi voimme näyttää, mitkä tanssijat verkostossasi ovat jo täällä - mikä helpottaa tuttujen kasvojen löytämistä milongoissa ja syvempien yhteyksien luomista.\"",
+      "cardTitle": "Löydä ystäväsi",
+      "cardDescription": "Facebookisi auttaa meitä yhdistämään sinut tanssijoihin, joita saatat jo tuntea, joten et aloita tyhjältä pöydältä.",
+      "facebookLabel": "Facebook-profiilin URL (valinnainen)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "Käytämme tätä sillan rakentamiseen muihin yhteisöihin ja yhdistääksemme sinut tanssijoihin, joita saatat tuntea.",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "Virhe",
+        "errorDescription": "Profiilitietojen tallentaminen epäonnistui"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "Takaisin",
+      "next": "Seuraava",
+      "skip": "Ohita",
+      "finish": "Valmis",
+      "saving": "Tallennetaan..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "Kaupungin valinta",
+      "seoTitle": "Valitse kaupunkisi - Mundo Tango",
+      "seoDescription": "Valitse kotikaupunkisi yhdistääksesi paikallisiin tango-tanssijoihin",
+      "step": "Vaihe 1/6",
+      "title": "Missä tanssit?",
+      "subtitle": "Yhdistä tanssijoihin alueellasi",
+      "cardTitle": "Kotikaupunkisi",
+      "cardDescription": "Tämä auttaa meitä näyttämään sinulle paikallisia tapahtumia ja tanssijoita",
+      "searchLabel": "Etsi kaupunkiasi",
+      "searchPlaceholder": "Kirjoita kaupunkisi nimi...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "Valitse suosituista tangokohteista"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "Kaupunki vaaditaan",
+        "selectCity": "Valitse kotikaupunkisi"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "Lähde lisätty!",
+        "submittedForReview": "Lähetetty tarkistettavaksi",
+        "trackingEvents": "Aloitamme tapahtumien seuraamisen sivustolta",
+        "thankYou": "Kiitos! Ehdotuksesi on lähetetty tarkistettavaksi.",
+        "errorTitle": "Virhe",
+        "suggestionFailed": "Ehdotuksen lähettäminen epäonnistui",
+        "saveFailed": "Kaupunkien tallentaminen epäonnistui"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "Valokuvan lataus",
+      "seoTitle": "Lisää profiilikuva - Mundo Tango",
+      "seoDescription": "Lataa profiilikuva",
+      "step": "Vaihe 3/6",
+      "title": "Lisää profiilikuva",
+      "subtitle": "Auta muita tunnistamaan sinut yhteisössä",
+      "cardTitle": "Profiilikuva",
+      "cardDescription": "Auta muita tunnistamaan sinut (voit ohittaa tämän vaiheen)",
+      "previewAlt": "Profiilin esikatselu",
+      "dropHere": "Vedä valokuvasi tähän",
+      "or": "tai",
+      "browseFiles": "Selaa tiedostoja",
+      "fileTypes": "PNG, JPG enintään 5MB",
+      "photoSelected": "Valokuva valittu!",
+      "uploading": "Ladataan...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "Virheellinen tiedosto",
+        "selectImage": "Valitse kuva tiedosto",
+        "fileTooLarge": "Tiedosto liian suuri",
+        "sizeLimit": "Valitse kuva, joka on alle 5MB",
+        "uploadFailed": "Lähetys epäonnistui",
+        "tryAgain": "Valokuvan lataaminen epäonnistui. Yritä uudelleen.",
+        "skipFailed": "Ohittaminen epäonnistui. Yritä uudelleen."
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "Kielet",
+      "seoTitle": "Kielet - Mundo Tango",
+      "seoDescription": "Kerro meille, mitä kieliä puhut",
+      "step": "Vaihe 5/6",
+      "title": "Mitä kieliä puhut?",
+      "subtitle": "Yhdistä tanssijoihin omalla kielelläsi",
+      "cardTitle": "Kielet",
+      "cardDescription": "Valitse ensisijainen kielesi ja kaikki muut kielet, joita puhut",
+      "primaryLabel": "Ensisijainen kieli",
+      "primaryHint": "Tämä asettaa myös sivustosi näyttökielen",
+      "primaryPlaceholder": "Valitse ensisijainen kielesi",
+      "additionalLabel": "Lisäkielet (valinnainen)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "Ensisijainen kieli vaaditaan",
+        "selectPrimary": "Valitse ensisijainen kielesi",
+        "saveFailed": "Kielten tallentaminen epäonnistui",
+        "saveFailedTitle": "Kielen tallentaminen epäonnistui"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "Tango-roolit",
+      "seoTitle": "Tango-roolit - Mundo Tango",
+      "seoDescription": "Kerro meille tangomatkastasi",
+      "step": "Vaihe 2/6",
+      "title": "Mitä rooleja esität?",
+      "subtitle": "Valitse kaikki, jotka koskevat sinua",
+      "cardTitle": "Tango-identiteettisi",
+      "cardDescription": "Auta muita tietämään, miten osallistut tango-maailmaan"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "Tanssikokemus",
+      "seoTitle": "Tanssikokemuksesi - Mundo Tango",
+      "seoDescription": "Jaa tanssikokemustasosi",
+      "step": "Vaihe 4/6",
+      "title": "Tanssikokemuksesi",
+      "subtitle": "Auta meitä yhdistämään sinut oikeiden tanssijoiden kanssa"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "Kiinnostuksen kohteet",
+      "seoTitle": "Kiinnostuksen kohteesi - Mundo Tango",
+      "seoDescription": "Kerro meille kiinnostuksen kohteistasi",
+      "step": "Vaihe 6/6",
+      "title": "Mitkä ovat kiinnostuksen kohteesi?",
+      "subtitle": "Valitse aiheita, jotka kiinnostavat sinua",
+      "helpText": "Valitse vähintään 3 kiinnostuksen kohdetta personoidaksesi syötteesi",
+      "selectedCount": "{{count}} valittua",
+      "finishing": "Valmistellaan...",
+      "completeSetup": "Viimeistele asetukset",
+      "searchPlaceholder": "Etsi yhteisöjä tai lisää uusi...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "Kunto & Urheilu"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "Teknologia & Innovaatio"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "Henkisyys & Kasvu"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "Jooga & Hyvinvointi"
         },
         "music": {
-          "label": "Music"
+          "label": "Musiikki"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "Valokuvaus & Video"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "Taide & Luovuus"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "Luku & Kirjoitus"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "Matkailu & Seikkailu"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "Ruoka & Ruoanlaitto"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "Viini & Juomat"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Pelaaminen"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "Ulkoilma-aktiviteetit"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "Lumilajit"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "Pyöräily"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "Vesilajit"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "Luonto & Puutarhanhoito"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "Elokuvat & Viihde"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "Lemmikit & Eläimet"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "Sosiaalinen & Yhteisö"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
+        "fitness_gym": "Kuntosali & Painot",
+        "fitness_running": "Juoksu",
         "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
+        "fitness_martial_arts": "Taistelulajit",
         "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
+        "fitness_soccer": "Jalkapallo",
+        "fitness_basketball": "Koripallo",
+        "fitness_fencing": "Miekkailu",
+        "tech_coding": "Koodaus & Kehitys",
+        "tech_ai": "AI & Tulevaisuuden Teknologia",
+        "tech_crypto": "Web3 & Krypto",
+        "tech_gaming": "Pelaamiskulttuuri",
+        "spirit_meditation": "Meditaatio",
+        "spirit_astrology": "Astrologia",
+        "spirit_philosophy": "Filosofia",
+        "spirit_community": "Yhteisön Rakentaminen",
+        "yoga_hatha": "Hatha Jooga",
         "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
+        "yoga_meditation": "Meditaatio",
         "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
+        "yoga_breathwork": "Hengitysharjoitukset",
+        "music_listening": "Musiikin Kuuntelu",
+        "music_concerts": "Live-konsertit",
         "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
-        "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
-        "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
-        "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "music_guitar": "Kitara",
+        "music_singing": "Laulu",
+        "music_dj": "DJ-työskentely",
+        "music_production": "Musiikin tuotanto",
+        "photo_portrait": "Muotokuvaus",
+        "photo_landscape": "Maisemakuvaus",
+        "photo_street": "Katuvalokuvaus",
+        "photo_video": "Videokuvaus",
+        "photo_editing": "Valokuvien muokkaus",
+        "art_painting": "Maalaus",
+        "art_drawing": "Piirtäminen",
+        "art_sculpture": "Veistos",
+        "art_digital": "Digitaalinen taide",
+        "art_crafts": "Käsityöt & DIY",
+        "art_pottery": "Keraaminen taide",
+        "reading_fiction": "Fiktio",
+        "reading_nonfiction": "Tietokirjallisuus",
+        "reading_poetry": "Runous",
+        "reading_writing": "Luova kirjoittaminen",
+        "reading_journals": "Päiväkirjan pitäminen",
+        "travel_backpacking": "Vaellusreissut",
+        "travel_luxury": "Ylellinen matkailu",
+        "travel_cultural": "Kulttuurimatkailu",
+        "travel_road_trips": "Tiematkat",
+        "travel_solo": "Yksinäinen matkailu",
+        "cooking_home": "Kotiruoka",
+        "cooking_baking": "Leivonta",
+        "cooking_gourmet": "Gourmet-keittiö",
+        "cooking_international": "Kansainvälinen keittiö",
+        "cooking_healthy": "Terveellinen ruokavalio",
+        "wine_tasting": "Viininmaistelu",
+        "wine_cocktails": "Koktailit",
+        "wine_coffee": "Kahvin arvostus",
+        "wine_tea": "Teekulttuuri",
+        "wine_brewing": "Kotipanimo",
+        "gaming_video": "Videopelit",
+        "gaming_board": "Pöytäpelit",
+        "gaming_card": "Korttipelit",
+        "gaming_tabletop": "Pöytäroolipelit",
+        "gaming_esports": "e-urheilu",
+        "outdoor_hiking": "Vaellus",
+        "outdoor_camping": "Leirintä",
+        "outdoor_climbing": "Kalliokiipeily",
+        "outdoor_fishing": "Kalastus",
+        "outdoor_kayaking": "Kajakki",
+        "outdoor_surfing": "Surffaus",
+        "snow_skiing": "Hiihto",
+        "snow_snowboard": "Laskettelu",
+        "snow_crosscountry": "Maastohiihto",
+        "snow_ice_skating": "Luistelu",
+        "snow_sledding": "Kelkkailu",
+        "snow_snowshoeing": "Lumikenkäily",
+        "cycling_road": "Maantiepyöräily",
+        "cycling_mountain": "Maastopyöräily",
+        "cycling_urban": "Kaupunkipyöräily",
+        "cycling_touring": "Pyörämatkailu",
+        "water_swimming": "Uinti",
+        "water_scuba": "Scuba-uinti",
+        "water_snorkel": "Snorklaus",
+        "water_sailing": "Purjehdus",
+        "water_paddleboard": "Melontapaddle",
+        "nature_gardening": "Puutarhanhoito",
+        "nature_birdwatching": "Lintujen tarkkailu",
+        "nature_botany": "Kasvien keräily",
+        "nature_wildlife": "Villieläinkuvaus",
+        "movies_cinema": "Elokuvateatteri",
+        "movies_tv": "TV-sarjat",
+        "movies_documentary": "Dokumentit",
+        "movies_theater": "Teatteri",
+        "movies_standup": "Stand-up komedia",
+        "pets_dogs": "Koirat",
+        "pets_cats": "Kissat",
+        "pets_exotic": "Eksoottiset lemmikit",
+        "pets_horses": "Hevosen ratsastus",
+        "pets_rescue": "Eläinten pelastus",
+        "social_volunteering": "Vapaaehtoistyö",
+        "social_meetups": "Kokoontumiset",
+        "social_networking": "Verkostoituminen",
+        "social_languages": "Kielivaihto"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "Tervetuloa Mundo Tangoon!",
+        "completeDesc": "Profiilisi on valmis. Aloita tutkiminen!",
+        "waitlistTitle": "Profiili valmis!",
+        "waitlistDesc": "Ilmoitamme sinulle, kun tilisi on aktivoitu"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "Tallennus epäonnistui. Yritä uudelleen."
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "Yhteisön ohjeet",
+      "subtitle": "Ole hyvä ja tarkista ja hyväksy ehtomme",
+      "legalDocsTitle": "Lailliset asiakirjat",
+      "legalDocsDescription": "Tarkista palveluehtomme ja tietosuojakäytäntömme",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "Hyväksyn palveluehdot",
+        "description": "Meidän ehtomme säätelevät Mundo Tangon käyttöäsi",
+        "link": "Lue käyttöehdot"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "Hyväksyn tietosuojakäytännön",
+        "description": "Kuinka käsittelemme tietojasi",
+        "link": "Lue tietosuojakäytäntö"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "Yhteisön käyttäytymissäännöt",
+      "cocDescription": "Auta meitä ylläpitämään kunnioittavaa yhteisöä",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "Ole kunnioittava",
+          "description": "Kohtele kaikkia arvokkaasti ja kohteliaasti"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "Ole osallistava",
+          "description": "Tervetuloa tanssijoille kaikilta tasoilta ja taustoilta"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "Ole aito",
+          "description": "Käytä oikeaa henkilöllisyyttäsi ja rehellistä tietoa"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "Kunnioita suostumusta",
+          "description": "Kysy aina ennen tanssimista ja kunnioita rajoja"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "Ei häirintää",
+          "description": "Nollatoleranssi häirinnälle tai kiusaamiselle"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "Ei roskapostia",
+          "description": "Älä lähetä ei-toivottuja mainoksia"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "Ei syrjintää",
+          "description": "Emme salli minkäänlaista syrjintää"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "Suojaa yksityisyys",
+          "description": "Älä jaa muiden tietoja ilman suostumusta"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "Aseta turvallisuus etusijalle",
+          "description": "Ilmoita kaikista vaarallisista käytöksistä heti"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "Noudata lakeja",
+          "description": "Noudata kaikkia soveltuvia lakeja"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "Ilmoita ongelmista",
+          "description": "Auta meitä ilmoittamalla rikkomuksista"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "Tukekaa toisiaan",
+          "description": "Auta muita tanssijoita kasvamaan"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "Hyväksy kaikki ja jatka",
+      "accepting": "Hyväksytään...",
+      "incompleteAlert": "Hyväksy kaikki vaaditut ehdot",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "Tervetuloa!",
+        "description": "Olet hyväksynyt yhteisön ohjeet"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "Tallennus epäonnistui. Yritä uudelleen."
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "Jonotuslista",
+      "seoTitle": "Olet jonotuslistalla - Mundo Tango",
+      "seoDescription": "Tilisi on odottamassa aktivointia",
+      "title": "Olet jonotuslistalla!",
+      "welcomeMessage": "Tervetuloa, {{name}}!",
+      "defaultName": "Tanssija",
+      "profileComplete": "Profiili valmis",
+      "profileCompleteDesc": "Profiilisi on valmis ja odottaa",
+      "emailNotice": "Lähetämme sinulle sähköpostia osoitteeseen {{email}} kun tilisi on valmis",
+      "whenReady": "kun tilisi on valmis.",
+      "whileYouWait": "Kun odotat, auta meitä kasvamaan:",
+      "volunteerButton": "Tule vapaaehtoiseksi",
+      "supportButton": "Tue Mundo Tangoa"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "Opastettu kierros",
+      "seoTitle": "Tutustu Mundo Tangoon",
+      "seoDescription": "Opettele käyttämään Mundo Tangoa",
+      "skipTour": "Ohita kierros",
+      "finish": "Lopeta kierros",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "Löydä julkaisuja tango-yhteisöstä",
+        "events": "Löydä milongoja, tunteja ja festivaaleja",
+        "groups": "Liity ryhmiin omassa kaupungissasi tai kiinnostuksesi mukaan",
+        "messages": "Yhdistä suoraan muiden tanssijoiden kanssa",
+        "profile": "Mukauta tango-profiiliasi",
+        "createPost": "Jaa tangohetkesi"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "Päivitä kokemuksesi",
+        "subtitle": "Hyödynnä Mundo Tangon mahdollisuudet",
+        "limitedOffer": "Rajoitettu tarjous",
+        "getStarted": "Aloita",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "Yhdistä",
+            "description": "Lähetä viesti suoraan mille tahansa tanssijalle"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "Näkymättömyys",
+            "description": "Saa esiin hakutuloksissa"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "Tapahtumat",
+            "description": "Etusijalle pääsy suosittuihin tapahtumiin"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "Kasva",
+            "description": "Edistyneet analytiikat profiilillesi"
           },
           "premium": {
             "title": "Premium",
-            "description": "Exclusive premium features"
+            "description": "Eksklusiiviset premium-ominaisuudet"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "Kirjaudu sisään",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Kirjaudu sisään - Mundo Tango",
+      "description": "Kirjaudu sisään Mundo Tango -tilillesi yhdistääksesi globaaliin tango-yhteisöön, löytääksesi tapahtumia ja jakaaksesi intohimosi argentiinalaiseen tangoa kohtaan."
     },
-    "badge": "Welcome Back",
+    "badge": "Tervetuloa takaisin",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Tango-matkaasi jatkuu",
+      "paragraph": "Kirjaudu sisään yhdistääksesi tanssijoihin ympäri maailmaa, löytääksesi tapahtumia ja jakaaksesi intohimosi"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "tanssijat",
+      "events": "tapahtumat"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "Sähköposti",
+      "password": "Salasana",
+      "signIn": "Kirjaudu sisään",
+      "signingIn": "Kirjautuminen...",
+      "forgotPassword": "Unohditko salasanan?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Eikö sinulla ole tiliä?",
+    "createAccount": "Luo yksi nyt",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Tervetuloa takaisin!",
+      "successDescription": "Olet kirjautunut sisään onnistuneesti.",
+      "errorTitle": "Kirjautuminen epäonnistui",
+      "errorDescription": "Virheelliset tunnistetiedot"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Koti",
+    "pageLayoutTitle": "Missä Tango Kohtaa Yhteisön",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Yhdistä globaalin tangoyhteisön kanssa",
+      "description": "Liity tuhansiin tangotanssijoihin ympäri maailmaa. Löydä tapahtumia, etsi opettajia, yhdistä tanssijoiden kanssa ja uppoudu intohimoiseen argentiinalaisen tangon maailmaan."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Tervetuloa globaalin tangoyhteisön pariin",
+      "heading": "Missä Tango Kohtaa Yhteisön",
+      "paragraph": "Jaa muistoja, löydä tapahtumia ja auta meitä rakentamaan tangoteknologian tulevaisuutta. Liity tuhansiin intohimoisiin tanssijoihin, jotka yhdistävät ympäri maailmaa.",
+      "getStarted": "Aloita ilmaiseksi",
+      "volunteer": "Vapaaehtoisena autat rakentamaan MT:tä"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Kuinka se toimii",
+      "description": "Aloita tangomatkasi kolmessa yksinkertaisessa vaiheessa",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Luo profiilisi",
+        "description": "Liity ilmaiseksi ja kerro meille tangomatkastasi, kokemustasostasi ja tanssivalinnoistasi"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Löydä & Yhdistä",
+        "description": "Löydä tapahtumia, opettajia ja paikkoja lähelläsi. Yhdistä tanssijoiden kanssa, jotka jakavat intohimosi"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Tanssi & Kasva",
+        "description": "Osallistu tapahtumiin, ota tunteja, ystävysty ja tule osaksi globaalia tangoyhteisöä"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Kaikki mitä tarvitset",
+      "description": "Yhdistä, löydä ja kasvata tangomatkaasi tehokkailla ominaisuuksilla",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Yhteisö",
+        "heading": "Yhdistä tanssijoiden kanssa ympäri maailmaa",
+        "description": "Liity elävään globaaliin tangoharrastajien yhteisöön. Yhdistä tanssijoiden, opettajien ja järjestäjien kanssa Buenos Airesista Tokioon.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Seuraa tanssijoita ja rakenna verkostosi",
+          "groups": "Liity ryhmiin kiinnostuksen ja sijainnin mukaan",
+          "messaging": "Reaaliaikaiset viestintä- ja chat-ominaisuudet",
+          "discover": "Löydä tanssijoita, jotka vierailevat kaupungissasi"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Tapahtumat",
+        "heading": "Löydä tapahtumia kaikkialta",
+        "description": "Älä koskaan jää paitsi milongasta, festivaalista tai työpajasta. Alustamme yhdistää sinut tuhansiin tango-tapahtumiin, jotka tapahtuvat ympäri maailmaa.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Kattava tapahtumakalenteri",
+          "rsvp": "Vahvistus ja lippujen varaus",
+          "notifications": "Tapahtumailmoitukset ja muistutukset",
+          "map": "Interaktiivinen kartta paikoista"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Suora lähetys",
+          "description": "Katso milongoja ympäri maailmaa reaaliajassa"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Musiikkikirjasto",
+          "description": "Kuraattuja tango-soittolistoja ja oppaita"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Vahvistetut opettajat",
+          "description": "Opettele sertifioiduilta ohjaajilta"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Matkasuunnittelija",
+          "description": "Suunnittele matkoja ja löydä isäntiä ympäri maailmaa"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Mitä tanssijat sanovat",
+      "description": "Liity tuhansiin tyytyväisiin tanssijoihin ympäri maailmaa",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "Buenos Aires, Argentiina",
+          "text": "Mundo Tango auttoi minua löytämään tanssiperheeni uudessa kaupungissa. Yhteisö on lämmin, vieraanvarainen ja todella intohimoinen tangolle."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, Yhdysvallat",
+          "text": "Olen löytänyt uskomattomia milongoja ja työpajoja tämän alustan kautta. Siitä on tullut olennainen osa tango-matkaani."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moskova, Venäjä",
+          "text": "Opettajaluettelo auttoi minua löytämään uskomattomia ohjaajia. Tanssini on parantunut valtavasti!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Usein kysytyt kysymykset",
+      "description": "Kaikki, mitä sinun tarvitsee tietää Mundo Tangosta",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Mitä on Mundo Tango?",
+          "answer": "Mundo Tango on globaali alusta, joka yhdistää tango-tanssijat, opettajat ja järjestäjät. Autamme sinua löytämään tapahtumia, löytämään tanssipartnereita, oppimaan huippuohjaajilta ja uppoutumaan elävään tango-yhteisöön ympäri maailmaa."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Is Mundo Tango ilmainen käyttää?",
+          "answer": "Kyllä! Tarjoamme ilmaisen tason, joka sisältää perusprofiilin luomisen, tapahtumien löytämisen ja viestinnän. Premium-ominaisuudet, kuten rajaton viestintä, AI-tanssipartnerin sovittaminen ja etusijalla olevat tapahtumailmoitukset, ovat saatavilla Pro-tilauksellamme."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Kuinka löydän tango-tapahtumia lähelläni?",
+          "answer": "Käytä vain tapahtumakalenteriamme tai hakutoimintoja suodattaaksesi kaupungin, päivämäärän ja tapahtumatyypin mukaan. Voit löytää milongoja, festivaaleja, työpajoja ja harjoitussessioita, jotka tapahtuvat alueellasi tai missä tahansa maailmassa."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Voinko yhdistää muiden tanssijoiden kanssa?",
+          "answer": "Ehdottomasti! Seuraa tanssijoita, liity ryhmiin, lähetä kaveripyyntöjä ja keskustele yhteisön kanssa. Alustamme on suunniteltu edistämään aitoja yhteyksiä tangomaailmassa."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Kuinka löydän tango-opettajia?",
+          "answer": "Vieraile opettajaluettelossamme selataksesi varmennettuja ohjaajia ympäri maailmaa. Suodata sijainnin, erikoisalan ja kokemustason mukaan. Lue arvosteluja muilta opiskelijoilta ja varaa yksityistunteja suoraan alustan kautta."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Mikä tekee Mundo Tangosta erilaisen?",
+          "answer": "Olemme tanssijoiden rakentama, tanssijoille. Keskitymme aitojen yhteisöjen rakentamiseen, laadukkaiden tapahtumien kuratointiin ja yhteyksien luomiseen globaalin tango-perheen kanssa - emme vain toista sosiaalista verkostoa."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Valmiina liittymään yhteisöön?",
+      "description": "Luo ilmainen tilisi tänään ja ala yhdistää intohimoisia tango-tanssijoita ympäri maailmaa. Ei luottokorttia vaadita.",
+      "button": "Liity Mundo Tangoon ilmaiseksi",
+      "freeForever": "Ilmainen ikuisesti",
+      "noCreditCard": "Ei luottokorttia",
+      "cancelAnytime": "Peruuta milloin tahansa"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Syöte",
+    "description": "Pysy ajan tasalla tangoyhteisön uusimmista uutisista",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Kaikki julkaisut",
+      "following": "Seuraaminen",
+      "popular": "Suositut",
+      "recent": "Äskettäin"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Mitä mieltä olet?",
+    "noPost": "Ei julkaisuja näytettäväksi"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Tapahtumat",
+    "description": "Löydä tango-tapahtumia lähelläsi",
+    "upcoming": "Tulevat tapahtumat",
+    "past": "Menneet tapahtumat",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "Kaikki tapahtumat",
+      "milongas": "Milongat",
+      "workshops": "Työpajat",
+      "festivals": "Festivaalit",
+      "classes": "Tunnit"
     },
-    "noEvents": "No events found"
+    "noEvents": "Ei tapahtumia löytynyt"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Profiili",
+    "description": "Näytä ja muokkaa profiiliasi",
+    "editProfile": "Muokkaa profiilia",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Julkaisut",
+      "photos": "Kuvat",
+      "videos": "Videot",
+      "events": "Tapahtumat",
+      "friends": "Ystävät"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Julkaisut",
+      "followers": "Seuraajat",
+      "following": "Seuraaminen",
+      "events": "Osallistuneet tapahtumat"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Viestit",
+    "description": "Keskustele tango-yhteyksiesi kanssa",
+    "newMessage": "Uusi viesti",
+    "searchConversations": "Etsi keskusteluja",
+    "noMessages": "Ei viestejä vielä",
+    "startConversation": "Aloita keskustelu"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Tango-opettajat",
+    "description": "Löydä ja yhdistä tango-opettajiin",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Kaikki opettajat",
+      "featured": "Esitelty",
+      "nearby": "Lähellä"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Näytä profiili",
+    "bookLesson": "Varaa tunti"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Tango-paikat",
+    "description": "Löydä tangopaikkoja ympäri maailmaa",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Kaikki paikat",
+      "milongas": "Milongat",
+      "schools": "Tanssikoulut",
+      "theaters": "Teatterit"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Hanki reittiohjeet"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Asetukset",
+    "description": "Hallinnoi tilisi asetuksia",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Tilin asetukset",
+      "profile": "Profiili",
+      "privacy": "Yksityisyys",
+      "notifications": "Ilmoitukset",
+      "security": "Turvallisuus",
+      "billing": "Laskutus",
+      "preferences": "Asetukset"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Elämän CEO -koontinäyttö",
+    "description": "Henkilökohtainen AI-avustajasi elämänhallintaan",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Terveysagentti",
+      "fitness": "Kuntoiluagentti",
+      "nutrition": "Ravitsemusagentti",
+      "finance": "Rahoitusagentti",
+      "career": "Ura-agentti",
+      "productivity": "Tuottavuusagentti",
+      "relationships": "Suhdeagentti",
+      "learning": "Oppimisagentti"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Markkinapaikka",
+    "description": "Osta ja myy tangoon liittyviä tuotteita",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Tanssikengät",
+      "clothing": "Vaatteet",
+      "music": "Musiikki",
+      "accessories": "Lisävarusteet",
+      "other": "Muut"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Ylläpito-ohjelma",
+    "description": "Alustan hallinta ja johtaminen",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Yhteenveto",
+      "users": "Käyttäjät",
+      "content": "Sisältö",
+      "reports": "Raportit",
+      "analytics": "Analytiikka",
+      "settings": "Asetukset"
     }
   }
 }

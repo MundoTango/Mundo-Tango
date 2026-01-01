@@ -327,26 +327,66 @@
       "completeSetup": "Fuldfør opsætning",
       "searchPlaceholder": "Søg fællesskaber eller tilføj et nyt...",
       "categories": {
-        "fitness": { "label": "Fitness & Sport" },
-        "tech": { "label": "Tech & Innovation" },
-        "spirituality": { "label": "Spiritualitet & Vækst" },
-        "yoga": { "label": "Yoga & Wellness" },
-        "music": { "label": "Musik" },
-        "photography": { "label": "Fotografi & Video" },
-        "art": { "label": "Kunst & Kreativitet" },
-        "reading": { "label": "Læsning & Skrivning" },
-        "travel": { "label": "Rejser & Eventyr" },
-        "cooking": { "label": "Madlavning & Mad" },
-        "wine": { "label": "Vin & Drikkevarer" },
-        "gaming": { "label": "Gaming" },
-        "outdoors": { "label": "Udendørsaktiviteter" },
-        "snow": { "label": "Vintersport" },
-        "cycling": { "label": "Cykling" },
-        "water": { "label": "Vandsport" },
-        "nature": { "label": "Natur & Havearbejde" },
-        "movies": { "label": "Film & Underholdning" },
-        "pets": { "label": "Kæledyr & Dyr" },
-        "social": { "label": "Social & Fællesskab" }
+        "fitness": {
+          "label": "Fitness & Sport"
+        },
+        "tech": {
+          "label": "Teknologi & Innovation"
+        },
+        "spirituality": {
+          "label": "Spiritualitet & Vækst"
+        },
+        "yoga": {
+          "label": "Yoga & Velvære"
+        },
+        "music": {
+          "label": "Musik"
+        },
+        "photography": {
+          "label": "Fotografi & Video"
+        },
+        "art": {
+          "label": "Kunst & Kreativitet"
+        },
+        "reading": {
+          "label": "Læsning & Skrivning"
+        },
+        "travel": {
+          "label": "Rejser & Eventyr"
+        },
+        "cooking": {
+          "label": "Madlavning & Mad"
+        },
+        "wine": {
+          "label": "Vin & Drikkevarer"
+        },
+        "gaming": {
+          "label": "Gaming"
+        },
+        "outdoors": {
+          "label": "Udendørsaktiviteter"
+        },
+        "snow": {
+          "label": "Vintersport"
+        },
+        "cycling": {
+          "label": "Cykling"
+        },
+        "water": {
+          "label": "Vandsport"
+        },
+        "nature": {
+          "label": "Natur & Havearbejde"
+        },
+        "movies": {
+          "label": "Film & Underholdning"
+        },
+        "pets": {
+          "label": "Kæledyr & Dyr"
+        },
+        "social": {
+          "label": "Social & Fællesskab"
+        }
       },
       "items": {
         "fitness_gym": "Fitness & Vægte",
@@ -359,7 +399,7 @@
         "fitness_fencing": "Fægtning",
         "tech_coding": "Kodning & Dev",
         "tech_ai": "AI & Fremtidens Tech",
-        "tech_crypto": "Web3 & Crypto",
+        "tech_crypto": "Web3 & Krypto",
         "tech_gaming": "Gaming Kultur",
         "spirit_meditation": "Meditation",
         "spirit_astrology": "Astrologi",
@@ -393,7 +433,7 @@
         "reading_poetry": "Poesi",
         "reading_writing": "Kreativ skrivning",
         "reading_journals": "Dagbogsskrivning",
-        "travel_backpacking": "Backpacking",
+        "travel_backpacking": "Rygsækrejser",
         "travel_luxury": "Luksusrejser",
         "travel_cultural": "Kulturturisme",
         "travel_road_trips": "Roadtrips",
@@ -411,7 +451,7 @@
         "gaming_video": "Videospil",
         "gaming_board": "Brætspil",
         "gaming_card": "Kortspil",
-        "gaming_tabletop": "Tabletop RPGs",
+        "gaming_tabletop": "Brætspil RPGs",
         "gaming_esports": "eSports",
         "outdoor_hiking": "Vandring",
         "outdoor_camping": "Camping",
@@ -433,7 +473,7 @@
         "water_scuba": "Dykning",
         "water_snorkel": "Snorkling",
         "water_sailing": "Sejlsport",
-        "water_paddleboard": "Paddleboarding",
+        "water_paddleboard": "Stand Up Paddleboarding",
         "nature_gardening": "Havearbejde",
         "nature_birdwatching": "Fuglekiggeri",
         "nature_botany": "Plantesamling",
@@ -449,7 +489,7 @@
         "pets_horses": "Ridning",
         "pets_rescue": "Dyrerescue",
         "social_volunteering": "Frivilligt arbejde",
-        "social_meetups": "Meetups",
+        "social_meetups": "Møder",
         "social_networking": "Netværk",
         "social_languages": "Sprogudveksling"
       },
@@ -824,7 +864,7 @@
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
+    "title": "Liv CEO Dashboard",
     "description": "Din personlige AI-assistent til livsstyring",
     "agents": {
       "health": "Sundhedsagent",

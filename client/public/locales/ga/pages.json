@@ -1,896 +1,896 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "Cláraigh",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "Bí páirteach i Mundo Tango - Cruthaigh do Chuntas",
+      "description": "Cruthaigh do chuntas Mundo Tango agus bí páirteach i bpobal domhanda na tango Airgintíne. Ceangail le damhsóirí, faigh amach imeachtaí, agus roinn do phaisean don tango."
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "Fáilte chuig an gClann",
+      "beginJourney": "Tosaigh do Thuras",
+      "joinCommunity": "Bí páirteach sa Phobal"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "Tá tú ann!",
+      "joinMundoTango": "Bí páirteach i Mundo Tango",
+      "description": "Ceangail le damhsóirí ar fud an domhain, faigh amach milongas, agus tum isteach i saol paiseanta na tango Airgintíne",
+      "waitlistDescription": "Fáilte chuig pobal Mundo Tango. Táimid ag ullmhú do chuntas agus cuirfimid in iúl duit go luath!"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ damhsóirí",
+      "events": "{{count}}+ imeachtaí",
+      "cities": "{{count}} cathracha"
     },
     "form": {
-      "fullName": "Full Name",
+      "fullName": "Ainm Iomlán",
       "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "email": "Ríomhphost",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "Ainm Úsáideora",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "Pasfhocal",
+      "confirmPassword": "Deimhnigh Pasfhocal",
+      "inviteOnlyNotice": "Tá clárú faoi láthair ar fáil do dhaoine a cuireadh cuireadh. Comhlánaigh an foirm seo chun bheith ar ár liosta feithimh agus cuirfimid in iúl duit nuair a bheidh do chuntas réidh.",
+      "acceptTermsPrefix": "Glacaim leis an",
+      "termsAndConditions": "Téarmaí & Coinníollacha"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "Tá an ríomhphost seo cláraithe cheana",
+      "emailAvailable": "Ríomhphost ar fáil!",
+      "usernameTaken": "Ainm úsáideora tógtha. Bain triail as {{suggestion}}",
+      "usernameAvailable": "Ainm úsáideora ar fáil!",
+      "passwordsMatch": "Comhoiriúnann na pasfhocail",
+      "passwordsDontMatch": "Ní comhoiriúnann na pasfhocail"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "Láidir",
+      "medium": "Meán",
+      "strong": "Láidir",
+      "veryStrong": "An-láidir"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "An bhfuil cód cuireadh agat? (Roghnach)",
+      "placeholder": "Cuir isteach do chód cuireadh le haghaidh rochtain láithreach",
+      "accepted": "Cód glacadh! Beidh do chuntas gníomhachtaithe láithreach.",
+      "noWorries": "Ná bí buartha! Comhlánaigh an foirm thíos chun ár liosta feithimh a chur le chéile."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
+      "welcomeUser": "Fáilte, {{name}}!",
       "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "onTheList": "Tá tú ar an liosta. Seolfaimid ríomhphost chugat ag",
+      "whenReady": "nuair a bheidh do chuntas réidh.",
+      "helpUsGrow": "Cé go bhfuil tú ag fanacht, cabhraigh linn fás",
+      "volunteerWithUs": "Déan deonacht linn",
+      "supportMundoTango": "Tacaigh le Mundo Tango"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "Ag cruthú do chuntais...",
+      "joining": "Ag dul isteach...",
+      "createAccount": "Cruthaigh Cuntas",
+      "joinMundoTango": "Bí le Mundo Tango"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "An bhfuil cuntas agat cheana?",
+    "signIn": "Logáil isteach",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "Cód neamhbhailí",
+        "description": "Le do thoil, cuir isteach cód fíorúcháin 6-digit bailí."
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "Ríomhphost fíoraithe!",
+        "description": "Fáilte go Mundo Tango! Ag tosú do thús..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "Neamhshásúil fíorúcháin",
+        "description": "Cód neamhbhailí nó in éag. Le do thoil, déan iarracht arís."
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "Earráid",
+        "description": "Níor éirigh le ríomhphost a fhíorú. Le do thoil, déan iarracht arís."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "Ró-mhoill ar iarratais",
+        "description": "Le do thoil, fan cúpla nóiméad sula ndéanann tú iarracht arís."
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "Cód seolta!",
+        "description": "Le do thoil, seiceáil do bhosca isteach le haghaidh cód nua."
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "Níor éirigh le cód a sheoladh arís. Le do thoil, déan iarracht arís."
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "Tearmaí riachtanach",
+        "description": "Le do thoil, glac le na Téarmaí & Coinníollacha"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "Ní comhoiriúnachtaí pasfhocal",
+        "description": "Le do thoil, déan cinnte go bhfuil an dá phasfhocal comhoiriúnach"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "Pasfhocal laige",
+        "description": "Le do thoil, roghnaigh pasfhocal níos láidre"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "Seiceáil do ríomhphost",
+        "description": "Seoladh cód fíorúcháin 6-digit chugat. Le do thoil, seiceáil do bhosca isteach."
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "Neamhshásúil clárúcháin"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "Níor éirigh le clárú a chríochnú"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "Le do thoil, déan iarracht arís"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "Fáilte",
+      "seoTitle": "Fáilte go Mundo Tango",
+      "seoDescription": "Tosaigh do thuras tango le Mundo Tango",
+      "badge": "Socraigh Go Tapa",
+      "title": "Fáilte go Mundo Tango",
+      "subtitle": "Déanaimis do phróifíl a shocrú ionas gur féidir leat conradh a dhéanamh le pobal tango domhanda",
+      "duration": "Tógann sé thart ar 2 nóiméad",
+      "stepIndicator": "Céim {{current}} de {{total}}",
+      "getStarted": "Tosaigh",
+      "profileTitle": "Tosaíonn Do Thuras Tango",
+      "profileSubtitle": "Inis dúinn beagán fútsa",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "Roghnaigh Do Chathair",
+          "description": "Conradh le do phobal tango áitiúil"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "Inis dúinn do Róil",
+          "description": "Rinceoir, múinteoir, DJ, eagraí, nó gach rud thuas?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "Faigh Imeachtaí",
+          "description": "Faigh milongas, ranganna, agus féilte in aice leat"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "Comhroinn Do Thuras",
+          "description": "Conradh le rinceoirí ar do leibhéal"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "Conradh Facebook",
+          "description": "Ceangail do phróifíl Facebook chun cairde a fháil sa phobal"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "Conradh Sóisialta",
+      "seoTitle": "Conradh Do Shaol Sóisialta - Mundo Tango",
+      "seoDescription": "Ceangail do phróifílí sóisialta chun cairde a fháil sa phobal tango.",
+      "step": "Céim 2 de 6",
+      "title": "Conneict do Shaol Sóisialta",
+      "quote": "\"Tá a lán damhsóirí tango ag aithne ar a chéile cheana féin trí Facebook. Trí do phróifíl a nascadh, is féidir linn a thaispeáint duit cé na damhsóirí atá i do líonra atá anseo cheana - ag déanamh é níos éasca faces aitheanta a fháil ag milongas agus naisc níos doimhne a thógáil.\"",
+      "cardTitle": "Faigh do Charaí",
+      "cardDescription": "Cuireann do Facebook ar ár gcumas tú a comhoiriúnú le damhsóirí a d'fhéadfadh a bheith aithne agat orthu, mar sin ní bhíonn tú ag tosú ó thús.",
+      "facebookLabel": "URL Próifíle Facebook (Roghnach)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "Úsáidimid é seo mar dhroichead chuig pobail eile agus chun tú a comhoiriúnú le damhsóirí a d'fhéadfadh a bheith aithne agat orthu.",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "Earráid",
+        "errorDescription": "Theip ar eolas próifíle a shábháil"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "Ar ais",
+      "next": "Ar aghaidh",
+      "skip": "Séan",
+      "finish": "Críochnaigh",
+      "saving": "Ag sábháil..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "Rogha Cathrach",
+      "seoTitle": "Roghnaigh do Chathair - Mundo Tango",
+      "seoDescription": "Roghnaigh do chathair bhaile chun conneict le damhsóirí tango áitiúla",
+      "step": "Céim 1 de 6",
+      "title": "Cá bhfuil tú ag damhsa?",
+      "subtitle": "Conneict le damhsóirí i do cheantar",
+      "cardTitle": "Do Chathair Bhaile",
+      "cardDescription": "Cuireann sé seo ar ár gcumas tú a thaispeáint ócáidí áitiúla agus damhsóirí",
+      "searchLabel": "Cuardaigh do chathair",
+      "searchPlaceholder": "Clóscríobh ainm do chathair...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "Roghnaigh ó dhíreacha tango coitianta"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "Baile ag teastáil",
+        "selectCity": "Roghnaigh do bhaile dúchais le do thoil"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "Foinse curtha leis!",
+        "submittedForReview": "Curtha isteach le haghaidh athbhreithnithe",
+        "trackingEvents": "Tosóimid ag rianú imeachtaí ón suíomh",
+        "thankYou": "Go raibh maith agat! Tá do mholadh curtha isteach le haghaidh athbhreithnithe.",
+        "errorTitle": "Earráid",
+        "suggestionFailed": "Theip ar an mholadh a chur isteach",
+        "saveFailed": "Theip ar na bailte a shábháil"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "Uaslódáil Grianghraf",
+      "seoTitle": "Cuir Grianghraf Próifíle leis - Mundo Tango",
+      "seoDescription": "Uaslódáil do ghrianghraf próifíle",
+      "step": "Céim 3 de 6",
+      "title": "Cuir do Ghríosaigh Próifíle leis",
+      "subtitle": "Cabhraigh le daoine eile tú a aithint sa phobal",
+      "cardTitle": "Do Ghríosaigh Próifíle",
+      "cardDescription": "Cabhraigh le daoine eile tú a aithint (is féidir leat an céim seo a scipeáil)",
+      "previewAlt": "Réamhamharc próifíle",
+      "dropHere": "Cuir do ghrianghraf anseo",
+      "or": "nó",
+      "browseFiles": "Brabhsáil comhoibrithe",
+      "fileTypes": "PNG, JPG suas le 5MB",
+      "photoSelected": "Grianghraf roghnaithe!",
+      "uploading": "Ag uaslódáil...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "Comhad neamhbhailí",
+        "selectImage": "Roghnaigh comhad íomhá le do thoil",
+        "fileTooLarge": "Comhad ró-mhór",
+        "sizeLimit": "Roghnaigh íomhá faoi 5MB le do thoil",
+        "uploadFailed": "Tháinig teip ar an uaslódáil",
+        "tryAgain": "Teip ar an ngrianghraf a uaslódáil. Bain triail as arís le do thoil.",
+        "skipFailed": "Teip ar an gconradh a scipeáil. Bain triail as arís le do thoil."
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "Teangacha",
+      "seoTitle": "Do Theangacha - Mundo Tango",
+      "seoDescription": "Inis dúinn cad iad na teangacha a labhraíonn tú",
+      "step": "Céim 5 de 6",
+      "title": "Cad iad na Teangacha a Labhraíonn Tú?",
+      "subtitle": "Conas a nascann tú le damhsóirí i do theanga",
+      "cardTitle": "Do Theangacha",
+      "cardDescription": "Roghnaigh do theanga phríomha agus aon teangacha breise a labhraíonn tú",
+      "primaryLabel": "Teanga Phríomha",
+      "primaryHint": "Socraíonn sé seo teanga taispeána do shuíomh freisin",
+      "primaryPlaceholder": "Roghnaigh do theanga phríomha",
+      "additionalLabel": "Teangacha Breise (Roghnach)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "Teanga phríomha riachtanach",
+        "selectPrimary": "Roghnaigh do theanga phríomha le do thoil",
+        "saveFailed": "Teip ar na teangacha a shábháil",
+        "saveFailedTitle": "Teip ar Shábháil Teanga"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "Róil Tango",
+      "seoTitle": "Do Róil Tango - Mundo Tango",
+      "seoDescription": "Inis dúinn faoi do thuras tango",
+      "step": "Céim 2 de 6",
+      "title": "Cad iad na Róil a Imríonn Tú?",
+      "subtitle": "Roghnaigh gach rud a bhaineann leat",
+      "cardTitle": "Do Chórais Tango",
+      "cardDescription": "Cabhraigh le daoine eile a fháil amach conas a ghlacann tú páirt i saol an tango"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "Taithí Rince",
+      "seoTitle": "Do Thaithí Rince - Mundo Tango",
+      "seoDescription": "Comhoibrigh le do leibhéal taithí rince",
+      "step": "Céim 4 de 6",
+      "title": "Do Thaithí Rince",
+      "subtitle": "Cabhraigh linn tú a nascadh le na rinceoirí ceart"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "Suimeanna",
+      "seoTitle": "Do Shuíomhanna - Mundo Tango",
+      "seoDescription": "Inis dúinn faoi do shuíomhanna",
+      "step": "Céim 6 de 6",
+      "title": "Cad iad do Shuíomhanna?",
+      "subtitle": "Roghnaigh ábhair a bhfuil suim agat iontu",
+      "helpText": "Roghnaigh ar a laghad 3 suim chun do chraoladh a phearsanú",
+      "selectedCount": "{{count}} roghnaithe",
+      "finishing": "Ag críochnú...",
+      "completeSetup": "Críochnaigh Socrú",
+      "searchPlaceholder": "Cuardaigh pobail nó cuir ceann nua leis...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "Sláinte & Spóirt"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "Teicneolaíocht & Nuálaíocht"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "Spioradáltacht & Fás"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "Yoga & Folláine"
         },
         "music": {
-          "label": "Music"
+          "label": "Ceol"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "Grianghrafadóireacht & Físeán"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "Ealaín & Cruthaitheacht"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "Léamh & Scríobh"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "Turas & Eachtra"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "Cócaireacht & Bia"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "Fíon & Deochanna"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Cluichí"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "Gníomhaíochtaí Lasmuigh"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "Spóirt Sneachta"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "Rothaíocht"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "Spóirt Uisce"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "Dúlra & Gairdín"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "Scannáin & Siamsaíocht"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "Peataí & Ainmhithe"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "Sóisialta & Pobal"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
+        "fitness_gym": "Giom & Meáchain",
+        "fitness_running": "Rith",
         "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
+        "fitness_martial_arts": "Ealaíona Comhraic",
         "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
+        "fitness_soccer": "Sacair/Peil",
+        "fitness_basketball": "Cispheil",
+        "fitness_fencing": "Féachaint",
+        "tech_coding": "Códáil & Forbairt",
+        "tech_ai": "AI & Teicneolaíocht na Todhchaí",
+        "tech_crypto": "Web3 & Criptí",
+        "tech_gaming": "Cultúr Cluichí",
+        "spirit_meditation": "Mediotáiocht",
         "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
+        "spirit_philosophy": "Fealsúnacht",
+        "spirit_community": "Tógáil Comhoibrithe",
         "yoga_hatha": "Hatha Yoga",
         "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
+        "yoga_meditation": "Mediotáiocht",
         "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
+        "yoga_breathwork": "Obair Anála",
+        "music_listening": "Éisteacht le Ceol",
+        "music_concerts": "Conraithe Beo",
+        "music_piano": "Pianó",
+        "music_guitar": "Giotár",
+        "music_singing": "Amhránaíocht",
         "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
+        "music_production": "Táirgeadh Ceoil",
+        "photo_portrait": "Grianghrafadóireacht Póirtéara",
+        "photo_landscape": "Grianghrafadóireacht Tírdhreacha",
+        "photo_street": "Grianghrafadóireacht Sráide",
         "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
+        "photo_editing": "Eagarthóireacht Grianghraf",
+        "art_painting": "Péintéireacht",
+        "art_drawing": "Líneáil",
+        "art_sculpture": "Dealbhóireacht",
+        "art_digital": "Ealaín Dhigiteach",
+        "art_crafts": "Ceardaíocht & DIY",
+        "art_pottery": "Créacht",
+        "reading_fiction": "Ficsean",
+        "reading_nonfiction": "Neamh-Ficsean",
+        "reading_poetry": "Dán",
+        "reading_writing": "Scríbhneoireacht Cruthaitheach",
+        "reading_journals": "Dialann",
+        "travel_backpacking": "Siúlóidí",
+        "travel_luxury": "Turasanna Só",
+        "travel_cultural": "Turais Chultúrtha",
+        "travel_road_trips": "Turasanna Bóthair",
+        "travel_solo": "Turas aonair",
+        "cooking_home": "Cócaireacht Baile",
+        "cooking_baking": "Bácáil",
+        "cooking_gourmet": "Cócaireacht Ghairmiúil",
+        "cooking_international": "Cócaireacht Idirnáisiúnta",
+        "cooking_healthy": "Ithe Sláintiúil",
+        "wine_tasting": "Tástáil Fíon",
         "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
+        "wine_coffee": "Luachmhaireacht Caife",
+        "wine_tea": "Cultúr Tae",
+        "wine_brewing": "Déanamh Baile",
+        "gaming_video": "Cluichí Videó",
+        "gaming_board": "Cluichí Boird",
+        "gaming_card": "Cluichí Cártaí",
+        "gaming_tabletop": "RPGanna Tábla",
         "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
+        "outdoor_hiking": "Siúlóid",
+        "outdoor_camping": "Campáil",
+        "outdoor_climbing": "Dreapadóireacht Carraige",
+        "outdoor_fishing": "Iascaireacht",
+        "outdoor_kayaking": "Cadhcáil",
+        "outdoor_surfing": "Surfáil",
+        "snow_skiing": "Skiáil",
         "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
+        "snow_crosscountry": "Skiáil Trasna na Conairte",
+        "snow_ice_skating": "Skiáil Oighir",
         "snow_sledding": "Sledding",
         "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
+        "cycling_road": "Rothaíocht Bóthar",
+        "cycling_mountain": "Rothaíocht Sliabh",
+        "cycling_urban": "Rothaíocht Urbain",
+        "cycling_touring": "Turais Rothaíochta",
+        "water_swimming": "Snámh",
+        "water_scuba": "Díogaireacht Scuba",
         "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
-        "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "water_sailing": "Seoladh",
+        "water_paddleboard": "Bádóireacht",
+        "nature_gardening": "Gairdín",
+        "nature_birdwatching": "Féachaint ar Éin",
+        "nature_botany": "Bailiú Plandaí",
+        "nature_wildlife": "Grianghrafadóireacht Fiadhúlra",
+        "movies_cinema": "Pictiúrlann",
+        "movies_tv": "Sraith ghréasáin",
+        "movies_documentary": "Doiciméid",
+        "movies_theater": "Dráma",
+        "movies_standup": "Comhoibriú Seasta",
+        "pets_dogs": "Madraí",
+        "pets_cats": "Cait",
+        "pets_exotic": "Peataí Sármhara",
+        "pets_horses": "Riding Con",
+        "pets_rescue": "Tarrtháil Ainmhithe",
+        "social_volunteering": "Deonacht",
+        "social_meetups": "Cruinnithe",
+        "social_networking": "Líonraíocht",
+        "social_languages": "Malartú Teanga"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "Fáilte go Mundo Tango!",
+        "completeDesc": "Tá do phróifíl réidh. Tosaigh ag fiosrú!",
+        "waitlistTitle": "Comhlánaithe Próifíl!",
+        "waitlistDesc": "Cuirfimid in iúl duit nuair a gníomhófar do chuntas"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "Theip ar shábháil. Bain triail as arís."
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "Treoirlínte na Comhoibrithe",
+      "subtitle": "Le do thoil, athbhreithnigh agus glac lenár dtéarmaí",
+      "legalDocsTitle": "Doiciméid Dlí",
+      "legalDocsDescription": "Athbhreithnigh ár dtéarmaí seirbhíse agus polasaí príobháideachta",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "Glacaim le hAcmhainní na Seirbhíse",
+        "description": "Rialaíonn ár dtéarmaí do úsáid ar Mundo Tango",
+        "link": "Léigh na hAcmhainní Seirbhíse"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "Glacaim le Polasaí Príobháideachta",
+        "description": "Conas a láimhseálaimid do shonraí",
+        "link": "Léigh Polasaí Príobháideachta"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "Cód Iompraíochta na Comhoibrithe",
+      "cocDescription": "Cabhraigh linn pobal measúil a chothú",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "Bí Measúil",
+          "description": "Déanaigh do gach duine a chóireáil le dínit agus le cúirtéis"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "Bí Cuimsitheach",
+          "description": "Fáilte roimh rinceoirí ó gach leibhéal agus cúlra"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "Bí Duine Fíor",
+          "description": "Úsáid do shíniú fíor agus eolas macánta"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "Cuir Duine i gCuimhne",
+          "description": "I gcónaí iarr roimh rince agus meas ar theorainneacha"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "Níl Ciontacht",
+          "description": "Níl aon tolra do chiontacht nó do bhullying"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "Níl Spam",
+          "description": "Ná seol cur chun cinn neamháitithe"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "Níl Idirdhealú",
+          "description": "Ní ghlacaimid le heaglaonadh ar bith"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "Cosain Príobháideachas",
+          "description": "Ná roinn eolas daoine eile gan toiliú"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "Tosaigh ar Shábháilteacht",
+          "description": "Tuairiscigh aon iompar neamhshábháilte láithreach"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "Lean na Dlíthe",
+          "description": "Comhlíon gach dlí atá infheidhme"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "Tuairiscigh Fadhbanna",
+          "description": "Cabhraigh linn trí thuairisciú ar shárú"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "Tacaigh le Chéile",
+          "description": "Cabhraigh le comhoibritheoirí damhsa a fhorbairt"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "Glac le Gach Rud & Lean ar Aghaidh",
+      "accepting": "Ag glacadh...",
+      "incompleteAlert": "Le do thoil glac le gach téarma riachtanach",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "Fáilte!",
+        "description": "Tá tú tar éis ár dtreoirlínte pobail a ghlacadh"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "Theip ar shábháil. Le do thoil, déan iarracht arís."
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "Liosta Fanachta",
+      "seoTitle": "Tá tú ar an Liosta Fanachta - Mundo Tango",
+      "seoDescription": "Tá do chuntas ag fanacht le gníomhachtú",
+      "title": "Tá tú ar an Liosta Fanachta!",
+      "welcomeMessage": "Fáilte, {{name}}!",
+      "defaultName": "Damhsaí",
+      "profileComplete": "Comhlán Próifíl",
+      "profileCompleteDesc": "Tá do phróifíl réidh agus ag fanacht",
+      "emailNotice": "Seolfaidh muid ríomhphost chugat ag {{email}} nuair a bheidh do chuntas réidh",
+      "whenReady": "nuair a bheidh do chuntas réidh.",
+      "whileYouWait": "Cé go bhfuil tú ag fanacht, cabhraigh linn fás:",
+      "volunteerButton": "Éirigh le Duine Gníomhach",
+      "supportButton": "Tacaigh le Mundo Tango"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "Turas Treoraithe",
+      "seoTitle": "Fiosraigh Mundo Tango",
+      "seoDescription": "Foghlaim conas Mundo Tango a úsáid",
+      "skipTour": "Séan Turas",
+      "finish": "Críochnaigh Turas",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "Faigh postanna ó phobal an tango",
+        "events": "Faigh milongas, ranganna, agus féilte",
+        "groups": "Bí páirteach i ngrúpaí do do chathair nó do shuimeanna",
+        "messages": "Conas a nascadh go díreach le dancers eile",
+        "profile": "Saincheap do phróifíl tango",
+        "createPost": "Comhroinn do mhoments tango"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "Feabhsigh Do Thaithí",
+        "subtitle": "Faigh an chuid is mó as Mundo Tango",
+        "limitedOffer": "Tairiscint Teoranta",
+        "getStarted": "Tosaigh",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "Nasc",
+            "description": "Teachtaigh le haon dancer go díreach"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "Infheictheacht",
+            "description": "Faigh le feiceáil i dtorthaí cuardaigh"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "Imeachtaí",
+            "description": "Rochtain tosaigh do chuid imeachtaí coitianta"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "Fás",
+            "description": "Anailísíocht chun cinn do do phróifíl"
           },
           "premium": {
-            "title": "Premium",
-            "description": "Exclusive premium features"
+            "title": "Préimh",
+            "description": "Gnéithe préimhe eisiacha"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "Logáil isteach",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Sínigh isteach - Mundo Tango",
+      "description": "Sínigh isteach i do chuntas Mundo Tango chun ceangal leis an bpobal tango domhanda, imeachtaí a fháil, agus do phaisean don tango Airgintíne a roinnt."
     },
-    "badge": "Welcome Back",
+    "badge": "Fáilte ar ais",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Leanann do thuras Tango ar aghaidh",
+      "paragraph": "Sínigh isteach chun ceangal le damhsóirí ar fud an domhain, imeachtaí a fháil, agus do phaisean a roinnt"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "damhsóirí",
+      "events": "imeachtaí"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "Ríomhphost",
+      "password": "Pasfhocal",
+      "signIn": "Sínigh isteach",
+      "signingIn": "Ag síniú isteach...",
+      "forgotPassword": "An bhfuil pasfhocal dearmadta?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Níl cuntas agat?",
+    "createAccount": "Cruthaigh laistigh anois",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Fáilte ar ais!",
+      "successDescription": "Tá tú logáilte isteach go rathúil.",
+      "errorTitle": "Theip ar logáil isteach",
+      "errorDescription": "Credentails neamhbhailí"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Baile",
+    "pageLayoutTitle": "Áit a gcruinníonn Tango le Comhluadar",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Ceangail le Pobal Domhanda Tango",
+      "description": "Bí páirteach le mílte damhsóir tango ar fud an domhain. Faigh imeachtaí, faigh múinteoirí, ceangail le damhsóirí, agus tum isteach i saol paiseanta tango na hAirgintíne."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Fáilte chuig Pobal Domhanda Tango",
+      "heading": "Áit a gcruinníonn Tango le Comhluadar",
+      "paragraph": "Roinn cuimhní, faigh imeachtaí, agus cabhraigh linn an todhchaí teicneolaíochta tango a thógáil. Bí páirteach le mílte damhsóirí paiseanta ag ceangal ar fud an domhain.",
+      "getStarted": "Tosaigh Saor",
+      "volunteer": "Deonigh chun Cabhrú le MT a Thógáil"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Conas a Oibríonn sé",
+      "description": "Tosaigh do thuras tango i dtrí chéim shimplí",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Cruthaigh Do Phroifíl",
+        "description": "Bí páirteach saor in aisce agus inis dúinn faoi do thuras tango, leibhéal taithí, agus roghanna damhsa"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Faigh & Ceangail",
+        "description": "Faigh imeachtaí, múinteoirí, agus áiteanna in aice leat. Ceangail le damhsóirí a roinneann do phaisean"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Damhsáil & Fás",
+        "description": "Freastal ar imeachtaí, glac le ceachtanna, déan cairde, agus bí mar chuid den phobal domhanda tango"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Gach Rud a Teastaíonn Uait",
+      "description": "Ceangail, faigh amach, agus fás do thuras tango le gnéithe cumhachtacha",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Pobal",
+        "heading": "Ceangail le Damhsóirí ar fud an Domhain",
+        "description": "Bí páirteach le pobal domhanda bríomhar de dhaoine atá paiseanta faoi tango. Ceangail le damhsóirí, múinteoirí, agus eagraithe ó Bhuaidís Áras go Tóiceo.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Lean damhsóirí agus tóg do líonra",
+          "groups": "Bí páirteach i ngrúpaí bunaithe ar shuimeanna agus suíomh",
+          "messaging": "Teachtaireacht agus comhoibriú i réaltacht ama",
+          "discover": "Faigh damhsóirí a bhfuil cuairt á tabhairt acu ar do chathair"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Imeachtaí",
+        "heading": "Faigh Imeachtaí Gach Áit",
+        "description": "Ná caill milonga, féile, nó ceardlann. Ceanglaíonn ár n-ardán tú le mílte imeacht tango atá ag tarlú ar fud an domhain.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Féilire imeachtaí cuimsitheach",
+          "rsvp": "RSVP agus áirithint ticéid",
+          "notifications": "Fógraí agus cuimhneacháin imeachta",
+          "map": "Léarscáil idirghníomhach na n-ionad"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Sruthú Beo",
+          "description": "Féach milongas ar fud an domhain i bhfíor-am"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Leabharlann Ceoil",
+          "description": "Liostaí agus treoracha tango curtha le chéile"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Múinteoirí Deimhnithe",
+          "description": "Foghlaim ó mhúinteoirí deimhnithe"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Pleanálaí Taistil",
+          "description": "Pleanáil turas agus faigh óstach ar fud an domhain"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Cad a Deir na Rinceoirí",
+      "description": "Bí páirteach le mílte rinceoirí sásta ar fud an domhain",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "Buenos Aires, an Airgintín",
+          "text": "Chabhraigh Mundo Tango liom mo theaghlach rince a fháil i gcathair nua. Tá an pobal te, fáilteach, agus fíor-thaitneamhach faoi tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, SAM",
+          "text": "Fuair mé milongas agus ceardlanna iontacha tríd an ardán seo. Tá sé éigeantach do mo thuras tango."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moscó, an Rúis",
+          "text": "Chabhraigh an comhoibriú múinteoirí liom na múinteoirí iontacha a fháil. Tá mo rince feabhsaithe go mór!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Ceisteanna a Chuirtear Go Minic",
+      "description": "Gach rud a necesitas a fháil amach faoi Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Cad é Mundo Tango?",
+          "answer": "Is ardán domhanda é Mundo Tango a choinníonn rinceoirí tango, múinteoirí, agus eagraithe le chéile. Cuireann muid ar do chumas imeachtaí a fháil, comhpháirtithe rince a fháil, foghlaim ó na múinteoirí is fearr, agus do chorp a chur i dtaithí ar an bpobal tango bríomhar ar fud an domhain."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "An bhfuil Mundo Tango saor in aisce le húsáid?",
+          "answer": "Sea! Tairgimid leibhéal saor in aisce a chuimsíonn cruthú próifíle bunúsach, taiscéalaíocht imeachtaí, agus teachtaireachtaí. Tá gnéithe préimhe cosúil le teachtaireachtaí gan teorainn, comhoiriúnú comhpháirtí rince AI, agus foláirimh imeachta tosaíochta ar fáil lenár síntiús Pro."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Conas a fhaighim imeachtaí tango in aice liom?",
+          "answer": "Úsáid ár gCéim Imeachtaí nó na gnéithe Cuardaigh chun scagadh de réir cathrach, dáta, agus cineál imeachta. Is féidir leat milongas, féilte, ceardlanna, agus seisiúin chleachtaidh a fháil atá ar siúl i do cheantar nó in áit ar bith ar domhan."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "An féidir liom conradh a dhéanamh le rinceoirí eile?",
+          "answer": "Ar ndóigh! Lean rinceoirí, bí páirteach i ngrúpaí, seol iarratais cara, agus comhoibreoidh leis an bpobal. Tá ár n-ardán deartha chun conarthaí fíor a chothú laistigh den domhan tango."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Conas a fhaighim múinteoirí tango?",
+          "answer": "Tabhair cuairt ar ár gComhoibriú Múinteoirí chun múinteoirí deimhnithe a bhrabhsáil ar fud an domhain. Scagadh de réir suíomh, speisialtachta, agus leibhéal taithí. Léigh athbhreithnithe ó dhaltaí eile agus leabhar ceachtanna príobháideacha go díreach tríd an ardán."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Cad a dhéanann Mundo Tango difriúil?",
+          "answer": "Tógadh muid ag rinceoirí tango, do rinceoirí tango. Tá ár n-aire ar thógáil pobal fíor, curadh imeachtaí ardchaighdeáin, agus conradh a dhéanamh leat leis an teaghlaigh tango domhanda - ní hamháin líonra sóisialta eile."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Réidh le bheith páirteach sa Phobal?",
+      "description": "Cruthaigh do chuntas saor in aisce inniu agus tús a chur le conradh le rinceoirí tango paiseanta ar fud an domhain. Ní gá cárta creidmheasa.",
+      "button": "Bí páirteach i Mundo Tango Saor",
+      "freeForever": "Saor go deo",
+      "noCreditCard": "Níl cárta creidmheasa",
+      "cancelAnytime": "Cealaigh aon uair"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Feith",
+    "description": "Fan ar an eolas le nuashonruithe is déanaí ó phobal tango",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Gach Post",
+      "following": "Ag leanúint",
+      "popular": "Coitianta",
+      "recent": "Le déanaí"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Cad atá i do chloigeann?",
+    "noPost": "Níl aon phoist le taispeáint"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Imeachtaí",
+    "description": "Faigh imeachtaí tango in aice leat",
+    "upcoming": "Imeachtaí atá le teacht",
+    "past": "Imeachtaí atá thart",
     "filters": {
-      "all": "All Events",
+      "all": "Gach Imeacht",
       "milongas": "Milongas",
-      "workshops": "Workshops",
+      "workshops": "Ceardlanna",
       "festivals": "Festivals",
-      "classes": "Classes"
+      "classes": "Ranganna"
     },
-    "noEvents": "No events found"
+    "noEvents": "Níl aon imeachtaí le fáil"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Próifíl",
+    "description": "Féach agus eagarthóireacht do phróifíl",
+    "editProfile": "Eagarthóireacht Próifíle",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Poist",
+      "photos": "Grianghraif",
+      "videos": "Físeáin",
+      "events": "Imeachtaí",
+      "friends": "Cairde"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Poist",
+      "followers": "Leanúnaigh",
+      "following": "Ag leanúint",
+      "events": "Imeachtaí a freastal"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Teachtaireachtaí",
+    "description": "Comhrá le do naisc tango",
+    "newMessage": "Teachtaireacht Nua",
+    "searchConversations": "Cuardaigh comhoibrithe",
+    "noMessages": "Níl aon teachtaireachtaí ann go fóill",
+    "startConversation": "Tosaigh comhrá"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Múinteoirí Tango",
+    "description": "Faigh agus ceangail le múinteoirí tango",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Gach Múinteoir",
+      "featured": "Gnéithe",
+      "nearby": "Gar"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Féach ar Próifíl",
+    "bookLesson": "Leabhar Ceacht"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Ionad Tango",
+    "description": "Faigh ionaid tango ar fud an domhain",
     "filters": {
-      "all": "All Venues",
+      "all": "Gach Ionad",
       "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "schools": "Scoileanna Rince",
+      "theaters": "Amharclanna"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Faigh Treoracha"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Socruithe",
+    "description": "Bainistigh socruithe do chuntais",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Socruithe Cuntais",
+      "profile": "Próifíl",
+      "privacy": "Príobháideacht",
+      "notifications": "Fógraí",
+      "security": "Slándáil",
+      "billing": "Íocaíocht",
+      "preferences": "Roghaí"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Painéal Ceo do Shaol",
+    "description": "Do chabhair AI pearsanta le bainistíocht do shaol",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Gníomhaire Sláinte",
+      "fitness": "Gníomhaire Fisice",
+      "nutrition": "Gníomhaire Itheacháin",
+      "finance": "Gníomhaire Airgeadais",
+      "career": "Gníomhaire Gairme",
+      "productivity": "Gníomhaire Torthúlachta",
+      "relationships": "Gníomhaire Caidrimh",
+      "learning": "Gníomhaire Foghlama"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Margadh",
+    "description": "Ceannaigh agus díol earraí a bhaineann le tango",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Bróga Rince",
+      "clothing": "Éadaí",
+      "music": "Ceol",
+      "accessories": "Rochtain",
+      "other": "Eile"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Painéal Riaracháin",
+    "description": "Riarachán agus bainistíocht ardáin",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Forbhreathnú",
+      "users": "Úsáideoirí",
+      "content": "Ábhar",
+      "reports": "Tuarascálacha",
+      "analytics": "Anailís",
+      "settings": "Socruithe"
     }
   }
 }

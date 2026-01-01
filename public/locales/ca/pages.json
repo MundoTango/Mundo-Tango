@@ -643,127 +643,127 @@
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Inici",
+    "pageLayoutTitle": "On el Tango es Troba amb la Comunitat",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Connecta amb la Comunitat Global de Tango",
+      "description": "Uneix-te a milers de ballarins de tango a tot el món. Descobreix esdeveniments, troba professors, connecta amb ballarins i submergeix-te en el apassionat món del tango argentí."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Benvingut a la Comunitat Global de Tango",
+      "heading": "On el Tango es Troba amb la Comunitat",
+      "paragraph": "Comparteix records, troba esdeveniments i ajuda'ns a construir el futur de la tecnologia del tango. Uneix-te a milers de ballarins apassionats que es connecten a tot el món.",
+      "getStarted": "Comença Gratuitament",
+      "volunteer": "Voluntari per Ajudar a Construir MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Com Funciona",
+      "description": "Comença el teu viatge de tango en tres passos senzills",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Crea el Teu Perfil",
+        "description": "Uneix-te de manera gratuïta i explica'ns sobre el teu viatge de tango, nivell d'experiència i preferències de ball"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Descobreix i Connecta",
+        "description": "Troba esdeveniments, mestres i llocs prop teu. Connecta amb ballarins que comparteixen la teva passió"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Ballar i créixer",
+        "description": "Assisteix a esdeveniments, pren classes, fes amics i forma part de la comunitat global de tango"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Tot el que necessites",
+      "description": "Connecta, descobreix i fes créixer el teu viatge de tango amb funcions potents",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Comunitat",
+        "heading": "Connecta amb ballarins de tot el món",
+        "description": "Uneix-te a una comunitat global vibrant d'entusiastes del tango. Connecta amb ballarins, mestres i organitzadors des de Buenos Aires fins a Tòquio.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Segueix ballarins i construeix la teva xarxa",
+          "groups": "Uneix-te a grups basats en interessos i ubicació",
+          "messaging": "Funcions de missatgeria i xat en temps real",
+          "discover": "Descobreix ballarins que visiten la teva ciutat"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Esdeveniments",
+        "heading": "Descobreix esdeveniments a tot arreu",
+        "description": "Mai et perdis una milonga, festival o taller. La nostra plataforma et connecta amb milers d'esdeveniments de tango que es fan a nivell global.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Calendari d'esdeveniments complet",
+          "rsvp": "RSVP i reserva d'entrades",
+          "notifications": "Notificacions i recordatoris d'esdeveniments",
+          "map": "Mapa interactiu de llocs"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Transmissió en directe",
+          "description": "Mira milongues de tot el món en temps real"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Biblioteca de música",
+          "description": "Llistes de reproducció i guies de tango seleccionades"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Mestres verificats",
+          "description": "Aprèn de instructors certificats"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Planificador de viatges",
+          "description": "Planifica viatges i troba amfitrions a nivell global"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "El que diuen els ballarins",
+      "description": "Uneix-te a milers de ballarins satisfets de tot el món",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
+          "name": "Maria Rodríguez",
           "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "text": "Mundo Tango m'ha ajudat a trobar la meva família de dansa en una nova ciutat. La comunitat és càlida, acollidora i realment apassionada pel tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, EUA",
+          "text": "He descobert milongues i tallers increïbles a través d'aquesta plataforma. S'ha convertit en essencial per al meu viatge de tango."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moscou, Rússia",
+          "text": "El directori de professors m'ha ajudat a trobar instructors increïbles. La meva dansa ha millorat enormement!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Preguntes Freqüents",
+      "description": "Tot el que necessites saber sobre Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Què és Mundo Tango?",
+          "answer": "Mundo Tango és una plataforma global que connecta ballarins de tango, professors i organitzadors. T'ajudem a descobrir esdeveniments, trobar parelles de dansa, aprendre dels millors instructors i submergir-te en la vibrant comunitat de tango a tot el món."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "És gratuït utilitzar Mundo Tango?",
+          "answer": "Sí! Oferim un nivell gratuït que inclou la creació de perfils bàsics, la descoberta d'esdeveniments i la missatgeria. Les funcions premium com la missatgeria il·limitada, la coincidència de parelles de dansa amb IA i les notificacions d'esdeveniments prioritàries estan disponibles amb la nostra subscripció Pro."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Com puc trobar esdeveniments de tango a prop meu?",
+          "answer": "Simplement utilitza el nostre Calendari d'Esdeveniments o les funcions de Cerca per filtrar per ciutat, data i tipus d'esdeveniment. Pots descobrir milongues, festivals, tallers i sessions de pràctica que es duen a terme a la teva àrea o a qualsevol lloc del món."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Puc connectar-me amb altres ballarins?",
+          "answer": "Absolutament! Segueix ballarins, uneix-te a grups, envia sol·licituds d'amistat i xateja amb la comunitat. La nostra plataforma està dissenyada per fomentar connexions autèntiques dins del món del tango."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Com puc trobar professors de tango?",
+          "answer": "Visita el nostre Directori de Professors per navegar per instructors verificats a tot el món. Filtra per ubicació, especialitat i nivell d'experiència. Llegeix ressenyes d'altres estudiants i reserva classes particulars directament a través de la plataforma."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Què fa que Mundo Tango sigui diferent?",
+          "answer": "Estem construïts per ballarins de tango, per a ballarins de tango. El nostre enfocament és en la construcció d'una comunitat autèntica, la curació d'esdeveniments de qualitat i la connexió amb la família global de tango - no només una altra xarxa social."
         }
       }
     },
@@ -773,25 +773,25 @@
   },
   "feed": {
     "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "description": "Mantingues-te actualitzat amb les últimes novetats de la comunitat de tango",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
+      "all": "Tots els Posts",
+      "following": "Seguint",
       "popular": "Popular",
       "recent": "Recent"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Què tens al cap?",
+    "noPost": "No hi ha publicacions per mostrar"
   },
   "events": {
     "title": "Esdeveniments de Tango",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "description": "Descobreix esdeveniments de tango a prop teu",
+    "upcoming": "Esdeveniments futurs",
+    "past": "Esdeveniments passats",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
+      "all": "Tots els esdeveniments",
+      "milongas": "Milongues",
+      "workshops": "Tallers",
       "festivals": "Festivals",
       "classes": "Classes"
     },
@@ -802,20 +802,20 @@
   },
   "profile": {
     "title": "Perfil",
-    "description": "View and edit your profile",
+    "description": "Veure i editar el teu perfil",
     "editProfile": "Editar Perfil",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Publicacions",
+      "photos": "Fotos",
+      "videos": "Vídeos",
+      "events": "Esdeveniments",
+      "friends": "Amics"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Publicacions",
+      "followers": "Seguidors",
+      "following": "Seguint",
+      "events": "Esdeveniments assistits"
     },
     "followers": "Seguidors",
     "following": "Seguint",
@@ -823,83 +823,83 @@
     "about": "Sobre"
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Missatges",
+    "description": "Xateja amb les teves connexions de tango",
+    "newMessage": "Missatge nou",
+    "searchConversations": "Cerca converses",
+    "noMessages": "Encara no hi ha missatges",
+    "startConversation": "Inicia una conversa"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Professors de tango",
+    "description": "Troba i connecta amb professors de tango",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Tots els professors",
+      "featured": "Destacats",
+      "nearby": "A prop"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Veure perfil",
+    "bookLesson": "Reserva una classe"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Llocs de tango",
+    "description": "Descobreix llocs de tango a tot el món",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Tots els llocs",
+      "milongas": "Milongues",
+      "schools": "Escoles de ball",
+      "theaters": "Teatres"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Obtenir direccions"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Configuració",
+    "description": "Gestiona la configuració del teu compte",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Configuració del compte",
+      "profile": "Perfil",
+      "privacy": "Privadesa",
+      "notifications": "Notificacions",
+      "security": "Seguretat",
+      "billing": "Facturació",
+      "preferences": "Preferències"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Tauler de control del CEO de la vida",
+    "description": "El teu assistent d'IA personal per a la gestió de la vida",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Agent de salut",
+      "fitness": "Agent de fitness",
+      "nutrition": "Agent de nutrició",
+      "finance": "Agent de finances",
+      "career": "Agent de carrera",
+      "productivity": "Agent de productivitat",
+      "relationships": "Agent de relacions",
+      "learning": "Agent d'aprenentatge"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Mercat",
+    "description": "Compra i ven articles relacionats amb el tango",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Sabates de ball",
+      "clothing": "Roba",
+      "music": "Música",
+      "accessories": "Accessoris",
+      "other": "Altres"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Tauler d'administració",
+    "description": "Administració i gestió de la plataforma",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Visió general",
+      "users": "Usuaris",
+      "content": "Contingut",
+      "reports": "Informes",
+      "analytics": "Analítica",
+      "settings": "Configuració"
     }
   },
   "cities": {

@@ -327,26 +327,66 @@
       "completeSetup": "Installatie voltooien",
       "searchPlaceholder": "Zoek communities of voeg een nieuwe toe...",
       "categories": {
-        "fitness": { "label": "Fitness & Sport" },
-        "tech": { "label": "Tech & Innovatie" },
-        "spirituality": { "label": "Spiritualiteit & Groei" },
-        "yoga": { "label": "Yoga & Welzijn" },
-        "music": { "label": "Muziek" },
-        "photography": { "label": "Fotografie & Video" },
-        "art": { "label": "Kunst & Creativiteit" },
-        "reading": { "label": "Lezen & Schrijven" },
-        "travel": { "label": "Reizen & Avontuur" },
-        "cooking": { "label": "Koken & Eten" },
-        "wine": { "label": "Wijn & Dranken" },
-        "gaming": { "label": "Gaming" },
-        "outdoors": { "label": "Buitenactiviteiten" },
-        "snow": { "label": "Wintersport" },
-        "cycling": { "label": "Fietsen" },
-        "water": { "label": "Watersport" },
-        "nature": { "label": "Natuur & Tuinieren" },
-        "movies": { "label": "Films & Entertainment" },
-        "pets": { "label": "Huisdieren & Dieren" },
-        "social": { "label": "Sociaal & Community" }
+        "fitness": {
+          "label": "Fitness & Sport"
+        },
+        "tech": {
+          "label": "Tech & Innovatie"
+        },
+        "spirituality": {
+          "label": "Spiritualiteit & Groei"
+        },
+        "yoga": {
+          "label": "Yoga & Welzijn"
+        },
+        "music": {
+          "label": "Muziek"
+        },
+        "photography": {
+          "label": "Fotografie & Video"
+        },
+        "art": {
+          "label": "Kunst & Creativiteit"
+        },
+        "reading": {
+          "label": "Lezen & Schrijven"
+        },
+        "travel": {
+          "label": "Reizen & Avontuur"
+        },
+        "cooking": {
+          "label": "Koken & Eten"
+        },
+        "wine": {
+          "label": "Wijn & Dranken"
+        },
+        "gaming": {
+          "label": "Gaming"
+        },
+        "outdoors": {
+          "label": "Buitenactiviteiten"
+        },
+        "snow": {
+          "label": "Wintersport"
+        },
+        "cycling": {
+          "label": "Fietsen"
+        },
+        "water": {
+          "label": "Watersport"
+        },
+        "nature": {
+          "label": "Natuur & Tuinieren"
+        },
+        "movies": {
+          "label": "Films & Entertainment"
+        },
+        "pets": {
+          "label": "Huisdieren & Dieren"
+        },
+        "social": {
+          "label": "Sociaal & Community"
+        }
       },
       "items": {
         "fitness_gym": "Sportschool & Gewichten",
@@ -364,7 +404,7 @@
         "spirit_meditation": "Meditatie",
         "spirit_astrology": "Astrologie",
         "spirit_philosophy": "Filosofie",
-        "spirit_community": "Community Building",
+        "spirit_community": "Gemeenschapsopbouw",
         "yoga_hatha": "Hatha Yoga",
         "yoga_vinyasa": "Vinyasa Flow",
         "yoga_meditation": "Meditatie",
@@ -411,7 +451,7 @@
         "gaming_video": "Videogames",
         "gaming_board": "Bordspellen",
         "gaming_card": "Kaartspellen",
-        "gaming_tabletop": "Tabletop RPGs",
+        "gaming_tabletop": "Tabletop RPG's",
         "gaming_esports": "eSports",
         "outdoor_hiking": "Wandelen",
         "outdoor_camping": "Kamperen",
@@ -603,7 +643,7 @@
     }
   },
   "home": {
-    "pageName": "Home",
+    "pageName": "Thuis",
     "pageLayoutTitle": "Waar Tango Community Ontmoet",
     "seo": {
       "title": "Mundo Tango - Verbind met de Wereldwijde Tango Community",
@@ -636,7 +676,7 @@
       "heading": "Alles wat u nodig heeft",
       "description": "Verbind, ontdek en groei uw tango-reis met krachtige functies",
       "community": {
-        "badge": "Community",
+        "badge": "Gemeenschap",
         "heading": "Verbind met dansers wereldwijd",
         "description": "Word lid van een levendige wereldwijde community van tango-enthousiastelingen. Verbind met dansers, leraren en organisatoren van Buenos Aires tot Tokio.",
         "items": {
@@ -824,7 +864,7 @@
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
+    "title": "Leven CEO Dashboard",
     "description": "Uw persoonlijke AI-assistent voor levensbeheer",
     "agents": {
       "health": "Gezondheidsagent",
@@ -849,14 +889,14 @@
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
+    "title": "Beheer Dashboard",
     "description": "Platformbeheer en administratie",
     "sections": {
       "overview": "Overzicht",
       "users": "Gebruikers",
       "content": "Inhoud",
       "reports": "Rapporten",
-      "analytics": "Analytics",
+      "analytics": "Analyse",
       "settings": "Instellingen"
     }
   }

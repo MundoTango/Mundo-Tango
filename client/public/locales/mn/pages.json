@@ -1,896 +1,896 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "Бүртгүүлэх",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "Mundo Tango-д нэгдээрэй - Таны дансыг үүсгээрэй",
+      "description": "Таны Mundo Tango дансыг үүсгэж, дэлхийн Аргентин тангоны нийгэмлэгт нэгдээрэй. Бүжигчидтэй холбогдож, үйл явдлуудыг нээнэ үү, тангоны хүсэл тэмүүллээ хуваалцаарай."
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "Гэр бүлд тавтай морил",
+      "beginJourney": "Таны аяллыг эхлүүл",
+      "joinCommunity": "Нийгэмлэгт нэгдээрэй"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "Та орсон байна!",
+      "joinMundoTango": "Mundo Tango-д нэгдээрэй",
+      "description": "Дэлхий даяар бүжигчидтэй холбогдож, милонгас нээнэ үү, Аргентин тангоны хүсэл тэмүүллийн ертөнцөд уусна уу",
+      "waitlistDescription": "Mundo Tango нийгэмлэгт тавтай морил. Бид таны дансыг бэлтгэж байна, удахгүй танд мэдэгдэх болно!"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ бүжигчид",
+      "events": "{{count}}+ үйл явдлууд",
+      "cities": "{{count}} хотууд"
     },
     "form": {
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "fullName": "Бүтэн нэр",
+      "fullNamePlaceholder": "Мария Родригез",
+      "email": "И-мэйл",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "Хэрэглэгчийн нэр",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "Нууц үг",
+      "confirmPassword": "Нууц үгийг баталгаажуулах",
+      "inviteOnlyNotice": "Бүртгэл одоогоор зөвхөн урилгаар. Манай хүлээлгийн жагсаалтад нэгдэж, таны данс бэлэн болох үед танд мэдэгдэх болно.",
+      "acceptTermsPrefix": "Би",
+      "termsAndConditions": "Нөхцөл, шаардлагыг хүлээн зөвшөөрч байна"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "Энэ и-мэйл аль хэдийн бүртгэгдсэн",
+      "emailAvailable": "И-мэйл боломжтой!",
+      "usernameTaken": "Хэрэглэгчийн нэр авсан. {{suggestion}}-г туршаад үзээрэй",
+      "usernameAvailable": "Хэрэглэгчийн нэр боломжтой!",
+      "passwordsMatch": "Нууц үг тохирч байна",
+      "passwordsDontMatch": "Нууц үг тохирохгүй байна"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "Сул",
+      "medium": "Дунд",
+      "strong": "Хүчтэй",
+      "veryStrong": "Маш хүчтэй"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "Урилгааны кодтой юу? (Сонголт)",
+      "placeholder": "Таныг шууд нэвтрэхийн тулд урилгааны кодоо оруулна уу",
+      "accepted": "Код хүлээн авсан! Таны данс шууд идэвхжих болно.",
+      "noWorries": "Санаа зовох хэрэггүй! Бидний хүлээх жагсаалтад нэгдэхийн тулд доорх формыг бөглөнө үү."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "Тавтай морил, {{name}}!",
+      "defaultName": "Бүжигчин",
+      "onTheList": "Та жагсаалтад байна. Бид танд имэйл илгээнэ",
+      "whenReady": "танын данс бэлэн болох үед.",
+      "helpUsGrow": "Та хүлээж байхдаа бидэнд өсөхөд тусална уу",
+      "volunteerWithUs": "Бидэнтэй сайн дурын ажил хий",
+      "supportMundoTango": "Mundo Tango-г дэмж"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "Таны дансыг үүсгэж байна...",
+      "joining": "Нэгдэх...",
+      "createAccount": "Данс үүсгэх",
+      "joinMundoTango": "Mundo Tango-д нэгдэх"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "Данс байгаа юу?",
+    "signIn": "Нэвтрэх",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "Буруу код",
+        "description": "Зөв 6 оронтой баталгаажуулах код оруулна уу."
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "Имэйл баталгаажсан!",
+        "description": "Mundo Tango-д тавтай морил! Таныг элсүүлэхийг эхлүүлж байна..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "Баталгаажуулалт амжилтгүй боллоо",
+        "description": "Буруу эсвэл хугацаа дууссан код. Дахин оролдоно уу."
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "Алдаа",
+        "description": "Имэйл баталгаажуулахад алдаа гарлаа. Дахин оролдоно уу."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "Хэт олон хүсэлт",
+        "description": "Та дахин оролдохоосоо өмнө хэдэн минут хүлээгээрэй."
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "Код илгээсэн!",
+        "description": "Шинэ кодын төлөө таны имэйл хаягийг шалгаарай."
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "Код дахин илгээхэд алдаа гарлаа. Дахин оролдоно уу."
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "Нөхцлийг хүлээн зөвшөөрөх шаардлагатай",
+        "description": "Нөхцөл, журам хүлээн зөвшөөрнө үү"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "Нууц үг тохирохгүй байна",
+        "description": "Хоёр нууц үг адилхан байгааг шалгаарай"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "Сул нууц үг",
+        "description": "Илүү хүчтэй нууц үг сонгоно уу"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "Имэйлээ шалгаарай",
+        "description": "Бид танд 6 оронтой баталгаажуулах код илгээсэн. Имэйлээ шалгаарай."
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "Бүртгэл амжилтгүй боллоо"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "Бүртгүүлэхийг дуусгаж чадсангүй"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "Дахин оролдоно уу"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "Тавтай морил",
+      "seoTitle": "Mundo Tango-д тавтай морил",
+      "seoDescription": "Mundo Tango-тай хамт танго аялалаа эхлүүл",
+      "badge": "Түргэн тохиргоо",
+      "title": "Mundo Tango-д тавтай морил",
+      "subtitle": "Дэлхийн танго нийгэмлэгтэй холбогдохын тулд таны профайлыг тохируулахыг хичээе",
+      "duration": "Ойролцоогоор 2 минут зарцуулагдана",
+      "stepIndicator": "{{total}}-ийн {{current}} алхам",
+      "getStarted": "Эхлэх",
+      "profileTitle": "Таны танго аялал эхэлж байна",
+      "profileSubtitle": "Өөрийнхөө тухай бага зэрэг хэлээрэй",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "Хотоо сонгоно уу",
+          "description": "Таны орон нутгийн танго нийгэмлэгтэй холбогдоно уу"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "Таны үүрэгсийг бидэнд хэлээрэй",
+          "description": "Бүжигчин, багш, DJ, зохион байгуулагч, эсвэл дээрх бүх зүйл үү?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "Үйл явдлуудыг нээх",
+          "description": "Таны ойролцоох милонгас, анги, баяруудыг олоорой"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "Таны аяллыг хуваалцаарай",
+          "description": "Таны түвшний бүжигчидтэй холбогдоорой"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "Facebook холбох",
+          "description": "Нийгмийн сүлжээний профайлыг холбож, хамт олон дотроо найзуудаа олоорой"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "Нийгмийн холболт",
+      "seoTitle": "Таны Нийгмийн Дэлхий - Mundo Tango",
+      "seoDescription": "Таны нийгмийн профайлуудыг холбож, тангоны хамт олон дотроо найзуудаа олоорой.",
+      "step": "6-аас 2-р алхам",
+      "title": "Таны Нийгмийн Дэлхийтэй холбогдох",
+      "quote": "\"Олон танго бүжигчид Facebook-ээр дамжуулан бие биенээ мэддэг. Таны профайлыг холбосноор, бид таны сүлжээнд байгаа бүжигчид аль хэдийн энд байгаа эсэхийг харуулах боломжтой - милонгад танил хүмүүсийг олоход хялбар болгоно.\"",
+      "cardTitle": "Найзуудыг олоорой",
+      "cardDescription": "Таны Facebook бидэнд таныг аль хэдийн мэддэг бүжигчидтэй холбоход тусалдаг, ингэснээр та шинээр эхлэх шаардлагагүй.",
+      "facebookLabel": "Facebook профайлын URL (Сонголт)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "Бид үүнийг бусад хамт олон руу гүүр болгон ашиглаж, таныг мэдэх бүжигчидтэй холбохоор ашигладаг.",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "Алдаа",
+        "errorDescription": "Профайлын мэдээллийг хадгалахад алдаа гарлаа"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "Буцах",
+      "next": "Дараах",
+      "skip": "Алгасах",
+      "finish": "Дуусгах",
+      "saving": "Хадгалаж байна..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "Хотын сонголт",
+      "seoTitle": "Таны хотыг сонгоно уу - Mundo Tango",
+      "seoDescription": "Орон нутгийн танго бүжигчидтэй холбогдохын тулд гэрийн хотыг сонгоно уу",
+      "step": "6-аас 1-р алхам",
+      "title": "Та хаана бүжиглэдэг вэ?",
+      "subtitle": "Таны бүсэд бүжигчидтэй холбогдоорой",
+      "cardTitle": "Таны гэрийн хот",
+      "cardDescription": "Энэ нь бидэнд таныг орон нутгийн үйл явдлууд болон бүжигчдийг харуулахад тусалдаг",
+      "searchLabel": "Таны хотыг хайх",
+      "searchPlaceholder": "Хотын нэрээ бичнэ үү...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "Популяр танго чиглэлүүдээс сонгоно уу"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "Хот шаардлагатай",
+        "selectCity": "Таны гэрийн хотыг сонгоно уу"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "Эх сурвалж нэмэгдлээ!",
+        "submittedForReview": "Шалгалтад илгээгдлээ",
+        "trackingEvents": "Бид сайтаас үйл явдлуудыг хянахыг эхлэнэ",
+        "thankYou": "Баярлалаа! Таны санал шалгалтад илгээгдлээ.",
+        "errorTitle": "Алдаа",
+        "suggestionFailed": "Санал илгээхэд алдаа гарлаа",
+        "saveFailed": "Хотуудыг хадгалахад алдаа гарлаа"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "Зураг оруулах",
+      "seoTitle": "Профайл зураг нэмэх - Mundo Tango",
+      "seoDescription": "Таны профайл зургийг оруулна уу",
+      "step": "6-аас 3-р алхам",
+      "title": "Таны профайл зургийг нэмнэ үү",
+      "subtitle": "Нийгэмлэгт таньж мэдэхэд бусдад тусална",
+      "cardTitle": "Таны профайл зураг",
+      "cardDescription": "Бусдад таньж мэдэхэд тусална (та энэ алхмыг алгасаж болно)",
+      "previewAlt": "Профайл урьдчилсан харагдац",
+      "dropHere": "Зурагнаасаа энд хая",
+      "or": "эсвэл",
+      "browseFiles": "Файлуудыг хайх",
+      "fileTypes": "PNG, JPG 5MB хүртэл",
+      "photoSelected": "Зураг сонгогдлоо!",
+      "uploading": "Оруулж байна...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "Буруу файл",
+        "selectImage": "Зураг файлыг сонгоно уу",
+        "fileTooLarge": "Файл хэт том байна",
+        "sizeLimit": "5MB-аас доош зураг сонгоно уу",
+        "uploadFailed": "Ачааллахад алдаа гарлаа",
+        "tryAgain": "Зураг ачаалахад алдаа гарлаа. Дахин оролдоно уу.",
+        "skipFailed": "Алгасахад алдаа гарлаа. Дахин оролдоно уу."
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "Хэлүүд",
+      "seoTitle": "Таны хэлүүд - Mundo Tango",
+      "seoDescription": "Та ямар хэлээр ярьдаг талаар бидэнд хэлнэ үү",
+      "step": "6-аас 5-р алхам",
+      "title": "Та ямар хэлээр ярьдаг вэ?",
+      "subtitle": "Таны хэлээр бүжигчидтэй холбогдоно уу",
+      "cardTitle": "Таны хэлүүд",
+      "cardDescription": "Таны үндсэн хэл болон та ярьдаг нэмэлт хэлүүдийг сонгоно уу",
+      "primaryLabel": "Үндсэн хэл",
+      "primaryHint": "Энэ нь таны сайтад харуулах хэлийг тохируулах болно",
+      "primaryPlaceholder": "Таны үндсэн хэлийг сонгоно уу",
+      "additionalLabel": "Нэмэлт хэлүүд (Сонголт)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "Үндсэн хэл шаардлагатай",
+        "selectPrimary": "Таны үндсэн хэлийг сонгоно уу",
+        "saveFailed": "Хэлүүдийг хадгалахад алдаа гарлаа",
+        "saveFailedTitle": "Хэл хадгалах алдаа гарлаа"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "Тангоны үүрэг",
+      "seoTitle": "Таны тангоны үүрэг - Mundo Tango",
+      "seoDescription": "Таны тангоны аялалын талаар бидэнд хэлнэ үү",
+      "step": "6-аас 2-р алхам",
+      "title": "Та ямар үүрэг гүйцэтгэдэг вэ?",
+      "subtitle": "Танд хамааралтай бүхнийг сонгоно уу",
+      "cardTitle": "Таны тангоны танилт",
+      "cardDescription": "Та тангоны ертөнцөд хэрхэн оролцдогийг бусдад мэдэхэд тусална уу"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "Бүжгийн туршлага",
+      "seoTitle": "Таны бүжгийн туршлага - Mundo Tango",
+      "seoDescription": "Бүжгийн туршлагаа хуваалцаарай",
+      "step": "Алхам 4 из 6",
+      "title": "Таны бүжгийн туршлага",
+      "subtitle": "Танд тохирох бүжигчидтэй холбоход туслаарай"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "Сонирхол",
+      "seoTitle": "Таны сонирхол - Mundo Tango",
+      "seoDescription": "Таны сонирхлын тухай бидэнд хэлээрэй",
+      "step": "Алхам 6 из 6",
+      "title": "Таны сонирхол юу вэ?",
+      "subtitle": "Танд сонирхолтой сэдвүүдийг сонгоно уу",
+      "helpText": "Таны фидийг хувьчилж авахын тулд хамгийн багадаа 3 сонирхол сонгоно уу",
+      "selectedCount": "{{count}} сонгогдсон",
+      "finishing": "Дуусах...",
+      "completeSetup": "Тохиргоог дуусгах",
+      "searchPlaceholder": "Нийгэмлэгүүдийг хайж олох эсвэл шинэ нийгэмлэг нэмэх...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "Биеийн тамир & Спорт"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "Технологи & Шинэчлэл"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "Сүнслэг байдал & Хөгжил"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "Йога & Эрүүл мэнд"
         },
         "music": {
-          "label": "Music"
+          "label": "Хөгжим"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "Зураг & Видео"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "Урлаг & Бүтээлч байдал"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "Унших & Бичих"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "Аялал & Адал явдал"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "Гал тогоо & Хоол"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "Дарс & Уух зүйлс"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Тоглоом"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "Гадаа үйл ажиллагаа"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "Цасны спорт"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "Унадаг дугуй"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "Усны спорт"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "Природ ба цэцэрлэгжүүлэлт"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "Кино ба зугаа цэнгэл"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "Гэрийн тэжээвэр амьтад"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "Нийгэм ба хамт олон"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
-        "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
-        "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
-        "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
+        "fitness_gym": "Биеийн тамир ба жин",
+        "fitness_running": "Гүйх",
+        "fitness_crossfit": "Кроссфит",
+        "fitness_martial_arts": "Биет тамирын урлаг",
+        "fitness_tennis": "Теннис",
+        "fitness_soccer": "Хөлбөмбөг",
+        "fitness_basketball": "Сагсан бөмбөг",
+        "fitness_fencing": "Тулааны урлаг",
+        "tech_coding": "Код бичих ба хөгжүүлэлт",
+        "tech_ai": "Хиймэл оюун ухаан ба ирээдүйн технологи",
+        "tech_crypto": "Web3 ба крипто",
+        "tech_gaming": "Тоглоомын соёл",
+        "spirit_meditation": "Медитаци",
+        "spirit_astrology": "Оддын зурхай",
+        "spirit_philosophy": "Философи",
+        "spirit_community": "Нийгэм байгуулах",
+        "yoga_hatha": "Хатха йога",
+        "yoga_vinyasa": "Виньяса урсгал",
+        "yoga_meditation": "Медитаци",
+        "yoga_pilates": "Пилатес",
+        "yoga_breathwork": "Амьсгалын дасгал",
+        "music_listening": "Хөгжим сонсох",
+        "music_concerts": "Амьд концерт",
+        "music_piano": "Piano|||Пиано",
+        "music_guitar": "Guitar|||Гитар",
+        "music_singing": "Singing|||Дуулах",
+        "music_dj": "DJing|||ДЖ-ийн",
+        "music_production": "Music Production|||Загварын үйлдвэрлэл",
+        "photo_portrait": "Portrait Photography|||Портретын зураг",
+        "photo_landscape": "Landscape Photography|||Газарзүйн зураг",
+        "photo_street": "Street Photography|||Гудамжны зураг",
+        "photo_video": "Videography|||Видеографи",
+        "photo_editing": "Photo Editing|||Зургийн засвар",
+        "art_painting": "Painting|||Зураг",
+        "art_drawing": "Drawing|||Зурах",
+        "art_sculpture": "Sculpture|||Баримал",
+        "art_digital": "Digital Art|||Дижитал урлаг",
+        "art_crafts": "Crafts & DIY|||Гар урлал & DIY",
+        "art_pottery": "Pottery|||Гал тогооны шавар",
+        "reading_fiction": "Fiction|||Уран зохиол",
+        "reading_nonfiction": "Non-Fiction|||Уран зохиол бус",
+        "reading_poetry": "Poetry|||Шүлэг",
+        "reading_writing": "Creative Writing|||Бүтээлч бичих",
+        "reading_journals": "Journaling|||Өдрийн тэмдэглэл",
+        "travel_backpacking": "Backpacking|||Багажтай аялал",
+        "travel_luxury": "Luxury Travel|||Тансаг аялал",
+        "travel_cultural": "Cultural Tourism|||Соёлын аялал",
+        "travel_road_trips": "Road Trips|||Замын аялал",
+        "travel_solo": "Solo Travel|||Ганцаарчилсан аялал",
+        "cooking_home": "Home Cooking|||Гэрийн хоол",
+        "cooking_baking": "Baking|||Бялуу хийх",
+        "cooking_gourmet": "Gourmet Cuisine|||Гурван төрлийн хоол",
+        "cooking_international": "International Cuisine|||Олон улсын хоол",
+        "cooking_healthy": "Эрүүл хооллолт",
+        "wine_tasting": "Дарс амтлах",
+        "wine_cocktails": "Коктейль",
+        "wine_coffee": "Кофе үнэлэх",
+        "wine_tea": "Цайны соёл",
+        "wine_brewing": "Гэрийн пивоны үйлдвэрлэл",
+        "gaming_video": "Видео тоглоом",
+        "gaming_board": "Тавцангийн тоглоом",
+        "gaming_card": "Картын тоглоом",
+        "gaming_tabletop": "Тавцангийн RPG",
         "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
-        "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "outdoor_hiking": "Алхалт",
+        "outdoor_camping": "Кемпинг",
+        "outdoor_climbing": "Хаданд авиралт",
+        "outdoor_fishing": "Загас барих",
+        "outdoor_kayaking": "Каяк",
+        "outdoor_surfing": "Серфинг",
+        "snow_skiing": "Шуудуутай гулгах",
+        "snow_snowboard": "Цасны гулгах",
+        "snow_crosscountry": "Хөнгөн гулгах",
+        "snow_ice_skating": "Мөс дээр гулгах",
+        "snow_sledding": "Тэрэгтэй гулгах",
+        "snow_snowshoeing": "Цасны гутал өмсөх",
+        "cycling_road": "Замын дугуй",
+        "cycling_mountain": "Уулын дугуй",
+        "cycling_urban": "Хотын дугуй",
+        "cycling_touring": "Дугуйгаар аялал",
+        "water_swimming": "Усанд сэлэх",
+        "water_scuba": "Скуба шумбах",
+        "water_snorkel": "Шумбагч маск зүүх",
+        "water_sailing": "Sailing|||Салхинд завиар явах",
+        "water_paddleboard": "Paddleboarding|||Салхины завиар усан дээр явах",
+        "nature_gardening": "Gardening|||Гар урлал",
+        "nature_birdwatching": "Bird Watching|||Шувуу ажиглах",
+        "nature_botany": "Plant Collecting|||Ургамал цуглуулах",
+        "nature_wildlife": "Wildlife Photography|||Зэрлэг амьтдын зураг авах",
+        "movies_cinema": "Cinema|||Кино",
+        "movies_tv": "TV Series|||ТВ цуврал",
+        "movies_documentary": "Documentaries|||Баримтат кино",
+        "movies_theater": "Theater|||Театр",
+        "movies_standup": "Stand-up Comedy|||Зогсоолын инээд",
+        "pets_dogs": "Dogs|||Нохой",
+        "pets_cats": "Cats|||Муур",
+        "pets_exotic": "Exotic Pets|||Гадны амьтдын тэжээвэр",
+        "pets_horses": "Horse Riding|||Морь унах",
+        "pets_rescue": "Animal Rescue|||Амьтдыг аврах",
+        "social_volunteering": "Volunteering|||Сайн дурын ажил",
+        "social_meetups": "Meetups|||Уулзалт",
+        "social_networking": "Networking|||Сүлжээ байгуулах",
+        "social_languages": "Language Exchange|||Хэл солилцоо"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "Welcome to Mundo Tango!|||Mundo Tango-д тавтай морил!",
+        "completeDesc": "Your profile is ready. Start exploring!|||Таны профайл бэлэн боллоо. Судлахыг эхлээрэй!",
+        "waitlistTitle": "Profile Complete!|||Профайл бүрэн боллоо!",
+        "waitlistDesc": "We'll notify you when your account is activated|||Таны данс идэвхжихэд бид танд мэдэгдэх болно"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "Failed to save. Please try again.|||Хадгалахдаа алдаа гарлаа. Дахин оролдоно уу."
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "Community Guidelines|||Нийгмийн дүрэм",
+      "subtitle": "Please review and accept our terms|||Манай нөхцлийг шалгаж, хүлээн авна уу",
+      "legalDocsTitle": "Legal Documents|||Хууль эрх зүйн баримт бичиг",
+      "legalDocsDescription": "Review our terms of service and privacy policy|||Манай үйлчилгээний нөхцөл болон нууцлалын бодлогыг шалгана уу",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "I accept the Terms of Service|||Би Үйлчилгээний нөхцлийг хүлээн зөвшөөрч байна",
+        "description": "Манай нөхцлүүд таны Mundo Tango-г ашиглахад хамааралтай",
+        "link": "Үйлчилгээний нөхцлийг уншина уу"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "Би Нууцлалын бодлогыг хүлээн зөвшөөрч байна",
+        "description": "Бид таны өгөгдлийг хэрхэн удирддаг",
+        "link": "Нууцлалын бодлогыг уншина уу"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "Нийгмийн Кодекс",
+      "cocDescription": "Бидэнд хүндэтгэлтэй нийгмийг хадгалахад тусална уу",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "Хүндэтгэлтэй бай",
+          "description": "Бүх хүнтэй хүндэтгэлтэй, сайхан харьцаарай"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "Бүхнийг хамарсан бай",
+          "description": "Бүх түвшний болон арьс өнгөөрөө бүжигчдийг угтан авна"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "Жинхэнэ бай",
+          "description": "Өөрийн жинхэнэ танилт болон үнэн мэдээллийг ашигла"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "Зөвшөөрлийг хүндэтгэ",
+          "description": "Бүжиглэхээс өмнө үргэлж асуугаарай, хязгаарлалтыг хүндэтгэ"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "Зодоглохгүй",
+          "description": "Зодоглох, дарамтлахад тэсвэргүй"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "Спам байхгүй",
+          "description": "Санал болгосон сурталчилгааг бүү илгээгээрэй"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "Ялгаварлан гадуурхахгүй",
+          "description": "Бид ямар ч төрлийн ялгаварлан гадуурхалтыг тэсвэрлэхгүй"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "Нууцыг хамгаалах",
+          "description": "Бусдын мэдээллийг зөвшөөрөлгүйгээр бүү хуваалцаарай"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "Аюулгүй байдлыг тэргүүлэх",
+          "description": "Аюултай зан авирыг даруй мэдээлээрэй"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "Хуулийг дагах",
+          "description": "Бүх холбогдох хуульд нийцэж ажиллах"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "Асуудлуудыг мэдээлэх",
+          "description": "Зөрчлийг мэдээлснээр бидэнд тусална уу"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "Бид бие биеэ дэмжих",
+          "description": "Танцлагчидтай хамт өсөхөд туслаарай"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "Бүх зүйлийг хүлээн зөвшөөрч, үргэлжлүүлэх",
+      "accepting": "Хүлээн авч байна...",
+      "incompleteAlert": "Бүх шаардлагатай нөхцлийг хүлээн зөвшөөрнө үү",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "Тавтай морилно уу!",
+        "description": "Та манай хамтын ажиллагааны зааврыг хүлээн зөвшөөрсөн"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "Хадгалахдаа алдаа гарлаа. Дахин оролдоно уу."
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "Хүлээгдэж буй жагсаалт",
+      "seoTitle": "Та Хүлээгдэж буй жагсаалтад байна - Mundo Tango",
+      "seoDescription": "Таны данс идэвхжихийг хүлээж байна",
+      "title": "Та Хүлээгдэж буй жагсаалтад байна!",
+      "welcomeMessage": "Тавтай морилно уу, {{name}}!",
+      "defaultName": "Танцлагч",
+      "profileComplete": "Профайл бүрэн",
+      "profileCompleteDesc": "Таны профайл бэлэн бөгөөд хүлээж байна",
+      "emailNotice": "Таны данс бэлэн болох үед бид {{email}} хаягаар имэйл илгээнэ",
+      "whenReady": "танай данс бэлэн болох үед.",
+      "whileYouWait": "Та хүлээж байхдаа, бидэнд өсөхөд туслаарай:",
+      "volunteerButton": "Сайн дурын ажилтан болоорой",
+      "supportButton": "Mundo Tango-г дэмжээрэй"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "Чиглүүлэгч аялал",
+      "seoTitle": "Mundo Tango-г судлаарай",
+      "seoDescription": "Mundo Tango-г хэрхэн ашиглахыг сураарай",
+      "skipTour": "Аяллыг алгасах",
+      "finish": "Аялыг дуусгах",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "Танго хамт олон доторх бичлэгүүдийг олж мэдээрэй",
+        "events": "Милонгас, хичээл, баяр наадмуудыг олж мэдээрэй",
+        "groups": "Таны хот эсвэл сонирхолд зориулсан бүлгүүдэд нэгдээрэй",
+        "messages": "Бусад танцлагчидтай шууд холбогдоорой",
+        "profile": "Таны танго профайлыг өөрчлөх",
+        "createPost": "Танго мөчүүдээ хуваалцаарай"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "Таны туршлагыг сайжруул",
+        "subtitle": "Mundo Tango-оос хамгийн ихийг аваарай",
+        "limitedOffer": "Хязгаарлагдмал хугацааны санал",
+        "getStarted": "Эхлэх",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "Холбоо барих",
+            "description": "Ямар ч бүжигчнээр шууд мессеж илгээх"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "Ил тод байдал",
+            "description": "Хайлт хийх үр дүнгийн дунд онцгойлох"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "Үйл явдлууд",
+            "description": "Популяр үйл явдлуудад тэргүүн эрхтэй нэвтрэх"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "Өсөх",
+            "description": "Таны профайлд зориулсан дэвшилтэт аналитик"
           },
           "premium": {
-            "title": "Premium",
-            "description": "Exclusive premium features"
+            "title": "Тусгай",
+            "description": "Онцгой premium функцууд"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "Нэвтрэх",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Нэвтрэх - Mundo Tango",
+      "description": "Дэлхийн танго нийгэмлэгтэй холбогдох, үйл явдлуудыг олж мэдэх, Аргентин танго руух хүсэл тэмүүллээ хуваалцахын тулд таны Mundo Tango дансанд нэвтэрнэ үү."
     },
-    "badge": "Welcome Back",
+    "badge": "Буцаж ирсэнд тавтай морил",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Таны танго аялал үргэлжилсээр байна",
+      "paragraph": "Дэлхий даяар бүжигчидтэй холбогдох, үйл явдлуудыг олж мэдэх, хүсэл тэмүүллээ хуваалцахын тулд нэвтэрнэ үү"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "бүжигчид",
+      "events": "үйл явдлууд"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "И-мэйл",
+      "password": "Нууц үг",
+      "signIn": "Нэвтрэх",
+      "signingIn": "Нэвтэрч байна...",
+      "forgotPassword": "Нууц үгээ мартсан уу?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Дансгүй юу?",
+    "createAccount": "Одоо нэгийг үүсгээрэй",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Тавтай морилно уу!",
+      "successDescription": "Та амжилттай нэвтэрсэн.",
+      "errorTitle": "Нэвтрэлт амжилтгүй боллоо",
+      "errorDescription": "Хэрэглэгчийн нэр, нууц үг буруу байна"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Нүүр хуудас",
+    "pageLayoutTitle": "Tango хамт олонтой уулзах газар",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Дэлхийн Tango хамт олонтой холбогдох",
+      "description": "Дэлхий даяар мянга мянган танго бүжигчидтэй нэгдээрэй. Үйл явдлуудыг олж, багш нарыг хайж, бүжигчидтэй холбогдож, Аргентин тангоны халуун дулаан ертөнцөд орж үзээрэй."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Дэлхийн Tango хамт олонд тавтай морилно уу",
+      "heading": "Tango хамт олонтой уулзах газар",
+      "paragraph": "Санах ойгоо хуваалцаж, үйл явдлуудыг олж, танго технологийн ирээдүйг бүтэхэд туслаарай. Дэлхий даяар холбогдож буй мянган халуун сэтгэлтэй бүжигчидтэй нэгдээрэй.",
+      "getStarted": "Үнэгүй эхлэх",
+      "volunteer": "MT-г бүтэхэд туслах сайн дурын ажилтан бол"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Энэ нь хэрхэн ажилладаг",
+      "description": "Танго аялалаа гурван энгийн алхмаар эхлүүл",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Таны профайлыг үүсгээрэй",
+        "description": "Үнэгүй нэгдэж, танго аялал, туршлага, бүжгийн сонирхлоо бидэнд хэлээрэй"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Олж, холбогд",
+        "description": "Таны ойрхон үйл явдлууд, багш нар, газруудыг олж мэдээрэй. Таны сонирхлыг хуваалцдаг бүжигчидтэй холбогд"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Бүжиглэж, өс",
+        "description": "Үйл явдлуудад оролцож, хичээл ав, найз нөхөдтэй болж, дэлхийн танго хамт олны нэг хэсэг бол"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Танд хэрэгтэй бүх зүйл",
+      "description": "Холбогдож, олж мэдэж, танго аялалаа хүчирхэг функцүүдээр өсгөөрэй",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Хамт олон",
+        "heading": "Дэлхий даяар бүжигчидтэй холбогд",
+        "description": "Танго сонирхогчдын амьдралтай, идэвхтэй дэлхийн хамт олонд нэгдээрэй. Буэнос-Айресаас Токио хүртэл бүжигчид, багш нар, зохион байгуулагчидтай холбогд.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Бүжигчдийг дагаж, сүлжээ байгуул",
+          "groups": "Сонирхол, байршлаар үндэслэн бүлгүүдэд нэгд",
+          "messaging": "Бодит цагийн мессеж болон чат функцүүд",
+          "discover": "Таны хотод зочилж буй бүжигчдийг олж мэдээрэй"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Үйл явдлууд",
+        "heading": "Бүх газар үйл явдлуудыг олж мэдээрэй",
+        "description": "Милонга, фестиваль, эсвэл семинар алдахгүй. Манай платформ нь танд дэлхий даяар болж буй мянга мянган танго үйл явдлуудтай холбож өгдөг.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Түгээмэл үйл явдлын календарь",
+          "rsvp": "RSVP болон тасалбар захиалга",
+          "notifications": "Үйл явдлын мэдэгдэл болон сануулга",
+          "map": "Газруудын интерактив газрын зураг"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Амьд дамжуулалт",
+          "description": "Дэлхий даяар милонгуудыг бодит цаг хугацаанд үзээрэй"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Дууны сан",
+          "description": "Сонгосон танго плейлистууд болон гарын авлага"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Баталгаажсан багш нар",
+          "description": "Баталгаажсан багш нараас суралц"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Аяллын төлөвлөгч",
+          "description": "Аялал төлөвлөж, дэлхий даяар хүлээн авагчдыг олоорой"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Бүжигчид юу хэлдэг вэ",
+      "description": "Дэлхий даяар мянга мянган сэтгэл хангалуун бүжигчидтэй нэгдээрэй",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "Мария Родригес",
+          "location": "Буэнос Айрес, Аргентин",
+          "text": "Мундо Танго надад шинэ хотод бүжгийн гэр бүлээ олоход тусалсан. Нийгэмлэг нь дулаан, угтан авах, танго дээр үнэхээр дуртай."
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "Жеймс Чен",
+          "location": "Сан Франциско, АНУ",
+          "text": "Энэ платформын тусламжтайгаар би гайхалтай милонгууд болон семинаруудыг олж мэдсэн. Энэ нь миний танго аялалд зайлшгүй шаардлагатай болсон."
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "Элена Волков",
+          "location": "Москва, Орос",
+          "text": "Багш нарын лавлах надад гайхалтай багш нарыг олоход тусалсан. Миний бүжиг маш их сайжирсан!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Түгээмэл асуултууд",
+      "description": "Мундо Танго-гийн талаар мэдэх шаардлагатай бүх зүйл",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Мундо Танго гэж юу вэ?",
+          "answer": "Мундо Танго нь танго бүжигчид, багш нар, зохион байгуулагчдыг холбодог дэлхийн платформ юм. Бид танд үйл явдлуудыг олж мэдэх, бүжгийн түншүүдийг олох, шилдэг багш нараас суралцах, дэлхий даяар амьдралтай танго нийгэмлэгт оролцоход тусалдаг."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Mundo Tango үнэгүй ашиглах уу?",
+          "answer": "Танд Mundo Tango-ийг ашиглахад үнэгүй юу?"
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription.",
+          "answer": "Тийм ээ! Бид үндсэн профайл үүсгэх, үйл явдлыг хайх, мессеж илгээх зэрэг багцтай үнэгүй түвшинг санал болгож байна. Хязгааргүй мессеж, AI бүжгийн хамтрагчийн тохиргоо, болон тэргүүн ээлжийн үйл явдлын мэдэгдлүүд зэрэг дээд зэргийн онцлогууд манай Pro захиалгаар авах боломжтой."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "How do I find tango events near me?",
+          "answer": "Би хэрхэн надад ойрхон танго үйл явдлуудыг олох вэ?"
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world.",
+          "answer": "Зүгээр л манай Үйл явдлын Календарь эсвэл Хайлт функцийг ашиглан хот, огноо, үйл явдлын төрлөөр шүүж болно. Та өөрийн бүс нутагт эсвэл дэлхийн хаана ч болж буй милонгас, наадам, семинар, болон дадлага хичээлүүдийг олж мэдэх боломжтой."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Can I connect with other dancers?",
+          "answer": "Би бусад бүжигчидтэй холбогдож болох уу?"
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world.",
+      "description": "Мэдээж! Бүжигчдийг дагаж, бүлгүүдэд нэгдэж, найзын хүсэлт илгээж, хамт олонтойгоо ярилцаж болно. Манай платформ нь танго ертөнцөд жинхэнэ холбоосуудыг бий болгоход зориулагдсан.",
+      "button": "How do I find tango teachers?",
+      "freeForever": "Би хэрхэн танго багш нарыг олох вэ?",
+      "noCreditCard": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform.",
+      "cancelAnytime": "Манай Багш нарын Директорыг зочилж, дэлхий даяар баталгаажсан багш нарыг судлаарай. Байршил, мэргэжил, туршлагын түвшнээр шүүж болно. Бусад оюутнуудаас сэтгэгдэл уншиж, платформоор дамжуулан хувийн хичээл захиалаарай."
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "What makes Mundo Tango different?",
+    "description": "Mundo Tango-ийг юун дээр ялгаатай болгодог вэ?",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network.",
+      "following": "Бид танго бүжигчидтэй хамтран, танго бүжигчидийн төлөө бүтээсэн. Бидний анхаарал жинхэнэ хамт олон байгуулах, чанартай үйл явдлуудыг зохион байгуулах, мөн таныг дэлхийн танго гэр бүлтэй холбох дээр төвлөрч байна - зөвхөн өөр нэг нийгмийн сүлжээ биш.",
+      "popular": "Ready to Join the Community?",
+      "recent": "Хамт олонд нэгдэхэд бэлэн үү?"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
+    "noPost": "Өнөөдөр үнэгүй данс үүсгээд дэлхий даяар хүсэл эрмэлзэлтэй танго бүжигчидтэй холбогдож эхлээрэй. Кредит карт шаардлагагүй."
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Join Mundo Tango Free",
+    "description": "Mundo Tango-д үнэгүй нэгдээрэй",
+    "upcoming": "Free forever",
+    "past": "Үнэгүй, мөнхийн",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "No credit card",
+      "milongas": "Кредит карт шаардлагагүй",
+      "workshops": "Семинарууд",
+      "festivals": "Наадмууд",
+      "classes": "Ангиуд"
     },
-    "noEvents": "No events found"
+    "noEvents": "Үйл явдлууд олдсонгүй"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Профайл",
+    "description": "Таны профайлыг харах болон засах",
+    "editProfile": "Профайлыг засах",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Постууд",
+      "photos": "Зурагнууд",
+      "videos": "Видео",
+      "events": "Үйл явдлууд",
+      "friends": "Найзууд"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Постууд",
+      "followers": "Дагагчид",
+      "following": "Дагаж буй",
+      "events": "Оролцсон үйл явдлууд"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Мэссежүүд",
+    "description": "Таны танго холболтуудтай чатлах",
+    "newMessage": "Шинэ мэссеж",
+    "searchConversations": "Яриа хайх",
+    "noMessages": "Одоогоор мэссеж байхгүй",
+    "startConversation": "Яриа эхлүүлэх"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Танго багшид",
+    "description": "Танго багшид олох болон холбогдох",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Бүх багшид",
+      "featured": "Онцлох",
+      "nearby": "Ойр"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Профайлыг харах",
+    "bookLesson": "Хичээл захиалах"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Танго газарнууд",
+    "description": "Дэлхий даяар танго бүжгийн газруудыг нээнэ",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Бүжгийн газрууд",
+      "milongas": "Милонгас",
+      "schools": "Бүжгийн сургуулиуд",
+      "theaters": "Театр"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Чиглэл авах"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Тохиргоо",
+    "description": "Таны дансны тохиргоог удирдах",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Дансны тохиргоо",
+      "profile": "Профайл",
+      "privacy": "Нууцлал",
+      "notifications": "Мэдэгдлүүд",
+      "security": "Аюулгүй байдал",
+      "billing": "Төлбөр",
+      "preferences": "Тавилгууд"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Амьдралын CEO самбар",
+    "description": "Амьдралын менежментийн хувийн AI туслах",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Эрүүл мэндийн агент",
+      "fitness": "Биеийн тамирын агент",
+      "nutrition": "Хоолны агент",
+      "finance": "Санхүүгийн агент",
+      "career": "Ажлын агент",
+      "productivity": "Үр productivity агент",
+      "relationships": "Харилцааны агент",
+      "learning": "Сургалтын агент"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Зах зээл",
+    "description": "Танготой холбоотой зүйлсийг худалдаж авах болон зарах",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Бүжгийн гутал",
+      "clothing": "Хувцас",
+      "music": "Хөгжим",
+      "accessories": "Гар урлал",
+      "other": "Бусад"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Админ самбар",
+    "description": "Платформын удирдлага ба менежмент",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Тойм",
+      "users": "Хэрэглэгчид",
+      "content": "Контент",
+      "reports": "Тайлангууд",
+      "analytics": "Шинжилгээ",
+      "settings": "Тохиргоо"
     }
   }
 }

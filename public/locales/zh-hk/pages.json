@@ -1,896 +1,896 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "註冊",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "加入 Mundo Tango - 創建您的帳戶",
+      "description": "創建您的 Mundo Tango 帳戶並加入全球阿根廷探戈社區。與舞者聯繫，發現活動，並分享您對探戈的熱情。"
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "歡迎來到家庭",
+      "beginJourney": "開始您的旅程",
+      "joinCommunity": "加入社區"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "您已經加入了！",
+      "joinMundoTango": "加入 Mundo Tango",
+      "description": "與全球舞者聯繫，發現 milongas，並沉浸在充滿熱情的阿根廷探戈世界中",
+      "waitlistDescription": "歡迎來到 Mundo Tango 社區。我們正在準備您的帳戶，並會盡快通知您！"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ 舞者",
+      "events": "{{count}}+ 活動",
+      "cities": "{{count}} 城市"
     },
     "form": {
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "fullName": "全名",
+      "fullNamePlaceholder": "瑪麗亞·羅德里格斯",
+      "email": "電子郵件",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "用戶名",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "密碼",
+      "confirmPassword": "確認密碼",
+      "inviteOnlyNotice": "目前註冊僅限邀請。請填寫此表格以加入我們的候補名單，當您的帳戶準備好時我們會通知您。",
+      "acceptTermsPrefix": "我接受",
+      "termsAndConditions": "條款和條件"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "此電子郵件已被註冊",
+      "emailAvailable": "電子郵件可用！",
+      "usernameTaken": "用戶名已被佔用。嘗試 {{suggestion}}",
+      "usernameAvailable": "用戶名可用！",
+      "passwordsMatch": "密碼匹配",
+      "passwordsDontMatch": "密碼不匹配"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "弱",
+      "medium": "中",
+      "strong": "強",
+      "veryStrong": "非常強"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "有邀請碼嗎？（可選）",
+      "placeholder": "輸入您的邀請碼以立即訪問",
+      "accepted": "代碼已接受！您的帳戶將立即激活。",
+      "noWorries": "不用擔心！填寫下面的表格以加入我們的候補名單。"
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "歡迎，{{name}}！",
+      "defaultName": "舞者",
+      "onTheList": "您在名單上。我們會在",
+      "whenReady": "您的帳戶準備好時發送電子郵件給您。",
+      "helpUsGrow": "在您等待的同時，幫助我們成長",
+      "volunteerWithUs": "與我們志願服務",
+      "supportMundoTango": "支持Mundo Tango"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "正在創建您的帳戶...",
+      "joining": "正在加入...",
+      "createAccount": "創建帳戶",
+      "joinMundoTango": "加入Mundo Tango"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "已經有帳戶了嗎？",
+    "signIn": "登錄",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "無效的代碼",
+        "description": "請輸入有效的6位數驗證碼。"
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "電子郵件已驗證！",
+        "description": "歡迎來到Mundo Tango！正在開始您的入職流程..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "驗證失敗",
+        "description": "無效或過期的代碼。請再試一次。"
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "錯誤",
+        "description": "驗證電子郵件失敗。請再試一次。"
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "請求過多",
+        "description": "請稍候幾分鐘再試一次。"
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "代碼已發送！",
+        "description": "請檢查您的收件箱以獲取新代碼。"
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "重新發送代碼失敗。請再試一次。"
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "需要接受條款",
+        "description": "請接受條款和條件"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "密碼不匹配",
+        "description": "請確保兩個密碼完全相同"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "密碼太弱",
+        "description": "請選擇一個更強的密碼"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "檢查您的電子郵件",
+        "description": "我們已向您發送了一個6位數的驗證代碼。請檢查您的收件箱。"
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "註冊失敗"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "無法完成註冊"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "請再試一次"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "歡迎",
+      "seoTitle": "歡迎來到Mundo Tango",
+      "seoDescription": "開始您的Mundo Tango探戈之旅",
+      "badge": "快速設置",
+      "title": "歡迎來到Mundo Tango",
+      "subtitle": "讓我們設置您的個人資料，以便您可以與全球探戈社區聯繫",
+      "duration": "大約需要2分鐘",
+      "stepIndicator": "第{{current}}步，共{{total}}步",
+      "getStarted": "開始",
+      "profileTitle": "您的探戈之旅開始了",
+      "profileSubtitle": "告訴我們一些關於您的事情",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "選擇您的城市",
+          "description": "與您當地的探戈社區聯繫"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "告訴我們您的角色",
+          "description": "舞者、教師、DJ、組織者，還是以上所有？"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "發現活動",
+          "description": "尋找您附近的米隆加、課程和節日"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "分享您的旅程",
+          "description": "與您水平的舞者聯繫"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "連接 Facebook",
+          "description": "將您的 Facebook 個人資料鏈接以尋找社區中的朋友"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "社交連接",
+      "seoTitle": "連接您的社交世界 - Mundo Tango",
+      "seoDescription": "鏈接您的社交資料以尋找探戈社區中的朋友。",
+      "step": "第 2 步，共 6 步",
+      "title": "連接您的社交世界",
+      "quote": "\"許多探戈舞者已經通過 Facebook 互相認識。通過鏈接您的個人資料，我們可以告訴您在您的網絡中哪些舞者已經在這裡 - 使您更容易在米隆加中找到熟悉的面孔並建立更深的聯繫。\"",
+      "cardTitle": "尋找您的朋友",
+      "cardDescription": "您的 Facebook 幫助我們將您與您可能已經認識的舞者匹配，因此您不必從頭開始。",
+      "facebookLabel": "Facebook 個人資料 URL（可選）",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "我們將此用作與其他社區的橋樑，並將您與您可能認識的舞者匹配。",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "錯誤",
+        "errorDescription": "無法保存個人資料信息"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "返回",
+      "next": "下一步",
+      "skip": "跳過",
+      "finish": "完成",
+      "saving": "保存中..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "城市選擇",
+      "seoTitle": "選擇您的城市 - Mundo Tango",
+      "seoDescription": "選擇您的家鄉城市以與當地的探戈舞者聯繫",
+      "step": "第 1 步，共 6 步",
+      "title": "您在哪裡跳舞？",
+      "subtitle": "與您所在區域的舞者聯繫",
+      "cardTitle": "你的家鄉城市",
+      "cardDescription": "這幫助我們向你展示當地的活動和舞者",
+      "searchLabel": "搜索你的城市",
+      "searchPlaceholder": "輸入你的城市名稱...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "從熱門探戈目的地中選擇"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "城市是必需的",
+        "selectCity": "請選擇你的家鄉城市"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "來源已添加！",
+        "submittedForReview": "已提交審核",
+        "trackingEvents": "我們將開始跟踪網站上的活動",
+        "thankYou": "謝謝！你的建議已提交審核。",
+        "errorTitle": "錯誤",
+        "suggestionFailed": "提交建議失敗",
+        "saveFailed": "保存城市失敗"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "照片上傳",
+      "seoTitle": "添加個人資料照片 - Mundo Tango",
+      "seoDescription": "上傳你的個人資料照片",
+      "step": "第 3 步，共 6 步",
+      "title": "添加你的個人資料照片",
+      "subtitle": "幫助其他人認出你在社區中的身份",
+      "cardTitle": "你的個人資料照片",
+      "cardDescription": "幫助其他人認出你（你可以跳過這一步）",
+      "previewAlt": "個人資料預覽",
+      "dropHere": "將你的照片拖到這裡",
+      "or": "或者",
+      "browseFiles": "瀏覽文件",
+      "fileTypes": "PNG、JPG 最多 5MB",
+      "photoSelected": "照片已選擇！",
+      "uploading": "上傳中...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "無效的文件",
+        "selectImage": "請選擇一個圖像文件",
+        "fileTooLarge": "文件太大",
+        "sizeLimit": "請選擇一個小於 5MB 的圖像",
+        "uploadFailed": "上傳失敗",
+        "tryAgain": "上傳照片失敗。請再試一次。",
+        "skipFailed": "跳過失敗。請再試一次。"
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "語言",
+      "seoTitle": "你的語言 - Mundo Tango",
+      "seoDescription": "告訴我們你會說哪些語言",
+      "step": "第 5 步，共 6 步",
+      "title": "你會說哪些語言？",
+      "subtitle": "與你所用語言的舞者聯繫",
+      "cardTitle": "你的語言",
+      "cardDescription": "選擇你的主要語言和你會說的任何其他語言",
+      "primaryLabel": "主要語言",
+      "primaryHint": "這也將設置你的網站顯示語言",
+      "primaryPlaceholder": "選擇你的主要語言",
+      "additionalLabel": "附加語言（可選）",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "必須提供主要語言",
+        "selectPrimary": "請選擇你的主要語言",
+        "saveFailed": "保存語言失敗",
+        "saveFailedTitle": "語言保存失敗"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "探戈角色",
+      "seoTitle": "你的探戈角色 - Mundo Tango",
+      "seoDescription": "告訴我們你的探戈旅程",
+      "step": "第 2 步，共 6 步",
+      "title": "你扮演什麼角色？",
+      "subtitle": "選擇所有適用於你的選項",
+      "cardTitle": "你的探戈身份",
+      "cardDescription": "幫助其他人了解你在探戈世界中的參與方式"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "舞蹈經驗",
+      "seoTitle": "你的舞蹈經驗 - Mundo Tango",
+      "seoDescription": "分享你的舞蹈經驗水平",
+      "step": "第 4 步，共 6 步",
+      "title": "你的舞蹈經驗",
+      "subtitle": "幫助我們將你與合適的舞者聯繫起來"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "興趣",
+      "seoTitle": "你的興趣 - Mundo Tango",
+      "seoDescription": "告訴我們你的興趣",
+      "step": "第 6 步，共 6 步",
+      "title": "你的興趣是什麼？",
+      "subtitle": "選擇你感興趣的主題",
+      "helpText": "選擇至少 3 個興趣以個性化你的動態",
+      "selectedCount": "{{count}} 已選擇",
+      "finishing": "正在完成...",
+      "completeSetup": "完成設置",
+      "searchPlaceholder": "搜索社區或添加新社區...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "健身與運動"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "科技與創新"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "靈性與成長"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "瑜伽與健康"
         },
         "music": {
-          "label": "Music"
+          "label": "音樂"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "攝影與視頻"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "藝術與創意"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "閱讀與寫作"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "旅行與冒險"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "烹飪與食物"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "葡萄酒與飲品"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "遊戲"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "戶外活動"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "雪地運動"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "單車"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "水上運動"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "自然與園藝"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "電影與娛樂"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "寵物與動物"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "社交與社區"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
-        "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
-        "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
-        "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
-        "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
-        "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "fitness_gym": "健身與舉重",
+        "fitness_running": "跑步",
+        "fitness_crossfit": "交叉健身",
+        "fitness_martial_arts": "武術",
+        "fitness_tennis": "網球",
+        "fitness_soccer": "足球",
+        "fitness_basketball": "籃球",
+        "fitness_fencing": "擊劍",
+        "tech_coding": "編程與開發",
+        "tech_ai": "人工智能與未來科技",
+        "tech_crypto": "Web3與加密貨幣",
+        "tech_gaming": "遊戲文化",
+        "spirit_meditation": "冥想",
+        "spirit_astrology": "占星術",
+        "spirit_philosophy": "哲學",
+        "spirit_community": "社區建設",
+        "yoga_hatha": "哈他瑜伽",
+        "yoga_vinyasa": "流瑜伽",
+        "yoga_meditation": "冥想",
+        "yoga_pilates": "普拉提",
+        "yoga_breathwork": "呼吸練習",
+        "music_listening": "音樂欣賞",
+        "music_concerts": "現場音樂會",
+        "music_piano": "鋼琴",
+        "music_guitar": "吉他",
+        "music_singing": "唱歌",
+        "music_dj": "DJ",
+        "music_production": "音樂製作",
+        "photo_portrait": "人像攝影",
+        "photo_landscape": "風景攝影",
+        "photo_street": "街頭攝影",
+        "photo_video": "攝影錄影",
+        "photo_editing": "照片編輯",
+        "art_painting": "繪畫",
+        "art_drawing": "素描",
+        "art_sculpture": "雕塑",
+        "art_digital": "數位藝術",
+        "art_crafts": "手工藝及DIY",
+        "art_pottery": "陶藝",
+        "reading_fiction": "小說",
+        "reading_nonfiction": "非小說",
+        "reading_poetry": "詩歌",
+        "reading_writing": "創意寫作",
+        "reading_journals": "寫日記",
+        "travel_backpacking": "背包旅行",
+        "travel_luxury": "奢華旅行",
+        "travel_cultural": "文化旅遊",
+        "travel_road_trips": "公路旅行",
+        "travel_solo": "獨自旅行",
+        "cooking_home": "家庭烹飪",
+        "cooking_baking": "烘焙",
+        "cooking_gourmet": "美食",
+        "cooking_international": "國際美食",
+        "cooking_healthy": "健康飲食",
+        "wine_tasting": "品酒",
+        "wine_cocktails": "雞尾酒",
+        "wine_coffee": "咖啡品鑑",
+        "wine_tea": "茶文化",
+        "wine_brewing": "自家釀造",
+        "gaming_video": "電子遊戲",
+        "gaming_board": "桌上遊戲",
+        "gaming_card": "紙牌遊戲",
+        "gaming_tabletop": "桌上角色扮演遊戲",
+        "gaming_esports": "電子競技",
+        "outdoor_hiking": "健行",
+        "outdoor_camping": "露營",
+        "outdoor_climbing": "攀岩",
+        "outdoor_fishing": "釣魚",
+        "outdoor_kayaking": "皮划艇",
+        "outdoor_surfing": "衝浪",
+        "snow_skiing": "滑雪",
+        "snow_snowboard": "單板滑雪",
+        "snow_crosscountry": "越野滑雪",
+        "snow_ice_skating": "滑冰",
+        "snow_sledding": "雪橇",
+        "snow_snowshoeing": "雪鞋行走",
+        "cycling_road": "公路單車",
+        "cycling_mountain": "山地單車",
+        "cycling_urban": "城市單車",
+        "cycling_touring": "單車旅行",
+        "water_swimming": "游泳",
+        "water_scuba": "水肺潛水",
+        "water_snorkel": "浮潛",
+        "water_sailing": "航海",
+        "water_paddleboard": "划水板",
+        "nature_gardening": "園藝",
+        "nature_birdwatching": "觀鳥",
+        "nature_botany": "植物收集",
+        "nature_wildlife": "野生動物攝影",
+        "movies_cinema": "電影",
+        "movies_tv": "電視劇",
+        "movies_documentary": "紀錄片",
+        "movies_theater": "劇院",
+        "movies_standup": "單口喜劇",
+        "pets_dogs": "狗",
+        "pets_cats": "貓",
+        "pets_exotic": "異國寵物",
+        "pets_horses": "騎馬",
+        "pets_rescue": "動物救援",
+        "social_volunteering": "志願服務",
+        "social_meetups": "聚會",
+        "social_networking": "網絡交流",
+        "social_languages": "語言交換"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "歡迎來到Mundo Tango！",
+        "completeDesc": "您的個人資料已準備好。開始探索吧！",
+        "waitlistTitle": "個人資料已完成！",
+        "waitlistDesc": "我們會在您的帳戶啟用時通知您"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "保存失敗。請再試一次。"
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "社區指導方針",
+      "subtitle": "請查看並接受我們的條款",
+      "legalDocsTitle": "法律文件",
+      "legalDocsDescription": "查看我們的服務條款和隱私政策",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "我接受服務條款",
+        "description": "我們的條款規範您對 Mundo Tango 的使用",
+        "link": "閱讀服務條款"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "我接受隱私政策",
+        "description": "我們如何處理您的數據",
+        "link": "閱讀隱私政策"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "社區行為準則",
+      "cocDescription": "幫助我們維護一個尊重的社區",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "要尊重",
+          "description": "以尊嚴和禮貌對待每個人"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "要包容",
+          "description": "歡迎所有水平和背景的舞者"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "要真實",
+          "description": "使用您的真實身份和誠實的信息"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "尊重同意",
+          "description": "在跳舞之前始終詢問並尊重界限"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "禁止騷擾",
+          "description": "對騷擾或欺凌零容忍"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "禁止垃圾郵件",
+          "description": "不要發送未經請求的促銷信息"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "禁止歧視",
+          "description": "我們不容忍任何形式的歧視"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "保護隱私",
+          "description": "在未經同意的情況下不要分享他人的信息"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "優先考慮安全",
+          "description": "立即報告任何不安全的行為"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "遵守法律",
+          "description": "遵守所有適用的法律"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "報告問題",
+          "description": "通過報告違規行為來幫助我們"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "互相支持",
+          "description": "幫助其他舞者成長"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "接受所有條款並繼續",
+      "accepting": "正在接受...",
+      "incompleteAlert": "請接受所有必需的條款",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "歡迎！",
+        "description": "您已接受我們的社區指導方針"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "保存失敗。請再試一次。"
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "候補名單",
+      "seoTitle": "您在候補名單上 - Mundo Tango",
+      "seoDescription": "您的帳戶正在等待激活",
+      "title": "您在候補名單上！",
+      "welcomeMessage": "歡迎，{{name}}！",
+      "defaultName": "舞者",
+      "profileComplete": "個人資料已完成",
+      "profileCompleteDesc": "您的個人資料已準備好並在等待中",
+      "emailNotice": "當您的帳戶準備好時，我們將通過{{email}}發送電子郵件給您",
+      "whenReady": "當您的帳戶準備好時。",
+      "whileYouWait": "在您等待的同時，幫助我們成長：",
+      "volunteerButton": "成為志願者",
+      "supportButton": "支持Mundo Tango"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "導覽",
+      "seoTitle": "探索Mundo Tango",
+      "seoDescription": "學習如何使用Mundo Tango",
+      "skipTour": "跳過導覽",
+      "finish": "完成導覽",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "發現來自探戈社區的帖子",
+        "events": "查找milongas、課程和節日",
+        "groups": "加入您所在城市或興趣的群組",
+        "messages": "直接與其他舞者聯繫",
+        "profile": "自定義您的探戈個人資料",
+        "createPost": "分享你的探戈時刻"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "升級你的體驗",
+        "subtitle": "充分利用Mundo Tango",
+        "limitedOffer": "限時優惠",
+        "getStarted": "開始使用",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "連接",
+            "description": "直接消息任何舞者"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "可見性",
+            "description": "在搜索結果中被推薦"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "活動",
+            "description": "優先參加熱門活動"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "成長",
+            "description": "為你的個人資料提供高級分析"
           },
           "premium": {
-            "title": "Premium",
-            "description": "Exclusive premium features"
+            "title": "高級版",
+            "description": "獨家高級功能"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "登錄",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "登錄 - Mundo Tango",
+      "description": "登錄你的Mundo Tango帳戶以連接全球探戈社區，發現活動，並分享你對阿根廷探戈的熱情。"
     },
-    "badge": "Welcome Back",
+    "badge": "歡迎回來",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "你的探戈旅程繼續",
+      "paragraph": "登錄以連接全球舞者，發現活動，並分享你的熱情"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "舞者",
+      "events": "活動"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "電子郵件",
+      "password": "密碼",
+      "signIn": "登錄",
+      "signingIn": "登錄中...",
+      "forgotPassword": "忘記密碼？"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "還沒有帳戶？",
+    "createAccount": "現在創建一個",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "歡迎回來！",
+      "successDescription": "您已成功登錄。",
+      "errorTitle": "登錄失敗",
+      "errorDescription": "無效的憑證"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "首頁",
+    "pageLayoutTitle": "探討探戈與社區的交匯",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - 與全球探戈社區聯繫",
+      "description": "加入全球數以千計的探戈舞者。發現活動，尋找老師，與舞者聯繫，沉浸在阿根廷探戈的熱情世界中。"
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "歡迎來到全球探戈社區",
+      "heading": "探討探戈與社區的交匯",
+      "paragraph": "分享回憶，尋找活動，幫助我們建立探戈科技的未來。加入數以千計的熱情舞者，與全球連接。",
+      "getStarted": "免費開始",
+      "volunteer": "志願幫助建立MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "如何運作",
+      "description": "在三個簡單步驟中開始您的探戈之旅",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "創建您的個人資料",
+        "description": "免費加入並告訴我們您的探戈之旅、經驗水平和舞蹈偏好"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "發現與聯繫",
+        "description": "尋找您附近的活動、老師和場地。與分享您熱情的舞者聯繫"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "舞蹈與成長",
+        "description": "參加活動，上課，交朋友，成為全球探戈社區的一部分"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "您所需的一切",
+      "description": "通過強大的功能連接、發現和成長您的探戈之旅",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "社區",
+        "heading": "與全球舞者聯繫",
+        "description": "加入一個充滿活力的全球探戈愛好者社區。與從布宜諾斯艾利斯到東京的舞者、老師和組織者聯繫。",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "關注舞者並建立您的網絡",
+          "groups": "根據興趣和地點加入小組",
+          "messaging": "實時消息和聊天功能",
+          "discover": "發現訪問您城市的舞者"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "活動",
+        "heading": "隨時隨地發現活動",
+        "description": "永遠不會錯過任何舞會、節日或工作坊。我們的平台將你與全球數以千計的探戈活動連接起來。",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "全面的活動日曆",
+          "rsvp": "RSVP 和票務預訂",
+          "notifications": "活動通知和提醒",
+          "map": "場地互動地圖"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "直播",
+          "description": "實時觀看全球的舞會"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "音樂庫",
+          "description": "精選的探戈播放列表和指南"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "認證教師",
+          "description": "向認證的教練學習"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "旅行計劃",
+          "description": "計劃旅行並在全球尋找寄宿"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "舞者的心聲",
+      "description": "加入全球數以千計的滿意舞者",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "瑪利亞·羅德里格斯",
+          "location": "阿根廷布宜諾斯艾利斯",
+          "text": "Mundo Tango 幫助我在新城市找到我的舞蹈家庭。社區熱情友好，對探戈充滿熱情。"
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "詹姆斯·陳",
+          "location": "美國舊金山",
+          "text": "我通過這個平台發現了驚人的舞會和工作坊。它已成為我探戈旅程中不可或缺的一部分。"
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "艾琳娜·沃爾科夫",
+          "location": "俄羅斯莫斯科",
+          "text": "教師名錄幫助我找到令人難以置信的教練。我的舞技有了巨大的進步！"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "常見問題",
+      "description": "關於 Mundo Tango 的一切你需要知道的",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "什麼是 Mundo Tango？",
+          "answer": "Mundo Tango 是一個全球平台，連接探戈舞者、教師和組織者。我們幫助你發現活動、尋找舞伴、向頂尖教練學習，並沉浸在全球充滿活力的探戈社區中。"
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Is Mundo Tango 免費使用嗎？",
+          "answer": "是的！我們提供一個免費層級，包括基本的個人資料創建、活動發現和消息傳送。無限消息傳送、AI 舞伴配對和優先活動通知等高級功能可通過我們的專業訂閱獲得。"
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "我如何找到我附近的探戈活動？",
+          "answer": "只需使用我們的活動日曆或搜索功能按城市、日期和活動類型過濾。您可以發現您所在區域或世界各地的 milongas、節日、工作坊和練習課程。"
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "我可以與其他舞者聯繫嗎？",
+          "answer": "當然可以！關注舞者、加入小組、發送好友請求，並與社區聊天。我們的平台旨在促進探戈世界中的真實聯繫。"
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "我如何找到探戈老師？",
+          "answer": "訪問我們的教師目錄，瀏覽全球經過驗證的教練。按地點、專業和經驗水平過濾。閱讀其他學生的評論，並通過平台直接預訂私人課程。"
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Mundo Tango 有什麼不同之處？",
+          "answer": "我們是由探戈舞者為探戈舞者建立的。我們專注於真實的社區建設、高質量的活動策劃，並將您與全球探戈家庭聯繫起來，而不僅僅是另一個社交網絡。"
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "準備好加入社區了嗎？",
+      "description": "今天就創建您的免費帳戶，開始與全球熱愛探戈的舞者聯繫。無需信用卡。",
+      "button": "免費加入 Mundo Tango",
+      "freeForever": "永遠免費",
+      "noCreditCard": "無需信用卡",
+      "cancelAnytime": "隨時取消"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "動態",
+    "description": "隨時了解探戈社區的最新消息",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "所有帖子",
+      "following": "關注中",
+      "popular": "熱門",
+      "recent": "最近"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "你在想什麼？",
+    "noPost": "沒有帖子可顯示"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "活動",
+    "description": "發現您附近的探戈活動",
+    "upcoming": "即將舉行的活動",
+    "past": "過去的活動",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "所有活動",
+      "milongas": "米隆加",
+      "workshops": "工作坊",
+      "festivals": "節日",
+      "classes": "課程"
     },
-    "noEvents": "No events found"
+    "noEvents": "未找到任何活動"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "個人資料",
+    "description": "查看和編輯您的個人資料",
+    "editProfile": "編輯個人資料",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "帖子",
+      "photos": "照片",
+      "videos": "視頻",
+      "events": "活動",
+      "friends": "朋友"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "帖子",
+      "followers": "追隨者",
+      "following": "正在追隨",
+      "events": "參加的活動"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "消息",
+    "description": "與您的探戈聯繫人聊天",
+    "newMessage": "新消息",
+    "searchConversations": "搜索對話",
+    "noMessages": "尚未有消息",
+    "startConversation": "開始對話"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "探戈教師",
+    "description": "尋找並聯繫探戈教師",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "所有教師",
+      "featured": "特色",
+      "nearby": "附近"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "查看個人資料",
+    "bookLesson": "預訂課程"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "探戈場地",
+    "description": "發現全球的探戈場地",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "所有場地",
+      "milongas": "米隆加",
+      "schools": "舞蹈學校",
+      "theaters": "劇院"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "獲取方向"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "設置",
+    "description": "管理您的帳戶設置",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "帳戶設置",
+      "profile": "個人資料",
+      "privacy": "隱私",
+      "notifications": "通知",
+      "security": "安全",
+      "billing": "帳單",
+      "preferences": "偏好"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "生活 CEO 儀表板",
+    "description": "您的個人 AI 助手，用於生活管理",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "健康代理",
+      "fitness": "健身代理",
+      "nutrition": "營養代理",
+      "finance": "財務代理",
+      "career": "職業代理",
+      "productivity": "生產力代理",
+      "relationships": "關係代理",
+      "learning": "學習代理"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "市場",
+    "description": "買賣與探戈相關的物品",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "舞鞋",
+      "clothing": "服裝",
+      "music": "音樂",
+      "accessories": "配件",
+      "other": "其他"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "管理員儀表板",
+    "description": "平台管理和管理",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "概覽",
+      "users": "用戶",
+      "content": "內容",
+      "reports": "報告",
+      "analytics": "分析",
+      "settings": "設置"
     }
   }
 }

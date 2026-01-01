@@ -1,896 +1,896 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "Registruotis",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "Prisijunkite prie Mundo Tango - Sukurkite savo paskyrą",
+      "description": "Sukurkite savo Mundo Tango paskyrą ir prisijunkite prie pasaulinės argentinietiško tango bendruomenės. Susisiekite su šokėjais, atraskite renginius ir dalinkitės savo aistra tango."
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "Sveiki atvykę į šeimą",
+      "beginJourney": "Pradėkite savo kelionę",
+      "joinCommunity": "Prisijunkite prie bendruomenės"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "Jūs esate viduje!",
+      "joinMundoTango": "Prisijunkite prie Mundo Tango",
+      "description": "Susisiekite su šokėjais visame pasaulyje, atraskite milongas ir pasinerkite į aistringą argentinietiško tango pasaulį",
+      "waitlistDescription": "Sveiki atvykę į Mundo Tango bendruomenę. Mes ruošiam jūsų paskyrą ir netrukus pranešime!"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ šokėjų",
+      "events": "{{count}}+ renginių",
+      "cities": "{{count}} miestų"
     },
     "form": {
-      "fullName": "Full Name",
+      "fullName": "Pilnas vardas",
       "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "email": "El. paštas",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "Vartotojo vardas",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "Slaptažodis",
+      "confirmPassword": "Patvirtinkite slaptažodį",
+      "inviteOnlyNotice": "Registracija šiuo metu vyksta tik pagal kvietimus. Užpildykite šią formą, kad prisijungtumėte prie mūsų laukiančiųjų sąrašo, ir pranešime, kai jūsų paskyra bus paruošta.",
+      "acceptTermsPrefix": "Sutinku su",
+      "termsAndConditions": "Sąlygomis ir nuostatomis"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "Šis el. paštas jau registruotas",
+      "emailAvailable": "El. paštas prieinamas!",
+      "usernameTaken": "Vartotojo vardas užimtas. Išbandykite {{suggestion}}",
+      "usernameAvailable": "Vartotojo vardas prieinamas!",
+      "passwordsMatch": "Slaptažodžiai sutampa",
+      "passwordsDontMatch": "Slaptažodžiai nesutampa"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "Silpnas",
+      "medium": "Vidutinis",
+      "strong": "Stiprus",
+      "veryStrong": "Labai stiprus"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "Turite kvietimo kodą? (Pasirinktinai)",
+      "placeholder": "Įveskite savo kvietimo kodą, kad gautumėte tiesioginę prieigą",
+      "accepted": "Kodas priimtas! Jūsų paskyra bus aktyvuota iš karto.",
+      "noWorries": "Nereikia jaudintis! Užpildykite žemiau esančią formą, kad prisijungtumėte prie mūsų laukiančiųjų sąrašo."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "Sveiki atvykę, {{name}}!",
+      "defaultName": "Šokėjas",
+      "onTheList": "Esate sąraše. Mes jums atsiųsime el. laišką adresu",
+      "whenReady": "kai jūsų paskyra bus paruošta.",
+      "helpUsGrow": "Kol laukiate, padėkite mums augti",
+      "volunteerWithUs": "Būkite savanoris su mumis",
+      "supportMundoTango": "Palaikykite Mundo Tango"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "Kuriama jūsų paskyra...",
+      "joining": "Prisijungimas...",
+      "createAccount": "Sukurti paskyrą",
+      "joinMundoTango": "Prisijungti prie Mundo Tango"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "Jau turite paskyrą?",
+    "signIn": "Prisijungti",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "Neteisingas kodas",
+        "description": "Prašome įvesti galiojantį 6 skaitmenų patvirtinimo kodą."
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "El. paštas patvirtintas!",
+        "description": "Sveiki atvykę į Mundo Tango! Pradedame jūsų registraciją..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "Patvirtinimas nepavyko",
+        "description": "Neteisingas arba pasibaigęs kodas. Prašome bandyti dar kartą."
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "Klaida",
+        "description": "Nepavyko patvirtinti el. pašto. Prašome bandyti dar kartą."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "Per daug užklausų",
+        "description": "Prašome palaukti kelias minutes prieš bandant dar kartą."
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "Kodas išsiųstas!",
+        "description": "Prašome patikrinti savo pašto dėžutę dėl naujo kodo."
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "Nepavyko išsiųsti kodo dar kartą. Prašome bandyti vėl."
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "Reikalingi taisyklės",
+        "description": "Prašome priimti Taisykles ir Sąlygas"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "Slaptažodžiai nesutampa",
+        "description": "Prašome užtikrinti, kad abu slaptažodžiai būtų identiški"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "Silpnas slaptažodis",
+        "description": "Prašome pasirinkti stipresnį slaptažodį"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "Patikrinkite savo el. paštą",
+        "description": "Išsiuntėme jums 6 skaitmenų patvirtinimo kodą. Prašome patikrinti savo pašto dėžutę."
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "Registracija nepavyko"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "Nepavyko užbaigti registracijos"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "Prašome bandyti vėl"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "Sveiki atvykę",
+      "seoTitle": "Sveiki atvykę į Mundo Tango",
+      "seoDescription": "Pradėkite savo tango kelionę su Mundo Tango",
+      "badge": "Greitas nustatymas",
+      "title": "Sveiki atvykę į Mundo Tango",
+      "subtitle": "Nustatykime jūsų profilį, kad galėtumėte prisijungti prie pasaulinės tango bendruomenės",
+      "duration": "Užtrunka apie 2 minutes",
+      "stepIndicator": "Žingsnis {{current}} iš {{total}}",
+      "getStarted": "Pradėti",
+      "profileTitle": "Jūsų tango kelionė prasideda",
+      "profileSubtitle": "Paprašykite pasakyti šiek tiek apie save",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "Pasirinkite savo miestą",
+          "description": "Prisijunkite prie savo vietinės tango bendruomenės"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "Pasakykite mums savo roles",
+          "description": "Šokėjas, mokytojas, DJ, organizatorius ar visi iš aukščiau?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "Atraskite renginius",
+          "description": "Raskite milongas, pamokas ir festivalius šalia jūsų"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "Pasidalykite savo kelione",
+          "description": "Susisiekite su šokėjais, kurie yra jūsų lygyje"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "Prisijungti prie Facebook",
+          "description": "Susiekite savo Facebook profilį, kad rastumėte draugus bendruomenėje"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "Socialinis ryšys",
+      "seoTitle": "Susiekite savo socialinį pasaulį - Mundo Tango",
+      "seoDescription": "Susiekite savo socialinius profilius, kad rastumėte draugus tango bendruomenėje.",
+      "step": "2 žingsnis iš 6",
+      "title": "Susiekite savo socialinį pasaulį",
+      "quote": "\"Daugelis tango šokėjų jau pažįsta vieni kitus per Facebook. Susiejus jūsų profilį, galime parodyti, kurie šokėjai jūsų tinkle jau yra čia - taip lengviau rasti pažįstamas veidas milongose ir kurti gilesnius ryšius.\"",
+      "cardTitle": "Raskite savo draugus",
+      "cardDescription": "Jūsų Facebook padeda mums suderinti jus su šokėjais, kuriuos galbūt jau pažįstate, todėl nepradedate nuo nulio.",
+      "facebookLabel": "Facebook profilio URL (Pasirinktinai)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "Mes tai naudojame kaip tiltą į kitas bendruomenes ir kad suderintume jus su šokėjais, kuriuos galbūt pažįstate.",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "Klaida",
+        "errorDescription": "Nepavyko išsaugoti profilio informacijos"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "Atgal",
+      "next": "Kitas",
+      "skip": "Praleisti",
+      "finish": "Baigti",
+      "saving": "Išsaugoma..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "Miestų pasirinkimas",
+      "seoTitle": "Pasirinkite savo miestą - Mundo Tango",
+      "seoDescription": "Pasirinkite savo gimtąjį miestą, kad susisiektumėte su vietiniais tango šokėjais",
+      "step": "1 žingsnis iš 6",
+      "title": "Kur šokate?",
+      "subtitle": "Susisiekite su šokėjais savo rajone",
+      "cardTitle": "Jūsų namų miestas",
+      "cardDescription": "Tai padeda mums rodyti vietinius renginius ir šokėjus",
+      "searchLabel": "Ieškoti savo miesto",
+      "searchPlaceholder": "Įrašykite savo miesto pavadinimą...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "Pasirinkite iš populiarių tango vietų"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "Miestas privalomas",
+        "selectCity": "Prašome pasirinkti savo namų miestą"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "Šaltinis pridėtas!",
+        "submittedForReview": "Pateikta peržiūrai",
+        "trackingEvents": "Pradėsime sekti renginius iš svetainės",
+        "thankYou": "Ačiū! Jūsų pasiūlymas buvo išsiųstas peržiūrai.",
+        "errorTitle": "Klaida",
+        "suggestionFailed": "Nepavyko pateikti pasiūlymo",
+        "saveFailed": "Nepavyko išsaugoti miestų"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "Nuotraukos įkėlimas",
+      "seoTitle": "Pridėti profilio nuotrauką - Mundo Tango",
+      "seoDescription": "Įkelkite savo profilio nuotrauką",
+      "step": "3 žingsnis iš 6",
+      "title": "Pridėti savo profilio nuotrauką",
+      "subtitle": "Padėkite kitiems jus atpažinti bendruomenėje",
+      "cardTitle": "Jūsų profilio nuotrauka",
+      "cardDescription": "Padėkite kitiems jus atpažinti (galite praleisti šį žingsnį)",
+      "previewAlt": "Profilių peržiūra",
+      "dropHere": "Nukelkite savo nuotrauką čia",
+      "or": "arba",
+      "browseFiles": "Naršyti failus",
+      "fileTypes": "PNG, JPG iki 5MB",
+      "photoSelected": "Nuotrauka pasirinkta!",
+      "uploading": "Įkeliama...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "Neteisingas failas",
+        "selectImage": "Prašome pasirinkti vaizdo failą",
+        "fileTooLarge": "Failas per didelis",
+        "sizeLimit": "Prašome pasirinkti vaizdą, kuris yra mažesnis nei 5MB",
+        "uploadFailed": "Įkėlimas nepavyko",
+        "tryAgain": "Nepavyko įkelti nuotraukos. Prašome bandyti dar kartą.",
+        "skipFailed": "Nepavyko praleisti. Prašome bandyti dar kartą."
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "Kalbos",
+      "seoTitle": "Jūsų kalbos - Mundo Tango",
+      "seoDescription": "Pasakykite mums, kokiomis kalbomis kalbate",
+      "step": "5 žingsnis iš 6",
+      "title": "Kokias kalbas kalbate?",
+      "subtitle": "Susisiekite su šokėjais savo kalba",
+      "cardTitle": "Jūsų kalbos",
+      "cardDescription": "Pasirinkite savo pagrindinę kalbą ir bet kurias papildomas kalbas, kuriomis kalbate",
+      "primaryLabel": "Pagrindinė kalba",
+      "primaryHint": "Tai taip pat nustatys jūsų svetainės rodymo kalbą",
+      "primaryPlaceholder": "Pasirinkite savo pagrindinę kalbą",
+      "additionalLabel": "Papildomos kalbos (pasirinktinai)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "Reikalinga pagrindinė kalba",
+        "selectPrimary": "Prašome pasirinkti savo pagrindinę kalbą",
+        "saveFailed": "Nepavyko išsaugoti kalbų",
+        "saveFailedTitle": "Kalbos išsaugojimas nepavyko"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "Tango vaidmenys",
+      "seoTitle": "Jūsų tango vaidmenys - Mundo Tango",
+      "seoDescription": "Pasakykite mums apie savo tango kelionę",
+      "step": "2 žingsnis iš 6",
+      "title": "Kokius vaidmenis atliekate?",
+      "subtitle": "Pasirinkite visus, kurie jums tinka",
+      "cardTitle": "Jūsų tango tapatybė",
+      "cardDescription": "Padėkite kitiems sužinoti, kaip dalyvaujate tango pasaulyje"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "Šokio patirtis",
+      "seoTitle": "Jūsų šokio patirtis - Mundo Tango",
+      "seoDescription": "Pasidalykite savo šokio patirties lygiu",
+      "step": "Žingsnis 4 iš 6",
+      "title": "Jūsų šokio patirtis",
+      "subtitle": "Padėkite mums susieti jus su tinkamais šokėjais"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "Interesai",
+      "seoTitle": "Jūsų interesai - Mundo Tango",
+      "seoDescription": "Paprašykite pasakyti apie savo interesus",
+      "step": "Žingsnis 6 iš 6",
+      "title": "Kokie yra jūsų interesai?",
+      "subtitle": "Pasirinkite temas, kurios jus domina",
+      "helpText": "Pasirinkite bent 3 interesus, kad suasmenintumėte savo turinį",
+      "selectedCount": "{{count}} pasirinkta",
+      "finishing": "Baigiama...",
+      "completeSetup": "Užbaigti nustatymus",
+      "searchPlaceholder": "Ieškokite bendruomenių arba pridėkite naują...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "Fitnesas ir sportas"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "Technologijos ir inovacijos"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "Dvasinė praktika ir augimas"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "Joga ir gerovė"
         },
         "music": {
-          "label": "Music"
+          "label": "Muzika"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "Fotografija ir vaizdo įrašai"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "Menas ir kūrybiškumas"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "Skaitymas ir rašymas"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "Kelionės ir nuotykiai"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "Virimas ir maistas"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "Vynas ir gėrimai"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Žaidimai"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "Lauko veiklos"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "Sniego sportas"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "Dviračių sportas"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "Vandens sportas"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "Gamta ir sodininkystė"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "Filmai ir pramogos"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "Naminių gyvūnų ir gyvūnų"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "Socialinė ir bendruomeninė veikla"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
+        "fitness_gym": "Sporto salė ir svoriai",
+        "fitness_running": "Bėgimas",
         "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
+        "fitness_martial_arts": "Kovos menai",
+        "fitness_tennis": "Tenisas",
+        "fitness_soccer": "Futbolas",
+        "fitness_basketball": "Krepšinis",
+        "fitness_fencing": "Kardų kova",
+        "tech_coding": "Programavimas ir kūrimas",
+        "tech_ai": "Dirbtinis intelektas ir ateities technologijos",
+        "tech_crypto": "Web3 ir kriptovaliutos",
+        "tech_gaming": "Žaidimų kultūra",
+        "spirit_meditation": "Meditacija",
+        "spirit_astrology": "Astrologija",
+        "spirit_philosophy": "Filozofija",
+        "spirit_community": "Bendruomenės kūrimas",
+        "yoga_hatha": "Hatha joga",
+        "yoga_vinyasa": "Vinyasa srautas",
+        "yoga_meditation": "Meditacija",
         "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
-        "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
-        "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
+        "yoga_breathwork": "Kvėpavimo pratimai",
+        "music_listening": "Muzikos klausymas",
+        "music_concerts": "Gyvi koncertai",
+        "music_piano": "Pianinas",
+        "music_guitar": "Gitara",
+        "music_singing": "Dainavimas",
+        "music_dj": "DJ'avimas",
+        "music_production": "Muzikos gamyba",
+        "photo_portrait": "Portretinė fotografija",
+        "photo_landscape": "Peizažinė fotografija",
+        "photo_street": "Gatvės fotografija",
+        "photo_video": "Vaizdo įrašų kūrimas",
+        "photo_editing": "Nuotraukų redagavimas",
+        "art_painting": "Tapyba",
+        "art_drawing": "Piešimas",
+        "art_sculpture": "Skulptūra",
+        "art_digital": "Skaitmeninė menas",
+        "art_crafts": "Amatai ir DIY",
+        "art_pottery": "Keramika",
+        "reading_fiction": "Fikcija",
+        "reading_nonfiction": "Nefikcija",
+        "reading_poetry": "Poetika",
+        "reading_writing": "Kūrybinis rašymas",
+        "reading_journals": "Dienoraščio rašymas",
+        "travel_backpacking": "Keliaujant su kuprine",
+        "travel_luxury": "Prabangūs kelionės",
+        "travel_cultural": "Kultūrinis turizmas",
+        "travel_road_trips": "Kelionės automobiliu",
+        "travel_solo": "Kelionės vienam",
+        "cooking_home": "Namų gamyba",
+        "cooking_baking": "Kepimas",
+        "cooking_gourmet": "Gurmaniška virtuvė",
+        "cooking_international": "Tarptautinė virtuvė",
+        "cooking_healthy": "Sveika mityba",
+        "wine_tasting": "Vyno degustacija",
+        "wine_cocktails": "Kokteiliai",
+        "wine_coffee": "Kavos vertinimas",
+        "wine_tea": "Arbatos kultūra",
+        "wine_brewing": "Namų alaus darymas",
+        "gaming_video": "Vaizdo žaidimai",
+        "gaming_board": "Stalo žaidimai",
+        "gaming_card": "Kortų žaidimai",
+        "gaming_tabletop": "Stalo RPG",
+        "gaming_esports": "eSportas",
+        "outdoor_hiking": "Žygiai",
+        "outdoor_camping": "Stovyklavimas",
+        "outdoor_climbing": "Uolų lipimas",
+        "outdoor_fishing": "Žvejyba",
+        "outdoor_kayaking": "Kanojų sportas",
+        "outdoor_surfing": "Sertifikavimas",
+        "snow_skiing": "Slidinėjimas",
+        "snow_snowboard": "Snoubordas",
+        "snow_crosscountry": "Bėgimas per sniegą",
+        "snow_ice_skating": "Ledo čiuožimas",
+        "snow_sledding": "Sniego rogutės",
+        "snow_snowshoeing": "Sniego batai",
+        "cycling_road": "Kelių dviračių sportas",
+        "cycling_mountain": "Kalnų dviračių sportas",
+        "cycling_urban": "Miestų dviračių sportas",
+        "cycling_touring": "Dviračių turizmas",
+        "water_swimming": "Plaukimas",
+        "water_scuba": "Nardymas su akvalangu",
+        "water_snorkel": "Nardymas su vamzdeliu",
+        "water_sailing": "Plaukimas",
         "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "nature_gardening": "Sodininkystė",
+        "nature_birdwatching": "Paukščių stebėjimas",
+        "nature_botany": "Augalų kolekcionavimas",
+        "nature_wildlife": "Gamtos fotografija",
+        "movies_cinema": "Kinas",
+        "movies_tv": "TV serialai",
+        "movies_documentary": "Dokumentiniai filmai",
+        "movies_theater": "Teatras",
+        "movies_standup": "Stand-up komedija",
+        "pets_dogs": "Šunys",
+        "pets_cats": "Katės",
+        "pets_exotic": "Egzotiniai augintiniai",
+        "pets_horses": "Jodinėjimas",
+        "pets_rescue": "Gyvūnų gelbėjimas",
+        "social_volunteering": "Savanorystė",
+        "social_meetups": "Susitikimai",
+        "social_networking": "Tinklaveika",
+        "social_languages": "Kalbų mainai"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "Sveiki atvykę į Mundo Tango!",
+        "completeDesc": "Jūsų profilis paruoštas. Pradėkite tyrinėti!",
+        "waitlistTitle": "Profilis užpildytas!",
+        "waitlistDesc": "Pranešime jums, kai jūsų paskyra bus aktyvuota"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "Išsaugoti nepavyko. Prašome bandyti dar kartą."
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "Bendruomenės gairės",
+      "subtitle": "Prašome peržiūrėti ir priimti mūsų sąlygas",
+      "legalDocsTitle": "Teisiniai dokumentai",
+      "legalDocsDescription": "Peržiūrėkite mūsų paslaugų teikimo sąlygas ir privatumo politiką",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "Priimu paslaugų teikimo sąlygas",
+        "description": "Mūsų taisyklės reguliuoja jūsų naudojimąsi Mundo Tango",
+        "link": "Skaityti Paslaugų teikimo sąlygas"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "Sutinku su Privatumo politika",
+        "description": "Kaip mes tvarkome jūsų duomenis",
+        "link": "Skaityti Privatumo politiką"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "Bendruomenės elgesio kodeksas",
+      "cocDescription": "Padėkite mums išlaikyti pagarbią bendruomenę",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "Būkite pagarbus",
+          "description": "Elkitės su visais oriai ir mandagiai"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "Būkite įtraukiantys",
+          "description": "Sveiki atvykę šokėjams iš visų lygių ir aplinkų"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "Būkite autentiški",
+          "description": "Naudokite savo tikrą tapatybę ir sąžiningą informaciją"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "Gerbkite sutikimą",
+          "description": "Visada klauskite prieš šokdami ir gerbkite ribas"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "Nėra priekabiavimo",
+          "description": "Nulinė tolerancija priekabiavimui ar patyčioms"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "Nėra šlamšto",
+          "description": "Nesiųskite nepageidaujamų reklamų"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "Nėra diskriminacijos",
+          "description": "Mes netoleruojame jokios diskriminacijos"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "Apsaugokite privatumą",
+          "description": "Nedalykite kitų informacijos be sutikimo"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "Teikite prioritetą saugumui",
+          "description": "Praneškite apie bet kokį nesaugų elgesį nedelsdami"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "Laikykitės įstatymų",
+          "description": "Laikykitės visų taikomų įstatymų"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "Praneškite apie problemas",
+          "description": "Padėkite mums pranešdami apie pažeidimus"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "Palaikykite vieni kitus",
+          "description": "Padėkite kitiems šokėjams augti"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "Priimti viską ir tęsti",
+      "accepting": "Priimama...",
+      "incompleteAlert": "Prašome priimti visus reikiamus terminus",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "Sveiki atvykę!",
+        "description": "Priėmėte mūsų bendruomenės gaires"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "Nepavyko išsaugoti. Prašome bandyti dar kartą."
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "Laukiamasis sąrašas",
+      "seoTitle": "Esate laukiamajame sąraše - Mundo Tango",
+      "seoDescription": "Jūsų paskyra laukia aktyvacijos",
+      "title": "Esate laukiamajame sąraše!",
+      "welcomeMessage": "Sveiki atvykę, {{name}}!",
+      "defaultName": "Šokėjas",
+      "profileComplete": "Profilis užpildytas",
+      "profileCompleteDesc": "Jūsų profilis paruoštas ir laukia",
+      "emailNotice": "Mes atsiųsime jums el. laišką adresu {{email}}, kai jūsų paskyra bus paruošta",
+      "whenReady": "kai jūsų paskyra bus paruošta.",
+      "whileYouWait": "Kol laukiate, padėkite mums augti:",
+      "volunteerButton": "Tapkite savanoriu",
+      "supportButton": "Palaikykite Mundo Tango"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "Vadovaujama ekskursija",
+      "seoTitle": "Tyrinėkite Mundo Tango",
+      "seoDescription": "Išmokite, kaip naudotis Mundo Tango",
+      "skipTour": "Praleisti ekskursiją",
+      "finish": "Baigti ekskursiją",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "Atraskite įrašus iš tango bendruomenės",
+        "events": "Raskite milongas, pamokas ir festivalius",
+        "groups": "Prisijunkite prie grupių pagal savo miestą ar pomėgius",
+        "messages": "Tiesiogiai susisiekite su kitais šokėjais",
+        "profile": "Prik Customize your tango profile",
+        "createPost": "Pasidalykite savo tango akimirkomis"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "Patobulinkite savo patirtį",
+        "subtitle": "Išnaudokite viską, ką siūlo Mundo Tango",
+        "limitedOffer": "Riboto laiko pasiūlymas",
+        "getStarted": "Pradėti",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "Prisijungti",
+            "description": "Siųskite žinutę bet kuriam šokėjui tiesiogiai"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "Matomumas",
+            "description": "Būkite rodomi paieškos rezultatuose"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "Renginiai",
+            "description": "Prioritetinė prieiga prie populiarių renginių"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "Augti",
+            "description": "Išplėstinė analizė jūsų profiliui"
           },
           "premium": {
             "title": "Premium",
-            "description": "Exclusive premium features"
+            "description": "Išskirtinės premium funkcijos"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "Prisijungti",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Prisijungti - Mundo Tango",
+      "description": "Prisijunkite prie savo Mundo Tango paskyros, kad susijungtumėte su pasauline tango bendruomene, atrastumėte renginius ir pasidalintumėte savo aistra argentiniškam tango."
     },
-    "badge": "Welcome Back",
+    "badge": "Sveiki sugrįžę",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Jūsų tango kelionė tęsiasi",
+      "paragraph": "Prisijunkite, kad susijungtumėte su šokėjais visame pasaulyje, atrastumėte renginius ir pasidalintumėte savo aistra"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "šokėjai",
+      "events": "renginiai"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "El. paštas",
+      "password": "Slaptažodis",
+      "signIn": "Prisijungti",
+      "signingIn": "Prisijungia...",
+      "forgotPassword": "Pamiršote slaptažodį?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Neturite paskyros?",
+    "createAccount": "Sukurkite vieną dabar",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Sveiki sugrįžę!",
+      "successDescription": "Jūs sėkmingai prisijungėte.",
+      "errorTitle": "Prisijungimas nepavyko",
+      "errorDescription": "Neteisingi prisijungimo duomenys"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Pagrindinis",
+    "pageLayoutTitle": "Kur Tango susitinka su bendruomene",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Susisiekite su pasauline tango bendruomene",
+      "description": "Prisijunkite prie tūkstančių tango šokėjų visame pasaulyje. Atraskite renginius, raskite mokytojus, susisiekite su šokėjais ir pasinerkite į aistrą Argentinos tango pasaulyje."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Sveiki atvykę į pasaulinę tango bendruomenę",
+      "heading": "Kur Tango susitinka su bendruomene",
+      "paragraph": "Dalinkitės prisiminimais, raskite renginius ir padėkite mums kurti tango technologijų ateitį. Prisijunkite prie tūkstančių aistrą turinčių šokėjų, kurie susisiekia visame pasaulyje.",
+      "getStarted": "Pradėkite nemokamai",
+      "volunteer": "Tapkite savanoriu, kad padėtumėte kurti MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Kaip tai veikia",
+      "description": "Pradėkite savo tango kelionę trimis paprastais žingsniais",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Sukurkite savo profilį",
+        "description": "Prisijunkite nemokamai ir papasakokite mums apie savo tango kelionę, patirties lygį ir šokio pomėgius"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Atraskite ir susisiekite",
+        "description": "Raskite renginius, mokytojus ir vietas šalia jūsų. Susisiekite su šokėjais, kurie dalijasi jūsų aistra"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Šokite ir augkite",
+        "description": "Lankykite renginius, imkite pamokas, susiraskite draugų ir tapkite pasaulinės tango bendruomenės dalimi"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Viskas, ko jums reikia",
+      "description": "Susišalinkite, atraskite ir auginkite savo tango kelionę su galingomis funkcijomis",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Bendruomenė",
+        "heading": "Susišalinkite su šokėjais visame pasaulyje",
+        "description": "Prisijunkite prie gyvybingos pasaulinės tango entuziastų bendruomenės. Susišalinkite su šokėjais, mokytojais ir organizatoriais nuo Buenos Airių iki Tokijo.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Sekite šokėjus ir kurkite savo tinklą",
+          "groups": "Prisijunkite prie grupių pagal pomėgius ir vietą",
+          "messaging": "Realaus laiko žinučių ir pokalbių funkcijos",
+          "discover": "Atraskite šokėjus, kurie lankosi jūsų mieste"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Renginiai",
+        "heading": "Atraskite renginius visur",
+        "description": "Niekada nepraleiskite milongos, festivalio ar seminaro. Mūsų platforma sujungia jus su tūkstančiais tango renginių, vykstančių visame pasaulyje.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Išsamus renginių kalendorius",
+          "rsvp": "RSVP ir bilietų užsakymas",
+          "notifications": "Renginių pranešimai ir priminimai",
+          "map": "Interaktyvi vietų žemėlapis"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Tiesioginis transliavimas",
+          "description": "Žiūrėkite milongas visame pasaulyje realiu laiku"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Muzikos biblioteka",
+          "description": "Kuruotos tango grojaraščiai ir gidai"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Patvirtinti mokytojai",
+          "description": "Mokykitės iš sertifikuotų instruktorių"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Kelionių planuotojas",
+          "description": "Planuokite keliones ir raskite šeimininkus visame pasaulyje"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Ką sako šokėjai",
+      "description": "Prisijunkite prie tūkstančių patenkintų šokėjų visame pasaulyje",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "Buenos Airės, Argentina",
+          "text": "Mundo Tango padėjo man rasti savo šokių šeimą naujame mieste. Bendruomenė yra šilta, svetinga ir tikrai aistringa tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Franciskas, JAV",
+          "text": "Per šią platformą atradau nuostabias milongas ir seminarus. Tai tapo būtina mano tango kelionės dalimi."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Maskva, Rusija",
+          "text": "Mokytojų katalogas padėjo man rasti nuostabius instruktorius. Mano šokiai labai pagerėjo!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Dažnai užduodami klausimai",
+      "description": "Viskas, ką reikia žinoti apie Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Kas yra Mundo Tango?",
+          "answer": "Mundo Tango yra pasaulinė platforma, sujungianti tango šokėjus, mokytojus ir organizatorius. Mes padedame jums atrasti renginius, rasti šokių partnerius, mokytis iš geriausių instruktorių ir pasinerti į gyvybingą tango bendruomenę visame pasaulyje."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Ar Mundo Tango yra nemokamas naudoti?",
+          "answer": "Taip! Mes siūlome nemokamą planą, kuris apima pagrindinį profilio kūrimą, renginių paiešką ir žinučių siuntimą. Premium funkcijos, tokios kaip neribotas žinučių siuntimas, AI šokių partnerių derinimas ir prioritetiniai renginių pranešimai, yra prieinamos su mūsų Pro prenumerata."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Kaip rasti tango renginius šalia manęs?",
+          "answer": "Tiesiog naudokite mūsų Renginių kalendorių arba Paieškos funkcijas, kad filtruotumėte pagal miestą, datą ir renginio tipą. Galite atrasti milongas, festivalius, dirbtuves ir praktikos sesijas, vykstančias jūsų regione ar bet kur pasaulyje."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Ar galiu susisiekti su kitais šokėjais?",
+          "answer": "Žinoma! Sekite šokėjus, prisijunkite prie grupių, siųskite draugų užklausas ir bendraukite su bendruomene. Mūsų platforma sukurta tam, kad skatintų autentiškus ryšius tango pasaulyje."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Kaip rasti tango mokytojus?",
+          "answer": "Apsilankykite mūsų Mokytojų kataloge, kad naršytumėte patvirtintus instruktorius visame pasaulyje. Filtruokite pagal vietą, specializaciją ir patirties lygį. Perskaitykite kitų studentų atsiliepimus ir užsisakykite privačias pamokas tiesiog per platformą."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Kas daro Mundo Tango kitokį?",
+          "answer": "Mes esame sukurti šokėjų, šokėjams. Mūsų dėmesys skiriamas autentiškos bendruomenės kūrimui, kokybiškam renginių atrankai ir jūsų sujungimui su pasauline tango šeima - ne tik dar viena socialinė tinklas."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Pasiruošę prisijungti prie bendruomenės?",
+      "description": "Sukurkite savo nemokamą paskyrą šiandien ir pradėkite bendrauti su aistringais tango šokėjais visame pasaulyje. Kredito kortelė nereikalinga.",
+      "button": "Prisijunkite prie Mundo Tango nemokamai",
+      "freeForever": "Nemokamai amžinai",
+      "noCreditCard": "Be kredito kortelės",
+      "cancelAnytime": "Atšaukite bet kada"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Naujienos",
+    "description": "Būkite informuoti apie naujausius įvykius tango bendruomenėje",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Visi įrašai",
+      "following": "Sekama",
+      "popular": "Populiaru",
+      "recent": "Naujausi"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Ką galvojate?",
+    "noPost": "Nėra įrašų, kuriuos būtų galima rodyti"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Renginiai",
+    "description": "Atraskite tango renginius šalia jūsų",
+    "upcoming": "Artėjantys renginiai",
+    "past": "Praeities renginiai",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "Visi renginiai",
+      "milongas": "Milongos",
+      "workshops": "Dirbtuvės",
+      "festivals": "Festivaliai",
+      "classes": "Pamokos"
     },
-    "noEvents": "No events found"
+    "noEvents": "Renginių nerasta"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Profilis",
+    "description": "Peržiūrėti ir redaguoti savo profilį",
+    "editProfile": "Redaguoti profilį",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Įrašai",
+      "photos": "Nuotraukos",
+      "videos": "Vaizdo įrašai",
+      "events": "Renginiai",
+      "friends": "Draugai"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Įrašai",
+      "followers": "Sekėjai",
+      "following": "Sekami",
+      "events": "Lankyti renginiai"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Žinutės",
+    "description": "Bendraukite su savo tango ryšiais",
+    "newMessage": "Nauja žinutė",
+    "searchConversations": "Ieškoti pokalbių",
+    "noMessages": "Dar nėra žinučių",
+    "startConversation": "Pradėti pokalbį"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Tango mokytojai",
+    "description": "Raskite ir susisiekite su tango mokytojais",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Visi mokytojai",
+      "featured": "Išskirtiniai",
+      "nearby": "Netoliese"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Peržiūrėti profilį",
+    "bookLesson": "Užsakyti pamoką"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Tango vietos",
+    "description": "Atraskite tango vietas visame pasaulyje",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Visos vietos",
+      "milongas": "Milongos",
+      "schools": "Šokių mokyklos",
+      "theaters": "Teatrai"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Gauti nurodymus"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Nustatymai",
+    "description": "Tvarkykite savo paskyros nustatymus",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Paskyros nustatymai",
+      "profile": "Profilis",
+      "privacy": "Privatumas",
+      "notifications": "Pranešimai",
+      "security": "Saugumas",
+      "billing": "Apmokėjimas",
+      "preferences": "Pageidavimai"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Gyvenimo CEO valdymo skydelis",
+    "description": "Jūsų asmeninis AI asistentas gyvenimo valdymui",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Sveikatos agentas",
+      "fitness": "Fitneso agentas",
+      "nutrition": "Mitybos agentas",
+      "finance": "Finansų agentas",
+      "career": "Karjeros agentas",
+      "productivity": "Produktyvumo agentas",
+      "relationships": "Santykių agentas",
+      "learning": "Mokymosi agentas"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Rinka",
+    "description": "Pirkite ir parduokite tango susijusius daiktus",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Šokių batai",
+      "clothing": "Drabužiai",
+      "music": "Muzika",
+      "accessories": "Priedai",
+      "other": "Kita"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Administratoriaus skydelis",
+    "description": "Platformos administravimas ir valdymas",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Apžvalga",
+      "users": "Vartotojai",
+      "content": "Turinys",
+      "reports": "Ataskaitos",
+      "analytics": "Analitika",
+      "settings": "Nustatymai"
     }
   }
 }

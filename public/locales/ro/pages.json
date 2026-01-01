@@ -324,7 +324,7 @@
           "label": "Vin și Băuturi"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Jocuri"
         },
         "outdoors": {
           "label": "Activități în Aer Liber"
@@ -378,7 +378,7 @@
         "music_piano": "Pian",
         "music_guitar": "Chitară",
         "music_singing": "Canto",
-        "music_dj": "DJing",
+        "music_dj": "DJ-ing",
         "music_production": "Producție Muzicală",
         "photo_portrait": "Portrete",
         "photo_landscape": "Peisaje",
@@ -396,7 +396,7 @@
         "reading_poetry": "Poezie",
         "reading_writing": "Scriere Creativă",
         "reading_journals": "Jurnal",
-        "travel_backpacking": "Backpacking",
+        "travel_backpacking": "Drumeție",
         "travel_luxury": "Călătorii de Lux",
         "travel_cultural": "Turism Cultural",
         "travel_road_trips": "Călătorii cu Mașina",
@@ -650,120 +650,120 @@
       "description": "Alătură-te miilor de dansatori de tango din întreaga lume. Descoperă evenimente, găsește profesori, conectează-te cu dansatori și cufundă-te în lumea pasionată a tangoului argentinian."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Bine ai venit în Comunitatea Globală Tango",
+      "heading": "Acolo unde Tango-ul întâlnește Comunitatea",
+      "paragraph": "Împărtășește amintiri, găsește evenimente și ajută-ne să construim viitorul tehnologiei tango. Alătură-te miilor de dansatori pasionați care se conectează la nivel mondial.",
+      "getStarted": "Începe gratuit",
+      "volunteer": "Fii voluntar pentru a ajuta la construirea MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Cum funcționează",
+      "description": "Începe-ți călătoria tango în trei pași simpli",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Creează-ți profilul",
+        "description": "Alătură-te gratuit și spune-ne despre călătoria ta în tango, nivelul de experiență și preferințele de dans"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Descoperă și Conectează-te",
+        "description": "Găsește evenimente, profesori și locații aproape de tine. Conectează-te cu dansatori care împărtășesc pasiunea ta"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Dansează & Crește",
+        "description": "Participa la evenimente, ia lecții, fă prieteni și devino parte din comunitatea globală de tango"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Tot ce ai nevoie",
+      "description": "Conectează-te, descoperă și dezvoltă-ți călătoria în tango cu funcții puternice",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Comunitate",
+        "heading": "Conectează-te cu dansatori din întreaga lume",
+        "description": "Alătură-te unei comunități globale vibrante de entuziaști ai tango-ului. Conectează-te cu dansatori, profesori și organizatori din Buenos Aires până în Tokyo.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Urmărește dansatorii și construiește-ți rețeaua",
+          "groups": "Alătură-te grupurilor bazate pe interese și locație",
+          "messaging": "Mesagerie în timp real și funcții de chat",
+          "discover": "Descoperă dansatori care vizitează orașul tău"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Evenimente",
+        "heading": "Descoperă evenimente peste tot",
+        "description": "Nu rata niciodată o milonga, festival sau workshop. Platforma noastră te conectează la mii de evenimente de tango care au loc la nivel global.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Calendar de evenimente cuprinzător",
+          "rsvp": "RSVP și rezervare de bilete",
+          "notifications": "Notificări și memento-uri pentru evenimente",
+          "map": "Hartă interactivă a locațiilor"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Streaming Live",
+          "description": "Urmărește milongas din întreaga lume în timp real"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Biblioteca de Muzică",
+          "description": "Playlist-uri și ghiduri de tango curate"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Profesori Verificați",
+          "description": "Învață de la instructori certificați"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Planificator de Călătorii",
+          "description": "Planifică călătorii și găsește gazde la nivel global"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Ce spun dansatorii",
+      "description": "Alătură-te miilor de dansatori mulțumiți din întreaga lume",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
           "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "text": "Mundo Tango m-a ajutat să-mi găsesc familia de dans în un nou oraș. Comunitatea este caldă, primitoare și cu adevărat pasionată de tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, SUA",
+          "text": "Am descoperit milonga și ateliere uimitoare prin această platformă. A devenit esențială pentru călătoria mea în tango."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moscova, Rusia",
+          "text": "Directorul de profesori m-a ajutat să găsesc instructori incredibili. Dansul meu s-a îmbunătățit enorm!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Întrebări frecvente",
+      "description": "Tot ce trebuie să știi despre Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Ce este Mundo Tango?",
+          "answer": "Mundo Tango este o platformă globală care conectează dansatori de tango, profesori și organizatori. Te ajutăm să descoperi evenimente, să găsești parteneri de dans, să înveți de la cei mai buni instructori și să te imersezi în comunitatea vibrantă de tango din întreaga lume."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Este Mundo Tango gratuit de utilizat?",
+          "answer": "Da! Oferim un nivel gratuit care include crearea unui profil de bază, descoperirea de evenimente și mesagerie. Funcții premium precum mesagerie nelimitată, potrivirea partenerilor de dans cu AI și notificări prioritare pentru evenimente sunt disponibile cu abonamentul nostru Pro."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Cum pot găsi evenimente de tango în apropierea mea?",
+          "answer": "Pur și simplu folosește Calendarul de Evenimente sau funcțiile de Căutare pentru a filtra după oraș, dată și tip de eveniment. Poți descoperi milonga, festivaluri, ateliere și sesiuni de practică care au loc în zona ta sau oriunde în lume."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Pot să mă conectez cu alți dansatori?",
+          "answer": "Absolut! Urmărește dansatori, alătură-te grupurilor, trimite cereri de prietenie și discută cu comunitatea. Platforma noastră este concepută pentru a încuraja conexiuni autentice în lumea tango-ului."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Cum pot găsi profesori de tango?",
+          "answer": "Vizitează Directorul nostru de Profesori pentru a răsfoi instructori verificați din întreaga lume. Filtrează după locație, specialitate și nivel de experiență. Citește recenzii de la alți studenți și rezervă lecții private direct prin platformă."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Ce face Mundo Tango diferit?",
+          "answer": "Suntem construiți de dansatori de tango, pentru dansatori de tango. Ne concentrăm pe construirea unei comunități autentice, curarea de evenimente de calitate și conectarea ta cu familia globală de tango - nu doar o altă rețea socială."
         }
       }
     },
@@ -773,27 +773,27 @@
   },
   "feed": {
     "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "description": "Rămâi la curent cu cele mai recente noutăți din comunitatea tango",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Toate postările",
+      "following": "Urmărind",
+      "popular": "Populare",
+      "recent": "Recente"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Ce ai pe minte?",
+    "noPost": "Nu sunt postări de afișat"
   },
   "events": {
     "title": "Evenimente de Tango",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "description": "Descoperă evenimente de tango în apropierea ta",
+    "upcoming": "Evenimente Viitoare",
+    "past": "Evenimente Trecute",
     "filters": {
-      "all": "All Events",
+      "all": "Toate Evenimentele",
       "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "workshops": "Ateliere",
+      "festivals": "Festivaluri",
+      "classes": "Cursuri"
     },
     "noEvents": "Nu s-au găsit evenimente",
     "subtitle": "Descoperă milonghi, festivaluri și workshop-uri",
@@ -802,20 +802,20 @@
   },
   "profile": {
     "title": "Profil",
-    "description": "View and edit your profile",
+    "description": "Vezi și editează profilul tău",
     "editProfile": "Editează Profilul",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Postări",
+      "photos": "Fotografii",
+      "videos": "Videoclipuri",
+      "events": "Evenimente",
+      "friends": "Prieteni"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Postări",
+      "followers": "Urmăritori",
+      "following": "Urmăresc",
+      "events": "Evenimente Participante"
     },
     "followers": "Urmăritori",
     "following": "Urmărește",
@@ -823,83 +823,83 @@
     "about": "Despre"
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Mesaje",
+    "description": "Discută cu conexiunile tale de tango",
+    "newMessage": "Mesaj Nou",
+    "searchConversations": "Caută conversații",
+    "noMessages": "Încă nu sunt mesaje",
+    "startConversation": "Începe o conversație"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Profesori de Tango",
+    "description": "Găsește și conectează-te cu profesori de tango",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Toți Profesorii",
+      "featured": "Prezentate",
+      "nearby": "Aproape"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Vezi Profilul",
+    "bookLesson": "Rezervă o Lecție"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Locații de Tango",
+    "description": "Descoperiți locațiile de tango din întreaga lume",
     "filters": {
-      "all": "All Venues",
+      "all": "Toate locațiile",
       "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "schools": "Școli de dans",
+      "theaters": "Teatre"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Obțineți indicații"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Setări",
+    "description": "Gestionați setările contului dvs.",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Setările contului",
+      "profile": "Profil",
+      "privacy": "Confidențialitate",
+      "notifications": "Notificări",
+      "security": "Securitate",
+      "billing": "Facturare",
+      "preferences": "Preferințe"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Tabloul de bord al CEO-ului Life",
+    "description": "Asistentul dvs. personal AI pentru gestionarea vieții",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Agent de sănătate",
+      "fitness": "Agent de fitness",
+      "nutrition": "Agent de nutriție",
+      "finance": "Agent financiar",
+      "career": "Agent de carieră",
+      "productivity": "Agent de productivitate",
+      "relationships": "Agent de relații",
+      "learning": "Agent de învățare"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Piață",
+    "description": "Cumpărați și vindeți articole legate de tango",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Pantofi de dans",
+      "clothing": "Îmbrăcăminte",
+      "music": "Muzică",
+      "accessories": "Accesorii",
+      "other": "Altele"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Panou de administrare",
+    "description": "Administrarea și gestionarea platformei",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Prezentare generală",
+      "users": "Utilizatori",
+      "content": "Conținut",
+      "reports": "Rapoarte",
+      "analytics": "Analitice",
+      "settings": "Setări"
     }
   },
   "cities": {

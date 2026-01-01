@@ -1,896 +1,896 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "नोंदणी करा",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "मुंडो तांगा मध्ये सामील व्हा - आपले खाते तयार करा",
+      "description": "आपले मुंडो तांगा खाते तयार करा आणि जागतिक अर्जेंटिन तांगा समुदायात सामील व्हा. नृत्यांगनांसोबत कनेक्ट व्हा, कार्यक्रम शोधा, आणि तांगासाठी आपल्या आवडीत सामायिक करा."
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "कुटुंबात आपले स्वागत आहे",
+      "beginJourney": "आपल्या प्रवासाची सुरुवात करा",
+      "joinCommunity": "समुदायात सामील व्हा"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "आपण सामील झाला आहात!",
+      "joinMundoTango": "मुंडो तांगा मध्ये सामील व्हा",
+      "description": "जागतिक नृत्यांगनांसोबत कनेक्ट व्हा, मिलोंगास शोधा, आणि अर्जेंटिन तांगाच्या उत्कट जगात स्वतःला बुडवा",
+      "waitlistDescription": "मुंडो तांगा समुदायात आपले स्वागत आहे. आम्ही आपले खाते तयार करत आहोत आणि लवकरच आपल्याला सूचित करू!"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ नृत्यांगना",
+      "events": "{{count}}+ कार्यक्रम",
+      "cities": "{{count}} शहर"
     },
     "form": {
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "fullName": "पूर्ण नाव",
+      "fullNamePlaceholder": "मारिया रोड्रिग्ज",
+      "email": "ईमेल",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "वापरकर्ता नाव",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "पासवर्ड",
+      "confirmPassword": "पासवर्डची पुष्टी करा",
+      "inviteOnlyNotice": "नोंदणी सध्या आमंत्रण-फक्त आहे. आमच्या प्रतीक्षा यादीत सामील होण्यासाठी हा फॉर्म पूर्ण करा आणि आपले खाते तयार झाल्यावर आम्ही आपल्याला सूचित करू.",
+      "acceptTermsPrefix": "मी स्वीकारतो",
+      "termsAndConditions": "अटी आणि शर्ती"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "हा ईमेल आधीच नोंदणीकृत आहे",
+      "emailAvailable": "ईमेल उपलब्ध आहे!",
+      "usernameTaken": "वापरकर्ता नाव घेतले आहे. {{suggestion}} प्रयत्न करा",
+      "usernameAvailable": "वापरकर्ता नाव उपलब्ध आहे!",
+      "passwordsMatch": "पासवर्ड जुळतात",
+      "passwordsDontMatch": "पासवर्ड जुळत नाहीत"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "कमजोर",
+      "medium": "मध्यम",
+      "strong": "मजबूत",
+      "veryStrong": "खूप मजबूत"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "तुमच्याकडे आमंत्रण कोड आहे का? (ऐच्छिक)",
+      "placeholder": "तत्काळ प्रवेशासाठी तुमचा आमंत्रण कोड प्रविष्ट करा",
+      "accepted": "कोड स्वीकारला! तुमचा खाता तात्काळ सक्रिय केला जाईल.",
+      "noWorries": "कोणतीही काळजी नाही! आमच्या प्रतीक्षा यादीत सामील होण्यासाठी खालील फॉर्म पूर्ण करा."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "स्वागत आहे, {{name}}!",
+      "defaultName": "नर्तक",
+      "onTheList": "तुम्ही यादीत आहात. आम्ही तुम्हाला ईमेल करणार आहोत",
+      "whenReady": "जेव्हा तुमचा खाता तयार असेल.",
+      "helpUsGrow": "तुम्ही वाट पाहत असताना, आम्हाला वाढण्यास मदत करा",
+      "volunteerWithUs": "आमच्यासोबत स्वयंसेवक व्हा",
+      "supportMundoTango": "मुंडो टांगोला समर्थन द्या"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "तुमचा खाता तयार करत आहे...",
+      "joining": "सामील होत आहे...",
+      "createAccount": "खाता तयार करा",
+      "joinMundoTango": "मुंडो टांगोमध्ये सामील व्हा"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "तुमच्याकडे आधीच खाता आहे का?",
+    "signIn": "साइन इन करा",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "अवैध कोड",
+        "description": "कृपया वैध 6-अंकांचा प्रमाणीकरण कोड प्रविष्ट करा."
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "ईमेल सत्यापित झाले!",
+        "description": "मुंडो टांगोमध्ये स्वागत आहे! तुमचे ऑनबोर्डिंग सुरू करत आहे..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "सत्यापन अयशस्वी",
+        "description": "अवैध किंवा कालबाह्य कोड. कृपया पुन्हा प्रयत्न करा."
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "त्रुटी",
+        "description": "ईमेल सत्यापित करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "खूप सारे विनंत्या",
+        "description": "कृपया पुन्हा प्रयत्न करण्यापूर्वी काही मिनिटे थांबा."
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "कोड पाठवला!",
+        "description": "कृपया नवीन कोडसाठी आपल्या इनबॉक्सची तपासणी करा."
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "कोड पुन्हा पाठवण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा."
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "अटी आवश्यक आहेत",
+        "description": "कृपया अटी व शर्ती स्वीकारा"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "पासवर्ड जुळत नाहीत",
+        "description": "कृपया दोन्ही पासवर्ड समान आहेत याची खात्री करा"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "कमजोर पासवर्ड",
+        "description": "कृपया एक मजबूत पासवर्ड निवडा"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "आपला ई-मेल तपासा",
+        "description": "आम्ही आपल्याला ६-अंकी प्रमाणीकरण कोड पाठवला आहे. कृपया आपल्या इनबॉक्सची तपासणी करा."
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "नोंदणी अयशस्वी"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "साइनअप पूर्ण करता आले नाही"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "कृपया पुन्हा प्रयत्न करा"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "स्वागत आहे",
+      "seoTitle": "मुंडो टॅंगोमध्ये आपले स्वागत आहे",
+      "seoDescription": "मुंडो टॅंगोसह आपल्या टॅंगो प्रवासाची सुरुवात करा",
+      "badge": "जलद सेटअप",
+      "title": "मुंडो टॅंगोमध्ये आपले स्वागत आहे",
+      "subtitle": "आपला प्रोफाइल सेटअप करूया जेणेकरून आपण जागतिक टॅंगो समुदायाशी कनेक्ट होऊ शकता",
+      "duration": "याला सुमारे २ मिनिटे लागतील",
+      "stepIndicator": "चरण {{current}} ऑफ {{total}}",
+      "getStarted": "सुरू करा",
+      "profileTitle": "आपला टॅंगो प्रवास सुरू होतो",
+      "profileSubtitle": "आपल्या विषयी थोडक्यात सांगा",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "आपला शहर निवडा",
+          "description": "आपल्या स्थानिक टॅंगो समुदायाशी कनेक्ट व्हा"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "आपल्या भूमिका सांगा",
+          "description": "नर्तक, शिक्षक, DJ, आयोजक, किंवा यापैकी सर्व?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "इव्हेंट्स शोधा",
+          "description": "तुमच्या जवळील मिलोंगास, वर्ग, आणि महोत्सव शोधा"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "तुमचा प्रवास सामायिक करा",
+          "description": "तुमच्या स्तरावरच्या नृत्यांगनांसोबत कनेक्ट करा"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "फेसबुक कनेक्ट करा",
+          "description": "समुदायातील मित्र शोधण्यासाठी तुमचा फेसबुक प्रोफाइल लिंक करा"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "सामाजिक कनेक्ट",
+      "seoTitle": "तुमचा सामाजिक जग कनेक्ट करा - मुंडो टांगो",
+      "seoDescription": "तुमच्या सामाजिक प्रोफाइल्स लिंक करा जेणेकरून तुम्हाला टांगो समुदायातील मित्र सापडतील.",
+      "step": "6 पैकी 2वा टप्पा",
+      "title": "तुमचा सामाजिक जग कनेक्ट करा",
+      "quote": "\"अनेक टांगो नृत्यांगना आधीच फेसबुकद्वारे एकमेकांना ओळखतात. तुमचा प्रोफाइल लिंक करून, आम्ही तुम्हाला दाखवू शकतो की तुमच्या नेटवर्कमधील कोणते नृत्यांगना आधीच येथे आहेत - मिलोंगासमध्ये परिचित चेहरे शोधणे आणि गहन संबंध निर्माण करणे सोपे करते.\"",
+      "cardTitle": "तुमचे मित्र शोधा",
+      "cardDescription": "तुमचा फेसबुक तुम्हाला अशा नृत्यांगनांसोबत जुळवण्यात मदत करतो ज्यांना तुम्ही आधीच ओळखता, त्यामुळे तुम्हाला सुरुवात करावी लागणार नाही.",
+      "facebookLabel": "फेसबुक प्रोफाइल URL (ऐच्छिक)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "आम्ही हे इतर समुदायांमध्ये एक पुल म्हणून वापरतो आणि तुम्हाला तुम्हाला माहित असलेल्या नृत्यांगनांसोबत जुळवतो.",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "त्रुटी",
+        "errorDescription": "प्रोफाइल माहिती जतन करण्यात अयशस्वी"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "परत",
+      "next": "पुढे",
+      "skip": "काढा",
+      "finish": "समाप्त",
+      "saving": "जतन करत आहे..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "शहर निवड",
+      "seoTitle": "तुमचे शहर निवडा - मुंडो टांगो",
+      "seoDescription": "स्थानिक टांगो नृत्यांगनांसोबत कनेक्ट करण्यासाठी तुमचे घरचे शहर निवडा",
+      "step": "6 पैकी 1वा टप्पा",
+      "title": "तुम्ही कुठे नृत्य करता?",
+      "subtitle": "तुमच्या क्षेत्रातील नृत्यांगनांसोबत कनेक्ट करा",
+      "cardTitle": "तुमचा गृहनगर",
+      "cardDescription": "हे आपल्याला स्थानिक कार्यक्रम आणि नर्तक दाखवण्यात मदत करते",
+      "searchLabel": "आपल्या शहरासाठी शोधा",
+      "searchPlaceholder": "आपल्या शहराचे नाव टाका...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "लोकप्रिय तांगा स्थळांमधून निवडा"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "शहर आवश्यक आहे",
+        "selectCity": "कृपया आपला गृहनगर निवडा"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "स्रोत जोडला गेला!",
+        "submittedForReview": "पुनरावलोकनासाठी सादर केले",
+        "trackingEvents": "आम्ही साइटवरील कार्यक्रमांचे ट्रॅकिंग सुरू करू",
+        "thankYou": "धन्यवाद! आपला प्रस्ताव पुनरावलोकनासाठी पाठविला गेला आहे.",
+        "errorTitle": "त्रुटी",
+        "suggestionFailed": "प्रस्ताव सादर करण्यात अयशस्वी",
+        "saveFailed": "शहरे जतन करण्यात अयशस्वी"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "फोटो अपलोड",
+      "seoTitle": "प्रोफाइल फोटो जोडा - मुण्डो तांगा",
+      "seoDescription": "आपला प्रोफाइल फोटो अपलोड करा",
+      "step": "6 पैकी 3 पाऊल",
+      "title": "आपला प्रोफाइल फोटो जोडा",
+      "subtitle": "समुदायात आपल्याला ओळखण्यात इतरांना मदत करा",
+      "cardTitle": "आपला प्रोफाइल फोटो",
+      "cardDescription": "इतरांना आपल्याला ओळखण्यात मदत करा (आपण हा पाऊल वगळू शकता)",
+      "previewAlt": "प्रोफाइल पूर्वावलोकन",
+      "dropHere": "आपला फोटो येथे ड्रॉप करा",
+      "or": "किंवा",
+      "browseFiles": "फाइल ब्राउझ करा",
+      "fileTypes": "PNG, JPG 5MB पर्यंत",
+      "photoSelected": "फोटो निवडला गेला!",
+      "uploading": "अपलोड करत आहे...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "अवैध फाइल",
+        "selectImage": "कृपया एक चित्र फाइल निवडा",
+        "fileTooLarge": "फाइल खूप मोठी आहे",
+        "sizeLimit": "कृपया 5MB च्या खालील चित्र निवडा",
+        "uploadFailed": "अपलोड अयशस्वी",
+        "tryAgain": "फोटो अपलोड करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
+        "skipFailed": "स्किप करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा."
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "भाषा",
+      "seoTitle": "तुमच्या भाषा - Mundo Tango",
+      "seoDescription": "तुम्ही कोणत्या भाषांमध्ये बोलता ते आम्हाला सांगा",
+      "step": "चरण 5 पैकी 6",
+      "title": "तुम्ही कोणत्या भाषांमध्ये बोलता?",
+      "subtitle": "तुमच्याशी संबंधित नर्तकांशी कनेक्ट व्हा",
+      "cardTitle": "तुमच्या भाषा",
+      "cardDescription": "तुमची प्राथमिक भाषा आणि तुम्ही बोलणाऱ्या इतर भाषांचा निवड करा",
+      "primaryLabel": "प्राथमिक भाषा",
+      "primaryHint": "यामुळे तुमच्या साइटची प्रदर्शन भाषा देखील सेट होईल",
+      "primaryPlaceholder": "तुमची प्राथमिक भाषा निवडा",
+      "additionalLabel": "अतिरिक्त भाषाएँ (ऐच्छिक)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "प्राथमिक भाषा आवश्यक आहे",
+        "selectPrimary": "कृपया तुमची प्राथमिक भाषा निवडा",
+        "saveFailed": "भाषा जतन करण्यात अयशस्वी",
+        "saveFailedTitle": "भाषा जतन करण्यात अयशस्वी"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "टांगो भूमिका",
+      "seoTitle": "तुमच्या टांगो भूमिका - Mundo Tango",
+      "seoDescription": "तुमच्या टांगो प्रवासाबद्दल आम्हाला सांगा",
+      "step": "चरण 2 पैकी 6",
+      "title": "तुम्ही कोणत्या भूमिका निभावता?",
+      "subtitle": "तुमच्यावर लागू असलेल्या सर्व गोष्टी निवडा",
+      "cardTitle": "तुमची टांगो ओळख",
+      "cardDescription": "इतरांना तुम्ही टांगो जगात कसे सहभागी होता ते जाणून घेण्यास मदत करा"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "Dance अनुभव",
+      "seoTitle": "तुमचा नृत्य अनुभव - Mundo Tango",
+      "seoDescription": "तुमच्या नृत्य अनुभवाच्या पातळीची माहिती द्या",
+      "step": "चरण 4 पैकी 6",
+      "title": "तुमचा नृत्य अनुभव",
+      "subtitle": "आम्हाला योग्य नर्तकांशी तुम्हाला जोडण्यात मदत करा"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "आवडी",
+      "seoTitle": "तुमच्या आवडी - Mundo Tango",
+      "seoDescription": "तुमच्या आवडींबद्दल आम्हाला सांगा",
+      "step": "चरण 6 पैकी 6",
+      "title": "तुमच्या आवडी काय आहेत?",
+      "subtitle": "तुमच्या आवडत्या विषयांची निवड करा",
+      "helpText": "तुमच्या फीडसाठी वैयक्तिकृत करण्यासाठी किमान 3 आवडी निवडा",
+      "selectedCount": "{{count}} निवडले",
+      "finishing": "समापन करत आहे...",
+      "completeSetup": "सेटअप पूर्ण करा",
+      "searchPlaceholder": "समुदाय शोधा किंवा नवीन एक जोडा...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "फिटनेस आणि खेळ"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "तंत्रज्ञान आणि नवकल्पना"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "आध्यात्मिकता आणि वाढ"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "योग आणि आरोग्य"
         },
         "music": {
-          "label": "Music"
+          "label": "संगीत"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "छायाचित्रण आणि व्हिडिओ"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "कला आणि सर्जनशीलता"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "वाचन आणि लेखन"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "प्रवास आणि साहस"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "स्वयंपाक आणि अन्न"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "वाइन आणि पेये"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "खेळ"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "आउटडोर क्रियाकलाप"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "हिम क्रीडा"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "सायकल चालवणे"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "पाण्याच्या क्रीडा"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "निसर्ग आणि बागकाम"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "चित्रपट आणि मनोरंजन"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "पालतू प्राणी आणि वन्यजीव"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "सामाजिक आणि समुदाय"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
-        "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
-        "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
-        "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
-        "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
-        "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "fitness_gym": "जिम आणि वजन",
+        "fitness_running": "धावणे",
+        "fitness_crossfit": "क्रॉसफिट",
+        "fitness_martial_arts": "मार्शल आर्ट्स",
+        "fitness_tennis": "टेनिस",
+        "fitness_soccer": "सॉकर/फुटबॉल",
+        "fitness_basketball": "बास्केटबॉल",
+        "fitness_fencing": "फेन्सिंग",
+        "tech_coding": "कोडिंग आणि विकास",
+        "tech_ai": "एआय आणि भविष्य तंत्रज्ञान",
+        "tech_crypto": "वेब3 आणि क्रिप्टो",
+        "tech_gaming": "गेमिंग संस्कृती",
+        "spirit_meditation": "ध्यान",
+        "spirit_astrology": "ज्योतिष",
+        "spirit_philosophy": "तत्त्वज्ञान",
+        "spirit_community": "समुदाय निर्माण",
+        "yoga_hatha": "हठ योग",
+        "yoga_vinyasa": "विन्यास प्रवाह",
+        "yoga_meditation": "ध्यान",
+        "yoga_pilates": "पिलाटेस",
+        "yoga_breathwork": "श्वास कार्य",
+        "music_listening": "संगीत ऐकणे",
+        "music_concerts": "प्रत्यक्ष संगीत कार्यक्रम",
+        "music_piano": "पियानो",
+        "music_guitar": "गिटार",
+        "music_singing": "गायन",
+        "music_dj": "डीजेइंग",
+        "music_production": "संगीत उत्पादन",
+        "photo_portrait": "पोर्ट्रेट फोटोग्राफी",
+        "photo_landscape": "लँडस्केप फोटोग्राफी",
+        "photo_street": "स्ट्रीट फोटोग्राफी",
+        "photo_video": "व्हिडिओग्राफी",
+        "photo_editing": "फोटो संपादन",
+        "art_painting": "चित्रकला",
+        "art_drawing": "रेखाटन",
+        "art_sculpture": "शिल्पकला",
+        "art_digital": "डिजिटल कला",
+        "art_crafts": "हस्तकला आणि DIY",
+        "art_pottery": "मातीची भांडी",
+        "reading_fiction": "कथा",
+        "reading_nonfiction": "अकथा",
+        "reading_poetry": "कविता",
+        "reading_writing": "सर्जनशील लेखन",
+        "reading_journals": "जर्नलिंग",
+        "travel_backpacking": "बॅकपॅकिंग",
+        "travel_luxury": "लक्झरी प्रवास",
+        "travel_cultural": "संस्कृतिक पर्यटन",
+        "travel_road_trips": "रोड ट्रिप",
+        "travel_solo": "एकटा प्रवास",
+        "cooking_home": "घरगुती स्वयंपाक",
+        "cooking_baking": "बेकिंग",
+        "cooking_gourmet": "गौरमेट खाद्यपदार्थ",
+        "cooking_international": "आंतरराष्ट्रीय खाद्यपदार्थ",
+        "cooking_healthy": "आरोग्यदायी आहार",
+        "wine_tasting": "वाइन चव चाखणे",
+        "wine_cocktails": "कॉकटेल",
+        "wine_coffee": "कॉफीची प्रशंसा",
+        "wine_tea": "चहा संस्कृती",
+        "wine_brewing": "घरगुती ब्रूइंग",
+        "gaming_video": "व्हिडिओ गेम्स",
+        "gaming_board": "बोर्ड गेम्स",
+        "gaming_card": "कार्ड गेम्स",
+        "gaming_tabletop": "टेबलटॉप आरपीजी",
+        "gaming_esports": "ई-स्पोर्ट्स",
+        "outdoor_hiking": "हायकिंग",
+        "outdoor_camping": "कॅम्पिंग",
+        "outdoor_climbing": "रॉक क्लायंबिंग",
+        "outdoor_fishing": "फिशिंग",
+        "outdoor_kayaking": "कायाकिंग",
+        "outdoor_surfing": "सर्फिंग",
+        "snow_skiing": "स्कीइंग",
+        "snow_snowboard": "स्नोबोर्डिंग",
+        "snow_crosscountry": "क्रॉस-कंट्री स्कीइंग",
+        "snow_ice_skating": "आइस स्केटिंग",
+        "snow_sledding": "स्लेडिंग",
+        "snow_snowshoeing": "स्नोशूइंग",
+        "cycling_road": "रोड सायकलिंग",
+        "cycling_mountain": "माऊंटन बायकिंग",
+        "cycling_urban": "शहरी सायकलिंग",
+        "cycling_touring": "बाइक टूरिंग",
+        "water_swimming": "तैराकी",
+        "water_scuba": "स्कूबा डायविंग",
+        "water_snorkel": "स्नॉर्केलिंग",
+        "water_sailing": "Sailing|||नाव चालवणे",
+        "water_paddleboard": "Paddleboarding|||पॅडल बोर्डिंग",
+        "nature_gardening": "Gardening|||उद्यानकाम",
+        "nature_birdwatching": "Bird Watching|||पक्षी निरीक्षण",
+        "nature_botany": "Plant Collecting|||वनस्पती संकलन",
+        "nature_wildlife": "Wildlife Photography|||वन्यजीव छायाचित्रण",
+        "movies_cinema": "Cinema|||सिनेमागृह",
+        "movies_tv": "TV Series|||टीव्ही मालिका",
+        "movies_documentary": "Documentaries|||आलेखात्मक चित्रपट",
+        "movies_theater": "Theater|||नाट्यगृह",
+        "movies_standup": "Stand-up Comedy|||स्टँड-अप कॉमेडी",
+        "pets_dogs": "Dogs|||कुत्रे",
+        "pets_cats": "Cats|||बिल्ली",
+        "pets_exotic": "Exotic Pets|||अनोखे पाळीव प्राणी",
+        "pets_horses": "Horse Riding|||घोडेस्वारी",
+        "pets_rescue": "Animal Rescue|||प्राणी बचाव",
+        "social_volunteering": "Volunteering|||स्वयंसेवा",
+        "social_meetups": "Meetups|||भेटी",
+        "social_networking": "Networking|||जाळे तयार करणे",
+        "social_languages": "Language Exchange|||भाषा विनिमय"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "Welcome to Mundo Tango!|||मुंडो टॅंगोमध्ये आपले स्वागत आहे!",
+        "completeDesc": "Your profile is ready. Start exploring!|||आपला प्रोफाइल तयार आहे. अन्वेषण सुरू करा!",
+        "waitlistTitle": "Profile Complete!|||प्रोफाइल पूर्ण!",
+        "waitlistDesc": "We'll notify you when your account is activated|||आपला खाता सक्रिय झाल्यावर आम्ही आपल्याला सूचित करू."
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "Failed to save. Please try again.|||जतन करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा."
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "Community Guidelines|||समुदाय मार्गदर्शक तत्त्वे",
+      "subtitle": "Please review and accept our terms|||कृपया आमच्या अटींचा आढावा घ्या आणि स्वीकारा",
+      "legalDocsTitle": "Legal Documents|||कायदेशीर कागदपत्रे",
+      "legalDocsDescription": "Review our terms of service and privacy policy|||आमच्या सेवा अटी आणि गोपनीयता धोरणाचा आढावा घ्या",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "I accept the Terms of Service|||मी सेवा अटी स्वीकारतो.",
+        "description": "आमच्या अटी तुमच्या Mundo Tango च्या वापरावर लागू होतात",
+        "link": "सेवा अटी वाचा"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "मी गोपनीयता धोरण स्वीकारतो",
+        "description": "आम्ही तुमचे डेटा कसे हाताळतो",
+        "link": "गोपनीयता धोरण वाचा"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "समुदायाचा आचारसंहिता",
+      "cocDescription": "आम्हाला आदरपूर्ण समुदाय राखण्यात मदत करा",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "आदरपूर्ण रहा",
+          "description": "सर्वांना प्रतिष्ठा आणि शिष्टाचाराने वागवा"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "समावेशी रहा",
+          "description": "सर्व स्तरांवरील आणि पार्श्वभूमीतील नर्तकांचे स्वागत आहे"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "खरे रहा",
+          "description": "तुमची खरी ओळख आणि प्रामाणिक माहिती वापरा"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "संमतीचा आदर करा",
+          "description": "नृत्य करण्यापूर्वी नेहमी विचारणा करा आणि सीमांचे आदर करा"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "कोणतीही छळ नाही",
+          "description": "छळ किंवा धमकीसाठी शून्य सहिष्णुता"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "कोणतीही स्पॅम नाही",
+          "description": "अनधिकृत प्रचार पाठवू नका"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "कोणतीही भेदभाव नाही",
+          "description": "आम्ही कोणत्याही प्रकारच्या भेदभावाला सहन करत नाही"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "गोपनीयतेचे संरक्षण करा",
+          "description": "अनुमतीशिवाय इतरांची माहिती शेअर करू नका"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "सुरक्षा प्राधान्य द्या",
+          "description": "कोणतीही असुरक्षित वर्तन तात्काळ रिपोर्ट करा"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "कायद्यांचे पालन करा",
+          "description": "सर्व लागू कायद्यांचे पालन करा"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "समस्या रिपोर्ट करा",
+          "description": "उल्लंघनांची माहिती देऊन आम्हाला मदत करा"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "एकमेकांना समर्थन द्या",
+          "description": "सहाय्य करा साथीच्या नर्तकांना वाढवण्यासाठी"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "सर्व स्वीकारा आणि पुढे जा",
+      "accepting": "स्वीकृती देत आहे...",
+      "incompleteAlert": "कृपया सर्व आवश्यक अटी स्वीकारा",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "स्वागत आहे!",
+        "description": "तुम्ही आमच्या समुदायाच्या मार्गदर्शक तत्त्वांना स्वीकारले आहे"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "जतन करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा."
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "वेटलिस्ट",
+      "seoTitle": "तुम्ही वेटलिस्टवर आहात - Mundo Tango",
+      "seoDescription": "तुमचा खाता सक्रियतेसाठी प्रलंबित आहे",
+      "title": "तुम्ही वेटलिस्टवर आहात!",
+      "welcomeMessage": "स्वागत आहे, {{name}}!",
+      "defaultName": "नर्तक",
+      "profileComplete": "प्रोफाइल पूर्ण",
+      "profileCompleteDesc": "तुमचा प्रोफाइल तयार आहे आणि वाट पाहत आहे",
+      "emailNotice": "तुमच्या खात्यासाठी तयार झाल्यावर आम्ही तुम्हाला {{email}} वर ईमेल करू",
+      "whenReady": "तुमच्या खात्यासाठी तयार झाल्यावर.",
+      "whileYouWait": "तुम्ही वाट पाहत असताना, आम्हाला वाढण्यात मदत करा:",
+      "volunteerButton": "स्वयंसेवक बना",
+      "supportButton": "Mundo Tango ला समर्थन द्या"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "मार्गदर्शित दौरा",
+      "seoTitle": "Mundo Tango अन्वेषण करा",
+      "seoDescription": "Mundo Tango कसे वापरावे हे शिका",
+      "skipTour": "दौरा वगळा",
+      "finish": "दौरा पूर्ण करा",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "तांगो समुदायातील पोस्ट शोधा",
+        "events": "मिलोंगास, वर्ग, आणि महोत्सव शोधा",
+        "groups": "तुमच्या शहरासाठी किंवा आवडीसाठी गटात सामील व्हा",
+        "messages": "इतर नर्तकांशी थेट संपर्क साधा",
+        "profile": "तुमचा तांगो प्रोफाइल सानुकूलित करा",
+        "createPost": "तुमच्या टांगो क्षणांचा शेअर करा"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "तुमचा अनुभव सुधारित करा",
+        "subtitle": "मुंडो टांगोचा सर्वाधिक लाभ घ्या",
+        "limitedOffer": "मर्यादित कालावधीची ऑफर",
+        "getStarted": "सुरू करा",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "जोडा",
+            "description": "कोणत्याही नर्तकाला थेट संदेश पाठवा"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "दृश्यता",
+            "description": "शोध परिणामांमध्ये वैशिष्ट्यीकृत व्हा"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "कार्यक्रम",
+            "description": "लोकप्रिय कार्यक्रमांसाठी प्राधान्य प्रवेश"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "वाढवा",
+            "description": "तुमच्या प्रोफाइलसाठी प्रगत विश्लेषण"
           },
           "premium": {
-            "title": "Premium",
-            "description": "Exclusive premium features"
+            "title": "प्रीमियम",
+            "description": "विशिष्ट प्रीमियम वैशिष्ट्ये"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "लॉगिन",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "साइन इन - मुंडो टांगो",
+      "description": "जागतिक टांगो समुदायाशी कनेक्ट होण्यासाठी, कार्यक्रम शोधण्यासाठी, आणि अर्जेंटिनाच्या टांगोच्या प्रति तुमचा उत्साह शेअर करण्यासाठी तुमच्या मुंडो टांगो खात्यात साइन इन करा."
     },
-    "badge": "Welcome Back",
+    "badge": "पुन्हा स्वागत आहे",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "तुमचा टांगो प्रवास सुरू आहे",
+      "paragraph": "नर्तकांसोबत कनेक्ट होण्यासाठी, कार्यक्रम शोधण्यासाठी, आणि तुमच्या उत्साहाचे शेअर करण्यासाठी साइन इन करा"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "नर्तक",
+      "events": "कार्यक्रम"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "ईमेल",
+      "password": "पासवर्ड",
+      "signIn": "साइन इन",
+      "signingIn": "साइन इन करत आहे...",
+      "forgotPassword": "पासवर्ड विसरलात?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "खाते नाही का?",
+    "createAccount": "आता एक तयार करा",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "स्वागत आहे!",
+      "successDescription": "तुम्ही यशस्वीरित्या लॉगिन केले आहे.",
+      "errorTitle": "लॉगिन अयशस्वी",
+      "errorDescription": "अवैध प्रमाणपत्रे"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "मुख्यपृष्ठ",
+    "pageLayoutTitle": "जिथे टांगो समुदायाशी भेटतो",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "मुंडो टांगो - जागतिक टांगो समुदायाशी कनेक्ट करा",
+      "description": "जागतिक स्तरावर हजारो टांगो नर्तकांमध्ये सामील व्हा. कार्यक्रम शोधा, शिक्षक शोधा, नर्तकांशी कनेक्ट करा, आणि अर्जेंटिनाच्या टांगोच्या उत्कट जगात स्वतःला बुडवा."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "जागतिक टांगो समुदायात स्वागत आहे",
+      "heading": "जिथे टांगो समुदायाशी भेटतो",
+      "paragraph": "स्मृती शेअर करा, कार्यक्रम शोधा, आणि टांगो तंत्रज्ञानाच्या भविष्याची निर्मिती करण्यात मदत करा. जागतिक स्तरावर कनेक्ट करणाऱ्या हजारो उत्कट नर्तकांमध्ये सामील व्हा.",
+      "getStarted": "मोफत प्रारंभ करा",
+      "volunteer": "MT तयार करण्यात मदतीसाठी स्वयंसेवक बना"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "हे कसे कार्य करते",
+      "description": "तीन सोप्या टप्प्यात तुमच्या टांगोच्या प्रवासाची सुरुवात करा",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "तुमचा प्रोफाइल तयार करा",
+        "description": "मोफत सामील व्हा आणि तुमच्या टांगोच्या प्रवासाबद्दल, अनुभवाच्या पातळीबद्दल, आणि नृत्याच्या आवडींबद्दल आम्हाला सांगा"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "शोधा आणि कनेक्ट करा",
+        "description": "तुमच्या जवळील कार्यक्रम, शिक्षक, आणि स्थळे शोधा. तुमच्या आवडीच्या नर्तकांशी कनेक्ट करा"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "नृत्य करा आणि वाढा",
+        "description": "कार्यक्रमांमध्ये उपस्थित रहा, धडे घ्या, मित्र बनवा, आणि जागतिक टांगो समुदायाचा भाग बना"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "तुम्हाला आवश्यक असलेले सर्व काही",
+      "description": "शक्तिशाली वैशिष्ट्यांसह तुमच्या टांगोच्या प्रवासाशी कनेक्ट करा, शोधा, आणि वाढवा",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "समुदाय",
+        "heading": "जागतिक स्तरावर नर्तकांशी कनेक्ट करा",
+        "description": "टांगो उत्साहींच्या एक जीवंत जागतिक समुदायात सामील व्हा. बुएनोस आयर्सपासून टोकियोपर्यंत नर्तक, शिक्षक, आणि आयोजकांशी कनेक्ट करा.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "नर्तकांचे अनुसरण करा आणि तुमचे नेटवर्क तयार करा",
+          "groups": "आवडी आणि स्थानावर आधारित गटांमध्ये सामील व्हा",
+          "messaging": "वास्तविक-वेळ संदेश आणि चॅट वैशिष्ट्ये",
+          "discover": "तुमच्या शहरात भेट देणाऱ्या नर्तकांना शोधा"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "इव्हेंट्स",
+        "heading": "सर्वत्र इव्हेंट्स शोधा",
+        "description": "कधीही मिलोंगा, महोत्सव किंवा कार्यशाळा चुकवू नका. आमचा प्लॅटफॉर्म तुम्हाला जगभरात होणाऱ्या हजारो तांगा इव्हेंट्सशी जोडतो.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "संपूर्ण इव्हेंट कॅलेंडर",
+          "rsvp": "आरएसव्हीपी आणि तिकीट बुकिंग",
+          "notifications": "इव्हेंट नोटिफिकेशन्स आणि आठवणी",
+          "map": "स्थळांचा इंटरएक्टिव्ह नकाशा"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "लाइव्ह स्ट्रीमिंग",
+          "description": "जागतिक स्तरावर मिलोंगास थेट पहा"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "संगीत लायब्ररी",
+          "description": "क्युरेटेड तांगा प्लेलिस्ट आणि मार्गदर्शक"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "प्रमाणित शिक्षक",
+          "description": "प्रमाणित प्रशिक्षकांकडून शिका"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "प्रवास नियोजक",
+          "description": "योजना करा आणि जागतिक स्तरावर होस्ट शोधा"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "नृत्य करणाऱ्यांचे मत",
+      "description": "जागतिक स्तरावर हजारो समाधानी नृत्य करणाऱ्यांमध्ये सामील व्हा",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "मारिया रोड्रिग्ज",
+          "location": "ब्यूनस आयर्स, अर्जेंटिना",
+          "text": "मुंडो तांगा ने मला नवीन शहरात माझ्या नृत्य कुटुंबाचा शोध घेण्यात मदत केली. समुदाय उबदार, स्वागतार्ह आणि तांगा विषयी खरोखरच उत्साही आहे."
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "जेम्स चेन",
+          "location": "सॅन फ्रान्सिस्को, अमेरिका",
+          "text": "या प्लॅटफॉर्मद्वारे मी अद्भुत मिलोंगास आणि कार्यशाळा शोधल्या आहेत. हे माझ्या तांगा प्रवासासाठी अत्यावश्यक बनले आहे."
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "एलेना वोल्कोव",
+          "location": "मॉस्को, रशिया",
+          "text": "शिक्षक निर्देशिका ने मला अद्भुत प्रशिक्षक शोधण्यात मदत केली. माझे नृत्य खूप सुधारले आहे!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "वारंवार विचारले जाणारे प्रश्न",
+      "description": "मुंडो तांगा विषयी तुम्हाला माहित असलेले सर्व काही",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "मुंडो तांगा काय आहे?",
+          "answer": "मुंडो तांगा हा एक जागतिक प्लॅटफॉर्म आहे जो तांगा नृत्य करणारे, शिक्षक आणि आयोजक यांना जोडतो. आम्ही तुम्हाला इव्हेंट्स शोधण्यात, नृत्य भागीदार शोधण्यात, सर्वोत्तम प्रशिक्षकांकडून शिकण्यात आणि जागतिक स्तरावर तांगा समुदायात सामील होण्यात मदत करतो."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Is Mundo Tango वापरण्यासाठी मोफत आहे?",
+          "answer": "होय! आम्ही मूलभूत प्रोफाइल तयार करणे, कार्यक्रम शोधणे आणि संदेश पाठवणे यांचा समावेश असलेला एक मोफत स्तर ऑफर करतो. अमर्याद संदेश, AI नृत्य साथीदार जुळवणे, आणि प्राधान्य कार्यक्रम सूचना यांसारख्या प्रीमियम वैशिष्ट्यांसाठी आमच्या प्रो सदस्यतेसह उपलब्ध आहेत."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "मी माझ्या जवळच्या तांगा कार्यक्रमांचा शोध कसा घेऊ?",
+          "answer": "फक्त आमच्या कार्यक्रम कॅलेंडर किंवा शोध वैशिष्ट्यांचा वापर करून शहर, तारीख, आणि कार्यक्रम प्रकारानुसार फिल्टर करा. तुम्ही तुमच्या क्षेत्रात किंवा जगभरात होणाऱ्या मिलोंगास, महोत्सव, कार्यशाळा, आणि सराव सत्रांचा शोध घेऊ शकता."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "मी इतर नर्तकांशी कनेक्ट करू शकतो का?",
+          "answer": "निश्चितपणे! नर्तकांचे अनुसरण करा, गटांमध्ये सामील व्हा, मित्रांच्या विनंत्या पाठवा, आणि समुदायासोबत चॅट करा. आमचा प्लॅटफॉर्म तांगा जगात प्रामाणिक कनेक्शनला प्रोत्साहन देण्यासाठी डिझाइन केलेला आहे."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "मी तांगा शिक्षकांचा शोध कसा घेऊ?",
+          "answer": "आमच्या शिक्षक निर्देशिकेत भेट द्या आणि जगभरातील प्रमाणित प्रशिक्षकांचा शोध घ्या. स्थान, विशेषता, आणि अनुभव स्तरानुसार फिल्टर करा. इतर विद्यार्थ्यांकडून पुनरावलोकने वाचा आणि थेट प्लॅटफॉर्मद्वारे खासगी धडे बुक करा."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "मुंडो तांगा वेगळा कसा आहे?",
+          "answer": "आम्ही तांगा नर्तकांनी, तांगा नर्तकांसाठी तयार केले आहे. आमचा लक्ष प्रामाणिक समुदाय निर्माण करणे, गुणवत्ता कार्यक्रम क्यूरेशन, आणि तुम्हाला जागतिक तांगा कुटुंबाशी जोडणे यावर आहे - फक्त आणखी एक सामाजिक नेटवर्क नाही."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "समुदायात सामील होण्यासाठी तयार आहात का?",
+      "description": "आजच तुमचा मोफत खाते तयार करा आणि जगभरातील उत्साही तांगा नर्तकांशी कनेक्ट करायला सुरुवात करा. क्रेडिट कार्डची आवश्यकता नाही.",
+      "button": "मुंडो तांगा मोफत सामील व्हा",
+      "freeForever": "सर्वकाळ मोफत",
+      "noCreditCard": "क्रेडिट कार्ड नाही",
+      "cancelAnytime": "कधीही रद्द करा"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "फीड",
+    "description": "तांगा समुदायातील नवीनतम माहिती मिळवण्यासाठी अद्ययावत रहा",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "सर्व पोस्ट",
+      "following": "अनुसरण करणे",
+      "popular": "लोकप्रिय",
+      "recent": "अलीकडील"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "तुमच्या मनात काय आहे?",
+    "noPost": "दिसवायच्या पोस्ट नाहीत"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "कार्यक्रम",
+    "description": "तुमच्या जवळच्या तांगा कार्यक्रमांचा शोध घ्या",
+    "upcoming": "उपस्थित कार्यक्रम",
+    "past": "भूतकाळातील कार्यक्रम",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "सर्व कार्यक्रम",
+      "milongas": "मिलोंगास",
+      "workshops": "Workshops|||कार्यशाळा",
+      "festivals": "Festivals|||उत्सव",
+      "classes": "Classes|||क्लासेस"
     },
-    "noEvents": "No events found"
+    "noEvents": "No events found|||कोणतेही कार्यक्रम सापडले नाहीत"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Profile|||प्रोफाइल",
+    "description": "View and edit your profile|||तुमची प्रोफाइल पहा आणि संपादित करा",
+    "editProfile": "Edit Profile|||प्रोफाइल संपादित करा",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Posts|||पोस्ट्स",
+      "photos": "Photos|||फोटो",
+      "videos": "Videos|||व्हिडिओ",
+      "events": "Events|||कार्यक्रम",
+      "friends": "Friends|||मित्र"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Posts|||पोस्ट्स",
+      "followers": "Followers|||अनुयायी",
+      "following": "Following|||अनुकरण",
+      "events": "Events Attended|||उपस्थित कार्यक्रम"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Messages|||संदेश",
+    "description": "Chat with your tango connections|||तुमच्या टांगो कनेक्शन्ससोबत चॅट करा",
+    "newMessage": "New Message|||नवीन संदेश",
+    "searchConversations": "Search conversations|||संवाद शोधा",
+    "noMessages": "No messages yet|||आतापर्यंत कोणतेही संदेश नाहीत",
+    "startConversation": "Start a conversation|||संवाद सुरू करा"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Tango Teachers|||टांगो शिक्षक",
+    "description": "Find and connect with tango teachers|||टांगो शिक्षक शोधा आणि कनेक्ट करा",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "All Teachers|||सर्व शिक्षक",
+      "featured": "Featured|||विशेष",
+      "nearby": "Nearby|||जवळच्या"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "View Profile|||प्रोफाइल पहा",
+    "bookLesson": "Book a Lesson|||पाठ्यक्रम बुक करा"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Tango Venues|||टांगो स्थळे",
+    "description": "जागतिक स्तरावर टॅंगो स्थळे शोधा",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "सर्व स्थळे",
+      "milongas": "मिलोंगास",
+      "schools": "नृत्य शाळा",
+      "theaters": "गृहस्थळे"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "मार्गदर्शन मिळवा"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "सेटिंग्ज",
+    "description": "आपल्या खात्याच्या सेटिंग्ज व्यवस्थापित करा",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "खाते सेटिंग्ज",
+      "profile": "प्रोफाइल",
+      "privacy": "गोपनीयता",
+      "notifications": "सूचना",
+      "security": "सुरक्षा",
+      "billing": "बिलिंग",
+      "preferences": "आवडी"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "जीवन CEO डॅशबोर्ड",
+    "description": "जीवन व्यवस्थापनासाठी आपला वैयक्तिक AI सहाय्यक",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "आरोग्य एजंट",
+      "fitness": "फिटनेस एजंट",
+      "nutrition": "पोषण एजंट",
+      "finance": "आर्थिक एजंट",
+      "career": "करिअर एजंट",
+      "productivity": "उत्पादकता एजंट",
+      "relationships": "संबंध एजंट",
+      "learning": "शिक्षण एजंट"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "मार्केटप्लेस",
+    "description": "टॅंगो संबंधित वस्तू खरेदी आणि विक्री करा",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "नृत्याचे बूट",
+      "clothing": "कपडे",
+      "music": "संगीत",
+      "accessories": "अॅक्सेसरीज",
+      "other": "इतर"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "व्यवस्थापक डॅशबोर्ड",
+    "description": "प्लॅटफॉर्म प्रशासन आणि व्यवस्थापन",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "आढावा",
+      "users": "वापरकर्ते",
+      "content": "सामग्री",
+      "reports": "अहवाल",
+      "analytics": "विश्लेषण",
+      "settings": "सेटिंग्ज"
     }
   }
 }

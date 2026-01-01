@@ -1,677 +1,677 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "ລົງທະບຽນ",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "ເຂົ້າຮ່ວມ Mundo Tango - ສ້າງບັດທະບຽນຂອງທ່ານ",
+      "description": "ສ້າງບັດທະບຽນ Mundo Tango ຂອງທ່ານ ແລະເຂົ້າຮ່ວມຊຸມຊົນທາງອາຈັນຕິນ. ເຊື່ອມຕໍ່ກັບນັກເດິນ, ຄົ້ນຫາເຫດການ, ແລະແບ່ງປັນຄວາມຮັກສໍາລັບທາງອາຈັນຕິນ."
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "ຍິນດີຕ໭ບສະຖານທີ່ຄອບຄົວ",
+      "beginJourney": "ເລີ່ມການເດີນທາງຂອງທ່ານ",
+      "joinCommunity": "ເຂົ້າຮ່ວມຊຸມຊົນ"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "ທ່ານແລ້ວ!",
+      "joinMundoTango": "ເຂົ້າຮ່ວມ Mundo Tango",
+      "description": "ເຊື່ອມຕໍ່ກັບນັກເດິນທົ່ວໂລກ, ຄົ້ນຫາມິລອງກາສ, ແລະດິນໃນໂລກທີ່ຕື່ນຕົກຂອງທາງອາຈັນຕິນ",
+      "waitlistDescription": "ຍິນດີຕ໭ບສະຖານທີ່ຊຸມຊົນ Mundo Tango. ພວກເຮົາກຳລັງຈັດຕັ້ງບັດທະບຽນຂອງທ່ານ ແລະຈະແຈ້ງໃຫ້ທ່ານໃນໄວໆນີ້!"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ ນັກເດັນ",
+      "events": "{{count}}+ ງານ",
+      "cities": "{{count}} ເມືອງ"
     },
     "form": {
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "fullName": "ຊື່ເຕັມ",
+      "fullNamePlaceholder": "ម៉ារីយ៉ា រ៉ូដ្រីគេស",
+      "email": "ອີເມວ",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "ຊື່ໃນລະບົບ",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "ລະຫັດຜ່ານ",
+      "confirmPassword": "ຢືນຢັນລະຫັດຜ່ານ",
+      "inviteOnlyNotice": "ການລົງທະບຽນໃນເວັບໄຊນີ້ແມ່ນສໍາລັບບຸກຄົນທີ່ໄດ້ຮັບບັດເຊື່ອງແລ້ວ. ສົ່ງຟອມນີ້ເພື່ອເຂົ້າໄປສູ່ລາຍຊື່ລໍຖໍ່ ແລະພວກເຮົາຈະແຈ້ງເຖິງເມື່ອບັນຊີຂອງທ່ານພໍ່ແລ້ວ.",
+      "acceptTermsPrefix": "ຂໍອະໄພຂໍຍອມຮັບສະບັບ",
+      "termsAndConditions": "ເງື່ອນໄຂ ແລະ ສະຖານທີ່"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "ອີເມວນີ້ໄດ້ຖືກລົງທະບຽນແລ້ວ",
+      "emailAvailable": "ອີເມວສຽງສົດ!",
+      "usernameTaken": "ຊື່ຜູ້ໃຊ້ໄດ້ຖືກໃຊ້ແລ້ວ. ລອງໃຊ້ {{suggestion}}",
+      "usernameAvailable": "ຊື່ຜູ້ໃຊ້ສຽງສົດ!",
+      "passwordsMatch": "ລະຫັດຜ່ານສຽງກັນ",
+      "passwordsDontMatch": "ລະຫັດຜ່ານບໍ່ສຽງກັນ"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "ອ່ອນ",
+      "medium": "ກາງ",
+      "strong": "ແຂງແຮກ",
+      "veryStrong": "ສູງສຸດ"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "ມີລະຫັດແນະນຳບໍ? (ເລືອກໃຊ້)",
+      "placeholder": "ໃສ່ລະຫັດແນະນຳສໍາລັບການເຂົ້າໃຊ້ທັນທີ",
+      "accepted": "ລະຫັດຖືກຮັບ! ບັນຊີຂອງທ່ານຈະຖືກເປີດໃຊ້ທັນທີ.",
+      "noWorries": "ບໍ່ຕ້ອງກັວງ! ສົກສົມບັດຟອມດໍາລຽວລົງເພື່ອເຂົ້າໄປສູ່ລາຍຊື່ລໍຖໍ."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "ຍິນດີ, {{name}}!",
+      "defaultName": "ນັກເດັນ",
+      "onTheList": "ທ່ານຢູ່ໃນລາຍຊື່. ພວກເຮົາຈະສົ່ງອີເມວໃຫ້ທ່ານທີ່",
+      "whenReady": "ເມື່ອບັນຊີຂອງທ່ານແລ້ວ.",
+      "helpUsGrow": "ໃນຂະບວນການລໍຖ້າ, ຊ່ວຍເຮົາໃຫ້ເຕີມຕອນ",
+      "volunteerWithUs": "ອະສະໄພກັບເຮົາ",
+      "supportMundoTango": "ສະໜອງສະມາຄົມ Mundo Tango"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "ກຳລັງສ້າງບັນຊີຂອງທ່ານ...",
+      "joining": "ກຳລັງເຂົ້າຮ່ວມ...",
+      "createAccount": "ສ້າງບັນຊີ",
+      "joinMundoTango": "ເຂົ້າຮ່ວມ Mundo Tango"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "ມີບັນຊີແລ້ວບໍ?",
+    "signIn": "ເຂົ້າສູ່ລະບົບ",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "ລະດັບບໍ່ຖືກ",
+        "description": "ກະລຸນາໃສ່ລະດັບການຢືນຢັນ 6 ຕົວເລກທີ່ຖືກຕໍ່ກັນ."
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "ອີເມວໄດ້ຖືກຢືນຢັນ!",
+        "description": "ຍິນດີຕ໭ິມສູ່ Mundo Tango! ກຳລັງເລີ່ມການສະໜອງບັດທີ່ສະຖານທີ່..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "ການຢືນຢັນບໍ່ສຳເລັດ",
+        "description": "ລະດັບບໍ່ຖືກ ຫຼື ລະດັບແມ່ນສິ້ນສຸດ. ກະລຸນາລອງໃໝ່."
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "ບັດທິດ",
+        "description": "ລົ້ມເລີ່ມໃນການຢືນຢັນອີເມວ. ກະລຸນາລອງໃໝ່."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "ຄວາມຮ່ວມມືຫຼາຍເກີນໄປ",
+        "description": "ກະລຸນາລໍຖໍ່ສັບສົນບາງສິ່ງກ່ຽວກັບການລອງໃໝ່."
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "ລະຫັດຖືກສົ່ງແລ້ວ!",
+        "description": "ກະລຸນາກວດເບິ່ງສະຖານທີ່ສຽງຂອງທ່ານສໍາລັບລະຫັດໃໝ່."
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "ລົ້ມເລີຍໃນການສົ່ງລະຫັດອີກຄັ້ງ. ກະລຸນາລອງໃໝ່."
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "ຂໍແລະບັດທິບັດ",
+        "description": "ກະລຸນາຍອມຮັບຂໍແລະບັດທິບັດ"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "ລະຫັດບໍ່ສຽງກັນ",
+        "description": "ກະລຸນາແນ່ໃຈວ່າລະຫັດທັງສອງຄືກັນ"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "ລະຫັດອ່ອນ",
+        "description": "ກະລຸນາເລືອກລະຫັດທີ່ແກ່ກັນກວ່າ"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "ກວດເຊັກອີເມວຂອງທ່ານ",
+        "description": "ພວກເຮົາໄດ້ສົ່ງລະຫັດຢືນຢັນ 6 ຕົວເລກໃຫ້ທ່ານ. ກະລຸນາກວດເຊັກສະຖານທີ່ອີເມວຂອງທ່ານ."
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "ການລົງທະບຽນລົ່ມເລີຍ"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "ບໍ່ສາມາດສົມບູນການລົງທະບຽນ"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "ກະລຸນາລອງໃໝ່"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "ຍິນດີຕ໭ິມສູນ",
+      "seoTitle": "ຍິນດີຕ໭ິມສູນສູນມຸນໂດ ຕັງແຕ່ຕອນທ່ານ",
+      "seoDescription": "ເລີ່ມຕົ້ນການເດິນທາງທັງເດິນສູນມຸນໂດ",
+      "badge": "ການຕັ້ງຄ່າໃຫ້ໄວ",
+      "title": "ຍິນດີຕ໭ິມສູນສູນມຸນໂດ",
+      "subtitle": "ມາກຳນົດໂປຣໄຟລ໌ຂອງທ່ານເພື່ອທ່ານສາມາດເຊື່ອມຕໍ່ກັບຊຸມຊົນທັງໂລກຂອງທາງໂກ",
+      "duration": "ໃຊ່ເວລາປະມານ 2 ນາທີ",
+      "stepIndicator": "ຂັໍແລະ {{current}} ຂອງ {{total}}",
+      "getStarted": "ເລີ່ມຕົ້ນ",
+      "profileTitle": "ການເລີ່ມຕົ້ນການເດິນທາງທາງໂກຂອງທ່ານ",
+      "profileSubtitle": "ເວົ້າໃຫ້ເຮົາຮູ້ເລື່ອງກ່ຽວກັບຕົວທ່ານແລະ",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "ເລືອກເມືອງຂອງທ່ານ",
+          "description": "ເຊື່ອມຕໍ່ກັບຊຸມຊົນທາງໂກສະຖານທີ່ຂອງທ່ານ"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "ເວົ້າໃຫ້ເຮົາຮູ້ກ່ຽວກັບບົດບາດຂອງທ່ານ",
+          "description": "ນັກເດັນ, ອາຈານ, DJ, ຜູ້ຈັດງານ, ຫຼືທັງທຸກຢ່າງຂໍ້ມູນຂອງທ່ານ?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "ຄົ້ນຫາເຫດການ",
+          "description": "ຄົ້ນຫາມິລອງກາສ, ບົດຮຽນ, ແລະເຟດຕິບັດໃກ້ທ່ານ"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "ແບ່ງປັນການເດິນທາງຂອງທ່ານ",
+          "description": "ເຊື່ອມຕໍ່ກັບນັກເດັນທີ່ຢູ່ໃນລະດັບຂອງທ່ານ"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "ເຊື່ອມຕໍ່ Facebook",
+          "description": "ເຊື່ອມປະຖິບັດ Facebook ຂອງທ່ານເພື່ອຄົ້ນຫາເພື່ອນໃນຊຸມຊົນ"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "ເຊື່ອມຕໍ່ສັງຄົມ",
+      "seoTitle": "ເຊື່ອມຕໍ່ໂລກສັງຄົມ - Mundo Tango",
+      "seoDescription": "ເຊື່ອມປະຖິບັດສັງຄົມຂອງທໍເລັດເພື່ອຄົ້ນຫາເພື່ອນໃນຊຸມຊົນທາງເກົ່າ.",
+      "step": "ຂັໍ້ດຽວ 2 ຂອງ 6",
+      "title": "ເຊື່ອມໂລກສັງຄົມຂອງເຈົ້າ",
+      "quote": "\"ຫຼາຍຄົນເດິນທາງທັງຫມົດແລ້ວຮູ້ຈັກກັນຜ່ານ Facebook. ດ້ວຍການເຊື່ອມໃສ່ໂປຣໄຟລ໌ຂອງເຈົ້າ, ພວກເຮົາສາມາດແສດສະແດງໃຫ້ເຈົ້າເຫັນວ່າຄົນເດິນທາງໃນເຄື່ອງຂອງເຈົ້າທີ່ແລ້ວຢູ່ນີ່ - ຊ່ອຍໃຫ້ງ່າຍກວ່າໃນການຄົ້ນຫາໃບໜ້າທີ່ຄົນຮູ້ຈັກໃນມິລອງກາ ແລະສ້າງຄວາມເຊື່ອມຕໍ່ທີ່ລົດລະດັບລຶກຂຶ້ນ.\"",
+      "cardTitle": "ຄົ້ນຫາເພື່ອນຂອງເຈົ້າ",
+      "cardDescription": "Facebook ຂອງເຈົ້າຊ່ອຍໃຫ້ພວກເຮົາຄົ້ນຫາເດິນທາງທີ່ເຈົ້າອາດຈະຮູ້ຈັກ, ດັ່ງນັ້ນເຈົ້າບໍ່ໄດ້ເລີ່ມຈາກສູນ.",
+      "facebookLabel": "ລິເອງປະອບ Facebook (ເລືອກໃຊ້)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "ພວກເຮົາໃຊ້ນີ້ເປັນສະຖານທີ່ເພື່ອເຊື່ອມຕໍ່ສູ່ຊຸມຊົນອື່ນແລະເພີ່ມເຕີມເຈົ້າກັບເດິນທາງທີ່ເຈົ້າອາດຈະຮູ້ຈັກ.",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "ບັດທິດ",
+        "errorDescription": "ລົ້ມເລີ່ມໃນການບັນທຶກຂໍໍ່ລະບຽບ"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "ກັບ",
+      "next": "ຕໍ່ໄປ",
+      "skip": "ຂໍເອີ້ນ",
+      "finish": "ສິ້ນສຸດ",
+      "saving": "ກຳລັງບັນທຶກ..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "ການເລືອກເມືອງ",
+      "seoTitle": "ເລືອກເມືອງຂອງເຈົ້າ - Mundo Tango",
+      "seoDescription": "ເລືອກເມືອງບໍ່ອາໄສເພື່ອເຊື່ອມຕໍ່ກັບນັກເດິນທັງໂລກ",
+      "step": "ຂັໍ້ດຽວ 1 ຈາກ 6",
+      "title": "ເຈົ້າເດິນໃສ?",
+      "subtitle": "ເຊື່ອມຕໍ່ກັບນັກເດິນໃນເຂດຂອງເຈົ້າ",
+      "cardTitle": "ເມືອງບໍ່ອາໄສຂອງທ່ານ",
+      "cardDescription": "ນີ້ຊ່ວຍໃຫ້ເຮັດໃຫ້ເຮັດໃຫ້ເຫັນກິດຈະກຳແລະນັດເດີສະດິດໃນສະຖານທີ່ທ່ານ",
+      "searchLabel": "ຄົ້ນຫາເມືອງຂອງທ່ານ",
+      "searchPlaceholder": "ພິມຊື່ເມືອງຂອງທ່ານ...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "ເລືອກຈາກສະຖານທີ່ທັງປະຈຸບັນທີ່ມີຄວາມປະດິດສົດ"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "ຈະຕ້ອງມີເມືອງ",
+        "selectCity": "ກະລຸນາເລືອກເມືອງບໍ່ອາໄສຂອງທ່ານ"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "ແຫລ່ງໄດ້ເພີ່ມແລ້ວ!",
+        "submittedForReview": "ໄດ້ສົ່ງໃຫ້ກວດສອບ",
+        "trackingEvents": "ພວກເຮົາຈະເລີ່ມຕິດຕາມກິດຈະກຳຈາກເວັບໄຊທ໌",
+        "thankYou": "ຂອບໃຈ! ຄຳແນະນຳຂອງທ່ານໄດ້ຖືກສົ່ງເພື່ອການສະແກ່ງ.",
+        "errorTitle": "ຜິດພາດ",
+        "suggestionFailed": "ລົ້ມເລີຍໃນການສົ່ງຄຳແນະນຳ",
+        "saveFailed": "ລົ້ມເລີຍໃນການບັນທຶກເມືອງ"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "ອັບໂຫລດຮູບ",
+      "seoTitle": "ເພີ່ມຮູບໂປຣໄຟລໃນ - Mundo Tango",
+      "seoDescription": "ອັບໂຫລດຮູບໂປຣໄຟລຂອງທ່ານ",
+      "step": "ຂັໍ້ 3 ຈາກ 6",
+      "title": "ເພີ່ມຮູບໂປຣໄຟລຂອງທ່ານ",
+      "subtitle": "ຊ່ອຍໃຫ້ຄົນອື່ນຈິດຈະລະບັດທ່ານໃນຊຸມຊົນ",
+      "cardTitle": "ຮູບພາບໂປຣไฟล์ຂອງທ່ານ",
+      "cardDescription": "ຊ່ອຍໃຫ້ຄົນອື່ນຈິງເບິ່ງທ່ານ (ທ່ານສາມາດຂໍໍ່ອີກຂະບວນການນີ້)",
+      "previewAlt": "ການເບິ່ງລົງສະຖານທີ່",
+      "dropHere": "ປ່ອນຮູບພາບຂອງທ່ານທີ່ນີ້",
+      "or": "ຫຼື",
+      "browseFiles": "ເບິ່ງໄຟລ໌",
+      "fileTypes": "PNG, JPG ສູງສຸດ 5MB",
+      "photoSelected": "ຮູບພາບໄດ້ເລືອກ!",
+      "uploading": "ກຳລັງອັບໂຫລດ...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "ໄຟລ໌ບໍ່ຖືກຕ້ອງ",
+        "selectImage": "ກະລຸນາເລືອກໄຟລ໌ຮູບ",
+        "fileTooLarge": "ໄຟລ໌ໃຫຍ່ເກີນໄປ",
+        "sizeLimit": "ກະລຸນາເລືອກໄຟລ໌ຮູບທີ່ໃຕ້ 5MB",
+        "uploadFailed": "ການໂອນລົດລົ່ມເລີ່ມ",
+        "tryAgain": "ລົ່ມເລີ່ມໂອນຮູບພາບ. ກະລຸນາລອງໃໝ່.",
+        "skipFailed": "ລົ່ມເລີ່ມເຂົ້າໄປ. ກະລຸນາລອງໃໝ່."
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "ພາສາ",
+      "seoTitle": "ພາສາຂອງທ່ານ - Mundo Tango",
+      "seoDescription": "ເບິ່ງໃຫ້ເຮົາຮູ້ວ່າທ່ານເສັງພາສາໃດ",
+      "step": "ຂັໍແລະ 5 ຂອງ 6",
+      "title": "ທ່ານສຽງພາສາໃດ?",
+      "subtitle": "ເຊື່ອມຕໍ່ກັບນັກເດັນໃນພາສາຂອງທ່ານ",
+      "cardTitle": "ພາສາຂອງທ່ານ",
+      "cardDescription": "ເລືອກພາສາຫຼັກຂອງທ່ານແລະພາສາເພີ່ມເຕີມອື່ນໆທ່ານສຽງ",
+      "primaryLabel": "ພາສາຫຼັກ",
+      "primaryHint": "ນີ່ຈະກຳນົດພາສາສະແດງໃນເວັບໄຊທ໌ຂອງທ່ານ",
+      "primaryPlaceholder": "ເລືອກພາສາຫຼັກຂອງທ່ານ",
+      "additionalLabel": "ພາສາເພີ່ມເຕີມ (ຕາມຄວາມຈິງ)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "ພາສາຫຼັກຈະຕ້ອງ",
+        "selectPrimary": "ກະລຸນາເລືອກພາສາຫຼັກຂອງທ່ານ",
+        "saveFailed": "ລົ້ມເລີຍໃນການບັນທຶກພາສາ",
+        "saveFailedTitle": "ບັນທຶກພາສາລົ້ມເລີຍ"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "ບົດບາດທາງທາງສິນ",
+      "seoTitle": "ບົດບາດທາງທາງສິນຂອງທ່ານ - Mundo Tango",
+      "seoDescription": "ເວົ້າເຖິງການເດີນທາງທາງສິນຂອງທ່ານ",
+      "step": "ຂັໍ້ລັບ 2 ຂອງ 6",
+      "title": "ທ່ານເປັນບົດບາດໃດ?",
+      "subtitle": "ເລືອກທັງໝົດທີ່ເຫັນແມ່ນສໍາລັບທ່ານ",
+      "cardTitle": "ລະບົບບົດບາດທາງທາງສິນຂອງທ່ານ",
+      "cardDescription": "ຊ່ອຍໃຫ້ຄົນອື່ນຮູ້ວ່າທ່ານເຂົ້າຮ່ວມໃນໂລກທາງທາງສິນແນວໃດ"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "ປະສົບການເຕັນ",
+      "seoTitle": "ປະສົບການເຕັນຂອງທ່ານ - Mundo Tango",
+      "seoDescription": "ແບ່ງປັນລະດັບປະສົບການເຕັນຂອງທ່ານ",
+      "step": "ຂັໍແລະ 4 ຂອງ 6",
+      "title": "ປະສົບການເຕັນຂອງທ່ານ",
+      "subtitle": "ຊ່ອຍເຮັດໃຫ້ພວກເຮົາເຊື່ອມທ່ານກັບນັກເຕັນທີ່ເຫັນດີ"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "ຄວາມສົນໃຈ",
+      "seoTitle": "ຄວາມສົນໃຈຂອງທ່ານ - Mundo Tango",
+      "seoDescription": "ເວົ້າເຖິງຄວາມສົນໃຈຂອງທ່ານ",
+      "step": "ຂັໍແລະ 6 ຂອງ 6",
+      "title": "ທ່ານມີຄວາມສົນໃຈໃນຫຍັງ?",
+      "subtitle": "ເລືອກຫົວຂໍ້ທີ່ສົນໃຈ",
+      "helpText": "ເລືອກຄວາມສົນໃຈຢ່າງນໍາຫຼັກ 3 ຄວາມສົນໃຈເພື່ອປັບປຸງຟີດຂອງທ່ານ",
+      "selectedCount": "{{count}} ຖືກເລືອກ",
+      "finishing": "ກຳລັງສິ້ນສຸດ...",
+      "completeSetup": "ສິ້ນສຸດການຕັ້ງຄ່າ",
+      "searchPlaceholder": "ຄົ້ນຫາຊຸມຊົນ ຫຼື ເພີ່ມໃໝ່...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "ການຝຶກຝົນ & ກິລາ"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "ເທັກແລະນວິທະຍາສາດ"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "ຄວາມຈິງແລະການເຕິບໃຕ້"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "ຍົກາ ແລະ ສຸຂະພາບ"
         },
         "music": {
-          "label": "Music"
+          "label": "ດົນຕີ"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "ສະຖານທີ່ ແລະ ວິດີໂອ"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "ສິລະປະ ແລະ ຄວາມສໍາລັບ"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "ອ່ານ ແລະ ເຂົ້າໃຈ"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "ເດີນທາງ ແລະ ຜຈິດທົດສອບ"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "ປຸງສູດ ແລະ ອາຫານ"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "ເວັນ ແລະ ບິເວຣາຈ"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "ເກມິງ"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "ກິລາການກະທົບການ"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "ກິລາເຫລົ່ນໃນຫນະທິບັດ"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "ການປັບປຸງລົດ"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "ກິລານໍ້າ"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "ທຳມະຊາດ ແລະ ການປູກດິນ"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "ສິນຄ້າແລະບັນທຶກ"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "ສັດເພື່ອນ"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "ສັງຄົມ ແລະ ຊຸມຊົນ"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
+        "fitness_gym": "ສູນຝຶກອອນລາຍ ແລະ ນໍ້າໜັກ",
+        "fitness_running": "ການປ່ອນລົດ",
         "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
-        "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
+        "fitness_martial_arts": "ກິລາປ່ອນບັດ",
+        "fitness_tennis": "ເທນນິສ",
+        "fitness_soccer": "ບານໄຕ້/ບານຟຸດບອນ",
+        "fitness_basketball": "ບານເຕະ",
+        "fitness_fencing": "ການຕິດສະດວກ",
+        "tech_coding": "ການລຽນແລະພັດທະນາ",
+        "tech_ai": "AI & ເທັກໂນໂລີອະນາຄົດ",
+        "tech_crypto": "Web3 & ຄຣິບໂຕ",
+        "tech_gaming": "ວັດທະນະທຳການເລີ່ມຕົ້ນ",
+        "spirit_meditation": "ການແຈ້ງສະລະບັດ",
+        "spirit_astrology": "ດານດູດວິນ",
+        "spirit_philosophy": "ປິລະສັດທະ",
+        "spirit_community": "ການສ້າງຊຸມຊົນ",
+        "yoga_hatha": "ຮັດທາ ຍົກາ",
+        "yoga_vinyasa": "ວິນຍາສາ ຟລົວ",
+        "yoga_meditation": "ການແຈ້ງສະລະບັດ",
+        "yoga_pilates": "ພິລາດສ",
+        "yoga_breathwork": "ງານຫາຍລະດັບ",
+        "music_listening": "ການຟັງດົນຕີ",
+        "music_concerts": "ຄອນເສີດສົດ",
+        "music_piano": "ດົນຕີພຽນໂນ",
+        "music_guitar": "ດົນຕີກິຕາ",
+        "music_singing": "ຮ່ອງເພງ",
         "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
+        "music_production": "ການຜະລິດດົນຕີ",
+        "photo_portrait": "ການຖ່າຍຮູບສະແດງ",
+        "photo_landscape": "ການຖ່າຍຮູບທິດທາງ",
+        "photo_street": "ການຖ່າຍຮູບສະຖານທີ່",
+        "photo_video": "ການຖ່າຍວິດີໂອ",
+        "photo_editing": "ການແກ້ໄຂຮູບ",
+        "art_painting": "ສິລະປະ",
+        "art_drawing": "ການລະບຽງ",
+        "art_sculpture": "ປະຕິບັດ",
+        "art_digital": "ສິລະປະດິຈິຕອນ",
+        "art_crafts": "ງານສະເລີຍ & DIY",
+        "art_pottery": "ປະຕິບັດ",
+        "reading_fiction": "ນິຍາມ",
+        "reading_nonfiction": "ບໍ່ນິຍາມ",
+        "reading_poetry": "ກະລຸນາ",
+        "reading_writing": "ການຂຽນສໍາລັບສໍາລັບ",
+        "reading_journals": "ການຂຽນບັນທຶກ",
+        "travel_backpacking": "ການເດິນທາງດ້ວຍບັກແພັກ",
+        "travel_luxury": "ການເດິນທາງສູງສຸດ",
+        "travel_cultural": "ການເທິດທີ່ວັດທະນະທຳ",
+        "travel_road_trips": "ການເດິນທາງບໍ່ມີແຜນ",
+        "travel_solo": "ການເດິນທາງຄົນດຽວ",
+        "cooking_home": "ການປຸງອາຫານໃນບ້ານ",
+        "cooking_baking": "ການອົບ",
+        "cooking_gourmet": "ອາຫານສູງສຸດ",
+        "cooking_international": "ອາຫານນานาชาติ",
+        "cooking_healthy": "ການກິນອາຫານສຸຂະພາບ",
+        "wine_tasting": "ການລອງລິບສາ",
+        "wine_cocktails": "ຄອກເຕວ",
+        "wine_coffee": "ກາເຟສຽງສຽງ",
+        "wine_tea": "ວັດທະນະທຳການດື່ມຊາ",
+        "wine_brewing": "ການປຸງບໍ່ໃນບ້ານ",
+        "gaming_video": "ເກມວິດີໂອ",
+        "gaming_board": "ເກມແບດ",
+        "gaming_card": "ເກມໃບ",
+        "gaming_tabletop": "ເກມ RPG ບົດບາດ",
         "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
-        "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "outdoor_hiking": "ການເດິນທາງ",
+        "outdoor_camping": "ການບໍ່ລົງ",
+        "outdoor_climbing": "ການປິ່ນດິນ",
+        "outdoor_fishing": "ການປະກອບປາ",
+        "outdoor_kayaking": "ການໄປໍານໍາ",
+        "outdoor_surfing": "ການເຊິ່ອນ",
+        "snow_skiing": "ການສະລອຍ",
+        "snow_snowboard": "ການສະລອຍໃນຫນວງ",
+        "snow_crosscountry": "ການສະລອຍຂໍ້ສູງ",
+        "snow_ice_skating": "ການເດິນສະເລີຍນແອດ",
+        "snow_sledding": "ການເດິນສະເລີຍບົວ",
+        "snow_snowshoeing": "ການເດິນສະເລີຍລະດູໃນຫນວຍ",
+        "cycling_road": "ການຂັບລົດບິນສົ່ງ",
+        "cycling_mountain": "ການຂັບລົດສູງ",
+        "cycling_urban": "ການຂັບລົດໃນເມືອງ",
+        "cycling_touring": "ການເດິນສະເລີຍບິນທົ່ວໄປ",
+        "water_swimming": "ການລ່ຽວ",
+        "water_scuba": "ການດິນສະເລີຍສະເລີຍ",
+        "water_snorkel": "ການດິນສະເລີຍສະເລີຍ",
+        "water_sailing": "ການໍາທາງ",
+        "water_paddleboard": "ການເປັນສະຕິດສະຕິດ",
+        "nature_gardening": "ການປູກຕົ້ນ",
+        "nature_birdwatching": "ການສັງເກດນົກ",
+        "nature_botany": "ການລວມລະດັບຕົ້ນ",
+        "nature_wildlife": "ການຖ່າຍຮູບສັດໃນທະເລ",
+        "movies_cinema": "ສິນລະດິບ",
+        "movies_tv": "ລາຍການເທວີ",
+        "movies_documentary": "ສິນລະດິບສະຖານທີ່",
+        "movies_theater": "ລະດັບສິນລະດິບ",
+        "movies_standup": "ຕົວຕະກຳສະແດງສະແດງ",
+        "pets_dogs": "ສັດແມ່ນ",
+        "pets_cats": "ສັດແບບ",
+        "pets_exotic": "ສັດແປລະດັບ",
+        "pets_horses": "ຂຽນມໍ",
+        "pets_rescue": "ກູ້ໃຈສັດ",
+        "social_volunteering": "ການອະສະລະ",
+        "social_meetups": "ການປະຊຸມ",
+        "social_networking": "ການເຊື່ອມຕໍ່",
+        "social_languages": "ການແລກປ່ອນພາສາ"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "សូមស្វាគមន៍មកកាន់ Mundo Tango!",
+        "completeDesc": "ប្រវត្តិរូបរបស់អ្នកបានរៀបចំរួចរាល់។ ចាប់ផ្តើមស្វែងរក!",
+        "waitlistTitle": "ប្រវត្តិរូបបានបញ្ចប់!",
+        "waitlistDesc": "ພວກເຮົາຈະແຈ້ງໃຫ່ທ່ານເມື່ອບັນຊີຂອງທ່ານໄດ້ຖືກເປິດໃຊ້"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "ບໍ່ສາມາດບັນທຶກໄດ້. ຂໍລອງໃໝ່ອີກຄັ້ງ."
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "ຄູ່ມືຊຸມຊົນ",
+      "subtitle": "ຂໍແຈ້ງແລະຍອມຮັບເງື່ອນໄຂຂອງເຮົາ",
+      "legalDocsTitle": "ເອກະສານກົດໝາຍ",
+      "legalDocsDescription": "ກວດສອບເງື່ອນໄຂບໍລິການແລະນโยບາຍຄວາມສ່ວນບຸກຄົນ",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "ຂໍຍອມຮັບເງື່ອນໄຂບໍລິການ",
+        "description": "ເງື່ອນໄຂຂອງເຮົາກວບຄວາມໃຊ້ງານຂອງ Mundo Tango",
+        "link": "ອ່ານເງື່ອນໄຂບໍລິການ"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "ຂໍຍອມຮັບນະໂຍບາຍຄວາມສ່ວນບຸກຄົນ",
+        "description": "ວິທີທີ່ເຮົາດູແລຂໍໍໍຂອງທ່ານ",
+        "link": "ເອົາອ່ານນโยບາຍຄວາມລັບ"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "ລະບຽບລະບຽບຊຸມຊົນ",
+      "cocDescription": "ຊ່ວຍເຮັດໃຫ້ຊຸມຊົນມີຄວາມເຄົາລົບ",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "ເປັນຄວາມເຄົາລົບ",
+          "description": "ປະຕິບັດກັບທຸກຄົນດ້ວຍຄວາມສົມບູນແລະຄວາມສຸກສົມ"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "ເປັນສໍາລັບທຸກຄົນ",
+          "description": "ຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນຕ໭ອນ"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "ເປັນຄວາມຈິງ",
+          "description": "ໃຊ້ບັດບັດຈິງຂອງທ່ານແລະຂໍໍໍຂອງທ່ານ"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "ກະລຸນາເຊັດສະຖານທີ່",
+          "description": "ຂໍໃຫ້ຖາມກ່ຽວກັບການເດີນທາງແລະກະລຸນາເຄົ່ນຄວາມຈິງ"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "ບໍ່ມີການລົງຄະແນນ",
+          "description": "ບໍ່ມີຄວາມລົງຄະແນນສໍາລັບການລົງຄະແນນຫຼືການລົງຄະແນນ"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "ບໍ່ມີສິນຄ້າສົ່ງ",
+          "description": "ບໍ່ສົ່ງສິນຄ້າທີ່ບໍ່ແມ່ນສິນຄ້າ"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "ບໍ່ມີການແບ່ງປັນ",
+          "description": "ພວກເຮົາບໍ່ອະທິບາຍການແບ່ງປັນໃດໆ"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "ປ້ອງກັນຄວາມລັບ",
+          "description": "ບໍ່ແບ່ງປັນຂໍໍາລັບຂອງຄົນອື່ນໃນບໍ່ມີຄວາມລັບ"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "ສິດສະຖານຄວາມປອດໄພ",
+          "description": "ລາຍງານພະລິດພະຍາດໃດໆທີ່ບໍ່ປອດໄພແທ້"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "ປະຕິບັດຕາມກົດໝາຍ",
+          "description": "ປະຕິບັດຕາມກົດໝາຍທີ່ແບ່ງປະເພດທີ່ແບ່ງປະເພດ"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "ລາຍງານບັດທະຍະສິດ",
+          "description": "ຊ່ວຍເຮົາໂດຍການລາຍງານການລະບຽງ"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "ສະໜອງຄວາມສະໜອງກັນ",
+          "description": "ຊ່ວຍໃຫ້ຜູ້ເປັນສິດສະຖານຂອງຄົນອື່ນ"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "ຍິນດີທັງໝົດ & ດຳເນີນຕໍ່",
+      "accepting": "ກຳລັງຍິນດີ...",
+      "incompleteAlert": "ກະລຸນາຍອມຮັບເງິນທີ່ຈິງທັງໝົດ",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "ຍິນດີ! ",
+        "description": "ທ່ານໄດ້ຍອມຮັບຄູ່ມືຊຸມຊົນຂອງເຮົາ"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "ບໍ່ສາມາດບັນທຶກໄດ້. ກະລຸນາລອງໃໝ່."
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "ລາຍຊື່ລໍຖ້າ",
+      "seoTitle": "ທ່ານຢູ່ໃນລາຍຊື່ລໍຖ້າ - Mundo Tango",
+      "seoDescription": "ບັນຊີຂອງທ່ານກຳລັງລໍຖ້າການເປີດໃຊ້",
+      "title": "ທ່ານຢູ່ໃນລາຍຊື່ລໍຖ້າ!",
+      "welcomeMessage": "ຍິນດີ, {{name}}!",
+      "defaultName": "ນັກເດັນ",
+      "profileComplete": "ບັນດັດແບບສົມບູນ",
+      "profileCompleteDesc": "ບັນດັດຂອງທ່ານແລ້ວ ແລະກຳລັງລໍຖໍ່",
+      "emailNotice": "ພວກເຮົາຈະສົ່ງອີເມວໄປທີ່ {{email}} ເມື່ອບັນຊີຂອງທ່ານແລ້ວສໍາເລັດ",
+      "whenReady": "ເມື່ອບັນຊີຂອງທ່ານແລ້ວສໍາເລັດ.",
+      "whileYouWait": "ໃນຂະບວນການລໍຖໍ່, ຊ່ວຍເຮົາໃຫ້ເຕີມຕອນ:",
+      "volunteerButton": "ເປັນອາສາສະໜອງ",
+      "supportButton": "ເສີມສະໜອງ Mundo Tango"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "ທົດລອງທົ່ວໄປ",
+      "seoTitle": "ສຳລັບສະໜອງ Mundo Tango",
+      "seoDescription": "ຮຽນຮູ້ວ່າຈະໃຊ້ Mundo Tango ຢ່າງໃດ",
+      "skipTour": "ຂໍເອົາທົດສອບ",
+      "finish": "ສິ້ນສຸດທົດສອບ",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "ຄົ້ນພົບບົດບັນທຶກຈາກຊຸມຊົນທັງໂກ",
+        "events": "ຄົ້ນຫາມິລອງກາ, ບົດຮຽນ, ແລະງານແສດ",
+        "groups": "ເຂົ້າຮ່ວມກຸ່ມສໍາລັບເມືອງຂອງເຈົ້າ ຫຼື ຄວາມສົນໃຈ",
+        "messages": "ເຊື່ອມຕໍ່ກັບນັກເດິນທາງອື່ນແບບສົດໆ",
+        "profile": "ປັບປຸງແບບປະບັດທັງໂກຂອງເຈົ້າ",
+        "createPost": "ແບ່ງປັນຂະບວນການທັງໂກຂອງເຈົ້າ"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "ຍົກລະດັບປະສິດທະພາບຂອງເຈົ້າ",
+        "subtitle": "ເພີ່ມຄວາມສົນໃຈສູງສຸດຈາກ Mundo Tango",
+        "limitedOffer": "ຂໍ້ແນະນຳໃນເວລາຈຳກັດ",
+        "getStarted": "ເລີ່ມຕົ້ນ",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "ເຊື່ອມຕໍ່",
+            "description": "ສົ່ງຂໍໍ່ສິນຄ້າໃຫ້ນັກເດັນທີ່ສົມບູນ"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "ຄວາມເອົາໃຈ",
+            "description": "ເປັນສະຖານທີ່ໃນຜົນຄົ້ນຫາ"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "ງານອິນ",
+            "description": "ສິດເຂົ້າໃຊ້ກ່ຽວກັບງານທີ່ນິຍົມ"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "ເພີ່ມຂະບວນ",
+            "description": "ບັນທຶກຂະບວນສູງສຸດສໍາລັບໂປຣໄຟລ໌ຂອງເຈົ້າ"
           },
           "premium": {
-            "title": "Premium",
-            "description": "Exclusive premium features"
+            "title": "ພຣີເມຍມ",
+            "description": "ຄຸນສົມບັດສູງສຸດສໍາລັບຄຸນ"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "ເຂົ້າສູ່ລະບົບ",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "ເຂົ້າສູ່ - Mundo Tango",
+      "description": "ເຂົ້າສູ່ບັນຊີ Mundo Tango ຂອງທ່ານເພື່ອເຊື່ອມຕໍ່ກັບຊຸມຊົນທາງໂລກ, ຄົ້ນຫາເຫດການ, ແລະແບ່ງປັນຄວາມຮັກສໍາລັບທາງເອອກອາຈິນິນ."
     },
-    "badge": "Welcome Back",
+    "badge": "ຍິນດີຕອນກັບ",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "ການເດິນທາງທາງເອອກອາຈິນິນຂອງທ່ານຍັງດຳເນີນຕໍ່",
+      "paragraph": "ເຂົ້າສູ່ເພື່ອເຊື່ອມຕໍ່ກັບນັກເດັນທົ່ວໂລກ, ຄົ້ນຫາເຫດການ, ແລະແບ່ງປັນຄວາມຮັກ"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "ນັກເດັນ",
+      "events": "ເຫດການ"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "ອີເມວ",
+      "password": "ລະຫັດຜ່ານ",
+      "signIn": "ເຂົ້າສູ່ລະບົບ",
+      "signingIn": "ກຳລັງເຂົ້າສູ່ລະບົບ...",
+      "forgotPassword": "ລືມລະຫັດຜ່ານ?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "ບໍ່ມີບັດທະບຽນ?",
+    "createAccount": "ສ້າງບັດທະບຽນໃໝ່ໃຫ້ດຽວນີ້",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "ຍິນດີຕ໭ອນກັບ!",
+      "successDescription": "ເຂົ້າໃຊ້ງານແລ້ວ.",
+      "errorTitle": "ລະບົບເຂົ້າສູ່ລະບົບລົ້ມເຫລວ",
+      "errorDescription": "ບັດທະບຽນບໍ່ຖືກຕ້ອງ"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "ເຮືອນ",
+    "pageLayoutTitle": "ໃສ່ທີ່ Tango ເພີ່ມສັງຄົມ",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - ເຊື່ອມຕໍ່ກັບສັງຄົມ Tango ລະດັບໂລກ",
+      "description": "ລົງລົງໃນພັນທະກິດທັງສິບພັນຄົນທົ່ວໂລກ. ຄົ້ນຫາງານ, ຄົ້ນຫາອາຈານ, ແລະເຊື່ອມຕໍ່ກັບບັນດາຜູ້ເດິນທາງ, ແລະດຳລົງໃສ່ໂລກອັດຈັນທິນທີ່ຕິດເຊື່ອງ."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "ຍິນດີຕ໭ິດສູ່ຊຸມຊົນທັງໂລກ",
+      "heading": "ເມື່ອ Tango ເພີ່ມຂອງຊຸມຊົນ",
+      "paragraph": "ແບ່ງປັນຄວາມຈື່ຈິງ, ຄົ້ນຫາງານ, ແລະຊ່ວຍເຮັດໃຫ້ເກີດອະນາຄົດຂອງເທັກນິກທັງສິບພັນຄົນທີ່ຕິດເຊື່ອງທົ່ວໂລກ.",
+      "getStarted": "ເລີ່ມໃຊ້ງານຟຣີ",
+      "volunteer": "ອະສະໜັບເພື່ອສ້າງ MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "ວິທີທີ່ມັນເຮັດວຽກ",
+      "description": "ເລີ່ມການເດິນທາງທາງທັງໃນສາມຂັໍ້ງ່າຍ",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "ສ້າງໂປຣໄຟລ໌ຂອງທ່ານ",
+        "description": "ເຂົ້າຮ່ວມຟຣີ ແລະເລືອກເວົ້າເກີດຂອງທ່ານ ລະດັບປະສົງ ແລະຄວາມສົນໃຈໃນການເດີນທາງ"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "ຄົ້ນພົບ & ເຊື່ອມຕໍ່",
+        "description": "ຄົ້ນຫາງານ, ຄູ, ແລະສະຖານທີ່ໃກ້ທ່ານ. ເຊື່ອມຕໍ່ກັບນັກເດີນທີ່ແບ່ງປັນຄວາມຮັກຂອງທ່ານ"
       },
       "step3": {
         "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "description": "ເຂົ້າໄປງານ, ຮຽນຮູ້, ສ້າງເພື່ນ, ແລະເປັນສ່ວນໃນຊຸມຊົນທາງການຕັ້ງລາວທົ່ວໂລກ"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "ທຸກຢ່າງທີ່ທ່ານຈິງຈັງຈະຕ້ອງ",
+      "description": "ເຊື່ອມໃສ, ຄົ້ນພົບ, ແລະເຕີມເຕັມການເດີນທາງຕັ້ງລາວຂອງທ່ານດ້ວຍຄຸນສົມບັດທີ່ສະຫລຸບສຽງ",
       "community": {
         "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "heading": "ສໍາພັນກັບນັກເດັນທົ່ວໂລກ",
+        "description": "ເຂົ້າຮ່ວມກັບຊຸມຊົນທີ່ສີສັນຂອງຄົນຮັກທັງໝົດທົ່ວໂລກ. ສໍາພັນກັບນັກເດັນ, ອາຈານ, ແລະຜູ້ຈັດງານຈາກບົນົອດອາຍສ໌ເຖິງໂທກິໍ.",
         "items": {
           "follow": "Follow dancers and build your network",
           "groups": "Join groups based on interests and location",

@@ -1,638 +1,638 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "Registrarse",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "Únete a Mundo Tango - Crea tu cuenta",
+      "description": "Crea tu cuenta de Mundo Tango y únete a la comunidad global de tango argentino. Conéctate con bailarines, descubre eventos y comparte tu pasión por el tango."
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "Bienvenido a la familia",
+      "beginJourney": "Comienza tu viaje",
+      "joinCommunity": "Únete a la comunidad"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "¡Estás dentro!",
+      "joinMundoTango": "Únete a Mundo Tango",
+      "description": "Conéctate con bailarines de todo el mundo, descubre milongas y sumérgete en el apasionante mundo del tango argentino",
+      "waitlistDescription": "Bienvenido a la comunidad de Mundo Tango. Estamos preparando tu cuenta y te notificaremos pronto."
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ bailarines",
+      "events": "{{count}}+ eventos",
+      "cities": "{{count}} ciudades"
     },
     "form": {
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
-      "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "fullName": "Nombre completo",
+      "fullNamePlaceholder": "María Rodríguez",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "maria@ejemplo.com",
+      "username": "Nombre de usuario",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "inviteOnlyNotice": "El registro es actualmente solo por invitación. Completa este formulario para unirte a nuestra lista de espera y te notificaremos cuando tu cuenta esté lista.",
+      "acceptTermsPrefix": "Acepto los",
+      "termsAndConditions": "Términos y condiciones"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "Este correo electrónico ya está registrado",
+      "emailAvailable": "¡Correo electrónico disponible!",
+      "usernameTaken": "Nombre de usuario tomado. Intenta {{suggestion}}",
+      "usernameAvailable": "¡Nombre de usuario disponible!",
+      "passwordsMatch": "Las contraseñas coinciden",
+      "passwordsDontMatch": "Las contraseñas no coinciden"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "Débil",
+      "medium": "Medio",
+      "strong": "Fuerte",
+      "veryStrong": "Muy Fuerte"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "¿Tienes un código de invitación? (Opcional)",
+      "placeholder": "Ingresa tu código de invitación para acceso inmediato",
+      "accepted": "¡Código aceptado! Tu cuenta se activará de inmediato.",
+      "noWorries": "¡No te preocupes! Completa el formulario a continuación para unirte a nuestra lista de espera."
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "¡Bienvenido, {{name}}!",
+      "defaultName": "Bailarín",
+      "onTheList": "Estás en la lista. Te enviaremos un correo a",
+      "whenReady": "cuando tu cuenta esté lista.",
+      "helpUsGrow": "Mientras esperas, ayúdanos a crecer",
+      "volunteerWithUs": "Voluntaria con nosotros",
+      "supportMundoTango": "Apoya a Mundo Tango"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "Creando tu cuenta...",
+      "joining": "Uniéndote...",
+      "createAccount": "Crear Cuenta",
+      "joinMundoTango": "Unirse a Mundo Tango"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "signIn": "Iniciar sesión",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "Código inválido",
+        "description": "Por favor, ingresa un código de verificación válido de 6 dígitos."
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "¡Correo verificado!",
+        "description": "¡Bienvenido a Mundo Tango! Iniciando tu incorporación..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "Verificación fallida",
+        "description": "Código inválido o expirado. Por favor, intenta de nuevo."
       },
       "error": {
         "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "description": "No se pudo verificar el correo. Por favor, intenta de nuevo."
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "Demasiadas solicitudes",
+        "description": "Por favor, espera unos minutos antes de intentar nuevamente."
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "¡Código enviado!",
+        "description": "Por favor, revisa tu bandeja de entrada para un nuevo código."
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "Error al reenviar el código. Por favor, intenta nuevamente."
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "Se requieren términos",
+        "description": "Por favor, acepta los Términos y Condiciones"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "Las contraseñas no coinciden",
+        "description": "Por favor, asegúrate de que ambas contraseñas sean idénticas"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "Contraseña débil",
+        "description": "Por favor, elige una contraseña más fuerte"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "Revisa tu correo electrónico",
+        "description": "Te enviamos un código de verificación de 6 dígitos. Por favor, revisa tu bandeja de entrada."
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "Registro fallido"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "No se pudo completar el registro"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "Por favor, intenta nuevamente"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "Bienvenido",
+      "seoTitle": "Bienvenido a Mundo Tango",
+      "seoDescription": "Comienza tu viaje de tango con Mundo Tango",
+      "badge": "Configuración rápida",
+      "title": "Bienvenido a Mundo Tango",
+      "subtitle": "Vamos a configurar tu perfil para que puedas conectarte con la comunidad global de tango",
+      "duration": "Toma aproximadamente 2 minutos",
+      "stepIndicator": "Paso {{current}} de {{total}}",
+      "getStarted": "Comenzar",
+      "profileTitle": "Tu viaje de tango comienza",
+      "profileSubtitle": "Cuéntanos un poco sobre ti",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "Elige tu ciudad",
+          "description": "Conéctate con tu comunidad local de tango"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "Cuéntanos tus roles",
+          "description": "¿Bailarín, profesor, DJ, organizador o todos los anteriores?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "Descubre Eventos",
+          "description": "Encuentra milongas, clases y festivales cerca de ti"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "Comparte Tu Trayectoria",
+          "description": "Conéctate con bailarines de tu nivel"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "Conectar Facebook",
+          "description": "Vincula tu perfil de Facebook para encontrar amigos en la comunidad"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
-      "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "pageTitle": "Conexión Social",
+      "seoTitle": "Conecta Tu Mundo Social - Mundo Tango",
+      "seoDescription": "Vincula tus perfiles sociales para encontrar amigos en la comunidad de tango.",
+      "step": "Paso 2 de 6",
+      "title": "Conecta Tu Mundo Social",
+      "quote": "\"Muchos bailarines de tango ya se conocen a través de Facebook. Al vincular tu perfil, podemos mostrarte qué bailarines en tu red ya están aquí, facilitando encontrar caras conocidas en las milongas y construir conexiones más profundas.\"",
+      "cardTitle": "Encuentra a Tus Amigos",
+      "cardDescription": "Tu Facebook nos ayuda a emparejarte con bailarines que ya podrías conocer, así que no estás comenzando desde cero.",
+      "facebookLabel": "URL del Perfil de Facebook (Opcional)",
+      "facebookPlaceholder": "https://www.facebook.com/tu.perfil",
+      "helperText": "Usamos esto como un puente a otras comunidades y para emparejarte con bailarines que podrías conocer.",
       "toast": {
         "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorDescription": "Error al guardar la información del perfil"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "Atrás",
+      "next": "Siguiente",
+      "skip": "Saltar",
+      "finish": "Finalizar",
+      "saving": "Guardando..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "Selección de Ciudad",
+      "seoTitle": "Selecciona Tu Ciudad - Mundo Tango",
+      "seoDescription": "Elige tu ciudad de origen para conectarte con bailarines de tango locales",
+      "step": "Paso 1 de 6",
+      "title": "¿Dónde Bailas?",
+      "subtitle": "Conéctate con bailarines en tu área",
+      "cardTitle": "Tu ciudad de origen",
+      "cardDescription": "Esto nos ayuda a mostrarte eventos y bailarines locales",
+      "searchLabel": "Busca tu ciudad",
+      "searchPlaceholder": "Escribe el nombre de tu ciudad...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "Selecciona entre destinos populares de tango"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "Ciudad requerida",
+        "selectCity": "Por favor selecciona tu ciudad de origen"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
+        "sourceAdded": "¡Fuente añadida!",
+        "submittedForReview": "Enviado para revisión",
+        "trackingEvents": "Comenzaremos a rastrear eventos del sitio",
+        "thankYou": "¡Gracias! Tu sugerencia ha sido enviada para revisión.",
         "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "suggestionFailed": "No se pudo enviar la sugerencia",
+        "saveFailed": "No se pudo guardar las ciudades"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "Subida de foto",
+      "seoTitle": "Añadir foto de perfil - Mundo Tango",
+      "seoDescription": "Sube tu foto de perfil",
+      "step": "Paso 3 de 6",
+      "title": "Añade tu foto de perfil",
+      "subtitle": "Ayuda a otros a reconocerte en la comunidad",
+      "cardTitle": "Tu foto de perfil",
+      "cardDescription": "Ayuda a otros a reconocerte (puedes omitir este paso)",
+      "previewAlt": "Vista previa del perfil",
+      "dropHere": "Suelta tu foto aquí",
+      "or": "o",
+      "browseFiles": "Explorar archivos",
+      "fileTypes": "PNG, JPG hasta 5MB",
+      "photoSelected": "¡Foto seleccionada!",
+      "uploading": "Subiendo...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "Archivo no válido",
+        "selectImage": "Por favor selecciona un archivo de imagen",
+        "fileTooLarge": "Archivo demasiado grande",
+        "sizeLimit": "Por favor selecciona una imagen de menos de 5MB",
+        "uploadFailed": "La carga falló",
+        "tryAgain": "Falló al subir la foto. Por favor intenta de nuevo.",
+        "skipFailed": "Falló al omitir. Por favor intenta de nuevo."
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "Idiomas",
+      "seoTitle": "Tus Idiomas - Mundo Tango",
+      "seoDescription": "Cuéntanos qué idiomas hablas",
+      "step": "Paso 5 de 6",
+      "title": "¿Qué Idiomas Hablas?",
+      "subtitle": "Conéctate con bailarines en tu idioma",
+      "cardTitle": "Tus Idiomas",
+      "cardDescription": "Selecciona tu idioma principal y cualquier idioma adicional que hables",
+      "primaryLabel": "Idioma Principal",
+      "primaryHint": "Esto también establecerá el idioma de visualización de tu sitio",
+      "primaryPlaceholder": "Selecciona tu idioma principal",
+      "additionalLabel": "Idiomas Adicionales (Opcional)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "Se requiere idioma principal",
+        "selectPrimary": "Por favor selecciona tu idioma principal",
+        "saveFailed": "Falló al guardar idiomas",
+        "saveFailedTitle": "Error al guardar el idioma"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "Roles de Tango",
+      "seoTitle": "Tus Roles de Tango - Mundo Tango",
+      "seoDescription": "Cuéntanos sobre tu viaje en el tango",
+      "step": "Paso 2 de 6",
+      "title": "¿Qué Roles Desempeñas?",
+      "subtitle": "Selecciona todos los que apliquen a ti",
+      "cardTitle": "Tu Identidad en el Tango",
+      "cardDescription": "Ayuda a otros a saber cómo participas en el mundo del tango"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "Experiencia de Baile",
+      "seoTitle": "Tu Experiencia de Baile - Mundo Tango",
+      "seoDescription": "Comparte tu nivel de experiencia en baile",
+      "step": "Paso 4 de 6",
+      "title": "Tu Experiencia de Baile",
+      "subtitle": "Ayúdanos a conectarte con los bailarines adecuados"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "Intereses",
+      "seoTitle": "Tus Intereses - Mundo Tango",
+      "seoDescription": "Cuéntanos sobre tus intereses",
+      "step": "Paso 6 de 6",
+      "title": "¿Cuáles son tus Intereses?",
+      "subtitle": "Selecciona temas que te interesen",
+      "helpText": "Elige al menos 3 intereses para personalizar tu feed",
+      "selectedCount": "{{count}} seleccionados",
+      "finishing": "Finalizando...",
+      "completeSetup": "Completar Configuración",
+      "searchPlaceholder": "Buscar comunidades o agregar una nueva...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "Fitness y Deportes"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "Tecnología e Innovación"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "Espiritualidad y Crecimiento"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "Yoga y Bienestar"
         },
         "music": {
-          "label": "Music"
+          "label": "Música"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "Fotografía y Video"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "Arte y Creatividad"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "Lectura y Escritura"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "Viajes y Aventura"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "Cocina y Comida"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "Vino y Bebidas"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Juegos"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "Actividades al Aire Libre"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "Deportes de Nieve"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "Ciclismo"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "Deportes Acuáticos"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "Naturaleza y Jardinería"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "Películas y Entretenimiento"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "Mascotas y Animales"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "Social y Comunidad"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
+        "fitness_gym": "Gimnasio y Pesas",
+        "fitness_running": "Correr",
         "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
+        "fitness_martial_arts": "Artes Marciales",
+        "fitness_tennis": "Tenis",
+        "fitness_soccer": "Fútbol",
+        "fitness_basketball": "Baloncesto",
+        "fitness_fencing": "Esgrima",
+        "tech_coding": "Programación y Desarrollo",
+        "tech_ai": "IA y Tecnología del Futuro",
+        "tech_crypto": "Web3 y Cripto",
+        "tech_gaming": "Cultura Gamer",
+        "spirit_meditation": "Meditación",
+        "spirit_astrology": "Astrología",
+        "spirit_philosophy": "Filosofía",
+        "spirit_community": "Construcción de Comunidad",
+        "yoga_hatha": "Yoga Hatha",
         "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
+        "yoga_meditation": "Meditación",
         "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
+        "yoga_breathwork": "Trabajo de Respiración",
+        "music_listening": "Escucha de Música",
+        "music_concerts": "Conciertos en Vivo",
         "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
+        "music_guitar": "Guitarra",
+        "music_singing": "Canto",
         "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
+        "music_production": "Producción Musical",
+        "photo_portrait": "Fotografía de Retrato",
+        "photo_landscape": "Fotografía de Paisaje",
+        "photo_street": "Fotografía Callejera",
+        "photo_video": "Videografía",
+        "photo_editing": "Edición de Fotos",
+        "art_painting": "Pintura",
+        "art_drawing": "Dibujo",
+        "art_sculpture": "Escultura",
+        "art_digital": "Arte Digital",
+        "art_crafts": "Artesanías y DIY",
+        "art_pottery": "Cerámica",
+        "reading_fiction": "Ficción",
+        "reading_nonfiction": "No Ficción",
+        "reading_poetry": "Poesía",
+        "reading_writing": "Escritura Creativa",
+        "reading_journals": "Diario Personal",
+        "travel_backpacking": "Senderismo",
+        "travel_luxury": "Viajes de Lujo",
+        "travel_cultural": "Turismo Cultural",
+        "travel_road_trips": "Viajes por Carretera",
+        "travel_solo": "Viaje en Solitario",
+        "cooking_home": "Cocina Casera",
+        "cooking_baking": "Repostería",
+        "cooking_gourmet": "Cocina Gourmet",
+        "cooking_international": "Cocina Internacional",
+        "cooking_healthy": "Alimentación Saludable",
+        "wine_tasting": "Cata de Vinos",
+        "wine_cocktails": "Cócteles",
+        "wine_coffee": "Apreciación del Café",
+        "wine_tea": "Cultura del Té",
+        "wine_brewing": "Cerveza Artesanal en Casa",
+        "gaming_video": "Videojuegos",
+        "gaming_board": "Juegos de Mesa",
+        "gaming_card": "Juegos de Cartas",
+        "gaming_tabletop": "Juegos de Rol de Mesa",
         "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
+        "outdoor_hiking": "Senderismo",
+        "outdoor_camping": "Acampada",
+        "outdoor_climbing": "Escalada en Roca",
+        "outdoor_fishing": "Pesca",
+        "outdoor_kayaking": "Kayak",
+        "outdoor_surfing": "Surf",
+        "snow_skiing": "Esquí",
+        "snow_snowboard": "Snowboard",
+        "snow_crosscountry": "Esquí de Fondo",
+        "snow_ice_skating": "Patinaje sobre Hielo",
+        "snow_sledding": "Trineo",
+        "snow_snowshoeing": "Raquetas de Nieve",
+        "cycling_road": "Ciclismo en Ruta",
+        "cycling_mountain": "Ciclismo de Montaña",
+        "cycling_urban": "Ciclismo Urbano",
+        "cycling_touring": "Turismo en Bicicleta",
+        "water_swimming": "Natación",
+        "water_scuba": "Buceo",
+        "water_snorkel": "Esnórquel",
+        "water_sailing": "Navegación",
         "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "nature_gardening": "Jardinería",
+        "nature_birdwatching": "Observación de Aves",
+        "nature_botany": "Colección de Plantas",
+        "nature_wildlife": "Fotografía de Vida Silvestre",
+        "movies_cinema": "Cine",
+        "movies_tv": "Series de TV",
+        "movies_documentary": "Documentales",
+        "movies_theater": "Teatro",
+        "movies_standup": "Comedia Stand-up",
+        "pets_dogs": "Perros",
+        "pets_cats": "Gatos",
+        "pets_exotic": "Mascotas Exóticas",
+        "pets_horses": "Equitación",
+        "pets_rescue": "Rescate de Animales",
+        "social_volunteering": "Voluntariado",
+        "social_meetups": "Encuentros",
+        "social_networking": "Redes",
+        "social_languages": "Intercambio de Idiomas"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "¡Bienvenido a Mundo Tango!",
+        "completeDesc": "Tu perfil está listo. ¡Comienza a explorar!",
+        "waitlistTitle": "¡Perfil Completo!",
+        "waitlistDesc": "Te notificaremos cuando tu cuenta esté activada"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "Error al guardar. Por favor, intenta de nuevo."
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "Normas de la Comunidad",
+      "subtitle": "Por favor, revisa y acepta nuestros términos",
+      "legalDocsTitle": "Documentos Legales",
+      "legalDocsDescription": "Revisa nuestros términos de servicio y política de privacidad",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "Acepto los Términos de Servicio",
+        "description": "Nuestras condiciones rigen tu uso de Mundo Tango",
+        "link": "Leer Términos de Servicio"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "Acepto la Política de Privacidad",
+        "description": "Cómo manejamos tus datos",
+        "link": "Leer Política de Privacidad"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "Código de Conducta de la Comunidad",
+      "cocDescription": "Ayúdanos a mantener una comunidad respetuosa",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "Sé Respetuoso",
+          "description": "Trata a todos con dignidad y cortesía"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "Sé Inclusivo",
+          "description": "Bienvenidos bailarines de todos los niveles y orígenes"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "Sé Auténtico",
+          "description": "Usa tu identidad real e información honesta"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "Respeta el Consentimiento",
+          "description": "Siempre pregunta antes de bailar y respeta los límites"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "No al Acoso",
+          "description": "Cero tolerancia al acoso o bullying"
         },
         "noSpam": {
           "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "description": "No envíes promociones no solicitadas"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "No a la Discriminación",
+          "description": "No toleramos la discriminación de ningún tipo"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "Protege la Privacidad",
+          "description": "No compartas la información de otros sin consentimiento"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "Prioriza la Seguridad",
+          "description": "Informa cualquier comportamiento inseguro de inmediato"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "Cumple con las Leyes",
+          "description": "Cumple con todas las leyes aplicables"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "Informa Problemas",
+          "description": "Ayúdanos informando violaciones"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "Apóyense mutuamente",
+          "description": "Ayuda a otros bailarines a crecer"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "Aceptar todo y continuar",
+      "accepting": "Aceptando...",
+      "incompleteAlert": "Por favor, acepta todos los términos requeridos",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "¡Bienvenido!",
+        "description": "Has aceptado nuestras pautas comunitarias"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "Error al guardar. Por favor, intenta de nuevo."
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "Lista de espera",
+      "seoTitle": "Estás en la lista de espera - Mundo Tango",
+      "seoDescription": "Tu cuenta está pendiente de activación",
+      "title": "¡Estás en la lista de espera!",
+      "welcomeMessage": "¡Bienvenido, {{name}}!",
+      "defaultName": "Bailarín",
+      "profileComplete": "Perfil completo",
+      "profileCompleteDesc": "Tu perfil está listo y esperando",
+      "emailNotice": "Te enviaremos un correo a {{email}} cuando tu cuenta esté lista",
+      "whenReady": "cuando tu cuenta esté lista.",
+      "whileYouWait": "Mientras esperas, ayúdanos a crecer:",
+      "volunteerButton": "Conviértete en voluntario",
+      "supportButton": "Apoya a Mundo Tango"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "Tour guiado",
+      "seoTitle": "Explora Mundo Tango",
+      "seoDescription": "Aprende a usar Mundo Tango",
+      "skipTour": "Saltar tour",
+      "finish": "Finalizar tour",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "Descubre publicaciones de la comunidad de tango",
+        "events": "Encuentra milongas, clases y festivales",
+        "groups": "Únete a grupos de tu ciudad o intereses",
+        "messages": "Conéctate directamente con otros bailarines",
+        "profile": "Personaliza tu perfil de tango",
+        "createPost": "Comparte tus momentos de tango"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "Mejora tu experiencia",
+        "subtitle": "Aprovecha al máximo Mundo Tango",
+        "limitedOffer": "Oferta por tiempo limitado",
+        "getStarted": "Comienza",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "Conectar",
+            "description": "Envía un mensaje a cualquier bailarín directamente"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "Visibilidad",
+            "description": "Destácate en los resultados de búsqueda"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "Eventos",
+            "description": "Acceso prioritario a eventos populares"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "Crecer",
+            "description": "Análisis avanzados para tu perfil"
           },
           "premium": {
             "title": "Premium",
-            "description": "Exclusive premium features"
+            "description": "Características premium exclusivas"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "Iniciar sesión",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Iniciar sesión - Mundo Tango",
+      "description": "Inicia sesión en tu cuenta de Mundo Tango para conectarte con la comunidad global de tango, descubrir eventos y compartir tu pasión por el tango argentino."
     },
-    "badge": "Welcome Back",
+    "badge": "¡Bienvenido de nuevo!",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Tu viaje de tango continúa",
+      "paragraph": "Inicia sesión para conectarte con bailarines de todo el mundo, descubrir eventos y compartir tu pasión"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "bailarines",
+      "events": "eventos"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "signIn": "Iniciar sesión",
+      "signingIn": "Iniciando sesión...",
+      "forgotPassword": "¿Olvidaste tu contraseña?"
     },
     "noAccount": "¿No tienes cuenta?",
-    "createAccount": "Create one now",
+    "createAccount": "Crea una ahora",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "¡Bienvenido de nuevo!",
+      "successDescription": "Has iniciado sesión con éxito.",
+      "errorTitle": "Error de inicio de sesión",
+      "errorDescription": "Credenciales inválidas"
     },
     "title": "Iniciar Sesión",
     "email": "Correo electrónico",
@@ -641,127 +641,127 @@
     "signUp": "Regístrate"
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Inicio",
+    "pageLayoutTitle": "Donde el tango se encuentra con la comunidad",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Conéctate con la comunidad global de tango",
+      "description": "Únete a miles de bailarines de tango en todo el mundo. Descubre eventos, encuentra maestros, conéctate con bailarines y sumérgete en el apasionante mundo del tango argentino."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Bienvenido a la comunidad global de tango",
+      "heading": "Donde el tango se encuentra con la comunidad",
+      "paragraph": "Comparte recuerdos, encuentra eventos y ayúdanos a construir el futuro de la tecnología del tango. Únete a miles de bailarines apasionados conectando en todo el mundo.",
+      "getStarted": "Comienza gratis",
+      "volunteer": "Ofrece tu tiempo para ayudar a construir MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Cómo funciona",
+      "description": "Comienza tu viaje de tango en tres simples pasos",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Crea tu perfil",
+        "description": "Únete gratis y cuéntanos sobre tu viaje de tango, nivel de experiencia y preferencias de baile"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Descubre y conéctate",
+        "description": "Encuentra eventos, maestros y lugares cerca de ti. Conéctate con bailarines que comparten tu pasión"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Baila y crece",
+        "description": "Asiste a eventos, toma clases, haz amigos y conviértete en parte de la comunidad global de tango"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Todo lo que necesitas",
+      "description": "Conéctate, descubre y haz crecer tu viaje de tango con potentes características",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Comunidad",
+        "heading": "Conéctate con bailarines de todo el mundo",
+        "description": "Únete a una vibrante comunidad global de entusiastas del tango. Conéctate con bailarines, maestros y organizadores desde Buenos Aires hasta Tokio.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Sigue a los bailarines y construye tu red",
+          "groups": "Únete a grupos basados en intereses y ubicación",
+          "messaging": "Mensajería en tiempo real y funciones de chat",
+          "discover": "Descubre bailarines que visitan tu ciudad"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Eventos",
+        "heading": "Descubre eventos en todas partes",
+        "description": "Nunca te pierdas una milonga, festival o taller. Nuestra plataforma te conecta con miles de eventos de tango que ocurren en todo el mundo.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Calendario de eventos completo",
+          "rsvp": "RSVP y reserva de entradas",
+          "notifications": "Notificaciones y recordatorios de eventos",
+          "map": "Mapa interactivo de locales"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Transmisión en vivo",
+          "description": "Mira milongas de todo el mundo en tiempo real"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Biblioteca de música",
+          "description": "Listas de reproducción y guías de tango seleccionadas"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Profesores verificados",
+          "description": "Aprende de instructores certificados"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Planificador de viajes",
+          "description": "Planifica viajes y encuentra anfitriones en todo el mundo"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Lo que dicen los bailarines",
+      "description": "Únete a miles de bailarines satisfechos en todo el mundo",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
+          "name": "María Rodríguez",
           "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "text": "Mundo Tango me ayudó a encontrar mi familia de baile en una nueva ciudad. La comunidad es cálida, acogedora y verdaderamente apasionada por el tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, EE. UU.",
+          "text": "He descubierto milongas y talleres increíbles a través de esta plataforma. Se ha vuelto esencial para mi viaje en el tango."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moscú, Rusia",
+          "text": "El directorio de profesores me ayudó a encontrar instructores increíbles. ¡Mi baile ha mejorado enormemente!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Preguntas frecuentes",
+      "description": "Todo lo que necesitas saber sobre Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "¿Qué es Mundo Tango?",
+          "answer": "Mundo Tango es una plataforma global que conecta a bailarines, profesores y organizadores de tango. Te ayudamos a descubrir eventos, encontrar parejas de baile, aprender de los mejores instructores y sumergirte en la vibrante comunidad de tango en todo el mundo."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "¿Es gratis usar Mundo Tango?",
+          "answer": "¡Sí! Ofrecemos un nivel gratuito que incluye la creación de un perfil básico, descubrimiento de eventos y mensajería. Las funciones premium como mensajería ilimitada, emparejamiento de parejas de baile con IA y notificaciones prioritarias de eventos están disponibles con nuestra suscripción Pro."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "¿Cómo encuentro eventos de tango cerca de mí?",
+          "answer": "Simplemente utiliza nuestro Calendario de Eventos o las funciones de Búsqueda para filtrar por ciudad, fecha y tipo de evento. Puedes descubrir milongas, festivales, talleres y sesiones de práctica que se llevan a cabo en tu área o en cualquier parte del mundo."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "¿Puedo conectarme con otros bailarines?",
+          "answer": "¡Absolutamente! Sigue a bailarines, únete a grupos, envía solicitudes de amistad y chatea con la comunidad. Nuestra plataforma está diseñada para fomentar conexiones auténticas dentro del mundo del tango."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "¿Cómo encuentro profesores de tango?",
+          "answer": "Visita nuestro Directorio de Profesores para explorar instructores verificados en todo el mundo. Filtra por ubicación, especialidad y nivel de experiencia. Lee reseñas de otros estudiantes y reserva lecciones privadas directamente a través de la plataforma."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "¿Qué hace diferente a Mundo Tango?",
+          "answer": "Estamos construidos por bailarines de tango, para bailarines de tango. Nuestro enfoque está en la construcción de una comunidad auténtica, la curaduría de eventos de calidad y en conectarte con la familia global del tango, no solo en otra red social."
         }
       }
     },
@@ -771,27 +771,27 @@
   },
   "feed": {
     "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "description": "Mantente actualizado con lo último de la comunidad de tango",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
+      "all": "Todas las Publicaciones",
+      "following": "Siguiendo",
       "popular": "Popular",
-      "recent": "Recent"
+      "recent": "Reciente"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "¿Qué tienes en mente?",
+    "noPost": "No hay publicaciones para mostrar"
   },
   "events": {
     "title": "Eventos de Tango",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "description": "Descubre eventos de tango cerca de ti",
+    "upcoming": "Eventos Próximos",
+    "past": "Eventos Pasados",
     "filters": {
-      "all": "All Events",
+      "all": "Todos los Eventos",
       "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "workshops": "Talleres",
+      "festivals": "Festivales",
+      "classes": "Clases"
     },
     "noEvents": "No se encontraron eventos",
     "subtitle": "Descubre milongas, festivales y talleres",
@@ -800,20 +800,20 @@
   },
   "profile": {
     "title": "Perfil",
-    "description": "View and edit your profile",
+    "description": "Ver y editar tu perfil",
     "editProfile": "Editar Perfil",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
+      "posts": "Publicaciones",
+      "photos": "Fotos",
       "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "events": "Eventos",
+      "friends": "Amigos"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Publicaciones",
+      "followers": "Seguidores",
+      "following": "Siguiendo",
+      "events": "Eventos Asistidos"
     },
     "followers": "Seguidores",
     "following": "Siguiendo",
@@ -821,83 +821,83 @@
     "about": "Acerca de"
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Mensajes",
+    "description": "Chatea con tus conexiones de tango",
+    "newMessage": "Nuevo Mensaje",
+    "searchConversations": "Buscar conversaciones",
+    "noMessages": "Aún no hay mensajes",
+    "startConversation": "Iniciar una conversación"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Profesores de Tango",
+    "description": "Encuentra y conéctate con profesores de tango",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Todos los Profesores",
+      "featured": "Destacados",
+      "nearby": "Cerca"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Ver Perfil",
+    "bookLesson": "Reservar una Clase"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Lugares de Tango",
+    "description": "Descubre lugares de tango en todo el mundo",
     "filters": {
-      "all": "All Venues",
+      "all": "Todos los Lugares",
       "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "schools": "Escuelas de Baile",
+      "theaters": "Teatros"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Obtener Direcciones"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Configuraciones",
+    "description": "Gestiona la configuración de tu cuenta",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Configuración de Cuenta",
+      "profile": "Perfil",
+      "privacy": "Privacidad",
+      "notifications": "Notificaciones",
+      "security": "Seguridad",
+      "billing": "Facturación",
+      "preferences": "Preferencias"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Tablero del CEO de Life",
+    "description": "Tu asistente personal de IA para la gestión de la vida",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Agente de Salud",
+      "fitness": "Agente de Fitness",
+      "nutrition": "Agente de Nutrición",
+      "finance": "Agente de Finanzas",
+      "career": "Agente de Carrera",
+      "productivity": "Agente de Productividad",
+      "relationships": "Agente de Relaciones",
+      "learning": "Agente de Aprendizaje"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Mercado",
+    "description": "Compra y venta de artículos relacionados con el tango",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Zapatos de Baile",
+      "clothing": "Ropa",
+      "music": "Música",
+      "accessories": "Accesorios",
+      "other": "Otro"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Tablero de Administración",
+    "description": "Administración y gestión de la plataforma",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Resumen",
+      "users": "Usuarios",
+      "content": "Contenido",
+      "reports": "Informes",
+      "analytics": "Analíticas",
+      "settings": "Configuraciones"
     }
   },
   "cities": {

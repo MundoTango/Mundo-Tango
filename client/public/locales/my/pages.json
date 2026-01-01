@@ -1,896 +1,896 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "မှတ်ပုံတင်ပါ",
     "seo": {
-      "title": "Join Mundo Tango - Create Your Account",
-      "description": "Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      "title": "Mundo Tango တွင်ပါဝင်ပါ - သင့်အကောင့်ကိုဖန်တီးပါ",
+      "description": "သင့်၏ Mundo Tango အကောင့်ကိုဖန်တီးပြီး ကမ္ဘာလုံးဆိုင်ရာ အာဂျင်တီးနားတန်ဂို အသိုင်းအဝိုင်းတွင် ပါဝင်ပါ။ အက dancer များနှင့် ချိတ်ဆက်ပါ၊ အခမ်းအနားများကို ရှာဖွေပါ၊ နှင့် တန်ဂိုအတွက် သင့်စိတ်အားထက်သန်မှုကို မျှဝေပါ။"
     },
     "badge": {
-      "welcomeFamily": "Welcome to the Family",
-      "beginJourney": "Begin Your Journey",
-      "joinCommunity": "Join the Community"
+      "welcomeFamily": "မိသားစုသို့ ကြိုဆိုပါသည်",
+      "beginJourney": "သင့်ခရီးစဉ်ကို စတင်ပါ",
+      "joinCommunity": "အသိုင်းအဝိုင်းတွင် ပါဝင်ပါ"
     },
     "hero": {
-      "youreIn": "You're In!",
-      "joinMundoTango": "Join Mundo Tango",
-      "description": "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango",
-      "waitlistDescription": "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+      "youreIn": "သင့်အတွက် အောင်မြင်ပါပြီ!",
+      "joinMundoTango": "Mundo Tango တွင် ပါဝင်ပါ",
+      "description": "ကမ္ဘာတစ်ဝှမ်းရှိ အက dancer များနှင့် ချိတ်ဆက်ပါ၊ milongas များကို ရှာဖွေပါ၊ နှင့် အာဂျင်တီးနားတန်ဂို၏ စိတ်အားထက်သန်သော ကမ္ဘာတွင် ရှိပါ",
+      "waitlistDescription": "Mundo Tango အသိုင်းအဝိုင်းသို့ ကြိုဆိုပါသည်။ သင့်အကောင့်ကို ပြင်ဆင်နေပြီး မကြာမီ သင့်အား သတင်းပို့မည်!"
     },
     "stats": {
-      "dancers": "{{count}}+ dancers",
-      "events": "{{count}}+ events",
-      "cities": "{{count}} cities"
+      "dancers": "{{count}}+ အက dancer များ",
+      "events": "{{count}}+ အခမ်းအနားများ",
+      "cities": "{{count}} မြို့များ"
     },
     "form": {
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Maria Rodriguez",
-      "email": "Email",
+      "fullName": "အပြည့်အစုံအမည်",
+      "fullNamePlaceholder": "မာရီးယား ရိုဒရစ်ဂျက်",
+      "email": "အီးမေးလ်",
       "emailPlaceholder": "maria@example.com",
-      "username": "Username",
+      "username": "အသုံးပြုသူအမည်",
       "usernamePlaceholder": "maria_tango",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "inviteOnlyNotice": "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.",
-      "acceptTermsPrefix": "I accept the",
-      "termsAndConditions": "Terms & Conditions"
+      "password": "လျှို့ဝှက်နံပါတ်",
+      "confirmPassword": "လျှို့ဝှက်နံပါတ်ကို အတည်ပြုပါ",
+      "inviteOnlyNotice": "မှတ်ပုံတင်ခြင်းသည် လက်မှတ်ပေးရန်သာဖြစ်သည်။ ဤဖောင်ကို ပြည့်စုံပြီး ကျွန်ုပ်တို့၏ စောင့်ဆိုင်းစာရင်းတွင် ပါဝင်ရန် သင့်အား သတင်းပို့မည်။ သင့်အကောင့် ပြင်ဆင်ပြီးပါက သတင်းပို့ပါမည်။",
+      "acceptTermsPrefix": "ကျွန်ုပ်သည်",
+      "termsAndConditions": "စည်းကမ်းများနှင့် အခြေအနေများကို"
     },
     "validation": {
-      "emailTaken": "This email is already registered",
-      "emailAvailable": "Email available!",
-      "usernameTaken": "Username taken. Try {{suggestion}}",
-      "usernameAvailable": "Username available!",
-      "passwordsMatch": "Passwords match",
-      "passwordsDontMatch": "Passwords don't match"
+      "emailTaken": "ဤအီးမေးလ်သည် အရင်မှတ်ပုံတင်ပြီးသားဖြစ်သည်",
+      "emailAvailable": "အီးမေးလ်ရရှိပါပြီ!",
+      "usernameTaken": "အသုံးပြုသူအမည်ကိုယူထားပါသည်။ {{suggestion}} ကိုကြိုးစားပါ",
+      "usernameAvailable": "အသုံးပြုသူအမည်ရရှိပါပြီ!",
+      "passwordsMatch": "စကားဝှက်များကိုကိုက်ညီသည်",
+      "passwordsDontMatch": "စကားဝှက်များကိုကိုက်ညီမည်မဟုတ်ပါ"
     },
     "passwordStrength": {
-      "weak": "Weak",
-      "medium": "Medium",
-      "strong": "Strong",
-      "veryStrong": "Very Strong"
+      "weak": "အားနည်းသော",
+      "medium": "အလယ်အလတ်",
+      "strong": "အားကောင်းသော",
+      "veryStrong": "အလွန်အားကောင်းသော"
     },
     "inviteCode": {
-      "label": "Have an invite code? (Optional)",
-      "placeholder": "Enter your invite code for immediate access",
-      "accepted": "Code accepted! Your account will be activated immediately.",
-      "noWorries": "No worries! Complete the form below to join our waitlist."
+      "label": "ဖိတ်ကြားကုဒ်ရှိပါသလား? (ရွေးချယ်ရန်)",
+      "placeholder": "သင့်ရဲ့ဖိတ်ကြားကုဒ်ကိုထည့်ပါ၊ ချက်ချင်းဝင်ရောက်နိုင်ရန်",
+      "accepted": "ကုဒ်ကိုလက်ခံပြီးပါပြီ! သင့်အကောင့်ကိုချက်ချင်းဖွင့်လှစ်မည်။",
+      "noWorries": "စိတ်မပူပါနဲ့! ကျွန်ုပ်တို့၏စောင့်ဆိုင်းစာရင်းတွင်ပါဝင်ရန်အောက်ပါဖောင်ကိုပြီးပြည့်စုံပါ။"
     },
     "waitlist": {
-      "welcomeUser": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "onTheList": "You're on the list. We'll email you at",
-      "whenReady": "when your account is ready.",
-      "helpUsGrow": "While you wait, help us grow",
-      "volunteerWithUs": "Volunteer with us",
-      "supportMundoTango": "Support Mundo Tango"
+      "welcomeUser": "ကြိုဆိုပါတယ်၊ {{name}}!",
+      "defaultName": "အက dancer",
+      "onTheList": "သင်စာရင်းတွင်ပါဝင်သည်။ သင့်အားအီးမေးလ်ပို့ပါမည်",
+      "whenReady": "သင့်အကောင့်ပြင်ဆင်ပြီးချိန်တွင်။",
+      "helpUsGrow": "သင်စောင့်နေစဉ်၊ ကျွန်ုပ်တို့ကိုတိုးတက်စေပါ",
+      "volunteerWithUs": "ကျွန်ုပ်တို့နှင့်အတူအလှူရှင်ဖြစ်ပါ",
+      "supportMundoTango": "Mundo Tango ကိုထောက်ပံ့ပါ"
     },
     "button": {
-      "creatingAccount": "Creating your account...",
-      "joining": "Joining...",
-      "createAccount": "Create Account",
-      "joinMundoTango": "Join Mundo Tango"
+      "creatingAccount": "သင့်အကောင့်ကိုဖန်တီးနေသည်...",
+      "joining": "ပါဝင်နေသည်...",
+      "createAccount": "အကောင့်ဖန်တီးပါ",
+      "joinMundoTango": "Mundo Tango တွင်ပါဝင်ပါ"
     },
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
+    "alreadyHaveAccount": "အကောင့်ရှိပါသလား?",
+    "signIn": "ဝင်ရောက်ပါ",
     "toast": {
       "invalidCode": {
-        "title": "Invalid code",
-        "description": "Please enter a valid 6-digit verification code."
+        "title": "မမှန်ကန်သောကုဒ်",
+        "description": "ကျေးဇူးပြု၍ မှန်ကန်သော ၆-လုံး အတည်ပြုကုဒ်ကို ထည့်ပါ။"
       },
       "verified": {
-        "title": "Email verified!",
-        "description": "Welcome to Mundo Tango! Starting your onboarding..."
+        "title": "အီးမေးလ်ကို အတည်ပြုပြီးပါပြီ!",
+        "description": "Mundo Tango သို့ ကြိုဆိုပါတယ်! သင်၏ onboarding ကို စတင်နေပါပြီ..."
       },
       "verifyError": {
-        "title": "Verification failed",
-        "description": "Invalid or expired code. Please try again."
+        "title": "အတည်ပြုမှု မအောင်မြင်ပါ",
+        "description": "မမှန်ကန်သော သို့မဟုတ် သက်တမ်းကုန်ဆုံးသောကုဒ်။ ကျေးဇူးပြု၍ ထပ်မံကြိုးစားပါ။"
       },
       "error": {
-        "title": "Error",
-        "description": "Failed to verify email. Please try again."
+        "title": "အမှား",
+        "description": "အီးမေးလ်ကို အတည်ပြုရန် မအောင်မြင်ပါ။ ကျေးဇူးပြု၍ ထပ်မံကြိုးစားပါ။"
       },
       "tooMany": {
-        "title": "Too many requests",
-        "description": "Please wait a few minutes before trying again."
+        "title": "တောင်းဆိုမှုများ များပြားနေသည်",
+        "description": "ကျေးဇူးပြု၍ ထပ်မံကြိုးစားမည်မဟုတ်မီ မိနစ်အနည်းငယ် စောင့်ပါ။"
       },
       "codeSent": {
-        "title": "Code sent!",
-        "description": "Please check your inbox for a new code."
+        "title": "ကုဒ်ပို့ပြီး!",
+        "description": "သင်၏ inbox တွင် အကြောင်းအရာအသစ်ကို စစ်ဆေးပါ။"
       },
       "resendError": {
-        "description": "Failed to resend code. Please try again."
+        "description": "ကုဒ်ကို ထပ်ပို့ရန် မအောင်မြင်ပါ။ ကျေးဇူးပြု၍ ထပ်မံကြိုးစားပါ။"
       },
       "termsRequired": {
-        "title": "Terms required",
-        "description": "Please accept the Terms & Conditions"
+        "title": "စည်းမျဉ်းများ လိုအပ်သည်",
+        "description": "စည်းမျဉ်းနှင့် အခြေအနေများကို လက်ခံပါ"
       },
       "passwordMismatch": {
-        "title": "Passwords don't match",
-        "description": "Please ensure both passwords are identical"
+        "title": "စကားဝှက်များ မကိုက်ညီပါ",
+        "description": "စကားဝှက်နှစ်ခုလုံးသည် တူညီကြောင်း သေချာပါစေ"
       },
       "weakPassword": {
-        "title": "Weak password",
-        "description": "Please choose a stronger password"
+        "title": "စကားဝှက်အားနည်းသည်",
+        "description": "ပိုမိုသန်ဆောင်သော စကားဝှက်ကို ရွေးချယ်ပါ"
       },
       "checkEmail": {
-        "title": "Check your email",
-        "description": "We sent you a 6-digit verification code. Please check your inbox."
+        "title": "သင်၏ အီးမေးလ်ကို စစ်ဆေးပါ",
+        "description": "ကျွန်ုပ်တို့သည် သင်ထံ ၆-လုံး အတည်ပြုကုဒ်ကို ပို့ခဲ့ပါသည်။ ကျေးဇူးပြု၍ သင်၏ inbox ကို စစ်ဆေးပါ။"
       },
       "registrationFailed": {
-        "title": "Registration failed"
+        "title": "မှတ်ပုံတင်မှု မအောင်မြင်ပါ"
       },
       "signupFailed": {
-        "title": "Couldn't complete signup"
+        "title": "စာရင်းသွင်းခြင်းကို ပြီးမြောက်စေရန် မဖြစ်နိုင်ပါ"
       },
-      "tryAgain": "Please try again"
+      "tryAgain": "ကျေးဇူးပြု၍ ထပ်မံကြိုးစားပါ"
     }
   },
   "onboarding": {
     "welcome": {
-      "pageTitle": "Welcome",
-      "seoTitle": "Welcome to Mundo Tango",
-      "seoDescription": "Start your tango journey with Mundo Tango",
-      "badge": "Quick Setup",
-      "title": "Welcome to Mundo Tango",
-      "subtitle": "Let's set up your profile so you can connect with the global tango community",
-      "duration": "Takes about 2 minutes",
-      "stepIndicator": "Step {{current}} of {{total}}",
-      "getStarted": "Get Started",
-      "profileTitle": "Your Tango Journey Begins",
-      "profileSubtitle": "Tell us a bit about yourself",
+      "pageTitle": "ကြိုဆိုပါတယ်",
+      "seoTitle": "Mundo Tango သို့ ကြိုဆိုပါတယ်",
+      "seoDescription": "Mundo Tango နှင့်အတူ သင်၏ tango ခရီးစဉ်ကို စတင်ပါ",
+      "badge": "အမြန်တပ်ဆင်မှု",
+      "title": "Mundo Tango သို့ ကြိုဆိုပါတယ်",
+      "subtitle": "သင်၏ပရိုဖိုင်းကို တပ်ဆင်ရန် ကျွန်ုပ်တို့ကို ကူညီပါ၊ သင်သည် ကမ္ဘာလုံးဆိုင်ရာ tango အသိုင်းအဝိုင်းနှင့် ချိတ်ဆက်နိုင်ပါသည်",
+      "duration": "၂ မိနစ်ခန့် ကြာနိုင်သည်",
+      "stepIndicator": "အဆင့် {{current}} မှ {{total}} သို့",
+      "getStarted": "စတင်ပါ",
+      "profileTitle": "သင်၏ Tango ခရီးစဉ် စတင်ပါ",
+      "profileSubtitle": "သင့်အကြောင်း အနည်းငယ် ပြောပြပါ",
       "features": {
         "city": {
-          "title": "Choose Your City",
-          "description": "Connect with your local tango community"
+          "title": "သင်၏မြို့ကို ရွေးချယ်ပါ",
+          "description": "သင်၏ဒေသခံ tango အသိုင်းအဝိုင်းနှင့် ချိတ်ဆက်ပါ"
         },
         "roles": {
-          "title": "Tell Us Your Roles",
-          "description": "Dancer, teacher, DJ, organizer, or all of the above?"
+          "title": "သင်၏အခန်းကဏ္ဍများကို ပြောပြပါ",
+          "description": "အက dancer, ဆရာ, DJ, စီစဉ်သူ၊ သို့မဟုတ် အထက်ပါ အားလုံးလား?"
         },
         "events": {
-          "title": "Discover Events",
-          "description": "Find milongas, classes, and festivals near you"
+          "title": "အခမ်းအနားများကို ရှာဖွေပါ",
+          "description": "သင့်အနီးတွင် milongas, သင်တန်းများနှင့် ပွဲတော်များကို ရှာပါ"
         },
         "journey": {
-          "title": "Share Your Journey",
-          "description": "Connect with dancers at your level"
+          "title": "သင်၏ ခရီးစဉ်ကို မျှဝေပါ",
+          "description": "သင်၏အဆင့်တွင် dancer များနှင့် ချိတ်ဆက်ပါ"
         },
         "facebook": {
-          "title": "Connect Facebook",
-          "description": "Link your Facebook profile to find friends in the community"
+          "title": "Facebook နှင့် ချိတ်ဆက်ပါ",
+          "description": "သင်၏ Facebook ပရိုဖိုင်းကို ချိတ်ဆက်ပါ၊ အသိုင်းအဝိုင်းတွင် မိတ်ဆွေများကို ရှာဖွေရန်"
         }
       }
     },
     "social": {
-      "pageTitle": "Social Connect",
-      "seoTitle": "Connect Your Social World - Mundo Tango",
-      "seoDescription": "Link your social profiles to find friends in the tango community.",
-      "step": "Step 2 of 6",
-      "title": "Connect Your Social World",
-      "quote": "\"Many tango dancers already know each other through Facebook. By linking your profile, we can show you which dancers in your network are already here - making it easier to find familiar faces at milongas and build deeper connections.\"",
-      "cardTitle": "Find Your Friends",
-      "cardDescription": "Your Facebook helps us match you with dancers you may already know, so you're not starting from scratch.",
-      "facebookLabel": "Facebook Profile URL (Optional)",
+      "pageTitle": "လူမှုဆက်သွယ်မှု",
+      "seoTitle": "သင်၏ လူမှုကမ္ဘာကို ချိတ်ဆက်ပါ - Mundo Tango",
+      "seoDescription": "သင်၏ လူမှုပရိုဖိုင်းများကို ချိတ်ဆက်ပါ၊ tango အသိုင်းအဝိုင်းတွင် မိတ်ဆွေများကို ရှာဖွေရန်။",
+      "step": "အဆင့် ၂ မှ ၆",
+      "title": "သင့်လူမှုကမ္ဘာကိုချိတ်ဆက်ပါ",
+      "quote": "\"တချို့သောတန်ဂို dancer များသည် Facebook မှတစ်ဆင့် အပြန်အလှန်သိကြသည်။ သင့်ပရိုဖိုင်းကိုချိတ်ဆက်ခြင်းဖြင့် သင့်ကွန်ရက်ရှိ dancer များထဲမှ ဘယ်သူတွေရှိကြောင်း ပြသနိုင်ပါသည် - milongas တွင် ရင်ခုန်မှုများကို ရှာဖွေရန်နှင့် နက်ရှိုင်းသော ဆက်ဆံရေးများကို တည်ဆောက်ရန် ပိုမိုလွယ်ကူစေပါသည်။\"",
+      "cardTitle": "သင့်မိတ်ဆွေများကိုရှာပါ",
+      "cardDescription": "သင့် Facebook သည် သင်သည် အရင်က သိကြသော dancer များနှင့် ကိုက်ညီစေရန် ကူညီပေးသည်၊ ထို့ကြောင့် သင်သည် အစပြုနေခြင်းမရှိပါ။",
+      "facebookLabel": "Facebook ပရိုဖိုင်း URL (ရွေးချယ်ရန်)",
       "facebookPlaceholder": "https://www.facebook.com/your.profile",
-      "helperText": "We use this as a bridge to other communities and to match you with dancers you might know.",
+      "helperText": "ဤသည်ကို အခြားအသိုင်းအဝိုင်းများနှင့် ချိတ်ဆက်ရန်နှင့် သင်သိနိုင်သော dancer များနှင့် ကိုက်ညီစေရန် အသုံးပြုပါသည်။",
       "toast": {
-        "errorTitle": "Error",
-        "errorDescription": "Failed to save profile information"
+        "errorTitle": "အမှား",
+        "errorDescription": "ပရိုဖိုင်းအချက်အလက်များကို သိမ်းဆည်းရန် မအောင်မြင်ပါ"
       }
     },
     "navigation": {
-      "back": "Back",
-      "next": "Next",
-      "skip": "Skip",
-      "finish": "Finish",
-      "saving": "Saving..."
+      "back": "ပြန်သွားပါ",
+      "next": "နောက်တစ်ခု",
+      "skip": "ကျော်လွှားပါ",
+      "finish": "ပြီးဆုံးပါ",
+      "saving": "သိမ်းဆည်းနေသည်..."
     },
     "city": {
-      "pageTitle": "City Selection",
-      "seoTitle": "Select Your City - Mundo Tango",
-      "seoDescription": "Choose your home city to connect with local tango dancers",
-      "step": "Step 1 of 6",
-      "title": "Where Do You Dance?",
-      "subtitle": "Connect with dancers in your area",
-      "cardTitle": "Your Home City",
-      "cardDescription": "This helps us show you local events and dancers",
-      "searchLabel": "Search for your city",
-      "searchPlaceholder": "Type your city name...",
+      "pageTitle": "မြို့ရွေးချယ်မှု",
+      "seoTitle": "သင့်မြို့ကိုရွေးချယ်ပါ - Mundo Tango",
+      "seoDescription": "ဒေသခံတန်ဂို dancer များနှင့် ချိတ်ဆက်ရန် သင့်အိမ်မြို့ကို ရွေးချယ်ပါ",
+      "step": "အဆင့် ၁ မှ ၆",
+      "title": "သင်က ဘယ်မှာတန်ဂို dance လုပ်ပါသလဲ?",
+      "subtitle": "သင့်ဒေသရှိ dancer များနှင့် ချိတ်ဆက်ပါ",
+      "cardTitle": "သင့်အိမ်မြို့",
+      "cardDescription": "ဤသည်သည် သင့်ကို ဒေသခံအခမ်းအနားများနှင့် dancer များကို ပြသရန် ကူညီသည်",
+      "searchLabel": "သင့်မြို့ကို ရှာပါ",
+      "searchPlaceholder": "သင့်မြို့အမည်ကို ရေးပါ...",
       "eventSite": {
-        "help": "Select from popular tango destinations"
+        "help": "လူကြိုက်များသော တန်ဂို ခရီးသွားနေရာများမှ ရွေးချယ်ပါ"
       },
       "errors": {
-        "required": "City required",
-        "selectCity": "Please select your home city"
+        "required": "မြို့လိုအပ်သည်",
+        "selectCity": "သင်၏အိမ်မြို့ကိုရွေးချယ်ပါ"
       },
       "toast": {
-        "sourceAdded": "Source added!",
-        "submittedForReview": "Submitted for review",
-        "trackingEvents": "We'll start tracking events from the site",
-        "thankYou": "Thank you! Your suggestion has been sent for review.",
-        "errorTitle": "Error",
-        "suggestionFailed": "Failed to submit suggestion",
-        "saveFailed": "Failed to save cities"
+        "sourceAdded": "အရင်းအမြစ်ထည့်သွင်းပြီး!",
+        "submittedForReview": "သုံးသပ်ရန်တင်သွင်းပြီး",
+        "trackingEvents": "ကျွန်ုပ်တို့သည်ဆိုက်မှဖြစ်ရပ်များကိုစောင့်ကြည့်ပါမည်",
+        "thankYou": "ကျေးဇူးတင်ပါတယ်! သင်၏အကြံပြုချက်ကိုသုံးသပ်ရန်ပို့လိုက်ပါပြီ။",
+        "errorTitle": "အမှား",
+        "suggestionFailed": "အကြံပြုချက်တင်သွင်းရန်မအောင်မြင်ပါ",
+        "saveFailed": "မြို့များကိုသိမ်းဆည်းရန်မအောင်မြင်ပါ"
       }
     },
     "photo": {
-      "pageTitle": "Photo Upload",
-      "seoTitle": "Add Profile Photo - Mundo Tango",
-      "seoDescription": "Upload your profile photo",
-      "step": "Step 3 of 6",
-      "title": "Add Your Profile Photo",
-      "subtitle": "Help others recognize you in the community",
-      "cardTitle": "Your Profile Photo",
-      "cardDescription": "Help others recognize you (you can skip this step)",
-      "previewAlt": "Profile preview",
-      "dropHere": "Drop your photo here",
-      "or": "or",
-      "browseFiles": "Browse Files",
-      "fileTypes": "PNG, JPG up to 5MB",
-      "photoSelected": "Photo selected!",
-      "uploading": "Uploading...",
+      "pageTitle": "ဓာတ်ပုံတင်ရန်",
+      "seoTitle": "ပရိုဖိုင်းဓာတ်ပုံထည့်ပါ - Mundo Tango",
+      "seoDescription": "သင်၏ပရိုဖိုင်းဓာတ်ပုံကိုတင်ပါ",
+      "step": "အဆင့် ၃ မှ ၆",
+      "title": "သင်၏ပရိုဖိုင်းဓာတ်ပုံထည့်ပါ",
+      "subtitle": "အသိုင်းအဝိုင်းတွင်သင်ကိုအသိအမှတ်ပြုရန်အခြားသူများကိုကူညီပါ",
+      "cardTitle": "သင်၏ပရိုဖိုင်းဓာတ်ပုံ",
+      "cardDescription": "သင်ကိုအသိအမှတ်ပြုရန်အခြားသူများကိုကူညီပါ (ဤအဆင့်ကိုကျော်လိုက်နိုင်သည်)",
+      "previewAlt": "ပရိုဖိုင်းကြည့်ရှုခြင်း",
+      "dropHere": "ဓာတ်ပုံကိုဒီမှာကျော်ပါ",
+      "or": "သို့မဟုတ်",
+      "browseFiles": "ဖိုင်များကိုရှာဖွေပါ",
+      "fileTypes": "PNG, JPG ၅MB အထိ",
+      "photoSelected": "ဓာတ်ပုံရွေးချယ်ပြီး!",
+      "uploading": "တင်နေသည်...",
       "errors": {
-        "invalidFile": "Invalid file",
-        "selectImage": "Please select an image file",
-        "fileTooLarge": "File too large",
-        "sizeLimit": "Please select an image under 5MB",
-        "uploadFailed": "Upload failed",
-        "tryAgain": "Failed to upload photo. Please try again.",
-        "skipFailed": "Failed to skip. Please try again."
+        "invalidFile": "မမှန်ကန်သောဖိုင်",
+        "selectImage": "ဓာတ်ပုံဖိုင်ကို ရွေးချယ်ပါ",
+        "fileTooLarge": "ဖိုင်အရွယ်အစား ကြီးလွန်းသည်",
+        "sizeLimit": "၅MB အောက်ရှိ ဓာတ်ပုံကို ရွေးချယ်ပါ",
+        "uploadFailed": "အပ်လိုက်မှု မအောင်မြင်ပါ",
+        "tryAgain": "ဓာတ်ပုံကို အပ်လိုက်ရန် မအောင်မြင်ပါ။ ထပ်မံကြိုးစားပါ။",
+        "skipFailed": "ကျော်လွှားရန် မအောင်မြင်ပါ။ ထပ်မံကြိုးစားပါ။"
       }
     },
     "languages": {
-      "pageTitle": "Languages",
-      "seoTitle": "Your Languages - Mundo Tango",
-      "seoDescription": "Tell us what languages you speak",
-      "step": "Step 5 of 6",
-      "title": "What Languages Do You Speak?",
-      "subtitle": "Connect with dancers in your language",
-      "cardTitle": "Your Languages",
-      "cardDescription": "Select your primary language and any additional languages you speak",
-      "primaryLabel": "Primary Language",
-      "primaryHint": "This will also set your site display language",
-      "primaryPlaceholder": "Select your primary language",
-      "additionalLabel": "Additional Languages (Optional)",
+      "pageTitle": "ဘာသာစကားများ",
+      "seoTitle": "သင့်ဘာသာစကားများ - Mundo Tango",
+      "seoDescription": "သင်ပြောဆိုသော ဘာသာစကားများကို ကျွန်ုပ်တို့အား ပြောပြပါ",
+      "step": "အဆင့် ၅ မှ ၆",
+      "title": "သင်ပြောဆိုသော ဘာသာစကားများက ဘာလဲ?",
+      "subtitle": "သင့်ဘာသာစကားဖြင့် အက dancer များနှင့် ချိတ်ဆက်ပါ",
+      "cardTitle": "သင့်ဘာသာစကားများ",
+      "cardDescription": "သင့်မူလဘာသာစကားနှင့် သင်ပြောဆိုသော အပိုဘာသာစကားများကို ရွေးချယ်ပါ",
+      "primaryLabel": "မူလဘာသာစကား",
+      "primaryHint": "ဤသည် သင့်ဆိုက်ပြသမှုဘာသာစကားကိုလည်း သတ်မှတ်ပါမည်",
+      "primaryPlaceholder": "သင့်မူလဘာသာစကားကို ရွေးချယ်ပါ",
+      "additionalLabel": "အပိုဘာသာစကားများ (ရွေးချယ်ရန်)",
       "errors": {
-        "required": "Primary language required",
-        "selectPrimary": "Please select your primary language",
-        "saveFailed": "Failed to save languages",
-        "saveFailedTitle": "Language Save Failed"
+        "required": "မူလဘာသာစကား လိုအပ်သည်",
+        "selectPrimary": "သင့်မူလဘာသာစကားကို ရွေးချယ်ပါ",
+        "saveFailed": "ဘာသာစကားများကို သိမ်းဆည်းရန် မအောင်မြင်ပါ",
+        "saveFailedTitle": "ဘာသာစကား သိမ်းဆည်းမှု မအောင်မြင်ပါ"
       }
     },
     "roles": {
-      "pageTitle": "Tango Roles",
-      "seoTitle": "Your Tango Roles - Mundo Tango",
-      "seoDescription": "Tell us about your tango journey",
-      "step": "Step 2 of 6",
-      "title": "What Roles Do You Play?",
-      "subtitle": "Select all that apply to you",
-      "cardTitle": "Your Tango Identity",
-      "cardDescription": "Help others know how you participate in the tango world"
+      "pageTitle": "Tango အခန်းကဏ္ဍများ",
+      "seoTitle": "သင့် Tango အခန်းကဏ္ဍများ - Mundo Tango",
+      "seoDescription": "သင့် Tango ခရီးစဉ်အကြောင်း ပြောပြပါ",
+      "step": "အဆင့် ၂ အထိ ၆",
+      "title": "သင်က ဘာအခန်းကဏ္ဍများတွင် ပါဝင်ပါသလဲ?",
+      "subtitle": "သင့်အား သက်ဆိုင်သော အရာအားလုံးကို ရွေးချယ်ပါ",
+      "cardTitle": "သင့် Tango အထိမ်းအမှတ်",
+      "cardDescription": "သင် tango ကမ္ဘာတွင် ဘယ်လို ပါဝင်မှုရှိသည်ကို အခြားသူများကို သိရှိစေပါ"
     },
     "experience": {
-      "pageTitle": "Dance Experience",
-      "seoTitle": "Your Dance Experience - Mundo Tango",
-      "seoDescription": "Share your dance experience level",
-      "step": "Step 4 of 6",
-      "title": "Your Dance Experience",
-      "subtitle": "Help us connect you with the right dancers"
+      "pageTitle": "အက dancing အတွေ့အကြုံ",
+      "seoTitle": "သင့် အက dancing အတွေ့အကြုံ - Mundo Tango",
+      "seoDescription": "သင့်အက dancing အတွေ့အကြုံ အဆင့်ကို မျှဝေပါ",
+      "step": "အဆင့် ၄ အထိ ၆",
+      "title": "သင့် အက dancing အတွေ့အကြုံ",
+      "subtitle": "သင့်ကို သင့်လျော်သော အကဖျော်ဖြေရေးများနှင့် ချိတ်ဆက်ရန် ကူညီပါ"
     },
     "hobbies": {
-      "pageTitle": "Interests",
-      "seoTitle": "Your Interests - Mundo Tango",
-      "seoDescription": "Tell us about your interests",
-      "step": "Step 6 of 6",
-      "title": "What Are Your Interests?",
-      "subtitle": "Select topics that interest you",
-      "helpText": "Choose at least 3 interests to personalize your feed",
-      "selectedCount": "{{count}} selected",
-      "finishing": "Finishing...",
-      "completeSetup": "Complete Setup",
-      "searchPlaceholder": "Search communities or add a new one...",
+      "pageTitle": "စိတ်ဝင်စားမှုများ",
+      "seoTitle": "သင့် စိတ်ဝင်စားမှုများ - Mundo Tango",
+      "seoDescription": "သင့် စိတ်ဝင်စားမှုများအကြောင်း ပြောပြပါ",
+      "step": "အဆင့် ၆ အထိ ၆",
+      "title": "သင့် စိတ်ဝင်စားမှုများက ဘာလဲ?",
+      "subtitle": "သင့်အား စိတ်ဝင်စားမှုရှိသော ခေါင်းစဉ်များကို ရွေးချယ်ပါ",
+      "helpText": "သင့် feed ကို ကိုယ်ပိုင်ဖန်တီးရန် အနည်းဆုံး ၃ ခုသော စိတ်ဝင်စားမှုများကို ရွေးချယ်ပါ",
+      "selectedCount": "{{count}} ရွေးချယ်ပြီး",
+      "finishing": "ပြီးဆုံးနေသည်...",
+      "completeSetup": "စီစဉ်မှု ပြီးစီးပါ",
+      "searchPlaceholder": "အသိုင်းအဝိုင်းများကို ရှာဖွေပါ သို့မဟုတ် အသစ်တစ်ခု ထည့်ပါ...",
       "categories": {
         "fitness": {
-          "label": "Fitness & Sports"
+          "label": "ကျန်းမာရေးနှင့် အားကစား"
         },
         "tech": {
-          "label": "Tech & Innovation"
+          "label": "နည်းပညာနှင့် တီထွင်မှု"
         },
         "spirituality": {
-          "label": "Spirituality & Growth"
+          "label": "စိတ်ကူးစိတ်သန်းနှင့် တိုးတက်မှု"
         },
         "yoga": {
-          "label": "Yoga & Wellness"
+          "label": "ယောဂါနှင့် ကျန်းမာရေး"
         },
         "music": {
-          "label": "Music"
+          "label": "ဂီတ"
         },
         "photography": {
-          "label": "Photography & Video"
+          "label": "ဓာတ်ပုံနှင့် ဗီဒီယို"
         },
         "art": {
-          "label": "Art & Creativity"
+          "label": "အနုပညာနှင့် ဖန်တီးမှု"
         },
         "reading": {
-          "label": "Reading & Writing"
+          "label": "စာဖတ်ခြင်းနှင့် စာရေးခြင်း"
         },
         "travel": {
-          "label": "Travel & Adventure"
+          "label": "ခရီးသွားခြင်းနှင့် စွန့်စားမှု"
         },
         "cooking": {
-          "label": "Cooking & Food"
+          "label": "ချက်ပြုတ်ခြင်းနှင့် အစားအစာ"
         },
         "wine": {
-          "label": "Wine & Beverages"
+          "label": "ဝိုင်နှင့် အရက်"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "ဂိမ်းကစားခြင်း"
         },
         "outdoors": {
-          "label": "Outdoor Activities"
+          "label": "အပြင်လှုပ်ရှားမှုများ"
         },
         "snow": {
-          "label": "Snow Sports"
+          "label": "နှင်းကစားပွဲများ"
         },
         "cycling": {
-          "label": "Cycling"
+          "label": "စက်ဘီးစီးခြင်း"
         },
         "water": {
-          "label": "Water Sports"
+          "label": "ရေကစားပွဲများ"
         },
         "nature": {
-          "label": "Nature & Gardening"
+          "label": "သဘာဝနှင့် ဥယျာဉ်စိုက်ပျိုးခြင်း"
         },
         "movies": {
-          "label": "Movies & Entertainment"
+          "label": "ရုပ်ရှင်နှင့် ဖျော်ဖြေရန်"
         },
         "pets": {
-          "label": "Pets & Animals"
+          "label": "မွေးမြူရေးနှင့် တိရစ္ဆာန်များ"
         },
         "social": {
-          "label": "Social & Community"
+          "label": "လူမှုနှင့် လူမှုအသိုင်းအဝိုင်း"
         }
       },
       "items": {
-        "fitness_gym": "Gym & Weights",
-        "fitness_running": "Running",
+        "fitness_gym": "ဂျင်နှင့် အလေးများ",
+        "fitness_running": "ပြေးခြင်း",
         "fitness_crossfit": "CrossFit",
-        "fitness_martial_arts": "Martial Arts",
-        "fitness_tennis": "Tennis",
-        "fitness_soccer": "Soccer/Football",
-        "fitness_basketball": "Basketball",
-        "fitness_fencing": "Fencing",
-        "tech_coding": "Coding & Dev",
-        "tech_ai": "AI & Future Tech",
-        "tech_crypto": "Web3 & Crypto",
-        "tech_gaming": "Gaming Culture",
-        "spirit_meditation": "Meditation",
-        "spirit_astrology": "Astrology",
-        "spirit_philosophy": "Philosophy",
-        "spirit_community": "Community Building",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
-        "yoga_meditation": "Meditation",
-        "yoga_pilates": "Pilates",
-        "yoga_breathwork": "Breathwork",
-        "music_listening": "Music Listening",
-        "music_concerts": "Live Concerts",
-        "music_piano": "Piano",
-        "music_guitar": "Guitar",
-        "music_singing": "Singing",
-        "music_dj": "DJing",
-        "music_production": "Music Production",
-        "photo_portrait": "Portrait Photography",
-        "photo_landscape": "Landscape Photography",
-        "photo_street": "Street Photography",
-        "photo_video": "Videography",
-        "photo_editing": "Photo Editing",
-        "art_painting": "Painting",
-        "art_drawing": "Drawing",
-        "art_sculpture": "Sculpture",
-        "art_digital": "Digital Art",
-        "art_crafts": "Crafts & DIY",
-        "art_pottery": "Pottery",
-        "reading_fiction": "Fiction",
-        "reading_nonfiction": "Non-Fiction",
-        "reading_poetry": "Poetry",
-        "reading_writing": "Creative Writing",
-        "reading_journals": "Journaling",
-        "travel_backpacking": "Backpacking",
-        "travel_luxury": "Luxury Travel",
-        "travel_cultural": "Cultural Tourism",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
-        "cooking_home": "Home Cooking",
-        "cooking_baking": "Baking",
-        "cooking_gourmet": "Gourmet Cuisine",
-        "cooking_international": "International Cuisine",
-        "cooking_healthy": "Healthy Eating",
-        "wine_tasting": "Wine Tasting",
-        "wine_cocktails": "Cocktails",
-        "wine_coffee": "Coffee Appreciation",
-        "wine_tea": "Tea Culture",
-        "wine_brewing": "Home Brewing",
-        "gaming_video": "Video Games",
-        "gaming_board": "Board Games",
-        "gaming_card": "Card Games",
-        "gaming_tabletop": "Tabletop RPGs",
+        "fitness_martial_arts": "စစ်ပွဲအနုပညာ",
+        "fitness_tennis": "တင်နစ်",
+        "fitness_soccer": "ဘောလုံး/ဖွတ်ဘော",
+        "fitness_basketball": "ဘတ်စကက်ဘော",
+        "fitness_fencing": "ဖင်စင်",
+        "tech_coding": "ကုဒ်ရေးခြင်းနှင့် ဖွံ့ဖြိုးတိုးတက်မှု",
+        "tech_ai": "အတုအယောင်နှင့် အနာဂတ်နည်းပညာ",
+        "tech_crypto": "ဝက်ဘ် ၃ နှင့် ကရစ်ပတို",
+        "tech_gaming": "ဂိမ်းယဉ်ကျေးမှု",
+        "spirit_meditation": "စိတ်ရှည်ခြင်း",
+        "spirit_astrology": "ကြယ်ကြီးခန့်မှန်းခြေ",
+        "spirit_philosophy": "သိပ္ပံပညာ",
+        "spirit_community": "အသိုင်းအဝိုင်း တည်ဆောက်ခြင်း",
+        "yoga_hatha": "ဟာသာ ယောဂ",
+        "yoga_vinyasa": "ဗီနီယာဆာ ဖလို",
+        "yoga_meditation": "စိတ်ရှည်ခြင်း",
+        "yoga_pilates": "ပီလာတစ်",
+        "yoga_breathwork": "အသက်ရှူလုပ်ငန်း",
+        "music_listening": "ဂီတနားထောင်ခြင်း",
+        "music_concerts": "တိုက်ရိုက် ကွန်ဆာ့တ်များ",
+        "music_piano": "ပီယာနို",
+        "music_guitar": "ဂီတာ",
+        "music_singing": "သီချင်းဆိုခြင်း",
+        "music_dj": "ဒီဂျေလုပ်ခြင်း",
+        "music_production": "ဂီတထုတ်လုပ်ခြင်း",
+        "photo_portrait": "ပုံရိပ်ရိုက်ခြင်း",
+        "photo_landscape": "မြင်ကွင်းပုံရိုက်ခြင်း",
+        "photo_street": "လမ်းမပုံရိုက်ခြင်း",
+        "photo_video": "ဗီဒီယိုရိုက်ခြင်း",
+        "photo_editing": "ပုံတည်းဖြတ်ခြင်း",
+        "art_painting": "ပန်းချီ",
+        "art_drawing": "ဆွဲချုပ်ခြင်း",
+        "art_sculpture": "ထုထည်",
+        "art_digital": "ဒစ်ဂျစ်တယ် အနုပညာ",
+        "art_crafts": "လက်မှုနှင့် DIY",
+        "art_pottery": "ကွက်ထုတ်",
+        "reading_fiction": "အကြောင်းအရာ",
+        "reading_nonfiction": "အကြောင်းအရာမဟုတ်",
+        "reading_poetry": "ကဗျာ",
+        "reading_writing": "ဖန်တီးမှုရေးသားခြင်း",
+        "reading_journals": "နေ့စဉ်မှတ်စု",
+        "travel_backpacking": "အိတ်ဆောင်ခရီး",
+        "travel_luxury": "အထူးခရီး",
+        "travel_cultural": "ယဉ်ကျေးမှုခရီးသွား",
+        "travel_road_trips": "လမ်းခရီး",
+        "travel_solo": "တစ်ဦးတည်းခရီး",
+        "cooking_home": "အိမ်တွင်းချက်ပြုတ်ခြင်း",
+        "cooking_baking": "ပန်းကန်ချက်ပြုတ်ခြင်း",
+        "cooking_gourmet": "အထူးစားသောက်",
+        "cooking_international": "နိုင်ငံတကာစားသောက်",
+        "cooking_healthy": "ကျန်းမာရေးစားသောက်ခြင်း",
+        "wine_tasting": "ဝိုင်စမ်းသပ်ခြင်း",
+        "wine_cocktails": "ကော့ကေးလ်",
+        "wine_coffee": "ကော်ဖီအထူးပြုခြင်း",
+        "wine_tea": "လက်ဖက်ရည်ယဉ်ကျေးမှု",
+        "wine_brewing": "အိမ်တွင် အရက်လုပ်ခြင်း",
+        "gaming_video": "ဗီဒီယိုဂိမ်းများ",
+        "gaming_board": "ဘုတ်ဂိမ်းများ",
+        "gaming_card": "ကတ်ဂိမ်းများ",
+        "gaming_tabletop": "စားပွဲပေါ် RPGs",
         "gaming_esports": "eSports",
-        "outdoor_hiking": "Hiking",
-        "outdoor_camping": "Camping",
-        "outdoor_climbing": "Rock Climbing",
-        "outdoor_fishing": "Fishing",
-        "outdoor_kayaking": "Kayaking",
-        "outdoor_surfing": "Surfing",
-        "snow_skiing": "Skiing",
-        "snow_snowboard": "Snowboarding",
-        "snow_crosscountry": "Cross-Country Skiing",
-        "snow_ice_skating": "Ice Skating",
-        "snow_sledding": "Sledding",
-        "snow_snowshoeing": "Snowshoeing",
-        "cycling_road": "Road Cycling",
-        "cycling_mountain": "Mountain Biking",
-        "cycling_urban": "Urban Cycling",
-        "cycling_touring": "Bike Touring",
-        "water_swimming": "Swimming",
-        "water_scuba": "Scuba Diving",
-        "water_snorkel": "Snorkeling",
-        "water_sailing": "Sailing",
-        "water_paddleboard": "Paddleboarding",
-        "nature_gardening": "Gardening",
-        "nature_birdwatching": "Bird Watching",
-        "nature_botany": "Plant Collecting",
-        "nature_wildlife": "Wildlife Photography",
-        "movies_cinema": "Cinema",
-        "movies_tv": "TV Series",
-        "movies_documentary": "Documentaries",
-        "movies_theater": "Theater",
-        "movies_standup": "Stand-up Comedy",
-        "pets_dogs": "Dogs",
-        "pets_cats": "Cats",
-        "pets_exotic": "Exotic Pets",
-        "pets_horses": "Horse Riding",
-        "pets_rescue": "Animal Rescue",
-        "social_volunteering": "Volunteering",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
-        "social_languages": "Language Exchange"
+        "outdoor_hiking": "တောင်တက်ခြင်း",
+        "outdoor_camping": "ကမ်းခြေမှာ အိမ်ရာ",
+        "outdoor_climbing": "ကျောက်တက်ခြင်း",
+        "outdoor_fishing": "ငါးဖမ်းခြင်း",
+        "outdoor_kayaking": "ကယားစီးခြင်း",
+        "outdoor_surfing": "လှိုင်းထဲသို့ စီးခြင်း",
+        "snow_skiing": "စီးရီးလှိုင်း",
+        "snow_snowboard": "နှင်းလှိုင်း",
+        "snow_crosscountry": "အပြင်လမ်းစီးရီး",
+        "snow_ice_skating": "ရေခဲစီးခြင်း",
+        "snow_sledding": "ရေခဲစီးခြင်း",
+        "snow_snowshoeing": "နှင်းဖုံးစီးခြင်း",
+        "cycling_road": "လမ်းစီးခြင်း",
+        "cycling_mountain": "တောင်စီးခြင်း",
+        "cycling_urban": "မြို့ပြစီးခြင်း",
+        "cycling_touring": "ဘိုက်ခရီးသွားခြင်း",
+        "water_swimming": "ရေကူးခြင်း",
+        "water_scuba": "စကူဘာရေထဲသို့ ဝင်ခြင်း",
+        "water_snorkel": "စနောက်လှိုင်း",
+        "water_sailing": "လှေခွာခြင်း",
+        "water_paddleboard": "ပန်းကန်စီးခြင်း",
+        "nature_gardening": "ပန်းသီးစိုက်ခြင်း",
+        "nature_birdwatching": "ငှက်ကြည့်ခြင်း",
+        "nature_botany": "ပန်းစုဆောင်းခြင်း",
+        "nature_wildlife": "သဘာဝတိရစ္ဆာန်ဓာတ်ပုံရိုက်ခြင်း",
+        "movies_cinema": "ရုပ်ရှင်",
+        "movies_tv": "တီဗီ စီးရီးများ",
+        "movies_documentary": "စာတမ်းရုပ်ရှင်များ",
+        "movies_theater": "သရုပ်ပြ",
+        "movies_standup": "ရပ်တည်သော ဟာသ",
+        "pets_dogs": "ခွေးများ",
+        "pets_cats": "ကြောင်များ",
+        "pets_exotic": "ထူးခြားသော အိမ်မွေးတိရစ္ဆာန်များ",
+        "pets_horses": "မြင်းစီးခြင်း",
+        "pets_rescue": "တိရစ္ဆာန်ကယ်ဆယ်ခြင်း",
+        "social_volunteering": "အလှူရှင်လုပ်ခြင်း",
+        "social_meetups": "တွေ့ဆုံမှုများ",
+        "social_networking": "ကွန်ယက်ဆက်ဆံရေး",
+        "social_languages": "ဘာသာစကားလဲလှယ်ခြင်း"
       },
       "success": {
-        "completeTitle": "Welcome to Mundo Tango!",
-        "completeDesc": "Your profile is ready. Start exploring!",
-        "waitlistTitle": "Profile Complete!",
-        "waitlistDesc": "We'll notify you when your account is activated"
+        "completeTitle": "Mundo Tango သို့ ကြိုဆိုပါတယ်!",
+        "completeDesc": "သင်၏ပရိုဖိုင်းသည် ပြင်ဆင်ပြီးဖြစ်သည်။ စတင်လေ့လာပါ!",
+        "waitlistTitle": "ပရိုဖိုင်း ပြီးပြည့်စုံပါပြီ!",
+        "waitlistDesc": "သင်၏အကောင့်ကို အတည်ပြုသောအခါ သတင်းပို့ပါမည်"
       },
       "errors": {
-        "saveFailed": "Failed to save. Please try again."
+        "saveFailed": "သိမ်းဆည်းရန် မအောင်မြင်ပါ။ ကျေးဇူးပြု၍ ထပ်မံကြိုးစားပါ။"
       }
     },
     "legal": {
-      "title": "Community Guidelines",
-      "subtitle": "Please review and accept our terms",
-      "legalDocsTitle": "Legal Documents",
-      "legalDocsDescription": "Review our terms of service and privacy policy",
+      "title": "အသိုင်းအဝိုင်း လမ်းညွှန်ချက်များ",
+      "subtitle": "ကျွန်ုပ်တို့၏ စည်းကမ်းများကို ပြန်လည်ဆန်းစစ်ပြီး လက်ခံပါ",
+      "legalDocsTitle": "ဥပဒေရေးရာ စာရွက်စာတမ်းများ",
+      "legalDocsDescription": "ကျွန်ုပ်တို့၏ ဝန်ဆောင်မှု စည်းကမ်းများနှင့် ကိုယ်ရေးအချက်အလက် မူဝါဒကို ပြန်လည်ဆန်းစစ်ပါ",
       "termsOfService": {
-        "label": "I accept the Terms of Service",
-        "description": "Our terms govern your use of Mundo Tango",
-        "link": "Read Terms of Service"
+        "label": "ဝန်ဆောင်မှု စည်းကမ်းများကို လက်ခံပါ",
+        "description": "ကျွန်ုပ်တို့၏ စည်းကမ်းများသည် Mundo Tango ကို သုံးစွဲမှုကို ထိန်းချုပ်သည်",
+        "link": "ဝန်ဆောင်မှု စည်းကမ်းများကို ဖတ်ပါ"
       },
       "privacyPolicy": {
-        "label": "I accept the Privacy Policy",
-        "description": "How we handle your data",
-        "link": "Read Privacy Policy"
+        "label": "ကိုယ်ရေးအချက်အလက် မူဝါဒကို လက်ခံပါ",
+        "description": "ကျွန်ုပ်တို့ သင့်ဒေတာကို ဘယ်လို ကိုင်တွယ်ပါသလဲ",
+        "link": "ကိုယ်ရေးအချက်အလက် မူဝါဒကို ဖတ်ပါ"
       },
-      "cocTitle": "Community Code of Conduct",
-      "cocDescription": "Help us maintain a respectful community",
+      "cocTitle": "အသိုင်းအဝိုင်း အပြုအမူ ကုဒ်",
+      "cocDescription": "ကျွန်ုပ်တို့ကို အထောက်အကူပြု၍ ရိုRespectful အသိုင်းအဝိုင်းကို ထိန်းသိမ်းပါ",
       "coc": {
         "respectful": {
-          "title": "Be Respectful",
-          "description": "Treat everyone with dignity and courtesy"
+          "title": "ရိုRespectful ဖြစ်ပါ",
+          "description": "အားလုံးကို ဂုဏ်ယူမှုနှင့် ဂုဏ်ယူမှုဖြင့် ဆက်ဆံပါ"
         },
         "inclusive": {
-          "title": "Be Inclusive",
-          "description": "Welcome dancers of all levels and backgrounds"
+          "title": "ပါဝင်မှုရှိပါ",
+          "description": "အဆင့်အတန်းနှင့် နောက်ခံအမျိုးမျိုးရှိသော က dancers များကို ကြိုဆိုပါ"
         },
         "authentic": {
-          "title": "Be Authentic",
-          "description": "Use your real identity and honest information"
+          "title": "အမှန်တရားရှိပါ",
+          "description": "သင့်အမှန်တရား အထင်အမြင်နှင့် ရိုးရိုးရှင်းရှင်း အချက်အလက်များကို အသုံးပြုပါ"
         },
         "consent": {
-          "title": "Respect Consent",
-          "description": "Always ask before dancing and respect boundaries"
+          "title": "သဘောတူမှုကို ဂုဏ်ပြုပါ",
+          "description": "က dance မပြုမီ မေးမြန်းပါ၊ နှင့် နယ်နိမိတ်များကို ဂုဏ်ပြုပါ"
         },
         "noHarassment": {
-          "title": "No Harassment",
-          "description": "Zero tolerance for harassment or bullying"
+          "title": "အထိခိုက်မှု မရှိပါ",
+          "description": "အထိခိုက်မှု သို့မဟုတ် အကြမ်းဖက်မှုအတွက် အထူးမခံပါ"
         },
         "noSpam": {
-          "title": "No Spam",
-          "description": "Don't send unsolicited promotions"
+          "title": "Spam မရှိပါ",
+          "description": "မလိုအပ်သော ကြော်ငြာများ မပို့ပါနှင့်"
         },
         "noDiscrimination": {
-          "title": "No Discrimination",
-          "description": "We don't tolerate discrimination of any kind"
+          "title": "ခွဲခြားမှု မရှိပါ",
+          "description": "ကျွန်ုပ်တို့သည် မည်သည့်အမျိုးအစားမှ ခွဲခြားမှုကိုလည်း ခံစားမထားပါ"
         },
         "privacy": {
-          "title": "Protect Privacy",
-          "description": "Don't share others' information without consent"
+          "title": "ကိုယ်ရေးအချက်အလက်ကို ကာကွယ်ပါ",
+          "description": "အခြားသူများ၏ အချက်အလက်များကို ခွင့်ပြုချက်မရှိဘဲ မမျှဝေပါ"
         },
         "safety": {
-          "title": "Prioritize Safety",
-          "description": "Report any unsafe behavior immediately"
+          "title": "လုံခြုံမှုကို ဦးစားပေးပါ",
+          "description": "မလုံခြုံသော အပြုအမူများကို ချက်ချင်း အစီရင်ခံပါ"
         },
         "laws": {
-          "title": "Follow Laws",
-          "description": "Comply with all applicable laws"
+          "title": "ဥပဒေများကို လိုက်နာပါ",
+          "description": "သက်ဆိုင်ရာ ဥပဒေများအားလုံးကို လိုက်နာပါ"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "ပြဿနာများကို အစီရင်ခံပါ",
+          "description": "ချိုးဖျက်မှုများကို အစီရင်ခံခြင်းဖြင့် ကျွန်ုပ်တို့ကို ကူညီပါ"
         },
         "support": {
-          "title": "Support Each Other",
-          "description": "Help fellow dancers grow"
+          "title": "တစ်ဦးနှင့် တစ်ဦးကို ထောက်ခံပါ",
+          "description": "အခြားအက dancer များကို ကြီးထွားရန် ကူညီပါ"
         }
       },
-      "acceptAll": "Accept All & Continue",
-      "accepting": "Accepting...",
-      "incompleteAlert": "Please accept all required terms",
+      "acceptAll": "အားလုံးကို လက်ခံပြီး ဆက်လက်ပါ",
+      "accepting": "လက်ခံနေပါ...",
+      "incompleteAlert": "လိုအပ်သော အစည်းအဝေးများအားလုံးကို လက်ခံပါ",
       "success": {
-        "title": "Welcome!",
-        "description": "You've accepted our community guidelines"
+        "title": "ကြိုဆိုပါတယ်!",
+        "description": "သင်သည် ကျွန်ုပ်တို့၏ လူမှုအသိုင်းအဝိုင်း လမ်းညွှန်ချက်များကို လက်ခံခဲ့သည်"
       },
       "errors": {
-        "failed": "Failed to save. Please try again."
+        "failed": "သိမ်းဆည်းရန် မအောင်မြင်ပါ။ ကျေးဇူးပြု၍ ထပ်မံကြိုးစားပါ။"
       }
     },
     "waitlist": {
-      "pageTitle": "Waitlist",
-      "seoTitle": "You're on the Waitlist - Mundo Tango",
-      "seoDescription": "Your account is pending activation",
-      "title": "You're on the Waitlist!",
-      "welcomeMessage": "Welcome, {{name}}!",
-      "defaultName": "Dancer",
-      "profileComplete": "Profile Complete",
-      "profileCompleteDesc": "Your profile is ready and waiting",
-      "emailNotice": "We'll email you at {{email}} when your account is ready",
-      "whenReady": "when your account is ready.",
-      "whileYouWait": "While you wait, help us grow:",
-      "volunteerButton": "Become a Volunteer",
-      "supportButton": "Support Mundo Tango"
+      "pageTitle": "စောင့်ဆိုင်းစာရင်း",
+      "seoTitle": "သင်သည် စောင့်ဆိုင်းစာရင်းတွင် ရှိသည် - Mundo Tango",
+      "seoDescription": "သင့်အကောင့်သည် အတည်ပြုမှုကို စောင့်ဆိုင်းနေသည်",
+      "title": "သင်သည် စောင့်ဆိုင်းစာရင်းတွင် ရှိသည်!",
+      "welcomeMessage": "ကြိုဆိုပါတယ်၊ {{name}}!",
+      "defaultName": "အက dancer",
+      "profileComplete": "ပရိုဖိုင် ပြီးပြည့်စုံသည်",
+      "profileCompleteDesc": "သင့်ပရိုဖိုင်သည် ပြင်ဆင်ပြီး စောင့်နေသည်",
+      "emailNotice": "သင့်အကောင့်ပြင်ဆင်ပြီးပါက {{email}} သို့ အီးမေးလ်ပို့ပါမည်",
+      "whenReady": "သင့်အကောင့်ပြင်ဆင်ပြီးပါက။",
+      "whileYouWait": "စောင့်ဆိုင်းနေစဉ်တွင် ကျွန်ုပ်တို့ကို ကြီးထွားရန် ကူညီပါ:",
+      "volunteerButton": "Volunteer ဖြစ်ပါ",
+      "supportButton": "Mundo Tango ကို ထောက်ပံ့ပါ"
     },
     "tour": {
-      "pageTitle": "Guided Tour",
-      "seoTitle": "Explore Mundo Tango",
-      "seoDescription": "Learn how to use Mundo Tango",
-      "skipTour": "Skip Tour",
-      "finish": "Finish Tour",
+      "pageTitle": "လမ်းညွှန်ခရီးစဉ်",
+      "seoTitle": "Mundo Tango ကို ရှာဖွေပါ",
+      "seoDescription": "Mundo Tango ကို ဘယ်လိုအသုံးပြုရမည်ကို သင်ယူပါ",
+      "skipTour": "ခရီးစဉ်ကို လွှတ်ပါ",
+      "finish": "ခရီးစဉ်ကို ပြီးမြောက်ပါ",
       "steps": {
-        "feed": "Discover posts from the tango community",
-        "events": "Find milongas, classes, and festivals",
-        "groups": "Join groups for your city or interests",
-        "messages": "Connect directly with other dancers",
-        "profile": "Customize your tango profile",
-        "createPost": "Share your tango moments"
+        "feed": "tango အသိုင်းအဝိုင်းမှ ပို့စ်များကို ရှာဖွေပါ",
+        "events": "milongas, သင်တန်းများနှင့် ပွဲတော်များကို ရှာဖွေပါ",
+        "groups": "သင့်မြို့ သို့မဟုတ် စိတ်ဝင်စားမှုများအတွက် အုပ်စုများတွင် ပါဝင်ပါ",
+        "messages": "အခြားက dancer များနှင့် တိုက်ရိုက်ဆက်သွယ်ပါ",
+        "profile": "သင့် tango ပရိုဖိုင်ကို အထူးပြုလုပ်ပါ",
+        "createPost": "သင့် tango အချိန်များကို မျှဝေပါ"
       }
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
-        "subtitle": "Get the most out of Mundo Tango",
-        "limitedOffer": "Limited Time Offer",
-        "getStarted": "Get Started",
+        "title": "သင့်အတွေ့အကြုံကို တိုးတက်စေပါ",
+        "subtitle": "Mundo Tango မှ အများဆုံး အကျိုးရရှိပါ",
+        "limitedOffer": "ကာလကန့်သတ်ထားသော အထူးအဆိုပြုချက်",
+        "getStarted": "စတင်ပါ",
         "features": {
           "connect": {
-            "title": "Connect",
-            "description": "Message any dancer directly"
+            "title": "ဆက်သွယ်ပါ",
+            "description": "dancer မည်သူမဆိုကို တိုက်ရိုက်မက်ဆေ့ခ်ျပို့ပါ"
           },
           "visibility": {
-            "title": "Visibility",
-            "description": "Get featured in search results"
+            "title": "မြင်သာမှု",
+            "description": "ရှာဖွေရန်ရလဒ်များတွင် ထင်ရှားပါ"
           },
           "events": {
-            "title": "Events",
-            "description": "Priority access to popular events"
+            "title": "ပွဲများ",
+            "description": "လူကြိုက်များသော အခမ်းအနားများအတွက် ဦးစားပေး ဝင်ရောက်ခွင့်"
           },
           "grow": {
-            "title": "Grow",
-            "description": "Advanced analytics for your profile"
+            "title": "တိုးတက်ပါ",
+            "description": "သင့်ပရိုဖိုင်းအတွက် အဆင့်မြင့် အချက်အလက်ခွဲခြမ်းစိတ်ဖြာမှု"
           },
           "premium": {
-            "title": "Premium",
-            "description": "Exclusive premium features"
+            "title": "ပရီးမီယမ်",
+            "description": "အထူးပရီးမီယမ် လုပ်ဆောင်ချက်များ"
           }
         }
       }
     }
   },
   "login": {
-    "pageName": "Login",
+    "pageName": "ဝင်ရောက်ပါ",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "ဝင်ရောက်ပါ - Mundo Tango",
+      "description": "ကမ္ဘာလုံးဆိုင်ရာ တန်ဂို အသိုင်းအဝိုင်းနှင့် ချိတ်ဆက်ရန်၊ အခမ်းအနားများကို ရှာဖွေရန်နှင့် အာဂျင်တီးနား တန်ဂိုအတွက် သင့်စိတ်အားထက်သန်မှုကို မျှဝေရန် သင့် Mundo Tango အကောင့်သို့ ဝင်ရောက်ပါ။"
     },
-    "badge": "Welcome Back",
+    "badge": "ပြန်လာပါတယ်",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "သင့် တန်ဂို ခရီးစဉ် ဆက်လက်နေဆဲ",
+      "paragraph": "ကမ္ဘာတစ်ဝှမ်းရှိ အက dancer များနှင့် ချိတ်ဆက်ရန်၊ အခမ်းအနားများကို ရှာဖွေရန်နှင့် သင့်စိတ်အားထက်သန်မှုကို မျှဝေရန် ဝင်ရောက်ပါ"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "အက dancer များ",
+      "events": "အခမ်းအနားများ"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "အီးမေးလ်",
+      "password": "စကားဝှက်",
+      "signIn": "ဝင်ရောက်ပါ",
+      "signingIn": "ဝင်ရောက်နေသည်...",
+      "forgotPassword": "စကားဝှက်ကို မေ့နေပါသလား?"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "အကောင့်မရှိသေးပါ?",
+    "createAccount": "ယခုတစ်ခါ ဖန်တီးပါ",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "ပြန်လာပါတယ်!",
+      "successDescription": "သင်သည် အောင်မြင်စွာ ဝင်ရောက်ခဲ့ပါပြီ။",
+      "errorTitle": "ဝင်ရောက်မှု မအောင်မြင်ပါ",
+      "errorDescription": "မမှန်ကန်သော အချက်အလက်များ"
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "မူလစာမျက်နှာ",
+    "pageLayoutTitle": "တန်ဂိုနှင့် လူမှုရေးတွေ့ဆုံရာ",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - ကမ္ဘာလုံးဆိုင်ရာ တန်ဂို လူမှုရေးနှင့် ချိတ်ဆက်ပါ",
+      "description": "ကမ္ဘာတစ်ဝှမ်းရှိ တန်ဂို က dancer များထဲတွင် ပါဝင်ပါ။ အခမ်းအနားများကို ရှာဖွေပါ၊ ဆရာများကို ရှာပါ၊ dancer များနှင့် ချိတ်ဆက်ပါ၊ အာဂျင်တီးနား တန်ဂို၏ အားထုတ်မှုအပြည့်အဝကို ခံစားပါ။"
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "ကမ္ဘာလုံးဆိုင်ရာ တန်ဂို လူမှုရေးသို့ ကြိုဆိုပါသည်",
+      "heading": "တန်ဂိုနှင့် လူမှုရေးတွေ့ဆုံရာ",
+      "paragraph": "မှတ်ဉာဏ်များကို မျှဝေပါ၊ အခမ်းအနားများကို ရှာပါ၊ နှင့် တန်ဂို နည်းပညာ၏ အနာဂတ်ကို တည်ဆောက်ရန် ကူညီပါ။ ကမ္ဘာတစ်ဝှမ်းရှိ အားထုတ်မှုရှိသော dancer များနှင့် ချိတ်ဆက်ပါ။",
+      "getStarted": "အခမဲ့ စတင်ပါ",
+      "volunteer": "MT ကို တည်ဆောက်ရန် အလှူရှင်ဖြစ်ပါ"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "ဒါက ဘယ်လိုလုပ်သလဲ",
+      "description": "သင့်တန်ဂိုခရီးကို ရိုးရှင်းသော အဆင့်သုံးတွင် စတင်ပါ",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "သင့်ပရိုဖိုင်ကို ဖန်တီးပါ",
+        "description": "အခမဲ့ ဝင်ရောက်ပါ၊ သင့်တန်ဂိုခရီး၊ အတွေ့အကြုံအဆင့်နှင့် အက dancer များကို ပြောပြပါ"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "ရှာဖွေပါနှင့် ချိတ်ဆက်ပါ",
+        "description": "သင့်အနီးရှိ အခမ်းအနားများ၊ ဆရာများနှင့် နေရာများကို ရှာပါ။ သင့်အား အားထုတ်မှုမျှဝေသော dancer များနှင့် ချိတ်ဆက်ပါ"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "အက dancer နှင့် ကြီးထွားပါ",
+        "description": "အခမ်းအနားများကို တက်ရောက်ပါ၊ သင်ခန်းစာများကို ယူပါ၊ မိတ်ဖက်များကို ဖန်တီးပါ၊ နှင့် ကမ္ဘာလုံးဆိုင်ရာ တန်ဂို လူမှုရေး၏ အစိတ်အပိုင်းဖြစ်ပါ"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "သင့်လိုအပ်ချက်များအားလုံး",
+      "description": "ချိတ်ဆက်ပါ၊ ရှာဖွေပါ၊ နှင့် သင့်တန်ဂိုခရီးကို အားကောင်းသော လုပ်ဆောင်ချက်များဖြင့် ကြီးထွားပါ",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "လူမှုရေး",
+        "heading": "ကမ္ဘာတစ်ဝှမ်းရှိ dancer များနှင့် ချိတ်ဆက်ပါ",
+        "description": "တန်ဂို အားကစားသမားများ၏ အထွေထွေ လူမှုရေးကို ဝင်ရောက်ပါ။ ဘွေနိုက်စ်အိုင်ရစ်မှ တိုကျိုအထိ dancer များ၊ ဆရာများနှင့် အစီအစဉ်ဆွဲသူများနှင့် ချိတ်ဆက်ပါ။",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "dancer များကို လိုက်နာပါနှင့် သင့်ကွန်ယက်ကို တည်ဆောက်ပါ",
+          "groups": "စိတ်ဝင်စားမှုနှင့် တည်နေရာအပေါ် အခြေခံ၍ အဖွဲ့များတွင် ဝင်ပါ",
+          "messaging": "အချိန်နှင့်အမျှ စကားပြောခြင်းနှင့် စကားပြောစနစ်များ",
+          "discover": "သင့်မြို့ကို လာရောက်နေသော dancer များကို ရှာဖွေပါ"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "အခမ်းအနားများ",
+        "heading": "အခမ်းအနားများကို အားလုံးမှာ ရှာဖွေပါ",
+        "description": "မီလောင်ဂါ၊ ပွဲတော် သို့မဟုတ် အလုပ်ရုံများကို မလွတ်ပါနှင့်။ ကျွန်ုပ်တို့၏ ပလက်ဖောင်းသည် ကမ္ဘာတစ်ဝှမ်းရှိ တန်ဂို အခမ်းအနားများနှင့် သင်တို့ကို ချိတ်ဆက်ပေးသည်။",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "အခမ်းအနားများအတွက် အပြည့်အစုံသော ကယ်လင်ဒါ",
+          "rsvp": "RSVP နှင့် လက်မှတ်စာရင်း",
+          "notifications": "အခမ်းအနား သတိပေးချက်များနှင့် အမှတ်အသားများ",
+          "map": "နေရာများ၏ အပြန်အလှန် မြေပုံ"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "တိုက်ရိုက် ရုပ်သံ",
+          "description": "ကမ္ဘာတစ်ဝှမ်းရှိ မီလောင်ဂါများကို တိုက်ရိုက် ကြည့်ရှုပါ"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "ဂီတ စာကြည့်တိုက်",
+          "description": "ရွေးချယ်ထားသော တန်ဂို ပလေ့လစ်များနှင့် လမ်းညွှန်များ"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "အတည်ပြု ဆရာများ",
+          "description": "လက်မှတ်ရရှိထားသော သင်ကြားသူများမှ သင်ယူပါ"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "ခရီးသွား စီမံကိန်း",
+          "description": "ခရီးများကို စီစဉ်ပြီး ကမ္ဘာတစ်ဝှမ်းရှိ မိသားစုများကို ရှာပါ"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "အက dancer များ၏ အမြင်များ",
+      "description": "ကမ္ဘာတစ်ဝှမ်းရှိ အဆင်ပြေသော အက dancer များထဲတွင် ပါဝင်ပါ",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "မာရီးယား ရိုဒရစ်ဂျက်",
+          "location": "ဘွေနိုက်စ် အိုင်းရစ်စ်၊ အာဂျင်တီးနား",
+          "text": "Mundo Tango သည် ငါ့ရဲ့ dance မိသားစုကို အသစ်သော မြို့တွင် ရှာဖွေရန် ကူညီခဲ့သည်။ အဖွဲ့အစည်းသည် အပူချိန်၊ ကြိုဆိုမှုနှင့် တန်ဂိုအပေါ် အစစ်အမှန် စိတ်အားထက်သန်သည်။"
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "ဂျိမ်းစ် ချင်",
+          "location": "ဆန်ဖရန်စစ္စကို၊ အမေရိကန်",
+          "text": "ကျွန်ုပ်သည် ဤပလက်ဖောင်းမှ အံ့သြဖွယ် မီလောင်ဂါများနှင့် အလုပ်ရုံများကို ရှာဖွေခဲ့သည်။ ၎င်းသည် ကျွန်ုပ်၏ တန်ဂို ခရီးစဉ်အတွက် အရေးကြီးသွားခဲ့သည်။"
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "အီလီနာ ဗိုလ်ကော့",
+          "location": "မော်စကို၊ ရုရှား",
+          "text": "အဆင့်မြင့်ဆရာများကိုရှာဖွေရန် ဆရာများစာရင်းက ကူညီပေးခဲ့သည်။ ကျွန်ုပ်၏အက dance အဆင့်မြင့်လာခဲ့သည်!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "မေးမြန်း frequently မေးခွန်းများ",
+      "description": "Mundo Tango အကြောင်းသိရန်လိုအပ်သောအရာများအားလုံး",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Mundo Tango ဆိုတာဘာလဲ?",
+          "answer": "Mundo Tango သည် tango အက dance အားလုံးကိုချိတ်ဆက်ပေးသောကမ္ဘာလုံးဆိုင်ရာပလက်ဖောင်းဖြစ်သည်။ ကျွန်ုပ်တို့သည် သင့်ကိုဖြစ်ရပ်များရှာဖွေရန်၊ အက dance မိတ်ဖက်များကိုရှာဖွေရန်၊ ထိပ်တန်းဆရာများထံမှသင်ယူရန်နှင့် ကမ္ဘာတစ်ဝှမ်းရှိ အထူးသဖြင့် tango အသိုင်းအဝိုင်းတွင် ရှိနေစေရန် ကူညီပေးသည်။"
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Mundo Tango သည် အသုံးပြုရန်အခမဲ့လား?",
+          "answer": "ဟုတ်ပါတယ်! ကျွန်ုပ်တို့သည် အခြေခံပရိုဖိုင်ဖန်တီးခြင်း၊ ဖြစ်ရပ်ရှာဖွေရန်နှင့် မက်ဆေ့ချ်ပို့ရန်ပါဝင်သော အခမဲ့အဆင့်ကို ပေးထားသည်။ အကောင်းဆုံးမက်ဆေ့ချ်ပို့ခြင်း၊ AI အက dance မိတ်ဖက်ကိုချိတ်ဆက်ခြင်းနှင့် ဦးစားပေးဖြစ်ရပ်သတင်းအချက်အလက်များကဲ့သို့သော Premium အင်္ဂါရပ်များကို ကျွန်ုပ်တို့၏ Pro subscription ဖြင့်ရရှိနိုင်သည်။"
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "ကျွန်ုပ်သည် ကျွန်ုပ်၏အနီးအနားရှိ tango ဖြစ်ရပ်များကိုဘယ်လိုရှာဖွေမလဲ?",
+          "answer": "ကျွန်ုပ်တို့၏ ဖြစ်ရပ်များကယ်လင်ဒါ သို့မဟုတ် ရှာဖွေရန်အင်္ဂါရပ်များကို အသုံးပြု၍ မြို့၊ ရက်နှင့် ဖြစ်ရပ်အမျိုးအစားအလိုက်စစ်ထုတ်နိုင်သည်။ သင်၏ဒေသတွင် သို့မဟုတ် ကမ္ဘာတစ်ဝှမ်းတွင် ဖြစ်ပွားနေသော milongas၊ ပွဲတော်များ၊ အလုပ်ရုံများနှင့် လေ့ကျင့်မှုအစည်းအဝေးများကိုရှာဖွေနိုင်သည်။"
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "အခြားအက dance အားလုံးနှင့်ချိတ်ဆက်နိုင်ပါသလား?",
+          "answer": "အထူးသဖြင့်! အက dance အားလုံးကိုလိုက်နာပါ၊ အုပ်စုများတွင်ပါဝင်ပါ၊ မိတ်ဆွေတောင်းဆိုချက်များပို့ပါ၊ နှင့် အသိုင်းအဝိုင်းနှင့်စကားပြောပါ။ ကျွန်ုပ်တို့၏ပလက်ဖောင်းသည် tango ကမ္ဘာတွင် သဘာဝချိတ်ဆက်မှုများကိုမြှင့်တင်ရန်ဒီဇိုင်းဆွဲထားသည်။"
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "ကျွန်ုပ်သည် tango ဆရာများကိုဘယ်လိုရှာဖွေမလဲ?",
+          "answer": "ကမ္ဘာတစ်ဝှမ်းရှိ အတည်ပြုဆရာများကို ရှာဖွေရန် ကျွန်ုပ်တို့၏ ဆရာများစာရင်းကို သွားပါ။ တည်နေရာ၊ အထူးပြုမှုနှင့် အတွေ့အကြုံအဆင့်အလိုက်စစ်ထုတ်ပါ။ အခြားကျောင်းသားများမှ ပြန်လည်သုံးသပ်ချက်များကိုဖတ်ပါနှင့် ပလက်ဖောင်းမှတဆင့် တိုက်ရိုက်ပုဂ္ဂိုလ်ရေးသင်ခန်းစာများကိုဘွတ်ကင်လုပ်ပါ။"
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Mundo Tango ကို မည်သို့ကွဲပြားစေသလဲ?",
+          "answer": "ကျွန်ုပ်တို့သည် tango အက dance အားလုံးအတွက်၊ tango အက dance အားလုံးကဖန်တီးထားသည်။ ကျွန်ုပ်တို့၏အာရုံစိုက်မှုသည် သဘာဝအသိုင်းအဝိုင်းတည်ဆောက်ခြင်း၊ အရည်အသွေးရှိသော ဖြစ်ရပ်များကို စီစဉ်ခြင်းနှင့် ကမ္ဘာလုံးဆိုင်ရာ tango မိသားစုနှင့်ချိတ်ဆက်ခြင်းဖြစ်သည် - အခြားသော လူမှုကွန်ရက်တစ်ခုသာမဟုတ်။"
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "အသိုင်းအဝိုင်းတွင် ပါဝင်ရန် ပြင်ဆင်ထားပါသလား?",
+      "description": "ယနေ့သင်၏အခမဲ့အကောင့်ကိုဖန်တီးပြီး ကမ္ဘာတစ်ဝှမ်းရှိ စိတ်အားထက်သန်သော tango အက dance အားလုံးနှင့်ချိတ်ဆက်ရန်စတင်ပါ။ ခရက်ဒစ်ကတ်မလိုအပ်ပါ။",
+      "button": "Mundo Tango အခမဲ့ပါဝင်ပါ",
+      "freeForever": "အမြဲအခမဲ့",
+      "noCreditCard": "ခရက်ဒစ်ကတ်မရှိ",
+      "cancelAnytime": "မည်သည့်အချိန်တွင်မဆို ရပ်ဆိုင်းပါ"
     }
   },
   "feed": {
     "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "description": "tango အသိုင်းအဝိုင်းမှ နောက်ဆုံးရသတင်းများနှင့်အတူ အဆက်အသွယ်ရှိနေပါ",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "အားလုံးသောစာတမ်းများ",
+      "following": "လိုက်နာနေသည်",
+      "popular": "လူကြိုက်များသော",
+      "recent": "နောက်ဆုံး"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "သင်၏စိတ်တွင်ဘာရှိပါသလဲ?",
+    "noPost": "ပြသရန်စာရင်းမရှိပါ"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "အခမ်းအနားများ",
+    "description": "သင်၏အနီးအနားရှိတန်ဂိုအခမ်းအနားများကိုရှာဖွေပါ",
+    "upcoming": "လာမည့်အခမ်းအနားများ",
+    "past": "အတိတ်အခမ်းအနားများ",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "အခမ်းအနားများအားလုံး",
+      "milongas": "မီလွန်ဂါများ",
+      "workshops": "လုပ်shops",
+      "festivals": "ပွဲတော်များ",
+      "classes": "သင်တန်းများ"
     },
-    "noEvents": "No events found"
+    "noEvents": "အခမ်းအနားများမတွေ့ပါ"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "ပရိုဖိုင်",
+    "description": "သင်၏ပရိုဖိုင်ကိုကြည့်ရှု့ပြီးပြင်ဆင်ပါ",
+    "editProfile": "ပရိုဖိုင်ကိုပြင်ဆင်ပါ",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "စာပို့များ",
+      "photos": "ဓာတ်ပုံများ",
+      "videos": "ဗီဒီယိုများ",
+      "events": "အခမ်းအနားများ",
+      "friends": "မိတ်ဆွေများ"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "စာပို့များ",
+      "followers": "လိုက်နာသူများ",
+      "following": "လိုက်နာနေသည်",
+      "events": "တက်ရောက်ခဲ့သော အခမ်းအနားများ"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "သတင်းစာများ",
+    "description": "သင်၏ tango ဆက်ဆံရေးများနှင့် စကားပြောပါ",
+    "newMessage": "သစ်သော သတင်းစာ",
+    "searchConversations": "စကားပြောဆိုမှုများကို ရှာဖွေပါ",
+    "noMessages": "သတင်းစာများ မရှိသေးပါ",
+    "startConversation": "စကားပြောဆိုမှုတစ်ခု စတင်ပါ"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Tango ဆရာများ",
+    "description": "Tango ဆရာများကို ရှာဖွေပြီး ဆက်သွယ်ပါ",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "ဆရာများအားလုံး",
+      "featured": "ထူးခြားသော",
+      "nearby": "အနီးအနား"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "ပရိုဖိုင်းကို ကြည့်ပါ",
+    "bookLesson": "သင်ခန်းစာတစ်ခု စီစဉ်ပါ"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Tango နေရာများ",
+    "description": "ကမ္ဘာတစ်ဝှမ်းရှိ tango နေရာများကို ရှာဖွေပါ",
     "filters": {
-      "all": "All Venues",
+      "all": "နေရာများအားလုံး",
       "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "schools": "အက dancing ကျောင်းများ",
+      "theaters": "သရုပ်ပြရုံများ"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "လမ်းညွှန်ချက်များ ရယူပါ"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "ဆက်တင်များ",
+    "description": "သင်၏ အကောင့်ဆက်တင်များကို စီမံပါ",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "အကောင့်ဆက်တင်များ",
+      "profile": "ပရိုဖိုင်း",
+      "privacy": "ပုဂ္ဂိုလ်ရေး",
+      "notifications": "သတင်းအချက်အလက်များ",
+      "security": "လုံခြုံရေး",
+      "billing": "ဘီလ်",
+      "preferences": "ကြိုက်နှစ်သက်မှုများ"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "ဘဝ CEO ဒက်ရှ်ဘုတ်",
+    "description": "ဘဝစီမံခန့်ခွဲမှုအတွက် သင့်ပုဂ္ဂိုလ်ရေး AI အကူအညီ",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "ကျန်းမာရေး အေးဂျင့်",
+      "fitness": "ဖစ်နက်စ် အေးဂျင့်",
+      "nutrition": "အာဟာရ အေးဂျင့်",
+      "finance": "ဘဏ္ဍာရေး အေးဂျင့်",
+      "career": "အလုပ်အကိုင် အေးဂျင့်",
+      "productivity": "ထုတ်လုပ်မှု အေးဂျင့်",
+      "relationships": "ဆက်ဆံရေး အေးဂျင့်",
+      "learning": "သင်ယူမှု အေးဂျင့်"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "ဈေးကွက်",
+    "description": "တန်ဂိုနှင့်ဆက်နွယ်သောပစ္စည်းများကို ဝယ်ယူနှင့်ရောင်းချပါ",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "အကန့်အသတ်รองဖိနပ်",
+      "clothing": "အဝတ်အထည်",
+      "music": "ဂီတ",
+      "accessories": "အထူးပစ္စည်းများ",
+      "other": "အခြား"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "အုပ်ချုပ်ရေး ဒက်ရှ်ဘုတ်",
+    "description": "ပလက်ဖောင်းအုပ်ချုပ်မှုနှင့်စီမံခန့်ခွဲမှု",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "အကျဉ်းချုပ်",
+      "users": "အသုံးပြုသူများ",
+      "content": "အကြောင်းအရာ",
+      "reports": "အစီရင်ခံစာများ",
+      "analytics": "အချက်အလက်များ",
+      "settings": "ဆက်တင်များ"
     }
   }
 }

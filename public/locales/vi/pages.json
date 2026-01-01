@@ -356,7 +356,7 @@
         "fitness_running": "Chạy bộ",
         "fitness_crossfit": "CrossFit",
         "fitness_martial_arts": "Võ thuật",
-        "fitness_tennis": "Tennis",
+        "fitness_tennis": "Quần vợt",
         "fitness_soccer": "Bóng đá",
         "fitness_basketball": "Bóng rổ",
         "fitness_fencing": "Đấu kiếm",
@@ -598,7 +598,7 @@
             "description": "Phân tích nâng cao cho hồ sơ của bạn"
           },
           "premium": {
-            "title": "Premium",
+            "title": "Cao cấp",
             "description": "Tính năng premium độc quyền"
           }
         }
@@ -637,127 +637,127 @@
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Trang chủ",
+    "pageLayoutTitle": "Nơi Tango Gặp Gỡ Cộng Đồng",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Kết nối với Cộng Đồng Tango Toàn Cầu",
+      "description": "Tham gia cùng hàng ngàn vũ công tango trên toàn thế giới. Khám phá sự kiện, tìm giáo viên, kết nối với các vũ công, và đắm mình trong thế giới đam mê của tango Argentina."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Chào mừng bạn đến với Cộng Đồng Tango Toàn Cầu",
+      "heading": "Nơi Tango Gặp Gỡ Cộng Đồng",
+      "paragraph": "Chia sẻ kỷ niệm, tìm sự kiện, và giúp chúng tôi xây dựng tương lai của công nghệ tango. Tham gia cùng hàng ngàn vũ công đam mê kết nối trên toàn cầu.",
+      "getStarted": "Bắt đầu miễn phí",
+      "volunteer": "Tình nguyện giúp xây dựng MT"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Cách thức hoạt động",
+      "description": "Bắt đầu hành trình tango của bạn trong ba bước đơn giản",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Tạo Hồ Sơ Của Bạn",
+        "description": "Tham gia miễn phí và cho chúng tôi biết về hành trình tango của bạn, trình độ kinh nghiệm, và sở thích khiêu vũ"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Khám Phá & Kết Nối",
+        "description": "Tìm sự kiện, giáo viên, và địa điểm gần bạn. Kết nối với các vũ công có cùng đam mê"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Khiêu Vũ & Phát Triển",
+        "description": "Tham gia sự kiện, tham gia lớp học, kết bạn, và trở thành một phần của cộng đồng tango toàn cầu"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Tất cả những gì bạn cần",
+      "description": "Kết nối, khám phá và phát triển hành trình tango của bạn với những tính năng mạnh mẽ",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Cộng đồng",
+        "heading": "Kết nối với các vũ công trên toàn thế giới",
+        "description": "Tham gia vào một cộng đồng toàn cầu sôi động của những người đam mê tango. Kết nối với các vũ công, giáo viên và nhà tổ chức từ Buenos Aires đến Tokyo.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Theo dõi các vũ công và xây dựng mạng lưới của bạn",
+          "groups": "Tham gia các nhóm dựa trên sở thích và vị trí",
+          "messaging": "Tính năng nhắn tin và trò chuyện thời gian thực",
+          "discover": "Khám phá các vũ công đang thăm thành phố của bạn"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Sự kiện",
+        "heading": "Khám phá sự kiện ở khắp mọi nơi",
+        "description": "Không bao giờ bỏ lỡ một milonga, lễ hội hoặc workshop. Nền tảng của chúng tôi kết nối bạn với hàng ngàn sự kiện tango đang diễn ra trên toàn cầu.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Lịch sự kiện toàn diện",
+          "rsvp": "RSVP và đặt vé",
+          "notifications": "Thông báo và nhắc nhở sự kiện",
+          "map": "Bản đồ tương tác của các địa điểm"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Phát trực tiếp",
+          "description": "Xem milongas trên toàn thế giới trong thời gian thực"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Thư viện âm nhạc",
+          "description": "Danh sách phát và hướng dẫn tango được chọn lọc"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Giáo viên đã được xác minh",
+          "description": "Học từ các giảng viên được chứng nhận"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Kế hoạch du lịch",
+          "description": "Lập kế hoạch chuyến đi và tìm kiếm người chủ nhà trên toàn cầu"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Những gì các vũ công nói",
+      "description": "Tham gia cùng hàng ngàn vũ công hài lòng trên toàn thế giới",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
           "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "text": "Mundo Tango đã giúp tôi tìm thấy gia đình khiêu vũ của mình ở một thành phố mới. Cộng đồng rất ấm áp, chào đón và thực sự đam mê tango."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, Hoa Kỳ",
+          "text": "Tôi đã khám phá ra những milonga và workshop tuyệt vời thông qua nền tảng này. Nó đã trở thành điều thiết yếu cho hành trình tango của tôi."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moscow, Nga",
+          "text": "Danh bạ giáo viên đã giúp tôi tìm được những giảng viên tuyệt vời. Kỹ năng nhảy múa của tôi đã cải thiện rất nhiều!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Câu hỏi thường gặp",
+      "description": "Tất cả những gì bạn cần biết về Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Mundo Tango là gì?",
+          "answer": "Mundo Tango là một nền tảng toàn cầu kết nối những người nhảy tango, giáo viên và nhà tổ chức. Chúng tôi giúp bạn khám phá các sự kiện, tìm kiếm bạn nhảy, học hỏi từ những giảng viên hàng đầu và hòa mình vào cộng đồng tango sôi động trên toàn thế giới."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Mundo Tango có miễn phí sử dụng không?",
+          "answer": "Có! Chúng tôi cung cấp một gói miễn phí bao gồm việc tạo hồ sơ cơ bản, khám phá sự kiện và nhắn tin. Các tính năng cao cấp như nhắn tin không giới hạn, ghép đôi bạn nhảy bằng AI và thông báo sự kiện ưu tiên có sẵn với gói Pro của chúng tôi."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Làm thế nào để tôi tìm các sự kiện tango gần tôi?",
+          "answer": "Chỉ cần sử dụng Lịch sự kiện hoặc các tính năng Tìm kiếm để lọc theo thành phố, ngày và loại sự kiện. Bạn có thể khám phá các milonga, lễ hội, workshop và buổi tập đang diễn ra trong khu vực của bạn hoặc bất kỳ đâu trên thế giới."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Tôi có thể kết nối với những người nhảy khác không?",
+          "answer": "Chắc chắn rồi! Theo dõi các vũ công, tham gia nhóm, gửi yêu cầu kết bạn và trò chuyện với cộng đồng. Nền tảng của chúng tôi được thiết kế để thúc đẩy các kết nối chân thực trong thế giới tango."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Làm thế nào để tôi tìm các giáo viên tango?",
+          "answer": "Hãy truy cập Danh bạ Giáo viên của chúng tôi để duyệt qua các giảng viên đã được xác minh trên toàn thế giới. Lọc theo vị trí, chuyên môn và trình độ kinh nghiệm. Đọc đánh giá từ các học viên khác và đặt bài học riêng trực tiếp qua nền tảng."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Điều gì làm cho Mundo Tango khác biệt?",
+          "answer": "Chúng tôi được xây dựng bởi những người nhảy tango, cho những người nhảy tango. Chúng tôi tập trung vào việc xây dựng cộng đồng chân thực, tổ chức sự kiện chất lượng và kết nối bạn với gia đình tango toàn cầu - không chỉ là một mạng xã hội khác."
         }
       }
     },
@@ -766,28 +766,28 @@
     "subtitle": "Kết nối với cộng đồng tango toàn cầu"
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Tin tức",
+    "description": "Cập nhật những thông tin mới nhất từ cộng đồng tango",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Tất cả bài viết",
+      "following": "Đang theo dõi",
+      "popular": "Phổ biến",
+      "recent": "Gần đây"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Bạn đang nghĩ gì?",
+    "noPost": "Không có bài viết nào để hiển thị"
   },
   "events": {
     "title": "Sự kiện Tango",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "description": "Khám phá các sự kiện tango gần bạn",
+    "upcoming": "Sự kiện sắp tới",
+    "past": "Sự kiện đã qua",
     "filters": {
-      "all": "All Events",
+      "all": "Tất cả sự kiện",
       "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "workshops": "Hội thảo",
+      "festivals": "Lễ hội",
+      "classes": "Lớp học"
     },
     "noEvents": "Không tìm thấy sự kiện",
     "subtitle": "Khám phá milonga, lễ hội và workshop",
@@ -796,20 +796,20 @@
   },
   "profile": {
     "title": "Hồ sơ",
-    "description": "View and edit your profile",
+    "description": "Xem và chỉnh sửa hồ sơ của bạn",
     "editProfile": "Chỉnh sửa hồ sơ",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Bài viết",
+      "photos": "Hình ảnh",
+      "videos": "Video",
+      "events": "Sự kiện",
+      "friends": "Bạn bè"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Bài viết",
+      "followers": "Người theo dõi",
+      "following": "Đang theo dõi",
+      "events": "Sự kiện đã tham dự"
     },
     "followers": "Người theo dõi",
     "following": "Đang theo dõi",
@@ -817,83 +817,83 @@
     "about": "Giới thiệu"
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Tin nhắn",
+    "description": "Trò chuyện với các kết nối tango của bạn",
+    "newMessage": "Tin nhắn mới",
+    "searchConversations": "Tìm kiếm cuộc trò chuyện",
+    "noMessages": "Chưa có tin nhắn nào",
+    "startConversation": "Bắt đầu một cuộc trò chuyện"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Giáo viên Tango",
+    "description": "Tìm và kết nối với các giáo viên tango",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Tất cả giáo viên",
+      "featured": "Nổi bật",
+      "nearby": "Gần đây"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Xem hồ sơ",
+    "bookLesson": "Đặt một bài học"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Địa điểm Tango",
+    "description": "Khám phá các địa điểm tango trên toàn thế giới",
     "filters": {
-      "all": "All Venues",
+      "all": "Tất cả địa điểm",
       "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "schools": "Trường khiêu vũ",
+      "theaters": "Nhà hát"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Lấy chỉ đường"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Cài đặt",
+    "description": "Quản lý cài đặt tài khoản của bạn",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Cài đặt tài khoản",
+      "profile": "Hồ sơ",
+      "privacy": "Quyền riêng tư",
+      "notifications": "Thông báo",
+      "security": "Bảo mật",
+      "billing": "Thanh toán",
+      "preferences": "Tùy chọn"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Bảng điều khiển CEO cuộc sống",
+    "description": "Trợ lý AI cá nhân của bạn cho việc quản lý cuộc sống",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Đại lý sức khỏe",
+      "fitness": "Đại lý thể dục",
+      "nutrition": "Đại lý dinh dưỡng",
+      "finance": "Đại lý tài chính",
+      "career": "Đại lý sự nghiệp",
+      "productivity": "Đại lý năng suất",
+      "relationships": "Đại lý quan hệ",
+      "learning": "Đại lý học tập"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Thị trường",
+    "description": "Mua và bán các mặt hàng liên quan đến tango",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Giày khiêu vũ",
+      "clothing": "Quần áo",
+      "music": "Âm nhạc",
+      "accessories": "Phụ kiện",
+      "other": "Khác"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Admin Dashboard|||Bảng điều khiển quản trị",
+    "description": "Platform administration and management|||Quản trị và quản lý nền tảng",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Overview|||Tổng quan",
+      "users": "Users|||Người dùng",
+      "content": "Content|||Nội dung",
+      "reports": "Reports|||Báo cáo",
+      "analytics": "Analytics|||Phân tích",
+      "settings": "Settings|||Cài đặt"
     }
   },
   "cities": {
