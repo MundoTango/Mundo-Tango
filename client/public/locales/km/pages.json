@@ -23,7 +23,7 @@
     },
     "form": {
       "fullName": "ឈ្មោះពេញ",
-      "fullNamePlaceholder": "Maria Rodriguez",
+      "fullNamePlaceholder": "ម៉ារីយ៉ា រ៉ូដ្រីគេស",
       "email": "អ៊ីមែល",
       "emailPlaceholder": "maria@example.com",
       "username": "ឈ្មោះអ្នកប្រើ",
@@ -896,81 +896,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "សម្ភាសន៍ AI - ការប្រកួតទេពកោសល្យ Mundo Tango",
+        "description": "បញ្ចប់សម្ភាសន៍ស្ម័គ្រចិត្តរបស់អ្នកជាមួយលោក Blue AI ដើម្បីទទួលបានឱកាសដ៏ល្អបំផុត។"
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "សម្ភាសន៍ AI",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "ដំណាក់កាលទី 1: ការវិភាគប្រវត្តិរូប",
+        "work": "ដំណាក់កាលទី 2: ការប្រកួតការងារ",
+        "complete": "សម្ភាសន៍បានបញ្ចប់!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "ប្រវត្តិរូប",
+        "workAssignment": "ការប្រកួតការងារ"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "សំណួរ {{current}} នៃ {{total}}",
+        "allQuestionsAnswered": "សំណួរទាំងអស់ត្រូវបានឆ្លើយ"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "ប្រភេទឯកសារមិនត្រឹមត្រូវ",
+          "description": "សូមបញ្ចូលឯកសារ PDF, DOCX, ឬ TXT"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "ប្រវត្តិរូបត្រូវបានបកប្រែ!",
+          "description": "លោក Blue អាចអានមាតិកាប្រវត្តិរូបរបស់អ្នកបានឥឡូវនេះ។"
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "ការបញ្ចូលបានបរាជ័យ",
+          "description": "សូមព្យាយាមម្តងទៀត"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "សម័យខ្វះ",
+          "description": "សូមចាប់ផ្តើមពីទំព័រ Talent Match"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "កំហុស",
+          "description": "មិនអាចដំណើរការឆ្លើយតបរបស់អ្នកបានទេ"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "មាតិការសូមសុំមិនមាន",
+        "description": "សូមបញ្ចូលសូមសុំរបស់អ្នកឡើងវិញ ដើម្បីឱ្យលោក Blue អាចអាន និងយោងទៅកាន់បទពិសោធន៍របស់អ្នក។",
+        "parsing": "កំពុងបកប្រែ...",
+        "reupload": "បញ្ចូលឡើងវិញ"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "មើលផ្ទាំងគ្រប់គ្រង H2AC",
+        "goHome": "ទៅផ្ទះ"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "សួស្តី! ខ្ញុំបានពិនិត្យមើលផ្ទៃខាងក្រោយរបស់អ្នក។ អ្នកនឹងនិយាយអ្វីថាជំនាញបច្ចេកទេសដែលអ្នកមានទំនុកចិត្តបំផុត?",
+          "q2": "តើបច្ចេកវិទ្យាឬឧបករណ៍ណាដែលអ្នករីករាយធ្វើការជាមួយបំផុត?",
+          "q3": "តើមានជំនាញណាដែលនៅក្នុងសូមសុំរបស់អ្នកដែលអ្នកចង់ប្រើប្រាស់បន្ថែមនៅក្នុងការងារស្ម័គ្រចិត្តទេ?",
+          "q4": "តើតំបន់ណានៃការអភិវឌ្ឍន៍សូហ្វវែរដែលអ្នកមានចំណាប់អារម្មណ៍បំផុតនៅពេលនេះ?",
+          "q5": "តើអ្នកបានធ្វើការនៅលើគម្រោងប្រភពបើកឬយុទ្ធនាការសហគមន៍ណាមួយមុននេះទេ?",
+          "q6": "តើស្ទីលការងារដែលអ្នកចូលចិត្តគឺអ្វី - តើអ្នកចូលចិត្តការងារឯករាជ្យឬការសហការទេ?",
+          "q7": "តើអ្នកធ្វើដូចម្តេចក្នុងការចូលទៅរៀនបច្ចេកវិទ្យាថ្មីៗ?",
+          "q8": "តើអ្នកមានសង្ឃឹមថានឹងមានឥទ្ធិពលអ្វីខ្លះតាមរយៈការងារស្ម័គ្រចិត្ត?",
+          "q9": "អស្ចារ្យ! មុននឹងយើងចាប់ផ្តើមពិភាក្សាអំពីឱកាសជាក់លាក់ តើមានអ្វីផ្សេងទៀតអំពីផ្ទៃខាងក្រោយរបស់អ្នកដែលអ្នកចង់បង្ហាញទេ?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "ឥឡូវនេះយើងមនោសញ្ចេតនាអំពីរបៀបដែលអ្នកអាចចូលរួមក្នុង Mundo Tango! តើតំបន់ណាដែលអ្នកមានចំណាប់អារម្មណ៍បំផុត៖ frontend, backend, AI/ML, ឬអ្វីផ្សេងទៀត?",
+          "q2": "Mundo Tango តភ្ជាប់សហគមន៍តង់ហ្គូពិភពលោក។ តើមានលក្ខណៈណាដែលអ្នកនឹងរំភើបក្នុងការជួយកសាង?",
+          "q3": "យើងមានឱកាសស្ម័គ្រចិត្តទាំងបច្ចេកទេសនិងមិនបច្ចេកទេស។ តើប្រភេទការងារណាដែលធ្វើឱ្យអ្នកមានកម្លាំងបំផុត?",
+          "q4": "តើអ្នកអាចចំណាយពេលប៉ុន្មានម៉ោងក្នុងមួយសប្តាហ៍ដើម្បីចូលរួមក្នុងការងារស្ម័គ្រចិត្ត?",
+          "q5": "តើអ្នកចូលចិត្តធ្វើការឯករាជ្យឬជាផ្នែកមួយនៃក្រុម?",
+          "q6": "តើអ្នកមានអារម្មណ៍ស្រួលជាមួយការកូដជាគូឬការពិនិត្យកូដទេ?",
+          "q7": "តើបទពិសោធន៍របស់អ្នកជាមួយការអភិវឌ្ឍន៍ agile/sprint គឺជាអ្វី?",
+          "q8": "យើងប្រើ GitHub សម្រាប់ការសហការណ៍។ តើអ្នកមានអារម្មណ៍ស្រួលជាមួយនឹងដំណើរការប្រើ Git ទេ?",
+          "q9": "តើអ្នកចង់ធ្វើការនៅលើលក្ខណៈថ្មីៗ ការជួសជុលកំហុស ឬឯកសារ?",
+          "q10": "ចុងក្រោយនេះ តើវិធីល្អបំផុតក្នុងការទំនាក់ទំនងជាមួយអ្នកគឺអ្វី - Slack, អ៊ីមែល, ឬសារលើវេទិការបស់យើង?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "អស្ចារ្យ! ខ្ញុំឥឡូវនេះមានការយល់ដឹងល្អអំពីផ្ទៃខាងក្រោយ និងបទពិសោធន៍របស់អ្នក។ យើងចូរផ្លាស់ទៅដំណាក់កាលទី 2 ដែលយើងនឹងពិភាក្សាអំពីវិធីជាក់លាក់ដែលអ្នកអាចចូលរួមក្នុង Mundo Tango។",
+        "processingError": "ខ្ញុំសូមអភ័យទោស ប៉ុន្តែខ្ញុំមានបញ្ហាក្នុងការប្រតិបត្តិការនោះ។ តើអ្នកអាចសាកល្បងម្តងទៀតបានទេ?"
       }
     }
   }

@@ -497,15 +497,15 @@
         },
         "consent": {
           "title": "Հարգեք համաձայնությունը",
-          "description": "Always ask before dancing and respect boundaries"
+          "description": "Միշտ հարցրեք նախքան պարելը և հարգեք սահմանները"
         },
         "noHarassment": {
           "title": "Ոչ հալածանք",
-          "description": "Zero tolerance for harassment or bullying"
+          "description": "Զրո հանդուրժողականություն հալածանքի կամ բռնության համար"
         },
         "noSpam": {
           "title": "Ոչ սպամ",
-          "description": "Don't send unsolicited promotions"
+          "description": "Մի ուղարկեք անպատասխան առաջարկներ"
         },
         "noDiscrimination": {
           "title": "Ոչ խտրականություն",
@@ -513,19 +513,19 @@
         },
         "privacy": {
           "title": "Պաշտպանեք գաղտնիությունը",
-          "description": "Don't share others' information without consent"
+          "description": "Մի կիսվեք ուրիշների տեղեկություններով առանց համաձայնության"
         },
         "safety": {
           "title": "Առաջնորդեք անվտանգությունը",
-          "description": "Report any unsafe behavior immediately"
+          "description": "Ամենաանվտանգ վարքագիծը անմիջապես հաղորդեք"
         },
         "laws": {
           "title": "Հետևեք օրենքներին",
-          "description": "Comply with all applicable laws"
+          "description": "Համապատասխանեք բոլոր կիրառելի օրենքներին"
         },
         "report": {
-          "title": "Report Issues",
-          "description": "Help us by reporting violations"
+          "title": "Հայտարարեք խնդիրների մասին",
+          "description": "Օգնեք մեզ հաղորդելով խախտումների մասին"
         },
         "support": {
           "title": "Օգնեք միմյանց",
@@ -575,7 +575,7 @@
     },
     "subscription": {
       "welcome": {
-        "title": "Upgrade Your Experience",
+        "title": "Ուղղեք ձեր փորձը",
         "subtitle": "Maximize your Mundo Tango experience",
         "limitedOffer": "Սահմանափակ ժամանակի առաջարկ",
         "getStarted": "Սկսել",
@@ -896,81 +896,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI հարցազրույց - Mundo Tango Talent Match",
+        "description": "Ավարտեք ձեր կամավոր հարցազրույցը Mr Blue AI-ի հետ, որպեսզի համապատասխանեք կատարյալ հնարավորություններին:"
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI հարցազրույց",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "Քայլ 1: Ռեզյումեի խորքային ուսումնասիրություն",
+        "work": "Քայլ 2: Աշխատանքի հանձնարարությունների համապատասխանեցում",
+        "complete": "Հարցազրույցը ավարտված է!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "Ռեզյումե",
+        "workAssignment": "Աշխատանքային հանձնարարություն"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Հարց {{current}} מתוך {{total}}",
+        "allQuestionsAnswered": "Բոլոր հարցերը պատասխանված են"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Չի թույլատրվում ֆայլի այս տեսակը",
+          "description": "Խնդրում ենք ներբեռնել PDF, DOCX կամ TXT"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "Ռեզյումեն մշակված է!",
+          "description": "Պարոն Բլուն այժմ կարող է կարդալ ձեր ռեզյումեի բովանդակությունը:"
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Ներբեռնումը ձախողվեց",
+          "description": "Խնդրում ենք փորձել կրկին"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Կարգավիճակ չկա",
+          "description": "Խնդրում ենք սկսել Talent Match էջից"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Սխալ",
+          "description": "Ձեր պատասխանն մշակել չի հաջողվել"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Ռեզյումեի բովանդակությունը հասանելի չէ",
+        "description": "Կրկին ներբեռնեք ձեր ռեզյումեն, որպեսզի պարոն Բլուն կարողանա կարդալ և հղում անել ձեր փորձին:",
+        "parsing": "Մշակում...",
+        "reupload": "Կրկին ներբեռնել"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "Դիտել H2AC վահանակը",
+        "goHome": "Գնալ տուն"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Բարև! Ես ուսումնասիրել եմ ձեր ֆոնդը: Ինչպիսի տեխնիկական հմտություն եք կարծում, որ ամենից շատ վստահ եք?",
+          "q2": "Որ տեխնոլոգիաներով կամ գործիքներով եք դուք ամենից շատ հաճույք ստանում աշխատել?",
+          "q3": "Ռեզյումեում կան արդյոք հմտություններ, որոնք կցանկանայիք ավելի շատ օգտագործել կամավոր աշխատանքում?",
+          "q4": "Որ ծրագրային զարգացման ոլորտները ձեզ ամենից շատ հետաքրքրում են այս պահին?",
+          "q5": "Դուք արդյո՞ք աշխատել եք բաց աղբյուրի նախագծերի կամ համայնքային նախաձեռնությունների վրա:",
+          "q6": "Ո՞րն է ձեր նախընտրելի աշխատանքային ոճը՝ անկախ աշխատանքը, թե համագործակցությունը:",
+          "q7": "Ինչպե՞ս եք սովորաբար մոտենում նոր տեխնոլոգիաների ուսուցմանը:",
+          "q8": "Ո՞ր տեսակի ազդեցություն եք ակնկալում ունենալ կամավոր աշխատանքի միջոցով:",
+          "q9": "Հիանալի է! Նախքան կոնկրետ հնարավորությունների քննարկմանը անցնելը, կա՞ որևէ այլ բան ձեր ֆոնի մասին, որը կցանկանայիք ընդգծել:"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Այժմ խոսենք այն մասին, թե ինչպես կարող եք նպաստել Mundo Tango-ին: Ո՞ր ոլորտը ձեզ առավել հետաքրքրում է՝ ֆրոնտենդ, բեքենդ, AI/ML, թե ինչ-որ այլ բան:",
+          "q2": "Mundo Tango-ն կապում է գլոբալ տանգո համայնքը: Ո՞ր ֆունկցիաները կուզեիք օգնել կառուցել:",
+          "q3": "Մենք ունենք ինչպես տեխնիկական, այնպես էլ ոչ տեխնիկական կամավորական հնարավորություններ: Ո՞ր տեսակի աշխատանքը ձեզ առավել էներգիա է տալիս:",
+          "q4": "Ինչքան ժամանակ շաբաթական կարող եք իրականում նվիրել կամավոր աշխատանքի:",
+          "q5": "Դուք նախընտրում եք աշխատել անկախ, թե թիմի մաս կազմելով:",
+          "q6": "Դուք հարմար եք զույգ ծրագրավորման կամ կոդի վերանայման համար:",
+          "q7": "Ո՞րն է ձեր փորձը ագիլ/սպրինտ-հիմնված զարգացման հետ:",
+          "q8": "Մենք օգտագործում ենք GitHub համագործակցության համար: Դուք հարմար եք Git աշխատանքային հոսքերի հետ:",
+          "q9": "Դուք նախընտրում եք աշխատել նոր ֆունկցիաների, սխալների ուղղումների, թե փաստաթղթավորման վրա:",
+          "q10": "Վերջապես, ինչպե՞ս է լավագույնը կապվել ձեզ հետ՝ Slack, էլ. փոստ, թե մեր պլատֆորմի հաղորդագրությունները:"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Հիանալի է! Այժմ ես լավ հասկանում եմ ձեր ֆոնը և փորձը: Եկեք անցնենք 2-րդ փուլ, որտեղ կքննարկենք կոնկրետ եղանակներ, թե ինչպես կարող եք նպաստել Mundo Tango-ին:",
+        "processingError": "Ներեցեք, բայց ես դժվարություններ ունեցա դա մշակելու մեջ: Կարո՞ղ եք խնդրել կրկին փորձել:"
       }
     }
   }

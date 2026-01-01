@@ -892,5 +892,86 @@
       "analytics": "Greiningar",
       "settings": "Stillingar"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI viðtal - Mundo Tango Talent Match",
+        "description": "Ljúktu viðtalinu þínu við Mr Blue AI til að passa við fullkomnar tækifæri."
+      },
+      "pageTitle": "AI viðtal",
+      "phases": {
+        "resume": "Fasi 1: Dýrmæt úttekt á ferilskrá",
+        "work": "Fasi 2: Samþætting vinnuskipana",
+        "complete": "Viðtal lokið!"
+      },
+      "phaseLabels": {
+        "resume": "Ferilskrá",
+        "workAssignment": "Vinnuskipulag"
+      },
+      "progress": {
+        "questionOf": "Spurning {{current}} af {{total}}",
+        "allQuestionsAnswered": "Allar spurningar svaraðar"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Ógild skráartegund",
+          "description": "Vinsamlegast hlaðið upp PDF, DOCX, eða TXT"
+        },
+        "resumeParsed": {
+          "title": "Ferilskrá greind!",
+          "description": "Mr. Blue getur nú lesið efni ferilskrárinnar þinnar."
+        },
+        "uploadFailed": {
+          "title": "Hleðsla mistókst",
+          "description": "Vinsamlegast reyndu aftur"
+        },
+        "missingSession": {
+          "title": "Vantar sesjón",
+          "description": "Vinsamlegast byrjið á Talent Match síðu"
+        },
+        "error": {
+          "title": "Villa",
+          "description": "Mistókst að vinna úr svörum þínum"
+        }
+      },
+      "resumeBanner": {
+        "title": "Efni ferilskrár ekki tiltækt",
+        "description": "Hlaðið ferilskránni aftur upp svo Mr. Blue geti lesið og vísað í reynslu þína.",
+        "parsing": "Greining...",
+        "reupload": "Hlaða aftur upp"
+      },
+      "buttons": {
+        "viewDashboard": "Skoða H2AC stjórnborð",
+        "goHome": "Fara heim"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Halló! Ég hef farið yfir bakgrunn þinn. Hvað myndirðu segja að væri tæknikunnátta sem þú ert vissastur um?",
+          "q2": "Hvaða tækni eða verkfæri nýtirðu helst?",
+          "q3": "Eru einhverjar kunnáttur á ferilskránni þinni sem þú myndir vilja nota meira í sjálfboðavinnu?",
+          "q4": "Hvaða svið hugbúnaðarþróunar vekja mestan áhuga þinn núna?",
+          "q5": "Hefurðu unnið að opinberum verkefnum eða samfélagslegum frumkvæði áður?",
+          "q6": "Hver er þín uppáhalds vinnustíll - líkar þér betur að vinna sjálfstætt eða í samstarfi?",
+          "q7": "Hvernig nálgast þú venjulega að læra nýjar tækni?",
+          "q8": "Hvaða áhrif vonast þú til að hafa í gegnum sjálfboðavinnu?",
+          "q9": "Frábært! Áður en við förum að ræða sérstakar tækifæri, er eitthvað annað um bakgrunn þinn sem þú vilt leggja áherslu á?"
+        },
+        "work": {
+          "q1": "Nú skulum við ræða um hvernig þú getur lagt þitt af mörkum til Mundo Tango! Hvaða svið vekur mestan áhuga þinn: frontend, backend, AI/ML, eða eitthvað annað?",
+          "q2": "Mundo Tango tengir alþjóðlega tango samfélagið. Hvaða eiginleika myndir þú vera spenntur fyrir að hjálpa til við að byggja?",
+          "q3": "Við höfum bæði tæknileg og ekki tæknileg sjálfboðavinnutækifæri. Hvaða tegund vinnu gefur þér mestan orku?",
+          "q4": "Hversu mikinn tíma á viku gætirðu raunverulega skuldbundið þig til sjálfboðavinnu?",
+          "q5": "Fynnst þér betra að vinna sjálfstætt eða sem hluti af teymi?",
+          "q6": "Ertu þægilegur með parforritun eða kóðaskoðanir?",
+          "q7": "Hvað er reynsla þín af aðlögunar-/sprint-bundinni þróun?",
+          "q8": "Við notum GitHub til samstarfs. Ertu þægilegur með Git vinnuflæði?",
+          "q9": "Viltu frekar vinna að nýjum eiginleikum, villuleit eða skjölun?",
+          "q10": "Að lokum, hvað er besti hátturinn til að hafa samband við þig - Slack, tölvupóstur, eða skilaboð á okkar vettvangi?"
+        },
+        "phaseTransition": "Frábært! Ég hef núna frábæra skilning á bakgrunni þínum og reynslu. Förum í Fasa 2 þar sem við munum ræða sérstakar leiðir sem þú getur lagt þitt af mörkum til Mundo Tango.",
+        "processingError": "Fyrirgefðu, en ég átti í erfiðleikum með að vinna úr því. Gætirðu vinsamlegast reynt aftur?"
+      }
+    }
   }
 }

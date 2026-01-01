@@ -892,5 +892,86 @@
       "analytics": "Analītika",
       "settings": "Iestatījumi"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI intervija - Mundo Tango talantu saskaņošana",
+        "description": "Pabeidziet savu brīvprātīgā interviju ar Mr Blue AI, lai tiktu saskaņots ar ideālajām iespējām."
+      },
+      "pageTitle": "AI intervija",
+      "phases": {
+        "resume": "Fāze 1: CV dziļā analīze",
+        "work": "Fāze 2: Darba uzdevumu saskaņošana",
+        "complete": "Intervija pabeigta!"
+      },
+      "phaseLabels": {
+        "resume": "CV",
+        "workAssignment": "Darba uzdevums"
+      },
+      "progress": {
+        "questionOf": "Jautājums {{current}} no {{total}}",
+        "allQuestionsAnswered": "Visi jautājumi atbildēti"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Nederīgs faila tips",
+          "description": "Lūdzu, augšupielādējiet PDF, DOCX vai TXT"
+        },
+        "resumeParsed": {
+          "title": "CV analizēts!",
+          "description": "Mr. Blue tagad var lasīt jūsu CV saturu."
+        },
+        "uploadFailed": {
+          "title": "Augšupielāde neizdevās",
+          "description": "Lūdzu, mēģiniet vēlreiz"
+        },
+        "missingSession": {
+          "title": "Trūkst sesijas",
+          "description": "Lūdzu, sāciet no Talantu saskaņošanas lapas"
+        },
+        "error": {
+          "title": "Kļūda",
+          "description": "Neizdevās apstrādāt jūsu atbildi"
+        }
+      },
+      "resumeBanner": {
+        "title": "CV saturs nav pieejams",
+        "description": "Pārlādējiet savu CV, lai Mr. Blue varētu izlasīt un atsaukties uz jūsu pieredzi.",
+        "parsing": "Apstrāde...",
+        "reupload": "Pārlādēt"
+      },
+      "buttons": {
+        "viewDashboard": "Skatīt H2AC informācijas paneli",
+        "goHome": "Doties uz mājām"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Sveiki! Esmu pārskatījis jūsu fona informāciju. Ko jūs teiktu, kas ir tehniskā prasme, kurā jūs visvairāk pārliecināti?",
+          "q2": "Kuras tehnoloģijas vai rīkus jums visvairāk patīk izmantot?",
+          "q3": "Vai ir kādas prasmes jūsu CV, kuras jūs vēlētos izmantot vairāk brīvprātīgajā darbā?",
+          "q4": "Kuras programmatūras izstrādes jomas jūs šobrīd visvairāk interesē?",
+          "q5": "Vai jūs iepriekš esat strādājis pie kādiem atvērtā koda projektiem vai kopienas iniciatīvām?",
+          "q6": "Kāds ir jūsu vēlamais darba stils - vai jums patīk strādāt patstāvīgi vai sadarboties?",
+          "q7": "Kā jūs parasti pieejat jaunu tehnoloģiju apguvei?",
+          "q8": "Kāda veida ietekmi jūs cerat radīt, strādājot brīvprātīgi?",
+          "q9": "Lieliski! Pirms pārejam pie konkrētām iespējām, vai ir kas cits par jūsu fona informāciju, ko jūs vēlētos izcelt?"
+        },
+        "work": {
+          "q1": "Tagad runāsim par to, kā jūs varat ieguldīt Mundo Tango! Kura joma jūs visvairāk interesē: frontend, backend, AI/ML vai kaut kas cits?",
+          "q2": "Mundo Tango savieno globālo tango kopienu. Kādas funkcijas jūs būtu priecīgs palīdzēt izstrādāt?",
+          "q3": "Mums ir gan tehniskas, gan netehniskas brīvprātīgā darba iespējas. Kāda veida darbs jūs visvairāk iedvesmo?",
+          "q4": "Cik daudz laika nedēļā jūs reāli varētu veltīt brīvprātīgajam darbam?",
+          "q5": "Vai jums patīk strādāt patstāvīgi vai kā daļai no komandas?",
+          "q6": "Vai jūs jūtaties ērti ar pāru programmēšanu vai koda pārskatīšanu?",
+          "q7": "Kāda ir jūsu pieredze ar agile/sprinta bāzētu izstrādi?",
+          "q8": "Mēs izmantojam GitHub sadarbībai. Vai jums ir ērti ar Git darba plūsmām?",
+          "q9": "Vai jūs labprātāk strādātu pie jauniem funkcionalitātēm, kļūdu labojumiem vai dokumentācijas?",
+          "q10": "Visbeidzot, kāds ir labākais veids, kā sazināties ar jums - Slack, e-pasts vai mūsu platformas ziņojumi?"
+        },
+        "phaseTransition": "Lieliski! Tagad man ir laba izpratne par jūsu pieredzi un fona. Pāriesim uz 2. posmu, kur mēs apspriedīsim konkrētus veidus, kā jūs varat piedalīties Mundo Tango.",
+        "processingError": "Atvainojos, bet man bija grūtības to apstrādāt. Vai jūs varētu lūdzu mēģināt vēlreiz?"
+      }
+    }
   }
 }

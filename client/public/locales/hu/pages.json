@@ -374,7 +374,7 @@
         "yoga_breathwork": "Légzőgyakorlatok",
         "music_listening": "Zenehallgatás",
         "music_concerts": "Élő Koncertek",
-        "music_piano": "Piano",
+        "music_piano": "Zongora",
         "music_guitar": "Gitár",
         "music_singing": "Éneklés",
         "music_dj": "DJ-zés",
@@ -896,81 +896,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI Interjú - Mundo Tango Tehetség Találkozó",
+        "description": "Fejezze be önkéntes interjúját Mr Blue AI-vel, hogy a tökéletes lehetőségekkel párosítsák."
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI Interjú",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "1. fázis: Önéletrajz mélyreható elemzése",
+        "work": "2. fázis: Munkafeladat párosítás",
+        "complete": "Interjú befejezve!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "Önéletrajz",
+        "workAssignment": "Munkafeladat"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Kérdés {{current}} a {{total}}-ból",
+        "allQuestionsAnswered": "Minden kérdés megválaszolva"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Érvénytelen fájltípus",
+          "description": "Kérjük, töltsön fel PDF, DOCX vagy TXT fájlt"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "Önéletrajz feldolgozva!",
+          "description": "Mr. Blue most már olvashatja az önéletrajzod tartalmát."
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Feltöltés sikertelen",
+          "description": "Kérlek, próbáld újra"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Hiányzó munkamenet",
+          "description": "Kérlek, a Talent Match oldalról kezdj"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Hiba",
+          "description": "Sikertelen a válaszod feldolgozása"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Az önéletrajz tartalma nem elérhető",
+        "description": "Feltöltsd újra az önéletrajzodat, hogy Mr. Blue olvashassa és hivatkozhasson a tapasztalataidra.",
+        "parsing": "Elemzés...",
+        "reupload": "Feltöltés újra"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "H2AC irányítópult megtekintése",
+        "goHome": "Hazamenni"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Szia! Áttekintettem a háttered. Mit mondanál, melyik technikai készségben vagy a legmagabiztosabb?",
+          "q2": "Mely technológiákkal vagy eszközökkel szeretsz a legjobban dolgozni?",
+          "q3": "Vannak olyan készségek az önéletrajzodban, amelyeket szívesebben használnál önkéntes munkában?",
+          "q4": "Mely szoftverfejlesztési területek érdekelnek a legjobban jelenleg?",
+          "q5": "Dolgoztál már nyílt forráskódú projekteken vagy közösségi kezdeményezéseken korábban?",
+          "q6": "Mi a preferált munkastílusod - szeretsz függetlenül dolgozni vagy együttműködni?",
+          "q7": "Hogyan közelíted meg általában az új technológiák tanulását?",
+          "q8": "Milyen hatást szeretnél gyakorolni az önkéntes munkádon keresztül?",
+          "q9": "Nagyszerű! Mielőtt a konkrét lehetőségekről beszélnénk, van-e bármi más a hátteredben, amit szeretnél kiemelni?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Most beszéljünk arról, hogyan tudnál hozzájárulni a Mundo Tangóhoz! Melyik terület érdekel a legjobban: frontend, backend, AI/ML, vagy valami más?",
+          "q2": "A Mundo Tango összeköti a globális tango közösséget. Milyen funkciók megépítésében örülnél, ha segíthetnél?",
+          "q3": "Mind technikai, mind nem technikai önkéntes lehetőségeink vannak. Milyen típusú munka energizál a legjobban?",
+          "q4": "Mennyi időt tudnál reálisan heti szinten önkéntes munkára szánni?",
+          "q5": "Inkább önállóan dolgozol, vagy csapatban?",
+          "q6": "Kényelmesen érzed magad a párprogramozásban vagy a kódellenőrzések során?",
+          "q7": "Mi a tapasztalatod az agilis/sprint-alapú fejlesztéssel kapcsolatban?",
+          "q8": "A GitHub-ot használjuk az együttműködéshez. Kényelmesen boldogulsz a Git munkafolyamatokkal?",
+          "q9": "Inkább új funkciókon, hibajavításokon vagy dokumentáción szeretnél dolgozni?",
+          "q10": "Végül, mi a legjobb módja a kommunikációnak veled - Slack, e-mail vagy a platformunk üzenetküldése?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Kiváló! Most már jól értem a hátteredet és tapasztalataidat. Lépjünk a 2. fázisba, ahol megbeszéljük, hogy milyen konkrét módon tudsz hozzájárulni a Mundo Tangóhoz.",
+        "processingError": "Elnézést, de problémám akadt ezzel. Kérlek, próbáld meg újra!"
       }
     }
   }

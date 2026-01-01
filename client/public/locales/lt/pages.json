@@ -353,7 +353,7 @@
       "items": {
         "fitness_gym": "Sporto salė ir svoriai",
         "fitness_running": "Bėgimas",
-        "fitness_crossfit": "CrossFit",
+        "fitness_crossfit": "Krosfitas",
         "fitness_martial_arts": "Kovos menai",
         "fitness_tennis": "Tenisas",
         "fitness_soccer": "Futbolas",
@@ -896,81 +896,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI interviu - Mundo Tango Talent Match",
+        "description": "Baigkite savo savanorių interviu su Mr Blue AI, kad gautumėte tinkamiausias galimybes."
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI interviu",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "1 etapas: Gyvenimo aprašymo analizė",
+        "work": "2 etapas: Darbo užduočių derinimas",
+        "complete": "Interviu baigtas!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "Gyvenimo aprašymas",
+        "workAssignment": "Darbo užduotis"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Klausimas {{current}} iš {{total}}",
+        "allQuestionsAnswered": "Visi klausimai atsakyti"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Neteisingas failo tipas",
+          "description": "Prašome įkelti PDF, DOCX arba TXT"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "Gyvenimo aprašymas apdorotas!",
+          "description": "Mr. Blue dabar gali perskaityti jūsų gyvenimo aprašymo turinį."
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Įkėlimas nepavyko",
+          "description": "Prašome bandyti dar kartą"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Trūksta sesijos",
+          "description": "Prašome pradėti nuo Talent Match puslapio"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Klaida",
+          "description": "Nepavyko apdoroti jūsų atsakymo"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Gyvenimo aprašymo turinys nėra prieinamas",
+        "description": "Pakartotinai įkelkite savo gyvenimo aprašymą, kad ponas Blue galėtų perskaityti ir remtis jūsų patirtimi.",
+        "parsing": "Analizuojama...",
+        "reupload": "Pakartotinai įkelti"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "Peržiūrėti H2AC valdymo skydelį",
+        "goHome": "Grįžti namo"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Sveiki! Aš peržiūrėjau jūsų patirtį. Koks techninis įgūdis jums yra pats patikimiausias?",
+          "q2": "Kokios technologijos ar įrankiai jums labiausiai patinka dirbti?",
+          "q3": "Ar yra įgūdžių jūsų gyvenimo aprašyme, kuriuos norėtumėte labiau panaudoti savanoriškoje veikloje?",
+          "q4": "Kokios programinės įrangos kūrimo sritys jus šiuo metu labiausiai domina?",
+          "q5": "Ar anksčiau dirbote su atvirojo kodo projektais ar bendruomenės iniciatyvomis?",
+          "q6": "Koks jūsų pageidaujamas darbo stilius - ar jums patinka nepriklausomas darbas, ar bendradarbiavimas?",
+          "q7": "Kaip paprastai priimate naujų technologijų mokymąsi?",
+          "q8": "Kokį poveikį tikitės padaryti per savanorišką veiklą?",
+          "q9": "Puiku! Prieš pereinant prie konkrečių galimybių aptarimo, ar yra kas nors kito apie jūsų patirtį, ką norėtumėte pabrėžti?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Dabar pakalbėkime apie tai, kaip galite prisidėti prie Mundo Tango! Kuri sritis jus labiausiai domina: frontend, backend, AI/ML, ar kažkas kito?",
+          "q2": "Mundo Tango sujungia pasaulinę tango bendruomenę. Kokias funkcijas norėtumėte padėti kurti?",
+          "q3": "Mes turime tiek techninių, tiek netechninių savanoriškų galimybių. Koks darbo tipas jums suteikia energijos?",
+          "q4": "Kiek laiko per savaitę realiai galėtumėte skirti savanoriškam darbui?",
+          "q5": "Ar jums labiau patinka dirbti savarankiškai ar komandoje?",
+          "q6": "Ar jums patogu dirbti porose arba atlikti kodo peržiūras?",
+          "q7": "Kokia jūsų patirtis su agiliu/sprintiniu vystymu?",
+          "q8": "Mes naudojame GitHub bendradarbiavimui. Ar jums patogu dirbti su Git darbo srautais?",
+          "q9": "Ar jums labiau patiktų dirbti su naujomis funkcijomis, klaidų taisymu ar dokumentacija?",
+          "q10": "Galiausiai, koks geriausias būdas su jumis bendrauti - Slack, el. paštas ar mūsų platformos žinutės?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Puiku! Dabar turiu gerą supratimą apie jūsų patirtį ir foną. Pereikime prie 2 etapo, kur aptarsime konkrečius būdus, kaip galite prisidėti prie Mundo Tango.",
+        "processingError": "Atsiprašau, bet man kilo sunkumų tai apdorojant. Ar galėtumėte pabandyti dar kartą?"
       }
     }
   }

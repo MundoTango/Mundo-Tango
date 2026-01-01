@@ -221,9 +221,10 @@
     },
     "navigation": {
       "back": "Atrás",
-      "continue": "Continuar",
+      "next": "Siguiente",
       "skip": "Omitir",
-      "next": "Siguiente"
+      "finish": "Terminar",
+      "saving": "Guardando..."
     },
     "city": {
       "pageTitle": "Selección de Ciudad",
@@ -330,30 +331,70 @@
       "completeSetup": "Completar Configuración",
       "searchPlaceholder": "Buscar comunidades o agregar una nueva...",
       "categories": {
-        "fitness": { "label": "Fitness y Deportes" },
-        "tech": { "label": "Tecnología e Innovación" },
-        "spirituality": { "label": "Espiritualidad y Crecimiento" },
-        "yoga": { "label": "Yoga y Bienestar" },
-        "music": { "label": "Música" },
-        "photography": { "label": "Fotografía y Video" },
-        "art": { "label": "Arte y Creatividad" },
-        "reading": { "label": "Lectura y Escritura" },
-        "travel": { "label": "Viajes y Aventura" },
-        "cooking": { "label": "Cocina y Gastronomía" },
-        "wine": { "label": "Vino y Bebidas" },
-        "gaming": { "label": "Videojuegos" },
-        "outdoors": { "label": "Actividades al Aire Libre" },
-        "snow": { "label": "Deportes de Nieve" },
-        "cycling": { "label": "Ciclismo" },
-        "water": { "label": "Deportes Acuáticos" },
-        "nature": { "label": "Naturaleza y Jardinería" },
-        "movies": { "label": "Cine y Entretenimiento" },
-        "pets": { "label": "Mascotas y Animales" },
-        "social": { "label": "Social y Comunidad" }
+        "fitness": {
+          "label": "Fitness y Deportes"
+        },
+        "tech": {
+          "label": "Tecnología e Innovación"
+        },
+        "spirituality": {
+          "label": "Espiritualidad y Crecimiento"
+        },
+        "yoga": {
+          "label": "Yoga y Bienestar"
+        },
+        "music": {
+          "label": "Música"
+        },
+        "photography": {
+          "label": "Fotografía y Video"
+        },
+        "art": {
+          "label": "Arte y Creatividad"
+        },
+        "reading": {
+          "label": "Lectura y Escritura"
+        },
+        "travel": {
+          "label": "Viajes y Aventura"
+        },
+        "cooking": {
+          "label": "Cocina y Gastronomía"
+        },
+        "wine": {
+          "label": "Vino y Bebidas"
+        },
+        "gaming": {
+          "label": "Videojuegos"
+        },
+        "outdoors": {
+          "label": "Actividades al Aire Libre"
+        },
+        "snow": {
+          "label": "Deportes de Nieve"
+        },
+        "cycling": {
+          "label": "Ciclismo"
+        },
+        "water": {
+          "label": "Deportes Acuáticos"
+        },
+        "nature": {
+          "label": "Naturaleza y Jardinería"
+        },
+        "movies": {
+          "label": "Cine y Entretenimiento"
+        },
+        "pets": {
+          "label": "Mascotas y Animales"
+        },
+        "social": {
+          "label": "Social y Comunidad"
+        }
       },
       "items": {
         "fitness_gym": "Gimnasio y Pesas",
-        "fitness_running": "Running",
+        "fitness_running": "Ejecutando",
         "fitness_crossfit": "CrossFit",
         "fitness_martial_arts": "Artes Marciales",
         "fitness_tennis": "Tenis",
@@ -368,7 +409,7 @@
         "spirit_astrology": "Astrología",
         "spirit_philosophy": "Filosofía",
         "spirit_community": "Construcción de Comunidad",
-        "yoga_hatha": "Hatha Yoga",
+        "yoga_hatha": "Yoga Hatha",
         "yoga_vinyasa": "Vinyasa Flow",
         "yoga_meditation": "Meditación",
         "yoga_pilates": "Pilates",
@@ -445,14 +486,14 @@
         "movies_tv": "Series de TV",
         "movies_documentary": "Documentales",
         "movies_theater": "Teatro",
-        "movies_standup": "Stand-up Comedy",
+        "movies_standup": "Comedia Stand-up",
         "pets_dogs": "Perros",
         "pets_cats": "Gatos",
         "pets_exotic": "Mascotas Exóticas",
         "pets_horses": "Equitación",
         "pets_rescue": "Rescate de Animales",
         "social_volunteering": "Voluntariado",
-        "social_meetups": "Meetups",
+        "social_meetups": "Encuentros",
         "social_networking": "Networking",
         "social_languages": "Intercambio de Idiomas"
       },
@@ -603,13 +644,6 @@
           }
         }
       }
-    },
-    "navigation": {
-      "back": "Atrás",
-      "next": "Siguiente",
-      "skip": "Omitir",
-      "finish": "Terminar",
-      "saving": "Guardando..."
     }
   },
   "home": {
@@ -936,5 +970,86 @@
       "classes": "Clases"
     },
     "noEvents": "No se encontraron eventos"
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Entrevista AI - Mundo Tango Talent Match",
+        "description": "Completa tu entrevista de voluntario con Mr Blue AI para ser emparejado con las oportunidades perfectas."
+      },
+      "pageTitle": "Entrevista AI",
+      "phases": {
+        "resume": "Fase 1: Profundización del Currículum",
+        "work": "Fase 2: Asignación de Trabajo",
+        "complete": "¡Entrevista Completa!"
+      },
+      "phaseLabels": {
+        "resume": "Currículum",
+        "workAssignment": "Asignación de Trabajo"
+      },
+      "progress": {
+        "questionOf": "Pregunta {{current}} de {{total}}",
+        "allQuestionsAnswered": "Todas las preguntas respondidas"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Tipo de archivo no válido",
+          "description": "Por favor, sube PDF, DOCX o TXT"
+        },
+        "resumeParsed": {
+          "title": "¡Currículum analizado!",
+          "description": "El Sr. Blue ahora puede leer el contenido de tu currículum."
+        },
+        "uploadFailed": {
+          "title": "Error al subir",
+          "description": "Por favor, intenta de nuevo"
+        },
+        "missingSession": {
+          "title": "Sesión faltante",
+          "description": "Por favor, comienza desde la página de Coincidencia de Talento"
+        },
+        "error": {
+          "title": "Error",
+          "description": "No se pudo procesar tu respuesta"
+        }
+      },
+      "resumeBanner": {
+        "title": "Contenido del currículum no disponible",
+        "description": "Vuelve a subir tu currículum para que el Sr. Blue pueda leer y referenciar tu experiencia.",
+        "parsing": "Analizando...",
+        "reupload": "Volver a subir"
+      },
+      "buttons": {
+        "viewDashboard": "Ver Panel de Control H2AC",
+        "goHome": "Ir a Inicio"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "¡Hola! He revisado tu experiencia. ¿Cuál dirías que es la habilidad técnica en la que te sientes más seguro?",
+          "q2": "¿Qué tecnologías o herramientas disfrutas usar más?",
+          "q3": "¿Hay alguna habilidad en tu currículum que te gustaría utilizar más en el trabajo voluntario?",
+          "q4": "¿Qué áreas del desarrollo de software te interesan más en este momento?",
+          "q5": "¿Has trabajado en algún proyecto de código abierto o iniciativas comunitarias antes?",
+          "q6": "¿Cuál es tu estilo de trabajo preferido: te gusta trabajar de forma independiente o en colaboración?",
+          "q7": "¿Cómo sueles abordar el aprendizaje de nuevas tecnologías?",
+          "q8": "¿Qué tipo de impacto esperas tener a través del trabajo voluntario?",
+          "q9": "¡Genial! Antes de pasar a discutir oportunidades específicas, ¿hay algo más sobre tu experiencia que te gustaría resaltar?"
+        },
+        "work": {
+          "q1": "Ahora hablemos sobre cómo puedes contribuir a Mundo Tango. ¿Qué área te interesa más: frontend, backend, IA/ML, o algo más?",
+          "q2": "Mundo Tango conecta a la comunidad global del tango. ¿Qué características te emocionaría ayudar a construir?",
+          "q3": "Tenemos oportunidades de voluntariado tanto técnicas como no técnicas. ¿Qué tipo de trabajo te energiza más?",
+          "q4": "¿Cuánto tiempo por semana podrías comprometerte realísticamente al trabajo voluntario?",
+          "q5": "¿Prefieres trabajar de forma independiente o como parte de un equipo?",
+          "q6": "¿Te sientes cómodo con la programación en pareja o las revisiones de código?",
+          "q7": "¿Cuál es tu experiencia con el desarrollo ágil/basado en sprints?",
+          "q8": "Usamos GitHub para la colaboración. ¿Te sientes cómodo con los flujos de trabajo de Git?",
+          "q9": "¿Preferirías trabajar en nuevas características, correcciones de errores o documentación?",
+          "q10": "Finalmente, ¿cuál es la mejor manera de comunicarme contigo: Slack, correo electrónico o el mensajería de nuestra plataforma?"
+        },
+        "phaseTransition": "¡Excelente! Ahora tengo una gran comprensión de tu experiencia y antecedentes. Pasemos a la Fase 2 donde discutiremos formas específicas en las que puedes contribuir a Mundo Tango.",
+        "processingError": "Lo siento, pero tuve problemas para procesar eso. ¿Podrías intentar de nuevo?"
+      }
+    }
   }
 }

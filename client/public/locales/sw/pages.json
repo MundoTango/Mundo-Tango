@@ -896,81 +896,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "Mahojiano ya AI - Ulinganifu wa Talanta wa Mundo Tango",
+        "description": "Kamilisha mahojiano yako ya kujitolea na Bwana Blue AI ili upate ulinganifu na fursa bora."
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "Mahojiano ya AI",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "Awamu ya 1: Uchambuzi wa Wasifu",
+        "work": "Awamu ya 2: Ulinganifu wa Kazi",
+        "complete": "Mahojiano Yamekamilika!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "Wasifu",
+        "workAssignment": "Kazi"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Swali {{current}} la {{total}}",
+        "allQuestionsAnswered": "Maswali yote yamejibiwa"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Aina ya faili si sahihi",
+          "description": "Tafadhali pakia PDF, DOCX, au TXT"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "Wasifu umechambuliwa!",
+          "description": "Bwana Blue sasa anaweza kusoma maudhui ya wasifu wako."
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Pakia ilishindikana",
+          "description": "Tafadhali jaribu tena"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Kikao hakipo",
+          "description": "Tafadhali anza kutoka kwenye ukurasa wa Ulinganifu wa Talanta"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Kosa",
+          "description": "Imeshindikana kushughulikia jibu lako"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Maudhui ya wasifu hayapatikani",
+        "description": "Pakia tena wasifu wako ili Bwana Blue aweze kusoma na kurejelea uzoefu wako.",
+        "parsing": "Inachambuliwa...",
+        "reupload": "Pakia tena"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "Tazama Dashibodi ya H2AC",
+        "goHome": "Rudi Nyumbani"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Habari! Nimeangalia historia yako. Ungeweza kusema ni ujuzi gani wa kiufundi unaojiamini zaidi?",
+          "q2": "Ni teknolojia au zana gani unazofurahia kufanya kazi nazo zaidi?",
+          "q3": "Je, kuna ujuzi wowote kwenye wasifu wako ungependa kutumia zaidi katika kazi za kujitolea?",
+          "q4": "Ni maeneo gani ya maendeleo ya programu yanayokuvutia zaidi kwa sasa?",
+          "q5": "Je, umewahi kufanya kazi kwenye miradi ya chanzo wazi au mipango ya jamii hapo awali?",
+          "q6": "Ni mtindo gani wa kazi unayopendelea - unafurahia kazi huru au ushirikiano?",
+          "q7": "Unakaribia vipi kujifunza teknolojia mpya?",
+          "q8": "Ni aina gani ya athari unatarajia kufanya kupitia kazi za kujitolea?",
+          "q9": "Nzuri! Kabla hatujaenda kwenye kujadili fursa maalum, je, kuna jambo lolote kuhusu historia yako ungependa kusisitiza?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Sasa hebu tuzungumze kuhusu jinsi unavyoweza kuchangia katika Mundo Tango! Ni eneo gani linakuvutia zaidi: frontend, backend, AI/ML, au kitu kingine?",
+          "q2": "Mundo Tango inachanganya jamii ya tango duniani. Ni vipengele gani ungefurahia kusaidia kujenga?",
+          "q3": "Tuna fursa za kujitolea za kiufundi na zisizo za kiufundi. Ni aina gani ya kazi inayokupa nguvu zaidi?",
+          "q4": "Ni muda gani kwa wiki unaweza kujitolea kwa kazi za kujitolea kwa njia halisi?",
+          "q5": "Je, unapendelea kufanya kazi kwa uhuru au kama sehemu ya timu?",
+          "q6": "Je, uko tayari na programu ya pamoja au mapitio ya msimbo?",
+          "q7": "Ni uzoefu gani unao nao na maendeleo ya agile/sprint?",
+          "q8": "Tunatumia GitHub kwa ushirikiano. Je, uko tayari na michakato ya Git?",
+          "q9": "Je, ungependa kufanya kazi kwenye vipengele vipya, kurekebisha makosa, au nyaraka?",
+          "q10": "Hatimaye, ni njia ipi bora ya kuwasiliana nawe - Slack, barua pepe, au ujumbe wa jukwaa letu?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Nzuri! Sasa ninaelewa vizuri historia yako na uzoefu. Hebu tuende kwenye Awamu ya 2 ambapo tutajadili njia maalum unavyoweza kuchangia katika Mundo Tango.",
+        "processingError": "Samahani, lakini nilikuwa na shida katika kuchakata hiyo. Tafadhali jaribu tena."
       }
     }
   }

@@ -892,5 +892,86 @@
       "analytics": "Analitik",
       "settings": "Tetapan"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Temu Duga AI - Padanan Bakat Mundo Tango",
+        "description": "Lengkapkan temu duga sukarelawan anda dengan Encik Blue AI untuk dipadankan dengan peluang yang sempurna."
+      },
+      "pageTitle": "Temu Duga AI",
+      "phases": {
+        "resume": "Fasa 1: Penyelaman Mendalam Resume",
+        "work": "Fasa 2: Padanan Tugas Kerja",
+        "complete": "Temu duga selesai!"
+      },
+      "phaseLabels": {
+        "resume": "Resume",
+        "workAssignment": "Tugasan Kerja"
+      },
+      "progress": {
+        "questionOf": "Soalan {{current}} daripada {{total}}",
+        "allQuestionsAnswered": "Semua soalan telah dijawab"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Jenis fail tidak sah",
+          "description": "Sila muat naik PDF, DOCX, atau TXT"
+        },
+        "resumeParsed": {
+          "title": "Resume telah diproses!",
+          "description": "Encik Blue kini boleh membaca kandungan resume anda."
+        },
+        "uploadFailed": {
+          "title": "Muat naik gagal",
+          "description": "Sila cuba lagi"
+        },
+        "missingSession": {
+          "title": "Sesi hilang",
+          "description": "Sila mulakan dari halaman Padanan Bakat"
+        },
+        "error": {
+          "title": "Ralat",
+          "description": "Gagal memproses respons anda"
+        }
+      },
+      "resumeBanner": {
+        "title": "Kandungan resume tidak tersedia",
+        "description": "Muat naik semula resume anda supaya Encik Blue boleh membaca dan merujuk pengalaman anda.",
+        "parsing": "Memproses...",
+        "reupload": "Muat naik semula"
+      },
+      "buttons": {
+        "viewDashboard": "Lihat Papan Pemuka H2AC",
+        "goHome": "Pergi ke Halaman Utama"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Hai! Saya telah menyemak latar belakang anda. Apa yang anda katakan adalah kemahiran teknikal yang paling anda yakini?",
+          "q2": "Teknologi atau alat apa yang paling anda suka bekerja dengan?",
+          "q3": "Adakah terdapat kemahiran dalam resume anda yang ingin anda gunakan lebih dalam kerja sukarela?",
+          "q4": "Apakah bidang pembangunan perisian yang paling menarik minat anda sekarang?",
+          "q5": "Adakah anda pernah bekerja pada sebarang projek sumber terbuka atau inisiatif komuniti sebelum ini?",
+          "q6": "Apakah gaya kerja yang anda suka - adakah anda lebih suka kerja secara bebas atau kolaborasi?",
+          "q7": "Bagaimana anda biasanya mendekati pembelajaran teknologi baru?",
+          "q8": "Apakah jenis impak yang anda harapkan dapat dicapai melalui kerja sukarela?",
+          "q9": "Bagus! Sebelum kita bercakap tentang peluang tertentu, adakah terdapat apa-apa lagi tentang latar belakang anda yang ingin anda ketengahkan?"
+        },
+        "work": {
+          "q1": "Sekarang mari kita bincangkan bagaimana anda boleh menyumbang kepada Mundo Tango! Bidang manakah yang paling menarik minat anda: frontend, backend, AI/ML, atau sesuatu yang lain?",
+          "q2": "Mundo Tango menghubungkan komuniti tango global. Apakah ciri-ciri yang anda teruja untuk membantu membangunkannya?",
+          "q3": "Kami mempunyai peluang sukarela yang teknikal dan bukan teknikal. Apakah jenis kerja yang paling memberi tenaga kepada anda?",
+          "q4": "Berapa banyak masa setiap minggu yang anda boleh komited untuk kerja sukarela secara realistik?",
+          "q5": "Adakah anda lebih suka bekerja secara bebas atau sebagai sebahagian daripada pasukan?",
+          "q6": "Adakah anda selesa dengan pengaturcaraan pasangan atau semakan kod?",
+          "q7": "Apakah pengalaman anda dengan pembangunan berasaskan agile/sprint?",
+          "q8": "Kami menggunakan GitHub untuk kolaborasi. Adakah anda selesa dengan aliran kerja Git?",
+          "q9": "Adakah anda lebih suka bekerja pada ciri baru, pembetulan pepijat, atau dokumentasi?",
+          "q10": "Akhirnya, apakah cara terbaik untuk berkomunikasi dengan anda - Slack, email, atau mesej platform kami?"
+        },
+        "phaseTransition": "Cemerlang! Saya kini mempunyai pemahaman yang baik tentang latar belakang dan pengalaman anda. Mari kita bergerak ke Fasa 2 di mana kita akan membincangkan cara tertentu anda boleh menyumbang kepada Mundo Tango.",
+        "processingError": "Saya minta maaf, tetapi saya menghadapi masalah untuk memproses itu. Bolehkah anda cuba lagi?"
+      }
+    }
   }
 }

@@ -353,7 +353,7 @@
       "items": {
         "fitness_gym": "Sporto salė ir svoriai",
         "fitness_running": "Bėgimas",
-        "fitness_crossfit": "CrossFit",
+        "fitness_crossfit": "Krosfitas",
         "fitness_martial_arts": "Kovos menai",
         "fitness_tennis": "Tenisas",
         "fitness_soccer": "Futbolas",
@@ -891,6 +891,87 @@
       "reports": "Ataskaitos",
       "analytics": "Analitika",
       "settings": "Nustatymai"
+    }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI interviu - Mundo Tango Talent Match",
+        "description": "Baigkite savo savanorių interviu su Mr Blue AI, kad gautumėte tinkamiausias galimybes."
+      },
+      "pageTitle": "AI interviu",
+      "phases": {
+        "resume": "1 etapas: Gyvenimo aprašymo analizė",
+        "work": "2 etapas: Darbo užduočių derinimas",
+        "complete": "Interviu baigtas!"
+      },
+      "phaseLabels": {
+        "resume": "Gyvenimo aprašymas",
+        "workAssignment": "Darbo užduotis"
+      },
+      "progress": {
+        "questionOf": "Klausimas {{current}} iš {{total}}",
+        "allQuestionsAnswered": "Visi klausimai atsakyti"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Neteisingas failo tipas",
+          "description": "Prašome įkelti PDF, DOCX arba TXT"
+        },
+        "resumeParsed": {
+          "title": "Gyvenimo aprašymas apdorotas!",
+          "description": "Mr. Blue dabar gali perskaityti jūsų gyvenimo aprašymo turinį."
+        },
+        "uploadFailed": {
+          "title": "Įkėlimas nepavyko",
+          "description": "Prašome bandyti dar kartą"
+        },
+        "missingSession": {
+          "title": "Trūksta sesijos",
+          "description": "Prašome pradėti nuo Talent Match puslapio"
+        },
+        "error": {
+          "title": "Klaida",
+          "description": "Nepavyko apdoroti jūsų atsakymo"
+        }
+      },
+      "resumeBanner": {
+        "title": "Gyvenimo aprašymo turinys nėra prieinamas",
+        "description": "Pakartotinai įkelkite savo gyvenimo aprašymą, kad ponas Blue galėtų perskaityti ir remtis jūsų patirtimi.",
+        "parsing": "Analizuojama...",
+        "reupload": "Pakartotinai įkelti"
+      },
+      "buttons": {
+        "viewDashboard": "Peržiūrėti H2AC valdymo skydelį",
+        "goHome": "Grįžti namo"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Sveiki! Aš peržiūrėjau jūsų patirtį. Koks techninis įgūdis jums yra pats patikimiausias?",
+          "q2": "Kokios technologijos ar įrankiai jums labiausiai patinka dirbti?",
+          "q3": "Ar yra įgūdžių jūsų gyvenimo aprašyme, kuriuos norėtumėte labiau panaudoti savanoriškoje veikloje?",
+          "q4": "Kokios programinės įrangos kūrimo sritys jus šiuo metu labiausiai domina?",
+          "q5": "Ar anksčiau dirbote su atvirojo kodo projektais ar bendruomenės iniciatyvomis?",
+          "q6": "Koks jūsų pageidaujamas darbo stilius - ar jums patinka nepriklausomas darbas, ar bendradarbiavimas?",
+          "q7": "Kaip paprastai priimate naujų technologijų mokymąsi?",
+          "q8": "Kokį poveikį tikitės padaryti per savanorišką veiklą?",
+          "q9": "Puiku! Prieš pereinant prie konkrečių galimybių aptarimo, ar yra kas nors kito apie jūsų patirtį, ką norėtumėte pabrėžti?"
+        },
+        "work": {
+          "q1": "Dabar pakalbėkime apie tai, kaip galite prisidėti prie Mundo Tango! Kuri sritis jus labiausiai domina: frontend, backend, AI/ML, ar kažkas kito?",
+          "q2": "Mundo Tango sujungia pasaulinę tango bendruomenę. Kokias funkcijas norėtumėte padėti kurti?",
+          "q3": "Mes turime tiek techninių, tiek netechninių savanoriškų galimybių. Koks darbo tipas jums suteikia energijos?",
+          "q4": "Kiek laiko per savaitę realiai galėtumėte skirti savanoriškam darbui?",
+          "q5": "Ar jums labiau patinka dirbti savarankiškai ar komandoje?",
+          "q6": "Ar jums patogu dirbti porose arba atlikti kodo peržiūras?",
+          "q7": "Kokia jūsų patirtis su agiliu/sprintiniu vystymu?",
+          "q8": "Mes naudojame GitHub bendradarbiavimui. Ar jums patogu dirbti su Git darbo srautais?",
+          "q9": "Ar jums labiau patiktų dirbti su naujomis funkcijomis, klaidų taisymu ar dokumentacija?",
+          "q10": "Galiausiai, koks geriausias būdas su jumis bendrauti - Slack, el. paštas ar mūsų platformos žinutės?"
+        },
+        "phaseTransition": "Puiku! Dabar turiu gerą supratimą apie jūsų patirtį ir foną. Pereikime prie 2 etapo, kur aptarsime konkrečius būdus, kaip galite prisidėti prie Mundo Tango.",
+        "processingError": "Atsiprašau, bet man kilo sunkumų tai apdorojant. Ar galėtumėte pabandyti dar kartą?"
+      }
     }
   }
 }

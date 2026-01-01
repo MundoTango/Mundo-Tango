@@ -374,7 +374,7 @@
         "yoga_breathwork": "Légzőgyakorlatok",
         "music_listening": "Zenehallgatás",
         "music_concerts": "Élő Koncertek",
-        "music_piano": "Piano",
+        "music_piano": "Zongora",
         "music_guitar": "Gitár",
         "music_singing": "Éneklés",
         "music_dj": "DJ-zés",
@@ -891,6 +891,87 @@
       "reports": "Jelentések",
       "analytics": "Elemzések",
       "settings": "Beállítások"
+    }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Interjú - Mundo Tango Tehetség Találkozó",
+        "description": "Fejezze be önkéntes interjúját Mr Blue AI-vel, hogy a tökéletes lehetőségekkel párosítsák."
+      },
+      "pageTitle": "AI Interjú",
+      "phases": {
+        "resume": "1. fázis: Önéletrajz mélyreható elemzése",
+        "work": "2. fázis: Munkafeladat párosítás",
+        "complete": "Interjú befejezve!"
+      },
+      "phaseLabels": {
+        "resume": "Önéletrajz",
+        "workAssignment": "Munkafeladat"
+      },
+      "progress": {
+        "questionOf": "Kérdés {{current}} a {{total}}-ból",
+        "allQuestionsAnswered": "Minden kérdés megválaszolva"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Érvénytelen fájltípus",
+          "description": "Kérjük, töltsön fel PDF, DOCX vagy TXT fájlt"
+        },
+        "resumeParsed": {
+          "title": "Önéletrajz feldolgozva!",
+          "description": "Mr. Blue most már olvashatja az önéletrajzod tartalmát."
+        },
+        "uploadFailed": {
+          "title": "Feltöltés sikertelen",
+          "description": "Kérlek, próbáld újra"
+        },
+        "missingSession": {
+          "title": "Hiányzó munkamenet",
+          "description": "Kérlek, a Talent Match oldalról kezdj"
+        },
+        "error": {
+          "title": "Hiba",
+          "description": "Sikertelen a válaszod feldolgozása"
+        }
+      },
+      "resumeBanner": {
+        "title": "Az önéletrajz tartalma nem elérhető",
+        "description": "Feltöltsd újra az önéletrajzodat, hogy Mr. Blue olvashassa és hivatkozhasson a tapasztalataidra.",
+        "parsing": "Elemzés...",
+        "reupload": "Feltöltés újra"
+      },
+      "buttons": {
+        "viewDashboard": "H2AC irányítópult megtekintése",
+        "goHome": "Hazamenni"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Szia! Áttekintettem a háttered. Mit mondanál, melyik technikai készségben vagy a legmagabiztosabb?",
+          "q2": "Mely technológiákkal vagy eszközökkel szeretsz a legjobban dolgozni?",
+          "q3": "Vannak olyan készségek az önéletrajzodban, amelyeket szívesebben használnál önkéntes munkában?",
+          "q4": "Mely szoftverfejlesztési területek érdekelnek a legjobban jelenleg?",
+          "q5": "Dolgoztál már nyílt forráskódú projekteken vagy közösségi kezdeményezéseken korábban?",
+          "q6": "Mi a preferált munkastílusod - szeretsz függetlenül dolgozni vagy együttműködni?",
+          "q7": "Hogyan közelíted meg általában az új technológiák tanulását?",
+          "q8": "Milyen hatást szeretnél gyakorolni az önkéntes munkádon keresztül?",
+          "q9": "Nagyszerű! Mielőtt a konkrét lehetőségekről beszélnénk, van-e bármi más a hátteredben, amit szeretnél kiemelni?"
+        },
+        "work": {
+          "q1": "Most beszéljünk arról, hogyan tudnál hozzájárulni a Mundo Tangóhoz! Melyik terület érdekel a legjobban: frontend, backend, AI/ML, vagy valami más?",
+          "q2": "A Mundo Tango összeköti a globális tango közösséget. Milyen funkciók megépítésében örülnél, ha segíthetnél?",
+          "q3": "Mind technikai, mind nem technikai önkéntes lehetőségeink vannak. Milyen típusú munka energizál a legjobban?",
+          "q4": "Mennyi időt tudnál reálisan heti szinten önkéntes munkára szánni?",
+          "q5": "Inkább önállóan dolgozol, vagy csapatban?",
+          "q6": "Kényelmesen érzed magad a párprogramozásban vagy a kódellenőrzések során?",
+          "q7": "Mi a tapasztalatod az agilis/sprint-alapú fejlesztéssel kapcsolatban?",
+          "q8": "A GitHub-ot használjuk az együttműködéshez. Kényelmesen boldogulsz a Git munkafolyamatokkal?",
+          "q9": "Inkább új funkciókon, hibajavításokon vagy dokumentáción szeretnél dolgozni?",
+          "q10": "Végül, mi a legjobb módja a kommunikációnak veled - Slack, e-mail vagy a platformunk üzenetküldése?"
+        },
+        "phaseTransition": "Kiváló! Most már jól értem a hátteredet és tapasztalataidat. Lépjünk a 2. fázisba, ahol megbeszéljük, hogy milyen konkrét módon tudsz hozzájárulni a Mundo Tangóhoz.",
+        "processingError": "Elnézést, de problémám akadt ezzel. Kérlek, próbáld meg újra!"
+      }
     }
   }
 }

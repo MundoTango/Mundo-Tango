@@ -932,5 +932,86 @@
     "search": "Caută profesioniști...",
     "filterByRole": "Filtrează după rol",
     "filterByCity": "Filtrează după oraș"
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Interviu AI - Mundo Tango Talent Match",
+        "description": "Completează interviul tău de voluntariat cu Mr Blue AI pentru a fi potrivit cu oportunitățile perfecte."
+      },
+      "pageTitle": "Interviu AI",
+      "phases": {
+        "resume": "Faza 1: Analiză detaliată a CV-ului",
+        "work": "Faza 2: Potrivirea sarcinilor de lucru",
+        "complete": "Interviu complet!"
+      },
+      "phaseLabels": {
+        "resume": "CV",
+        "workAssignment": "Sarcină de lucru"
+      },
+      "progress": {
+        "questionOf": "Întrebarea {{current}} din {{total}}",
+        "allQuestionsAnswered": "Toate întrebările au fost răspunse"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Tip de fișier invalid",
+          "description": "Vă rugăm să încărcați PDF, DOCX sau TXT"
+        },
+        "resumeParsed": {
+          "title": "CV-ul a fost analizat!",
+          "description": "Dl. Blue poate acum să citească conținutul CV-ului dumneavoastră."
+        },
+        "uploadFailed": {
+          "title": "Încărcarea a eșuat",
+          "description": "Vă rugăm să încercați din nou"
+        },
+        "missingSession": {
+          "title": "Sesiune lipsă",
+          "description": "Vă rugăm să începeți de pe pagina Talent Match"
+        },
+        "error": {
+          "title": "Eroare",
+          "description": "Nu s-a reușit procesarea răspunsului dumneavoastră"
+        }
+      },
+      "resumeBanner": {
+        "title": "Conținutul CV-ului nu este disponibil",
+        "description": "Reîncărcați CV-ul dumneavoastră astfel încât Dl. Blue să poată citi și face referire la experiența dumneavoastră.",
+        "parsing": "Se analizează...",
+        "reupload": "Reîncărcați"
+      },
+      "buttons": {
+        "viewDashboard": "Vizualizați tabloul de bord H2AC",
+        "goHome": "Înapoi acasă"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Bună! Am revizuit background-ul dumneavoastră. Ce ați spune că este abilitatea tehnică în care aveți cea mai mare încredere?",
+          "q2": "Ce tehnologii sau instrumente îți place cel mai mult să folosești?",
+          "q3": "Există abilități din CV-ul tău pe care ai dori să le folosești mai mult în activități de voluntariat?",
+          "q4": "Ce domenii ale dezvoltării software te interesează cel mai mult în acest moment?",
+          "q5": "Ai lucrat vreodată la proiecte open source sau inițiative comunitare?",
+          "q6": "Care este stilul tău preferat de lucru - îți place să lucrezi independent sau în colaborare?",
+          "q7": "Cum abordezi de obicei învățarea de noi tehnologii?",
+          "q8": "Ce fel de impact speri să ai prin activități de voluntariat?",
+          "q9": "Excelent! Înainte să discutăm despre oportunități specifice, există ceva despre background-ul tău pe care ai dori să evidențiezi?"
+        },
+        "work": {
+          "q1": "Acum să discutăm despre cum poți contribui la Mundo Tango! Ce domeniu te interesează cel mai mult: frontend, backend, AI/ML sau altceva?",
+          "q2": "Mundo Tango conectează comunitatea globală de tango. Ce funcționalități ai fi entuziasmat să ajuți la construirea lor?",
+          "q3": "Avem atât oportunități de voluntariat tehnice, cât și non-tehnice. Ce tip de muncă te energizează cel mai mult?",
+          "q4": "Cât timp pe săptămână ai putea să te angajezi realist în activități de voluntariat?",
+          "q5": "Preferi să lucrezi independent sau ca parte a unei echipe?",
+          "q6": "Te simți confortabil cu programarea în pereche sau cu revizuirile de cod?",
+          "q7": "Care este experiența ta cu dezvoltarea agile/bazată pe sprint?",
+          "q8": "Folosim GitHub pentru colaborare. Te simți confortabil cu fluxurile de lucru Git?",
+          "q9": "Ai prefera să lucrezi la funcționalități noi, corecturi de erori sau documentație?",
+          "q10": "În cele din urmă, care este cea mai bună modalitate de a comunica cu tine - Slack, email sau mesageria platformei noastre?"
+        },
+        "phaseTransition": "Excelent! Acum am o înțelegere bună a background-ului și experienței tale. Să trecem la Faza 2, unde vom discuta modalități specifice prin care poți contribui la Mundo Tango.",
+        "processingError": "Îmi pare rău, dar am avut dificultăți în a procesa asta. Ai putea, te rog, să încerci din nou?"
+      }
+    }
   }
 }

@@ -932,5 +932,86 @@
     "search": "Profis suchen...",
     "filterByRole": "Nach Rolle filtern",
     "filterByCity": "Nach Stadt filtern"
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "KI-Interview - Mundo Tango Talent Match",
+        "description": "Vervollständigen Sie Ihr Freiwilligeninterview mit Mr Blue AI, um mit den perfekten Möglichkeiten matched zu werden."
+      },
+      "pageTitle": "KI-Interview",
+      "phases": {
+        "resume": "Phase 1: Lebenslauf-Analyse",
+        "work": "Phase 2: Zuordnung der Arbeitsaufträge",
+        "complete": "Interview abgeschlossen!"
+      },
+      "phaseLabels": {
+        "resume": "Lebenslauf",
+        "workAssignment": "Arbeitsauftrag"
+      },
+      "progress": {
+        "questionOf": "Frage {{current}} von {{total}}",
+        "allQuestionsAnswered": "Alle Fragen beantwortet"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Ungültiger Dateityp",
+          "description": "Bitte laden Sie PDF, DOCX oder TXT hoch"
+        },
+        "resumeParsed": {
+          "title": "Lebenslauf analysiert!",
+          "description": "Mr. Blue kann jetzt den Inhalt Ihres Lebenslaufs lesen."
+        },
+        "uploadFailed": {
+          "title": "Upload fehlgeschlagen",
+          "description": "Bitte versuchen Sie es erneut"
+        },
+        "missingSession": {
+          "title": "Fehlende Sitzung",
+          "description": "Bitte beginnen Sie von der Talent Match-Seite"
+        },
+        "error": {
+          "title": "Fehler",
+          "description": "Fehler beim Verarbeiten Ihrer Antwort"
+        }
+      },
+      "resumeBanner": {
+        "title": "Lebenslauf-Inhalt nicht verfügbar",
+        "description": "Laden Sie Ihren Lebenslauf erneut hoch, damit Herr Blau Ihre Erfahrungen lesen und darauf verweisen kann.",
+        "parsing": "Wird analysiert...",
+        "reupload": "Erneut hochladen"
+      },
+      "buttons": {
+        "viewDashboard": "H2AC-Dashboard anzeigen",
+        "goHome": "Nach Hause gehen"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Hallo! Ich habe Ihren Hintergrund überprüft. Was würden Sie sagen, ist die technische Fähigkeit, in der Sie am meisten Vertrauen haben?",
+          "q2": "Mit welchen Technologien oder Werkzeugen arbeiten Sie am liebsten?",
+          "q3": "Gibt es Fähigkeiten in Ihrem Lebenslauf, die Sie gerne mehr in der Freiwilligenarbeit einsetzen würden?",
+          "q4": "Welche Bereiche der Softwareentwicklung interessieren Sie momentan am meisten?",
+          "q5": "Haben Sie zuvor an Open-Source-Projekten oder Gemeinschaftsinitiativen gearbeitet?",
+          "q6": "Was ist Ihr bevorzugter Arbeitsstil - arbeiten Sie gerne unabhängig oder in Zusammenarbeit?",
+          "q7": "Wie gehen Sie normalerweise daran, neue Technologien zu lernen?",
+          "q8": "Welchen Einfluss hoffen Sie durch Freiwilligenarbeit zu erzielen?",
+          "q9": "Großartig! Bevor wir über spezifische Möglichkeiten sprechen, gibt es noch etwas über Ihren Hintergrund, das Sie hervorheben möchten?"
+        },
+        "work": {
+          "q1": "Lassen Sie uns jetzt darüber sprechen, wie Sie zu Mundo Tango beitragen können! Welcher Bereich interessiert Sie am meisten: Frontend, Backend, KI/ML oder etwas anderes?",
+          "q2": "Mundo Tango verbindet die globale Tango-Community. Welche Funktionen würden Sie begeistert helfen zu entwickeln?",
+          "q3": "Wir haben sowohl technische als auch nicht-technische Freiwilligenmöglichkeiten. Welche Art von Arbeit motiviert Sie am meisten?",
+          "q4": "Wie viel Zeit pro Woche könnten Sie realistisch für Freiwilligenarbeit aufbringen?",
+          "q5": "Arbeiten Sie lieber unabhängig oder im Team?",
+          "q6": "Fühlen Sie sich wohl mit Pair Programming oder Code-Reviews?",
+          "q7": "Wie ist Ihre Erfahrung mit agilem/sprintbasiertem Entwickeln?",
+          "q8": "Wir verwenden GitHub zur Zusammenarbeit. Fühlen Sie sich mit Git-Workflows wohl?",
+          "q9": "Würden Sie es vorziehen, an neuen Funktionen, Fehlerbehebungen oder Dokumentationen zu arbeiten?",
+          "q10": "Schließlich, was ist der beste Weg, um mit Ihnen zu kommunizieren - Slack, E-Mail oder unsere Plattformnachrichten?"
+        },
+        "phaseTransition": "Ausgezeichnet! Ich habe jetzt ein gutes Verständnis für Ihren Hintergrund und Ihre Erfahrungen. Lassen Sie uns zu Phase 2 übergehen, in der wir spezifische Möglichkeiten besprechen, wie Sie zu Mundo Tango beitragen können.",
+        "processingError": "Es tut mir leid, aber ich hatte Schwierigkeiten, das zu verarbeiten. Könnten Sie es bitte noch einmal versuchen?"
+      }
+    }
   }
 }

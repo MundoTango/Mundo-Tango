@@ -942,5 +942,86 @@
     "search": "Rechercher des professionnels...",
     "filterByRole": "Filtrer par rôle",
     "filterByCity": "Filtrer par ville"
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Entretien IA - Mundo Tango Talent Match",
+        "description": "Complétez votre entretien de bénévolat avec M. Blue IA pour être mis en relation avec les opportunités parfaites."
+      },
+      "pageTitle": "Entretien IA",
+      "phases": {
+        "resume": "Phase 1 : Plongée dans le CV",
+        "work": "Phase 2 : Correspondance des missions de travail",
+        "complete": "Entretien terminé !"
+      },
+      "phaseLabels": {
+        "resume": "CV",
+        "workAssignment": "Mission de travail"
+      },
+      "progress": {
+        "questionOf": "Question {{current}} sur {{total}}",
+        "allQuestionsAnswered": "Toutes les questions ont été répondues"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Type de fichier invalide",
+          "description": "Veuillez télécharger un PDF, DOCX ou TXT"
+        },
+        "resumeParsed": {
+          "title": "CV analysé !",
+          "description": "M. Blue peut maintenant lire le contenu de votre CV."
+        },
+        "uploadFailed": {
+          "title": "Échec du téléchargement",
+          "description": "Veuillez réessayer"
+        },
+        "missingSession": {
+          "title": "Session manquante",
+          "description": "Veuillez commencer à partir de la page Talent Match"
+        },
+        "error": {
+          "title": "Erreur",
+          "description": "Échec du traitement de votre réponse"
+        }
+      },
+      "resumeBanner": {
+        "title": "Contenu du CV non disponible",
+        "description": "Téléchargez à nouveau votre CV afin que M. Blue puisse lire et se référer à votre expérience.",
+        "parsing": "Analyse en cours...",
+        "reupload": "Télécharger à nouveau"
+      },
+      "buttons": {
+        "viewDashboard": "Voir le tableau de bord H2AC",
+        "goHome": "Retour à l'accueil"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Bonjour ! J'ai examiné votre parcours. Quelle serait selon vous la compétence technique dans laquelle vous êtes le plus confiant ?",
+          "q2": "Quelles technologies ou outils aimez-vous le plus utiliser ?",
+          "q3": "Y a-t-il des compétences sur votre CV que vous aimeriez utiliser davantage dans le bénévolat ?",
+          "q4": "Quels domaines du développement logiciel vous intéressent le plus en ce moment ?",
+          "q5": "Avez-vous déjà travaillé sur des projets open source ou des initiatives communautaires auparavant ?",
+          "q6": "Quel est votre style de travail préféré - aimez-vous le travail indépendant ou la collaboration ?",
+          "q7": "Comment abordez-vous généralement l'apprentissage de nouvelles technologies ?",
+          "q8": "Quel type d'impact espérez-vous avoir grâce au bénévolat ?",
+          "q9": "Super ! Avant de passer à la discussion des opportunités spécifiques, y a-t-il autre chose concernant votre parcours que vous aimeriez mettre en avant ?"
+        },
+        "work": {
+          "q1": "Parlons maintenant de la manière dont vous pouvez contribuer à Mundo Tango ! Quel domaine vous intéresse le plus : frontend, backend, IA/ML, ou autre chose ?",
+          "q2": "Mundo Tango connecte la communauté mondiale du tango. Quelles fonctionnalités seriez-vous enthousiaste à l'idée d'aider à construire ?",
+          "q3": "Nous avons des opportunités de bénévolat techniques et non techniques. Quel type de travail vous dynamise le plus ?",
+          "q4": "Combien de temps par semaine pourriez-vous raisonnablement consacrer au bénévolat ?",
+          "q5": "Préférez-vous travailler de manière indépendante ou en équipe ?",
+          "q6": "Êtes-vous à l'aise avec la programmation en binôme ou les revues de code ?",
+          "q7": "Quelle est votre expérience avec le développement agile basé sur des sprints ?",
+          "q8": "Nous utilisons GitHub pour la collaboration. Êtes-vous à l'aise avec les flux de travail Git ?",
+          "q9": "Préféreriez-vous travailler sur de nouvelles fonctionnalités, des corrections de bugs ou de la documentation ?",
+          "q10": "Enfin, quel est le meilleur moyen de communiquer avec vous - Slack, email, ou la messagerie de notre plateforme ?"
+        },
+        "phaseTransition": "Excellent ! J'ai maintenant une bonne compréhension de votre parcours et de votre expérience. Passons à la Phase 2 où nous discuterons des moyens spécifiques par lesquels vous pouvez contribuer à Mundo Tango.",
+        "processingError": "Je m'excuse, mais j'ai eu des difficultés à traiter cela. Pourriez-vous réessayer, s'il vous plaît ?"
+      }
+    }
   }
 }

@@ -892,5 +892,86 @@
       "analytics": "Analitika",
       "settings": "Mga Setting"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Interview - Mundo Tango Talent Match",
+        "description": "Kumpletuhin ang iyong volunteer interview kasama si Mr Blue AI upang makakuha ng tamang pagkakataon."
+      },
+      "pageTitle": "AI Interview",
+      "phases": {
+        "resume": "Yugto 1: Malalim na Pagsusuri ng Resume",
+        "work": "Yugto 2: Pagtutugma ng Trabaho",
+        "complete": "Natapos ang Interview!"
+      },
+      "phaseLabels": {
+        "resume": "Resume",
+        "workAssignment": "Pagtatalaga ng Trabaho"
+      },
+      "progress": {
+        "questionOf": "Tanong {{current}} ng {{total}}",
+        "allQuestionsAnswered": "Lahat ng tanong ay nasagot"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Hindi wastong uri ng file",
+          "description": "Mangyaring mag-upload ng PDF, DOCX, o TXT"
+        },
+        "resumeParsed": {
+          "title": "Nabasa ang resume!",
+          "description": "Ngayon ay maari nang basahin ni Mr. Blue ang nilalaman ng iyong resume."
+        },
+        "uploadFailed": {
+          "title": "Nabigong mag-upload",
+          "description": "Mangyaring subukan muli"
+        },
+        "missingSession": {
+          "title": "Nawawalang sesyon",
+          "description": "Mangyaring simulan mula sa pahina ng Talent Match"
+        },
+        "error": {
+          "title": "Error",
+          "description": "Nabigong iproseso ang iyong tugon"
+        }
+      },
+      "resumeBanner": {
+        "title": "Walang available na nilalaman ng resume",
+        "description": "I-reupload ang iyong resume upang maari itong basahin at gawing sanggunian ni Mr. Blue ang iyong karanasan.",
+        "parsing": "Nagsusuri...",
+        "reupload": "I-upload muli"
+      },
+      "buttons": {
+        "viewDashboard": "Tingnan ang H2AC Dashboard",
+        "goHome": "Umuwi"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Kamusta! Nasuri ko na ang iyong background. Ano ang masasabi mo na teknikal na kasanayan na pinaka-kumpiyansa ka?",
+          "q2": "Anong mga teknolohiya o kasangkapan ang pinaka-nasisiyahan kang gamitin?",
+          "q3": "Mayroon bang mga kasanayan sa iyong resume na nais mong gamitin pa sa volunteer work?",
+          "q4": "Anong mga larangan ng software development ang pinaka-interesado ka sa ngayon?",
+          "q5": "Nakapagtrabaho ka na ba sa anumang open source projects o mga inisyatibong pangkomunidad dati?",
+          "q6": "Ano ang iyong paboritong istilo ng trabaho - gusto mo ba ng independiyenteng trabaho o pakikipagtulungan?",
+          "q7": "Paano mo karaniwang nilalapitan ang pag-aaral ng mga bagong teknolohiya?",
+          "q8": "Anong uri ng epekto ang inaasahan mong magawa sa pamamagitan ng volunteer work?",
+          "q9": "Mahusay! Bago tayo lumipat sa pagtalakay ng mga tiyak na oportunidad, mayroon bang iba pang bagay tungkol sa iyong background na nais mong i-highlight?"
+        },
+        "work": {
+          "q1": "Ngayon pag-usapan natin kung paano ka makakatulong sa Mundo Tango! Aling larangan ang pinaka-interesado ka: frontend, backend, AI/ML, o iba pa?",
+          "q2": "Ang Mundo Tango ay nag-uugnay sa pandaigdigang komunidad ng tango. Anong mga tampok ang magiging masaya kang makatulong na buuin?",
+          "q3": "Mayroon tayong parehong teknikal at hindi teknikal na mga oportunidad sa volunteer. Anong uri ng trabaho ang pinaka-nagbibigay sa iyo ng enerhiya?",
+          "q4": "Gaano karaming oras sa isang linggo ang maaari mong talagang italaga sa volunteer work?",
+          "q5": "Mas gusto mo bang magtrabaho nang mag-isa o bilang bahagi ng isang koponan?",
+          "q6": "Komportable ka ba sa pair programming o code reviews?",
+          "q7": "Ano ang iyong karanasan sa agile/sprint-based development?",
+          "q8": "Gumagamit kami ng GitHub para sa pakikipagtulungan. Komportable ka ba sa Git workflows?",
+          "q9": "Mas gusto mo bang magtrabaho sa mga bagong tampok, pag-aayos ng bug, o dokumentasyon?",
+          "q10": "Sa wakas, ano ang pinakamainam na paraan upang makipag-ugnayan sa iyo - Slack, email, o messaging ng aming platform?"
+        },
+        "phaseTransition": "Mahusay! Ngayon ay mayroon akong mahusay na pag-unawa sa iyong background at karanasan. Lumipat tayo sa Phase 2 kung saan pag-uusapan natin ang mga tiyak na paraan na maaari kang makapag-ambag sa Mundo Tango.",
+        "processingError": "Humihingi ako ng paumanhin, ngunit nahirapan akong iproseso iyon. Maaari mo bang subukan muli?"
+      }
+    }
   }
 }

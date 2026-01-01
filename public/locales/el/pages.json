@@ -1,291 +1,978 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "Σύνδεση",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Είσοδος - Mundo Tango",
+      "description": "Συνδεθείτε στον λογαριασμό σας στο Mundo Tango για να συνδεθείτε με την παγκόσμια κοινότητα τάνγκο, να ανακαλύψετε εκδηλώσεις και να μοιραστείτε το πάθος σας για το αργεντίνικο τάνγκο."
     },
-    "badge": "Welcome Back",
+    "badge": "Καλώς Ήρθατε Ξανά",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Το Ταξίδι σας στο Τάνγκο Συνεχίζεται",
+      "paragraph": "Συνδεθείτε για να επικοινωνήσετε με χορευτές παγκοσμίως, να ανακαλύψετε εκδηλώσεις και να μοιραστείτε το πάθος σας"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "χορευτές",
+      "events": "εκδηλώσεις"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "Ηλεκτρονικό ταχυδρομείο",
+      "password": "Κωδικός",
+      "signIn": "Σύνδεση",
+      "signingIn": "Σύνδεση...",
+      "forgotPassword": "Ξεχάσατε τον κωδικό;"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Δεν έχετε λογαριασμό;",
+    "createAccount": "Δημιουργήστε έναν τώρα",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Καλώς ήρθατε ξανά!",
+      "successDescription": "Συνδεθήκατε επιτυχώς.",
+      "errorTitle": "Η σύνδεση απέτυχε",
+      "errorDescription": "Μη έγκυρα στοιχεία"
+    }
+  },
+  "register": {
+    "pageName": "Εγγραφή",
+    "seo": {
+      "title": "Εγγραφείτε στο Mundo Tango - Δημιουργήστε τον Λογαριασμό σας",
+      "description": "Δημιουργήστε τον λογαριασμό σας στο Mundo Tango και ενταχθείτε στην παγκόσμια κοινότητα αργεντίνικου τάνγκο. Συνδεθείτε με χορευτές, ανακαλύψτε εκδηλώσεις και μοιραστείτε το πάθος σας για το τάνγκο."
+    },
+    "badge": {
+      "welcomeFamily": "Καλώς Ήρθατε στην Οικογένεια",
+      "beginJourney": "Ξεκινήστε το Ταξίδι σας",
+      "joinCommunity": "Ενταχθείτε στην Κοινότητα"
+    },
+    "hero": {
+      "youreIn": "Είστε Μέσα!",
+      "joinMundoTango": "Εγγραφείτε στο Mundo Tango",
+      "description": "Συνδεθείτε με χορευτές παγκοσμίως, ανακαλύψτε μιλόνγκας και βυθιστείτε στον παθιασμένο κόσμο του αργεντίνικου τάνγκο",
+      "waitlistDescription": "Καλώς ήρθατε στην κοινότητα του Mundo Tango. Προετοιμάζουμε τον λογαριασμό σας και θα σας ειδοποιήσουμε σύντομα!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ χορευτές",
+      "events": "{{count}}+ εκδηλώσεις",
+      "cities": "{{count}} πόλεις"
+    },
+    "form": {
+      "fullName": "Πλήρες Όνομα",
+      "fullNamePlaceholder": "Μαρία Παπαδοπούλου",
+      "email": "Ηλεκτρονικό ταχυδρομείο",
+      "emailPlaceholder": "maria@example.com",
+      "username": "Όνομα χρήστη",
+      "usernamePlaceholder": "maria_tango",
+      "password": "Κωδικός",
+      "confirmPassword": "Επιβεβαίωση Κωδικού",
+      "inviteOnlyNotice": "Η εγγραφή είναι προς το παρόν μόνο με πρόσκληση. Συμπληρώστε αυτή τη φόρμα για να εγγραφείτε στη λίστα αναμονής και θα σας ειδοποιήσουμε όταν ο λογαριασμός σας είναι έτοιμος.",
+      "acceptTermsPrefix": "Αποδέχομαι τους",
+      "termsAndConditions": "Όρους & Προϋποθέσεις"
+    },
+    "validation": {
+      "emailTaken": "Αυτό το email είναι ήδη εγγεγραμμένο",
+      "emailAvailable": "Το email είναι διαθέσιμο!",
+      "usernameTaken": "Το όνομα χρήστη χρησιμοποιείται. Δοκιμάστε {{suggestion}}",
+      "usernameAvailable": "Το όνομα χρήστη είναι διαθέσιμο!",
+      "passwordsMatch": "Οι κωδικοί ταιριάζουν",
+      "passwordsDontMatch": "Οι κωδικοί δεν ταιριάζουν"
+    },
+    "passwordStrength": {
+      "weak": "Αδύναμος",
+      "medium": "Μέτριος",
+      "strong": "Ισχυρός",
+      "veryStrong": "Πολύ Ισχυρός"
+    },
+    "inviteCode": {
+      "label": "Έχετε κωδικό πρόσκλησης; (Προαιρετικό)",
+      "placeholder": "Εισάγετε τον κωδικό πρόσκλησης για άμεση πρόσβαση",
+      "accepted": "Ο κωδικός έγινε αποδεκτός! Ο λογαριασμός σας θα ενεργοποιηθεί αμέσως.",
+      "noWorries": "Μην ανησυχείτε! Συμπληρώστε την παρακάτω φόρμα για να εγγραφείτε στη λίστα αναμονής."
+    },
+    "waitlist": {
+      "welcomeUser": "Καλώς ήρθατε, {{name}}!",
+      "defaultName": "Χορευτή",
+      "onTheList": "Είστε στη λίστα. Θα σας στείλουμε email στο",
+      "whenReady": "όταν ο λογαριασμός σας είναι έτοιμος.",
+      "helpUsGrow": "Ενώ περιμένετε, βοηθήστε μας να αναπτυχθούμε",
+      "volunteerWithUs": "Γίνετε εθελοντής",
+      "supportMundoTango": "Υποστηρίξτε το Mundo Tango"
+    },
+    "button": {
+      "creatingAccount": "Δημιουργία λογαριασμού...",
+      "joining": "Εγγραφή...",
+      "createAccount": "Δημιουργία Λογαριασμού",
+      "joinMundoTango": "Εγγραφή στο Mundo Tango"
+    },
+    "alreadyHaveAccount": "Έχετε ήδη λογαριασμό;",
+    "signIn": "Συνδεθείτε",
+    "toast": {
+      "invalidCode": {
+        "title": "Μη έγκυρος κωδικός",
+        "description": "Παρακαλώ εισάγετε έναν έγκυρο 6ψήφιο κωδικό επαλήθευσης."
+      },
+      "verified": {
+        "title": "Το email επαληθεύτηκε!",
+        "description": "Καλώς ήρθατε στο Mundo Tango! Ξεκινά η διαδικασία εισαγωγής..."
+      },
+      "verifyError": {
+        "title": "Η επαλήθευση απέτυχε",
+        "description": "Μη έγκυρος ή ληγμένος κωδικός. Παρακαλώ δοκιμάστε ξανά."
+      },
+      "error": {
+        "title": "Σφάλμα",
+        "description": "Αποτυχία επαλήθευσης email. Παρακαλώ δοκιμάστε ξανά."
+      },
+      "tooMany": {
+        "title": "Πάρα πολλά αιτήματα",
+        "description": "Παρακαλώ περιμένετε μερικά λεπτά πριν δοκιμάσετε ξανά."
+      },
+      "codeSent": {
+        "title": "Ο κωδικός στάλθηκε!",
+        "description": "Παρακαλώ ελέγξτε τα εισερχόμενά σας για νέο κωδικό."
+      },
+      "resendError": {
+        "description": "Αποτυχία αποστολής κωδικού. Παρακαλώ δοκιμάστε ξανά."
+      },
+      "termsRequired": {
+        "title": "Απαιτούνται οι όροι",
+        "description": "Παρακαλώ αποδεχτείτε τους Όρους & Προϋποθέσεις"
+      },
+      "passwordMismatch": {
+        "title": "Οι κωδικοί δεν ταιριάζουν",
+        "description": "Παρακαλώ βεβαιωθείτε ότι οι δύο κωδικοί είναι ίδιοι"
+      },
+      "weakPassword": {
+        "title": "Αδύναμος κωδικός",
+        "description": "Παρακαλώ επιλέξτε ισχυρότερο κωδικό"
+      },
+      "checkEmail": {
+        "title": "Ελέγξτε το email σας",
+        "description": "Σας στείλαμε έναν 6ψήφιο κωδικό επαλήθευσης. Παρακαλώ ελέγξτε τα εισερχόμενά σας."
+      },
+      "registrationFailed": {
+        "title": "Η εγγραφή απέτυχε"
+      },
+      "signupFailed": {
+        "title": "Δεν ήταν δυνατή η ολοκλήρωση της εγγραφής"
+      },
+      "tryAgain": "Παρακαλώ δοκιμάστε ξανά"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Καλώς Ήρθατε",
+      "seoTitle": "Καλώς Ήρθατε στο Mundo Tango",
+      "seoDescription": "Ξεκινήστε το ταξίδι σας στο τάνγκο με το Mundo Tango",
+      "badge": "Γρήγορη Ρύθμιση",
+      "title": "Καλώς Ήρθατε στο Mundo Tango",
+      "subtitle": "Ας ρυθμίσουμε το προφίλ σας για να συνδεθείτε με την παγκόσμια κοινότητα τάνγκο",
+      "duration": "Διαρκεί περίπου 2 λεπτά",
+      "stepIndicator": "Βήμα {{current}} από {{total}}",
+      "getStarted": "Ξεκινήστε",
+      "profileTitle": "Το Ταξίδι σας στο Τάνγκο Αρχίζει",
+      "profileSubtitle": "Πείτε μας λίγα για εσάς",
+      "features": {
+        "city": {
+          "title": "Επιλέξτε την Πόλη σας",
+          "description": "Συνδεθείτε με την τοπική σας κοινότητα τάνγκο"
+        },
+        "roles": {
+          "title": "Πείτε μας τους Ρόλους σας",
+          "description": "Χορευτής, δάσκαλος, DJ, διοργανωτής ή όλα τα παραπάνω;"
+        },
+        "events": {
+          "title": "Ανακαλύψτε Εκδηλώσεις",
+          "description": "Βρείτε μιλόνγκας, μαθήματα και φεστιβάλ κοντά σας"
+        },
+        "journey": {
+          "title": "Μοιραστείτε το Ταξίδι σας",
+          "description": "Συνδεθείτε με χορευτές του επιπέδου σας"
+        },
+        "facebook": {
+          "title": "Συνδέστε το Facebook",
+          "description": "Συνδέστε το προφίλ σας στο Facebook για να βρείτε φίλους στην κοινότητα"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "Κοινωνική Σύνδεση",
+      "seoTitle": "Συνδέστε τον Κοινωνικό σας Κόσμο - Mundo Tango",
+      "seoDescription": "Συνδέστε τα κοινωνικά σας προφίλ για να βρείτε φίλους στην κοινότητα τάνγκο.",
+      "step": "Βήμα 2 από 6",
+      "title": "Συνδέστε τον Κοινωνικό σας Κόσμο",
+      "quote": "\"Πολλοί χορευτές τάνγκο ήδη γνωρίζονται μέσω Facebook. Συνδέοντας το προφίλ σας, μπορούμε να σας δείξουμε ποιοι χορευτές στο δίκτυό σας είναι ήδη εδώ - διευκολύνοντας την εύρεση γνωστών προσώπων στις μιλόνγκας.\"",
+      "cardTitle": "Βρείτε τους Φίλους σας",
+      "cardDescription": "Το Facebook σας μας βοηθά να σας ταιριάξουμε με χορευτές που μπορεί ήδη να γνωρίζετε.",
+      "facebookLabel": "URL Προφίλ Facebook (Προαιρετικό)",
+      "facebookPlaceholder": "https://www.facebook.com/your.profile",
+      "helperText": "Το χρησιμοποιούμε ως γέφυρα με άλλες κοινότητες και για να σας ταιριάξουμε με χορευτές που μπορεί να γνωρίζετε.",
+      "toast": {
+        "errorTitle": "Σφάλμα",
+        "errorDescription": "Αποτυχία αποθήκευσης πληροφοριών προφίλ"
+      }
+    },
+    "navigation": {
+      "back": "Πίσω",
+      "continue": "Συνέχεια",
+      "skip": "Παράλειψη",
+      "next": "Επόμενο",
+      "finish": "Ολοκλήρωση",
+      "saving": "Αποθήκευση..."
+    },
+    "city": {
+      "pageTitle": "Επιλογή Πόλης",
+      "seoTitle": "Επιλέξτε την Πόλη σας - Mundo Tango",
+      "seoDescription": "Επιλέξτε την πόλη σας για να συνδεθείτε με τοπικούς χορευτές τάνγκο",
+      "step": "Βήμα 1 από 6",
+      "title": "Πού Χορεύετε;",
+      "subtitle": "Συνδεθείτε με χορευτές στην περιοχή σας",
+      "cardTitle": "Η Πόλη σας",
+      "cardDescription": "Αυτό μας βοηθά να σας δείξουμε τοπικές εκδηλώσεις και χορευτές",
+      "searchLabel": "Αναζητήστε την πόλη σας",
+      "searchPlaceholder": "Πληκτρολογήστε το όνομα της πόλης σας...",
+      "eventSite": {
+        "help": "Επιλέξτε από δημοφιλείς προορισμούς τάνγκο"
+      },
+      "errors": {
+        "required": "Απαιτείται πόλη",
+        "selectCity": "Παρακαλώ επιλέξτε την πόλη σας"
+      },
+      "toast": {
+        "sourceAdded": "Η πηγή προστέθηκε!",
+        "submittedForReview": "Υποβλήθηκε για έλεγχο",
+        "trackingEvents": "Θα αρχίσουμε να παρακολουθούμε εκδηλώσεις από τον ιστότοπο",
+        "thankYou": "Ευχαριστούμε! Η πρότασή σας στάλθηκε για έλεγχο.",
+        "errorTitle": "Σφάλμα",
+        "suggestionFailed": "Αποτυχία υποβολής πρότασης",
+        "saveFailed": "Αποτυχία αποθήκευσης πόλεων"
+      }
+    },
+    "photo": {
+      "pageTitle": "Μεταφόρτωση Φωτογραφίας",
+      "seoTitle": "Προσθέστε Φωτογραφία Προφίλ - Mundo Tango",
+      "seoDescription": "Ανεβάστε τη φωτογραφία προφίλ σας",
+      "step": "Βήμα 3 από 6",
+      "title": "Προσθέστε τη Φωτογραφία Προφίλ σας",
+      "subtitle": "Βοηθήστε τους άλλους να σας αναγνωρίσουν στην κοινότητα",
+      "cardTitle": "Η Φωτογραφία Προφίλ σας",
+      "cardDescription": "Βοηθήστε τους άλλους να σας αναγνωρίσουν (μπορείτε να παραλείψετε αυτό το βήμα)",
+      "previewAlt": "Προεπισκόπηση προφίλ",
+      "dropHere": "Αφήστε τη φωτογραφία σας εδώ",
+      "or": "ή",
+      "browseFiles": "Περιήγηση Αρχείων",
+      "fileTypes": "PNG, JPG έως 5MB",
+      "photoSelected": "Η φωτογραφία επιλέχθηκε!",
+      "uploading": "Μεταφόρτωση...",
+      "errors": {
+        "invalidFile": "Μη έγκυρο αρχείο",
+        "selectImage": "Παρακαλώ επιλέξτε αρχείο εικόνας",
+        "fileTooLarge": "Πολύ μεγάλο αρχείο",
+        "sizeLimit": "Παρακαλώ επιλέξτε εικόνα κάτω από 5MB",
+        "uploadFailed": "Η μεταφόρτωση απέτυχε",
+        "tryAgain": "Αποτυχία μεταφόρτωσης φωτογραφίας. Παρακαλώ δοκιμάστε ξανά.",
+        "skipFailed": "Αποτυχία παράλειψης. Παρακαλώ δοκιμάστε ξανά."
+      }
+    },
+    "languages": {
+      "pageTitle": "Γλώσσες",
+      "seoTitle": "Οι Γλώσσες σας - Mundo Tango",
+      "seoDescription": "Πείτε μας ποιες γλώσσες μιλάτε",
+      "step": "Βήμα 5 από 6",
+      "title": "Ποιες Γλώσσες Μιλάτε;",
+      "subtitle": "Συνδεθείτε με χορευτές στη γλώσσα σας",
+      "cardTitle": "Οι Γλώσσες σας",
+      "cardDescription": "Επιλέξτε την κύρια γλώσσα σας και τυχόν επιπλέον γλώσσες που μιλάτε",
+      "primaryLabel": "Κύρια Γλώσσα",
+      "primaryHint": "Αυτό θα ορίσει επίσης τη γλώσσα εμφάνισης του ιστότοπου",
+      "primaryPlaceholder": "Επιλέξτε την κύρια γλώσσα σας",
+      "additionalLabel": "Επιπλέον Γλώσσες (Προαιρετικό)",
+      "errors": {
+        "required": "Απαιτείται κύρια γλώσσα",
+        "selectPrimary": "Παρακαλώ επιλέξτε την κύρια γλώσσα σας",
+        "saveFailed": "Αποτυχία αποθήκευσης γλωσσών",
+        "saveFailedTitle": "Η Αποθήκευση Γλώσσας Απέτυχε"
+      }
+    },
+    "roles": {
+      "pageTitle": "Ρόλοι Τάνγκο",
+      "seoTitle": "Οι Ρόλοι σας στο Τάνγκο - Mundo Tango",
+      "seoDescription": "Πείτε μας για το ταξίδι σας στο τάνγκο",
+      "step": "Βήμα 2 από 6",
+      "title": "Ποιους Ρόλους Παίζετε;",
+      "subtitle": "Επιλέξτε όλα όσα ισχύουν για εσάς",
+      "cardTitle": "Η Ταυτότητά σας στο Τάνγκο",
+      "cardDescription": "Βοηθήστε τους άλλους να μάθουν πώς συμμετέχετε στον κόσμο του τάνγκο"
+    },
+    "experience": {
+      "pageTitle": "Εμπειρία Χορού",
+      "seoTitle": "Η Εμπειρία Χορού σας - Mundo Tango",
+      "seoDescription": "Μοιραστείτε το επίπεδο εμπειρίας χορού σας",
+      "step": "Βήμα 4 από 6",
+      "title": "Η Εμπειρία Χορού σας",
+      "subtitle": "Βοηθήστε μας να σας συνδέσουμε με τους κατάλληλους χορευτές"
+    },
+    "hobbies": {
+      "pageTitle": "Ενδιαφέροντα",
+      "seoTitle": "Τα Ενδιαφέροντά σας - Mundo Tango",
+      "seoDescription": "Πείτε μας για τα ενδιαφέροντά σας",
+      "step": "Βήμα 6 από 6",
+      "title": "Ποια είναι τα Ενδιαφέροντά σας;",
+      "subtitle": "Επιλέξτε θέματα που σας ενδιαφέρουν",
+      "helpText": "Επιλέξτε τουλάχιστον 3 ενδιαφέροντα για να εξατομικεύσετε τη ροή σας",
+      "selectedCount": "{{count}} επιλεγμένα",
+      "finishing": "Ολοκλήρωση...",
+      "completeSetup": "Ολοκλήρωση Ρύθμισης",
+      "searchPlaceholder": "Αναζήτηση κοινοτήτων ή προσθήκη νέας...",
+      "categories": {
+        "fitness": {
+          "label": "Φυσική Κατάσταση & Αθλήματα"
+        },
+        "tech": {
+          "label": "Τεχνολογία & Καινοτομία"
+        },
+        "spirituality": {
+          "label": "Πνευματικότητα & Ανάπτυξη"
+        },
+        "yoga": {
+          "label": "Γιόγκα & Ευεξία"
+        },
+        "music": {
+          "label": "Μουσική"
+        },
+        "photography": {
+          "label": "Φωτογραφία & Βίντεο"
+        },
+        "art": {
+          "label": "Τέχνη & Δημιουργικότητα"
+        },
+        "reading": {
+          "label": "Ανάγνωση & Γραφή"
+        },
+        "travel": {
+          "label": "Ταξίδια & Περιπέτεια"
+        },
+        "cooking": {
+          "label": "Μαγειρική & Φαγητό"
+        },
+        "wine": {
+          "label": "Κρασί & Ποτά"
+        },
+        "gaming": {
+          "label": "Παιχνίδια"
+        },
+        "outdoors": {
+          "label": "Υπαίθριες Δραστηριότητες"
+        },
+        "snow": {
+          "label": "Χειμερινά Σπορ"
+        },
+        "cycling": {
+          "label": "Ποδηλασία"
+        },
+        "water": {
+          "label": "Θαλάσσια Σπορ"
+        },
+        "nature": {
+          "label": "Φύση & Κηπουρική"
+        },
+        "movies": {
+          "label": "Ταινίες & Ψυχαγωγία"
+        },
+        "pets": {
+          "label": "Κατοικίδια & Ζώα"
+        },
+        "social": {
+          "label": "Κοινωνικά & Κοινότητα"
+        }
+      },
+      "items": {
+        "fitness_gym": "Γυμναστήριο & Βάρη",
+        "fitness_running": "Τρέξιμο",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Πολεμικές Τέχνες",
+        "fitness_tennis": "Τένις",
+        "fitness_soccer": "Ποδόσφαιρο",
+        "fitness_basketball": "Μπάσκετ",
+        "fitness_fencing": "Ξιφασκία",
+        "tech_coding": "Προγραμματισμός",
+        "tech_ai": "AI & Μελλοντική Τεχνολογία",
+        "tech_crypto": "Web3 & Κρυπτονομίσματα",
+        "tech_gaming": "Gaming Κουλτούρα",
+        "spirit_meditation": "Διαλογισμός",
+        "spirit_astrology": "Αστρολογία",
+        "spirit_philosophy": "Φιλοσοφία",
+        "spirit_community": "Οικοδόμηση Κοινότητας",
+        "yoga_hatha": "Χάθα Γιόγκα",
+        "yoga_vinyasa": "Βινιάσα Φλόου",
+        "yoga_meditation": "Διαλογισμός",
+        "yoga_pilates": "Πιλάτες",
+        "yoga_breathwork": "Αναπνευστικές Τεχνικές",
+        "music_listening": "Ακρόαση Μουσικής",
+        "music_concerts": "Ζωντανές Συναυλίες",
+        "music_piano": "Πιάνο",
+        "music_guitar": "Κιθάρα",
+        "music_singing": "Τραγούδι",
+        "music_dj": "DJing",
+        "music_production": "Παραγωγή Μουσικής",
+        "photo_portrait": "Πορτραίτα",
+        "photo_landscape": "Τοπία",
+        "photo_street": "Δρόμος Φωτογραφία",
+        "photo_video": "Βιντεογράφηση",
+        "photo_editing": "Επεξεργασία Φωτογραφίας",
+        "art_painting": "Ζωγραφική",
+        "art_drawing": "Σχέδιο",
+        "art_sculpture": "Γλυπτική",
+        "art_digital": "Ψηφιακή Τέχνη",
+        "art_crafts": "Χειροτεχνία & DIY",
+        "art_pottery": "Κεραμική",
+        "reading_fiction": "Μυθιστόρημα",
+        "reading_nonfiction": "Μη Μυθοπλασία",
+        "reading_poetry": "Ποίηση",
+        "reading_writing": "Δημιουργική Γραφή",
+        "reading_journals": "Ημερολόγια",
+        "travel_backpacking": "Πεζοπορία",
+        "travel_luxury": "Πολυτελή Ταξίδια",
+        "travel_cultural": "Πολιτιστικός Τουρισμός",
+        "travel_road_trips": "Οδικά Ταξίδια",
+        "travel_solo": "Μοναχικά Ταξίδια",
+        "cooking_home": "Μαγείρεμα στο Σπίτι",
+        "cooking_baking": "Αρτοποιία",
+        "cooking_gourmet": "Gourmet Κουζίνα",
+        "cooking_international": "Διεθνής Κουζίνα",
+        "cooking_healthy": "Υγιεινή Διατροφή",
+        "wine_tasting": "Γευσιγνωσία Κρασιού",
+        "wine_cocktails": "Κοκτέιλ",
+        "wine_coffee": "Εκτίμηση Καφέ",
+        "wine_tea": "Κουλτούρα Τσαγιού",
+        "wine_brewing": "Ζυθοποιία",
+        "gaming_video": "Βιντεοπαιχνίδια",
+        "gaming_board": "Επιτραπέζια",
+        "gaming_card": "Χαρτιά",
+        "gaming_tabletop": "Επιτραπέζια RPGs",
+        "gaming_esports": "eSports",
+        "outdoor_hiking": "Πεζοπορία",
+        "outdoor_camping": "Κάμπινγκ",
+        "outdoor_climbing": "Αναρρίχηση",
+        "outdoor_fishing": "Ψάρεμα",
+        "outdoor_kayaking": "Καγιάκ",
+        "outdoor_surfing": "Σέρφινγκ",
+        "snow_skiing": "Σκι",
+        "snow_snowboard": "Snowboard",
+        "snow_crosscountry": "Σκι Αντοχής",
+        "snow_ice_skating": "Πατινάζ στον Πάγο",
+        "snow_sledding": "Έλκηθρο",
+        "snow_snowshoeing": "Πλέγματα Χιονιού",
+        "cycling_road": "Ποδηλασία Δρόμου",
+        "cycling_mountain": "Ορεινή Ποδηλασία",
+        "cycling_urban": "Αστική Ποδηλασία",
+        "cycling_touring": "Ποδηλατικές Περιηγήσεις",
+        "water_swimming": "Κολύμβηση",
+        "water_scuba": "Καταδύσεις",
+        "water_snorkel": "Καταδύσεις με αναπνευστήρα",
+        "water_sailing": "Ιστιοπλοΐα",
+        "water_paddleboard": "Πανί",
+        "nature_gardening": "Κηπουρική",
+        "nature_birdwatching": "Παρατήρηση Πουλιών",
+        "nature_botany": "Συλλογή Φυτών",
+        "nature_wildlife": "Φωτογραφία Άγριας Ζωής",
+        "movies_cinema": "Κινηματογράφος",
+        "movies_tv": "Τηλεοπτικές Σειρές",
+        "movies_documentary": "Ντοκιμαντέρ",
+        "movies_theater": "Θέατρο",
+        "movies_standup": "Stand-up Κωμωδία",
+        "pets_dogs": "Σκύλοι",
+        "pets_cats": "Γάτες",
+        "pets_exotic": "Εξωτικά Κατοικίδια",
+        "pets_horses": "Ιππασία",
+        "pets_rescue": "Διάσωση Ζώων",
+        "social_volunteering": "Εθελοντισμός",
+        "social_meetups": "Συναντήσεις",
+        "social_networking": "Δικτύωση",
+        "social_languages": "Ανταλλαγή Γλωσσών"
+      },
+      "success": {
+        "completeTitle": "Καλώς Ήρθατε στο Mundo Tango!",
+        "completeDesc": "Το προφίλ σας είναι έτοιμο. Ξεκινήστε την εξερεύνηση!",
+        "waitlistTitle": "Το Προφίλ Ολοκληρώθηκε!",
+        "waitlistDesc": "Θα σας ειδοποιήσουμε όταν ενεργοποιηθεί ο λογαριασμός σας"
+      },
+      "errors": {
+        "saveFailed": "Αποτυχία αποθήκευσης. Παρακαλώ δοκιμάστε ξανά."
+      }
+    },
+    "legal": {
+      "title": "Οδηγίες Κοινότητας",
+      "subtitle": "Παρακαλώ διαβάστε και αποδεχτείτε τους όρους μας",
+      "legalDocsTitle": "Νομικά Έγγραφα",
+      "legalDocsDescription": "Διαβάστε τους όρους υπηρεσίας και την πολιτική απορρήτου",
+      "termsOfService": {
+        "label": "Αποδέχομαι τους Όρους Υπηρεσίας",
+        "description": "Οι όροι μας διέπουν τη χρήση του Mundo Tango",
+        "link": "Διαβάστε τους Όρους Υπηρεσίας"
+      },
+      "privacyPolicy": {
+        "label": "Αποδέχομαι την Πολιτική Απορρήτου",
+        "description": "Πώς διαχειριζόμαστε τα δεδομένα σας",
+        "link": "Διαβάστε την Πολιτική Απορρήτου"
+      },
+      "cocTitle": "Κώδικας Δεοντολογίας Κοινότητας",
+      "cocDescription": "Βοηθήστε μας να διατηρήσουμε μια σεβαστική κοινότητα",
+      "coc": {
+        "respectful": {
+          "title": "Να Είστε Σεβαστικοί",
+          "description": "Συμπεριφερθείτε σε όλους με αξιοπρέπεια και ευγένεια"
+        },
+        "inclusive": {
+          "title": "Να Είστε Δεκτικοί",
+          "description": "Καλωσορίστε χορευτές όλων των επιπέδων και υπόβαθρων"
+        },
+        "authentic": {
+          "title": "Να Είστε Αυθεντικοί",
+          "description": "Χρησιμοποιήστε την πραγματική σας ταυτότητα και ειλικρινείς πληροφορίες"
+        },
+        "consent": {
+          "title": "Σεβαστείτε τη Συναίνεση",
+          "description": "Πάντα ρωτήστε πριν χορέψετε και σεβαστείτε τα όρια"
+        },
+        "noHarassment": {
+          "title": "Μηδενική Παρενόχληση",
+          "description": "Μηδενική ανοχή σε παρενόχληση ή εκφοβισμό"
+        },
+        "noSpam": {
+          "title": "Χωρίς Spam",
+          "description": "Μην στέλνετε αυτόκλητες προωθήσεις"
+        },
+        "noDiscrimination": {
+          "title": "Μηδενικές Διακρίσεις",
+          "description": "Δεν ανεχόμαστε διακρίσεις κανενός είδους"
+        },
+        "privacy": {
+          "title": "Προστατεύστε το Απόρρητο",
+          "description": "Μη μοιράζεστε πληροφορίες άλλων χωρίς συναίνεση"
+        },
+        "safety": {
+          "title": "Προτεραιότητα στην Ασφάλεια",
+          "description": "Αναφέρετε αμέσως κάθε μη ασφαλή συμπεριφορά"
+        },
+        "laws": {
+          "title": "Ακολουθήστε τους Νόμους",
+          "description": "Συμμορφωθείτε με όλους τους ισχύοντες νόμους"
+        },
+        "report": {
+          "title": "Αναφέρετε Προβλήματα",
+          "description": "Βοηθήστε μας αναφέροντας παραβιάσεις"
+        },
+        "support": {
+          "title": "Υποστηρίξτε ο Ένας τον Άλλο",
+          "description": "Βοηθήστε τους συναδέλφους χορευτές να εξελιχθούν"
+        }
+      },
+      "acceptAll": "Αποδοχή Όλων & Συνέχεια",
+      "accepting": "Αποδοχή...",
+      "incompleteAlert": "Παρακαλώ αποδεχτείτε όλους τους απαιτούμενους όρους",
+      "success": {
+        "title": "Καλώς Ήρθατε!",
+        "description": "Αποδεχτήκατε τις οδηγίες κοινότητάς μας"
+      },
+      "errors": {
+        "failed": "Αποτυχία αποθήκευσης. Παρακαλώ δοκιμάστε ξανά."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Λίστα Αναμονής",
+      "seoTitle": "Είστε στη Λίστα Αναμονής - Mundo Tango",
+      "seoDescription": "Ο λογαριασμός σας εκκρεμεί ενεργοποίηση",
+      "title": "Είστε στη Λίστα Αναμονής!",
+      "welcomeMessage": "Καλώς ήρθατε, {{name}}!",
+      "defaultName": "Χορευτή",
+      "profileComplete": "Το Προφίλ Ολοκληρώθηκε",
+      "profileCompleteDesc": "Το προφίλ σας είναι έτοιμο και περιμένει",
+      "emailNotice": "Θα σας στείλουμε email στο {{email}} όταν ο λογαριασμός σας είναι έτοιμος",
+      "whenReady": "όταν ο λογαριασμός σας είναι έτοιμος.",
+      "whileYouWait": "Ενώ περιμένετε, βοηθήστε μας να αναπτυχθούμε:",
+      "volunteerButton": "Γίνετε Εθελοντής",
+      "supportButton": "Υποστηρίξτε το Mundo Tango"
+    },
+    "tour": {
+      "pageTitle": "Καθοδηγούμενη Περιήγηση",
+      "seoTitle": "Εξερευνήστε το Mundo Tango",
+      "seoDescription": "Μάθετε πώς να χρησιμοποιείτε το Mundo Tango",
+      "skipTour": "Παράλειψη Περιήγησης",
+      "finish": "Ολοκλήρωση Περιήγησης",
+      "steps": {
+        "feed": "Ανακαλύψτε αναρτήσεις από την κοινότητα τάνγκο",
+        "events": "Βρείτε μιλόνγκας, μαθήματα και φεστιβάλ",
+        "groups": "Ενταχθείτε σε ομάδες για την πόλη ή τα ενδιαφέροντά σας",
+        "messages": "Συνδεθείτε απευθείας με άλλους χορευτές",
+        "profile": "Προσαρμόστε το προφίλ τάνγκο σας",
+        "createPost": "Μοιραστείτε τις στιγμές τάνγκο σας"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Αναβαθμίστε την Εμπειρία σας",
+        "subtitle": "Αξιοποιήστε στο έπακρο το Mundo Tango",
+        "limitedOffer": "Περιορισμένη Προσφορά",
+        "getStarted": "Ξεκινήστε",
+        "features": {
+          "connect": {
+            "title": "Σύνδεση",
+            "description": "Στείλτε μήνυμα σε οποιονδήποτε χορευτή"
+          },
+          "visibility": {
+            "title": "Ορατότητα",
+            "description": "Εμφανιστείτε στα αποτελέσματα αναζήτησης"
+          },
+          "events": {
+            "title": "Εκδηλώσεις",
+            "description": "Προτεραιότητα πρόσβασης σε δημοφιλείς εκδηλώσεις"
+          },
+          "grow": {
+            "title": "Ανάπτυξη",
+            "description": "Προηγμένα αναλυτικά για το προφίλ σας"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Αποκλειστικές premium δυνατότητες"
+          }
+        }
+      }
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Αρχική",
+    "pageLayoutTitle": "Όπου το Τάνγκο Συναντά την Κοινότητα",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Συνδεθείτε με την Παγκόσμια Κοινότητα Τάνγκο",
+      "description": "Ενταχθείτε σε χιλιάδες χορευτές τάνγκο παγκοσμίως. Ανακαλύψτε εκδηλώσεις, βρείτε δασκάλους, συνδεθείτε με χορευτές και βυθιστείτε στον παθιασμένο κόσμο του αργεντίνικου τάνγκο."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Καλώς Ήρθατε στην Παγκόσμια Κοινότητα Τάνγκο",
+      "heading": "Όπου το Τάνγκο Συναντά την Κοινότητα",
+      "paragraph": "Μοιραστείτε αναμνήσεις, βρείτε εκδηλώσεις και βοηθήστε μας να χτίσουμε το μέλλον της τεχνολογίας τάνγκο. Ενταχθείτε σε χιλιάδες παθιασμένους χορευτές που συνδέονται παγκοσμίως.",
+      "getStarted": "Ξεκινήστε Δωρεάν",
+      "volunteer": "Γίνετε Εθελοντής"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Πώς Λειτουργεί",
+      "description": "Ξεκινήστε το ταξίδι σας στο τάνγκο σε τρία απλά βήματα",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Δημιουργήστε το Προφίλ σας",
+        "description": "Εγγραφείτε δωρεάν και πείτε μας για το ταξίδι σας στο τάνγκο, το επίπεδο εμπειρίας και τις προτιμήσεις χορού"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Ανακαλύψτε & Συνδεθείτε",
+        "description": "Βρείτε εκδηλώσεις, δασκάλους και χώρους κοντά σας. Συνδεθείτε με χορευτές που μοιράζονται το πάθος σας"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Χορέψτε & Εξελιχθείτε",
+        "description": "Παρακολουθήστε εκδηλώσεις, κάντε μαθήματα, κάντε φίλους και γίνετε μέρος της παγκόσμιας κοινότητας τάνγκο"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "Όλα Όσα Χρειάζεστε",
+      "description": "Συνδεθείτε, ανακαλύψτε και αναπτύξτε το ταξίδι σας στο τάνγκο με ισχυρά χαρακτηριστικά",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Κοινότητα",
+        "heading": "Συνδεθείτε με Χορευτές Παγκοσμίως",
+        "description": "Ενταχθείτε σε μια ζωντανή παγκόσμια κοινότητα λάτρεων του τάνγκο. Συνδεθείτε με χορευτές, δασκάλους και διοργανωτές από το Μπουένος Άιρες μέχρι το Τόκιο.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Ακολουθήστε χορευτές και χτίστε το δίκτυό σας",
+          "groups": "Ενταχθείτε σε ομάδες βάσει ενδιαφερόντων και τοποθεσίας",
+          "messaging": "Μηνύματα και συνομιλία σε πραγματικό χρόνο",
+          "discover": "Ανακαλύψτε χορευτές που επισκέπτονται την πόλη σας"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Εκδηλώσεις",
+        "heading": "Ανακαλύψτε Εκδηλώσεις Παντού",
+        "description": "Μη χάσετε ποτέ μιλόνγκα, φεστιβάλ ή σεμινάριο. Η πλατφόρμα μας σας συνδέει με χιλιάδες εκδηλώσεις τάνγκο παγκοσμίως.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Πλήρες ημερολόγιο εκδηλώσεων",
+          "rsvp": "RSVP και κράτηση εισιτηρίων",
+          "notifications": "Ειδοποιήσεις και υπενθυμίσεις εκδηλώσεων",
+          "map": "Διαδραστικός χάρτης χώρων"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Ζωντανή Μετάδοση",
+          "description": "Παρακολουθήστε μιλόνγκας παγκοσμίως σε πραγματικό χρόνο"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Βιβλιοθήκη Μουσικής",
+          "description": "Επιλεγμένες λίστες αναπαραγωγής τάνγκο"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Πιστοποιημένοι Δάσκαλοι",
+          "description": "Μάθετε από πιστοποιημένους εκπαιδευτές"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Σχεδιασμός Ταξιδιού",
+          "description": "Σχεδιάστε ταξίδια και βρείτε οικοδεσπότες"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Τι Λένε οι Χορευτές",
+      "description": "Ενταχθείτε σε χιλιάδες ικανοποιημένους χορευτές παγκοσμίως",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "name": "Μαρία Ροντρίγκεζ",
+          "location": "Μπουένος Άιρες, Αργεντινή",
+          "text": "Το Mundo Tango με βοήθησε να βρω την οικογένεια χορού μου σε μια νέα πόλη. Η κοινότητα είναι ζεστή, φιλόξενη και πραγματικά παθιασμένη με το τάνγκο."
         },
         "testimonial2": {
-          "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "name": "Τζέιμς Τσεν",
+          "location": "Σαν Φρανσίσκο, ΗΠΑ",
+          "text": "Ανακάλυψα καταπληκτικές μιλόνγκας και σεμινάρια μέσω αυτής της πλατφόρμας. Έχει γίνει απαραίτητη για το ταξίδι μου στο τάνγκο."
         },
         "testimonial3": {
-          "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "name": "Ελένα Βόλκοφ",
+          "location": "Μόσχα, Ρωσία",
+          "text": "Ο κατάλογος δασκάλων με βοήθησε να βρω απίστευτους εκπαιδευτές. Ο χορός μου έχει βελτιωθεί εκπληκτικά!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Συχνές Ερωτήσεις",
+      "description": "Όλα όσα πρέπει να γνωρίζετε για το Mundo Tango",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Τι είναι το Mundo Tango;",
+          "answer": "Το Mundo Tango είναι μια παγκόσμια πλατφόρμα που συνδέει χορευτές, δασκάλους και διοργανωτές τάνγκο. Σας βοηθάμε να ανακαλύψετε εκδηλώσεις, να βρείτε συντρόφους χορού, να μάθετε από κορυφαίους εκπαιδευτές και να βυθιστείτε στη ζωντανή κοινότητα τάνγκο παγκοσμίως."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Είναι δωρεάν το Mundo Tango;",
+          "answer": "Ναι! Προσφέρουμε δωρεάν επίπεδο που περιλαμβάνει βασική δημιουργία προφίλ, ανακάλυψη εκδηλώσεων και μηνύματα. Premium δυνατότητες όπως απεριόριστα μηνύματα, AI ταίριασμα συντρόφων χορού και ειδοποιήσεις προτεραιότητας διατίθενται με τη συνδρομή Pro."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Πώς βρίσκω εκδηλώσεις τάνγκο κοντά μου;",
+          "answer": "Απλά χρησιμοποιήστε το Ημερολόγιο Εκδηλώσεων ή την Αναζήτηση για φιλτράρισμα κατά πόλη, ημερομηνία και τύπο εκδήλωσης. Μπορείτε να ανακαλύψετε μιλόνγκας, φεστιβάλ, σεμινάρια και πράκτικες στην περιοχή σας ή οπουδήποτε στον κόσμο."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Μπορώ να συνδεθώ με άλλους χορευτές;",
+          "answer": "Απολύτως! Ακολουθήστε χορευτές, ενταχθείτε σε ομάδες, στείλτε αιτήματα φιλίας και συνομιλήστε με την κοινότητα. Η πλατφόρμα μας είναι σχεδιασμένη για να ενισχύει αυθεντικές συνδέσεις στον κόσμο του τάνγκο."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Πώς βρίσκω δασκάλους τάνγκο;",
+          "answer": "Επισκεφθείτε τον Κατάλογο Δασκάλων για περιήγηση πιστοποιημένων εκπαιδευτών παγκοσμίως. Φιλτράρετε κατά τοποθεσία, ειδικότητα και επίπεδο εμπειρίας. Διαβάστε κριτικές άλλων μαθητών και κλείστε ιδιωτικά μαθήματα μέσω της πλατφόρμας."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Τι κάνει το Mundo Tango διαφορετικό;",
+          "answer": "Είμαστε φτιαγμένοι από χορευτές τάνγκο, για χορευτές τάνγκο. Η εστίασή μας είναι στην αυθεντική οικοδόμηση κοινότητας, την ποιοτική επιμέλεια εκδηλώσεων και τη σύνδεσή σας με την παγκόσμια οικογένεια τάνγκο - όχι απλώς ένα ακόμα κοινωνικό δίκτυο."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Έτοιμοι να Ενταχθείτε στην Κοινότητα;",
+      "description": "Δημιουργήστε τον δωρεάν λογαριασμό σας σήμερα και αρχίστε να συνδέεστε με παθιασμένους χορευτές τάνγκο παγκοσμίως. Δεν απαιτείται πιστωτική κάρτα.",
+      "button": "Εγγραφείτε Δωρεάν στο Mundo Tango",
+      "freeForever": "Δωρεάν για πάντα",
+      "noCreditCard": "Χωρίς πιστωτική κάρτα",
+      "cancelAnytime": "Ακύρωση οποτεδήποτε"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Ροή",
+    "description": "Μείνετε ενημερωμένοι με τα τελευταία από την κοινότητα τάνγκο",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Όλες οι Αναρτήσεις",
+      "following": "Ακολουθούμενοι",
+      "popular": "Δημοφιλή",
+      "recent": "Πρόσφατα"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Τι σκέφτεστε;",
+    "noPost": "Δεν υπάρχουν αναρτήσεις"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Εκδηλώσεις",
+    "description": "Ανακαλύψτε εκδηλώσεις τάνγκο κοντά σας",
+    "upcoming": "Επερχόμενες Εκδηλώσεις",
+    "past": "Προηγούμενες Εκδηλώσεις",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "Όλες οι Εκδηλώσεις",
+      "milongas": "Μιλόνγκας",
+      "workshops": "Σεμινάρια",
+      "festivals": "Φεστιβάλ",
+      "classes": "Μαθήματα"
     },
-    "noEvents": "No events found"
+    "noEvents": "Δεν βρέθηκαν εκδηλώσεις"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Προφίλ",
+    "description": "Προβολή και επεξεργασία του προφίλ σας",
+    "editProfile": "Επεξεργασία Προφίλ",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Αναρτήσεις",
+      "photos": "Φωτογραφίες",
+      "videos": "Βίντεο",
+      "events": "Εκδηλώσεις",
+      "friends": "Φίλοι"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Αναρτήσεις",
+      "followers": "Ακόλουθοι",
+      "following": "Ακολουθούμενοι",
+      "events": "Εκδηλώσεις που Παρακολουθήθηκαν"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Μηνύματα",
+    "description": "Συνομιλήστε με τις επαφές σας στο τάνγκο",
+    "newMessage": "Νέο Μήνυμα",
+    "searchConversations": "Αναζήτηση συνομιλιών",
+    "noMessages": "Δεν υπάρχουν μηνύματα ακόμα",
+    "startConversation": "Ξεκινήστε μια συνομιλία"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Δάσκαλοι Τάνγκο",
+    "description": "Βρείτε και συνδεθείτε με δασκάλους τάνγκο",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Όλοι οι Δάσκαλοι",
+      "featured": "Προτεινόμενοι",
+      "nearby": "Κοντινοί"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Προβολή Προφίλ",
+    "bookLesson": "Κράτηση Μαθήματος"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Χώροι Τάνγκο",
+    "description": "Ανακαλύψτε χώρους τάνγκο παγκοσμίως",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Όλοι οι Χώροι",
+      "milongas": "Μιλόνγκας",
+      "schools": "Σχολές Χορού",
+      "theaters": "Θέατρα"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Οδηγίες"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Ρυθμίσεις",
+    "description": "Διαχείριση ρυθμίσεων λογαριασμού",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Ρυθμίσεις Λογαριασμού",
+      "profile": "Προφίλ",
+      "privacy": "Απόρρητο",
+      "notifications": "Ειδοποιήσεις",
+      "security": "Ασφάλεια",
+      "billing": "Χρέωση",
+      "preferences": "Προτιμήσεις"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Πίνακας Life CEO",
+    "description": "Ο προσωπικός σας AI βοηθός για διαχείριση ζωής",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Πράκτορας Υγείας",
+      "fitness": "Πράκτορας Φυσικής Κατάστασης",
+      "nutrition": "Πράκτορας Διατροφής",
+      "finance": "Πράκτορας Οικονομικών",
+      "career": "Πράκτορας Καριέρας",
+      "productivity": "Πράκτορας Παραγωγικότητας",
+      "relationships": "Πράκτορας Σχέσεων",
+      "learning": "Πράκτορας Μάθησης"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Αγορά",
+    "description": "Αγοράστε και πουλήστε είδη τάνγκο",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Παπούτσια Χορού",
+      "clothing": "Ρούχα",
+      "music": "Μουσική",
+      "accessories": "Αξεσουάρ",
+      "other": "Άλλα"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Πίνακας Διαχείρισης",
+    "description": "Διαχείριση πλατφόρμας",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Επισκόπηση",
+      "users": "Χρήστες",
+      "content": "Περιεχόμενο",
+      "reports": "Αναφορές",
+      "analytics": "Αναλυτικά",
+      "settings": "Ρυθμίσεις"
+    }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Συνέντευξη - Mundo Tango Talent Match",
+        "description": "Ολοκληρώστε τη συνέντευξη εθελοντισμού σας με τον κ. Μπλε AI για να ταιριάξετε με τις τέλειες ευκαιρίες."
+      },
+      "pageTitle": "AI Συνέντευξη",
+      "phases": {
+        "resume": "Φάση 1: Βαθιά Ανάλυση Βιογραφικού",
+        "work": "Φάση 2: Ταίριασμα Εργασιακής Ανάθεσης",
+        "complete": "Η συνέντευξη ολοκληρώθηκε!"
+      },
+      "phaseLabels": {
+        "resume": "Βιογραφικό",
+        "workAssignment": "Εργασιακή Ανάθεση"
+      },
+      "progress": {
+        "questionOf": "Ερώτηση {{current}} από {{total}}",
+        "allQuestionsAnswered": "Όλες οι ερωτήσεις απαντήθηκαν"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Μη έγκυρος τύπος αρχείου",
+          "description": "Παρακαλώ ανεβάστε PDF, DOCX ή TXT"
+        },
+        "resumeParsed": {
+          "title": "Το βιογραφικό αναλύθηκε!",
+          "description": "Ο κ. Μπλε μπορεί τώρα να διαβάσει το περιεχόμενο του βιογραφικού σας."
+        },
+        "uploadFailed": {
+          "title": "Η ανέβασμα απέτυχε",
+          "description": "Παρακαλώ δοκιμάστε ξανά"
+        },
+        "missingSession": {
+          "title": "Λείπει η συνεδρία",
+          "description": "Παρακαλώ ξεκινήστε από τη σελίδα Talent Match"
+        },
+        "error": {
+          "title": "Σφάλμα",
+          "description": "Αποτυχία στην επεξεργασία της απάντησής σας"
+        }
+      },
+      "resumeBanner": {
+        "title": "Το περιεχόμενο του βιογραφικού δεν είναι διαθέσιμο",
+        "description": "Ανανεώστε το βιογραφικό σας ώστε ο κ. Μπλε να μπορεί να διαβάσει και να αναφερθεί στην εμπειρία σας.",
+        "parsing": "Ανάλυση...",
+        "reupload": "Επαναφόρτωση"
+      },
+      "buttons": {
+        "viewDashboard": "Δείτε τον πίνακα ελέγχου H2AC",
+        "goHome": "Πηγαίνετε στην Αρχική Σελίδα"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Γεια σου! Έχω εξετάσει το υπόβαθρό σου. Ποια είναι η τεχνική δεξιότητα στην οποία είσαι πιο σίγουρος;",
+          "q2": "Ποιες τεχνολογίες ή εργαλεία απολαμβάνεις να εργάζεσαι περισσότερο;",
+          "q3": "Υπάρχουν δεξιότητες στο βιογραφικό σου που θα ήθελες να χρησιμοποιήσεις περισσότερο σε εθελοντική εργασία;",
+          "q4": "Ποιες περιοχές ανάπτυξης λογισμικού σε ενδιαφέρουν περισσότερο αυτή τη στιγμή;",
+          "q5": "Έχεις εργαστεί σε ανοιχτού κώδικα έργα ή κοινοτικές πρωτοβουλίες στο παρελθόν;",
+          "q6": "Ποιο είναι το προτιμώμενο στυλ εργασίας σου - προτιμάς την ανεξάρτητη εργασία ή τη συνεργασία;",
+          "q7": "Πώς προσεγγίζεις συνήθως την εκμάθηση νέων τεχνολογιών;",
+          "q8": "Τι είδους αντίκτυπο ελπίζεις να έχεις μέσω της εθελοντικής εργασίας;",
+          "q9": "Υπέροχα! Πριν προχωρήσουμε στη συζήτηση συγκεκριμένων ευκαιριών, υπάρχει κάτι άλλο για το υπόβαθρό σου που θα ήθελες να επισημάνεις;"
+        },
+        "work": {
+          "q1": "Τώρα ας μιλήσουμε για το πώς μπορείς να συμβάλεις στο Mundo Tango! Ποια περιοχή σε ενδιαφέρει περισσότερο: frontend, backend, AI/ML ή κάτι άλλο;",
+          "q2": "Το Mundo Tango συνδέει την παγκόσμια κοινότητα του τάνγκο. Ποιες δυνατότητες θα ήσουν ενθουσιασμένος να βοηθήσεις να χτιστούν;",
+          "q3": "Έχουμε τόσο τεχνικές όσο και μη τεχνικές ευκαιρίες εθελοντισμού. Τι είδους εργασία σε ενθουσιάζει περισσότερο;",
+          "q4": "Πόσο χρόνο ανά εβδομάδα θα μπορούσες ρεαλιστικά να αφιερώσεις στην εθελοντική εργασία;",
+          "q5": "Προτιμάς να εργάζεσαι ανεξάρτητα ή ως μέρος μιας ομάδας;",
+          "q6": "Είσαι άνετος με τον προγραμματισμό ζευγών ή τις αναθεωρήσεις κώδικα;",
+          "q7": "Ποια είναι η εμπειρία σου με την ανάπτυξη agile/sprint;",
+          "q8": "Χρησιμοποιούμε το GitHub για συνεργασία. Είσαι άνετος με τις ροές εργασίας Git;",
+          "q9": "Θα προτιμούσες να εργαστείς σε νέες δυνατότητες, διορθώσεις σφαλμάτων ή τεκμηρίωση;",
+          "q10": "Τέλεια! Τώρα έχω μια καλή κατανόηση του υποβάθρου και της εμπειρίας σου. Ας προχωρήσουμε στη Φάση 2 όπου θα συζητήσουμε συγκεκριμένους τρόπους που μπορείς να συμβάλεις στο Mundo Tango."
+        },
+        "phaseTransition": "Λυπάμαι, αλλά είχα πρόβλημα να το επεξεργαστώ. Μπορείς να προσπαθήσεις ξανά;",
+        "processingError": "Λυπάμαι, αλλά είχα πρόβλημα με την επεξεργασία αυτού. Μπορείτε να προσπαθήσετε ξανά;"
+      }
     }
   }
 }

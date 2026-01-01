@@ -932,5 +932,86 @@
     "search": "Buscar profissionais...",
     "filterByRole": "Filtrar por função",
     "filterByCity": "Filtrar por cidade"
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Entrevista de IA - Mundo Tango Talent Match",
+        "description": "Complete sua entrevista de voluntário com o Sr. Blue AI para ser combinado com as oportunidades perfeitas."
+      },
+      "pageTitle": "Entrevista de IA",
+      "phases": {
+        "resume": "Fase 1: Análise do Currículo",
+        "work": "Fase 2: Correspondência de Atribuições de Trabalho",
+        "complete": "Entrevista Concluída!"
+      },
+      "phaseLabels": {
+        "resume": "Currículo",
+        "workAssignment": "Atribuição de Trabalho"
+      },
+      "progress": {
+        "questionOf": "Pergunta {{current}} de {{total}}",
+        "allQuestionsAnswered": "Todas as perguntas respondidas"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Tipo de arquivo inválido",
+          "description": "Por favor, envie PDF, DOCX ou TXT"
+        },
+        "resumeParsed": {
+          "title": "Currículo analisado!",
+          "description": "O Sr. Blue agora pode ler o conteúdo do seu currículo."
+        },
+        "uploadFailed": {
+          "title": "Falha no upload",
+          "description": "Por favor, tente novamente"
+        },
+        "missingSession": {
+          "title": "Sessão ausente",
+          "description": "Por favor, comece pela página de Correspondência de Talentos"
+        },
+        "error": {
+          "title": "Erro",
+          "description": "Falha ao processar sua resposta"
+        }
+      },
+      "resumeBanner": {
+        "title": "Conteúdo do currículo não disponível",
+        "description": "Reenvie seu currículo para que o Sr. Blue possa ler e referenciar sua experiência.",
+        "parsing": "Analisando...",
+        "reupload": "Reenviar"
+      },
+      "buttons": {
+        "viewDashboard": "Ver Painel H2AC",
+        "goHome": "Ir para Casa"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Olá! Eu revisei seu histórico. O que você diria que é a habilidade técnica em que você tem mais confiança?",
+          "q2": "Quais tecnologias ou ferramentas você mais gosta de trabalhar?",
+          "q3": "Há alguma habilidade no seu currículo que você gostaria de usar mais em trabalho voluntário?",
+          "q4": "Quais áreas de desenvolvimento de software mais te interessam no momento?",
+          "q5": "Você já trabalhou em projetos de código aberto ou iniciativas comunitárias antes?",
+          "q6": "Qual é o seu estilo de trabalho preferido - você gosta de trabalho independente ou colaboração?",
+          "q7": "Como você normalmente aborda o aprendizado de novas tecnologias?",
+          "q8": "Que tipo de impacto você espera causar através do trabalho voluntário?",
+          "q9": "Ótimo! Antes de falarmos sobre oportunidades específicas, há algo mais sobre seu histórico que você gostaria de destacar?"
+        },
+        "work": {
+          "q1": "Agora vamos falar sobre como você pode contribuir para o Mundo Tango! Qual área mais te interessa: frontend, backend, IA/ML ou algo mais?",
+          "q2": "O Mundo Tango conecta a comunidade global de tango. Quais recursos você ficaria animado para ajudar a construir?",
+          "q3": "Temos oportunidades de voluntariado tanto técnicas quanto não técnicas. Que tipo de trabalho mais te energiza?",
+          "q4": "Quanto tempo por semana você poderia realisticamente se comprometer ao trabalho voluntário?",
+          "q5": "Você prefere trabalhar de forma independente ou como parte de uma equipe?",
+          "q6": "Você se sente confortável com programação em par ou revisões de código?",
+          "q7": "Qual é a sua experiência com desenvolvimento ágil/baseado em sprints?",
+          "q8": "Usamos o GitHub para colaboração. Você se sente confortável com fluxos de trabalho do Git?",
+          "q9": "Você prefere trabalhar em novos recursos, correções de bugs ou documentação?",
+          "q10": "Finalmente, qual é a melhor forma de se comunicar com você - Slack, e-mail ou mensagens na nossa plataforma?"
+        },
+        "phaseTransition": "Excelente! Agora eu tenho uma boa compreensão do seu histórico e experiência. Vamos passar para a Fase 2, onde discutiremos maneiras específicas de você contribuir para o Mundo Tango.",
+        "processingError": "Peço desculpas, mas tive dificuldades em processar isso. Você poderia tentar novamente?"
+      }
+    }
   }
 }

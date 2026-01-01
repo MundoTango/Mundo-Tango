@@ -899,5 +899,86 @@
       "analytics": "Analityka",
       "settings": "Ustawienia"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Wywiad AI - Mundo Tango Talent Match",
+        "description": "Uzupełnij swój wywiad wolontariacki z panem Blue AI, aby dopasować się do idealnych możliwości."
+      },
+      "pageTitle": "Wywiad AI",
+      "phases": {
+        "resume": "Faza 1: Dogłębna analiza CV",
+        "work": "Faza 2: Dopasowanie zadań do pracy",
+        "complete": "Wywiad zakończony!"
+      },
+      "phaseLabels": {
+        "resume": "CV",
+        "workAssignment": "Zadanie do pracy"
+      },
+      "progress": {
+        "questionOf": "Pytanie {{current}} z {{total}}",
+        "allQuestionsAnswered": "Wszystkie pytania odpowiedziano"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Nieprawidłowy typ pliku",
+          "description": "Proszę przesłać PDF, DOCX lub TXT"
+        },
+        "resumeParsed": {
+          "title": "CV zostało przetworzone!",
+          "description": "Pan Blue może teraz przeczytać treść Twojego CV."
+        },
+        "uploadFailed": {
+          "title": "Przesyłanie nie powiodło się",
+          "description": "Proszę spróbować ponownie"
+        },
+        "missingSession": {
+          "title": "Brak sesji",
+          "description": "Proszę zacząć od strony Talent Match"
+        },
+        "error": {
+          "title": "Błąd",
+          "description": "Nie udało się przetworzyć Twojej odpowiedzi"
+        }
+      },
+      "resumeBanner": {
+        "title": "Treść CV niedostępna",
+        "description": "Prześlij ponownie swoje CV, aby Pan Blue mógł przeczytać i odwołać się do Twojego doświadczenia.",
+        "parsing": "Przetwarzanie...",
+        "reupload": "Prześlij ponownie"
+      },
+      "buttons": {
+        "viewDashboard": "Zobacz pulpit H2AC",
+        "goHome": "Idź do domu"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Cześć! Przejrzałem Twoje doświadczenie. Jaką umiejętność techniczną uważasz za swoją najmocniejszą?",
+          "q2": "Jakie technologie lub narzędzia lubisz najbardziej?",
+          "q3": "Czy są jakieś umiejętności w Twoim CV, które chciałbyś wykorzystać więcej w pracy wolontariackiej?",
+          "q4": "Jakie obszary rozwoju oprogramowania interesują Cię najbardziej w tej chwili?",
+          "q5": "Czy pracowałeś wcześniej nad jakimikolwiek projektami open source lub inicjatywami społecznościowymi?",
+          "q6": "Jaki jest Twój preferowany styl pracy - czy wolisz pracę niezależną czy współpracę?",
+          "q7": "Jak zazwyczaj podchodzisz do nauki nowych technologii?",
+          "q8": "Jakiego rodzaju wpływ chcesz wywrzeć poprzez pracę wolontariacką?",
+          "q9": "Świetnie! Zanim przejdziemy do omawiania konkretnych możliwości, czy jest coś jeszcze w twoim tle, co chciałbyś podkreślić?"
+        },
+        "work": {
+          "q1": "Teraz porozmawiajmy o tym, jak możesz przyczynić się do Mundo Tango! Która dziedzina interesuje cię najbardziej: frontend, backend, AI/ML, czy coś innego?",
+          "q2": "Mundo Tango łączy globalną społeczność tanga. Jakie funkcje chciałbyś pomóc zbudować?",
+          "q3": "Mamy zarówno techniczne, jak i nietechniczne możliwości wolontariatu. Jaki rodzaj pracy najbardziej cię energizuje?",
+          "q4": "Ile czasu tygodniowo mógłbyś realistycznie poświęcić na pracę wolontariacką?",
+          "q5": "Czy wolisz pracować samodzielnie, czy jako część zespołu?",
+          "q6": "Czy czujesz się komfortowo z programowaniem w parach lub przeglądami kodu?",
+          "q7": "Jakie masz doświadczenie w rozwoju opartym na agile/sprintach?",
+          "q8": "Używamy GitHub do współpracy. Czy czujesz się komfortowo z przepływami pracy Git?",
+          "q9": "Czy wolałbyś pracować nad nowymi funkcjami, poprawkami błędów, czy dokumentacją?",
+          "q10": "Na koniec, jaki jest najlepszy sposób komunikacji z tobą - Slack, e-mail, czy wiadomości na naszej platformie?"
+        },
+        "phaseTransition": "Doskonale! Teraz mam świetne zrozumienie twojego tła i doświadczenia. Przejdźmy do Etapu 2, gdzie omówimy konkretne sposoby, w jakie możesz przyczynić się do Mundo Tango.",
+        "processingError": "Przepraszam, ale miałem trudności z przetworzeniem tego. Czy mógłbyś spróbować ponownie?"
+      }
+    }
   }
 }

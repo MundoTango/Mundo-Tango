@@ -327,26 +327,66 @@
       "completeSetup": "Završi postavljanje",
       "searchPlaceholder": "Pretražite zajednice ili dodajte novu...",
       "categories": {
-        "fitness": { "label": "Fitness i sport" },
-        "tech": { "label": "Tehnologija i inovacije" },
-        "spirituality": { "label": "Duhovnost i rast" },
-        "yoga": { "label": "Yoga i wellness" },
-        "music": { "label": "Glazba" },
-        "photography": { "label": "Fotografija i video" },
-        "art": { "label": "Umjetnost i kreativnost" },
-        "reading": { "label": "Čitanje i pisanje" },
-        "travel": { "label": "Putovanja i avantura" },
-        "cooking": { "label": "Kuhanje i hrana" },
-        "wine": { "label": "Vino i piće" },
-        "gaming": { "label": "Igre" },
-        "outdoors": { "label": "Aktivnosti na otvorenom" },
-        "snow": { "label": "Zimski sportovi" },
-        "cycling": { "label": "Biciklizam" },
-        "water": { "label": "Vodeni sportovi" },
-        "nature": { "label": "Priroda i vrtlarstvo" },
-        "movies": { "label": "Filmovi i zabava" },
-        "pets": { "label": "Kućni ljubimci" },
-        "social": { "label": "Zajednica" }
+        "fitness": {
+          "label": "Fitness i sport"
+        },
+        "tech": {
+          "label": "Tehnologija i inovacije"
+        },
+        "spirituality": {
+          "label": "Duhovnost i rast"
+        },
+        "yoga": {
+          "label": "Yoga i wellness"
+        },
+        "music": {
+          "label": "Glazba"
+        },
+        "photography": {
+          "label": "Fotografija i video"
+        },
+        "art": {
+          "label": "Umjetnost i kreativnost"
+        },
+        "reading": {
+          "label": "Čitanje i pisanje"
+        },
+        "travel": {
+          "label": "Putovanja i avantura"
+        },
+        "cooking": {
+          "label": "Kuhanje i hrana"
+        },
+        "wine": {
+          "label": "Vino i piće"
+        },
+        "gaming": {
+          "label": "Igre"
+        },
+        "outdoors": {
+          "label": "Aktivnosti na otvorenom"
+        },
+        "snow": {
+          "label": "Zimski sportovi"
+        },
+        "cycling": {
+          "label": "Biciklizam"
+        },
+        "water": {
+          "label": "Vodeni sportovi"
+        },
+        "nature": {
+          "label": "Priroda i vrtlarstvo"
+        },
+        "movies": {
+          "label": "Filmovi i zabava"
+        },
+        "pets": {
+          "label": "Kućni ljubimci"
+        },
+        "social": {
+          "label": "Zajednica"
+        }
       },
       "items": {
         "fitness_gym": "Teretana",
@@ -375,7 +415,7 @@
         "music_piano": "Klavir",
         "music_guitar": "Gitara",
         "music_singing": "Pjevanje",
-        "music_dj": "DJing",
+        "music_dj": "DJ-ing",
         "music_production": "Glazbena produkcija",
         "photo_portrait": "Portretna fotografija",
         "photo_landscape": "Pejzažna fotografija",
@@ -393,7 +433,7 @@
         "reading_poetry": "Poezija",
         "reading_writing": "Kreativno pisanje",
         "reading_journals": "Vođenje dnevnika",
-        "travel_backpacking": "Backpacking",
+        "travel_backpacking": "Pješačenje",
         "travel_luxury": "Luksuzna putovanja",
         "travel_cultural": "Kulturni turizam",
         "travel_road_trips": "Putovanja autom",
@@ -431,7 +471,7 @@
         "cycling_touring": "Biciklistički turizam",
         "water_swimming": "Plivanje",
         "water_scuba": "Ronjenje",
-        "water_snorkel": "Snorkeling",
+        "water_snorkel": "Ronjenje",
         "water_sailing": "Jedrenje",
         "water_paddleboard": "SUP",
         "nature_gardening": "Vrtlarstvo",
@@ -858,6 +898,87 @@
       "reports": "Izvještaji",
       "analytics": "Analitika",
       "settings": "Postavke"
+    }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Intervju - Mundo Tango Talent Match",
+        "description": "Završite svoj volonterski intervju s gospodinom Blue AI kako biste se povezali s savršenim prilikama."
+      },
+      "pageTitle": "AI Intervju",
+      "phases": {
+        "resume": "Faza 1: Dubinska analiza životopisa",
+        "work": "Faza 2: Usklađivanje radnih zadataka",
+        "complete": "Intervju je završen!"
+      },
+      "phaseLabels": {
+        "resume": "Životopis",
+        "workAssignment": "Zadatak"
+      },
+      "progress": {
+        "questionOf": "Pitanje {{current}} od {{total}}",
+        "allQuestionsAnswered": "Sva pitanja su odgovorena"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Nevažeća vrsta datoteke",
+          "description": "Molimo vas da učitate PDF, DOCX ili TXT"
+        },
+        "resumeParsed": {
+          "title": "Životopis je obrađen!",
+          "description": "Gospodin Blue sada može pročitati sadržaj vašeg životopisa."
+        },
+        "uploadFailed": {
+          "title": "Učitavanje nije uspjelo",
+          "description": "Molimo pokušajte ponovo"
+        },
+        "missingSession": {
+          "title": "Nedostaje sesija",
+          "description": "Molimo započnite s stranice Talent Match"
+        },
+        "error": {
+          "title": "Greška",
+          "description": "Nije uspjelo obraditi vaš odgovor"
+        }
+      },
+      "resumeBanner": {
+        "title": "Sadržaj životopisa nije dostupan",
+        "description": "Ponovno učitajte svoj životopis kako bi gospodin Blue mogao pročitati i referencirati vaše iskustvo.",
+        "parsing": "Obrada...",
+        "reupload": "Ponovno učitaj"
+      },
+      "buttons": {
+        "viewDashboard": "Pogledajte H2AC nadzornu ploču",
+        "goHome": "Idite na početnu stranicu"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Bok! Pregledao sam vašu pozadinu. Što biste rekli da je tehnička vještina u kojoj ste najpouzdaniji?",
+          "q2": "Koje tehnologije ili alate najviše volite koristiti?",
+          "q3": "Postoje li vještine u vašem životopisu koje biste željeli više koristiti u volonterskom radu?",
+          "q4": "Koja područja razvoja softvera vas trenutno najviše zanimaju?",
+          "q5": "Jeste li prije radili na nekim projektima otvorenog koda ili inicijativama zajednice?",
+          "q6": "Koji je vaš preferirani stil rada - volite li samostalni rad ili suradnju?",
+          "q7": "Kako obično pristupate učenju novih tehnologija?",
+          "q8": "Kakav utjecaj se nadate ostvariti kroz volonterski rad?",
+          "q9": "Odlično! Prije nego što pređemo na raspravu o specifičnim prilikama, postoji li nešto drugo o vašem iskustvu što biste željeli istaknuti?"
+        },
+        "work": {
+          "q1": "Sada razgovarajmo o tome kako možete doprinijeti Mundo Tango! Koje područje vas najviše zanima: frontend, backend, AI/ML ili nešto drugo?",
+          "q2": "Mundo Tango povezuje globalnu tango zajednicu. Koje bi značajke voljeli pomoći izgraditi?",
+          "q3": "Imamo i tehničke i netehničke volonterske prilike. Koja vrsta posla vas najviše energizira?",
+          "q4": "Koliko vremena tjedno biste realno mogli posvetiti volonterskom radu?",
+          "q5": "Preferirate li raditi samostalno ili kao dio tima?",
+          "q6": "Jeste li ugodni s parnim programiranjem ili pregledima koda?",
+          "q7": "Kakvo je vaše iskustvo s agilnim/sprint temeljenim razvojem?",
+          "q8": "Koristimo GitHub za suradnju. Jeste li ugodni s Git radnim tokovima?",
+          "q9": "Biste li radije radili na novim značajkama, ispravcima grešaka ili dokumentaciji?",
+          "q10": "Na kraju, koji je najbolji način za komunikaciju s vama - Slack, e-mail ili poruke na našoj platformi?"
+        },
+        "phaseTransition": "Izvrsno! Sada imam dobro razumijevanje vašeg iskustva i pozadine. Pređimo na Fazu 2 gdje ćemo raspraviti specifične načine na koje možete doprinijeti Mundo Tango.",
+        "processingError": "Ispričavam se, ali imao sam problema s obradom toga. Možete li pokušati ponovo?"
+      }
     }
   }
 }

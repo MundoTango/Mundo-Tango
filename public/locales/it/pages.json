@@ -932,5 +932,86 @@
     "search": "Cerca professionisti...",
     "filterByRole": "Filtra per ruolo",
     "filterByCity": "Filtra per città"
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Colloquio AI - Abbinamento Talent Match Mundo Tango",
+        "description": "Completa il tuo colloquio di volontariato con Mr Blue AI per essere abbinato alle opportunità perfette."
+      },
+      "pageTitle": "Colloquio AI",
+      "phases": {
+        "resume": "Fase 1: Approfondimento del Curriculum",
+        "work": "Fase 2: Abbinamento Assegnazione Lavoro",
+        "complete": "Colloquio Completo!"
+      },
+      "phaseLabels": {
+        "resume": "Curriculum",
+        "workAssignment": "Assegnazione Lavoro"
+      },
+      "progress": {
+        "questionOf": "Domanda {{current}} di {{total}}",
+        "allQuestionsAnswered": "Tutte le domande risposte"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Tipo di file non valido",
+          "description": "Si prega di caricare PDF, DOCX o TXT"
+        },
+        "resumeParsed": {
+          "title": "Curriculum analizzato!",
+          "description": "Mr. Blue può ora leggere il contenuto del tuo curriculum."
+        },
+        "uploadFailed": {
+          "title": "Caricamento non riuscito",
+          "description": "Si prega di riprovare"
+        },
+        "missingSession": {
+          "title": "Sessione mancante",
+          "description": "Si prega di iniziare dalla pagina Talent Match"
+        },
+        "error": {
+          "title": "Errore",
+          "description": "Impossibile elaborare la tua risposta"
+        }
+      },
+      "resumeBanner": {
+        "title": "Contenuto del curriculum non disponibile",
+        "description": "Ricarica il tuo curriculum affinché il Sig. Blue possa leggere e fare riferimento alla tua esperienza.",
+        "parsing": "Elaborazione...",
+        "reupload": "Ricarica"
+      },
+      "buttons": {
+        "viewDashboard": "Visualizza il cruscotto H2AC",
+        "goHome": "Torna alla home"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Ciao! Ho esaminato il tuo background. Quale sarebbe la competenza tecnica in cui ti senti più sicuro?",
+          "q2": "Quali tecnologie o strumenti ti piace utilizzare di più?",
+          "q3": "Ci sono competenze nel tuo curriculum che vorresti utilizzare di più nel lavoro di volontariato?",
+          "q4": "Quali aree dello sviluppo software ti interessano di più in questo momento?",
+          "q5": "Hai mai lavorato a progetti open source o iniziative comunitarie?",
+          "q6": "Qual è il tuo stile di lavoro preferito: ti piace lavorare in modo indipendente o in collaborazione?",
+          "q7": "Come affronti di solito l'apprendimento di nuove tecnologie?",
+          "q8": "Che tipo di impatto speri di avere attraverso il lavoro di volontariato?",
+          "q9": "Ottimo! Prima di passare a discutere opportunità specifiche, c'è qualcos'altro riguardo al tuo background che vorresti evidenziare?"
+        },
+        "work": {
+          "q1": "Ora parliamo di come puoi contribuire a Mundo Tango! Quale area ti interessa di più: frontend, backend, AI/ML o qualcos'altro?",
+          "q2": "Mundo Tango connette la comunità globale del tango. Quali funzionalità saresti entusiasta di aiutare a costruire?",
+          "q3": "Abbiamo opportunità di volontariato sia tecniche che non tecniche. Quale tipo di lavoro ti energizza di più?",
+          "q4": "Quante ore a settimana potresti realisticamente dedicare al lavoro di volontariato?",
+          "q5": "Preferisci lavorare in modo indipendente o come parte di un team?",
+          "q6": "Ti senti a tuo agio con la programmazione in coppia o le revisioni del codice?",
+          "q7": "Qual è la tua esperienza con lo sviluppo agile/basato su sprint?",
+          "q8": "Utilizziamo GitHub per la collaborazione. Ti senti a tuo agio con i flussi di lavoro Git?",
+          "q9": "Preferiresti lavorare su nuove funzionalità, correzioni di bug o documentazione?",
+          "q10": "Infine, qual è il modo migliore per comunicare con te - Slack, email o il nostro sistema di messaggistica?"
+        },
+        "phaseTransition": "Eccellente! Ora ho una grande comprensione del tuo background e della tua esperienza. Passiamo alla Fase 2 in cui discuteremo modi specifici in cui puoi contribuire a Mundo Tango.",
+        "processingError": "Mi scuso, ma ho avuto problemi a elaborare ciò. Potresti per favore riprovare?"
+      }
+    }
   }
 }

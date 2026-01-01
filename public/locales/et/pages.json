@@ -892,5 +892,86 @@
       "analytics": "Analüütika",
       "settings": "Seaded"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI intervjuu - Mundo Tango Talent Match",
+        "description": "Täiendage oma vabatahtliku intervjuud hr Blue AI-ga, et leida sobivad võimalused."
+      },
+      "pageTitle": "AI intervjuu",
+      "phases": {
+        "resume": "Faasi 1: CV süvauuring",
+        "work": "Faasi 2: Tööülesannete sobitamine",
+        "complete": "Intervjuu lõpetatud!"
+      },
+      "phaseLabels": {
+        "resume": "CV",
+        "workAssignment": "Tööülesanne"
+      },
+      "progress": {
+        "questionOf": "Küsimus {{current}}/{{total}}",
+        "allQuestionsAnswered": "Kõik küsimused on vastatud"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Kehtetu failitüüp",
+          "description": "Palun laadige üles PDF, DOCX või TXT"
+        },
+        "resumeParsed": {
+          "title": "Elulugu on analüüsitud!",
+          "description": "Hr. Blue saab nüüd lugeda teie eluloo sisu."
+        },
+        "uploadFailed": {
+          "title": "Üleslaadimine ebaõnnestus",
+          "description": "Palun proovige uuesti"
+        },
+        "missingSession": {
+          "title": "Puuduv sessioon",
+          "description": "Palun alustage Talent Match lehelt"
+        },
+        "error": {
+          "title": "Viga",
+          "description": "Teie vastuse töötlemine ebaõnnestus"
+        }
+      },
+      "resumeBanner": {
+        "title": "Eluloo sisu pole saadaval",
+        "description": "Laadige oma elulugu uuesti üles, et hr. Blue saaks lugeda ja viidata teie kogemusele.",
+        "parsing": "Analüüsin...",
+        "reupload": "Laadige uuesti üles"
+      },
+      "buttons": {
+        "viewDashboard": "Vaata H2AC juhtpaneeli",
+        "goHome": "Mine koju"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Tere! Olen teie tausta üle vaadanud. Millist tehnilist oskust peate kõige kindlamaks?",
+          "q2": "Milliste tehnoloogiate või tööriistadega teile kõige rohkem meeldib töötada?",
+          "q3": "Kas on mingeid oskusi teie eluloos, mida sooviksite vabatahtlikutöös rohkem kasutada?",
+          "q4": "Millised tarkvaraarenduse valdkonnad huvitavad teid praegu kõige rohkem?",
+          "q5": "Kas olete varem töötanud mõne avatud lähtekoodiga projekti või kogukonna algatuse kallal?",
+          "q6": "Milline on teie eelistatud tööstiil - kas teile meeldib iseseisev töö või koostöö?",
+          "q7": "Kuidas te tavaliselt uusi tehnoloogiaid õppima asute?",
+          "q8": "Millist mõju loodate vabatahtlikutöö kaudu saavutada?",
+          "q9": "Suurepärane! Enne kui liigume konkreetsete võimaluste arutamisele, kas on midagi muud teie tausta kohta, mida sooviksite esile tuua?"
+        },
+        "work": {
+          "q1": "Nüüd räägime sellest, kuidas saate Mundo Tangole panustada! Milline valdkond huvitab teid kõige rohkem: frontend, backend, AI/ML või midagi muud?",
+          "q2": "Mundo Tango ühendab globaalset tango kogukonda. Millised funktsioonid teid erutavad, et aidata neid luua?",
+          "q3": "Meil on nii tehnilised kui ka mitte-tehnilised vabatahtlikuvõimalused. Milline töö energiseerib teid kõige rohkem?",
+          "q4": "Kui palju aega nädalas saaksite realistlikult vabatahtlikutööd teha?",
+          "q5": "Kas eelistate töötada iseseisvalt või meeskonnas?",
+          "q6": "Kas olete paariprogrammeerimise või koodikontrollidega mugav?",
+          "q7": "Milline on teie kogemus agiilse/sprindipõhise arendusega?",
+          "q8": "Kasutame koostööks GitHubi. Kas olete Git töövoogudega mugav?",
+          "q9": "Kas eelistaksite töötada uute funktsioonide, vigade parandamise või dokumentatsiooni kallal?",
+          "q10": "Lõpuks, mis on parim viis teiega suhtlemiseks - Slack, e-post või meie platvormi sõnumite kaudu?"
+        },
+        "phaseTransition": "Suurepärane! Mul on nüüd suurepärane arusaam teie taustast ja kogemusest. Liigume faasi 2, kus arutame konkreetseid viise, kuidas saate Mundo Tangole panustada.",
+        "processingError": "Vabandust, aga mul oli selle töötlemisega probleeme. Kas saaksite palun uuesti proovida?"
+      }
+    }
   }
 }

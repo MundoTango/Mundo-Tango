@@ -1,291 +1,978 @@
 {
   "login": {
-    "pageName": "Login",
+    "pageName": "Giriş",
     "seo": {
-      "title": "Sign In - Mundo Tango",
-      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
+      "title": "Giriş Yap - Mundo Tango",
+      "description": "Mundo Tango hesabınıza giriş yaparak küresel tango topluluğuyla bağlantı kurun, etkinlikleri keşfedin ve Arjantin tangosu tutkunuzu paylaşın."
     },
-    "badge": "Welcome Back",
+    "badge": "Tekrar Hoş Geldiniz",
     "hero": {
-      "heading": "Your Tango Journey Continues",
-      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
+      "heading": "Tango Yolculuğunuz Devam Ediyor",
+      "paragraph": "Dünya çapındaki dansçılarla bağlantı kurmak, etkinlikleri keşfetmek ve tutkunuzu paylaşmak için giriş yapın"
     },
     "stats": {
-      "dancers": "dancers",
-      "events": "events"
+      "dancers": "dansçı",
+      "events": "etkinlik"
     },
     "form": {
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?"
+      "email": "E-posta",
+      "password": "Şifre",
+      "signIn": "Giriş Yap",
+      "signingIn": "Giriş yapılıyor...",
+      "forgotPassword": "Şifremi unuttum"
     },
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one now",
+    "noAccount": "Hesabınız yok mu?",
+    "createAccount": "Şimdi oluşturun",
     "toast": {
-      "successTitle": "Welcome back!",
-      "successDescription": "You've successfully logged in.",
-      "errorTitle": "Login failed",
-      "errorDescription": "Invalid credentials"
+      "successTitle": "Tekrar hoş geldiniz!",
+      "successDescription": "Başarıyla giriş yaptınız.",
+      "errorTitle": "Giriş başarısız",
+      "errorDescription": "Geçersiz kimlik bilgileri"
+    }
+  },
+  "register": {
+    "pageName": "Kayıt",
+    "seo": {
+      "title": "Mundo Tango'ya Katılın - Hesabınızı Oluşturun",
+      "description": "Mundo Tango hesabınızı oluşturun ve küresel Arjantin tango topluluğuna katılın. Dansçılarla bağlantı kurun, etkinlikleri keşfedin ve tango tutkunuzu paylaşın."
+    },
+    "badge": {
+      "welcomeFamily": "Aileye Hoş Geldiniz",
+      "beginJourney": "Yolculuğunuza Başlayın",
+      "joinCommunity": "Topluluğa Katılın"
+    },
+    "hero": {
+      "youreIn": "İçeridesiniz!",
+      "joinMundoTango": "Mundo Tango'ya Katılın",
+      "description": "Dünya çapındaki dansçılarla bağlantı kurun, milongaları keşfedin ve Arjantin tangosunun tutkulu dünyasına dalın",
+      "waitlistDescription": "Mundo Tango topluluğuna hoş geldiniz. Hesabınızı hazırlıyoruz ve yakında size haber vereceğiz!"
+    },
+    "stats": {
+      "dancers": "{{count}}+ dansçı",
+      "events": "{{count}}+ etkinlik",
+      "cities": "{{count}} şehir"
+    },
+    "form": {
+      "fullName": "Tam Ad",
+      "fullNamePlaceholder": "Ayşe Yılmaz",
+      "email": "E-posta",
+      "emailPlaceholder": "ayse@example.com",
+      "username": "Kullanıcı Adı",
+      "usernamePlaceholder": "ayse_tango",
+      "password": "Şifre",
+      "confirmPassword": "Şifreyi Onayla",
+      "inviteOnlyNotice": "Kayıt şu anda yalnızca davetiye ile yapılmaktadır. Bekleme listemize katılmak için bu formu doldurun, hesabınız hazır olduğunda size haber vereceğiz.",
+      "acceptTermsPrefix": "Kabul ediyorum",
+      "termsAndConditions": "Şartlar ve Koşullar"
+    },
+    "validation": {
+      "emailTaken": "Bu e-posta zaten kayıtlı",
+      "emailAvailable": "E-posta müsait!",
+      "usernameTaken": "Kullanıcı adı alınmış. {{suggestion}} deneyin",
+      "usernameAvailable": "Kullanıcı adı müsait!",
+      "passwordsMatch": "Şifreler eşleşiyor",
+      "passwordsDontMatch": "Şifreler eşleşmiyor"
+    },
+    "passwordStrength": {
+      "weak": "Zayıf",
+      "medium": "Orta",
+      "strong": "Güçlü",
+      "veryStrong": "Çok Güçlü"
+    },
+    "inviteCode": {
+      "label": "Davet kodunuz var mı? (İsteğe bağlı)",
+      "placeholder": "Anında erişim için davet kodunuzu girin",
+      "accepted": "Kod kabul edildi! Hesabınız hemen etkinleştirilecek.",
+      "noWorries": "Sorun değil! Bekleme listemize katılmak için aşağıdaki formu doldurun."
+    },
+    "waitlist": {
+      "welcomeUser": "Hoş geldiniz, {{name}}!",
+      "defaultName": "Dansçı",
+      "onTheList": "Listedesiniz. Hesabınız hazır olduğunda size e-posta göndereceğiz:",
+      "whenReady": "hesabınız hazır olduğunda.",
+      "helpUsGrow": "Beklerken, büyümemize yardım edin",
+      "volunteerWithUs": "Bizimle gönüllü olun",
+      "supportMundoTango": "Mundo Tango'yu destekleyin"
+    },
+    "button": {
+      "creatingAccount": "Hesabınız oluşturuluyor...",
+      "joining": "Katılınıyor...",
+      "createAccount": "Hesap Oluştur",
+      "joinMundoTango": "Mundo Tango'ya Katıl"
+    },
+    "alreadyHaveAccount": "Zaten hesabınız var mı?",
+    "signIn": "Giriş yapın",
+    "toast": {
+      "invalidCode": {
+        "title": "Geçersiz kod",
+        "description": "Lütfen geçerli bir 6 haneli doğrulama kodu girin."
+      },
+      "verified": {
+        "title": "E-posta doğrulandı!",
+        "description": "Mundo Tango'ya hoş geldiniz! Tanıtım başlıyor..."
+      },
+      "verifyError": {
+        "title": "Doğrulama başarısız",
+        "description": "Geçersiz veya süresi dolmuş kod. Lütfen tekrar deneyin."
+      },
+      "error": {
+        "title": "Hata",
+        "description": "E-posta doğrulanamadı. Lütfen tekrar deneyin."
+      },
+      "tooMany": {
+        "title": "Çok fazla istek",
+        "description": "Lütfen tekrar denemeden önce birkaç dakika bekleyin."
+      },
+      "codeSent": {
+        "title": "Kod gönderildi!",
+        "description": "Lütfen yeni kod için gelen kutunuzu kontrol edin."
+      },
+      "resendError": {
+        "description": "Kod yeniden gönderilemedi. Lütfen tekrar deneyin."
+      },
+      "termsRequired": {
+        "title": "Şartlar gerekli",
+        "description": "Lütfen Şartlar ve Koşulları kabul edin"
+      },
+      "passwordMismatch": {
+        "title": "Şifreler eşleşmiyor",
+        "description": "Lütfen her iki şifrenin aynı olduğundan emin olun"
+      },
+      "weakPassword": {
+        "title": "Zayıf şifre",
+        "description": "Lütfen daha güçlü bir şifre seçin"
+      },
+      "checkEmail": {
+        "title": "E-postanızı kontrol edin",
+        "description": "Size 6 haneli bir doğrulama kodu gönderdik. Lütfen gelen kutunuzu kontrol edin."
+      },
+      "registrationFailed": {
+        "title": "Kayıt başarısız"
+      },
+      "signupFailed": {
+        "title": "Kayıt tamamlanamadı"
+      },
+      "tryAgain": "Lütfen tekrar deneyin"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "pageTitle": "Hoş Geldiniz",
+      "seoTitle": "Mundo Tango'ya Hoş Geldiniz",
+      "seoDescription": "Mundo Tango ile tango yolculuğunuza başlayın",
+      "badge": "Hızlı Kurulum",
+      "title": "Mundo Tango'ya Hoş Geldiniz",
+      "subtitle": "Küresel tango topluluğuyla bağlantı kurabilmeniz için profilinizi ayarlayalım",
+      "duration": "Yaklaşık 2 dakika sürer",
+      "stepIndicator": "Adım {{current}} / {{total}}",
+      "getStarted": "Başlayın",
+      "profileTitle": "Tango Yolculuğunuz Başlıyor",
+      "profileSubtitle": "Bize kendinizden biraz bahsedin",
+      "features": {
+        "city": {
+          "title": "Şehrinizi Seçin",
+          "description": "Yerel tango topluluğunuzla bağlantı kurun"
+        },
+        "roles": {
+          "title": "Rollerinizi Söyleyin",
+          "description": "Dansçı, öğretmen, DJ, organizatör veya hepsi?"
+        },
+        "events": {
+          "title": "Etkinlikleri Keşfedin",
+          "description": "Yakınınızdaki milongaları, dersleri ve festivalleri bulun"
+        },
+        "journey": {
+          "title": "Yolculuğunuzu Paylaşın",
+          "description": "Seviyenizdeki dansçılarla bağlantı kurun"
+        },
+        "facebook": {
+          "title": "Facebook'u Bağlayın",
+          "description": "Toplulukta arkadaşlarınızı bulmak için Facebook profilinizi bağlayın"
+        }
+      }
+    },
+    "social": {
+      "pageTitle": "Sosyal Bağlantı",
+      "seoTitle": "Sosyal Dünyanızı Bağlayın - Mundo Tango",
+      "seoDescription": "Tango topluluğunda arkadaşlarınızı bulmak için sosyal profillerinizi bağlayın.",
+      "step": "Adım 2 / 6",
+      "title": "Sosyal Dünyanızı Bağlayın",
+      "quote": "\"Birçok tango dansçısı zaten Facebook üzerinden birbirini tanıyor. Profilinizi bağlayarak, ağınızdaki hangi dansçıların burada olduğunu size gösterebiliriz - milongalarda tanıdık yüzler bulmayı ve daha derin bağlantılar kurmayı kolaylaştırır.\"",
+      "cardTitle": "Arkadaşlarınızı Bulun",
+      "cardDescription": "Facebook'unuz sizi zaten tanıyor olabileceğiniz dansçılarla eşleştirmemize yardımcı olur, böylece sıfırdan başlamazsınız.",
+      "facebookLabel": "Facebook Profil URL'si (İsteğe bağlı)",
+      "facebookPlaceholder": "https://www.facebook.com/profiliniz",
+      "helperText": "Bunu diğer topluluklarla köprü olarak ve tanıyor olabileceğiniz dansçılarla eşleştirmek için kullanıyoruz.",
+      "toast": {
+        "errorTitle": "Hata",
+        "errorDescription": "Profil bilgileri kaydedilemedi"
+      }
+    },
+    "navigation": {
+      "back": "Geri",
+      "continue": "Devam",
+      "skip": "Atla",
+      "next": "İleri",
+      "finish": "Bitir",
+      "saving": "Kaydediliyor..."
+    },
+    "city": {
+      "pageTitle": "Şehir Seçimi",
+      "seoTitle": "Şehrinizi Seçin - Mundo Tango",
+      "seoDescription": "Yerel tango dansçılarıyla bağlantı kurmak için şehrinizi seçin",
+      "step": "Adım 1 / 6",
+      "title": "Nerede Dans Ediyorsunuz?",
+      "subtitle": "Bölgenizdeki dansçılarla bağlantı kurun",
+      "cardTitle": "Ana Şehriniz",
+      "cardDescription": "Bu, size yerel etkinlikleri ve dansçıları göstermemize yardımcı olur",
+      "searchLabel": "Şehrinizi arayın",
+      "searchPlaceholder": "Şehir adını yazın...",
+      "eventSite": {
+        "help": "Popüler tango destinasyonlarından seçin"
+      },
+      "errors": {
+        "required": "Şehir gerekli",
+        "selectCity": "Lütfen ana şehrinizi seçin"
+      },
+      "toast": {
+        "sourceAdded": "Kaynak eklendi!",
+        "submittedForReview": "İncelemeye gönderildi",
+        "trackingEvents": "Sitedeki etkinlikleri takip etmeye başlayacağız",
+        "thankYou": "Teşekkürler! Öneriniz incelenmek üzere gönderildi.",
+        "errorTitle": "Hata",
+        "suggestionFailed": "Öneri gönderilemedi",
+        "saveFailed": "Şehirler kaydedilemedi"
+      }
+    },
+    "photo": {
+      "pageTitle": "Fotoğraf Yükleme",
+      "seoTitle": "Profil Fotoğrafı Ekle - Mundo Tango",
+      "seoDescription": "Profil fotoğrafınızı yükleyin",
+      "step": "Adım 3 / 6",
+      "title": "Profil Fotoğrafınızı Ekleyin",
+      "subtitle": "Toplulukta diğerlerinin sizi tanımasına yardımcı olun",
+      "cardTitle": "Profil Fotoğrafınız",
+      "cardDescription": "Diğerlerinin sizi tanımasına yardımcı olun (bu adımı atlayabilirsiniz)",
+      "previewAlt": "Profil önizleme",
+      "dropHere": "Fotoğrafınızı buraya bırakın",
+      "or": "veya",
+      "browseFiles": "Dosyalara Göz At",
+      "fileTypes": "5MB'a kadar PNG, JPG",
+      "photoSelected": "Fotoğraf seçildi!",
+      "uploading": "Yükleniyor...",
+      "errors": {
+        "invalidFile": "Geçersiz dosya",
+        "selectImage": "Lütfen bir resim dosyası seçin",
+        "fileTooLarge": "Dosya çok büyük",
+        "sizeLimit": "Lütfen 5MB'dan küçük bir resim seçin",
+        "uploadFailed": "Yükleme başarısız",
+        "tryAgain": "Fotoğraf yüklenemedi. Lütfen tekrar deneyin.",
+        "skipFailed": "Atlama başarısız. Lütfen tekrar deneyin."
+      }
+    },
+    "languages": {
+      "pageTitle": "Diller",
+      "seoTitle": "Dilleriniz - Mundo Tango",
+      "seoDescription": "Hangi dilleri konuştuğunuzu söyleyin",
+      "step": "Adım 5 / 6",
+      "title": "Hangi Dilleri Konuşuyorsunuz?",
+      "subtitle": "Dilinizde dansçılarla bağlantı kurun",
+      "cardTitle": "Dilleriniz",
+      "cardDescription": "Ana dilinizi ve konuştuğunuz ek dilleri seçin",
+      "primaryLabel": "Ana Dil",
+      "primaryHint": "Bu aynı zamanda site görüntüleme dilinizi de ayarlayacaktır",
+      "primaryPlaceholder": "Ana dilinizi seçin",
+      "additionalLabel": "Ek Diller (İsteğe bağlı)",
+      "errors": {
+        "required": "Ana dil gerekli",
+        "selectPrimary": "Lütfen ana dilinizi seçin",
+        "saveFailed": "Diller kaydedilemedi",
+        "saveFailedTitle": "Dil Kaydetme Başarısız"
+      }
+    },
+    "roles": {
+      "pageTitle": "Tango Rolleri",
+      "seoTitle": "Tango Rolleriniz - Mundo Tango",
+      "seoDescription": "Tango yolculuğunuz hakkında bize bilgi verin",
+      "step": "Adım 2 / 6",
+      "title": "Hangi Rolleri Üstleniyorsunuz?",
+      "subtitle": "Size uyanların hepsini seçin",
+      "cardTitle": "Tango Kimliğiniz",
+      "cardDescription": "Diğerlerinin tango dünyasında nasıl yer aldığınızı bilmesine yardımcı olun"
+    },
+    "experience": {
+      "pageTitle": "Dans Deneyimi",
+      "seoTitle": "Dans Deneyiminiz - Mundo Tango",
+      "seoDescription": "Dans deneyim seviyenizi paylaşın",
+      "step": "Adım 4 / 6",
+      "title": "Dans Deneyiminiz",
+      "subtitle": "Sizi doğru dansçılarla buluşturmamıza yardımcı olun"
+    },
+    "hobbies": {
+      "pageTitle": "İlgi Alanları",
+      "seoTitle": "İlgi Alanlarınız - Mundo Tango",
+      "seoDescription": "İlgi alanlarınız hakkında bize bilgi verin",
+      "step": "Adım 6 / 6",
+      "title": "İlgi Alanlarınız Neler?",
+      "subtitle": "İlginizi çeken konuları seçin",
+      "helpText": "Akışınızı kişiselleştirmek için en az 3 ilgi alanı seçin",
+      "selectedCount": "{{count}} seçildi",
+      "finishing": "Tamamlanıyor...",
+      "completeSetup": "Kurulumu Tamamla",
+      "searchPlaceholder": "Toplulukları arayın veya yeni bir tane ekleyin...",
+      "categories": {
+        "fitness": {
+          "label": "Fitness ve Spor"
+        },
+        "tech": {
+          "label": "Teknoloji ve Yenilik"
+        },
+        "spirituality": {
+          "label": "Maneviyat ve Gelişim"
+        },
+        "yoga": {
+          "label": "Yoga ve Sağlık"
+        },
+        "music": {
+          "label": "Müzik"
+        },
+        "photography": {
+          "label": "Fotoğraf ve Video"
+        },
+        "art": {
+          "label": "Sanat ve Yaratıcılık"
+        },
+        "reading": {
+          "label": "Okuma ve Yazma"
+        },
+        "travel": {
+          "label": "Seyahat ve Macera"
+        },
+        "cooking": {
+          "label": "Yemek ve Mutfak"
+        },
+        "wine": {
+          "label": "Şarap ve İçecekler"
+        },
+        "gaming": {
+          "label": "Oyun"
+        },
+        "outdoors": {
+          "label": "Açık Hava Aktiviteleri"
+        },
+        "snow": {
+          "label": "Kar Sporları"
+        },
+        "cycling": {
+          "label": "Bisiklet"
+        },
+        "water": {
+          "label": "Su Sporları"
+        },
+        "nature": {
+          "label": "Doğa ve Bahçecilik"
+        },
+        "movies": {
+          "label": "Film ve Eğlence"
+        },
+        "pets": {
+          "label": "Evcil Hayvanlar"
+        },
+        "social": {
+          "label": "Sosyal ve Topluluk"
+        }
+      },
+      "items": {
+        "fitness_gym": "Spor Salonu ve Ağırlık",
+        "fitness_running": "Koşu",
+        "fitness_crossfit": "CrossFit",
+        "fitness_martial_arts": "Dövüş Sanatları",
+        "fitness_tennis": "Tenis",
+        "fitness_soccer": "Futbol",
+        "fitness_basketball": "Basketbol",
+        "fitness_fencing": "Eskrim",
+        "tech_coding": "Kodlama ve Geliştirme",
+        "tech_ai": "Yapay Zeka ve Gelecek Teknolojisi",
+        "tech_crypto": "Web3 ve Kripto",
+        "tech_gaming": "Oyun Kültürü",
+        "spirit_meditation": "Meditasyon",
+        "spirit_astrology": "Astroloji",
+        "spirit_philosophy": "Felsefe",
+        "spirit_community": "Topluluk Oluşturma",
+        "yoga_hatha": "Hatha Yoga",
+        "yoga_vinyasa": "Vinyasa Akışı",
+        "yoga_meditation": "Meditasyon",
+        "yoga_pilates": "Pilates",
+        "yoga_breathwork": "Nefes Çalışması",
+        "music_listening": "Müzik Dinleme",
+        "music_concerts": "Canlı Konserler",
+        "music_piano": "Piyano",
+        "music_guitar": "Gitar",
+        "music_singing": "Şarkı Söyleme",
+        "music_dj": "DJ'lik",
+        "music_production": "Müzik Prodüksiyon",
+        "photo_portrait": "Portre Fotoğrafçılığı",
+        "photo_landscape": "Manzara Fotoğrafçılığı",
+        "photo_street": "Sokak Fotoğrafçılığı",
+        "photo_video": "Video Çekimi",
+        "photo_editing": "Fotoğraf Düzenleme",
+        "art_painting": "Resim",
+        "art_drawing": "Çizim",
+        "art_sculpture": "Heykel",
+        "art_digital": "Dijital Sanat",
+        "art_crafts": "El Sanatları ve Kendin Yap",
+        "art_pottery": "Çömlek",
+        "reading_fiction": "Kurgu",
+        "reading_nonfiction": "Kurgu Dışı",
+        "reading_poetry": "Şiir",
+        "reading_writing": "Yaratıcı Yazarlık",
+        "reading_journals": "Günlük Tutma",
+        "travel_backpacking": "Sırt Çantalı Seyahat",
+        "travel_luxury": "Lüks Seyahat",
+        "travel_cultural": "Kültürel Turizm",
+        "travel_road_trips": "Yol Gezileri",
+        "travel_solo": "Solo Seyahat",
+        "cooking_home": "Ev Yemekleri",
+        "cooking_baking": "Fırıncılık",
+        "cooking_gourmet": "Gurme Mutfak",
+        "cooking_international": "Uluslararası Mutfak",
+        "cooking_healthy": "Sağlıklı Beslenme",
+        "wine_tasting": "Şarap Tadımı",
+        "wine_cocktails": "Kokteyller",
+        "wine_coffee": "Kahve Kültürü",
+        "wine_tea": "Çay Kültürü",
+        "wine_brewing": "Ev Yapımı Bira",
+        "gaming_video": "Video Oyunları",
+        "gaming_board": "Masa Oyunları",
+        "gaming_card": "Kart Oyunları",
+        "gaming_tabletop": "Masa Üstü RPG",
+        "gaming_esports": "eSporlar",
+        "outdoor_hiking": "Yürüyüş",
+        "outdoor_camping": "Kamp",
+        "outdoor_climbing": "Kaya Tırmanışı",
+        "outdoor_fishing": "Balıkçılık",
+        "outdoor_kayaking": "Kano",
+        "outdoor_surfing": "Sörf",
+        "snow_skiing": "Kayak",
+        "snow_snowboard": "Snowboard",
+        "snow_crosscountry": "Kros Kayağı",
+        "snow_ice_skating": "Buz Pateni",
+        "snow_sledding": "Kızak",
+        "snow_snowshoeing": "Kar Ayakkabısı",
+        "cycling_road": "Yol Bisikleti",
+        "cycling_mountain": "Dağ Bisikleti",
+        "cycling_urban": "Şehir Bisikleti",
+        "cycling_touring": "Bisiklet Turu",
+        "water_swimming": "Yüzme",
+        "water_scuba": "Tüplü Dalış",
+        "water_snorkel": "Şnorkelle Dalış",
+        "water_sailing": "Yelken",
+        "water_paddleboard": "Kürek Sörfü",
+        "nature_gardening": "Bahçecilik",
+        "nature_birdwatching": "Kuş Gözlemciliği",
+        "nature_botany": "Bitki Koleksiyonu",
+        "nature_wildlife": "Yaban Hayatı Fotoğrafçılığı",
+        "movies_cinema": "Sinema",
+        "movies_tv": "TV Dizileri",
+        "movies_documentary": "Belgeseller",
+        "movies_theater": "Tiyatro",
+        "movies_standup": "Stand-up Komedi",
+        "pets_dogs": "Köpekler",
+        "pets_cats": "Kediler",
+        "pets_exotic": "Egzotik Hayvanlar",
+        "pets_horses": "At Binme",
+        "pets_rescue": "Hayvan Kurtarma",
+        "social_volunteering": "Gönüllülük",
+        "social_meetups": "Buluşmalar",
+        "social_networking": "Ağ Oluşturma",
+        "social_languages": "Dil Değişimi"
+      },
+      "success": {
+        "completeTitle": "Mundo Tango'ya Hoş Geldiniz!",
+        "completeDesc": "Profiliniz hazır. Keşfetmeye başlayın!",
+        "waitlistTitle": "Profil Tamamlandı!",
+        "waitlistDesc": "Hesabınız etkinleştirildiğinde size haber vereceğiz"
+      },
+      "errors": {
+        "saveFailed": "Kaydedilemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "legal": {
+      "title": "Topluluk Kuralları",
+      "subtitle": "Lütfen şartlarımızı inceleyin ve kabul edin",
+      "legalDocsTitle": "Yasal Belgeler",
+      "legalDocsDescription": "Hizmet şartlarımızı ve gizlilik politikamızı inceleyin",
+      "termsOfService": {
+        "label": "Hizmet Şartlarını kabul ediyorum",
+        "description": "Şartlarımız Mundo Tango kullanımınızı düzenler",
+        "link": "Hizmet Şartlarını Oku"
+      },
+      "privacyPolicy": {
+        "label": "Gizlilik Politikasını kabul ediyorum",
+        "description": "Verilerinizi nasıl işlediğimiz",
+        "link": "Gizlilik Politikasını Oku"
+      },
+      "cocTitle": "Topluluk Davranış Kuralları",
+      "cocDescription": "Saygılı bir topluluk sürdürmemize yardımcı olun",
+      "coc": {
+        "respectful": {
+          "title": "Saygılı Olun",
+          "description": "Herkese onur ve nezaketle davranın"
+        },
+        "inclusive": {
+          "title": "Kapsayıcı Olun",
+          "description": "Her seviyeden ve geçmişten dansçıları hoş karşılayın"
+        },
+        "authentic": {
+          "title": "Özgün Olun",
+          "description": "Gerçek kimliğinizi ve dürüst bilgilerinizi kullanın"
+        },
+        "consent": {
+          "title": "Onaya Saygı Gösterin",
+          "description": "Dans etmeden önce her zaman sorun ve sınırlara saygı gösterin"
+        },
+        "noHarassment": {
+          "title": "Taciz Yasaktır",
+          "description": "Taciz veya zorbalığa sıfır tolerans"
+        },
+        "noSpam": {
+          "title": "Spam Yasaktır",
+          "description": "İstenmeyen promosyonlar göndermeyin"
+        },
+        "noDiscrimination": {
+          "title": "Ayrımcılık Yasaktır",
+          "description": "Hiçbir türde ayrımcılığa tolerans göstermiyoruz"
+        },
+        "privacy": {
+          "title": "Gizliliği Koruyun",
+          "description": "Başkalarının bilgilerini izinsiz paylaşmayın"
+        },
+        "safety": {
+          "title": "Güvenliği Öncelik Yapın",
+          "description": "Güvensiz davranışları hemen bildirin"
+        },
+        "laws": {
+          "title": "Yasalara Uyun",
+          "description": "Tüm geçerli yasalara uyun"
+        },
+        "report": {
+          "title": "Sorunları Bildirin",
+          "description": "İhlalleri bildirerek bize yardımcı olun"
+        },
+        "support": {
+          "title": "Birbirinizi Destekleyin",
+          "description": "Diğer dansçıların gelişmesine yardımcı olun"
+        }
+      },
+      "acceptAll": "Tümünü Kabul Et ve Devam Et",
+      "accepting": "Kabul ediliyor...",
+      "incompleteAlert": "Lütfen tüm gerekli şartları kabul edin",
+      "success": {
+        "title": "Hoş Geldiniz!",
+        "description": "Topluluk kurallarımızı kabul ettiniz"
+      },
+      "errors": {
+        "failed": "Kaydedilemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "waitlist": {
+      "pageTitle": "Bekleme Listesi",
+      "seoTitle": "Bekleme Listesindesiniz - Mundo Tango",
+      "seoDescription": "Hesabınız etkinleştirme bekliyor",
+      "title": "Bekleme Listesindesiniz!",
+      "welcomeMessage": "Hoş geldiniz, {{name}}!",
+      "defaultName": "Dansçı",
+      "profileComplete": "Profil Tamamlandı",
+      "profileCompleteDesc": "Profiliniz hazır ve bekliyor",
+      "emailNotice": "Hesabınız hazır olduğunda size {{email}} adresine e-posta göndereceğiz",
+      "whenReady": "hesabınız hazır olduğunda.",
+      "whileYouWait": "Beklerken, büyümemize yardımcı olun:",
+      "volunteerButton": "Gönüllü Olun",
+      "supportButton": "Mundo Tango'yu Destekleyin"
+    },
+    "tour": {
+      "pageTitle": "Rehberli Tur",
+      "seoTitle": "Mundo Tango'yu Keşfedin",
+      "seoDescription": "Mundo Tango'yu nasıl kullanacağınızı öğrenin",
+      "skipTour": "Turu Atla",
+      "finish": "Turu Bitir",
+      "steps": {
+        "feed": "Tango topluluğundan gönderileri keşfedin",
+        "events": "Milongaları, dersleri ve festivalleri bulun",
+        "groups": "Şehriniz veya ilgi alanlarınız için gruplara katılın",
+        "messages": "Diğer dansçılarla doğrudan bağlantı kurun",
+        "profile": "Tango profilinizi özelleştirin",
+        "createPost": "Tango anlarınızı paylaşın"
+      }
+    },
+    "subscription": {
+      "welcome": {
+        "title": "Deneyiminizi Yükseltin",
+        "subtitle": "Mundo Tango'dan en iyi şekilde yararlanın",
+        "limitedOffer": "Sınırlı Süreli Teklif",
+        "getStarted": "Başlayın",
+        "features": {
+          "connect": {
+            "title": "Bağlantı",
+            "description": "Herhangi bir dansçıya doğrudan mesaj atın"
+          },
+          "visibility": {
+            "title": "Görünürlük",
+            "description": "Arama sonuçlarında öne çıkın"
+          },
+          "events": {
+            "title": "Etkinlikler",
+            "description": "Popüler etkinliklere öncelikli erişim"
+          },
+          "grow": {
+            "title": "Büyüme",
+            "description": "Profiliniz için gelişmiş analizler"
+          },
+          "premium": {
+            "title": "Premium",
+            "description": "Özel premium özellikler"
+          }
+        }
+      }
     }
   },
   "home": {
-    "pageName": "Home",
-    "pageLayoutTitle": "Where Tango Meets Community",
+    "pageName": "Ana Sayfa",
+    "pageLayoutTitle": "Tango ve Topluluk Buluşuyor",
     "seo": {
-      "title": "Mundo Tango - Connect with the Global Tango Community",
-      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      "title": "Mundo Tango - Küresel Tango Topluluğuyla Bağlanın",
+      "description": "Dünya çapında binlerce tango dansçısına katılın. Etkinlikleri keşfedin, öğretmenler bulun, dansçılarla bağlantı kurun ve Arjantin tangosunun tutkulu dünyasına dalın."
     },
     "hero": {
-      "badge": "Welcome to the Global Tango Community",
-      "heading": "Where Tango Meets Community",
-      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
-      "getStarted": "Get Started Free",
-      "volunteer": "Volunteer to Help Build MT"
+      "badge": "Küresel Tango Topluluğuna Hoş Geldiniz",
+      "heading": "Tango ve Topluluk Buluşuyor",
+      "paragraph": "Anıları paylaşın, etkinlikler bulun ve tango teknolojisinin geleceğini birlikte inşa edelim. Dünya çapında bağlanan binlerce tutkulu dansçıya katılın.",
+      "getStarted": "Ücretsiz Başlayın",
+      "volunteer": "MT'yi İnşa Etmeye Gönüllü Olun"
     },
     "howItWorks": {
-      "heading": "How It Works",
-      "description": "Start your tango journey in three simple steps",
+      "heading": "Nasıl Çalışır",
+      "description": "Tango yolculuğunuza üç basit adımda başlayın",
       "step1": {
-        "title": "Create Your Profile",
-        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+        "title": "Profilinizi Oluşturun",
+        "description": "Ücretsiz katılın ve bize tango yolculuğunuz, deneyim seviyeniz ve dans tercihleriniz hakkında bilgi verin"
       },
       "step2": {
-        "title": "Discover & Connect",
-        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+        "title": "Keşfedin ve Bağlanın",
+        "description": "Yakınınızdaki etkinlikleri, öğretmenleri ve mekanları bulun. Tutkunuzu paylaşan dansçılarla bağlantı kurun"
       },
       "step3": {
-        "title": "Dance & Grow",
-        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+        "title": "Dans Edin ve Büyüyün",
+        "description": "Etkinliklere katılın, ders alın, arkadaşlar edinin ve küresel tango topluluğunun bir parçası olun"
       }
     },
     "features": {
-      "heading": "Everything You Need",
-      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "heading": "İhtiyacınız Olan Her Şey",
+      "description": "Güçlü özelliklerle tango yolculuğunuzu bağlayın, keşfedin ve büyütün",
       "community": {
-        "badge": "Community",
-        "heading": "Connect with Dancers Worldwide",
-        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "badge": "Topluluk",
+        "heading": "Dünya Çapındaki Dansçılarla Bağlanın",
+        "description": "Canlı bir küresel tango meraklıları topluluğuna katılın. Buenos Aires'ten Tokyo'ya dansçılar, öğretmenler ve organizatörlerle bağlantı kurun.",
         "items": {
-          "follow": "Follow dancers and build your network",
-          "groups": "Join groups based on interests and location",
-          "messaging": "Real-time messaging and chat features",
-          "discover": "Discover dancers visiting your city"
+          "follow": "Dansçıları takip edin ve ağınızı oluşturun",
+          "groups": "İlgi alanlarına ve konuma göre gruplara katılın",
+          "messaging": "Gerçek zamanlı mesajlaşma ve sohbet özellikleri",
+          "discover": "Şehrinizi ziyaret eden dansçıları keşfedin"
         }
       },
       "events": {
-        "badge": "Events",
-        "heading": "Discover Events Everywhere",
-        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "badge": "Etkinlikler",
+        "heading": "Her Yerde Etkinlikleri Keşfedin",
+        "description": "Hiçbir milonga, festival veya atölye kaçırmayın. Platformumuz sizi dünya çapında gerçekleşen binlerce tango etkinliğine bağlar.",
         "items": {
-          "calendar": "Comprehensive event calendar",
-          "rsvp": "RSVP and ticket booking",
-          "notifications": "Event notifications and reminders",
-          "map": "Interactive map of venues"
+          "calendar": "Kapsamlı etkinlik takvimi",
+          "rsvp": "RSVP ve bilet rezervasyonu",
+          "notifications": "Etkinlik bildirimleri ve hatırlatıcılar",
+          "map": "İnteraktif mekan haritası"
         }
       },
       "cards": {
         "liveStreaming": {
-          "title": "Live Streaming",
-          "description": "Watch milongas worldwide in real-time"
+          "title": "Canlı Yayın",
+          "description": "Dünya çapındaki milongaları gerçek zamanlı izleyin"
         },
         "musicLibrary": {
-          "title": "Music Library",
-          "description": "Curated tango playlists and guides"
+          "title": "Müzik Kütüphanesi",
+          "description": "Seçilmiş tango çalma listeleri ve rehberler"
         },
         "verifiedTeachers": {
-          "title": "Verified Teachers",
-          "description": "Learn from certified instructors"
+          "title": "Onaylı Öğretmenler",
+          "description": "Sertifikalı eğitmenlerden öğrenin"
         },
         "travelPlanner": {
-          "title": "Travel Planner",
-          "description": "Plan trips and find hosts globally"
+          "title": "Seyahat Planlayıcı",
+          "description": "Geziler planlayın ve dünya çapında ev sahipleri bulun"
         }
       }
     },
     "testimonials": {
-      "heading": "What Dancers Say",
-      "description": "Join thousands of satisfied dancers worldwide",
+      "heading": "Dansçılar Ne Diyor",
+      "description": "Dünya çapında binlerce memnun dansçıya katılın",
       "items": {
         "testimonial1": {
           "name": "Maria Rodriguez",
-          "location": "Buenos Aires, Argentina",
-          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+          "location": "Buenos Aires, Arjantin",
+          "text": "Mundo Tango yeni bir şehirde dans ailemi bulmama yardımcı oldu. Topluluk sıcak, misafirperver ve gerçekten tangoya tutkulu."
         },
         "testimonial2": {
           "name": "James Chen",
-          "location": "San Francisco, USA",
-          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+          "location": "San Francisco, ABD",
+          "text": "Bu platform aracılığıyla harika milongalar ve atölyeler keşfettim. Tango yolculuğum için vazgeçilmez oldu."
         },
         "testimonial3": {
           "name": "Elena Volkov",
-          "location": "Moscow, Russia",
-          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+          "location": "Moskova, Rusya",
+          "text": "Öğretmenler rehberi inanılmaz eğitmenler bulmama yardımcı oldu. Dansım muazzam gelişti!"
         }
       }
     },
     "faq": {
-      "heading": "Frequently Asked Questions",
-      "description": "Everything you need to know about Mundo Tango",
+      "heading": "Sıkça Sorulan Sorular",
+      "description": "Mundo Tango hakkında bilmeniz gereken her şey",
       "items": {
         "q1": {
-          "question": "What is Mundo Tango?",
-          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+          "question": "Mundo Tango nedir?",
+          "answer": "Mundo Tango, tango dansçılarını, öğretmenlerini ve organizatörlerini birbirine bağlayan küresel bir platformdur. Etkinlikleri keşfetmenize, dans partnerleri bulmanıza, en iyi eğitmenlerden öğrenmenize ve dünya çapındaki canlı tango topluluğuna dahil olmanıza yardımcı oluyoruz."
         },
         "q2": {
-          "question": "Is Mundo Tango free to use?",
-          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+          "question": "Mundo Tango ücretsiz mi?",
+          "answer": "Evet! Temel profil oluşturma, etkinlik keşfi ve mesajlaşma içeren ücretsiz bir katman sunuyoruz. Sınırsız mesajlaşma, AI dans partneri eşleştirme ve öncelikli etkinlik bildirimleri gibi premium özellikler Pro aboneliğimizle kullanılabilir."
         },
         "q3": {
-          "question": "How do I find tango events near me?",
-          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+          "question": "Yakınımdaki tango etkinliklerini nasıl bulurum?",
+          "answer": "Etkinlik Takvimimizi veya Arama özelliklerimizi kullanarak şehre, tarihe ve etkinlik türüne göre filtreleyin. Bölgenizdeki veya dünyanın herhangi bir yerindeki milongaları, festivalleri, atölyeleri ve pratik seanslarını keşfedebilirsiniz."
         },
         "q4": {
-          "question": "Can I connect with other dancers?",
-          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+          "question": "Diğer dansçılarla bağlantı kurabilir miyim?",
+          "answer": "Kesinlikle! Dansçıları takip edin, gruplara katılın, arkadaşlık istekleri gönderin ve toplulukla sohbet edin. Platformumuz tango dünyasında otantik bağlantıları teşvik etmek için tasarlandı."
         },
         "q5": {
-          "question": "How do I find tango teachers?",
-          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+          "question": "Tango öğretmenlerini nasıl bulurum?",
+          "answer": "Dünya çapındaki onaylı eğitmenlere göz atmak için Öğretmenler Rehberimizi ziyaret edin. Konum, uzmanlık ve deneyim seviyesine göre filtreleyin. Diğer öğrencilerin yorumlarını okuyun ve platform aracılığıyla doğrudan özel dersler ayırtın."
         },
         "q6": {
-          "question": "What makes Mundo Tango different?",
-          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+          "question": "Mundo Tango'yu farklı kılan nedir?",
+          "answer": "Tango dansçıları tarafından, tango dansçıları için inşa edildik. Odak noktamız otantik topluluk oluşturma, kaliteli etkinlik küratörlüğü ve sizi küresel tango ailesiyle buluşturmaktır - sadece başka bir sosyal ağ değil."
         }
       }
     },
     "cta": {
-      "heading": "Ready to Join the Community?",
-      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
-      "button": "Join Mundo Tango Free",
-      "freeForever": "Free forever",
-      "noCreditCard": "No credit card",
-      "cancelAnytime": "Cancel anytime"
+      "heading": "Topluluğa Katılmaya Hazır mısınız?",
+      "description": "Bugün ücretsiz hesabınızı oluşturun ve dünya çapındaki tutkulu tango dansçılarıyla bağlantı kurmaya başlayın. Kredi kartı gerekmez.",
+      "button": "Mundo Tango'ya Ücretsiz Katıl",
+      "freeForever": "Sonsuza kadar ücretsiz",
+      "noCreditCard": "Kredi kartı yok",
+      "cancelAnytime": "İstediğiniz zaman iptal"
     }
   },
   "feed": {
-    "title": "Feed",
-    "description": "Stay updated with the latest from the tango community",
+    "title": "Akış",
+    "description": "Tango topluluğundan en son haberlerle güncel kalın",
     "filters": {
-      "all": "All Posts",
-      "following": "Following",
-      "popular": "Popular",
-      "recent": "Recent"
+      "all": "Tüm Gönderiler",
+      "following": "Takip Ettiklerim",
+      "popular": "Popüler",
+      "recent": "Son"
     },
-    "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "createPost": "Aklınızda ne var?",
+    "noPost": "Gösterilecek gönderi yok"
   },
   "events": {
-    "title": "Events",
-    "description": "Discover tango events near you",
-    "upcoming": "Upcoming Events",
-    "past": "Past Events",
+    "title": "Etkinlikler",
+    "description": "Yakınınızdaki tango etkinliklerini keşfedin",
+    "upcoming": "Yaklaşan Etkinlikler",
+    "past": "Geçmiş Etkinlikler",
     "filters": {
-      "all": "All Events",
-      "milongas": "Milongas",
-      "workshops": "Workshops",
-      "festivals": "Festivals",
-      "classes": "Classes"
+      "all": "Tüm Etkinlikler",
+      "milongas": "Milongalar",
+      "workshops": "Atölyeler",
+      "festivals": "Festivaller",
+      "classes": "Dersler"
     },
-    "noEvents": "No events found"
+    "noEvents": "Etkinlik bulunamadı"
   },
   "profile": {
-    "title": "Profile",
-    "description": "View and edit your profile",
-    "editProfile": "Edit Profile",
+    "title": "Profil",
+    "description": "Profilinizi görüntüleyin ve düzenleyin",
+    "editProfile": "Profili Düzenle",
     "tabs": {
-      "posts": "Posts",
-      "photos": "Photos",
-      "videos": "Videos",
-      "events": "Events",
-      "friends": "Friends"
+      "posts": "Gönderiler",
+      "photos": "Fotoğraflar",
+      "videos": "Videolar",
+      "events": "Etkinlikler",
+      "friends": "Arkadaşlar"
     },
     "stats": {
-      "posts": "Posts",
-      "followers": "Followers",
-      "following": "Following",
-      "events": "Events Attended"
+      "posts": "Gönderiler",
+      "followers": "Takipçiler",
+      "following": "Takip Ettiklerim",
+      "events": "Katıldığım Etkinlikler"
     }
   },
   "messages": {
-    "title": "Messages",
-    "description": "Chat with your tango connections",
-    "newMessage": "New Message",
-    "searchConversations": "Search conversations",
-    "noMessages": "No messages yet",
-    "startConversation": "Start a conversation"
+    "title": "Mesajlar",
+    "description": "Tango bağlantılarınızla sohbet edin",
+    "newMessage": "Yeni Mesaj",
+    "searchConversations": "Konuşmaları ara",
+    "noMessages": "Henüz mesaj yok",
+    "startConversation": "Bir konuşma başlatın"
   },
   "teachers": {
-    "title": "Tango Teachers",
-    "description": "Find and connect with tango teachers",
+    "title": "Tango Öğretmenleri",
+    "description": "Tango öğretmenleri bulun ve bağlantı kurun",
     "filters": {
-      "all": "All Teachers",
-      "featured": "Featured",
-      "nearby": "Nearby"
+      "all": "Tüm Öğretmenler",
+      "featured": "Öne Çıkan",
+      "nearby": "Yakınımdaki"
     },
-    "viewProfile": "View Profile",
-    "bookLesson": "Book a Lesson"
+    "viewProfile": "Profili Görüntüle",
+    "bookLesson": "Ders Ayırt"
   },
   "venues": {
-    "title": "Tango Venues",
-    "description": "Discover tango venues worldwide",
+    "title": "Tango Mekanları",
+    "description": "Dünya çapındaki tango mekanlarını keşfedin",
     "filters": {
-      "all": "All Venues",
-      "milongas": "Milongas",
-      "schools": "Dance Schools",
-      "theaters": "Theaters"
+      "all": "Tüm Mekanlar",
+      "milongas": "Milongalar",
+      "schools": "Dans Okulları",
+      "theaters": "Tiyatrolar"
     },
-    "getDirections": "Get Directions"
+    "getDirections": "Yol Tarifi Al"
   },
   "settings": {
-    "title": "Settings",
-    "description": "Manage your account settings",
+    "title": "Ayarlar",
+    "description": "Hesap ayarlarınızı yönetin",
     "sections": {
-      "account": "Account Settings",
-      "profile": "Profile",
-      "privacy": "Privacy",
-      "notifications": "Notifications",
-      "security": "Security",
-      "billing": "Billing",
-      "preferences": "Preferences"
+      "account": "Hesap Ayarları",
+      "profile": "Profil",
+      "privacy": "Gizlilik",
+      "notifications": "Bildirimler",
+      "security": "Güvenlik",
+      "billing": "Fatura",
+      "preferences": "Tercihler"
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
-    "description": "Your personal AI assistant for life management",
+    "title": "Life CEO Kontrol Paneli",
+    "description": "Yaşam yönetimi için kişisel AI asistanınız",
     "agents": {
-      "health": "Health Agent",
-      "fitness": "Fitness Agent",
-      "nutrition": "Nutrition Agent",
-      "finance": "Finance Agent",
-      "career": "Career Agent",
-      "productivity": "Productivity Agent",
-      "relationships": "Relationship Agent",
-      "learning": "Learning Agent"
+      "health": "Sağlık Asistanı",
+      "fitness": "Fitness Asistanı",
+      "nutrition": "Beslenme Asistanı",
+      "finance": "Finans Asistanı",
+      "career": "Kariyer Asistanı",
+      "productivity": "Verimlilik Asistanı",
+      "relationships": "İlişki Asistanı",
+      "learning": "Öğrenme Asistanı"
     }
   },
   "marketplace": {
-    "title": "Marketplace",
-    "description": "Buy and sell tango-related items",
+    "title": "Pazar Yeri",
+    "description": "Tango ile ilgili ürünleri alın ve satın",
     "categories": {
-      "shoes": "Dance Shoes",
-      "clothing": "Clothing",
-      "music": "Music",
-      "accessories": "Accessories",
-      "other": "Other"
+      "shoes": "Dans Ayakkabıları",
+      "clothing": "Giyim",
+      "music": "Müzik",
+      "accessories": "Aksesuarlar",
+      "other": "Diğer"
     }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "description": "Platform administration and management",
+    "title": "Yönetici Paneli",
+    "description": "Platform yönetimi ve idaresi",
     "sections": {
-      "overview": "Overview",
-      "users": "Users",
-      "content": "Content",
-      "reports": "Reports",
-      "analytics": "Analytics",
-      "settings": "Settings"
+      "overview": "Genel Bakış",
+      "users": "Kullanıcılar",
+      "content": "İçerik",
+      "reports": "Raporlar",
+      "analytics": "Analitik",
+      "settings": "Ayarlar"
+    }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Mülakat - Mundo Tango Yetenek Eşleştirmesi",
+        "description": "Mükemmel fırsatlarla eşleşmek için Bay Mavi AI ile gönüllü mülakatınızı tamamlayın."
+      },
+      "pageTitle": "AI Mülakat",
+      "phases": {
+        "resume": "Aşama 1: Özgeçmiş Derinlemesine İnceleme",
+        "work": "Aşama 2: İş Atama Eşleştirme",
+        "complete": "Mülakat Tamamlandı!"
+      },
+      "phaseLabels": {
+        "resume": "Özgeçmiş",
+        "workAssignment": "İş Ataması"
+      },
+      "progress": {
+        "questionOf": "Soru {{current}} / {{total}}",
+        "allQuestionsAnswered": "Tüm sorular yanıtlandı"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Geçersiz dosya türü",
+          "description": "Lütfen PDF, DOCX veya TXT yükleyin"
+        },
+        "resumeParsed": {
+          "title": "Özgeçmiş ayrıştırıldı!",
+          "description": "Bay Mavi artık özgeçmiş içeriğinizi okuyabilir."
+        },
+        "uploadFailed": {
+          "title": "Yükleme başarısız oldu",
+          "description": "Lütfen tekrar deneyin"
+        },
+        "missingSession": {
+          "title": "Oturum eksik",
+          "description": "Lütfen Yetenek Eşleştirme sayfasından başlayın"
+        },
+        "error": {
+          "title": "Hata",
+          "description": "Yanıtınızı işleme alma başarısız oldu"
+        }
+      },
+      "resumeBanner": {
+        "title": "Özgeçmiş içeriği mevcut değil",
+        "description": "Özgeçmişinizi yeniden yükleyin, böylece Bay Mavi deneyiminizi okuyabilir ve referans alabilir.",
+        "parsing": "Ayrıştırılıyor...",
+        "reupload": "Yeniden yükle"
+      },
+      "buttons": {
+        "viewDashboard": "H2AC Gösterge Tablosunu Görüntüle",
+        "goHome": "Ana Sayfaya Git"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Merhaba! Geçmişinizi inceledim. En güvendiğiniz teknik beceri nedir?",
+          "q2": "Hangi teknolojiler veya araçlarla çalışmayı en çok seviyorsunuz?",
+          "q3": "Özgeçmişinizde gönüllü çalışmalarda daha fazla kullanmak istediğiniz beceriler var mı?",
+          "q4": "Şu anda yazılım geliştirmede en çok hangi alanlar ilginizi çekiyor?",
+          "q5": "Daha önce herhangi bir açık kaynak projesinde veya topluluk girişiminde çalıştınız mı?",
+          "q6": "Tercih ettiğiniz çalışma tarzı nedir - bağımsız çalışmayı mı yoksa işbirliğini mi seversiniz?",
+          "q7": "Yeni teknolojileri öğrenmeye genellikle nasıl yaklaşıyorsunuz?",
+          "q8": "Gönüllü çalışmalarda ne tür bir etki yaratmayı umuyorsunuz?",
+          "q9": "Harika! Şimdi belirli fırsatları tartışmadan önce, geçmişinizle ilgili vurgulamak istediğiniz başka bir şey var mı?"
+        },
+        "work": {
+          "q1": "Şimdi Mundo Tango'ya nasıl katkıda bulunabileceğinizi konuşalım! Hangi alan sizi en çok ilgilendiriyor: frontend, backend, AI/ML veya başka bir şey?",
+          "q2": "Mundo Tango, küresel tango topluluğunu bir araya getiriyor. Hangi özellikleri geliştirmekte yardımcı olmaktan heyecan duyarsınız?",
+          "q3": "Hem teknik hem de teknik olmayan gönüllü fırsatlarımız var. Hangi tür işler sizi en çok enerji veriyor?",
+          "q4": "Haftada ne kadar zamanı gönüllü çalışmalara ayırabileceğinizi gerçekçi bir şekilde tahmin edebilirsiniz?",
+          "q5": "Bağımsız çalışmayı mı yoksa bir ekibin parçası olarak mı çalışmayı tercih ediyorsunuz?",
+          "q6": "Eşli programlama veya kod incelemeleri konusunda rahat mısınız?",
+          "q7": "Agile/sprint tabanlı geliştirme konusundaki deneyiminiz nedir?",
+          "q8": "İşbirliği için GitHub kullanıyoruz. Git iş akışlarıyla rahat mısınız?",
+          "q9": "Yeni özellikler, hata düzeltmeleri veya dokümantasyon üzerinde mi çalışmayı tercih edersiniz?",
+          "q10": "Son olarak, sizinle iletişim kurmanın en iyi yolu nedir - Slack, e-posta veya platformumuzun mesajlaşması?"
+        },
+        "phaseTransition": "Harika! Artık arka planınız ve deneyiminiz hakkında iyi bir anlayışa sahibim. Mundo Tango'ya nasıl katkıda bulunabileceğinizi tartışacağımız 2. Aşama'ya geçelim.",
+        "processingError": "Üzgünüm, ama bunu işlemekte zorlandım. Lütfen tekrar dener misiniz?"
+      }
     }
   }
 }

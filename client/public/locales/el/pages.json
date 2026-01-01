@@ -15,7 +15,7 @@
       "events": "εκδηλώσεις"
     },
     "form": {
-      "email": "Email",
+      "email": "Ηλεκτρονικό ταχυδρομείο",
       "password": "Κωδικός",
       "signIn": "Σύνδεση",
       "signingIn": "Σύνδεση...",
@@ -55,7 +55,7 @@
     "form": {
       "fullName": "Πλήρες Όνομα",
       "fullNamePlaceholder": "Μαρία Παπαδοπούλου",
-      "email": "Email",
+      "email": "Ηλεκτρονικό ταχυδρομείο",
       "emailPlaceholder": "maria@example.com",
       "username": "Όνομα χρήστη",
       "usernamePlaceholder": "maria_tango",
@@ -355,7 +355,7 @@
           "label": "Κρασί & Ποτά"
         },
         "gaming": {
-          "label": "Gaming"
+          "label": "Παιχνίδια"
         },
         "outdoors": {
           "label": "Υπαίθριες Δραστηριότητες"
@@ -393,16 +393,16 @@
         "fitness_fencing": "Ξιφασκία",
         "tech_coding": "Προγραμματισμός",
         "tech_ai": "AI & Μελλοντική Τεχνολογία",
-        "tech_crypto": "Web3 & Crypto",
+        "tech_crypto": "Web3 & Κρυπτονομίσματα",
         "tech_gaming": "Gaming Κουλτούρα",
         "spirit_meditation": "Διαλογισμός",
         "spirit_astrology": "Αστρολογία",
         "spirit_philosophy": "Φιλοσοφία",
         "spirit_community": "Οικοδόμηση Κοινότητας",
-        "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
+        "yoga_hatha": "Χάθα Γιόγκα",
+        "yoga_vinyasa": "Βινιάσα Φλόου",
         "yoga_meditation": "Διαλογισμός",
-        "yoga_pilates": "Pilates",
+        "yoga_pilates": "Πιλάτες",
         "yoga_breathwork": "Αναπνευστικές Τεχνικές",
         "music_listening": "Ακρόαση Μουσικής",
         "music_concerts": "Ζωντανές Συναυλίες",
@@ -413,7 +413,7 @@
         "music_production": "Παραγωγή Μουσικής",
         "photo_portrait": "Πορτραίτα",
         "photo_landscape": "Τοπία",
-        "photo_street": "Street Photography",
+        "photo_street": "Δρόμος Φωτογραφία",
         "photo_video": "Βιντεογράφηση",
         "photo_editing": "Επεξεργασία Φωτογραφίας",
         "art_painting": "Ζωγραφική",
@@ -427,11 +427,11 @@
         "reading_poetry": "Ποίηση",
         "reading_writing": "Δημιουργική Γραφή",
         "reading_journals": "Ημερολόγια",
-        "travel_backpacking": "Backpacking",
+        "travel_backpacking": "Πεζοπορία",
         "travel_luxury": "Πολυτελή Ταξίδια",
         "travel_cultural": "Πολιτιστικός Τουρισμός",
-        "travel_road_trips": "Road Trips",
-        "travel_solo": "Solo Travel",
+        "travel_road_trips": "Οδικά Ταξίδια",
+        "travel_solo": "Μοναχικά Ταξίδια",
         "cooking_home": "Μαγείρεμα στο Σπίτι",
         "cooking_baking": "Αρτοποιία",
         "cooking_gourmet": "Gourmet Κουζίνα",
@@ -445,7 +445,7 @@
         "gaming_video": "Βιντεοπαιχνίδια",
         "gaming_board": "Επιτραπέζια",
         "gaming_card": "Χαρτιά",
-        "gaming_tabletop": "Tabletop RPGs",
+        "gaming_tabletop": "Επιτραπέζια RPGs",
         "gaming_esports": "eSports",
         "outdoor_hiking": "Πεζοπορία",
         "outdoor_camping": "Κάμπινγκ",
@@ -465,9 +465,9 @@
         "cycling_touring": "Ποδηλατικές Περιηγήσεις",
         "water_swimming": "Κολύμβηση",
         "water_scuba": "Καταδύσεις",
-        "water_snorkel": "Snorkeling",
+        "water_snorkel": "Καταδύσεις με αναπνευστήρα",
         "water_sailing": "Ιστιοπλοΐα",
-        "water_paddleboard": "Paddleboarding",
+        "water_paddleboard": "Πανί",
         "nature_gardening": "Κηπουρική",
         "nature_birdwatching": "Παρατήρηση Πουλιών",
         "nature_botany": "Συλλογή Φυτών",
@@ -476,15 +476,15 @@
         "movies_tv": "Τηλεοπτικές Σειρές",
         "movies_documentary": "Ντοκιμαντέρ",
         "movies_theater": "Θέατρο",
-        "movies_standup": "Stand-up Comedy",
+        "movies_standup": "Stand-up Κωμωδία",
         "pets_dogs": "Σκύλοι",
         "pets_cats": "Γάτες",
         "pets_exotic": "Εξωτικά Κατοικίδια",
         "pets_horses": "Ιππασία",
         "pets_rescue": "Διάσωση Ζώων",
         "social_volunteering": "Εθελοντισμός",
-        "social_meetups": "Meetups",
-        "social_networking": "Networking",
+        "social_meetups": "Συναντήσεις",
+        "social_networking": "Δικτύωση",
         "social_languages": "Ανταλλαγή Γλωσσών"
       },
       "success": {
@@ -715,17 +715,17 @@
       "description": "Ενταχθείτε σε χιλιάδες ικανοποιημένους χορευτές παγκοσμίως",
       "items": {
         "testimonial1": {
-          "name": "Maria Rodriguez",
+          "name": "Μαρία Ροντρίγκεζ",
           "location": "Μπουένος Άιρες, Αργεντινή",
           "text": "Το Mundo Tango με βοήθησε να βρω την οικογένεια χορού μου σε μια νέα πόλη. Η κοινότητα είναι ζεστή, φιλόξενη και πραγματικά παθιασμένη με το τάνγκο."
         },
         "testimonial2": {
-          "name": "James Chen",
+          "name": "Τζέιμς Τσεν",
           "location": "Σαν Φρανσίσκο, ΗΠΑ",
           "text": "Ανακάλυψα καταπληκτικές μιλόνγκας και σεμινάρια μέσω αυτής της πλατφόρμας. Έχει γίνει απαραίτητη για το ταξίδι μου στο τάνγκο."
         },
         "testimonial3": {
-          "name": "Elena Volkov",
+          "name": "Ελένα Βόλκοφ",
           "location": "Μόσχα, Ρωσία",
           "text": "Ο κατάλογος δασκάλων με βοήθησε να βρω απίστευτους εκπαιδευτές. Ο χορός μου έχει βελτιωθεί εκπληκτικά!"
         }
@@ -897,81 +897,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI Συνέντευξη - Mundo Tango Talent Match",
+        "description": "Ολοκληρώστε τη συνέντευξη εθελοντισμού σας με τον κ. Μπλε AI για να ταιριάξετε με τις τέλειες ευκαιρίες."
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI Συνέντευξη",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "Φάση 1: Βαθιά Ανάλυση Βιογραφικού",
+        "work": "Φάση 2: Ταίριασμα Εργασιακής Ανάθεσης",
+        "complete": "Η συνέντευξη ολοκληρώθηκε!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "Βιογραφικό",
+        "workAssignment": "Εργασιακή Ανάθεση"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Ερώτηση {{current}} από {{total}}",
+        "allQuestionsAnswered": "Όλες οι ερωτήσεις απαντήθηκαν"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Μη έγκυρος τύπος αρχείου",
+          "description": "Παρακαλώ ανεβάστε PDF, DOCX ή TXT"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "Το βιογραφικό αναλύθηκε!",
+          "description": "Ο κ. Μπλε μπορεί τώρα να διαβάσει το περιεχόμενο του βιογραφικού σας."
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Η ανέβασμα απέτυχε",
+          "description": "Παρακαλώ δοκιμάστε ξανά"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Λείπει η συνεδρία",
+          "description": "Παρακαλώ ξεκινήστε από τη σελίδα Talent Match"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Σφάλμα",
+          "description": "Αποτυχία στην επεξεργασία της απάντησής σας"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Το περιεχόμενο του βιογραφικού δεν είναι διαθέσιμο",
+        "description": "Ανανεώστε το βιογραφικό σας ώστε ο κ. Μπλε να μπορεί να διαβάσει και να αναφερθεί στην εμπειρία σας.",
+        "parsing": "Ανάλυση...",
+        "reupload": "Επαναφόρτωση"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "Δείτε τον πίνακα ελέγχου H2AC",
+        "goHome": "Πηγαίνετε στην Αρχική Σελίδα"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Γεια σου! Έχω εξετάσει το υπόβαθρό σου. Ποια είναι η τεχνική δεξιότητα στην οποία είσαι πιο σίγουρος;",
+          "q2": "Ποιες τεχνολογίες ή εργαλεία απολαμβάνεις να εργάζεσαι περισσότερο;",
+          "q3": "Υπάρχουν δεξιότητες στο βιογραφικό σου που θα ήθελες να χρησιμοποιήσεις περισσότερο σε εθελοντική εργασία;",
+          "q4": "Ποιες περιοχές ανάπτυξης λογισμικού σε ενδιαφέρουν περισσότερο αυτή τη στιγμή;",
+          "q5": "Έχεις εργαστεί σε ανοιχτού κώδικα έργα ή κοινοτικές πρωτοβουλίες στο παρελθόν;",
+          "q6": "Ποιο είναι το προτιμώμενο στυλ εργασίας σου - προτιμάς την ανεξάρτητη εργασία ή τη συνεργασία;",
+          "q7": "Πώς προσεγγίζεις συνήθως την εκμάθηση νέων τεχνολογιών;",
+          "q8": "Τι είδους αντίκτυπο ελπίζεις να έχεις μέσω της εθελοντικής εργασίας;",
+          "q9": "Υπέροχα! Πριν προχωρήσουμε στη συζήτηση συγκεκριμένων ευκαιριών, υπάρχει κάτι άλλο για το υπόβαθρό σου που θα ήθελες να επισημάνεις;"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Τώρα ας μιλήσουμε για το πώς μπορείς να συμβάλεις στο Mundo Tango! Ποια περιοχή σε ενδιαφέρει περισσότερο: frontend, backend, AI/ML ή κάτι άλλο;",
+          "q2": "Το Mundo Tango συνδέει την παγκόσμια κοινότητα του τάνγκο. Ποιες δυνατότητες θα ήσουν ενθουσιασμένος να βοηθήσεις να χτιστούν;",
+          "q3": "Έχουμε τόσο τεχνικές όσο και μη τεχνικές ευκαιρίες εθελοντισμού. Τι είδους εργασία σε ενθουσιάζει περισσότερο;",
+          "q4": "Πόσο χρόνο ανά εβδομάδα θα μπορούσες ρεαλιστικά να αφιερώσεις στην εθελοντική εργασία;",
+          "q5": "Προτιμάς να εργάζεσαι ανεξάρτητα ή ως μέρος μιας ομάδας;",
+          "q6": "Είσαι άνετος με τον προγραμματισμό ζευγών ή τις αναθεωρήσεις κώδικα;",
+          "q7": "Ποια είναι η εμπειρία σου με την ανάπτυξη agile/sprint;",
+          "q8": "Χρησιμοποιούμε το GitHub για συνεργασία. Είσαι άνετος με τις ροές εργασίας Git;",
+          "q9": "Θα προτιμούσες να εργαστείς σε νέες δυνατότητες, διορθώσεις σφαλμάτων ή τεκμηρίωση;",
+          "q10": "Τέλεια! Τώρα έχω μια καλή κατανόηση του υποβάθρου και της εμπειρίας σου. Ας προχωρήσουμε στη Φάση 2 όπου θα συζητήσουμε συγκεκριμένους τρόπους που μπορείς να συμβάλεις στο Mundo Tango."
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Λυπάμαι, αλλά είχα πρόβλημα να το επεξεργαστώ. Μπορείς να προσπαθήσεις ξανά;",
+        "processingError": "Λυπάμαι, αλλά είχα πρόβλημα με την επεξεργασία αυτού. Μπορείτε να προσπαθήσετε ξανά;"
       }
     }
   }

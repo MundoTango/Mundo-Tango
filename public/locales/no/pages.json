@@ -899,5 +899,86 @@
       "analytics": "Analyse",
       "settings": "Innstillinger"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI-intervju - Mundo Tango Talent Match",
+        "description": "Fullfør din frivillige intervju med Mr Blue AI for å bli matchet med de perfekte mulighetene."
+      },
+      "pageTitle": "AI-intervju",
+      "phases": {
+        "resume": "Fase 1: Dypdykk i CV",
+        "work": "Fase 2: Matching av arbeidsoppgaver",
+        "complete": "Intervju fullført!"
+      },
+      "phaseLabels": {
+        "resume": "CV",
+        "workAssignment": "Arbeidsoppgave"
+      },
+      "progress": {
+        "questionOf": "Spørsmål {{current}} av {{total}}",
+        "allQuestionsAnswered": "Alle spørsmål besvart"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Ugyldig filtype",
+          "description": "Vennligst last opp PDF, DOCX eller TXT"
+        },
+        "resumeParsed": {
+          "title": "CV analysert!",
+          "description": "Mr. Blue kan nå lese innholdet i CV-en din."
+        },
+        "uploadFailed": {
+          "title": "Opplasting mislyktes",
+          "description": "Vennligst prøv igjen"
+        },
+        "missingSession": {
+          "title": "Mangler økt",
+          "description": "Vennligst start fra Talent Match-siden"
+        },
+        "error": {
+          "title": "Feil",
+          "description": "Kunne ikke behandle svaret ditt"
+        }
+      },
+      "resumeBanner": {
+        "title": "CV-innhold ikke tilgjengelig",
+        "description": "Last opp CV-en din på nytt slik at Mr. Blue kan lese og referere til erfaringen din.",
+        "parsing": "Analyserer...",
+        "reupload": "Last opp på nytt"
+      },
+      "buttons": {
+        "viewDashboard": "Vis H2AC-dashbord",
+        "goHome": "Gå hjem"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Hei der! Jeg har gjennomgått bakgrunnen din. Hva vil du si er den tekniske ferdigheten du er mest trygg på?",
+          "q2": "Hvilke teknologier eller verktøy liker du best å jobbe med?",
+          "q3": "Er det noen ferdigheter på CV-en din som du gjerne vil bruke mer i frivillig arbeid?",
+          "q4": "Hvilke områder innen programvareutvikling interesserer deg mest akkurat nå?",
+          "q5": "Har du jobbet med noen open source-prosjekter eller samfunnsinitiativer før?",
+          "q6": "Hva er din foretrukne arbeidsstil - liker du uavhengig arbeid eller samarbeid?",
+          "q7": "Hvordan pleier du å tilnærme deg læring av nye teknologier?",
+          "q8": "Hvilken type innvirkning håper du å gjøre gjennom frivillig arbeid?",
+          "q9": "Flott! Før vi går videre til å diskutere spesifikke muligheter, er det noe annet om bakgrunnen din du vil fremheve?"
+        },
+        "work": {
+          "q1": "La oss nå snakke om hvordan du kan bidra til Mundo Tango! Hvilket område interesserer deg mest: frontend, backend, AI/ML, eller noe annet?",
+          "q2": "Mundo Tango kobler det globale tango-samfunnet. Hvilke funksjoner ville du vært begeistret for å hjelpe til med å bygge?",
+          "q3": "Vi har både tekniske og ikke-tekniske frivillige muligheter. Hvilken type arbeid gir deg mest energi?",
+          "q4": "Hvor mye tid per uke kan du realistisk forplikte deg til frivillig arbeid?",
+          "q5": "Foretrekker du å jobbe uavhengig eller som en del av et team?",
+          "q6": "Er du komfortabel med parprogrammering eller kodegjennomganger?",
+          "q7": "Hva er din erfaring med smidig/sprint-basert utvikling?",
+          "q8": "Vi bruker GitHub for samarbeid. Er du komfortabel med Git-arbeidsflyter?",
+          "q9": "Vil du helst jobbe med nye funksjoner, feilrettinger eller dokumentasjon?",
+          "q10": "Til slutt, hva er den beste måten å kommunisere med deg på - Slack, e-post eller vår plattformmelding?"
+        },
+        "phaseTransition": "Utmerket! Jeg har nå en god forståelse av bakgrunnen og erfaringen din. La oss gå videre til fase 2 hvor vi skal diskutere spesifikke måter du kan bidra til Mundo Tango.",
+        "processingError": "Jeg beklager, men jeg hadde problemer med å behandle det. Kan du vennligst prøve igjen?"
+      }
+    }
   }
 }

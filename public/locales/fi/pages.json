@@ -892,5 +892,86 @@
       "analytics": "Analytiikka",
       "settings": "Asetukset"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI-haastattelu - Mundo Tango Talent Match",
+        "description": "Viimeistele vapaaehtoistyön haastattelusi herra Blue AI:n kanssa, jotta saat täydelliset mahdollisuudet."
+      },
+      "pageTitle": "AI-haastattelu",
+      "phases": {
+        "resume": "Vaihe 1: CV:n syväsukellus",
+        "work": "Vaihe 2: Työtehtävien sovittaminen",
+        "complete": "Haastattelu valmis!"
+      },
+      "phaseLabels": {
+        "resume": "CV",
+        "workAssignment": "Työtehtävä"
+      },
+      "progress": {
+        "questionOf": "Kysymys {{current}} / {{total}}",
+        "allQuestionsAnswered": "Kaikki kysymykset vastattu"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Virheellinen tiedostotyyppi",
+          "description": "Lataa PDF-, DOCX- tai TXT-tiedosto"
+        },
+        "resumeParsed": {
+          "title": "Ansioluettelo käsitelty!",
+          "description": "Herra Blue voi nyt lukea ansioluettelosi sisältöä."
+        },
+        "uploadFailed": {
+          "title": "Lähetys epäonnistui",
+          "description": "Yritä uudelleen"
+        },
+        "missingSession": {
+          "title": "Istunto puuttuu",
+          "description": "Aloita Talent Match -sivulta"
+        },
+        "error": {
+          "title": "Virhe",
+          "description": "Vastauksesi käsittely epäonnistui"
+        }
+      },
+      "resumeBanner": {
+        "title": "Ansioluettelon sisältö ei ole saatavilla",
+        "description": "Lähetä ansioluettelosi uudelleen, jotta herra Blue voi lukea ja viitata kokemukseesi.",
+        "parsing": "Käsitellään...",
+        "reupload": "Lähetä uudelleen"
+      },
+      "buttons": {
+        "viewDashboard": "Näytä H2AC-hallintapaneeli",
+        "goHome": "Mene kotiin"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Hei! Olen tarkastellut taustaasi. Mikä olisi tekninen taito, jossa tunnet itsesi varmimmaksi?",
+          "q2": "Mitkä teknologiat tai työkalut nautit eniten työskennellessäsi?",
+          "q3": "Onko ansioluettelossasi taitoja, joita haluaisit käyttää enemmän vapaaehtoistyössä?",
+          "q4": "Mitkä ohjelmistokehityksen alueet kiinnostavat sinua eniten juuri nyt?",
+          "q5": "Oletko työskennellyt aiemmin avoimen lähdekoodin projekteissa tai yhteisöaloitteissa?",
+          "q6": "Mikä on suosikkityöskentelytyylisi - pidätkö itsenäisestä työstä vai yhteistyöstä?",
+          "q7": "Miten lähestyt yleensä uusien teknologioiden oppimista?",
+          "q8": "Minkälaista vaikutusta toivot saavuttavasi vapaaehtoistyön kautta?",
+          "q9": "Hienoa! Ennen kuin siirrymme keskustelemaan erityisistä mahdollisuuksista, onko jotain muuta taustastasi, jonka haluaisit tuoda esiin?"
+        },
+        "work": {
+          "q1": "Puhutaan nyt siitä, miten voit vaikuttaa Mundo Tangoon! Mikä alue kiinnostaa sinua eniten: frontend, backend, AI/ML vai jokin muu?",
+          "q2": "Mundo Tango yhdistää globaalin tangoyhteisön. Mitkä ominaisuudet innostaisivat sinua auttamaan rakentamisessa?",
+          "q3": "Meillä on sekä teknisiä että ei-teknisiä vapaaehtoistyömahdollisuuksia. Minkä tyyppinen työ innostaa sinua eniten?",
+          "q4": "Kuinka paljon aikaa viikossa voisit realistisesti sitoutua vapaaehtoistyöhön?",
+          "q5": "Pidätkö enemmän itsenäisestä työskentelystä vai tiimissä työskentelystä?",
+          "q6": "Oletko mukava pariohjelmoinnin tai koodikatselmusten kanssa?",
+          "q7": "Mikä on kokemuksesi ketterästä/sprinttipohjaisesta kehityksestä?",
+          "q8": "Käytämme GitHubia yhteistyöhön. Oletko mukava Git-työnkulkujen kanssa?",
+          "q9": "Haluaisitko työskennellä uusien ominaisuuksien, virhekorjausten vai dokumentaation parissa?",
+          "q10": "Lopuksi, mikä on paras tapa kommunikoida kanssasi - Slack, sähköposti vai alustamme viestintä?"
+        },
+        "phaseTransition": "Erinomaista! Minulla on nyt hyvä käsitys taustastasi ja kokemuksestasi. Siirrytään vaiheeseen 2, jossa keskustelemme erityisistä tavoista, joilla voit osallistua Mundo Tangoon.",
+        "processingError": "Anteeksi, mutta minulla oli vaikeuksia käsitellä sitä. Voisitko yrittää uudelleen?"
+      }
+    }
   }
 }

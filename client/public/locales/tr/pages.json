@@ -400,7 +400,7 @@
         "spirit_philosophy": "Felsefe",
         "spirit_community": "Topluluk Oluşturma",
         "yoga_hatha": "Hatha Yoga",
-        "yoga_vinyasa": "Vinyasa Flow",
+        "yoga_vinyasa": "Vinyasa Akışı",
         "yoga_meditation": "Meditasyon",
         "yoga_pilates": "Pilates",
         "yoga_breathwork": "Nefes Çalışması",
@@ -484,7 +484,7 @@
         "pets_rescue": "Hayvan Kurtarma",
         "social_volunteering": "Gönüllülük",
         "social_meetups": "Buluşmalar",
-        "social_networking": "Networking",
+        "social_networking": "Ağ Oluşturma",
         "social_languages": "Dil Değişimi"
       },
       "success": {
@@ -897,81 +897,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI Mülakat - Mundo Tango Yetenek Eşleştirmesi",
+        "description": "Mükemmel fırsatlarla eşleşmek için Bay Mavi AI ile gönüllü mülakatınızı tamamlayın."
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI Mülakat",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "Aşama 1: Özgeçmiş Derinlemesine İnceleme",
+        "work": "Aşama 2: İş Atama Eşleştirme",
+        "complete": "Mülakat Tamamlandı!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "Özgeçmiş",
+        "workAssignment": "İş Ataması"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Soru {{current}} / {{total}}",
+        "allQuestionsAnswered": "Tüm sorular yanıtlandı"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Geçersiz dosya türü",
+          "description": "Lütfen PDF, DOCX veya TXT yükleyin"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "Özgeçmiş ayrıştırıldı!",
+          "description": "Bay Mavi artık özgeçmiş içeriğinizi okuyabilir."
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Yükleme başarısız oldu",
+          "description": "Lütfen tekrar deneyin"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Oturum eksik",
+          "description": "Lütfen Yetenek Eşleştirme sayfasından başlayın"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Hata",
+          "description": "Yanıtınızı işleme alma başarısız oldu"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Özgeçmiş içeriği mevcut değil",
+        "description": "Özgeçmişinizi yeniden yükleyin, böylece Bay Mavi deneyiminizi okuyabilir ve referans alabilir.",
+        "parsing": "Ayrıştırılıyor...",
+        "reupload": "Yeniden yükle"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "H2AC Gösterge Tablosunu Görüntüle",
+        "goHome": "Ana Sayfaya Git"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Merhaba! Geçmişinizi inceledim. En güvendiğiniz teknik beceri nedir?",
+          "q2": "Hangi teknolojiler veya araçlarla çalışmayı en çok seviyorsunuz?",
+          "q3": "Özgeçmişinizde gönüllü çalışmalarda daha fazla kullanmak istediğiniz beceriler var mı?",
+          "q4": "Şu anda yazılım geliştirmede en çok hangi alanlar ilginizi çekiyor?",
+          "q5": "Daha önce herhangi bir açık kaynak projesinde veya topluluk girişiminde çalıştınız mı?",
+          "q6": "Tercih ettiğiniz çalışma tarzı nedir - bağımsız çalışmayı mı yoksa işbirliğini mi seversiniz?",
+          "q7": "Yeni teknolojileri öğrenmeye genellikle nasıl yaklaşıyorsunuz?",
+          "q8": "Gönüllü çalışmalarda ne tür bir etki yaratmayı umuyorsunuz?",
+          "q9": "Harika! Şimdi belirli fırsatları tartışmadan önce, geçmişinizle ilgili vurgulamak istediğiniz başka bir şey var mı?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Şimdi Mundo Tango'ya nasıl katkıda bulunabileceğinizi konuşalım! Hangi alan sizi en çok ilgilendiriyor: frontend, backend, AI/ML veya başka bir şey?",
+          "q2": "Mundo Tango, küresel tango topluluğunu bir araya getiriyor. Hangi özellikleri geliştirmekte yardımcı olmaktan heyecan duyarsınız?",
+          "q3": "Hem teknik hem de teknik olmayan gönüllü fırsatlarımız var. Hangi tür işler sizi en çok enerji veriyor?",
+          "q4": "Haftada ne kadar zamanı gönüllü çalışmalara ayırabileceğinizi gerçekçi bir şekilde tahmin edebilirsiniz?",
+          "q5": "Bağımsız çalışmayı mı yoksa bir ekibin parçası olarak mı çalışmayı tercih ediyorsunuz?",
+          "q6": "Eşli programlama veya kod incelemeleri konusunda rahat mısınız?",
+          "q7": "Agile/sprint tabanlı geliştirme konusundaki deneyiminiz nedir?",
+          "q8": "İşbirliği için GitHub kullanıyoruz. Git iş akışlarıyla rahat mısınız?",
+          "q9": "Yeni özellikler, hata düzeltmeleri veya dokümantasyon üzerinde mi çalışmayı tercih edersiniz?",
+          "q10": "Son olarak, sizinle iletişim kurmanın en iyi yolu nedir - Slack, e-posta veya platformumuzun mesajlaşması?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Harika! Artık arka planınız ve deneyiminiz hakkında iyi bir anlayışa sahibim. Mundo Tango'ya nasıl katkıda bulunabileceğinizi tartışacağımız 2. Aşama'ya geçelim.",
+        "processingError": "Üzgünüm, ama bunu işlemekte zorlandım. Lütfen tekrar dener misiniz?"
       }
     }
   }

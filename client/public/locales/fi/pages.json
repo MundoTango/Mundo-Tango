@@ -896,81 +896,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI-haastattelu - Mundo Tango Talent Match",
+        "description": "Viimeistele vapaaehtoistyön haastattelusi herra Blue AI:n kanssa, jotta saat täydelliset mahdollisuudet."
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI-haastattelu",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "Vaihe 1: CV:n syväsukellus",
+        "work": "Vaihe 2: Työtehtävien sovittaminen",
+        "complete": "Haastattelu valmis!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "CV",
+        "workAssignment": "Työtehtävä"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Kysymys {{current}} / {{total}}",
+        "allQuestionsAnswered": "Kaikki kysymykset vastattu"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Virheellinen tiedostotyyppi",
+          "description": "Lataa PDF-, DOCX- tai TXT-tiedosto"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "Ansioluettelo käsitelty!",
+          "description": "Herra Blue voi nyt lukea ansioluettelosi sisältöä."
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Lähetys epäonnistui",
+          "description": "Yritä uudelleen"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Istunto puuttuu",
+          "description": "Aloita Talent Match -sivulta"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Virhe",
+          "description": "Vastauksesi käsittely epäonnistui"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Ansioluettelon sisältö ei ole saatavilla",
+        "description": "Lähetä ansioluettelosi uudelleen, jotta herra Blue voi lukea ja viitata kokemukseesi.",
+        "parsing": "Käsitellään...",
+        "reupload": "Lähetä uudelleen"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "Näytä H2AC-hallintapaneeli",
+        "goHome": "Mene kotiin"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Hei! Olen tarkastellut taustaasi. Mikä olisi tekninen taito, jossa tunnet itsesi varmimmaksi?",
+          "q2": "Mitkä teknologiat tai työkalut nautit eniten työskennellessäsi?",
+          "q3": "Onko ansioluettelossasi taitoja, joita haluaisit käyttää enemmän vapaaehtoistyössä?",
+          "q4": "Mitkä ohjelmistokehityksen alueet kiinnostavat sinua eniten juuri nyt?",
+          "q5": "Oletko työskennellyt aiemmin avoimen lähdekoodin projekteissa tai yhteisöaloitteissa?",
+          "q6": "Mikä on suosikkityöskentelytyylisi - pidätkö itsenäisestä työstä vai yhteistyöstä?",
+          "q7": "Miten lähestyt yleensä uusien teknologioiden oppimista?",
+          "q8": "Minkälaista vaikutusta toivot saavuttavasi vapaaehtoistyön kautta?",
+          "q9": "Hienoa! Ennen kuin siirrymme keskustelemaan erityisistä mahdollisuuksista, onko jotain muuta taustastasi, jonka haluaisit tuoda esiin?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Puhutaan nyt siitä, miten voit vaikuttaa Mundo Tangoon! Mikä alue kiinnostaa sinua eniten: frontend, backend, AI/ML vai jokin muu?",
+          "q2": "Mundo Tango yhdistää globaalin tangoyhteisön. Mitkä ominaisuudet innostaisivat sinua auttamaan rakentamisessa?",
+          "q3": "Meillä on sekä teknisiä että ei-teknisiä vapaaehtoistyömahdollisuuksia. Minkä tyyppinen työ innostaa sinua eniten?",
+          "q4": "Kuinka paljon aikaa viikossa voisit realistisesti sitoutua vapaaehtoistyöhön?",
+          "q5": "Pidätkö enemmän itsenäisestä työskentelystä vai tiimissä työskentelystä?",
+          "q6": "Oletko mukava pariohjelmoinnin tai koodikatselmusten kanssa?",
+          "q7": "Mikä on kokemuksesi ketterästä/sprinttipohjaisesta kehityksestä?",
+          "q8": "Käytämme GitHubia yhteistyöhön. Oletko mukava Git-työnkulkujen kanssa?",
+          "q9": "Haluaisitko työskennellä uusien ominaisuuksien, virhekorjausten vai dokumentaation parissa?",
+          "q10": "Lopuksi, mikä on paras tapa kommunikoida kanssasi - Slack, sähköposti vai alustamme viestintä?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Erinomaista! Minulla on nyt hyvä käsitys taustastasi ja kokemuksestasi. Siirrytään vaiheeseen 2, jossa keskustelemme erityisistä tavoista, joilla voit osallistua Mundo Tangoon.",
+        "processingError": "Anteeksi, mutta minulla oli vaikeuksia käsitellä sitä. Voisitko yrittää uudelleen?"
       }
     }
   }

@@ -930,81 +930,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AI 面試 - Mundo Tango 人才匹配",
+        "description": "完成與藍先生 AI 的志願者面試，以獲得完美的機會匹配。"
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AI 面試",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "第一階段：簡歷深入分析",
+        "work": "第二階段：工作分配匹配",
+        "complete": "面試完成！"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "簡歷",
+        "workAssignment": "工作分配"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "問題 {{current}} / {{total}}",
+        "allQuestionsAnswered": "所有問題已回答"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "無效的文件類型",
+          "description": "請上傳 PDF、DOCX 或 TXT"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "簡歷解析完成！",
+          "description": "藍先生現在可以閱讀您的簡歷內容。"
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "上傳失敗",
+          "description": "請再試一次"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "缺少會話",
+          "description": "請從人才匹配頁面開始"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "錯誤",
+          "description": "處理您的回應失敗"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "簡歷內容不可用",
+        "description": "重新上傳您的簡歷，以便藍先生可以閱讀並參考您的經驗。",
+        "parsing": "解析中...",
+        "reupload": "重新上傳"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "查看 H2AC 儀表板",
+        "goHome": "回家"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "嗨！我已經審查了你的背景。你認為你最有信心的技術技能是什麼？",
+          "q2": "你最喜歡使用哪些技術或工具？",
+          "q3": "在你的履歷中，有哪些技能是你希望在志願工作中更多使用的？",
+          "q4": "目前你對哪些軟體開發領域最感興趣？",
+          "q5": "你之前有參與過任何開源項目或社區倡議嗎？",
+          "q6": "你偏好的工作風格是什麼 - 你喜歡獨立工作還是合作？",
+          "q7": "你通常如何學習新技術？",
+          "q8": "你希望通過志願工作產生什麼樣的影響？",
+          "q9": "太好了！在我們討論具體機會之前，還有什麼關於你的背景想要強調的嗎？"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "現在讓我們談談你如何能為 Mundo Tango 做出貢獻！你最感興趣的領域是什麼：前端、後端、AI/ML，還是其他？",
+          "q2": "Mundo Tango 連接全球探戈社區。你會對哪些功能感到興奮並希望參與建設？",
+          "q3": "我們有技術和非技術的志願者機會。哪種類型的工作最能激勵你？",
+          "q4": "每週你能實際投入多少時間來進行志願工作？",
+          "q5": "你更喜歡獨立工作還是團隊合作？",
+          "q6": "你對配對編程或代碼審查感到舒適嗎？",
+          "q7": "你對敏捷/衝刺開發的經驗如何？",
+          "q8": "我們使用 GitHub 進行協作。你對 Git 工作流程感到舒適嗎？",
+          "q9": "你更願意專注於新功能、錯誤修復還是文檔？",
+          "q10": "最後，與你溝通的最佳方式是什麼 - Slack、電子郵件還是我們的平台消息？"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "太棒了！我現在對你的背景和經驗有了很好的了解。讓我們進入第二階段，討論你可以如何為 Mundo Tango 做出具體貢獻。",
+        "processingError": "我很抱歉，但我在處理這個時遇到了困難。你能再試一次嗎？"
       }
     }
   }

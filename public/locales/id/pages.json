@@ -1,6 +1,6 @@
 {
   "register": {
-    "pageName": "Register",
+    "pageName": "Daftar",
     "seo": {
       "title": "Bergabung dengan Mundo Tango - Buat Akun Anda",
       "description": "Buat akun Mundo Tango Anda dan bergabunglah dengan komunitas tango Argentina global. Terhubung dengan penari, temukan acara, dan bagikan hasrat Anda untuk tango."
@@ -891,6 +891,87 @@
       "reports": "Laporan",
       "analytics": "Analitik",
       "settings": "Pengaturan"
+    }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Wawancara AI - Pertandingan Bakat Mundo Tango",
+        "description": "Selesaikan wawancara sukarelawan Anda dengan Mr Blue AI untuk mendapatkan kesempatan yang sempurna."
+      },
+      "pageTitle": "Wawancara AI",
+      "phases": {
+        "resume": "Fase 1: Penyelaman Resume",
+        "work": "Fase 2: Pencocokan Tugas Kerja",
+        "complete": "Wawancara Selesai!"
+      },
+      "phaseLabels": {
+        "resume": "Resume",
+        "workAssignment": "Tugas Kerja"
+      },
+      "progress": {
+        "questionOf": "Pertanyaan {{current}} dari {{total}}",
+        "allQuestionsAnswered": "Semua pertanyaan terjawab"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Jenis file tidak valid",
+          "description": "Silakan unggah PDF, DOCX, atau TXT"
+        },
+        "resumeParsed": {
+          "title": "Resume berhasil diparsing!",
+          "description": "Tuan Blue sekarang dapat membaca konten resume Anda."
+        },
+        "uploadFailed": {
+          "title": "Unggahan gagal",
+          "description": "Silakan coba lagi"
+        },
+        "missingSession": {
+          "title": "Sesi hilang",
+          "description": "Silakan mulai dari halaman Pencocokan Talenta"
+        },
+        "error": {
+          "title": "Kesalahan",
+          "description": "Gagal memproses respons Anda"
+        }
+      },
+      "resumeBanner": {
+        "title": "Konten resume tidak tersedia",
+        "description": "Unggah ulang resume Anda agar Tuan Blue dapat membaca dan merujuk pengalaman Anda.",
+        "parsing": "Memproses...",
+        "reupload": "Unggah ulang"
+      },
+      "buttons": {
+        "viewDashboard": "Lihat Dasbor H2AC",
+        "goHome": "Kembali ke Beranda"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Hai! Saya telah meninjau latar belakang Anda. Apa yang Anda katakan adalah keterampilan teknis yang paling Anda kuasai?",
+          "q2": "Teknologi atau alat apa yang paling Anda nikmati untuk digunakan?",
+          "q3": "Apakah ada keterampilan di resume Anda yang ingin Anda gunakan lebih banyak dalam pekerjaan sukarela?",
+          "q4": "Bidang pengembangan perangkat lunak mana yang paling menarik bagi Anda saat ini?",
+          "q5": "Apakah Anda pernah bekerja pada proyek sumber terbuka atau inisiatif komunitas sebelumnya?",
+          "q6": "Apa gaya kerja yang Anda sukai - apakah Anda lebih suka bekerja secara mandiri atau berkolaborasi?",
+          "q7": "Bagaimana Anda biasanya mendekati pembelajaran teknologi baru?",
+          "q8": "Dampak seperti apa yang Anda harapkan dapat Anda buat melalui pekerjaan sukarela?",
+          "q9": "Bagus! Sebelum kita beralih ke membahas peluang spesifik, adakah hal lain tentang latar belakang Anda yang ingin Anda soroti?"
+        },
+        "work": {
+          "q1": "Sekarang mari kita bicarakan bagaimana Anda dapat berkontribusi pada Mundo Tango! Bidang mana yang paling menarik bagi Anda: frontend, backend, AI/ML, atau sesuatu yang lain?",
+          "q2": "Mundo Tango menghubungkan komunitas tango global. Fitur apa yang akan Anda senang bantu bangun?",
+          "q3": "Kami memiliki peluang sukarela baik yang teknis maupun non-teknis. Jenis pekerjaan apa yang paling memberi energi bagi Anda?",
+          "q4": "Berapa banyak waktu per minggu yang dapat Anda komit secara realistis untuk pekerjaan sukarela?",
+          "q5": "Apakah Anda lebih suka bekerja secara mandiri atau sebagai bagian dari tim?",
+          "q6": "Apakah Anda nyaman dengan pemrograman pasangan atau tinjauan kode?",
+          "q7": "Apa pengalaman Anda dengan pengembangan berbasis agile/sprint?",
+          "q8": "Kami menggunakan GitHub untuk kolaborasi. Apakah Anda nyaman dengan alur kerja Git?",
+          "q9": "Apakah Anda lebih suka bekerja pada fitur baru, perbaikan bug, atau dokumentasi?",
+          "q10": "Akhirnya, apa cara terbaik untuk berkomunikasi dengan Anda - Slack, email, atau pesan di platform kami?"
+        },
+        "phaseTransition": "Luar biasa! Saya sekarang memiliki pemahaman yang baik tentang latar belakang dan pengalaman Anda. Mari kita beralih ke Fase 2 di mana kita akan membahas cara spesifik Anda dapat berkontribusi pada Mundo Tango.",
+        "processingError": "Saya minta maaf, tetapi saya mengalami kesulitan memproses itu. Bisakah Anda mencoba lagi?"
+      }
     }
   }
 }

@@ -930,81 +930,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "AIインタビュー - Mundo Tangoタレントマッチ",
+        "description": "完璧な機会にマッチするために、ブルーAIとのボランティアインタビューを完了してください。"
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "AIインタビュー",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "フェーズ1: レジュメの深堀り",
+        "work": "フェーズ2: 仕事の割り当てマッチング",
+        "complete": "インタビュー完了！"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "レジュメ",
+        "workAssignment": "仕事の割り当て"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "質問{{current}} / {{total}}",
+        "allQuestionsAnswered": "すべての質問に回答済み"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "無効なファイルタイプ",
+          "description": "PDF、DOCX、またはTXTをアップロードしてください"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "レジュメが解析されました！",
+          "description": "ブルー氏はあなたのレジュメの内容を読むことができます。"
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "アップロードに失敗しました",
+          "description": "もう一度お試しください"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "セッションがありません",
+          "description": "タレントマッチページから始めてください"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "エラー",
+          "description": "あなたの応答を処理できませんでした"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "レジュメの内容が利用できません",
+        "description": "ブルー氏があなたの経験を読み、参照できるようにレジュメを再アップロードしてください。",
+        "parsing": "解析中...",
+        "reupload": "再アップロード"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "H2ACダッシュボードを見る",
+        "goHome": "ホームに戻る"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "こんにちは！あなたのバックグラウンドを確認しました。最も自信のある技術スキルは何だと思いますか？",
+          "q2": "最も楽しんでいる技術やツールは何ですか？",
+          "q3": "ボランティア活動でより多く使いたいスキルは履歴書にありますか？",
+          "q4": "現在、ソフトウェア開発のどの分野に最も興味がありますか？",
+          "q5": "以前にオープンソースプロジェクトやコミュニティの取り組みに参加したことはありますか？",
+          "q6": "あなたの好みの働き方は何ですか - 独立して働くのが好きですか、それとも協力するのが好きですか？",
+          "q7": "新しい技術を学ぶ際、通常どのようにアプローチしますか？",
+          "q8": "ボランティア活動を通じてどのような影響を与えたいですか？",
+          "q9": "素晴らしい！具体的な機会について話す前に、あなたのバックグラウンドで強調したいことは他にありますか？"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "さて、Mundo Tangoにどのように貢献できるかについて話しましょう！どの分野に最も興味がありますか：フロントエンド、バックエンド、AI/ML、または他の何かですか？",
+          "q2": "Mundo Tangoは世界のタンゴコミュニティをつなぎます。どの機能を構築する手助けをすることに興奮しますか？",
+          "q3": "技術的および非技術的なボランティアの機会があります。どのタイプの仕事が最も活力を与えますか？",
+          "q4": "ボランティア活動に現実的にどれくらいの時間を週にコミットできますか？",
+          "q5": "独立して働くのが好きですか、それともチームの一員として働くのが好きですか？",
+          "q6": "ペアプログラミングやコードレビューに慣れていますか？",
+          "q7": "アジャイル/スプリントベースの開発に関する経験はどうですか？",
+          "q8": "コラボレーションにはGitHubを使用しています。Gitワークフローに慣れていますか？",
+          "q9": "新機能、バグ修正、またはドキュメントの作成のどれに取り組むことを好みますか？",
+          "q10": "最後に、あなたとコミュニケーションを取る最良の方法は何ですか - Slack、メール、または私たちのプラットフォームのメッセージングですか？"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "素晴らしい！あなたのバックグラウンドと経験について素晴らしい理解が得られました。Mundo Tangoに貢献できる具体的な方法について話すフェーズ2に移りましょう。",
+        "processingError": "申し訳ありませんが、それを処理するのに問題がありました。もう一度試していただけますか？"
       }
     }
   }

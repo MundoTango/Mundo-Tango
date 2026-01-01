@@ -926,5 +926,86 @@
     "search": "Tìm chuyên gia...",
     "filterByRole": "Lọc theo vai trò",
     "filterByCity": "Lọc theo thành phố"
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "Phỏng vấn AI - Mundo Tango Talent Match",
+        "description": "Hoàn thành phỏng vấn tình nguyện của bạn với Mr Blue AI để được ghép với những cơ hội hoàn hảo."
+      },
+      "pageTitle": "Phỏng vấn AI",
+      "phases": {
+        "resume": "Giai đoạn 1: Khám Phá Hồ Sơ",
+        "work": "Giai đoạn 2: Ghép Nhiệm Vụ Công Việc",
+        "complete": "Phỏng vấn đã hoàn thành!"
+      },
+      "phaseLabels": {
+        "resume": "Hồ sơ",
+        "workAssignment": "Nhiệm vụ công việc"
+      },
+      "progress": {
+        "questionOf": "Câu hỏi {{current}} của {{total}}",
+        "allQuestionsAnswered": "Tất cả câu hỏi đã được trả lời"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Loại tệp không hợp lệ",
+          "description": "Vui lòng tải lên PDF, DOCX hoặc TXT"
+        },
+        "resumeParsed": {
+          "title": "Đã phân tích sơ yếu lý lịch!",
+          "description": "Ông Blue giờ có thể đọc nội dung sơ yếu lý lịch của bạn."
+        },
+        "uploadFailed": {
+          "title": "Tải lên không thành công",
+          "description": "Vui lòng thử lại"
+        },
+        "missingSession": {
+          "title": "Thiếu phiên làm việc",
+          "description": "Vui lòng bắt đầu từ trang Talent Match"
+        },
+        "error": {
+          "title": "Lỗi",
+          "description": "Không thể xử lý phản hồi của bạn"
+        }
+      },
+      "resumeBanner": {
+        "title": "Nội dung sơ yếu lý lịch không có sẵn",
+        "description": "Tải lại sơ yếu lý lịch của bạn để ông Blue có thể đọc và tham khảo kinh nghiệm của bạn.",
+        "parsing": "Đang phân tích...",
+        "reupload": "Tải lại"
+      },
+      "buttons": {
+        "viewDashboard": "Xem Bảng điều khiển H2AC",
+        "goHome": "Về trang chủ"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Chào bạn! Tôi đã xem xét nền tảng của bạn. Bạn sẽ nói kỹ năng kỹ thuật nào mà bạn tự tin nhất?",
+          "q2": "Bạn thích làm việc với công nghệ hoặc công cụ nào nhất?",
+          "q3": "Có kỹ năng nào trong sơ yếu lý lịch của bạn mà bạn muốn sử dụng nhiều hơn trong công việc tình nguyện không?",
+          "q4": "Lĩnh vực phát triển phần mềm nào hiện tại bạn quan tâm nhất?",
+          "q5": "Bạn đã từng làm việc trên bất kỳ dự án mã nguồn mở hoặc sáng kiến cộng đồng nào chưa?",
+          "q6": "Phong cách làm việc ưa thích của bạn là gì - bạn thích làm việc độc lập hay hợp tác?",
+          "q7": "Bạn thường tiếp cận việc học công nghệ mới như thế nào?",
+          "q8": "Bạn hy vọng tạo ra ảnh hưởng gì thông qua công việc tình nguyện?",
+          "q9": "Tuyệt vời! Trước khi chúng ta chuyển sang thảo luận về các cơ hội cụ thể, có điều gì khác về nền tảng của bạn mà bạn muốn nhấn mạnh không?"
+        },
+        "work": {
+          "q1": "Bây giờ hãy nói về cách bạn có thể đóng góp cho Mundo Tango! Khu vực nào khiến bạn hứng thú nhất: frontend, backend, AI/ML, hay một cái gì đó khác?",
+          "q2": "Mundo Tango kết nối cộng đồng tango toàn cầu. Bạn sẽ hào hứng giúp xây dựng những tính năng nào?",
+          "q3": "Chúng tôi có cả cơ hội tình nguyện kỹ thuật và phi kỹ thuật. Loại công việc nào khiến bạn cảm thấy năng lượng nhất?",
+          "q4": "Bạn có thể cam kết bao nhiêu thời gian mỗi tuần cho công việc tình nguyện một cách thực tế?",
+          "q5": "Bạn thích làm việc độc lập hay là một phần của một nhóm?",
+          "q6": "Bạn có thoải mái với lập trình cặp hoặc đánh giá mã không?",
+          "q7": "Kinh nghiệm của bạn với phát triển theo phương pháp agile/sprint là gì?",
+          "q8": "Chúng tôi sử dụng GitHub để hợp tác. Bạn có thoải mái với quy trình làm việc của Git không?",
+          "q9": "Bạn muốn làm việc trên các tính năng mới, sửa lỗi, hay tài liệu?",
+          "q10": "Cuối cùng, cách tốt nhất để liên lạc với bạn là gì - Slack, email, hay tin nhắn trên nền tảng của chúng tôi?"
+        },
+        "phaseTransition": "Xuất sắc! Tôi hiện có một hiểu biết tuyệt vời về nền tảng và kinh nghiệm của bạn. Hãy chuyển sang Giai đoạn 2, nơi chúng ta sẽ thảo luận về những cách cụ thể mà bạn có thể đóng góp cho Mundo Tango.",
+        "processingError": "Tôi xin lỗi, nhưng tôi gặp khó khăn trong việc xử lý điều đó. Bạn có thể thử lại không?"
+      }
+    }
   }
 }

@@ -899,5 +899,86 @@
       "analytics": "Analyse",
       "settings": "Instellingen"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Interview - Mundo Tango Talent Match",
+        "description": "Voltooi uw vrijwilligersinterview met Mr Blue AI om gekoppeld te worden aan de perfecte kansen."
+      },
+      "pageTitle": "AI Interview",
+      "phases": {
+        "resume": "Fase 1: Diepgaande analyse van het cv",
+        "work": "Fase 2: Koppeling van werkopdrachten",
+        "complete": "Interview voltooid!"
+      },
+      "phaseLabels": {
+        "resume": "Cv",
+        "workAssignment": "Werkopdracht"
+      },
+      "progress": {
+        "questionOf": "Vraag {{current}} van {{total}}",
+        "allQuestionsAnswered": "Alle vragen beantwoord"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Ongeldig bestandstype",
+          "description": "Upload alstublieft PDF, DOCX of TXT"
+        },
+        "resumeParsed": {
+          "title": "Cv geparsed!",
+          "description": "Mr. Blue kan nu uw cv-inhoud lezen."
+        },
+        "uploadFailed": {
+          "title": "Upload mislukt",
+          "description": "Probeer het alstublieft opnieuw"
+        },
+        "missingSession": {
+          "title": "Ontbrekende sessie",
+          "description": "Begin alstublieft vanaf de Talent Match-pagina"
+        },
+        "error": {
+          "title": "Fout",
+          "description": "Kon uw reactie niet verwerken"
+        }
+      },
+      "resumeBanner": {
+        "title": "Cv-inhoud niet beschikbaar",
+        "description": "Upload uw cv opnieuw zodat Mr. Blue uw ervaring kan lezen en verwijzen.",
+        "parsing": "Aan het parseren...",
+        "reupload": "Opnieuw uploaden"
+      },
+      "buttons": {
+        "viewDashboard": "Bekijk H2AC Dashboard",
+        "goHome": "Ga naar Home"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Hallo daar! Ik heb je achtergrond bekeken. Wat zou je zeggen dat de technische vaardigheid is waar je het meest vertrouwen in hebt?",
+          "q2": "Met welke technologieën of tools werk je het liefst?",
+          "q3": "Zijn er vaardigheden op je cv die je graag meer zou willen gebruiken in vrijwilligerswerk?",
+          "q4": "Welke gebieden van softwareontwikkeling interesseren je momenteel het meest?",
+          "q5": "Heb je eerder aan open source-projecten of gemeenschapsinitiatieven gewerkt?",
+          "q6": "Wat is je favoriete werkstijl - werk je liever zelfstandig of in samenwerking?",
+          "q7": "Hoe pak je doorgaans het leren van nieuwe technologieën aan?",
+          "q8": "Wat voor impact hoop je te maken door vrijwilligerswerk?",
+          "q9": "Geweldig! Voordat we over specifieke kansen gaan praten, is er nog iets anders over je achtergrond dat je wilt benadrukken?"
+        },
+        "work": {
+          "q1": "Laten we nu praten over hoe je kunt bijdragen aan Mundo Tango! Welk gebied interesseert je het meest: frontend, backend, AI/ML, of iets anders?",
+          "q2": "Mundo Tango verbindt de wereldwijde tango gemeenschap. Welke functies zou je leuk vinden om te helpen bouwen?",
+          "q3": "We hebben zowel technische als niet-technische vrijwilligersmogelijkheden. Wat voor soort werk geeft je de meeste energie?",
+          "q4": "Hoeveel tijd per week zou je realistisch gezien kunnen besteden aan vrijwilligerswerk?",
+          "q5": "Werk je liever zelfstandig of als onderdeel van een team?",
+          "q6": "Voel je je comfortabel met pair programming of code reviews?",
+          "q7": "Wat is je ervaring met agile/sprint-gebaseerde ontwikkeling?",
+          "q8": "We gebruiken GitHub voor samenwerking. Voel je je comfortabel met Git-workflows?",
+          "q9": "Heb je de voorkeur om aan nieuwe functies, bugfixes of documentatie te werken?",
+          "q10": "Wat is tenslotte de beste manier om met je te communiceren - Slack, e-mail of onze platformberichten?"
+        },
+        "phaseTransition": "Uitstekend! Ik heb nu een goed begrip van je achtergrond en ervaring. Laten we doorgaan naar Fase 2 waar we specifieke manieren zullen bespreken waarop je kunt bijdragen aan Mundo Tango.",
+        "processingError": "Mijn excuses, maar ik had moeite om dat te verwerken. Zou je het alsjeblieft opnieuw kunnen proberen?"
+      }
+    }
   }
 }

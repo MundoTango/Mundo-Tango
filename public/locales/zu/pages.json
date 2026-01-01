@@ -892,5 +892,86 @@
       "analytics": "I-Analytics",
       "settings": "Izilungiselelo"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Interview - Mundo Tango Talent Match",
+        "description": "Qedela udaba lwakho lokuzithandela noMnu Blue AI ukuze uthole amathuba afanele."
+      },
+      "pageTitle": "AI Interview",
+      "phases": {
+        "resume": "Isigaba 1: Ukuhlola Okuqukethwe Kwe-Resume",
+        "work": "Isigaba 2: Ukuvumelanisa Imisebenzi",
+        "complete": "Uhlolo Luqediwe!"
+      },
+      "phaseLabels": {
+        "resume": "I-Resume",
+        "workAssignment": "Imisebenzi"
+      },
+      "progress": {
+        "questionOf": "Umbuzo {{current}} ka {{total}}",
+        "allQuestionsAnswered": "Bonke imibuzo iphenduliwe"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Uhlobo lwefayela aluvumelekile",
+          "description": "Sicela uthumele i-PDF, i-DOCX, noma i-TXT"
+        },
+        "resumeParsed": {
+          "title": "I-Resume ihlaziywe!",
+          "description": "UMnu. Blue manje angafunda okuqukethwe kwe-Resume yakho."
+        },
+        "uploadFailed": {
+          "title": "Ukulayisha kwehlulekile",
+          "description": "Sicela uzame futhi"
+        },
+        "missingSession": {
+          "title": "Uhlanga oluphuthelwe",
+          "description": "Sicela uqale kusuka ekhasini le-Talent Match"
+        },
+        "error": {
+          "title": "Iphutha",
+          "description": "Kwehlulekile обработить impendulo yakho"
+        }
+      },
+      "resumeBanner": {
+        "title": "Okuqukethwe kwe-resume akutholakali",
+        "description": "Phinda uthumele i-resume yakho ukuze uMnu. Blue akwazi ukufunda futhi abheke ulwazi lwakho.",
+        "parsing": "Ukucubungula...",
+        "reupload": "Phinda uthumele"
+      },
+      "buttons": {
+        "viewDashboard": "Buka i-H2AC Dashboard",
+        "goHome": "Hamba Ekhaya"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Sawubona! Ngibheke emuva kwakho. Yini ongayisho ukuthi iyona thalente yobuchwepheshe oyikholelwayo kakhulu?",
+          "q2": "Yiziphi ubuchwepheshe noma amathuluzi owathokozelayo kakhulu?",
+          "q3": "Ingabe kukhona amakhono akho kwi-resume ofuna ukuwasebenzisa kakhulu emsebenzini wezokuzithandela?",
+          "q4": "Yiziphi izindawo zokuthuthukiswa kwesofthiwe ezikukhanga kakhulu njengamanje?",
+          "q5": "Uke wasebenza kunoma yiziphi amaphrojekthi avulekile noma imizamo yomphakathi ngaphambili?",
+          "q6": "Yini indlela yakho yokusebenza oyithandayo - uthanda ukusebenza ngokuzimela noma ukubambisana?",
+          "q7": "Ujwayele kanjani ukufunda ubuchwepheshe obusha?",
+          "q8": "Yimuphi umthelela ofisa ukuwufaka emsebenzini wezokuzithandela?",
+          "q9": "Kuhle! Ngaphambi kokuthi siqale ukukhuluma ngama-ithuba athile, ingabe kukhona okunye okukhuluma ngakho emuva kwakho ofuna ukukugqamisa?"
+        },
+        "work": {
+          "q1": "Manje ake sikhulume ngokuthi ungawufaka kanjani umnikelo ku-Mundo Tango! Yisiphi isifunda esikukhanga kakhulu: frontend, backend, AI/ML, noma okuthile?",
+          "q2": "I-Mundo Tango ixhuma umphakathi we-tango womhlaba. Yiziphi izici ozokujabulela ukusiza ukuzenza?",
+          "q3": "Sineziqinisekiso zokuzithandela ezobuchwepheshe nezingenabo ubuchwepheshe. Yisiphi isitayela somsebenzi esikukhuthazayo kakhulu?",
+          "q4": "Ucabanga ukuthi ungachitha isikhathi esingakanani ngesonto emsebenzini wezokuzithandela?",
+          "q5": "Uthanda ukusebenza ngokuzimela noma njengengxenye yeqembu?",
+          "q6": "Ingabe uzizwa ukhululekile nge-pair programming noma ukubuyekezwa kwekhodi?",
+          "q7": "Yini ulwazi lwakho ngentuthuko ye-agile/sprint-based?",
+          "q8": "Sisebenzisa i-GitHub ukuze sibe nokubambisana. Ingabe uzizwa ukhululekile nge-Git workflows?",
+          "q9": "Ingabe ungathanda ukusebenza ezintweni ezintsha, ukulungiswa kwamaphutha, noma imibhalo?",
+          "q10": "Ekugcineni, iyiphi indlela engcono yokuxhumana nawe - i-Slack, i-imeyili, noma imiyalezo yeplathifomu yethu?"
+        },
+        "phaseTransition": "Kuhle! Manje senginokuqonda okuhle ngeng background yakho nolwazi. Ake sihambe siye ku-Phase 2 lapho sizoxoxa ngezindlela ezithile ongakwazi ukuzifaka ku-Mundo Tango.",
+        "processingError": "Ngiyaxolisa, kodwa ngibe nenkinga yokucubungula lokho. Ungakwenza lokhu futhi?"
+      }
+    }
   }
 }

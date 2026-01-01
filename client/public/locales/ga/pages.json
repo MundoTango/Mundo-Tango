@@ -56,7 +56,7 @@
     },
     "waitlist": {
       "welcomeUser": "Fáilte, {{name}}!",
-      "defaultName": "Dancer",
+      "defaultName": "Rinceoir",
       "onTheList": "Tá tú ar an liosta. Seolfaimid ríomhphost chugat ag",
       "whenReady": "nuair a bheidh do chuntas réidh.",
       "helpUsGrow": "Cé go bhfuil tú ag fanacht, cabhraigh linn fás",
@@ -896,81 +896,81 @@
   "talentMatch": {
     "interview": {
       "seo": {
-        "title": "AI Interview - Mundo Tango Talent Match",
-        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        "title": "Agallamh AI - Comhoiriúnacht Tallainne Mundo Tango",
+        "description": "Críochnaigh do agallamh deonach le Mr Blue AI chun comhoiriúnacht a fháil leis na deiseanna foirfe."
       },
-      "pageTitle": "AI Interview",
+      "pageTitle": "Agallamh AI",
       "phases": {
-        "resume": "Phase 1: Resume Deep-Dive",
-        "work": "Phase 2: Work Assignment Matching",
-        "complete": "Interview Complete!"
+        "resume": "Céim 1: Tumadh i do CV",
+        "work": "Céim 2: Comhoiriúnacht Oibre",
+        "complete": "Agallamh Críochnaithe!"
       },
       "phaseLabels": {
-        "resume": "Resume",
-        "workAssignment": "Work Assignment"
+        "resume": "CV",
+        "workAssignment": "Comhoiriúnacht Oibre"
       },
       "progress": {
-        "questionOf": "Question {{current}} of {{total}}",
-        "allQuestionsAnswered": "All questions answered"
+        "questionOf": "Ceist {{current}} de {{total}}",
+        "allQuestionsAnswered": "Freagraíodh na ceisteanna go léir"
       },
       "toast": {
         "invalidFileType": {
-          "title": "Invalid file type",
-          "description": "Please upload PDF, DOCX, or TXT"
+          "title": "Cineál comhoibrithe neamhbhailí",
+          "description": "Le do thoil, uaslódáil PDF, DOCX, nó TXT"
         },
         "resumeParsed": {
-          "title": "Resume parsed!",
-          "description": "Mr. Blue can now read your resume content."
+          "title": "CV curtha ar fáil!",
+          "description": "Is féidir le Mr. Blue anois do ábhar CV a léamh."
         },
         "uploadFailed": {
-          "title": "Upload failed",
-          "description": "Please try again"
+          "title": "Uaslódáil teipthe",
+          "description": "Le do thoil, déan iarracht arís"
         },
         "missingSession": {
-          "title": "Missing session",
-          "description": "Please start from the Talent Match page"
+          "title": "Seisiún atá in easnamh",
+          "description": "Le do thoil, tús a chur ó leathanach Comhoiriúnachta Tallainne"
         },
         "error": {
-          "title": "Error",
-          "description": "Failed to process your response"
+          "title": "Earráid",
+          "description": "Teip ar phróiseáil do fhreagra"
         }
       },
       "resumeBanner": {
-        "title": "Resume content not available",
-        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
-        "parsing": "Parsing...",
-        "reupload": "Re-upload"
+        "title": "Ábhar CV nach bhfuil ar fáil",
+        "description": "Uaslódáil do CV arís ionas gur féidir le Mr. Blue do thaithí a léamh agus a thagairt.",
+        "parsing": "Ag parseáil...",
+        "reupload": "Uaslódáil arís"
       },
       "buttons": {
-        "viewDashboard": "View H2AC Dashboard",
-        "goHome": "Go Home"
+        "viewDashboard": "Féach ar Painéal H2AC",
+        "goHome": "Téigh Abhaile"
       },
       "fallbackQuestions": {
         "resume": {
-          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
-          "q2": "What technologies or tools do you enjoy working with the most?",
-          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
-          "q4": "What areas of software development interest you the most right now?",
-          "q5": "Have you worked on any open source projects or community initiatives before?",
-          "q6": "What's your preferred working style - do you like independent work or collaboration?",
-          "q7": "How do you typically approach learning new technologies?",
-          "q8": "What kind of impact do you hope to make through volunteer work?",
-          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+          "q1": "Dia dhuit! Rinne mé athbhreithniú ar do chúlra. Cad a déarfá atá an scil teicniúil is mó atá muinín agat ann?",
+          "q2": "Cad iad na teicneolaíochtaí nó na huirlisí is fearr leat a bheith ag obair leo?",
+          "q3": "An bhfuil scileanna ar do CV ar mhaith leat a úsáid níos mó i do chuid oibre deonach?",
+          "q4": "Cad iad na réimsí forbartha bogearraí a bhfuil suim agat iontu faoi láthair?",
+          "q5": "An raibh tú ag obair ar aon tionscadail foinse oscailte nó tionscnaimh pobail roimhe seo?",
+          "q6": "Cad é do stíl oibre is fearr leat - an maith leat obair neamhspleách nó comhoibriú?",
+          "q7": "Conas a dhéanaíonn tú de ghnáth le foghlaim teicneolaíochtaí nua?",
+          "q8": "Cén sort tionchair a bhfuil súil agat a dhéanamh trí do chuid oibre deonach?",
+          "q9": "Skásta! Sula dtéimid ar aghaidh chun comhrá a dhéanamh faoi dheiseanna ar leith, an bhfuil aon rud eile faoi do chúlra ar mhaith leat a chur in iúl?"
         },
         "work": {
-          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
-          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
-          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
-          "q4": "How much time per week could you realistically commit to volunteer work?",
-          "q5": "Do you prefer working independently or as part of a team?",
-          "q6": "Are you comfortable with pair programming or code reviews?",
-          "q7": "What's your experience with agile/sprint-based development?",
-          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
-          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
-          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+          "q1": "Anois, déanaimis comhrá faoi conas is féidir leat cur le Mundo Tango! Cé acu réimse a bhfuil suim agat ann: frontend, backend, AI/ML, nó rud éigin eile?",
+          "q2": "Ceanglaíonn Mundo Tango an pobal tango domhanda. Cad iad na gnéithe a bheadh tú ar bís chun cabhrú le tógáil?",
+          "q3": "Tá deiseanna oibre deonacha teicniúla agus neamh-theicniúla againn. Cad é an cineál oibre a chuireann fuinneamh ort?",
+          "q4": "Cé mhéad ama in aghaidh na seachtaine a d'fhéadfá a thiomnú go réalaíoch do do chuid oibre deonach?",
+          "q5": "An fearr leat obair neamhspleách nó mar chuid de ghrúpa?",
+          "q6": "An bhfuil tú compordach le cláir phéire nó athbhreithnithe cód?",
+          "q7": "Cad é do thaithí le forbairt agile/sprint-bhunaithe?",
+          "q8": "Úsáidimid GitHub le haghaidh comhoibrithe. An bhfuil tú compordach le hoibreacha Git?",
+          "q9": "An mbeadh tú ag iarraidh obair ar ghnéithe nua, deisiúcháin laige, nó doiciméadú?",
+          "q10": "Ar deireadh, cad é an bealach is fearr chun cumarsáid a dhéanamh leat - Slack, ríomhphost, nó teachtaireachtaí ar ár n-ardán?"
         },
-        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
-        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+        "phaseTransition": "Ar fheabhas! Tá tuiscint mhaith agam anois ar do chúlra agus do thaithí. Téimid ar aghaidh go Céim 2 áit a ndéanfaimid plé ar bhealaí ar leith ar féidir leat cur le Mundo Tango.",
+        "processingError": "Gabh mo leithscéal, ach bhí deacracht agam le próiseáil sin. An bhféadfá triail a bhaint as arís?"
       }
     }
   }

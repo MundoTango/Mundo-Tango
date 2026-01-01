@@ -327,26 +327,66 @@
       "completeSetup": "Dokončiť nastavenie",
       "searchPlaceholder": "Hľadajte komunity alebo pridajte novú...",
       "categories": {
-        "fitness": { "label": "Fitness a šport" },
-        "tech": { "label": "Technológie a inovácie" },
-        "spirituality": { "label": "Duchovnosť a rast" },
-        "yoga": { "label": "Jóga a wellness" },
-        "music": { "label": "Hudba" },
-        "photography": { "label": "Fotografia a video" },
-        "art": { "label": "Umenie a kreativita" },
-        "reading": { "label": "Čítanie a písanie" },
-        "travel": { "label": "Cestovanie a dobrodružstvo" },
-        "cooking": { "label": "Varenie a jedlo" },
-        "wine": { "label": "Víno a nápoje" },
-        "gaming": { "label": "Hry" },
-        "outdoors": { "label": "Vonkajšie aktivity" },
-        "snow": { "label": "Zimné športy" },
-        "cycling": { "label": "Cyklistika" },
-        "water": { "label": "Vodné športy" },
-        "nature": { "label": "Príroda a záhradníctvo" },
-        "movies": { "label": "Filmy a zábava" },
-        "pets": { "label": "Zvieratá" },
-        "social": { "label": "Komunita" }
+        "fitness": {
+          "label": "Fitness a šport"
+        },
+        "tech": {
+          "label": "Technológie a inovácie"
+        },
+        "spirituality": {
+          "label": "Duchovnosť a rast"
+        },
+        "yoga": {
+          "label": "Jóga a wellness"
+        },
+        "music": {
+          "label": "Hudba"
+        },
+        "photography": {
+          "label": "Fotografia a video"
+        },
+        "art": {
+          "label": "Umenie a kreativita"
+        },
+        "reading": {
+          "label": "Čítanie a písanie"
+        },
+        "travel": {
+          "label": "Cestovanie a dobrodružstvo"
+        },
+        "cooking": {
+          "label": "Varenie a jedlo"
+        },
+        "wine": {
+          "label": "Víno a nápoje"
+        },
+        "gaming": {
+          "label": "Hry"
+        },
+        "outdoors": {
+          "label": "Vonkajšie aktivity"
+        },
+        "snow": {
+          "label": "Zimné športy"
+        },
+        "cycling": {
+          "label": "Cyklistika"
+        },
+        "water": {
+          "label": "Vodné športy"
+        },
+        "nature": {
+          "label": "Príroda a záhradníctvo"
+        },
+        "movies": {
+          "label": "Filmy a zábava"
+        },
+        "pets": {
+          "label": "Zvieratá"
+        },
+        "social": {
+          "label": "Komunita"
+        }
       },
       "items": {
         "fitness_gym": "Posilňovňa",
@@ -595,7 +635,7 @@
             "description": "Pokročilá analytika profilu"
           },
           "premium": {
-            "title": "Premium",
+            "title": "Prémiový",
             "description": "Exkluzívne prémiové funkcie"
           }
         }
@@ -824,7 +864,7 @@
     }
   },
   "lifeCEO": {
-    "title": "Life CEO Dashboard",
+    "title": "Dashboard generálneho riaditeľa",
     "description": "Váš osobný AI asistent pre správu života",
     "agents": {
       "health": "Agent zdravia",
@@ -858,6 +898,87 @@
       "reports": "Správy",
       "analytics": "Analytika",
       "settings": "Nastavenia"
+    }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI pohovor - Mundo Tango Talent Match",
+        "description": "Dokončite svoj dobrovoľnícky pohovor s pánom Blue AI, aby ste sa spojili s dokonalými príležitosťami."
+      },
+      "pageTitle": "AI pohovor",
+      "phases": {
+        "resume": "Fáza 1: Hlboké ponorenie do životopisu",
+        "work": "Fáza 2: Zladenie pracovných úloh",
+        "complete": "Pohovor dokončený!"
+      },
+      "phaseLabels": {
+        "resume": "Životopis",
+        "workAssignment": "Pracovná úloha"
+      },
+      "progress": {
+        "questionOf": "Otázka {{current}} z {{total}}",
+        "allQuestionsAnswered": "Všetky otázky sú zodpovedané"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Neplatný typ súboru",
+          "description": "Nahrajte prosím PDF, DOCX alebo TXT"
+        },
+        "resumeParsed": {
+          "title": "Životopis bol spracovaný!",
+          "description": "Pán Blue teraz môže čítať obsah vášho životopisu."
+        },
+        "uploadFailed": {
+          "title": "Nahrávanie zlyhalo",
+          "description": "Skúste to prosím znova"
+        },
+        "missingSession": {
+          "title": "Chýbajúca relácia",
+          "description": "Začnite prosím na stránke Talent Match"
+        },
+        "error": {
+          "title": "Chyba",
+          "description": "Nepodarilo sa spracovať vašu odpoveď"
+        }
+      },
+      "resumeBanner": {
+        "title": "Obsah životopisu nie je k dispozícii",
+        "description": "Znova nahrajte svoj životopis, aby pán Blue mohol čítať a odkazovať na vaše skúsenosti.",
+        "parsing": "Spracovávanie...",
+        "reupload": "Znova nahrať"
+      },
+      "buttons": {
+        "viewDashboard": "Zobraziť H2AC Dashboard",
+        "goHome": "Ísť domov"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Ahoj! Preveril som váš profil. Akú technickú zručnosť považujete za svoju najväčšiu silu?",
+          "q2": "S akými technológiami alebo nástrojmi sa vám najviac páči pracovať?",
+          "q3": "Sú nejaké zručnosti vo vašom životopise, ktoré by ste chceli viac využiť v dobrovoľníckej práci?",
+          "q4": "Ktoré oblasti vývoja softvéru vás momentálne najviac zaujímajú?",
+          "q5": "Pracovali ste už niekedy na open source projektoch alebo komunitných iniciatívach?",
+          "q6": "Aký je váš preferovaný pracovný štýl - máte radi nezávislú prácu alebo spoluprácu?",
+          "q7": "Ako zvyčajne pristupujete k učeniu nových technológií?",
+          "q8": "Aký dopad dúfate, že dosiahnete prostredníctvom dobrovoľníckej práce?",
+          "q9": "Skvelé! Predtým, než prejdeme k diskusii o konkrétnych príležitostiach, je niečo iné o vašej minulosti, čo by ste chceli zdôrazniť?"
+        },
+        "work": {
+          "q1": "Teraz sa porozprávajme o tom, ako môžete prispieť k Mundo Tango! Ktorá oblasť vás najviac zaujíma: frontend, backend, AI/ML alebo niečo iné?",
+          "q2": "Mundo Tango spája globálnu tango komunitu. Aké funkcie by vás nadchli pri budovaní?",
+          "q3": "Máme technické aj netechnické dobrovoľnícke príležitosti. Aký typ práce vás najviac energizuje?",
+          "q4": "Koľko času za týždeň by ste realisticky mohli venovať dobrovoľníckej práci?",
+          "q5": "Preferujete pracovať samostatne alebo ako súčasť tímu?",
+          "q6": "Cítite sa pohodlne pri párovom programovaní alebo revíziách kódu?",
+          "q7": "Aké máte skúsenosti s agilným/iteratívnym vývojom?",
+          "q8": "Na spoluprácu používame GitHub. Cítite sa pohodlne s Git pracovnými postupmi?",
+          "q9": "Radšej by ste pracovali na nových funkciách, opravách chýb alebo dokumentácii?",
+          "q10": "Nakoniec, aký je najlepší spôsob, ako s vami komunikovať - Slack, e-mail alebo správy na našej platforme?"
+        },
+        "phaseTransition": "Vynikajúce! Teraz mám skvelé pochopenie vašej minulosti a skúseností. Prejdime do fázy 2, kde budeme diskutovať o konkrétnych spôsoboch, ako môžete prispieť k Mundo Tango.",
+        "processingError": "Ospravedlňujem sa, ale mal som problémy s spracovaním toho. Môžete to prosím skúsiť znova?"
+      }
     }
   }
 }

@@ -926,5 +926,86 @@
     "search": "搜索专业人士...",
     "filterByRole": "按角色筛选",
     "filterByCity": "按城市筛选"
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "人工智能面试 - Mundo Tango 人才匹配",
+        "description": "完成与蓝先生人工智能的志愿者面试，以获得完美的机会匹配。"
+      },
+      "pageTitle": "人工智能面试",
+      "phases": {
+        "resume": "第一阶段：简历深入分析",
+        "work": "第二阶段：工作任务匹配",
+        "complete": "面试完成！"
+      },
+      "phaseLabels": {
+        "resume": "简历",
+        "workAssignment": "工作任务"
+      },
+      "progress": {
+        "questionOf": "第 {{current}} 个问题，共 {{total}} 个",
+        "allQuestionsAnswered": "所有问题已回答"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "无效的文件类型",
+          "description": "请上传 PDF、DOCX 或 TXT 格式的文件"
+        },
+        "resumeParsed": {
+          "title": "简历解析成功！",
+          "description": "蓝先生现在可以阅读您的简历内容。"
+        },
+        "uploadFailed": {
+          "title": "上传失败",
+          "description": "请再试一次"
+        },
+        "missingSession": {
+          "title": "缺少会话",
+          "description": "请从人才匹配页面开始"
+        },
+        "error": {
+          "title": "错误",
+          "description": "处理您的响应失败"
+        }
+      },
+      "resumeBanner": {
+        "title": "简历内容不可用",
+        "description": "重新上传您的简历，以便蓝先生可以阅读并参考您的经验。",
+        "parsing": "解析中...",
+        "reupload": "重新上传"
+      },
+      "buttons": {
+        "viewDashboard": "查看 H2AC 仪表板",
+        "goHome": "回家"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "你好！我已经审查了你的背景。你最自信的技术技能是什么？",
+          "q2": "你最喜欢使用哪些技术或工具？",
+          "q3": "在你的简历中，有哪些技能你希望在志愿工作中更多地使用？",
+          "q4": "目前你对软件开发的哪些领域最感兴趣？",
+          "q5": "你之前有参与过任何开源项目或社区活动吗？",
+          "q6": "你喜欢什么样的工作风格 - 独立工作还是合作？",
+          "q7": "你通常是如何学习新技术的？",
+          "q8": "你希望通过志愿工作产生什么样的影响？",
+          "q9": "很好！在我们讨论具体机会之前，还有什么关于你的背景想要强调的吗？"
+        },
+        "work": {
+          "q1": "现在让我们谈谈你如何能为 Mundo Tango 做出贡献！你最感兴趣的领域是：前端、后端、AI/ML，还是其他？",
+          "q2": "Mundo Tango 连接全球探戈社区。你希望参与构建哪些功能？",
+          "q3": "我们有技术和非技术的志愿机会。哪种类型的工作最能激励你？",
+          "q4": "你每周可以实际投入多少时间来进行志愿工作？",
+          "q5": "你更喜欢独立工作还是团队合作？",
+          "q6": "你对结对编程或代码审查感到舒适吗？",
+          "q7": "你在敏捷/冲刺开发方面的经验如何？",
+          "q8": "我们使用 GitHub 进行协作。你对 Git 工作流感到舒适吗？",
+          "q9": "你更愿意处理新功能、错误修复还是文档？",
+          "q10": "最后，与你沟通的最佳方式是什么 - Slack、电子邮件，还是我们的平台消息？"
+        },
+        "phaseTransition": "太好了！我现在对你的背景和经验有了很好的理解。让我们进入第二阶段，讨论你可以为 Mundo Tango 做出贡献的具体方式。",
+        "processingError": "我很抱歉，但我处理这个时遇到了问题。你能再试一次吗？"
+      }
+    }
   }
 }
