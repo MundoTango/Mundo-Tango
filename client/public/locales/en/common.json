@@ -78,5 +78,28 @@
   "findEvents": "Find events near you",
   "discoverProfessionals": "Discover tango professionals",
   "community": "Community",
-  "connections": "Connections"
+  "connections": "Connections",
+  "invitations": "Invitations",
+  "admin": "Admin",
+  "globalDancers": "Global Dancers",
+  "activeEvents": "Active Events",
+  "communities": "Communities",
+  "yourCity": "Your City",
+  "globalStatistics": "Global Statistics",
+  "globalCommunity": "Global Tango Community",
+  "whoItsFor": "Who It's For",
+  "forDancers": "For Dancers",
+  "forTeachers": "For Teachers",
+  "forOrganizers": "For Organizers",
+  "buttons": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "share": "Share",
+    "viewAll": "View All"
+  }
 }

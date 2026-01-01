@@ -534,7 +534,24 @@ export function UnifiedLocationPicker({
     if (mode === "city") {
       const parts = location.display_name.split(',').map(p => p.trim());
       if (parts.length >= 2) {
-        return `${parts[0]}, ${parts[parts.length - 1]}`;
+        const city = parts[0];
+        const country = parts[parts.length - 1];
+        
+        // For US cities, include the state for disambiguation (e.g., Washington DC vs Washington state)
+        if (country === "United States" || country === "USA" || country === "United States of America") {
+          // Find state - typically second to last part, but skip if it's a ZIP code
+          for (let i = parts.length - 2; i >= 1; i--) {
+            const part = parts[i];
+            // Skip ZIP codes and short parts
+            if (/^\d{5}(-\d{4})?$/.test(part) || part.length <= 2) continue;
+            // Skip county names that end with "County"
+            if (part.endsWith("County")) continue;
+            // This should be the state
+            return `${city}, ${part}, ${country}`;
+          }
+        }
+        
+        return `${city}, ${country}`;
       }
     }
     return location.display_name;

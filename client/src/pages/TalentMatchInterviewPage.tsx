@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -150,7 +151,14 @@ export default function TalentMatchInterviewPage() {
       resumeContext = `The volunteer hasn't uploaded a resume yet. Please ask them to describe their background, skills, and experience.`;
     }
     
+    // Get user's preferred language for Mr Blue to respond in
+    const userLanguage = i18n.language || 'en';
+    const languageInstruction = userLanguage !== 'en' 
+      ? `IMPORTANT: You MUST respond entirely in ${userLanguage}. Do not use English unless the user writes in English.`
+      : '';
+    
     const systemPrompt = `You are Mr Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Resume Deep-Dive.
+${languageInstruction}
 
 ${resumeContext}
 
@@ -203,7 +211,15 @@ If this is question ${TOTAL_RESUME_QUESTIONS}, make it a summary/transition ques
 
   const generateWorkQuestion = useCallback(async (questionNumber: number, previousAnswers: string[], resumeAnswers: string[]) => {
     const resumeContext = resumeAnswers.join(" | ");
+    
+    // Get user's preferred language for Mr Blue to respond in
+    const userLanguage = i18n.language || 'en';
+    const languageInstruction = userLanguage !== 'en' 
+      ? `IMPORTANT: You MUST respond entirely in ${userLanguage}. Do not use English unless the user writes in English.`
+      : '';
+    
     const systemPrompt = `You are Mr Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 2: Work Assignment Matching.
+${languageInstruction}
 
 Based on the resume interview, here's what we learned about the volunteer:
 ${resumeContext}
@@ -400,7 +416,14 @@ Resume interview highlights: ${interviewState.resumeAnswers.slice(-5).join(" | "
 Work preferences discussed: ${newAnswers.slice(-5).join(" | ")}
 Volunteer name: ${userName}
 `;
+            // Get user's preferred language for Mr Blue to respond in
+            const userLanguage = i18n.language || 'en';
+            const langInstruction = userLanguage !== 'en' 
+              ? `IMPORTANT: You MUST respond entirely in ${userLanguage}. Do not use English.`
+              : '';
+            
             const systemPrompt = `You are Mr Blue, the AI interviewer for Mundo Tango's volunteer program. Generate a warm, personalized completion message.
+${langInstruction}
 
 Based on the interview:
 ${summaryContext}
