@@ -690,21 +690,13 @@ export default function LandingPage() {
                   {t('common:builtByTanguero', 'Built by a Tanguero, For Tangueros')}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Scott started dancing tango in{" "}
-                  {publicStats?.platformStats?.startedDancing ||
-                    "September 2007"}{" "}
-                  and has traveled to {publicStats?.platformStats?.cities || 79}{" "}
-                  cities across {publicStats?.platformStats?.countries || 27}{" "}
-                  countries for tango. In April 2024, he began building Mundo
-                  Tango, investing over{" "}
-                  {publicStats?.platformStats?.hoursInvested?.toLocaleString() ||
-                    "3,000"}{" "}
-                  hours and $
-                  {(
-                    publicStats?.platformStats?.amountInvested || 30000
-                  ).toLocaleString()}{" "}
-                  of his own money to create the platform the tango community
-                  deserves.
+                  {t('pages:landing.hero.scottStory', {
+                    date: publicStats?.platformStats?.startedDancing || "September 2007",
+                    cities: publicStats?.platformStats?.cities || 79,
+                    countries: publicStats?.platformStats?.countries || 27,
+                    hours: publicStats?.platformStats?.hoursInvested?.toLocaleString() || "3,000",
+                    amount: (publicStats?.platformStats?.amountInvested || 30000).toLocaleString()
+                  }, "Scott started dancing tango in {{date}} and has traveled to {{cities}} cities across {{countries}} countries for tango. In April 2024, he began building Mundo Tango, investing over {{hours}} hours and ${{amount}} of his own money to create the platform the tango community deserves.")}
                 </p>
               </div>
               <div className="flex gap-3">
