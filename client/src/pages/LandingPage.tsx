@@ -116,6 +116,18 @@ export default function LandingPage() {
     
     // Track and redirect to Facebook
     console.log('[Analytics] New email captured:', capturedEmail);
+    
+    // Save to server if we have an endpoint
+    try {
+      await fetch('/api/qa-platform/visitor-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: capturedEmail, source: 'facebook_live_modal' })
+      });
+    } catch (e) {
+      console.error('[Analytics] Failed to save email to server:', e);
+    }
+
     window.open('https://www.facebook.com/sboddye', '_blank');
   }, [capturedEmail, t, toast]);
   

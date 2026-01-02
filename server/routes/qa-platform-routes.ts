@@ -28,6 +28,31 @@ function isGodLevel(user: any): boolean {
 // ANALYTICS CONSENT
 // ============================================================================
 
+// Save visitor email from landing page (Guest access)
+router.post("/visitor-email", async (req: Request, res: Response) => {
+  try {
+    const { email, source } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    // Store as a "Contact" or "Feedback" in the QA system so it appears in admin
+    await storage.createUserFeedback({
+      userId: null, // Guest
+      sessionId: null,
+      feedbackType: "support",
+      title: `Visitor Email Capture: ${source || 'unknown'}`,
+      description: `Visitor interested in Facebook Live sessions: ${email}`,
+      status: "pending",
+      currentPage: "LandingPage",
+      priority: "medium"
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("[QA] Error saving visitor email:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.post("/consent", async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
