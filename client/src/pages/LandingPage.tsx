@@ -298,14 +298,17 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="w-full lg:w-[400px] shrink-0">
-                  <div className="relative aspect-[2/3] w-full max-w-[320px] mx-auto lg:ml-auto group">
+                <div className="w-full lg:w-[450px] shrink-0">
+                  <div className="relative aspect-[3/2] w-full max-w-[500px] mx-auto lg:ml-auto group">
                     <div className="absolute -inset-1 ocean-gradient opacity-50 blur rounded-2xl group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
                     <img 
-                      src="/attached_assets/Skoot_(40)_1767343376837.jpg" 
+                      src="/attached_assets/IMG_9422-Mejorado-NR_1767343524360.jpg" 
                       alt="Scott - Mundo Tango Founder" 
                       className="relative rounded-xl w-full h-full object-cover shadow-2xl border border-white/20"
                     />
+                    <div className="absolute bottom-2 right-2 bg-black/50 backdrop-blur-sm px-2 py-1 rounded text-[10px] text-white/70 opacity-0 group-hover:opacity-100 transition-opacity">
+                      Photo by <a href="https://www.instagram.com/otroalexrobledo/" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">@otroalexrobledo</a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -315,10 +318,10 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
-                className="bg-gradient-to-r from-amber-500/30 via-orange-500/30 to-red-500/30 backdrop-blur-md border-2 border-amber-400/50 rounded-xl p-6 mt-12 max-w-4xl mx-auto shadow-lg shadow-amber-500/20"
+                className="bg-gradient-to-r from-amber-500/30 via-orange-500/30 to-red-500/30 backdrop-blur-md border-2 border-amber-400/50 rounded-xl p-6 mt-12 max-w-4xl mx-auto shadow-lg shadow-amber-500/20 text-center"
                 data-testid="announcement-live-sessions"
               >
-                  <div className="flex items-center gap-3 justify-center mb-3">
+                <div className="flex items-center gap-3 justify-center mb-3">
                     <div className="flex gap-1">
                       <div className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
                       <div className="h-3 w-3 rounded-full bg-amber-400 animate-pulse" style={{ animationDelay: '0.2s' }} />
