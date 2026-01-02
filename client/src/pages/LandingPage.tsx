@@ -323,40 +323,60 @@ export default function LandingPage() {
                   
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-sm text-white/90 mb-5">
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.losAngeles', 'Los Angeles')}</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🇺🇸</span>
+                        <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.losAngeles', 'Los Angeles')}</div>
+                      </div>
                       <div className="font-bold text-lg">9:00 AM</div>
                     </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.newYork', 'New York')}</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🇺🇸</span>
+                        <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.newYork', 'New York')}</div>
+                      </div>
                       <div className="font-bold text-lg">12:00 PM</div>
                     </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.buenosAires', 'Buenos Aires')}</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🇦🇷</span>
+                        <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.buenosAires', 'Buenos Aires')}</div>
+                      </div>
                       <div className="font-bold text-lg">1:00 PM</div>
                     </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.paris', 'Paris')}</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🇫🇷</span>
+                        <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.paris', 'Paris')}</div>
+                      </div>
                       <div className="font-bold text-lg">6:00 PM</div>
                     </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.moscow', 'Moscow')}</div>
-                      <div className="font-bold text-lg">8:00 PM</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🇺🇦</span>
+                        <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.kyiv', 'Kyiv')}</div>
+                      </div>
+                      <div className="font-bold text-lg">7:00 PM</div>
                     </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all border border-amber-400/30">
-                      <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.london', 'London')}</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🇬🇧</span>
+                        <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.london', 'London')}</div>
+                      </div>
                       <div className="font-bold text-lg">5:00 PM</div>
                     </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.seoul', 'Seoul')}</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🇰🇷</span>
+                        <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.seoul', 'Seoul')}</div>
+                      </div>
                       <div className="font-bold text-lg">2:00 AM <span className="text-xs">(+1)</span></div>
                     </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.sydney', 'Sydney')}</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">🇦🇺</span>
+                        <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.sydney', 'Sydney')}</div>
+                      </div>
                       <div className="font-bold text-lg">4:00 AM <span className="text-xs">(+1)</span></div>
-                    </div>
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all border border-amber-400/30">
-                      <div className="font-medium text-amber-200/80 text-xs">{t('pages:landing.hero.cities.tokyo', 'Tokyo')}</div>
-                      <div className="font-bold text-lg">2:00 AM <span className="text-xs">(+1)</span></div>
                     </div>
                   </div>
                   <p className="text-white/90 leading-relaxed text-base md:text-lg mb-4">

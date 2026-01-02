@@ -8,7 +8,19 @@
       "facebookLive": "Facebook Live Каждый Четверг",
       "qaScott": "Прямые Q&A Сессии со Скоттом",
       "nextSession": "Следующая Сессия: {{date}}",
-      "joinFacebook": "Присоединиться в Facebook Live"
+      "joinFacebook": "Присоединиться в Facebook Live",
+      "qaDescription": "Отвечаем на все ваши вопросы: <span className=\"font-semibold text-amber-200\">Что такое Mundo Tango?</span> Для кого это и как это может повлиять на <span className=\"font-semibold text-amber-200\">ВАС</span>? Зачем нам это нужно? И многое другое!",
+      "recurringNotice": "Мы будем проводить прямые трансляции <span className=\"font-semibold text-amber-200\">каждый четверг</span> в одно и то же время, чтобы услышать, чего <span className=\"font-semibold text-amber-200\">ВЫ</span> хотите от этой платформы!",
+      "cities": {
+        "losAngeles": "Лос-Анджелес",
+        "newYork": "Нью-Йорк",
+        "buenosAires": "Буэнос-Айрес",
+        "paris": "Париж",
+        "kyiv": "Киев",
+        "london": "Лондон",
+        "seoul": "Сеул",
+        "sydney": "Сидней"
+      }
     }
   },
   "register": {

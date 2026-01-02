@@ -11,12 +11,11 @@
       "cities": {
         "losAngeles": "Los Angeles",
         "newYork": "New York",
-        "buenos Aires": "Buenos Aires",
-        "london": "London",
+        "buenosAires": "Buenos Aires",
         "paris": "Paris",
-        "moscow": "Moscow",
+        "kyiv": "Kyiv",
+        "london": "London",
         "seoul": "Seoul",
-        "tokyo": "Tokyo",
         "sydney": "Sydney"
       },
       "qaDescription": "Answering all your questions: <span className=\"font-semibold text-amber-200\">What is Mundo Tango?</span> Who is it for and how could it impact <span className=\"font-semibold text-amber-200\">YOU</span>? Why do we need it? And more!",
