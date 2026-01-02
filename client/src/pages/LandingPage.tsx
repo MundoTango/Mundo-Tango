@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import scottPhotoPath from "@assets/IMG_9422-Mejorado-NR_1767344720406.jpg";
 
 // Cookie helpers
 const getCookie = (name: string): string | null => {
@@ -422,7 +423,7 @@ export default function LandingPage() {
                     <div className="relative w-28 h-28 md:w-36 md:h-36">
                       <div className="absolute -inset-1 ocean-gradient opacity-50 blur rounded-xl group-hover:opacity-100 transition duration-500"></div>
                       <img 
-                        src="/attached_assets/IMG_9422-Mejorado-NR_1767343524360.jpg" 
+                        src={scottPhotoPath} 
                         alt="Scott - Mundo Tango Founder" 
                         className="relative rounded-lg w-full h-full object-cover shadow-xl border border-white/20"
                       />
