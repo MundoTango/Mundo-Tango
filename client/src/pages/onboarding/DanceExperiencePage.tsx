@@ -252,7 +252,7 @@ export default function DanceExperiencePage() {
 
   return (
     <SelfHealingErrorBoundary pageName="OtherHobbies" fallbackRoute="/">
-      <PageLayout title={t('pages:onboarding.hobbies.pageTitle', 'OtherHobbies')} showBreadcrumbs>
+      <PageLayout title={t('pages:onboarding.hobbies.pageTitle', 'Interests')} showBreadcrumbs>
         <>
           <SEO title={t('pages:onboarding.hobbies.seoTitle', 'Your Hobbies - Mundo Tango')} description={t('pages:onboarding.hobbies.seoDescription', 'Tell us about your other interests')} />
           
@@ -300,20 +300,20 @@ export default function DanceExperiencePage() {
                       </div>
                       <div className="space-y-1">
                         <h2 className="text-3xl md:text-4xl font-serif font-bold tracking-tight text-foreground">
-                          Beyond the Dance Floor
+                          {t('pages:onboarding.hobbies.beyondTitle', 'Beyond the Dance Floor')}
                         </h2>
                         <div className="h-1 w-20 bg-primary/40 rounded-full" />
                       </div>
                     </div>
                     <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-medium italic">
-                      "Tango is the bridge to human connection. What other passions ignite your soul and connect you to the world?"
+                      {t('pages:onboarding.hobbies.beyondQuote', '"Tango is the bridge to human connection. What other passions ignite your soul and connect you to the world?"')}
                     </p>
                     <div className="bg-primary/5 border-l-4 border-primary p-4 rounded-r-lg mt-6 mb-2">
                       <p className="text-sm text-primary/80 font-semibold uppercase tracking-wider">
-                        The Mundo Tango Vision
+                        {t('pages:onboarding.hobbies.visionTitle', 'The Mundo Tango Vision')}
                       </p>
                       <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                        We use these shared passions to build local communities where tango serves as the catalyst for deeper relationships and new beginnings.
+                        {t('pages:onboarding.hobbies.visionDescription', 'We use these shared passions to build local communities where tango serves as the catalyst for deeper relationships and new beginnings.')}
                       </p>
                     </div>
                   </CardHeader>

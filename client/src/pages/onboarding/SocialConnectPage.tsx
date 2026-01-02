@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -12,14 +12,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import heroImage from "@assets/stock_images/global_world_map_con_854a9c2d.jpg";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 
 export default function SocialConnectPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const { user, refreshCurrentUser } = useAuth();
   const { toast } = useToast();
-  const [facebookUrl, setFacebookUrl] = useState(user?.facebookUrl || "");
   const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm({
+    defaultValues: {
+      facebookUrl: user?.facebookUrl || ""
+    }
+  });
 
   useEffect(() => {
     if (!user) {
@@ -29,7 +36,7 @@ export default function SocialConnectPage() {
     }
   }, [user, navigate]);
 
-  const handleContinue = async () => {
+  const handleContinue = async (data: any) => {
     setIsLoading(true);
     try {
       const accessToken = localStorage.getItem("accessToken");
@@ -40,7 +47,7 @@ export default function SocialConnectPage() {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ 
-          facebookUrl,
+          facebookUrl: data.facebookUrl,
           formStatus: 2 // Persist progress
         }),
       });
@@ -99,50 +106,63 @@ export default function SocialConnectPage() {
           transition={{ duration: 0.3, delay: 0.1 }}
         >
           <Card className="overflow-hidden">
-            <CardHeader className="bg-card p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-xl bg-primary/10">
-                  <Facebook className="h-6 w-6 text-primary" />
-                </div>
-                <h2 className="text-2xl font-serif font-bold">{t('pages:onboarding.social.cardTitle', 'Find Your Friends')}</h2>
-              </div>
-              <p className="text-muted-foreground leading-relaxed">
-                {t('pages:onboarding.social.cardDescription', 'Your Facebook helps us match you with friends you may already know, so you\'re not starting from scratch.')}
-              </p>
-            </CardHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleContinue)}>
+                <CardHeader className="bg-card p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-3 rounded-xl bg-primary/10">
+                      <Facebook className="h-6 w-6 text-primary" />
+                    </div>
+                    <h2 className="text-2xl font-serif font-bold">{t('pages:onboarding.social.cardTitle', 'Find Your Friends')}</h2>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {t('pages:onboarding.social.cardDescription', 'Your Facebook helps us match you with friends you may already know, so you\'re not starting from scratch.')}
+                  </p>
+                </CardHeader>
 
-            <CardContent className="p-8 space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium uppercase tracking-widest text-muted-foreground">{t('pages:onboarding.social.facebookLabel', 'Facebook Profile URL (Optional)')}</label>
-                <Input
-                  placeholder={t('pages:onboarding.social.facebookPlaceholder', 'https://www.facebook.com/your.profile')}
-                  value={facebookUrl}
-                  onChange={(e) => setFacebookUrl(e.target.value)}
-                  className="h-12"
-                />
-                <p className="text-xs text-muted-foreground italic mt-2">
-                  {t('pages:onboarding.social.helperText', 'We use this as a bridge to other communities and to match you with dancers you might know.')}
-                </p>
-              </div>
-            </CardContent>
+                <CardContent className="p-8 space-y-6">
+                    <FormField
+                      control={form.control as any}
+                      name="facebookUrl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('pages:onboarding.social.facebookLabel', 'Facebook Profile URL (Optional)')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder={t('pages:onboarding.social.facebookPlaceholder', 'https://www.facebook.com/your.profile')}
+                              {...field}
+                              data-testid="input-facebook-url"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                          <p className="text-xs text-muted-foreground italic mt-2">
+                            {t('pages:onboarding.social.helperText', 'We use this as a bridge to other communities and to match you with dancers you might know.')}
+                          </p>
+                        </FormItem>
+                      )}
+                    />
+                </CardContent>
 
-            <CardFooter className="p-8 bg-muted/20 flex justify-between">
-              <Button
-                variant="outline"
-                onClick={() => navigate("/onboarding/city")}
-                disabled={isLoading}
-              >
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                {t('pages:onboarding.navigation.back', 'Back')}
-              </Button>
-              <Button
-                onClick={handleContinue}
-                disabled={isLoading}
-                className="gap-2"
-              >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t('pages:onboarding.navigation.continue', 'Continue')} <ChevronRight className="h-4 w-4" /></>}
-              </Button>
-            </CardFooter>
+                <CardFooter className="p-8 bg-muted/20 flex justify-between">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate("/onboarding/city")}
+                    disabled={isLoading}
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-2" />
+                    {t('pages:onboarding.navigation.back', 'Back')}
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="gap-2"
+                  >
+                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t('pages:onboarding.navigation.continue', 'Continue')} <ChevronRight className="h-4 w-4" /></>}
+                  </Button>
+                </CardFooter>
+              </form>
+            </Form>
           </Card>
           
           <div className="flex justify-center gap-2 mt-8">
