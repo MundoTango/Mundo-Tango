@@ -370,7 +370,7 @@ function PlanSelectionStep({
                 </Button>
                 {plan.id === 'basic' && (
                   <p className="text-xs text-center text-muted-foreground">
-                    {t('pages:onboarding.subscription.plans.freeTrial', '14-day free trial, no credit card required')}
+                    {t('pages:onboarding.subscription.plans.freeTrial', 'Cancel anytime, 30-day money-back guarantee')}
                   </p>
                 )}
               </CardContent>
@@ -734,10 +734,10 @@ function PaymentStep({
               <div className="p-3 bg-primary/10 rounded-lg space-y-1">
                 <p className="font-semibold text-sm flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  {t('pages:onboarding.subscription.payment.freeTrialTitle', '14-Day Free Trial')}
+                  {t('pages:onboarding.subscription.payment.freeTrialTitle', 'Full Access Included')}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {t('pages:onboarding.subscription.payment.freeTrialDesc', 'No charge today. Cancel anytime during trial.')}
+                  {t('pages:onboarding.subscription.payment.freeTrialDesc', 'Cancel anytime. 30-day money-back guarantee.')}
                 </p>
               </div>
             )}

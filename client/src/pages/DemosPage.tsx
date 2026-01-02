@@ -184,7 +184,7 @@ export default function DemosPage() {
                   className="border-white/30 text-white hover:bg-white/10"
                   data-testid="button-start-trial"
                 >
-                  {t('pages:demos.startTrial', 'Start 7-Day Free Trial')}
+                  {t('pages:demos.startTrial', 'Join Now')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -293,7 +293,7 @@ export default function DemosPage() {
               variants={fadeInUp}
               className="text-lg text-muted-foreground"
             >
-              {t('pages:demos.ctaSubtitle', 'Join thousands of dancers worldwide. Start your 7-day free trial today.')}
+              {t('pages:demos.ctaSubtitle', 'Join thousands of dancers worldwide. Start your tango journey today.')}
             </motion.p>
             <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
               <Link href="/register">

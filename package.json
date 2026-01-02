@@ -192,7 +192,7 @@
     "simple-git": "^3.30.0",
     "size-limit": "^11.2.0",
     "speakeasy": "^2.0.0",
-    "stripe": "^18.5.0",
+    "stripe": "^20.0.0",
     "stripe-replit-sync": "^1.0.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",

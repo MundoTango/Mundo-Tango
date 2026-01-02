@@ -48,8 +48,8 @@ const features = [
 
 const faqs = [
   {
-    question: "How does the 7-day free trial work?",
-    answer: "Start your free trial today with full access to all features. No credit card required to start. After 7 days, you can choose to continue with our Pro membership at just $4.99/month."
+    question: "How do I get started?",
+    answer: "Join now and get full access to all features. Start exploring the global tango community immediately with our Pro membership at just $4.99/month."
   },
   {
     question: "Can I cancel anytime?",
@@ -64,8 +64,8 @@ const faqs = [
     answer: "Yes! Pay annually and get 2 months free - that's just $49.99/year instead of $59.88 (monthly rate)."
   },
   {
-    question: "What happens if I don't subscribe after the trial?",
-    answer: "No worries! You'll still have access to basic features like browsing events and viewing profiles. Premium features like unlimited messaging and AI assistance require a subscription."
+    question: "What if I want to cancel?",
+    answer: "No worries! You can cancel anytime. You'll still have access to basic features like browsing events and viewing profiles. Premium features like unlimited messaging and AI assistance require a subscription."
   },
   {
     question: "Do you offer refunds?",
@@ -83,8 +83,7 @@ export default function PricingPage() {
     mutationFn: async () => {
       const response = await apiRequest('POST', '/api/pricing/checkout-session', {
         planId: 'pro_monthly',
-        billingInterval: 'monthly',
-        trialDays: 7
+        billingInterval: 'monthly'
       });
       const data = await response.json();
       return data;
@@ -123,7 +122,7 @@ export default function PricingPage() {
         <PublicLayout>
           <SEO
             title="Pricing - Mundo Tango"
-            description="Join Mundo Tango with a 7-day free trial. Then just $4.99/month for unlimited access to the global tango community, events, messaging, and more."
+            description="Join Mundo Tango now for just $4.99/month for unlimited access to the global tango community, events, messaging, and more."
           />
 
           <div className="min-h-screen">
@@ -145,9 +144,9 @@ export default function PricingPage() {
                     Start Dancing Today
                   </h1>
                   <p className="text-xl text-white/90 mb-8">
-                    Join the global tango community with a 7-day free trial.
+                    Join the global tango community today.
                     <br />
-                    No credit card required to start.
+                    Start dancing with Pro membership.
                   </p>
                 </motion.div>
               </div>
@@ -180,14 +179,14 @@ export default function PricingPage() {
                           <span className="text-muted-foreground">/month</span>
                         </div>
                         <p className="text-sm text-muted-foreground mt-2">
-                          After 7-day free trial
+                          Billed monthly
                         </p>
                       </div>
                       
                       <div className="bg-primary/10 rounded-lg p-4 mb-6">
                         <p className="font-semibold text-primary flex items-center justify-center gap-2">
                           <Sparkles className="w-5 h-5" />
-                          7 Days Free - No Credit Card Required
+                          Full Access - Cancel Anytime
                         </p>
                       </div>
 
@@ -204,7 +203,7 @@ export default function PricingPage() {
                             Starting...
                           </>
                         ) : (
-                          isAuthenticated ? 'Start Pro Membership' : 'Start Free Trial'
+                          isAuthenticated ? 'Start Pro Membership' : 'Join Now'
                         )}
                       </Button>
 
@@ -294,7 +293,7 @@ export default function PricingPage() {
                 >
                   <h2 className="text-3xl font-bold mb-4">Ready to Join?</h2>
                   <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-                    Start your 7-day free trial today and become part of the world's largest tango community.
+                    Join now and become part of the world's largest tango community.
                   </p>
                   <Button 
                     size="lg" 
@@ -309,7 +308,7 @@ export default function PricingPage() {
                         Starting...
                       </>
                     ) : (
-                      isAuthenticated ? 'Start Pro Membership' : 'Start Your Free Trial'
+                      isAuthenticated ? 'Start Pro Membership' : 'Join Now'
                     )}
                   </Button>
                 </motion.div>

@@ -91,7 +91,7 @@ export function DemoModal({ open, onOpenChange }: DemoModalProps) {
                 onClick={() => onOpenChange(false)}
                 data-testid="button-start-trial-modal"
               >
-                Start 7-Day Trial
+                Join Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>

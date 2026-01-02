@@ -151,6 +151,7 @@ import groupRoutes from "./routes/group-routes";
 import { cityGroupDataIngestionService } from "./services/city-group-data-ingestion";
 import mapRoutes from "./routes/map-routes";
 import crowdfundingRoutes from "./routes/crowdfunding-routes";
+import stripeDonationRoutes from "./routes/stripe-donation-routes";
 import recommendationRoutes from "./routes/recommendation-routes";
 import crowdfundingAgentsRoutes from "./routes/crowdfundingAgentsRoutes";
 import analyticsModerationRoutes from "./routes/analytics-moderation-routes";
@@ -1461,6 +1462,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/marketplace", marketplaceRoutes);
   app.use("/api/subscriptions", subscriptionRoutes);
   crowdfundingRoutes(app); // GoFundMe-style crowdfunding platform
+  stripeDonationRoutes(app); // Stripe donation checkout (mb.md P111-P115)
   app.use("/api/crowdfunding/agents", crowdfundingAgentsRoutes); // AI Agents for crowdfunding (Agents #181-184)
   
   // Phase D: Community & Engagement Systems

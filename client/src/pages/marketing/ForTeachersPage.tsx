@@ -51,7 +51,7 @@ export default function ForTeachersPage() {
   ];
 
   const benefits = [
-    t('pages:teachers.benefits.freeTrial', '7-day free trial with Pro features'),
+    t('pages:teachers.benefits.freeTrial', 'Full access to Pro features'),
     t('pages:teachers.benefits.cancelAnytime', 'Cancel anytime'),
     t('pages:teachers.benefits.unlimitedListings', 'Unlimited class listings'),
     t('pages:teachers.benefits.studentTools', 'Student management tools'),
@@ -192,7 +192,7 @@ export default function ForTeachersPage() {
               </div>
               <Link href="/register?redirect=/talent-match&role=teacher">
                 <Button size="lg" className="text-lg px-12" data-testid="button-cta-teachers">
-                  {t('pages:teachers.cta.button', 'Start Your Free Trial')}
+                  {t('pages:teachers.cta.button', 'Join Now')}
                   <Sparkles className="ml-2 h-5 w-5" />
                 </Button>
               </Link>

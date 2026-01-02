@@ -31,8 +31,8 @@ const faqs = [
     answer: "We accept all major credit cards (Visa, Mastercard, American Express) through Stripe.",
   },
   {
-    question: "Is there a free trial?",
-    answer: "The Free plan is always available. Pro and Premium plans can be tested for 14 days risk-free.",
+    question: "Is there a free plan?",
+    answer: "Yes! The Free plan is always available with basic features. Upgrade anytime to Pro or Premium for full access.",
   },
   {
     question: "Can I cancel my subscription?",
