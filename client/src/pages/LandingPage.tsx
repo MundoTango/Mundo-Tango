@@ -328,6 +328,10 @@ export default function LandingPage() {
                       <div className="font-medium text-amber-200/80 text-xs">Moscow</div>
                       <div className="font-bold text-lg">8:00 PM</div>
                     </div>
+                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all border border-amber-400/30">
+                      <div className="font-medium text-amber-200/80 text-xs">London</div>
+                      <div className="font-bold text-lg">5:00 PM</div>
+                    </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
                       <div className="font-medium text-amber-200/80 text-xs">Seoul</div>
                       <div className="font-bold text-lg">2:00 AM <span className="text-xs">(+1)</span></div>
