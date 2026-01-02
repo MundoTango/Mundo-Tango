@@ -336,6 +336,10 @@ export default function LandingPage() {
                       <div className="font-medium text-amber-200/80 text-xs">Sydney</div>
                       <div className="font-bold text-lg">4:00 AM <span className="text-xs">(+1)</span></div>
                     </div>
+                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all border border-amber-400/30">
+                      <div className="font-medium text-amber-200/80 text-xs">Tokyo</div>
+                      <div className="font-bold text-lg">2:00 AM <span className="text-xs">(+1)</span></div>
+                    </div>
                   </div>
                   <p className="text-white/90 leading-relaxed text-base md:text-lg mb-4">
                     Answering all your questions: <span className="font-semibold text-amber-200">What is Mundo Tango?</span> Who is it for and how could it impact <span className="font-semibold text-amber-200">YOU</span>? Why do we need it? And more!
