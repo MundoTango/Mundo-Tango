@@ -432,32 +432,9 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     if (qaMode !== "none") {
       try {
         const snapshot = getSnapshot();
-        const response = await apiRequest("POST", "/api/qa-platform/feedback", {
-          feedbackType: qaMode === "bug" ? "bug" : qaMode === "features" ? "feature" : "support",
-          title: messageText.substring(0, 50) + (messageText.length > 50 ? "..." : ""),
-          description: messageText,
-          currentPage: location,
-          sessionSnapshot: snapshot,
-          priority: qaMode === "bug" ? "high" : "medium",
-          sessionId
-        });
-
-        if (response.ok) {
-          const successMessage: Message = {
-            id: `qa-success-${Date.now()}`,
-            role: "assistant",
-            content: qaMode === "bug" 
-              ? "Bug report submitted successfully! Our developers have been notified and will review your session context."
-              : qaMode === "features"
-                ? "Feature request recorded! This has been added to our development pipeline for review."
-                : "Support request received. We'll get back to you as soon as possible.",
-            timestamp: new Date(),
-          };
-          setMessages((prev) => [...prev, successMessage]);
-          setQaMode("none"); // Reset mode after submission
-          setIsLoading(false);
-          return;
-        }
+        // Use the common submit logic
+        await submitQaRequest(messageText);
+        return; // Early return to prevent regular chat
       } catch (error) {
         console.error("[MrBlueChat] QA submission failed:", error);
         // Fall back to regular chat if submission fails
@@ -789,7 +766,7 @@ Please describe the issue you encountered:
 - What happened instead?
 - Any error messages?
 
-I'll analyze this and may be able to fix it automatically.`,
+I'll analyze this and may be able to fix it automatically. Use the **Submit** button when you're ready.`,
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, bugMessage]);
