@@ -7,8 +7,8 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import scottPhoto1 from "@assets/optimized/Skoot_20-optimized.jpg";
 import scottPhoto2 from "@assets/optimized/Skoot_16-optimized.jpg";
+import scottNewAbout from "@assets/founder/scott_new_about.jpg";
 import tangoHeroImage from "@assets/stock_images/argentine_tango_danc_cc9bdfab.jpg";
 
 export default function AboutPage() {
@@ -169,9 +169,9 @@ export default function AboutPage() {
                 <div className="flex-shrink-0">
                   <div className="flex flex-col gap-4">
                     <img 
-                      src={scottPhoto1} 
+                      src={scottNewAbout} 
                       alt="Scott, Founder of Mundo Tango" 
-                      className="w-48 h-48 md:w-64 md:h-64 rounded-lg object-cover shadow-lg"
+                      className="w-48 h-64 md:w-64 md:h-80 rounded-lg object-cover shadow-lg"
                       data-testid="img-founder-1"
                     />
                     <img 
