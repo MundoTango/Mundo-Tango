@@ -415,38 +415,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-            {stats.length > 0 && (
-              <div
-                className={`grid gap-4 mt-12 ${
-                  stats.length === 1
-                    ? "grid-cols-1 max-w-xs mx-auto"
-                    : stats.length === 2
-                      ? "grid-cols-2 max-w-md mx-auto"
-                      : stats.length === 3
-                        ? "grid-cols-3 max-w-lg mx-auto"
-                        : "grid-cols-2 lg:grid-cols-4"
-                }`}
-              >
-                {stats.map((stat, index) => (
-                  <div
-                    key={index}
-                    className="glass-card rounded-xl p-6 text-center"
-                    data-testid={`stat-${index}`}
-                  >
-                    <div className="text-3xl md:text-4xl font-bold text-white">
-                      {stat.value}
-                    </div>
-                    <div className="text-sm md:text-base text-white/80 mt-1">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
       <section className="py-20 md:py-24" data-testid="section-features">
         <div className="container mx-auto px-4">
