@@ -181,8 +181,16 @@ export default function AboutPage() {
                       data-testid="img-founder-2"
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2 text-center">
-                    Photos: <a href="https://www.facebook.com/aparotidis" target="_blank" rel="noopener noreferrer" className="hover:underline">Alexandros Parotidis</a>
+                  <p className="text-xs text-muted-foreground mt-2 text-center flex flex-col gap-1">
+                    <span>
+                      Photos: <a href="https://www.facebook.com/aparotidis" target="_blank" rel="noopener noreferrer" className="hover:underline">Alexandros Parotidis</a>
+                    </span>
+                    <span>
+                      Brooch: <a href="https://www.facebook.com/miradatanguera" target="_blank" rel="noopener noreferrer" className="hover:underline">Mirada Tanguera</a>
+                    </span>
+                    <span>
+                      Pants: <a href="https://www.facebook.com/espaciodebas" target="_blank" rel="noopener noreferrer" className="hover:underline">Debas Tango</a>
+                    </span>
                   </p>
                 </div>
                 <div className="space-y-4 text-muted-foreground">
