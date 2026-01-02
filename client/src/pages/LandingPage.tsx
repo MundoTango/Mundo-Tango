@@ -418,9 +418,9 @@ export default function LandingPage() {
                     </div>
                   </div>
                   
-                  {/* Scott's photo - small thumbnail on right */}
+                  {/* Scott's photo - landscape thumbnail on right */}
                   <div className="shrink-0 group order-first md:order-last">
-                    <div className="relative w-36 h-36 md:w-56 md:h-56">
+                    <div className="relative w-48 h-32 md:w-72 md:h-48">
                       <div className="absolute -inset-1 ocean-gradient opacity-50 blur rounded-xl group-hover:opacity-100 transition duration-500"></div>
                       <img 
                         src={scottPhotoPath} 
@@ -428,9 +428,9 @@ export default function LandingPage() {
                         loading="eager"
                         className="relative rounded-lg w-full h-full object-cover shadow-xl border border-white/20"
                       />
-                      <div className="absolute -bottom-1 -right-1 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-[10px] text-white/90 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                        PC: Alex <a href="https://www.instagram.com/otroalexrobledo/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-200 underline decoration-white/30 transition-colors">@otroalexrobledo</a>
-                      </div>
+                    </div>
+                    <div className="text-center mt-2 text-[10px] text-white/70">
+                      PC: Alex <a href="https://www.instagram.com/otroalexrobledo/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-200 underline transition-colors">@otroalexrobledo</a>
                     </div>
                   </div>
                 </div>
