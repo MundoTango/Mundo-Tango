@@ -298,19 +298,6 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="w-full lg:w-[450px] shrink-0">
-                  <div className="relative aspect-[3/2] w-full max-w-[500px] mx-auto lg:ml-auto group">
-                    <div className="absolute -inset-1 ocean-gradient opacity-50 blur rounded-2xl group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                    <img 
-                      src="/attached_assets/IMG_9422-Mejorado-NR_1767343524360.jpg" 
-                      alt="Scott - Mundo Tango Founder" 
-                      className="relative rounded-xl w-full h-full object-cover shadow-2xl border border-white/20"
-                    />
-                    <div className="absolute bottom-2 right-2 bg-black/50 backdrop-blur-sm px-2 py-1 rounded text-[10px] text-white/70 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Photo by <a href="https://www.instagram.com/otroalexrobledo/" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">@otroalexrobledo</a>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               {/* Live Sessions Announcement - Permanent recurring Thursday sessions */}
@@ -318,97 +305,100 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
-                className="bg-gradient-to-r from-amber-500/30 via-orange-500/30 to-red-500/30 backdrop-blur-md border-2 border-amber-400/50 rounded-xl p-6 mt-12 max-w-4xl mx-auto shadow-lg shadow-amber-500/20 text-center"
+                className="bg-gradient-to-r from-amber-500/30 via-orange-500/30 to-red-500/30 backdrop-blur-md border-2 border-amber-400/50 rounded-xl p-6 mt-12 max-w-4xl mx-auto shadow-lg shadow-amber-500/20"
                 data-testid="announcement-live-sessions"
               >
-                <div className="flex items-center gap-3 justify-center mb-3">
-                  <div className="flex gap-1">
-                    <div className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
-                    <div className="h-3 w-3 rounded-full bg-amber-400 animate-pulse" style={{ animationDelay: '0.2s' }} />
-                    <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: '0.4s' }} />
+                <div className="flex flex-col md:flex-row gap-6 items-center">
+                  {/* Scott's photo - small thumbnail */}
+                  <div className="shrink-0 group">
+                    <div className="relative w-32 h-32 md:w-40 md:h-40">
+                      <div className="absolute -inset-1 ocean-gradient opacity-50 blur rounded-xl group-hover:opacity-100 transition duration-500"></div>
+                      <img 
+                        src="/attached_assets/IMG_9422-Mejorado-NR_1767343524360.jpg" 
+                        alt="Scott - Mundo Tango Founder" 
+                        className="relative rounded-lg w-full h-full object-cover shadow-xl border border-white/20"
+                      />
+                      <div className="absolute -bottom-1 -right-1 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[8px] text-white/70 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a href="https://www.instagram.com/otroalexrobledo/" target="_blank" rel="noopener noreferrer" className="hover:text-white">@otroalexrobledo</a>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-amber-300 font-bold uppercase tracking-wider text-sm">
-                    {t('pages:landing.hero.facebookLive', 'Facebook Live Every Thursday')}
-                  </span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">
-                  {t('pages:landing.hero.qaScott', 'Live Q&A Sessions with Scott')}
-                </h3>
+                  
+                  {/* Q&A content */}
+                  <div className="flex-1 text-center md:text-left">
+                    <div className="flex items-center gap-3 justify-center md:justify-start mb-3">
+                      <div className="flex gap-1">
+                        <div className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
+                        <div className="h-3 w-3 rounded-full bg-amber-400 animate-pulse" style={{ animationDelay: '0.2s' }} />
+                        <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: '0.4s' }} />
+                      </div>
+                      <span className="text-amber-300 font-bold uppercase tracking-wider text-sm">
+                        {t('pages:landing.hero.facebookLive', 'Facebook Live Every Thursday')}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">
+                      {t('pages:landing.hero.qaScott', 'Live Q&A Sessions with Scott')}
+                    </h3>
                 
-                {/* Dynamic next session - always shows upcoming Thursday */}
-                <div className="bg-white/10 rounded-lg px-4 py-2 inline-block mb-4">
-                  <span className="text-lg font-bold text-amber-200">
-                    {t('pages:landing.hero.nextSession', { date: nextSessionLabel }, 'Next Session: {{date}}')}
-                  </span>
-                </div>
+                    {/* Dynamic next session - always shows upcoming Thursday */}
+                    <div className="bg-white/10 rounded-lg px-4 py-2 inline-block mb-4">
+                      <span className="text-lg font-bold text-amber-200">
+                        {t('pages:landing.hero.nextSession', { date: nextSessionLabel }, 'Next Session: {{date}}')}
+                      </span>
+                    </div>
                 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-sm text-white/90 mb-5">
-                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-3xl">🇺🇸</span>
-                      <div className="font-bold text-lg">CA: 9:00 AM</div>
-                      <div className="font-bold text-lg">NY: 12:00 PM</div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm text-white/90 mb-4">
+                      <div className="bg-white/10 rounded-lg p-2 text-center">
+                        <span className="text-xl">🇺🇸</span>
+                        <div className="text-xs font-bold">CA 9AM / NY 12PM</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-2 text-center">
+                        <span className="text-xl">🇦🇷</span>
+                        <div className="text-xs font-bold">1:00 PM</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-2 text-center border border-amber-400/30">
+                        <span className="text-xl">🇬🇧</span>
+                        <div className="text-xs font-bold">5:00 PM</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-2 text-center">
+                        <span className="text-xl">🇫🇷</span>
+                        <div className="text-xs font-bold">6:00 PM</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-2 text-center">
+                        <span className="text-xl">🇺🇦</span>
+                        <div className="text-xs font-bold">7:00 PM</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-2 text-center">
+                        <span className="text-xl">🇨🇳</span>
+                        <div className="text-xs font-bold">1AM (+1)</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-2 text-center">
+                        <span className="text-xl">🇰🇷</span>
+                        <div className="text-xs font-bold">2AM (+1)</div>
+                      </div>
+                      <div className="bg-white/10 rounded-lg p-2 text-center">
+                        <span className="text-xl">🇦🇺</span>
+                        <div className="text-xs font-bold">4AM (+1)</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-3xl">🇦🇷</span>
-                      <div className="font-bold text-lg">1:00 PM</div>
-                    </div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all border border-amber-400/30">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-3xl">🇬🇧</span>
-                      <div className="font-bold text-lg">5:00 PM</div>
-                    </div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-3xl">🇫🇷</span>
-                      <div className="font-bold text-lg">6:00 PM</div>
-                    </div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-3xl">🇺🇦</span>
-                      <div className="font-bold text-lg">7:00 PM</div>
-                    </div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-3xl">🇨🇳</span>
-                      <div className="font-bold text-lg">1:00 AM <span className="text-xs">(+1)</span></div>
-                    </div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-3xl">🇰🇷</span>
-                      <div className="font-bold text-lg">2:00 AM <span className="text-xs">(+1)</span></div>
-                    </div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-3xl">🇦🇺</span>
-                      <div className="font-bold text-lg">4:00 AM <span className="text-xs">(+1)</span></div>
-                    </div>
+                    <p className="text-white/90 leading-relaxed text-sm mb-3">
+                      <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.qaDescription', 'Answering all your questions: <span className="font-semibold text-amber-200">What is Mundo Tango?</span> Who is it for and how could it impact <span className="font-semibold text-amber-200">YOU</span>? Why do we need it? And more!') }} />
+                    </p>
+                    <p className="text-white/80 leading-relaxed text-sm mb-4">
+                      <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.recurringNotice', 'We will be doing live sessions <span className="font-semibold text-amber-200">every Thursday</span> at the same time to hear what <span className="font-semibold text-amber-200">YOU</span> want out of this platform and to tell you what is happening!') }} />
+                    </p>
+                    <a 
+                      href="https://www.facebook.com/sboddye" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold px-5 py-2.5 rounded-lg transition-all hover-elevate text-sm"
+                      data-testid="button-facebook-live"
+                    >
+                      <Facebook className="h-4 w-4" />
+                      {t('pages:landing.hero.joinFacebook', 'Join on Facebook Live')}
+                    </a>
                   </div>
                 </div>
-                <p className="text-white/90 leading-relaxed text-base md:text-lg mb-4">
-                  <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.qaDescription', 'Answering all your questions: <span className="font-semibold text-amber-200">What is Mundo Tango?</span> Who is it for and how could it impact <span className="font-semibold text-amber-200">YOU</span>? Why do we need it? And more!') }} />
-                </p>
-                <p className="text-white/80 leading-relaxed text-base mb-5">
-                  <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.recurringNotice', 'We will be doing live sessions <span className="font-semibold text-amber-200">every Thursday</span> at the same time to hear what <span className="font-semibold text-amber-200">YOU</span> want out of this platform and to tell you what is happening!') }} />
-                </p>
-                <a 
-                  href="https://www.facebook.com/sboddye" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold px-6 py-3 rounded-lg transition-all hover-elevate"
-                  data-testid="button-facebook-live"
-                >
-                  <Facebook className="h-5 w-5" />
-                  {t('pages:landing.hero.joinFacebook', 'Join on Facebook Live')}
-                </a>
               </MotionDiv>
             </div>
           </div>
