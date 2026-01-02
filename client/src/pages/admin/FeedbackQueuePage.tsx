@@ -71,10 +71,7 @@ export default function FeedbackQueuePage() {
 
   const approveMutation = useMutation({
     mutationFn: async ({ id, notes }: { id: number; notes: string }) => {
-      return apiRequest(`/api/qa-platform/admin/approve/${id}`, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'approve', notes }),
-      });
+      return apiRequest('POST', `/api/qa-platform/admin/approve/${id}`, { action: 'approve', notes });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
@@ -85,10 +82,7 @@ export default function FeedbackQueuePage() {
 
   const rejectMutation = useMutation({
     mutationFn: async ({ id, notes }: { id: number; notes: string }) => {
-      return apiRequest(`/api/qa-platform/admin/approve/${id}`, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'reject', notes }),
-      });
+      return apiRequest('POST', `/api/qa-platform/admin/approve/${id}`, { action: 'reject', notes });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
