@@ -31,13 +31,98 @@ import {
   Instagram,
   Youtube,
 } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+
+// Cookie helpers
+const getCookie = (name: string): string | null => {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? decodeURIComponent(match[2]) : null;
+};
+
+const setCookie = (name: string, value: string, days: number = 365) => {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+};
 
 export default function LandingPage() {
   const { t, i18n } = useTranslation(['pages', 'navigation', 'common']);
+  const { toast } = useToast();
   const [demoModalOpen, setDemoModalOpen] = useState(false);
+  const [emailCaptureOpen, setEmailCaptureOpen] = useState(false);
+  const [capturedEmail, setCapturedEmail] = useState("");
+  const [storedEmail, setStoredEmail] = useState<string | null>(null);
+  
+  // Check for stored email in cookies on mount
+  useEffect(() => {
+    const email = getCookie('mt_visitor_email');
+    if (email) {
+      setStoredEmail(email);
+    }
+  }, []);
+  
+  // Handle Facebook Live button click
+  const handleFacebookLiveClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // If we already have their email, go directly to Facebook
+    if (storedEmail) {
+      // Track the click with existing email
+      console.log('[Analytics] Facebook Live click with stored email:', storedEmail);
+      window.open('https://www.facebook.com/sboddye', '_blank');
+      return;
+    }
+    
+    // Show email capture modal
+    setEmailCaptureOpen(true);
+  }, [storedEmail]);
+  
+  // Handle email submission
+  const handleEmailSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!capturedEmail || !capturedEmail.includes('@')) {
+      toast({
+        title: t('common:error', 'Error'),
+        description: t('common:invalidEmail', 'Please enter a valid email address'),
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Store email in cookie
+    setCookie('mt_visitor_email', capturedEmail);
+    setStoredEmail(capturedEmail);
+    
+    // Close modal
+    setEmailCaptureOpen(false);
+    
+    // Show thank you message
+    toast({
+      title: t('pages:landing.hero.thankYou', 'Thank you!'),
+      description: t('pages:landing.hero.emailSaved', "We'll keep you updated about our live sessions."),
+    });
+    
+    // Track and redirect to Facebook
+    console.log('[Analytics] New email captured:', capturedEmail);
+    window.open('https://www.facebook.com/sboddye', '_blank');
+  }, [capturedEmail, t, toast]);
+  
+  // Skip email capture and go directly
+  const handleSkipEmail = useCallback(() => {
+    setEmailCaptureOpen(false);
+    window.open('https://www.facebook.com/sboddye', '_blank');
+  }, []);
   
   // Dynamic next Thursday calculation (local time) - always shows upcoming session
   const nextThursday = useMemo(() => {
@@ -390,16 +475,14 @@ export default function LandingPage() {
                   <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.recurringNotice', 'We will be doing live sessions <span className="font-semibold text-amber-200">every Thursday</span> at the same time to hear what <span className="font-semibold text-amber-200">YOU</span> want out of this platform and to tell you what is happening!') }} />
                 </p>
                 <div className="text-center">
-                  <a 
-                    href="https://www.facebook.com/sboddye" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold px-5 py-2.5 rounded-lg transition-all hover-elevate text-sm"
+                  <button 
+                    onClick={handleFacebookLiveClick}
+                    className="inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold px-5 py-2.5 rounded-lg transition-all hover-elevate text-sm cursor-pointer"
                     data-testid="button-facebook-live"
                   >
                     <Facebook className="h-4 w-4" />
                     {t('pages:landing.hero.joinFacebook', 'Join on Facebook Live')}
-                  </a>
+                  </button>
                 </div>
               </MotionDiv>
             </div>
@@ -869,6 +952,53 @@ export default function LandingPage() {
       </footer>
 
       <DemoModal open={demoModalOpen} onOpenChange={setDemoModalOpen} />
+      
+      {/* Email Capture Modal for Facebook Live */}
+      <Dialog open={emailCaptureOpen} onOpenChange={setEmailCaptureOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Facebook className="h-5 w-5 text-[#1877F2]" />
+              {t('pages:landing.hero.joinLiveSession', 'Join Our Live Session')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('pages:landing.hero.emailCaptureDesc', "Enter your email to stay updated about our weekly Thursday sessions. We'll send you reminders before each session!")}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEmailSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="visitor-email">{t('common:email', 'Email')}</Label>
+              <Input
+                id="visitor-email"
+                type="email"
+                placeholder={t('common:emailPlaceholder', 'your@email.com')}
+                value={capturedEmail}
+                onChange={(e) => setCapturedEmail(e.target.value)}
+                className="w-full"
+                data-testid="input-visitor-email"
+                autoFocus
+              />
+            </div>
+            <div className="flex gap-3">
+              <Button
+                type="submit"
+                className="flex-1 bg-[#1877F2] hover:bg-[#166FE5] text-white"
+                data-testid="button-submit-email"
+              >
+                {t('pages:landing.hero.continueToFacebook', 'Continue to Facebook')}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleSkipEmail}
+                data-testid="button-skip-email"
+              >
+                {t('common:skip', 'Skip')}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
