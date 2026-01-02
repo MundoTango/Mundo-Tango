@@ -370,7 +370,7 @@ export default function LandingPage() {
                         <Play className="h-5 w-5" />
                         {t('pages:landing.hero.watchDemo', 'Watch Demo')}
                       </Button>
-                      <Link href="/register">
+                      <Link href="/register?redirect=/onboarding">
                         <Button
                           size="lg"
                           className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold"
