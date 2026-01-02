@@ -240,14 +240,14 @@ export default function LandingPage() {
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
                 data-testid="text-hero-headline"
               >
-                {t('pages:home.hero.heading', 'Where Tango Meets Community')}
+                {t('pages:landing.hero.title', 'The Global Heart of Tango')}
               </h1>
 
               <p
                 className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto"
                 data-testid="text-hero-subheadline"
               >
-                {t('pages:home.hero.paragraph', 'Connect with tango dancers worldwide, discover events, and experience the magic of Argentine tango.')}
+                {t('pages:landing.hero.subtitle', 'Connecting dancers, teachers, and organizers in a unified ecosystem for the worldwide tango community.')}
               </p>
 
               <div className="space-y-6">
@@ -260,7 +260,7 @@ export default function LandingPage() {
                     data-testid="button-watch-demo"
                   >
                     <Play className="h-5 w-5" />
-                    {t('pages:home.hero.watchDemo', 'Watch Demo')}
+                    {t('pages:landing.hero.watchDemo', 'Watch Demo')}
                   </Button>
                 <Link href="/register">
                   <Button
@@ -268,7 +268,7 @@ export default function LandingPage() {
                     className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold"
                     data-testid="button-join-free"
                   >
-                    {t('pages:home.hero.getStarted', 'Get Started Free')}
+                    {t('pages:landing.hero.getStarted', 'Get Started Free')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -355,6 +355,44 @@ export default function LandingPage() {
                   </Card>
                 </MotionDiv>
               ))}
+            </div>
+          </MotionDiv>
+        </div>
+      </section>
+
+      {/* Talent Match Section */}
+      <section className="py-20 md:py-24 bg-muted/30" data-testid="section-talent-match">
+        <div className="container mx-auto px-4">
+          <MotionDiv
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="space-y-16"
+          >
+            <div className="text-center max-w-3xl mx-auto space-y-4">
+              <MotionH2
+                variants={fadeInUp}
+                className="text-3xl md:text-4xl font-bold ocean-gradient-text"
+                data-testid="text-talent-match-heading"
+              >
+                {t('pages:landing.talentMatch.title', 'Talent Match AI')}
+              </MotionH2>
+              <MotionP
+                variants={fadeInUp}
+                className="text-lg text-muted-foreground"
+              >
+                {t('pages:landing.talentMatch.subtitle', 'Our advanced AI connects tango professionals with global opportunities based on skills, experience, and style.')}
+              </MotionP>
+            </div>
+
+            <div className="flex justify-center">
+              <Link href="/talent-match">
+                <Button size="lg" className="ocean-gradient text-white">
+                  {t('pages:landing.talentMatch.cta', 'Join the Network')}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
             </div>
           </MotionDiv>
         </div>
@@ -585,12 +623,12 @@ export default function LandingPage() {
                     size="sm"
                     data-testid="button-about-scott"
                   >
-                    {t('navigation:footer.about')}
+                    {t('navigation:footer.about', 'About Us')}
                   </Button>
                 </Link>
                 <Link href="/support">
                   <Button size="sm" data-testid="button-support-platform">
-                    {t('navigation:footer.support')}
+                    {t('navigation:footer.support', 'Support')}
                   </Button>
                 </Link>
               </div>
@@ -643,14 +681,14 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">{t('navigation:footer.company')}</h3>
+              <h3 className="font-semibold mb-4">{t('navigation:footer.company', 'Company')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link
                     href="/about"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {t('navigation:footer.about')}
+                    {t('navigation:footer.about', 'About Us')}
                   </Link>
                 </li>
                 <li>
@@ -658,7 +696,7 @@ export default function LandingPage() {
                     href="/for-dancers"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {t('common:forDancers', 'For Dancers')}
+                    {t('navigation:forDancers', 'For Dancers')}
                   </Link>
                 </li>
                 <li>
@@ -666,7 +704,7 @@ export default function LandingPage() {
                     href="/for-teachers"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {t('common:forTeachers', 'For Teachers')}
+                    {t('navigation:forTeachers', 'For Teachers')}
                   </Link>
                 </li>
                 <li>
@@ -674,21 +712,21 @@ export default function LandingPage() {
                     href="/for-organizers"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {t('common:forOrganizers', 'For Organizers')}
+                    {t('navigation:forOrganizers', 'For Organizers')}
                   </Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">{t('navigation:community')}</h3>
+              <h3 className="font-semibold mb-4">{t('navigation:community', 'Community')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link
                     href="/support"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {t('navigation:footer.support')}
+                    {t('navigation:footer.support', 'Support')}
                   </Link>
                 </li>
                 <li>
@@ -696,21 +734,21 @@ export default function LandingPage() {
                     href="/volunteer"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {t('navigation:footer.volunteer')}
+                    {t('navigation:footer.volunteer', 'Volunteer')}
                   </Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">{t('navigation:footer.legal')}</h3>
+              <h3 className="font-semibold mb-4">{t('navigation:footer.legal', 'Legal')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link
                     href="/terms"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {t('navigation:footer.terms')}
+                    {t('navigation:footer.terms', 'Terms of Service')}
                   </Link>
                 </li>
                 <li>
@@ -718,7 +756,7 @@ export default function LandingPage() {
                     href="/privacy"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {t('navigation:footer.privacy')}
+                    {t('navigation:footer.privacy', 'Privacy Policy')}
                   </Link>
                 </li>
                 <li>
@@ -726,7 +764,7 @@ export default function LandingPage() {
                     href="/contact"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {t('navigation:footer.contact')}
+                    {t('navigation:footer.contact', 'Contact')}
                   </Link>
                 </li>
               </ul>

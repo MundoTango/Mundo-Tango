@@ -1,4 +1,22 @@
 {
+  "landing": {
+    "hero": {
+      "title": "The Global Heart of Tango",
+      "subtitle": "Connecting dancers, teachers, and organizers in a unified ecosystem for the worldwide tango community.",
+      "watchDemo": "Watch Demo",
+      "getStarted": "Get Started Free"
+    },
+    "talentMatch": {
+      "title": "Talent Match AI",
+      "subtitle": "Our advanced AI connects tango professionals with global opportunities based on skills, experience, and style.",
+      "cta": "Join the Network"
+    },
+    "features": {
+      "events": "Real-time global event discovery and management.",
+      "community": "Connect with milongas, festivals, and local communities.",
+      "ai": "Intelligent matching and community insights with Mr. Blue."
+    }
+  },
   "register": {
     "pageName": "Register",
     "seo": {
