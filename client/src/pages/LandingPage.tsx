@@ -335,6 +335,12 @@ export default function LandingPage() {
                         <div className="font-bold text-lg">1:00 PM</div>
                       </div>
                     </div>
+                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all border border-amber-400/30">
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-3xl">🇬🇧</span>
+                        <div className="font-bold text-lg">5:00 PM</div>
+                      </div>
+                    </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
                       <div className="flex flex-col items-center gap-1">
                         <span className="text-3xl">🇫🇷</span>
@@ -347,15 +353,15 @@ export default function LandingPage() {
                         <div className="font-bold text-lg">7:00 PM</div>
                       </div>
                     </div>
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all border border-amber-400/30">
+                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
                       <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇬🇧</span>
-                        <div className="font-bold text-lg">5:00 PM</div>
+                        <span className="text-3xl">🇰🇷</span>
+                        <div className="font-bold text-lg">2:00 AM <span className="text-xs">(+1)</span></div>
                       </div>
                     </div>
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
                       <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇰🇷</span>
+                        <span className="text-3xl">🇯🇵</span>
                         <div className="font-bold text-lg">2:00 AM <span className="text-xs">(+1)</span></div>
                       </div>
                     </div>
