@@ -19,7 +19,7 @@ const AdminEventsPage = lazy(() => import("@/pages/admin/AdminEventsPage"));
 const HousingReviewsPage = lazy(() => import("@/pages/admin/HousingReviewsPage"));
 const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
 const AdsManager = lazy(() => import("@/pages/admin/AdsManager"));
-const FounderApprovalPage = lazy(() => import("@/pages/admin/FounderApprovalPage"));
+const FeedbackQueuePage = lazy(() => import("@/pages/admin/FeedbackQueuePage"));
 const SafetyReviewPage = lazy(() => import("@/pages/admin/SafetyReviewPage"));
 const AISupportPage = lazy(() => import("@/pages/admin/AISupportPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
@@ -171,11 +171,20 @@ export function AdminRoutes() {
           </AdminLayout>
         </ProtectedRoute>
       </Route>
+      <Route path="/admin/feedback-queue">
+        <ProtectedRoute>
+          <AdminLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <FeedbackQueuePage />
+            </Suspense>
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/admin/founder-approval">
         <ProtectedRoute>
           <AdminLayout>
             <Suspense fallback={<LoadingFallback />}>
-              <FounderApprovalPage />
+              <FeedbackQueuePage />
             </Suspense>
           </AdminLayout>
         </ProtectedRoute>
