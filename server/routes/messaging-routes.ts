@@ -133,7 +133,7 @@ export function registerMessagingRoutes(app: Express) {
         )
         .orderBy(directMessages.createdAt);
 
-      const senderIds = [...new Set(messages.map(m => m.senderId))];
+      const senderIds = Array.from(new Set(messages.map(m => m.senderId)));
       const senderMap = new Map<number, any>();
       
       if (senderIds.length > 0) {
@@ -445,14 +445,15 @@ export function registerMessagingRoutes(app: Express) {
         .limit(1);
 
       if (!guestUser) {
-        [guestUser] = await db.insert(users).values({
+        const [newGuestUser] = await db.insert(users).values({
           email: 'guest-contact@mundotango.life',
           username: 'guest-contact',
           name: 'Guest Contact',
           password: 'no-login',
           roleLevel: 0,
           isEmailVerified: true,
-        }).returning({ id: users.id });
+        }).returning();
+        guestUser = { id: newGuestUser.id };
       }
       const senderId = guestUser.id;
 
