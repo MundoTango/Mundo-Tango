@@ -24,19 +24,21 @@ fi
 # IMPORTANT: Before adding new asset imports, ensure the directory is preserved here
 if [ -d "attached_assets" ]; then
     echo "Cleaning attached_assets/..."
-    echo "  PRESERVING: stock_images/ (20+ pages), optimized/ (7 pages)"
+    echo "  PRESERVING: stock_images/ (20+ pages), optimized/ (7 pages), and scott-founder-optimized.jpg"
     
     # =================================================================
     # PRESERVED DIRECTORIES (used by React components via @assets/):
     # - stock_images/  → Used by 20+ pages (landing, marketing, etc.)
     # - optimized/     → Used by 7 pages (About, Home, Friends, Life-CEO pages)
+    # - scott-founder-optimized.jpg → Used by LandingPage.tsx
     # 
-    # If you add new asset imports, add the directory name to this list!
+    # If you add new asset imports, add the directory/file name to this list!
     # =================================================================
     
     find attached_assets -mindepth 1 -maxdepth 1 \
         ! -name "stock_images" \
         ! -name "optimized" \
+        ! -name "scott-founder-optimized.jpg" \
         -exec rm -rf {} \; 2>/dev/null || true
     
     # Show what was preserved
