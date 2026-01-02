@@ -90,7 +90,7 @@ export default function ContactPage() {
                       {t('pages:contact.emailDescription', 'For questions, feedback, partnerships, or support, reach out to us at:')}
                     </p>
                     <a 
-                      href="mailto:contact@mundotango.life" 
+                      href="mailto:scott@boddye.com" 
                       className="text-2xl md:text-3xl font-semibold text-primary hover:underline block"
                       data-testid="link-email"
                     >

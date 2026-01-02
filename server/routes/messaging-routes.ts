@@ -441,12 +441,12 @@ export function registerMessagingRoutes(app: Express) {
       let [guestUser] = await db
         .select({ id: users.id })
         .from(users)
-        .where(eq(users.email, 'guest-contact@mundotango.life'))
+        .where(eq(users.email, 'guest-contact@scott@boddye.com'))
         .limit(1);
 
       if (!guestUser) {
         [guestUser] = await db.insert(users).values({
-          email: 'guest-contact@mundotango.life',
+          email: 'guest-contact@scott@boddye.com',
           username: 'guest-contact',
           name: 'Guest Contact',
           password: 'no-login',
