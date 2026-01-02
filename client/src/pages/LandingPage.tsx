@@ -89,7 +89,7 @@ export default function LandingPage() {
   }, [storedEmail]);
   
   // Handle email submission
-  const handleEmailSubmit = useCallback((e: React.FormEvent) => {
+  const handleEmailSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!capturedEmail || !capturedEmail.includes('@')) {
