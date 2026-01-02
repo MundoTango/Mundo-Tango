@@ -273,6 +273,57 @@ export default function LandingPage() {
                   </Button>
                 </Link>
                 </div>
+
+                <MotionDiv
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="bg-primary/20 backdrop-blur-md border border-primary/30 rounded-xl p-6 mt-8 max-w-3xl mx-auto"
+                >
+                  <div className="flex items-center gap-3 justify-center mb-3">
+                    <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-red-400 font-bold uppercase tracking-wider text-sm">Live Announcement</span>
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+                    Live Question and Answer session with Scott
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-white/90 mb-4">
+                    <div className="bg-white/10 rounded-lg p-2">
+                      <div className="font-semibold text-primary-foreground/70">Los Angeles</div>
+                      <div className="font-bold">9:00 AM</div>
+                    </div>
+                    <div className="bg-white/10 rounded-lg p-2">
+                      <div className="font-semibold text-primary-foreground/70">New York</div>
+                      <div className="font-bold">12:00 PM</div>
+                    </div>
+                    <div className="bg-white/10 rounded-lg p-2">
+                      <div className="font-semibold text-primary-foreground/70">Buenos Aires</div>
+                      <div className="font-bold">1:00 PM</div>
+                    </div>
+                    <div className="bg-white/10 rounded-lg p-2">
+                      <div className="font-semibold text-primary-foreground/70">Paris</div>
+                      <div className="font-bold">6:00 PM</div>
+                    </div>
+                    <div className="bg-white/10 rounded-lg p-2">
+                      <div className="font-semibold text-primary-foreground/70">Moscow</div>
+                      <div className="font-bold">8:00 PM</div>
+                    </div>
+                    <div className="bg-white/10 rounded-lg p-2">
+                      <div className="font-semibold text-primary-foreground/70">Seoul</div>
+                      <div className="font-bold">2:00 AM (+1)</div>
+                    </div>
+                    <div className="bg-white/10 rounded-lg p-2">
+                      <div className="font-semibold text-primary-foreground/70">Sydney</div>
+                      <div className="font-bold">4:00 AM (+1)</div>
+                    </div>
+                    <div className="bg-white/10 rounded-lg p-2 flex items-center justify-center">
+                      <div className="font-bold text-primary-foreground/90 italic">January 8, 2026</div>
+                    </div>
+                  </div>
+                  <p className="text-white/80 italic leading-relaxed">
+                    "Answering all your questions: what is Mundo Tango, who is it for and how COULD it impact YOU, why do we need it, and more!"
+                  </p>
+                </MotionDiv>
               </div>
             </div>
 
