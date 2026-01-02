@@ -107,7 +107,7 @@ export default function SocialConnectPage() {
                 <h2 className="text-2xl font-serif font-bold">{t('pages:onboarding.social.cardTitle', 'Find Your Friends')}</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                {t('pages:onboarding.social.cardDescription', 'Your Facebook helps us match you with dancers you may already know, so you\'re not starting from scratch.')}
+                {t('pages:onboarding.social.cardDescription', 'Your Facebook helps us match you with friends you may already know, so you\'re not starting from scratch.')}
               </p>
             </CardHeader>
 
