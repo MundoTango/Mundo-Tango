@@ -322,96 +322,98 @@ export default function LandingPage() {
                 data-testid="announcement-live-sessions"
               >
                 <div className="flex items-center gap-3 justify-center mb-3">
-                    <div className="flex gap-1">
-                      <div className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
-                      <div className="h-3 w-3 rounded-full bg-amber-400 animate-pulse" style={{ animationDelay: '0.2s' }} />
-                      <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: '0.4s' }} />
-                    </div>
-                    <span className="text-amber-300 font-bold uppercase tracking-wider text-sm">
-                      {t('pages:landing.hero.facebookLive', 'Facebook Live Every Thursday')}
-                    </span>
+                  <div className="flex gap-1">
+                    <div className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
+                    <div className="h-3 w-3 rounded-full bg-amber-400 animate-pulse" style={{ animationDelay: '0.2s' }} />
+                    <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: '0.4s' }} />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">
-                    {t('pages:landing.hero.qaScott', 'Live Q&A Sessions with Scott')}
-                  </h3>
-                  
-                  {/* Dynamic next session - always shows upcoming Thursday */}
-                  <div className="bg-white/10 rounded-lg px-4 py-2 inline-block mb-4">
-                    <span className="text-lg font-bold text-amber-200">
-                      {t('pages:landing.hero.nextSession', { date: nextSessionLabel }, 'Next Session: {{date}}')}
-                    </span>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-sm text-white/90 mb-5">
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇺🇸</span>
-                        <div className="font-bold text-lg">CA: 9:00 AM</div>
-                        <div className="font-bold text-lg">NY: 12:00 PM</div>
-                      </div>
-                    </div>
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇦🇷</span>
-                        <div className="font-bold text-lg">1:00 PM</div>
-                      </div>
-                    </div>
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all border border-amber-400/30">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇬🇧</span>
-                        <div className="font-bold text-lg">5:00 PM</div>
-                      </div>
-                    </div>
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇫🇷</span>
-                        <div className="font-bold text-lg">6:00 PM</div>
-                      </div>
-                    </div>
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇺🇦</span>
-                        <div className="font-bold text-lg">7:00 PM</div>
-                      </div>
-                    </div>
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇨🇳</span>
-                        <div className="font-bold text-lg">1:00 AM <span className="text-xs">(+1)</span></div>
-                      </div>
-                    </div>
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇰🇷</span>
-                        <div className="font-bold text-lg">2:00 AM <span className="text-xs">(+1)</span></div>
-                      </div>
-                    </div>
-                    <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-3xl">🇦🇺</span>
-                        <div className="font-bold text-lg">4:00 AM <span className="text-xs">(+1)</span></div>
-                      </div>
+                  <span className="text-amber-300 font-bold uppercase tracking-wider text-sm">
+                    {t('pages:landing.hero.facebookLive', 'Facebook Live Every Thursday')}
+                  </span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">
+                  {t('pages:landing.hero.qaScott', 'Live Q&A Sessions with Scott')}
+                </h3>
+                
+                {/* Dynamic next session - always shows upcoming Thursday */}
+                <div className="bg-white/10 rounded-lg px-4 py-2 inline-block mb-4">
+                  <span className="text-lg font-bold text-amber-200">
+                    {t('pages:landing.hero.nextSession', { date: nextSessionLabel }, 'Next Session: {{date}}')}
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-sm text-white/90 mb-5">
+                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-3xl">🇺🇸</span>
+                      <div className="font-bold text-lg">CA: 9:00 AM</div>
+                      <div className="font-bold text-lg">NY: 12:00 PM</div>
                     </div>
                   </div>
-                  <p className="text-white/90 leading-relaxed text-base md:text-lg mb-4">
-                    <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.qaDescription', 'Answering all your questions: <span className="font-semibold text-amber-200">What is Mundo Tango?</span> Who is it for and how could it impact <span className="font-semibold text-amber-200">YOU</span>? Why do we need it? And more!') }} />
-                  </p>
-                  <p className="text-white/80 leading-relaxed text-base mb-5">
-                    <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.recurringNotice', 'We will be doing live sessions <span className="font-semibold text-amber-200">every Thursday</span> at the same time to hear what <span className="font-semibold text-amber-200">YOU</span> want out of this platform and to tell you what is happening!') }} />
-                  </p>
-                  <a 
-                    href="https://www.facebook.com/sboddye" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold px-6 py-3 rounded-lg transition-all hover-elevate"
-                    data-testid="button-facebook-live"
-                  >
-                    <Facebook className="h-5 w-5" />
-                    {t('pages:landing.hero.joinFacebook', 'Join on Facebook Live')}
-                  </a>
-                </MotionDiv>
-              </div>
+                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-3xl">🇦🇷</span>
+                      <div className="font-bold text-lg">1:00 PM</div>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all border border-amber-400/30">
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-3xl">🇬🇧</span>
+                      <div className="font-bold text-lg">5:00 PM</div>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-3xl">🇫🇷</span>
+                      <div className="font-bold text-lg">6:00 PM</div>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-3xl">🇺🇦</span>
+                      <div className="font-bold text-lg">7:00 PM</div>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-3xl">🇨🇳</span>
+                      <div className="font-bold text-lg">1:00 AM <span className="text-xs">(+1)</span></div>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-3xl">🇰🇷</span>
+                      <div className="font-bold text-lg">2:00 AM <span className="text-xs">(+1)</span></div>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-3xl">🇦🇺</span>
+                      <div className="font-bold text-lg">4:00 AM <span className="text-xs">(+1)</span></div>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-white/90 leading-relaxed text-base md:text-lg mb-4">
+                  <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.qaDescription', 'Answering all your questions: <span className="font-semibold text-amber-200">What is Mundo Tango?</span> Who is it for and how could it impact <span className="font-semibold text-amber-200">YOU</span>? Why do we need it? And more!') }} />
+                </p>
+                <p className="text-white/80 leading-relaxed text-base mb-5">
+                  <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.recurringNotice', 'We will be doing live sessions <span className="font-semibold text-amber-200">every Thursday</span> at the same time to hear what <span className="font-semibold text-amber-200">YOU</span> want out of this platform and to tell you what is happening!') }} />
+                </p>
+                <a 
+                  href="https://www.facebook.com/sboddye" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold px-6 py-3 rounded-lg transition-all hover-elevate"
+                  data-testid="button-facebook-live"
+                >
+                  <Facebook className="h-5 w-5" />
+                  {t('pages:landing.hero.joinFacebook', 'Join on Facebook Live')}
+                </a>
+              </MotionDiv>
             </div>
+          </div>
+        </div>
+      </section>
 
             {stats.length > 0 && (
               <div
