@@ -19,6 +19,17 @@ export function PublicNavbar() {
     { label: t('common:ambassadors', 'Ambassadors'), path: "/ambassadors" }
   ];
 
+  const audienceItems = [
+    { label: t('common:forDancers', 'For Dancers'), path: "/for-dancers", icon: Users },
+    { label: t('common:forTeachers', 'For Teachers'), path: "/for-teachers", icon: GraduationCap },
+    { label: t('common:forOrganizers', 'For Organizers'), path: "/for-organizers", icon: CalendarCheck },
+    { label: t('common:tangoRoles', 'Tango Roles'), path: "/tango-roles", icon: Shuffle }
+  ];
+
+  const communityItems = [
+    { label: t('common:openSource', 'Open Source'), path: "/open-source", icon: Code }
+  ];
+
   const isActive = (path: string) => location === path;
 
   return (
