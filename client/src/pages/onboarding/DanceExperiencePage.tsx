@@ -294,15 +294,28 @@ export default function DanceExperiencePage() {
               >
                 <Card className="overflow-hidden">
                   <CardHeader className="bg-card p-8 pb-4">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 rounded-xl bg-primary/10">
-                        <Palette className="h-6 w-6 text-primary" />
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="p-3 rounded-xl bg-primary/10 shadow-inner">
+                        <Palette className="h-7 w-7 text-primary animate-pulse" />
                       </div>
-                      <h2 className="text-2xl md:text-3xl font-serif font-bold">Communities</h2>
+                      <div className="space-y-1">
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold tracking-tight text-foreground">
+                          Beyond the Dance Floor
+                        </h2>
+                        <div className="h-1 w-20 bg-primary/40 rounded-full" />
+                      </div>
                     </div>
-                    <p className="text-muted-foreground leading-relaxed">
-                      What other communities do you belong to that you are as or more passionate than tango?
+                    <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-medium italic">
+                      "Tango is the bridge to human connection. What other passions ignite your soul and connect you to the world?"
                     </p>
+                    <div className="bg-primary/5 border-l-4 border-primary p-4 rounded-r-lg mt-6 mb-2">
+                      <p className="text-sm text-primary/80 font-semibold uppercase tracking-wider">
+                        The Mundo Tango Vision
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                        We use these shared passions to build local communities where tango serves as the catalyst for deeper relationships and new beginnings.
+                      </p>
+                    </div>
                   </CardHeader>
 
                   <CardContent className="p-8 space-y-6">
