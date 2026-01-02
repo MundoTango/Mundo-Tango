@@ -12,6 +12,9 @@ import {
   Sparkles,
   Bug,
   MessageSquare,
+  Paperclip,
+  FileText,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -622,7 +625,80 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     }
   };
 
-  // QA System Handler: Help Button - Opens support flow with journey context
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // QA System: Submission logic
+  const submitQaRequest = useCallback(async (finalMessage?: string) => {
+    const messageText = finalMessage || input;
+    if (!messageText.trim() && attachments.length === 0) return;
+
+    setIsLoading(true);
+    try {
+      const snapshot = getSnapshot();
+      
+      // Handle media attachments like PostCreator
+      const processedAttachments = await Promise.all(attachments.map(async (file) => {
+        if (file.type.startsWith('image/')) {
+          // Use a simple base64 for now, mimicking PostCreator's fileToBase64 logic
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve({ name: file.name, type: file.type, data: reader.result });
+            reader.readAsDataURL(file);
+          });
+        }
+        return { name: file.name, type: file.type };
+      }));
+
+      const response = await apiRequest("POST", "/api/qa-platform/feedback", {
+        feedbackType: qaMode === "bug" ? "bug" : qaMode === "features" ? "feature" : "support",
+        title: messageText.substring(0, 50) + (messageText.length > 50 ? "..." : ""),
+        description: messageText,
+        currentPage: location,
+        sessionSnapshot: snapshot,
+        priority: qaMode === "bug" ? "high" : "medium",
+        sessionId,
+        attachments: processedAttachments
+      });
+
+      if (response.ok) {
+        const successMessage: Message = {
+          id: `qa-success-${Date.now()}`,
+          role: "assistant",
+          content: qaMode === "bug" 
+            ? "Bug report submitted successfully! Our developers have been notified."
+            : "Request recorded! This has been passed through @mb.md for architectural review and is now pending admin approval for build.",
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, successMessage]);
+        setQaMode("none");
+        setAttachments([]);
+        setAttachmentPreviews([]);
+        setInput("");
+      }
+    } catch (error) {
+      console.error("[MrBlueChat] QA submission failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [qaMode, input, attachments, location, snapshot, sessionId]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    
+    setAttachments(prev => [...prev, ...files]);
+    const previews = files.map(file => URL.createObjectURL(file));
+    setAttachmentPreviews(prev => [...prev, ...previews]);
+  };
+
+  const removeAttachment = (index: number) => {
+    URL.revokeObjectURL(attachmentPreviews[index]);
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+    setAttachmentPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleHelpRequest = useCallback(() => {
     const snapshot = getSnapshot();
     trackStep({ path: location, action: "qa_help_opened" });
@@ -1030,28 +1106,84 @@ I'll analyze this and may be able to fix it automatically.`,
         </div>
 
         <div className="relative flex items-end gap-2 max-w-2xl mx-auto">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-            placeholder="Ask about events, cities, tango tips..."
-            className="min-h-[48px] max-h-32 resize-none rounded-2xl pr-14 border-muted-foreground/20 focus:border-primary/50 transition-colors"
-            disabled={isLoading}
-            data-testid="input-chat-message"
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            multiple
+            onChange={handleFileSelect}
+            accept="image/*,application/pdf,.doc,.docx"
           />
           <Button
             size="icon"
-            className="absolute right-2 bottom-2 h-9 w-9 rounded-full shadow-sm"
-            disabled={!input.trim() || isLoading}
-            onClick={sendMessage}
-            data-testid="button-send-message"
+            variant="ghost"
+            className="h-9 w-9 rounded-full flex-shrink-0"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading}
           >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
+            <Paperclip className="h-4 w-4" />
           </Button>
+
+          <div className="flex-1 flex flex-col gap-2">
+            {attachmentPreviews.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2">
+                {attachmentPreviews.map((preview, i) => (
+                  <div key={i} className="relative group h-12 w-12 rounded-md border overflow-hidden bg-muted">
+                    {attachments[i].type.startsWith('image/') ? (
+                      <img src={preview} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center">
+                        <FileText className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                    )}
+                    <button
+                      onClick={() => removeAttachment(i)}
+                      className="absolute top-0 right-0 bg-background/80 p-0.5 rounded-bl-md opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder={qaMode !== "none" ? "Describe your request..." : "Ask about events, cities, tango tips..."}
+              className="min-h-[48px] max-h-32 resize-none rounded-2xl pr-14 border-muted-foreground/20 focus:border-primary/50 transition-colors"
+              disabled={isLoading}
+              data-testid="input-chat-message"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {qaMode !== "none" ? (
+              <Button
+                size="sm"
+                className="h-9 px-3 rounded-full bg-primary hover:bg-primary/90 shadow-sm"
+                disabled={(!input.trim() && attachments.length === 0) || isLoading}
+                onClick={() => submitQaRequest()}
+                data-testid="button-submit-qa"
+              >
+                Submit
+              </Button>
+            ) : (
+              <Button
+                size="icon"
+                className="h-9 w-9 rounded-full shadow-sm"
+                disabled={!input.trim() || isLoading}
+                onClick={sendMessage}
+                data-testid="button-send-message"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+          </div>
         </div>
         <p className="text-center text-[10px] text-muted-foreground mt-2 max-w-2xl mx-auto">
           Mr. Blue has access to real platform data including events, cities,
