@@ -420,15 +420,16 @@ export default function LandingPage() {
                   
                   {/* Scott's photo - small thumbnail on right */}
                   <div className="shrink-0 group order-first md:order-last">
-                    <div className="relative w-32 h-32 md:w-44 md:h-44">
+                    <div className="relative w-36 h-36 md:w-56 md:h-56">
                       <div className="absolute -inset-1 ocean-gradient opacity-50 blur rounded-xl group-hover:opacity-100 transition duration-500"></div>
                       <img 
                         src={scottPhotoPath} 
                         alt="Scott - Mundo Tango Founder" 
+                        loading="eager"
                         className="relative rounded-lg w-full h-full object-cover shadow-xl border border-white/20"
                       />
-                      <div className="absolute -bottom-1 -right-1 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[8px] text-white/70 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                        PC: Alex <a href="https://www.instagram.com/otroalexrobledo/" target="_blank" rel="noopener noreferrer" className="hover:text-white underline decoration-white/30">@otroalexrobledo</a>
+                      <div className="absolute -bottom-1 -right-1 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-[10px] text-white/90 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        PC: Alex <a href="https://www.instagram.com/otroalexrobledo/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-200 underline decoration-white/30 transition-colors">@otroalexrobledo</a>
                       </div>
                     </div>
                   </div>
