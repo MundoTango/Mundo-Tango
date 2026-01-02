@@ -13,8 +13,9 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - Handoff Plan: Never deviate - Follow exact phase sequence
 - Auto-Fix Maximization - All auto-fix as much as possible (3-attempt retry, <10% escalation rate)
 - Validation Loop - observe → decide → act → validate → adapt (not just automation)
-- MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
-- Three-Layer Completion - Every feature requires: UI Layer + Data Layer + Interaction Layer (never mark UI-only as complete)
+- MB.MD Methodology - Apply v9.9.4 patterns systematically: Research → Plan → Build → Test → Fix → Document.
+- Internationalization First - All UI text MUST use i18next `t()` function and have corresponding entries in `client/public/locales/en/*.json`. Never commit hardcoded UI strings.
+- Parallel Translation Updates - When adding/modifying UI text, update all language variants (or use TranslationAgent for bulk sync) in parallel with code changes.
 - Never mark messaging tasks complete without E2E verification - Must test PRO contact → inbox flow and new conversation creation
 - Verify imports exist before using - Check all referenced schemas/tables are imported at file top
 

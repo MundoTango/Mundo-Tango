@@ -2,12 +2,22 @@
 
 !Modular Brain v3.1
 
-**Version:** 3.2.0
-**Updated:** December 30, 2025
+**Version:** 3.2.1
+**Updated:** January 2, 2026
 **Architecture:** Modular Cognitive Framework + Live Execution
 **Total Agents:** 140+
-**Patterns:** 107 (61 Core + 16 VibeCoding Evolution + 9 New Patterns 69–77 + 19 Industry AI Learned + 2 Execution Patterns)
+**Patterns:** 108 (61 Core + 16 VibeCoding Evolution + 9 New Patterns 69–77 + 19 Industry AI Learned + 2 Execution Patterns + 1 i18n Guard)
 **Status:** OPERATIONAL + VIBECODING EVOLUTION 100% COMPLETE (10/10 patterns)
+
+---
+
+## MB.MD Methodology v9.9.4: i18n Guard Pattern
+
+| ID | Protocol | Action |
+|----|----------|--------|
+| P108 | **i18n Guard** | Intercept ALL UI string writes. Check `client/src/**/*.tsx`. If string is NOT wrapped in `t()`, FAIL and REFACTOR to use i18next. |
+| P109 | **Locale Sync** | Every turn that adds a key to `en/*.json` MUST trigger `TranslationAgent` to sync other priority languages (es, fr, de, it, ru, pt). |
+| P110 | **Hardcode Audit** | Bi-weekly recursive grep for raw strings in JSX/TSX components to ensure 100% translation coverage. |
 
 ---
 
@@ -26,6 +36,7 @@ These directives override ALL other instructions. Issued by Scott Boddye.
 | #6 | **Never change ID column types** (serial ↔ varchar breaks data) | Database |
 | #7 | **Auto-Fix Maximization** – 3-attempt retry, <10% escalation rate | Global |
 | #8 | **Validation Score** – Observe → decide → act (validate → adapt) | Global |
+| #9 | **Zero Hardcoding** – All UI text MUST be externalized to locales BEFORE completion | Global |
 
 ---
 

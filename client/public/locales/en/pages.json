@@ -4,7 +4,24 @@
       "title": "The Global Heart of Tango",
       "subtitle": "Connecting dancers, teachers, and organizers in a unified ecosystem for the worldwide tango community.",
       "watchDemo": "Watch Demo",
-      "getStarted": "Get Started Free"
+      "getStarted": "Get Started Free",
+      "facebookLive": "Facebook Live Every Thursday",
+      "qaScott": "Live Q&A Sessions with Scott",
+      "nextSession": "Next Session: January 8, 2026",
+      "cities": {
+        "losAngeles": "Los Angeles",
+        "newYork": "New York",
+        "buenos Aires": "Buenos Aires",
+        "london": "London",
+        "paris": "Paris",
+        "moscow": "Moscow",
+        "seoul": "Seoul",
+        "tokyo": "Tokyo",
+        "sydney": "Sydney"
+      },
+      "qaDescription": "Answering all your questions: <span className=\"font-semibold text-amber-200\">What is Mundo Tango?</span> Who is it for and how could it impact <span className=\"font-semibold text-amber-200\">YOU</span>? Why do we need it? And more!",
+      "recurringNotice": "We will be doing live sessions <span className=\"font-semibold text-amber-200\">every Thursday</span> at the same time to hear what <span className=\"font-semibold text-amber-200\">YOU</span> want out of this platform and to tell you what is happening!",
+      "joinFacebook": "Join on Facebook Live"
     },
     "talentMatch": {
       "title": "Talent Match AI",
