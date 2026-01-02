@@ -325,7 +325,7 @@ Extract all tango events from this page as JSON array:`
         `https://nominatim.openstreetmap.org/search?q=${encodedAddress}&format=json&addressdetails=1&limit=1`,
         {
           headers: {
-            'User-Agent': 'MundoTango/1.0 (scott@boddye.com)',
+            'User-Agent': 'MundoTango/1.0 (contact@mundotango.life)',
           },
           timeout: 5000,
         }
