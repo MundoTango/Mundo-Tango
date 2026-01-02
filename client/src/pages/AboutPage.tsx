@@ -8,7 +8,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import scottPhoto2 from "@assets/optimized/Skoot_16-optimized.jpg";
-import scottNewAbout from "@assets/founder/scott_new_about.jpg";
+import scottNewAbout from "@/assets/founder/scott_new_about.jpg";
 import tangoHeroImage from "@assets/stock_images/argentine_tango_danc_cc9bdfab.jpg";
 
 export default function AboutPage() {
