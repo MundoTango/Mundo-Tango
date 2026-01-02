@@ -682,7 +682,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     } finally {
       setIsLoading(false);
     }
-  }, [qaMode, input, attachments, location, snapshot, sessionId]);
+  }, [qaMode, input, attachments, location, getSnapshot, sessionId]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
