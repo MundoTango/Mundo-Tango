@@ -56,6 +56,15 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Vanity URLs**: `/:username` resolves to PRO page or user profile
 - **Documentation**: See `docs/prd/VANITY_URLS.md` for URL routing spec
 
+### Admin Feedback & QA System (Updated Jan 2, 2026)
+- **Unified Admin Queue**: Single tabbed interface at `/admin/feedback-queue` consolidates user feedback triage + founder feature approvals
+- **Tabs**: "User Feedback" (bug reports, feature requests, help) + "Feature Approval" (agent-built features pending review)
+- **Mr. Blue Integration**: Chat modes (Help, Features, Bug Report) with attachment support and session tracking
+- **Journey Replay**: Session events captured for bug context (clicks, navigation, scrolls, errors, forms)
+- **Backend Routes**: `/api/qa-platform/*` for feedback, `/api/admin/founder-approval/*` for feature reviews
+- **Access Control**: God-level users (scott@boddye.com, admin@mundotango.life, tier === 8) required
+- **Backward Compatibility**: `/admin/founder-approval` redirects to unified queue
+
 ### Navigation & Attention Hub (Updated Dec 30, 2025)
 - **Fake User Filter**: `@discovered.mundotango.app` emails excluded from friend requests/suggestions via `not(like(users.email, '%@discovered.mundotango.app'))` filter in storage.ts
 - **Language Selector**: REMOVED from both UnifiedTopBar.tsx and GlobalTopbar.tsx (language setting from user profile only)
