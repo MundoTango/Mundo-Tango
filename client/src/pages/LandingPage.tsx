@@ -252,54 +252,72 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-black/20" />
 
         <div className="relative z-10 container mx-auto px-4 py-20">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className="glass-card rounded-2xl p-8 md:p-12 space-y-8">
-              <h1
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
-                data-testid="text-hero-headline"
-              >
-                {t('pages:landing.hero.title', 'The Global Heart of Tango')}
-              </h1>
+          <div className="max-w-6xl mx-auto">
+            <div className="glass-card rounded-2xl p-8 md:p-12">
+              <div className="flex flex-col lg:flex-row gap-12 items-center lg:items-start text-center lg:text-left">
+                <div className="flex-1 space-y-8">
+                  <div className="space-y-4">
+                    <h1
+                      className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
+                      data-testid="text-hero-headline"
+                    >
+                      {t('pages:landing.hero.title', 'The Global Heart of Tango')}
+                    </h1>
 
-              <p
-                className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto"
-                data-testid="text-hero-subheadline"
-              >
-                {t('pages:landing.hero.subtitle', 'Connecting dancers, teachers, and organizers in a unified ecosystem for the worldwide tango community.')}
-              </p>
+                    <p
+                      className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto lg:mx-0"
+                      data-testid="text-hero-subheadline"
+                    >
+                      {t('pages:landing.hero.subtitle', 'Connecting dancers, teachers, and organizers in a unified ecosystem for the worldwide tango community.')}
+                    </p>
+                  </div>
 
-              <div className="space-y-6">
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-6 h-auto font-semibold gap-3"
-                    onClick={() => setDemoModalOpen(true)}
-                    data-testid="button-watch-demo"
-                  >
-                    <Play className="h-5 w-5" />
-                    {t('pages:landing.hero.watchDemo', 'Watch Demo')}
-                  </Button>
-                <Link href="/register">
-                  <Button
-                    size="lg"
-                    className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold"
-                    data-testid="button-join-free"
-                  >
-                    {t('pages:landing.hero.getStarted', 'Get Started Free')}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
+                  <div className="space-y-6">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-6 h-auto font-semibold gap-3"
+                        onClick={() => setDemoModalOpen(true)}
+                        data-testid="button-watch-demo"
+                      >
+                        <Play className="h-5 w-5" />
+                        {t('pages:landing.hero.watchDemo', 'Watch Demo')}
+                      </Button>
+                      <Link href="/register">
+                        <Button
+                          size="lg"
+                          className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold"
+                          data-testid="button-join-free"
+                        >
+                          {t('pages:landing.hero.getStarted', 'Get Started Free')}
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Live Sessions Announcement - Permanent recurring Thursday sessions */}
-                <MotionDiv
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
-                  className="bg-gradient-to-r from-amber-500/30 via-orange-500/30 to-red-500/30 backdrop-blur-md border-2 border-amber-400/50 rounded-xl p-6 mt-8 max-w-3xl mx-auto shadow-lg shadow-amber-500/20"
-                  data-testid="announcement-live-sessions"
-                >
+                <div className="w-full lg:w-[400px] shrink-0">
+                  <div className="relative aspect-[2/3] w-full max-w-[320px] mx-auto lg:ml-auto group">
+                    <div className="absolute -inset-1 ocean-gradient opacity-50 blur rounded-2xl group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                    <img 
+                      src="/attached_assets/Skoot_(40)_1767343376837.jpg" 
+                      alt="Scott - Mundo Tango Founder" 
+                      className="relative rounded-xl w-full h-full object-cover shadow-2xl border border-white/20"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Live Sessions Announcement - Permanent recurring Thursday sessions */}
+              <MotionDiv
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
+                className="bg-gradient-to-r from-amber-500/30 via-orange-500/30 to-red-500/30 backdrop-blur-md border-2 border-amber-400/50 rounded-xl p-6 mt-12 max-w-4xl mx-auto shadow-lg shadow-amber-500/20"
+                data-testid="announcement-live-sessions"
+              >
                   <div className="flex items-center gap-3 justify-center mb-3">
                     <div className="flex gap-1">
                       <div className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
