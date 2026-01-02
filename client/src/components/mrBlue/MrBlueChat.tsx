@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import ReactMarkdown from "react-markdown";
 import {
   Send,
   Loader2,
@@ -981,9 +982,11 @@ I'll analyze this and may be able to fix it automatically.`,
                         : "bg-card border border-border/50 rounded-bl-md backdrop-blur-sm")
                     }
                   >
-                    <p className="whitespace-pre-wrap leading-relaxed">
-                      {message.content}
-                    </p>
+                    <div className="markdown-content prose prose-sm dark:prose-invert max-w-none">
+                      <ReactMarkdown>
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
                   </div>
                   <p
                     className={
