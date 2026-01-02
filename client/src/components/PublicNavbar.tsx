@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun, ChevronDown, Users, GraduationCap, CalendarCheck, Code, Shuffle } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { LanguageSelectorButton } from "@/components/LanguageSelector";
 
 export function PublicNavbar() {
   const { t } = useTranslation(['navigation', 'common']);
@@ -18,17 +17,6 @@ export function PublicNavbar() {
     { label: t('common:help', 'Help'), path: "/support" },
     { label: t('common:volunteer', 'Volunteer'), path: "/volunteer" },
     { label: t('common:ambassadors', 'Ambassadors'), path: "/ambassadors" }
-  ];
-
-  const audienceItems = [
-    { label: t('common:forDancers', 'For Dancers'), path: "/for-dancers", icon: Users },
-    { label: t('common:forTeachers', 'For Teachers'), path: "/for-teachers", icon: GraduationCap },
-    { label: t('common:forOrganizers', 'For Organizers'), path: "/for-organizers", icon: CalendarCheck },
-    { label: t('common:tangoRoles', 'Tango Roles'), path: "/tango-roles", icon: Shuffle }
-  ];
-
-  const communityItems = [
-    { label: t('common:openSource', 'Open Source'), path: "/open-source", icon: Code }
   ];
 
   const isActive = (path: string) => location === path;
@@ -117,9 +105,6 @@ export function PublicNavbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
-          {/* Language Selector */}
-          <LanguageSelectorButton />
-
           {/* Theme Toggle */}
           <Button
             variant="ghost"
