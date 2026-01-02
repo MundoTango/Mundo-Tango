@@ -122,15 +122,15 @@ router.post("/register", async (req: Request, res: Response) => {
     });
 
     // Auto-create city group if user registered with a city
-    if (validatedData.city) {
+    if ((validatedData as any).city) {
       try {
         const result = await ensureCityGroupExists(
-          validatedData.city,
-          validatedData.country || null,
+          (validatedData as any).city,
+          (validatedData as any).country || null,
           user.id
         );
         if (result?.wasCreated) {
-          console.log(`[Auth] Auto-created city group for ${validatedData.city}: ${result.groupName}`);
+          console.log(`[Auth] Auto-created city group for ${(validatedData as any).city}: ${result.groupName}`);
         }
       } catch (cityGroupError) {
         console.error("[Auth] Failed to create city group during registration:", cityGroupError);
@@ -370,7 +370,6 @@ router.post("/waitlist", async (req: Request, res: Response) => {
       password: finalPassword,
       waitlist: true,
       waitlistDate: new Date(),
-      isActive: false,
     });
 
     res.status(201).json({
@@ -561,7 +560,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
         email: user.email,
         role: user.role,
         isVerified: true,
-        onboardingCompleted: user.onboardingCompleted,
+        onboardingCompleted: user.isOnboardingComplete,
       }
     });
   } catch (error) {
