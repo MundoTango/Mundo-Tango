@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import scottPhotoPath from "@assets/IMG_9422-Mejorado-NR_1767344720406.jpg";
+import scottPhotoPath from "@assets/scott-founder-optimized.jpg";
 
 // Cookie helpers
 const getCookie = (name: string): string | null => {
