@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Route, Redirect, useLocation } from "wouter";
 import { LoadingFallback } from "@/components/LoadingFallback";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Redirect component that preserves query params
 function RedirectWithQuery({ to }: { to: string }) {
@@ -42,10 +43,11 @@ const AboutTangoPage = lazy(() => import("@/pages/AboutTangoPage"));
 const H2ACDashboardPage = lazy(() => import("@/pages/H2ACDashboardPage"));
 
 export function MarketingRoutes() {
+  const { user } = useAuth();
   return (
     <>
       <Route path="/">
-        <RedirectWithQuery to="/landing" />
+        {user ? <Redirect to="/feed" /> : <RedirectWithQuery to="/landing" />}
       </Route>
       <Route path="/lander">
         <RedirectWithQuery to="/landing" />

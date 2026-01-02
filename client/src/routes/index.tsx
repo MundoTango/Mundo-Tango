@@ -67,20 +67,11 @@ export function RouteLoader() {
     if (location.startsWith("/events") || location.startsWith("/event-series") || location.startsWith("/event-calendar") || location.startsWith("/my-events") || location.startsWith("/calendar") || location.startsWith("/travel")) {
       return <EventRoutes />;
     }
+    if (location === "/" || location.startsWith("/landing") || location.startsWith("/demos") || location.startsWith("/for-dancers") || location.startsWith("/for-teachers") || location.startsWith("/for-organizers") || location.startsWith("/tango-roles") || location.startsWith("/support") || location.startsWith("/donate") || location.startsWith("/supporters") || (location.startsWith("/volunteer") && !location.startsWith("/volunteer-recruitment") && !location.startsWith("/volunteer-testing")) || location.startsWith("/ambassadors") || location.startsWith("/open-source") || location.startsWith("/about") || location.startsWith("/features") || location.startsWith("/pricing") || location.startsWith("/testimonials") || location.startsWith("/discover") || location.startsWith("/terms") || (location.startsWith("/privacy") && !location.startsWith("/privacy-hub")) || location.startsWith("/community-guidelines") || location.startsWith("/help") || location.startsWith("/contact") || location.startsWith("/h2ac") || location.startsWith("/about-tango")) {
+      return <MarketingRoutes />;
+    }
     if (location.startsWith("/feed") || location.startsWith("/dashboard") || location.startsWith("/home") || location.startsWith("/profile") || location.startsWith("/friends") || location.startsWith("/friend-requests") || location.startsWith("/friendship") || location.startsWith("/followers") || location.startsWith("/following") || location.startsWith("/messages") || location.startsWith("/notifications") || location.startsWith("/groups") || location.startsWith("/community") || location.startsWith("/map") || location.startsWith("/world") || location.startsWith("/cities") || location.startsWith("/city") || location.startsWith("/search") || location.startsWith("/favorites") || location.startsWith("/saved") || location.startsWith("/stories") || location.startsWith("/live") || location.startsWith("/invitations") || location.startsWith("/facebook") || location.startsWith("/closeness") || location.startsWith("/recommendations") || location.startsWith("/gamification") || location.startsWith("/leaderboard") || location.startsWith("/report") || location.startsWith("/reputation") || location.startsWith("/create-post") || location.startsWith("/posts") || location.startsWith("/professional-reputation")) {
       return <SocialRoutes />;
-    }
-    if (location.startsWith("/marketplace") || location.startsWith("/checkout") || location.startsWith("/billing") || location.startsWith("/payment") || location.startsWith("/subscription") || location.startsWith("/crowdfunding") || location.startsWith("/financial") || location.startsWith("/invoices") || location.startsWith("/booking")) {
-      return <CommerceRoutes />;
-    }
-    if (location.startsWith("/pro/") || location.startsWith("/p/") || location.startsWith("/housing")) {
-      return <MiscRoutes />;
-    }
-    if (location === "/") {
-      return <SocialRoutes />;
-    }
-    if (location.startsWith("/landing") || location.startsWith("/demos") || location.startsWith("/for-dancers") || location.startsWith("/for-teachers") || location.startsWith("/for-organizers") || location.startsWith("/tango-roles") || location.startsWith("/support") || location.startsWith("/donate") || location.startsWith("/supporters") || (location.startsWith("/volunteer") && !location.startsWith("/volunteer-recruitment") && !location.startsWith("/volunteer-testing")) || location.startsWith("/ambassadors") || location.startsWith("/open-source") || location.startsWith("/about") || location.startsWith("/features") || location.startsWith("/pricing") || location.startsWith("/testimonials") || location.startsWith("/discover") || location.startsWith("/terms") || (location.startsWith("/privacy") && !location.startsWith("/privacy-hub")) || location.startsWith("/community-guidelines") || location.startsWith("/help") || location.startsWith("/contact") || location.startsWith("/h2ac") || location.startsWith("/about-tango")) {
-      return <MarketingRoutes />;
     }
     return <MiscRoutes />;
   };
