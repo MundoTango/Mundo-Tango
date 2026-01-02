@@ -101,7 +101,7 @@ export default function DonatePage() {
 
             <div className="text-center space-y-4">
               <a 
-                href="https://www.gofundme.com/f/mundo-tango" 
+                href="https://www.gofundme.com/f/join-us-in-bringing-mundo-tango-to-life" 
                 target="_blank" 
                 rel="noopener noreferrer"
               >

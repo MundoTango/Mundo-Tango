@@ -30,7 +30,7 @@ export function GoFundMeEmbed({
     <div 
       ref={containerRef}
       className="gfm-embed" 
-      data-url="https://www.gofundme.com/f/mundo-tango/widget/medium?sharesheet=undefined&attribution_id=sl:78961690-0cb7-4d9b-8b5a-2188804e707a"
+      data-url="https://www.gofundme.com/f/join-us-in-bringing-mundo-tango-to-life/widget/medium?sharesheet=undefined&attribution_id=sl:78961690-0cb7-4d9b-8b5a-2188804e707a"
       data-testid="gofundme-embed"
     />
   );

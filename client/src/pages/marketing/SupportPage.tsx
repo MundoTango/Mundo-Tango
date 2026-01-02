@@ -414,7 +414,7 @@ function SupportPageContent() {
             </MotionDiv>
             <MotionDiv variants={fadeInUp} className="text-center">
               <a 
-                href="https://www.gofundme.com/f/mundo-tango" 
+                href="https://www.gofundme.com/f/join-us-in-bringing-mundo-tango-to-life" 
                 target="_blank" 
                 rel="noopener noreferrer"
               >
@@ -446,7 +446,7 @@ function SupportPageContent() {
             </MotionP>
             <MotionDiv variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
               <a 
-                href="https://www.gofundme.com/f/mundo-tango" 
+                href="https://www.gofundme.com/f/join-us-in-bringing-mundo-tango-to-life" 
                 target="_blank" 
                 rel="noopener noreferrer"
               >
