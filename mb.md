@@ -18,6 +18,8 @@
 | P108 | **i18n Guard** | Intercept ALL UI string writes. Check `client/src/**/*.tsx`. If string is NOT wrapped in `t()`, FAIL and REFACTOR to use i18next. |
 | P109 | **Locale Sync** | Every turn that adds a key to `en/*.json` MUST trigger `TranslationAgent` to sync other priority languages (es, fr, de, it, ru, pt). |
 | P110 | **Hardcode Audit** | Bi-weekly recursive grep for raw strings in JSX/TSX components to ensure 100% translation coverage. |
+| P116 | **Dynamic Date Patterns** | NEVER hardcode dates in UI. Use computed values (e.g., `getNextThursday()`) with i18n interpolation: `t('key', { date })`. |
+| P117 | **Subagent Edit Guard** | Before spawning subagent with edit task: 1) READ target file first, 2) Verify exact string match exists, 3) Prefer small focused edits over large replacements. Subagents MUST validate snippets before `edit` tool invocation. |
 
 ### Stripe Payment Patterns (P111-P115) - Co-Led by `stripe.md`
 

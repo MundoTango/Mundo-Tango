@@ -1,4 +1,16 @@
 {
+  "landing": {
+    "hero": {
+      "title": "Глобальное Сердце Танго",
+      "subtitle": "Объединяем танцоров, учителей и организаторов в единой экосистеме мирового танго-сообщества.",
+      "watchDemo": "Смотреть Демо",
+      "getStarted": "Начать Бесплатно",
+      "facebookLive": "Facebook Live Каждый Четверг",
+      "qaScott": "Прямые Q&A Сессии со Скоттом",
+      "nextSession": "Следующая Сессия: {{date}}",
+      "joinFacebook": "Присоединиться в Facebook Live"
+    }
+  },
   "register": {
     "pageName": "Регистрация",
     "seo": {

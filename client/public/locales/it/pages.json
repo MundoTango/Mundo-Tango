@@ -1,4 +1,16 @@
 {
+  "landing": {
+    "hero": {
+      "title": "Il Cuore Globale del Tango",
+      "subtitle": "Connettere ballerini, insegnanti e organizzatori in un ecosistema unificato per la comunità mondiale del tango.",
+      "watchDemo": "Guarda Demo",
+      "getStarted": "Inizia Gratis",
+      "facebookLive": "Facebook Live Ogni Giovedì",
+      "qaScott": "Sessioni Q&A in Diretta con Scott",
+      "nextSession": "Prossima Sessione: {{date}}",
+      "joinFacebook": "Partecipa su Facebook Live"
+    }
+  },
   "register": {
     "pageName": "Registrazione",
     "seo": {

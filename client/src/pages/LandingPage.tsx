@@ -31,17 +31,31 @@ import {
   Instagram,
   Youtube,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 export default function LandingPage() {
-  const { t } = useTranslation(['pages', 'navigation', 'common']);
+  const { t, i18n } = useTranslation(['pages', 'navigation', 'common']);
   const [demoModalOpen, setDemoModalOpen] = useState(false);
   
-  // Q&A Session announcement - auto-hide after event ends (January 8, 2026 at 6 PM Paris time = 5 PM UTC)
-  const QA_SESSION_END = new Date('2026-01-08T17:00:00Z');
-  const showQAAnnouncement = new Date() < QA_SESSION_END;
+  // Dynamic next Thursday calculation (local time) - always shows upcoming session
+  const nextThursday = useMemo(() => {
+    const now = new Date();
+    const result = new Date(now);
+    // Calculate days until next Thursday (4 = Thursday in JS Date) using local time
+    const currentDay = result.getDay();
+    const daysUntilThursday = (4 - currentDay + 7) % 7 || 7;
+    result.setDate(result.getDate() + daysUntilThursday);
+    return result;
+  }, []);
+  
+  // Use i18n language for localized date formatting with fallback to browser default
+  const nextSessionLabel = nextThursday.toLocaleDateString(i18n.language || undefined, { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
 
   useEffect(() => {
     document.title = "Mundo Tango - Global Tango Community Platform";
@@ -300,14 +314,12 @@ export default function LandingPage() {
                     {t('pages:landing.hero.qaScott', 'Live Q&A Sessions with Scott')}
                   </h3>
                   
-                  {/* First session highlight - auto-hides after January 8, 2026 */}
-                  {showQAAnnouncement && (
-                    <div className="bg-white/10 rounded-lg px-4 py-2 inline-block mb-4">
-                      <span className="text-lg font-bold text-amber-200">
-                        {t('pages:landing.hero.nextSession', 'Next Session: January 8, 2026')}
-                      </span>
-                    </div>
-                  )}
+                  {/* Dynamic next session - always shows upcoming Thursday */}
+                  <div className="bg-white/10 rounded-lg px-4 py-2 inline-block mb-4">
+                    <span className="text-lg font-bold text-amber-200">
+                      {t('pages:landing.hero.nextSession', { date: nextSessionLabel }, 'Next Session: {{date}}')}
+                    </span>
+                  </div>
                   
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-sm text-white/90 mb-5">
                     <div className="bg-white/10 rounded-lg p-3 hover-elevate transition-all">

@@ -7,7 +7,7 @@
       "getStarted": "Get Started Free",
       "facebookLive": "Facebook Live Every Thursday",
       "qaScott": "Live Q&A Sessions with Scott",
-      "nextSession": "Next Session: January 8, 2026",
+      "nextSession": "Next Session: {{date}}",
       "cities": {
         "losAngeles": "Los Angeles",
         "newYork": "New York",
