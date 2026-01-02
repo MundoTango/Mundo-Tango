@@ -436,37 +436,37 @@ export default function LandingPage() {
                 </div>
                 
                 {/* Time zones grid - below header */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm text-white/90 mb-4">
-                  <div className="bg-white/10 rounded-lg p-2 text-center">
-                    <span className="text-xl">🇺🇸</span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm text-white/90 mb-4">
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <span className="text-4xl block mb-1">🇺🇸</span>
                     <div className="text-xs font-bold">CA 9AM / NY 12PM</div>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-2 text-center">
-                    <span className="text-xl">🇦🇷</span>
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <span className="text-4xl block mb-1">🇦🇷</span>
                     <div className="text-xs font-bold">1:00 PM</div>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-2 text-center border border-amber-400/30">
-                    <span className="text-xl">🇬🇧</span>
+                  <div className="bg-white/10 rounded-lg p-3 text-center border border-amber-400/30">
+                    <span className="text-4xl block mb-1">🇬🇧</span>
                     <div className="text-xs font-bold">5:00 PM</div>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-2 text-center">
-                    <span className="text-xl">🇫🇷</span>
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <span className="text-4xl block mb-1">🇫🇷</span>
                     <div className="text-xs font-bold">6:00 PM</div>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-2 text-center">
-                    <span className="text-xl">🇺🇦</span>
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <span className="text-4xl block mb-1">🇺🇦</span>
                     <div className="text-xs font-bold">7:00 PM</div>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-2 text-center">
-                    <span className="text-xl">🇨🇳</span>
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <span className="text-4xl block mb-1">🇨🇳</span>
                     <div className="text-xs font-bold">1AM (+1)</div>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-2 text-center">
-                    <span className="text-xl">🇰🇷</span>
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <span className="text-4xl block mb-1">🇰🇷</span>
                     <div className="text-xs font-bold">2AM (+1)</div>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-2 text-center">
-                    <span className="text-xl">🇦🇺</span>
+                  <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <span className="text-4xl block mb-1">🇦🇺</span>
                     <div className="text-xs font-bold">4AM (+1)</div>
                   </div>
                 </div>
