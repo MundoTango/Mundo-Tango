@@ -2,22 +2,45 @@
 
 !Modular Brain v3.1
 
-**Version:** 3.2.1
+**Version:** 3.3.0
 **Updated:** January 2, 2026
 **Architecture:** Modular Cognitive Framework + Live Execution
-**Total Agents:** 140+
-**Patterns:** 108 (61 Core + 16 VibeCoding Evolution + 9 New Patterns 69–77 + 19 Industry AI Learned + 2 Execution Patterns + 1 i18n Guard)
-**Status:** OPERATIONAL + VIBECODING EVOLUTION 100% COMPLETE (10/10 patterns)
+**Total Agents:** 141+ (Added: StripeAgent)
+**Patterns:** 115 (61 Core + 16 VibeCoding Evolution + 9 New Patterns 69–77 + 19 Industry AI Learned + 2 Execution Patterns + 3 i18n Guard + 5 Stripe Payment)
+**Status:** OPERATIONAL + VIBECODING EVOLUTION 100% COMPLETE + STRIPE PAYMENT INTEGRATION
 
 ---
 
-## MB.MD Methodology v9.9.4: i18n Guard Pattern
+## MB.MD Methodology v9.9.5: i18n Guard + Payment Patterns
 
 | ID | Protocol | Action |
 |----|----------|--------|
 | P108 | **i18n Guard** | Intercept ALL UI string writes. Check `client/src/**/*.tsx`. If string is NOT wrapped in `t()`, FAIL and REFACTOR to use i18next. |
 | P109 | **Locale Sync** | Every turn that adds a key to `en/*.json` MUST trigger `TranslationAgent` to sync other priority languages (es, fr, de, it, ru, pt). |
 | P110 | **Hardcode Audit** | Bi-weekly recursive grep for raw strings in JSX/TSX components to ensure 100% translation coverage. |
+
+### Stripe Payment Patterns (P111-P115) - Co-Led by `stripe.md`
+
+| ID | Protocol | Action |
+|----|----------|--------|
+| P111 | **StripeCheckout** | Use Stripe Checkout for all donations. Create session server-side → redirect client. Never handle raw card data. |
+| P112 | **WebhookSecurity** | ALL Stripe webhooks MUST verify signature with `stripe.webhooks.constructEvent()`. Reject unverified payloads. |
+| P113 | **PaymentState** | Optimistic UI: Show "Processing..." → Poll/webhook for confirmation → Update UI. Never assume success without confirmation. |
+| P114 | **FundraisingGoal** | Track progress in DB. Query total donations on page load. Cache with 5-min TTL. Show progress bar + donor count. |
+| P115 | **DonorRecognition** | Support anonymous donations. Named donors require explicit consent. Display donor wall with opt-in only. |
+
+### Payment Agent Coordination
+
+```
+stripe.md (Payment Expert) ←→ mb.md (Orchestrator)
+    ↓
+    ├── Checkout Flow Design
+    ├── Webhook Implementation  
+    ├── Security Validation
+    └── Progress UI Components
+```
+
+**Invocation:** `use mb.md: payments` or `use stripe.md`
 
 ---
 
