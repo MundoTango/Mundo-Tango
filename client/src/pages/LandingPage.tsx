@@ -501,7 +501,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Waitlist Roles Module */}
-                {publicStats?.waitlistRoles && publicStats.waitlistRoles.length > 0 && (
+                {publicStats?.waitlistRoles && publicStats.waitlistRoles.length > 0 ? (
                   <div className="mt-8 pt-8 border-t border-white/10">
                     <h4 className="text-white font-bold text-center mb-6 uppercase tracking-widest text-sm opacity-80">
                       Current Waitlist by Role
@@ -516,6 +516,10 @@ export default function LandingPage() {
                         </div>
                       ))}
                     </div>
+                  </div>
+                ) : (
+                  <div className="mt-8 pt-8 border-t border-white/10 text-center">
+                    <p className="text-white/40 text-xs italic">Loading waitlist stats...</p>
                   </div>
                 )}
               </MotionDiv>

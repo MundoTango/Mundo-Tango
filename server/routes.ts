@@ -947,7 +947,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           SELECT unnest(tango_roles) as role_item
           FROM users
           WHERE waitlist = true
-          AND (email ILIKE '%nomad%' OR email ILIKE '%tango%')
         ) roles
         WHERE role_item IS NOT NULL
         GROUP BY role_item
@@ -969,13 +968,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Only return stats that meet the display threshold (no fake numbers!)
       res.json({
-        dancers: totalUsers >= DISPLAY_THRESHOLD ? totalUsers : null,
-        teachers: teacherCount >= DISPLAY_THRESHOLD ? teacherCount : null,
-        organizers: organizerCount >= DISPLAY_THRESHOLD ? organizerCount : null,
-        events: totalEvents >= DISPLAY_THRESHOLD ? totalEvents : null,
-        cities: totalCities >= DISPLAY_THRESHOLD ? totalCities : null,
-        countries: totalCountries >= 3 ? totalCountries : null,
+        dancers: (totalUsers || 0) >= 1 ? totalUsers : null,
+        teachers: (teacherCount || 0) >= 1 ? teacherCount : null,
+        organizers: (organizerCount || 0) >= 1 ? organizerCount : null,
+        events: (totalEvents || 0) >= 1 ? totalEvents : null,
+        cities: (totalCities || 0) >= 1 ? totalCities : null,
+        countries: (totalCountries || 0) >= 1 ? totalCountries : null,
         platformStats,
+        waitlistRoles: waitlistRoles.rows || [],
       });
     } catch (error: any) {
       console.error('[PublicStats] Error:', error);
