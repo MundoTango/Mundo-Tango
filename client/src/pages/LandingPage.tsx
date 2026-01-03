@@ -80,7 +80,7 @@ export default function LandingPage() {
     if (storedEmail) {
       // Track the click with existing email
       console.log('[Analytics] Facebook Live click with stored email:', storedEmail);
-      window.open('https://www.facebook.com/sboddye', '_blank');
+      window.location.href = 'https://www.facebook.com/sboddye';
       return;
     }
     
@@ -128,13 +128,16 @@ export default function LandingPage() {
       console.error('[Analytics] Failed to save email to server:', e);
     }
 
-    window.open('https://www.facebook.com/sboddye', '_blank');
+    // Redirect to Facebook after a tiny delay to ensure toast is visible and fetch is initiated
+    setTimeout(() => {
+      window.location.href = 'https://www.facebook.com/sboddye';
+    }, 500);
   }, [capturedEmail, t, toast]);
   
   // Skip email capture and go directly
   const handleSkipEmail = useCallback(() => {
     setEmailCaptureOpen(false);
-    window.open('https://www.facebook.com/sboddye', '_blank');
+    window.location.href = 'https://www.facebook.com/sboddye';
   }, []);
   
   // Dynamic next Thursday calculation (local time) - always shows upcoming session
