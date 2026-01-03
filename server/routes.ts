@@ -937,6 +937,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .from(groups)
         .where(and(eq(groups.type, "city"), sql`country IS NOT NULL AND country != ''`));
       const totalCountries = countriesResult[0]?.count || 0;
+
+      // Waitlist Role Stats (New MB.MD Module)
+      const waitlistRoles = await db.execute(sql`
+        SELECT 
+          role_item as role,
+          COUNT(*)::int as count
+        FROM (
+          SELECT unnest(tango_roles) as role_item
+          FROM users
+          WHERE waitlist = true
+          AND (email ILIKE '%nomad%' OR email ILIKE '%tango%')
+        ) roles
+        WHERE role_item IS NOT NULL
+        GROUP BY role_item
+        ORDER BY count DESC
+      `);
       
       // Platform stats (always shown - these are founder facts)
       const platformStats = {

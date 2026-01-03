@@ -317,6 +317,7 @@ export default function LandingPage() {
       cities: number;
       countries: number;
     };
+    waitlistRoles?: { role: string; count: number }[];
   }>({
     queryKey: ["/api/stats/public"],
     staleTime: 5 * 60 * 1000,
@@ -498,6 +499,25 @@ export default function LandingPage() {
                     {t('pages:landing.hero.joinFacebook', 'Join on Facebook Live')}
                   </button>
                 </div>
+
+                {/* Waitlist Roles Module */}
+                {publicStats?.waitlistRoles && publicStats.waitlistRoles.length > 0 && (
+                  <div className="mt-8 pt-8 border-t border-white/10">
+                    <h4 className="text-white font-bold text-center mb-6 uppercase tracking-widest text-sm opacity-80">
+                      Current Waitlist by Role
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                      {publicStats.waitlistRoles.map((role) => (
+                        <div key={role.role} className="bg-white/5 rounded-lg p-3 text-center border border-white/10 hover:bg-white/10 transition-colors">
+                          <div className="text-2xl font-bold text-amber-300 mb-1">{role.count}</div>
+                          <div className="text-[10px] text-white/60 uppercase font-medium truncate">
+                            {role.role}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </MotionDiv>
             </div>
           </div>
