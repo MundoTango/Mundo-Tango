@@ -108,30 +108,36 @@ export default function LandingPage() {
     // Close modal
     setEmailCaptureOpen(false);
     
-    // Show thank you message
-    toast({
-      title: t('pages:landing.hero.thankYou', 'Thank you!'),
-      description: t('pages:landing.hero.emailSaved', "We'll keep you updated about our live sessions."),
-    });
-    
     // Track and redirect to Facebook
     console.log('[Analytics] New email captured:', capturedEmail);
     
     // Save to server if we have an endpoint
     try {
-      await fetch('/api/qa-platform/visitor-email', {
+      const response = await fetch('/api/qa-platform/visitor-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: capturedEmail, source: 'facebook_live_modal' })
       });
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+      
+      console.log('[Analytics] Email saved to server successfully');
     } catch (e) {
       console.error('[Analytics] Failed to save email to server:', e);
     }
 
-    // Redirect to Facebook after a tiny delay to ensure toast is visible and fetch is initiated
+    // Show thank you message and redirect
+    toast({
+      title: t('pages:landing.hero.thankYou', 'Thank you!'),
+      description: t('pages:landing.hero.emailSaved', "We'll keep you updated about our live sessions."),
+    });
+
+    // Redirect to Facebook after a tiny delay to ensure toast is visible
     setTimeout(() => {
       window.location.href = 'https://www.facebook.com/sboddye';
-    }, 500);
+    }, 1000);
   }, [capturedEmail, t, toast]);
   
   // Skip email capture and go directly
