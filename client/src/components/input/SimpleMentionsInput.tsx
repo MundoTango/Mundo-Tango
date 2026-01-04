@@ -607,6 +607,8 @@ export function SimpleMentionsInput({
 
     setShowMentionDropdown(false);
     setMentionSearchQuery("");
+    setMentionResults([]);
+    setSelectedMentionIndex(0);
 
     // Restore focus
     setTimeout(() => editorRef.current?.focus(), 50);

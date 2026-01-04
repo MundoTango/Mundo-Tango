@@ -116,22 +116,24 @@ router.get("/cities/search", authenticateToken, async (req, res) => {
     const limit = 10;
 
     const searchedCommunities = await (storage as any).searchCommunities(searchQuery, limit);
-    // Deduplicate and filter results
+    // Deduplicate by cityName and filter results strictly
     const results = searchedCommunities
-      .filter((community: any, index: number, self: any[]) => 
-        // Strict match on city name or community name
-        (community.name.toLowerCase().includes(searchQuery) || community.cityName.toLowerCase().includes(searchQuery)) &&
-        // Deduplicate by cityName
-        index === self.findIndex((t) => t.cityName === community.cityName)
-      )
-      .map((community: any) => ({
-      id: `city_${community.id}`,
-      type: "city" as const,
-      display: community.name.replace(/\sTango\sCommunity$/i, ''),
-      avatar: community.coverPhotoUrl,
-      subtitle: `${community.cityName} • ${community.memberCount || 0} members`,
-      metadata: { country: community.country },
-    }));
+      .reduce((acc: any[], community: any) => {
+        const isDuplicate = acc.some(item => item.display.toLowerCase() === community.name.replace(/\sTango\sCommunity$/i, '').toLowerCase());
+        const matchesQuery = community.name.toLowerCase().includes(searchQuery) || community.cityName.toLowerCase().includes(searchQuery);
+        
+        if (!isDuplicate && matchesQuery) {
+          acc.push({
+            id: `city_${community.id}`,
+            type: "city" as const,
+            display: community.name.replace(/\sTango\sCommunity$/i, ''),
+            avatar: community.coverPhotoUrl,
+            subtitle: `${community.cityName} • ${community.memberCount || 0} members`,
+            metadata: { country: community.country },
+          });
+        }
+        return acc;
+      }, []);
 
     res.json({ data: results });
   } catch (error: any) {
