@@ -276,11 +276,11 @@ export function SimpleMentionsInput({
           ...resultsByType.event,
           ...resultsByType.group
         ].filter(result => {
-          const display = result.display.toLowerCase();
+          const display = (result.display || "").toLowerCase();
           const username = (result.username || "").toLowerCase();
           
-          // Strict search: The result MUST contain the query in the display name
-          // OR it must be a direct city match for the city being searched
+          // STRICT SEARCH: The display name MUST contain the query
+          // and for cities, we ensure it's not a partial match like "buen" matching something else entirely
           return display.includes(lowerQuery) || username.includes(lowerQuery);
         }).map(result => ({
           ...result,
@@ -305,15 +305,19 @@ export function SimpleMentionsInput({
 
         // Sort results to prioritize those that start with the query, then those that include it
         allResults.sort((a, b) => {
-          const aDisplay = a.display.toLowerCase();
-          const bDisplay = b.display.toLowerCase();
+          const aDisplay = (a.display || "").toLowerCase();
+          const bDisplay = (b.display || "").toLowerCase();
           
-          const aStartsWith = aDisplay.startsWith(lowerQuery);
-          const bStartsWith = bDisplay.startsWith(lowerQuery);
-          
-          if (aStartsWith && !bStartsWith) return -1;
-          if (!aStartsWith && bStartsWith) return 1;
-          
+          // Boost exact matches
+          if (aDisplay === lowerQuery) return -1;
+          if (bDisplay === lowerQuery) return 1;
+
+          // Boost startsWith
+          const aStarts = aDisplay.startsWith(lowerQuery);
+          const bStarts = bDisplay.startsWith(lowerQuery);
+          if (aStarts && !bStarts) return -1;
+          if (!aStarts && bStarts) return 1;
+
           return aDisplay.localeCompare(bDisplay);
         });
         
