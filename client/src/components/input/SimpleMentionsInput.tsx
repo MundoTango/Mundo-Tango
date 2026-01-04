@@ -595,7 +595,7 @@ export function SimpleMentionsInput({
     const mentionToken: MentionToken = {
       kind: 'mention',
       type: entity.type,
-      id: entity.id,
+      id: entity.type === 'city' ? (entity.metadata?.slug || entity.id) : entity.id,
       name: entity.display,
       groupType: entity.type === 'group' ? entity.metadata?.groupType : undefined,
     };
