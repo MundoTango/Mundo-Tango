@@ -3,7 +3,7 @@ import { authenticateToken } from "../middleware/auth";
 import { storage } from "../storage";
 import { db } from "@shared/db";
 import { eq, ilike, or, and, sql } from "drizzle-orm";
-import { users, events, groups, communities, posts } from "@shared/schema";
+import { users, events, groups, communities, posts, cities } from "@shared/schema";
 import { notificationService } from "../services/notification-service";
 
 const router = Router();

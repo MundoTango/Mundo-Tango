@@ -320,7 +320,8 @@ export function SimpleMentionsInput({
           return aDisplay.localeCompare(bDisplay);
         });
 
-        setMentionResults(deduplicated.slice(0, 10));
+        const allResults = deduplicated.slice(0, 10);
+        setMentionResults(allResults);
         
         // Backfill remaining slots if we have fewer than 10 results
         // This ensures we show up to 10 results total
