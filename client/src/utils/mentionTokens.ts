@@ -58,7 +58,7 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
   // Combined regex that matches:
   // 1. Full canonical format: @type:id:name or @group:groupType:id:name
   // 2. Plain mention format: @username (must be preceded by whitespace or start of string, not part of email)
-  const canonicalRegex = /@(user|event|group|city):(?:(professional|city):)?([^:\s]+):([^\s]+)/g;
+  const canonicalRegex = /@(user|event|group|city):(?:(professional|city):)?([^:\s]+):([^@\s\n]+)/g;
   
   // First pass: find all canonical mentions
   const canonicalMatches: Array<{ index: number; length: number; token: MentionToken }> = [];

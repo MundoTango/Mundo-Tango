@@ -491,7 +491,7 @@ export function SimpleMentionsInput({
       kind: 'mention',
       type: entity.type,
       id: entity.id,
-      name: entity.display,
+      name: entity.display.replace(/\s+/g, '_'),
       groupType: entity.type === 'group' ? entity.metadata?.groupType : undefined,
     };
 
