@@ -82,17 +82,15 @@ export default function LandingPage() {
   const handleFacebookLiveClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     
-    // If we already have their email, go directly to Facebook
-    if (storedEmail) {
-      // Track the click with existing email
-      console.log('[Analytics] Facebook Live click with stored email:', storedEmail);
-      window.location.href = 'https://www.facebook.com/sboddye';
-      return;
+    // Always show email capture modal - even returning visitors
+    // Pre-fill with stored email if we have one
+    if (storedEmail && !capturedEmail) {
+      setCapturedEmail(storedEmail);
     }
     
     // Show email capture modal
     setEmailCaptureOpen(true);
-  }, [storedEmail]);
+  }, [storedEmail, capturedEmail]);
   
   // Handle email submission
   const handleEmailSubmit = useCallback(async (e: React.FormEvent) => {
