@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
 import { db } from '../db';
-import { sql } from 'drizzle-orm';
-import { chatMessages } from '@shared/schema';
+import { sql, eq, and, or } from 'drizzle-orm';
+import { directMessages } from '@shared/schema';
 
 export async function getUnreadCount(userId: number) {
   try {
     const result = await db.select({ count: sql<number>`count(*)::int` })
-      .from(chatMessages)
-      .where(sql`(${chatMessages.readBy} IS NULL OR NOT (${userId} = ANY(${chatMessages.readBy})))`);
+      .from(directMessages)
+      .where(and(
+        eq(directMessages.recipientId, userId),
+        eq(directMessages.isRead, false)
+      ));
     return result[0]?.count || 0;
   } catch (error) {
     console.error('Error fetching unread count:', error);
