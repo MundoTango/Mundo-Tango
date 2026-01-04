@@ -67,7 +67,7 @@ Discover 739+ tango events across the globe. From intimate practicas to internat
 ✅ 739+ events  
 ✅ Filter by city, date, type  
 ✅ RSVP instantly  
-Never miss a milonga again! #TangoTravel #MiHere is the content being created. Let me continue:longa
+Never miss a milonga again! #TangoTravel #MilongaFinder
 
 **User Persona - Traveler:**  
 "I travel for tango. Mundo Tango helps me find events in every city I visit - from Buenos Aires to Berlin!"

@@ -27,7 +27,7 @@ import { intentDetector, sentimentAnalyzer, type UserIntent, type Sentiment } fr
 const MrBlueAvatar = lazy(() => import("./MrBlueAvatar").then(m => ({ default: m.MrBlueAvatar })));
 
 // Lazy load 3D avatar component (heavy Three.js dependency)
-const MrBlueAvatar3D = lazy(() => import("@/components/mrBlue/core/MrBlueAvatar3D"));
+const MrBlueAvatar3D = lazy(() => import("@/components/mrBlue/avatars/MrBlueAvatar3D"));
 
 interface Message {
   id: string;
