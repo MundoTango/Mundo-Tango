@@ -305,7 +305,7 @@ npm run build
 npm start
 
 # Type checking
-npm run check
+npm run typecheck
 
 # Database operations
 npm run db:push      # Push schema changes
@@ -764,7 +764,7 @@ Development is coordinated by **1,255+ ESA agents** across 6 categories:
 
 3. **Run Quality Checks**
    ```bash
-   npm run check      # Type checking
+   npm run typecheck      # Type checking
    npm run test       # E2E tests
    npm run lint       # Linting
    ```
