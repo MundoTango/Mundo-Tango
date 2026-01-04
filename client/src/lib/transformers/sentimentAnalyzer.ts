@@ -10,14 +10,15 @@
 
 export type Sentiment = 'positive' | 'negative' | 'neutral';
 
-// Dynamic import to avoid bundling the large transformers library
+// Transformers.js is optional - this feature uses fallback heuristics
+// The ML model loading is disabled to avoid Vite bundling issues
 let pipelineModule: any = null;
-const loadPipeline = async () => {
-  if (!pipelineModule) {
-    const module = await import('@xenova/transformers');
-    pipelineModule = module.pipeline;
-  }
-  return pipelineModule;
+const transformersUnavailable = true; // Disabled - use heuristic detection
+
+const loadPipeline = async (): Promise<any> => {
+  // ML model loading disabled - always use fallback detection
+  // @xenova/transformers has bundling issues with Vite
+  return null;
 };
 
 export interface SentimentResult {
@@ -39,9 +40,11 @@ class TransformersSentimentAnalyzer {
   /**
    * Lazy-load the sentiment analysis model
    * Model is cached in browser after first download
+   * Returns null if transformers.js is not available
    */
   private async ensureModel() {
     if (this.classifier) return this.classifier;
+    if (transformersUnavailable) return null;
     if (this.isLoading) {
       // Wait for ongoing load
       while (this.isLoading) {
@@ -57,6 +60,10 @@ class TransformersSentimentAnalyzer {
       // Use DistilBERT fine-tuned for sentiment analysis
       // Fast, accurate, and browser-friendly
       const pipeline = await loadPipeline();
+      if (!pipeline) {
+        // Transformers not available, will use fallback detection
+        return null;
+      }
       this.classifier = await pipeline(
         'sentiment-analysis',
         'Xenova/distilbert-base-uncased-finetuned-sst-2-english'
@@ -67,7 +74,8 @@ class TransformersSentimentAnalyzer {
     } catch (error) {
       console.error('[SentimentAnalyzer] Failed to load model:', error);
       this.loadError = error as Error;
-      throw error;
+      // Don't throw - just return null to fall back to heuristics
+      return null;
     } finally {
       this.isLoading = false;
     }
@@ -82,6 +90,11 @@ class TransformersSentimentAnalyzer {
   async analyzeSentiment(message: string): Promise<SentimentResult> {
     try {
       const model = await this.ensureModel();
+      
+      // If ML model not available, use heuristic detection
+      if (!model) {
+        return this.heuristicSentiment(message);
+      }
       
       // Run sentiment analysis
       const results = await model(message);
@@ -124,19 +137,44 @@ class TransformersSentimentAnalyzer {
       };
     } catch (error) {
       console.error('[SentimentAnalyzer] Analysis failed:', error);
-      
-      // Fallback to neutral sentiment
-      return {
-        sentiment: 'neutral',
-        confidence: 0.5,
-        scores: {
-          positive: 0.33,
-          negative: 0.33,
-          neutral: 0.34,
-        },
-        suggestedTone: 'friendly and helpful',
-      };
+      return this.heuristicSentiment(message);
     }
+  }
+
+  /**
+   * Heuristic-based sentiment detection (fallback when ML unavailable)
+   */
+  private heuristicSentiment(message: string): SentimentResult {
+    const lower = message.toLowerCase();
+    
+    // Positive indicators
+    const positiveWords = ['thanks', 'great', 'awesome', 'love', 'perfect', 'excellent', 'happy', 'good', 'nice', 'wonderful'];
+    const negativeWords = ['frustrated', 'angry', 'broken', 'wrong', 'bad', 'hate', 'annoying', 'terrible', 'awful', 'stuck'];
+    
+    const positiveCount = positiveWords.filter(w => lower.includes(w)).length;
+    const negativeCount = negativeWords.filter(w => lower.includes(w)).length;
+    
+    let sentiment: Sentiment = 'neutral';
+    let confidence = 0.6;
+    
+    if (positiveCount > negativeCount) {
+      sentiment = 'positive';
+      confidence = 0.7;
+    } else if (negativeCount > positiveCount) {
+      sentiment = 'negative';
+      confidence = 0.7;
+    }
+    
+    return {
+      sentiment,
+      confidence,
+      scores: {
+        positive: sentiment === 'positive' ? 0.6 : 0.2,
+        negative: sentiment === 'negative' ? 0.6 : 0.2,
+        neutral: sentiment === 'neutral' ? 0.6 : 0.2,
+      },
+      suggestedTone: this.getSuggestedTone(sentiment, confidence),
+    };
   }
 
   /**

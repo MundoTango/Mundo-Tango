@@ -11,14 +11,15 @@
 
 export type UserIntent = 'visual_change' | 'code_generation' | 'question' | 'command';
 
-// Dynamic import to avoid bundling the large transformers library
+// Transformers.js is optional - this feature uses regex-only detection
+// The ML model loading is disabled to avoid Vite bundling issues
 let pipelineModule: any = null;
-const loadPipeline = async () => {
-  if (!pipelineModule) {
-    const module = await import('@xenova/transformers');
-    pipelineModule = module.pipeline;
-  }
-  return pipelineModule;
+const transformersUnavailable = true; // Disabled - use regex-only detection
+
+const loadPipeline = async (): Promise<any> => {
+  // ML model loading disabled - always use fast regex detection
+  // @xenova/transformers has bundling issues with Vite
+  return null;
 };
 
 export interface IntentResult {
@@ -40,9 +41,11 @@ class TransformersIntentDetector {
   /**
    * Lazy-load the text classification model
    * Model is cached in browser after first download
+   * Returns null if transformers.js is not available
    */
   private async ensureModel() {
     if (this.classifier) return this.classifier;
+    if (transformersUnavailable) return null;
     if (this.isLoading) {
       // Wait for ongoing load
       while (this.isLoading) {
@@ -58,6 +61,10 @@ class TransformersIntentDetector {
       // Use zero-shot classification for intent detection
       // This model can classify text into custom categories without training
       const pipeline = await loadPipeline();
+      if (!pipeline) {
+        // Transformers not available, will use regex-only detection
+        return null;
+      }
       this.classifier = await pipeline(
         'zero-shot-classification',
         'Xenova/distilbert-base-uncased-mnli'
@@ -68,7 +75,8 @@ class TransformersIntentDetector {
     } catch (error) {
       console.error('[IntentDetector] Failed to load model:', error);
       this.loadError = error as Error;
-      throw error;
+      // Don't throw - just return null to fall back to regex
+      return null;
     } finally {
       this.isLoading = false;
     }
@@ -92,9 +100,17 @@ class TransformersIntentDetector {
       };
     }
 
-    // Fallback to ML model for ambiguous cases
+    // Fallback to ML model for ambiguous cases (if available)
     try {
       const model = await this.ensureModel();
+      
+      // If ML model not available, default to question intent
+      if (!model) {
+        return {
+          intent: 'question',
+          confidence: 0.6,
+        };
+      }
       
       // Define intent labels with descriptions for better classification
       const candidateLabels = [
