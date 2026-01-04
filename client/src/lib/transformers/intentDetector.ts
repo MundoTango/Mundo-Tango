@@ -1,5 +1,5 @@
 /**
- * Browser-Based Intent Detector using regex patterns
+ * Browser-Based Intent Detector using Transformers.js
  * Classifies user messages instantly without backend API calls
  * 
  * Intent Types:
@@ -7,12 +7,19 @@
  * - code_generation: Creating new components, features, API endpoints
  * - question: General questions, help requests
  * - command: Navigation, actions, system commands
- * 
- * Note: ML-based detection removed to reduce bundle size.
- * Fast regex-based detection handles 95%+ of cases accurately.
  */
 
 export type UserIntent = 'visual_change' | 'code_generation' | 'question' | 'command';
+
+// Dynamic import to avoid bundling the large transformers library
+let pipelineModule: any = null;
+const loadPipeline = async () => {
+  if (!pipelineModule) {
+    const module = await import('@xenova/transformers');
+    pipelineModule = module.pipeline;
+  }
+  return pipelineModule;
+};
 
 export interface IntentResult {
   intent: UserIntent;
@@ -20,28 +27,114 @@ export interface IntentResult {
   rawScores?: Record<string, number>;
 }
 
-class IntentDetector {
+interface ClassificationResult {
+  label: string;
+  score: number;
+}
+
+class TransformersIntentDetector {
+  private classifier: any = null;
+  private isLoading = false;
+  private loadError: Error | null = null;
+
+  /**
+   * Lazy-load the text classification model
+   * Model is cached in browser after first download
+   */
+  private async ensureModel() {
+    if (this.classifier) return this.classifier;
+    if (this.isLoading) {
+      // Wait for ongoing load
+      while (this.isLoading) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      return this.classifier;
+    }
+
+    this.isLoading = true;
+    try {
+      console.log('[IntentDetector] Loading Transformers.js model...');
+      
+      // Use zero-shot classification for intent detection
+      // This model can classify text into custom categories without training
+      const pipeline = await loadPipeline();
+      this.classifier = await pipeline(
+        'zero-shot-classification',
+        'Xenova/distilbert-base-uncased-mnli'
+      );
+      
+      console.log('[IntentDetector] ✅ Model loaded and cached');
+      this.loadError = null;
+    } catch (error) {
+      console.error('[IntentDetector] Failed to load model:', error);
+      this.loadError = error as Error;
+      throw error;
+    } finally {
+      this.isLoading = false;
+    }
+
+    return this.classifier;
+  }
+
   /**
    * Detect user intent from natural language message
-   * Uses fast regex-based detection (no external dependencies)
+   * Fast regex-based detection with ML fallback
    */
   async detectIntent(message: string): Promise<IntentResult> {
     const lowerMessage = message.toLowerCase().trim();
 
-    // Fast regex-based detection (handles 95%+ of cases)
+    // Fast regex-based detection for obvious cases (instant)
     const fastIntent = this.fastDetect(lowerMessage);
     if (fastIntent) {
       return {
         intent: fastIntent,
-        confidence: 0.95,
+        confidence: 0.95, // High confidence for regex matches
       };
     }
 
-    // Default to question for ambiguous cases
-    return {
-      intent: 'question',
-      confidence: 0.7,
-    };
+    // Fallback to ML model for ambiguous cases
+    try {
+      const model = await this.ensureModel();
+      
+      // Define intent labels with descriptions for better classification
+      const candidateLabels = [
+        'changing visual appearance or styling',
+        'generating or creating new code',
+        'asking a question or requesting help',
+        'executing a command or navigation'
+      ];
+
+      const result = await model(message, candidateLabels);
+      
+      // Map results to our intent types
+      const intentMap: Record<number, UserIntent> = {
+        0: 'visual_change',
+        1: 'code_generation',
+        2: 'question',
+        3: 'command'
+      };
+
+      const topIndex = result.labels.indexOf(result.labels[0]);
+      const topScore = result.scores[0];
+
+      return {
+        intent: intentMap[topIndex] || 'question',
+        confidence: topScore,
+        rawScores: {
+          visual_change: result.scores[candidateLabels.indexOf('changing visual appearance or styling')],
+          code_generation: result.scores[candidateLabels.indexOf('generating or creating new code')],
+          question: result.scores[candidateLabels.indexOf('asking a question or requesting help')],
+          command: result.scores[candidateLabels.indexOf('executing a command or navigation')]
+        }
+      };
+    } catch (error) {
+      console.error('[IntentDetector] ML classification failed, using fallback:', error);
+      // Fallback to question intent if ML fails
+      return {
+        intent: 'question',
+        confidence: 0.5,
+      };
+    }
   }
 
   /**
@@ -76,15 +169,13 @@ class IntentDetector {
       return 'code_generation';
     }
 
-    // Command patterns (high confidence) - allow "please" prefixes and indirect phrasing
+    // Command patterns (high confidence)
     const commandPatterns = [
-      /\b(go to|navigate|open|close|show|hide)\b/,
-      /\b(save|load|export|import|download|upload)\b/,
-      /\b(start|stop|restart|pause|resume)\b/,
-      /\b(clear|reset|undo|redo)\b/,
-      /\b(scroll|zoom|refresh|reload)\b/,
-      /\b(please|could you|can you|would you).*(reset|clear|open|close|save|load|start|stop|show|hide|navigate|go to)/,
-      /\b(run|execute|trigger|launch|deploy)\b/,
+      /^(go to|navigate|open|close|show|hide)/,
+      /^(save|load|export|import|download|upload)/,
+      /^(start|stop|restart|pause|resume)/,
+      /^(clear|reset|undo|redo)/,
+      /^(scroll|zoom|refresh|reload)/,
     ];
 
     if (commandPatterns.some(pattern => pattern.test(message))) {
@@ -108,23 +199,27 @@ class IntentDetector {
   }
 
   /**
-   * Check if detector is ready (always true - no external dependencies)
+   * Check if model is ready or loading
    */
   getStatus(): { ready: boolean; loading: boolean; error: string | null } {
     return {
-      ready: true,
-      loading: false,
-      error: null,
+      ready: this.classifier !== null,
+      loading: this.isLoading,
+      error: this.loadError?.message || null,
     };
   }
 
   /**
-   * Preload (no-op - no external model needed)
+   * Preload model in background (optional optimization)
    */
   async preload(): Promise<void> {
-    // No-op - regex-based detection needs no preloading
+    try {
+      await this.ensureModel();
+    } catch (error) {
+      console.warn('[IntentDetector] Preload failed:', error);
+    }
   }
 }
 
 // Singleton instance
-export const intentDetector = new IntentDetector();
+export const intentDetector = new TransformersIntentDetector();
