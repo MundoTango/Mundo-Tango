@@ -118,28 +118,23 @@ router.get("/cities/search", authenticateToken, async (req, res) => {
     const searchedCommunities = await (storage as any).searchCommunities(searchQuery, limit);
     // Final strictly filtered and deduplicated results
     const results = searchedCommunities
-      .filter((c: any) => c.name.toLowerCase().includes(searchQuery))
+      .filter((c: any) => {
+        const name = (c.name || "").toLowerCase();
+        const city = (c.cityName || c.city_name || "").toLowerCase();
+        return name.includes(searchQuery) || city.includes(searchQuery);
+      })
       .reduce((acc: any[], community: any) => {
         const cleanDisplay = community.name.replace(/\sTango\sCommunity$/i, '');
-        // Prefer entries with photos and members
-        const existingIndex = acc.findIndex(item => item.display === cleanDisplay);
-        const currentEntry = {
-          id: `city_${community.id}`,
-          type: "city" as const,
-          display: cleanDisplay,
-          avatar: community.coverPhotoUrl,
-          subtitle: `${community.cityName} • ${community.memberCount || 0} members`,
-          metadata: { country: community.country },
-        };
-
-        if (existingIndex === -1) {
-          acc.push(currentEntry);
-        } else {
-          // If we find a duplicate, keep the one with more members or a photo
-          const existing = acc[existingIndex];
-          if ((!existing.avatar && currentEntry.avatar) || (currentEntry.subtitle.includes('3 members'))) {
-            acc[existingIndex] = currentEntry;
-          }
+        // Deduplicate by display name
+        if (!acc.some(item => item.display === cleanDisplay)) {
+          acc.push({
+            id: `city_${community.id}`,
+            type: "city" as const,
+            display: cleanDisplay,
+            avatar: community.coverPhotoUrl,
+            subtitle: `${community.cityName || community.city_name} • ${community.memberCount || community.member_count || 0} members`,
+            metadata: { country: community.country },
+          });
         }
         return acc;
       }, []);

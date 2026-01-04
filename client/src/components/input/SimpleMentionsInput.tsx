@@ -279,40 +279,46 @@ export function SimpleMentionsInput({
           const display = (result.display || "").toLowerCase();
           const username = (result.username || "").toLowerCase();
           
-          // STRICT SEARCH: The display name MUST contain the query
-          // and for cities, we ensure it's not a partial match like "buen" matching something else entirely
           return display.includes(lowerQuery) || username.includes(lowerQuery);
         }).map(result => ({
           ...result,
           display: result.display.replace(/\sTango\sCommunity$/i, '')
         }));
 
-        // Group back by type
-        const filteredByType = {
-          user: allFiltered.filter(r => r.type === "user"),
-          city: allFiltered.filter(r => r.type === "city"),
-          event: allFiltered.filter(r => r.type === "event"),
-          group: allFiltered.filter(r => r.type === "group"),
-        };
-
-        // Prioritize cities first, then balance other types
-        const cities = filteredByType.city.slice(0, 3);
-        const users = filteredByType.user.slice(0, 3);
-        const events = filteredByType.event.slice(0, 3);
-        const groups = filteredByType.group.slice(0, 3);
+        // Group back by type and Deduplicate by display name across types if necessary
+        // but prioritize cities
+        const uniqueResultsMap = new Map<string, MentionEntity>();
         
-        let allResults = [...cities, ...users, ...events, ...groups];
+        // Add cities first (priority)
+        allFiltered.filter(r => r.type === "city").forEach(r => {
+          if (!uniqueResultsMap.has(r.display)) {
+            uniqueResultsMap.set(r.display, r);
+          }
+        });
 
-        // Sort results to prioritize those that start with the query, then those that include it
+        // Add others
+        allFiltered.filter(r => r.type !== "city").forEach(r => {
+          if (!uniqueResultsMap.has(r.display)) {
+            uniqueResultsMap.set(r.display, r);
+          }
+        });
+
+        const deduplicated = Array.from(uniqueResultsMap.values());
+
+        // Prioritize cities first in the final list
+        const cities = deduplicated.filter(r => r.type === "city").slice(0, 3);
+        const others = deduplicated.filter(r => r.type !== "city").slice(0, 7);
+        
+        let allResults = [...cities, ...others];
+
+        // Sort results to prioritize those that start with the query
         allResults.sort((a, b) => {
           const aDisplay = (a.display || "").toLowerCase();
           const bDisplay = (b.display || "").toLowerCase();
           
-          // Boost exact matches
           if (aDisplay === lowerQuery) return -1;
           if (bDisplay === lowerQuery) return 1;
 
-          // Boost startsWith
           const aStarts = aDisplay.startsWith(lowerQuery);
           const bStarts = bDisplay.startsWith(lowerQuery);
           if (aStarts && !bStarts) return -1;
