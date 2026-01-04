@@ -11,7 +11,7 @@ import {
   getAllLeadershipAgents, 
   routeToLeadershipAgent,
   initializeLeadershipAgents 
-} from '../services/mrblue/agents/leadership';
+} from '../services/mrBlue/agents/leadership';
 
 const router = Router();
 

@@ -46,7 +46,6 @@ dependency-report.json
 lancedb_data/
 test-videos/
 e2e/
-docs/
 qa_reports/
 reports/
 agent-memory/

@@ -6,7 +6,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { aiCollaborationService } from '../services/mrblue/AICollaborationService';
+import { aiCollaborationService } from '../services/mrBlue/AICollaborationService';
 
 const router = Router();
 

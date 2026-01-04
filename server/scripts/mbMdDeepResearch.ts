@@ -9,8 +9,8 @@
  * 4. Coordinate autonomous improvements
  */
 
-import { mrBlueQAResearch } from '../services/mrblue/MrBlueQAResearch';
-import { agentRegistry } from '../services/mrblue/AgentRegistry';
+import { mrBlueQAResearch } from '../services/mrBlue/MrBlueQAResearch';
+import { agentRegistry } from '../services/mrBlue/AgentRegistry';
 import { db } from '@shared/db';
 import { groups, events, users, scrapedEvents } from '@shared/schema';
 import { sql, count } from 'drizzle-orm';

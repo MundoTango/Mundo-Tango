@@ -4,8 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
-import { AvatarCanvas } from '@/components/mr-blue/AvatarCanvas';
-import type { AvatarState } from '@/components/mr-blue/PixarAvatar';
+import { AvatarCanvas } from '@/components/mrBlue/advanced/AvatarCanvas';
+import type { AvatarState } from '@/components/mrBlue/advanced/PixarAvatar';
 import {
   Sparkles,
   Brain,
