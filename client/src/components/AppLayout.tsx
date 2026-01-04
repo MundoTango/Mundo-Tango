@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AppSidebar } from "./AppSidebar";
 import UnifiedTopBar from "./navigation/UnifiedTopBar";
-import TourGuide from "./mrBlue/TourGuide";
+import TourGuide from "./mrBlue/advanced/TourGuide";
 import { useQuery } from "@tanstack/react-query";
 import { SelfHealingStatus } from "@/components/SelfHealingStatus";
 import { SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
