@@ -292,7 +292,7 @@ export function SimpleMentionsInput({
         // Prioritize: City > User > Event > Group
         const sortedResults = [...allFiltered].sort((a, b) => {
           const typePriority = { city: 1, user: 2, event: 3, group: 4 };
-          return (typePriority[a.type] || 5) - (typePriority[b.type] || 5);
+          return (typePriority[a.type as EntityType] || 5) - (typePriority[b.type as EntityType] || 5);
         });
 
         sortedResults.forEach(r => {
@@ -320,14 +320,13 @@ export function SimpleMentionsInput({
           return aDisplay.localeCompare(bDisplay);
         });
 
-        const allResults = deduplicated.slice(0, 10);
-        setMentionResults(allResults);
+        let finalResults = deduplicated.slice(0, 10);
         
         // Backfill remaining slots if we have fewer than 10 results
         // This ensures we show up to 10 results total
-        if (allResults.length < 10) {
-          const remaining = 10 - allResults.length;
-          const usedIds = new Set(allResults.map(r => r.id));
+        if (finalResults.length < 10) {
+          const remaining = 10 - finalResults.length;
+          const usedIds = new Set(finalResults.map(r => r.id));
           
           // Get additional results from each type (beyond the first 3)
           const extraUsers = resultsByType.user.slice(3).filter(r => !usedIds.has(r.id));
@@ -337,10 +336,10 @@ export function SimpleMentionsInput({
           
           // Add extras until we reach 10
           const extras = [...extraCities, ...extraUsers, ...extraEvents, ...extraGroups];
-          allResults = [...allResults, ...extras.slice(0, remaining)];
+          finalResults = [...finalResults, ...extras.slice(0, remaining)];
         }
         
-        setMentionResults(allResults.slice(0, 10));
+        setMentionResults(finalResults.slice(0, 10));
       } catch (error) {
         console.error('Failed to search mentions:', error);
         setSearchError(error instanceof Error ? error.message : 'Search failed');
@@ -708,8 +707,15 @@ export function SimpleMentionsInput({
             >
               {searchError ? (
                 <div className="text-center py-4 text-sm">
-                  <div className="text-red-100 font-semibold mb-1">{searchError}</div>
-                  <div className="text-white/60 text-xs">Try refreshing the page</div>
+                  <div className="text-red-100 font-semibold mb-1">Search encountered an issue</div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => window.location.reload()}
+                    className="h-8 text-[10px] font-black uppercase tracking-widest bg-white/10 text-white border-white/20 hover:bg-white/20"
+                  >
+                    Refresh to retry
+                  </Button>
                 </div>
               ) : isSearching ? (
                 <div className="flex items-center justify-center py-4 text-white">
