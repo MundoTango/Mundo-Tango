@@ -439,7 +439,7 @@ export function SimpleMentionsInput({
         if (element.classList.contains('mention-pill')) {
           const type = element.getAttribute('data-mention-type') as EntityType || 'user';
           const id = element.getAttribute('data-mention-id') || '';
-          const name = element.textContent?.replace('@', '') || '';
+          const name = element.querySelector('span')?.textContent?.replace('@', '') || element.textContent?.replace('@', '') || '';
           newTokens.push({ kind: 'mention', type, id, name });
         } else if (element.tagName === 'BR') {
           const lastToken = newTokens[newTokens.length - 1];
@@ -517,8 +517,13 @@ export function SimpleMentionsInput({
     const preCaretRange = range.cloneRange();
     preCaretRange.selectNodeContents(editorRef.current);
     preCaretRange.setEnd(range.endContainer, range.endOffset);
-    const cursorPos = preCaretRange.toString().length;
+    const preCaretText = preCaretRange.toString();
+    const cursorPos = preCaretText.length;
 
+    // Determine the query to replace - find the last @ before the cursor
+    const lastAtPos = preCaretText.lastIndexOf('@');
+    const triggerText = lastAtPos !== -1 ? preCaretText.slice(lastAtPos) : '';
+    
     // Create mention token with groupType if it's a group
     const mentionToken: MentionToken = {
       kind: 'mention',

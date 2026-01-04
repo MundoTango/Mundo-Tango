@@ -58,7 +58,7 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
   // Combined regex that matches:
   // 1. Full canonical format: @type:id:name or @group:groupType:id:name
   // 2. Plain mention format: @username (must be preceded by whitespace or start of string, not part of email)
-  const canonicalRegex = /@(user|event|group|city):(?:(professional|city):)?([^:\s]+):([^@\s\n]+)/g;
+  const canonicalRegex = /@(user|event|group|city):(?:(professional|city):)?([^:\s]+):([^@\n]+?)(?=\s@|$)/g;
   
   // First pass: find all canonical mentions
   const canonicalMatches: Array<{ index: number; length: number; token: MentionToken }> = [];
@@ -70,7 +70,7 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
       kind: 'mention',
       type: type as EntityType,
       id,
-      name: name,
+      name: name.trim(),
     };
     if (type === 'group' && groupType) {
       token.groupType = groupType;
@@ -201,12 +201,11 @@ export function findMentionTriggerAtCursor(
   let atPos = -1;
   for (let i = cursorPos - 1; i >= 0; i--) {
     if (text[i] === '@') {
-      atPos = i;
-      break;
-    }
-    // Stop at whitespace
-    if (/\s/.test(text[i])) {
-      break;
+      // Check if it's the start of the string or preceded by whitespace
+      if (i === 0 || /\s/.test(text[i - 1])) {
+        atPos = i;
+        break;
+      }
     }
   }
   
@@ -214,9 +213,6 @@ export function findMentionTriggerAtCursor(
   
   // Extract query between '@' and cursor
   const query = text.substring(atPos + 1, cursorPos);
-  
-  // Must not contain whitespace
-  if (/\s/.test(query)) return null;
   
   return { start: atPos, query };
 }
