@@ -10,16 +10,12 @@
 
 export type Sentiment = 'positive' | 'negative' | 'neutral';
 
-// Transformers.js is optional - this feature uses fallback heuristics
-// The ML model loading is disabled to avoid Vite bundling issues
-let pipelineModule: any = null;
-const transformersUnavailable = true; // Disabled - use heuristic detection
-
-const loadPipeline = async (): Promise<any> => {
-  // ML model loading disabled - always use fallback detection
-  // @xenova/transformers has bundling issues with Vite
-  return null;
-};
+// Sentiment analysis uses lightweight heuristic detection (no ML dependencies)
+// This approach was chosen to improve Developer Experience:
+// - No native C++/Python compilation required for npm install
+// - Works immediately on any developer machine
+// - Fallback quality is sufficient for tone adjustment
+const transformersUnavailable = true;
 
 export interface SentimentResult {
   sentiment: Sentiment;
@@ -38,49 +34,11 @@ class TransformersSentimentAnalyzer {
   private loadError: Error | null = null;
 
   /**
-   * Lazy-load the sentiment analysis model
-   * Model is cached in browser after first download
-   * Returns null if transformers.js is not available
+   * Model loading disabled - always uses heuristic detection
+   * Kept for API compatibility with components that call ensureModel()
    */
   private async ensureModel() {
-    if (this.classifier) return this.classifier;
-    if (transformersUnavailable) return null;
-    if (this.isLoading) {
-      // Wait for ongoing load
-      while (this.isLoading) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      return this.classifier;
-    }
-
-    this.isLoading = true;
-    try {
-      console.log('[SentimentAnalyzer] Loading Transformers.js model...');
-      
-      // Use DistilBERT fine-tuned for sentiment analysis
-      // Fast, accurate, and browser-friendly
-      const pipeline = await loadPipeline();
-      if (!pipeline) {
-        // Transformers not available, will use fallback detection
-        return null;
-      }
-      this.classifier = await pipeline(
-        'sentiment-analysis',
-        'Xenova/distilbert-base-uncased-finetuned-sst-2-english'
-      );
-      
-      console.log('[SentimentAnalyzer] ✅ Model loaded and cached');
-      this.loadError = null;
-    } catch (error) {
-      console.error('[SentimentAnalyzer] Failed to load model:', error);
-      this.loadError = error as Error;
-      // Don't throw - just return null to fall back to heuristics
-      return null;
-    } finally {
-      this.isLoading = false;
-    }
-
-    return this.classifier;
+    return null;
   }
 
   /**

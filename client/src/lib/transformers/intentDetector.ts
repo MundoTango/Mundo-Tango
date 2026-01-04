@@ -11,16 +11,12 @@
 
 export type UserIntent = 'visual_change' | 'code_generation' | 'question' | 'command';
 
-// Transformers.js is optional - this feature uses regex-only detection
-// The ML model loading is disabled to avoid Vite bundling issues
-let pipelineModule: any = null;
-const transformersUnavailable = true; // Disabled - use regex-only detection
-
-const loadPipeline = async (): Promise<any> => {
-  // ML model loading disabled - always use fast regex detection
-  // @xenova/transformers has bundling issues with Vite
-  return null;
-};
+// Intent detection uses fast regex patterns (no ML dependencies)
+// This approach was chosen to improve Developer Experience:
+// - No native C++/Python compilation required for npm install
+// - Works immediately on any developer machine
+// - Regex detection provides instant, high-confidence results
+const transformersUnavailable = true;
 
 export interface IntentResult {
   intent: UserIntent;
@@ -39,49 +35,11 @@ class TransformersIntentDetector {
   private loadError: Error | null = null;
 
   /**
-   * Lazy-load the text classification model
-   * Model is cached in browser after first download
-   * Returns null if transformers.js is not available
+   * Model loading disabled - always uses regex detection
+   * Kept for API compatibility with components that call ensureModel()
    */
   private async ensureModel() {
-    if (this.classifier) return this.classifier;
-    if (transformersUnavailable) return null;
-    if (this.isLoading) {
-      // Wait for ongoing load
-      while (this.isLoading) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      return this.classifier;
-    }
-
-    this.isLoading = true;
-    try {
-      console.log('[IntentDetector] Loading Transformers.js model...');
-      
-      // Use zero-shot classification for intent detection
-      // This model can classify text into custom categories without training
-      const pipeline = await loadPipeline();
-      if (!pipeline) {
-        // Transformers not available, will use regex-only detection
-        return null;
-      }
-      this.classifier = await pipeline(
-        'zero-shot-classification',
-        'Xenova/distilbert-base-uncased-mnli'
-      );
-      
-      console.log('[IntentDetector] ✅ Model loaded and cached');
-      this.loadError = null;
-    } catch (error) {
-      console.error('[IntentDetector] Failed to load model:', error);
-      this.loadError = error as Error;
-      // Don't throw - just return null to fall back to regex
-      return null;
-    } finally {
-      this.isLoading = false;
-    }
-
-    return this.classifier;
+    return null;
   }
 
   /**
