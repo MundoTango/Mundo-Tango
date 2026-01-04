@@ -13,10 +13,55 @@ const sendMessageSchema = z.object({
 });
 
 export function registerMessagingRoutes(app: Express) {
+  app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+    try {
+      const result = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(directMessages)
+        .where(
+          and(
+            eq(directMessages.recipientId, req.user.id),
+            eq(directMessages.isRead, false)
+          )
+        );
+      
+      const unreadCount = result[0]?.count || 0;
+      console.log(`[Messaging] Unread count for user ${req.user.id}: ${unreadCount}`);
+      res.json({ count: unreadCount });
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
+      res.status(500).send("Failed to fetch unread count");
+    }
+  });
+
+  app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+    try {
+      const result = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(directMessages)
+        .where(
+          and(
+            eq(directMessages.recipientId, req.user.id),
+            eq(directMessages.isRead, false)
+          )
+        );
+      
+      const unreadCount = result[0]?.count || 0;
+      console.log(`[Messaging] Unread count for user ${req.user.id}: ${unreadCount}`);
+      res.json({ count: unreadCount });
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
+      res.status(500).send("Failed to fetch unread count");
+    }
+  });
+
   app.get("/api/messages/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     try {
+      // Find all conversations involving the user
       const dms = await db
         .select({
           id: directMessages.id,
@@ -33,8 +78,7 @@ export function registerMessagingRoutes(app: Express) {
             eq(directMessages.recipientId, req.user.id)
           )
         )
-        .orderBy(desc(directMessages.createdAt))
-        .limit(100);
+        .orderBy(desc(directMessages.createdAt));
 
       const conversationMap = new Map<number, any>();
       
@@ -46,8 +90,10 @@ export function registerMessagingRoutes(app: Express) {
             userId: partnerId,
             lastMessage: msg.content,
             timestamp: msg.createdAt,
-            isRead: msg.senderId !== req.user.id ? msg.isRead : true,
+            // A conversation is unread if the latest message was sent TO the user and is NOT read
+            isRead: msg.senderId === req.user.id ? true : msg.isRead,
             type: 'direct',
+            channel: 'mt'
           });
         }
       }
