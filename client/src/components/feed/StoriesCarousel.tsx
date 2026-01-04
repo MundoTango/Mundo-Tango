@@ -8,6 +8,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserRoleBadges } from "@/components/UserRoleBadges";
+import { useTranslation } from "react-i18next";
 
 type Story = {
   id: number;
@@ -36,6 +37,7 @@ type GroupedStories = {
 };
 
 export function StoriesCarousel() {
+  const { t } = useTranslation("pages");
   const { user } = useAuth();
   const [selectedStoryGroup, setSelectedStoryGroup] = useState<GroupedStories | null>(null);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
@@ -50,7 +52,7 @@ export function StoriesCarousel() {
     if (!acc[userId]) {
       acc[userId] = {
         userId,
-        userName: story.user?.name || "Unknown",
+        userName: story.user?.name || t("feed.user.unknown"),
         userImage: story.user?.profileImage,
         userTangoRoles: story.user?.tangoRoles,
         stories: [],
@@ -123,13 +125,13 @@ export function StoriesCarousel() {
             <div className="relative">
               <Avatar className="h-16 w-16 border-2 border-border">
                 <AvatarImage src={user?.profileImage || undefined} />
-                <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+                <AvatarFallback>{user?.name?.[0] || t("feed.user.unknownUsername").charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="absolute bottom-0 right-0 bg-primary rounded-full p-1">
                 <Plus className="h-3 w-3 text-primary-foreground" />
               </div>
             </div>
-            <span className="text-xs font-medium text-center line-clamp-1">Your Story</span>
+            <span className="text-xs font-medium text-center line-clamp-1">{t("feed.stories.yourStory")}</span>
           </button>
 
           {/* Stories from other users */}
@@ -234,7 +236,7 @@ export function StoriesCarousel() {
                   {selectedStoryGroup.stories[currentStoryIndex].imageUrl ? (
                     <img
                       src={selectedStoryGroup.stories[currentStoryIndex].imageUrl || ""}
-                      alt="Story"
+                      alt={t("feed.stories.storyAlt")}
                       className="max-h-full max-w-full object-contain"
                       data-testid="story-image"
                     />

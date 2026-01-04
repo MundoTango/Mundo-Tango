@@ -10,6 +10,7 @@ import { Link } from "wouter";
 import { UnifiedRSVPButton, type RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 import { useMyEvents, useUpcomingEvents, useMyRSVPs } from "@/hooks/useEvents";
 import { useNotificationSubscription } from "@/contexts/NotificationWebSocketContext";
+import { useTranslation } from "react-i18next";
 
 interface Event {
   id: number;
@@ -38,12 +39,15 @@ interface UpcomingEventsSidebarProps {
   className?: string;
 }
 
-const PRIORITY_CATEGORIES = [
-  { id: "my-events", label: "My Events", icon: Star, color: "from-amber-500 to-orange-500" },
-  { id: "upcoming", label: "Upcoming", icon: Clock, color: "from-purple-500 to-indigo-500" },
-];
+const PRIORITY_CATEGORY_ICONS: Record<string, { icon: any; color: string }> = {
+  "my-events": { icon: Star, color: "from-amber-500 to-orange-500" },
+  "upcoming": { icon: Clock, color: "from-purple-500 to-indigo-500" },
+};
+
+const PRIORITY_CATEGORY_IDS = ["my-events", "upcoming"];
 
 export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps) {
+  const { t } = useTranslation("pages");
   const [selectedCategory, setSelectedCategory] = useState("my-events");
   const [realtimeRsvps, setRealtimeRsvps] = useState<Record<number, number>>({});
   const queryClient = useQueryClient();
@@ -75,7 +79,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
   const events: Event[] = selectedCategory === 'my-events'
     ? (myEventsData as any[]).map((rsvp: any) => rsvp.event || {
         id: rsvp.eventId,
-        title: rsvp.eventTitle || 'Untitled Event',
+        title: rsvp.eventTitle || t("feed.events.untitledEvent"),
         startDate: rsvp.eventStartDate || new Date().toISOString(),
         location: rsvp.eventLocation,
         rsvpCount: rsvp.eventRsvpCount || 0,
@@ -127,13 +131,13 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
               className="bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent"
               style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
             >
-              Upcoming Events
+              {t("feed.events.upcomingEvents")}
             </span>
           </h3>
         </div>
         <Link href="/events">
           <Button variant="ghost" size="sm" className="text-xs" data-testid="button-view-all-events">
-            View All
+            {t("feed.events.viewAll")}
             <ExternalLink className="w-3 h-3 ml-1" />
           </Button>
         </Link>
@@ -141,20 +145,21 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
 
       {/* Category Filters */}
       <div className="grid grid-cols-2 gap-2">
-        {PRIORITY_CATEGORIES.map((category) => {
-          const Icon = category.icon;
-          const isActive = selectedCategory === category.id;
+        {PRIORITY_CATEGORY_IDS.map((categoryId) => {
+          const categoryData = PRIORITY_CATEGORY_ICONS[categoryId];
+          const Icon = categoryData.icon;
+          const isActive = selectedCategory === categoryId;
           return (
             <Button
-              key={category.id}
+              key={categoryId}
               variant={isActive ? "default" : "outline"}
               size="sm"
-              onClick={() => setSelectedCategory(category.id)}
-              className={`gap-1.5 text-xs ${isActive ? `bg-gradient-to-r ${category.color} text-white border-0` : ''}`}
-              data-testid={`button-category-${category.id}`}
+              onClick={() => setSelectedCategory(categoryId)}
+              className={`gap-1.5 text-xs ${isActive ? `bg-gradient-to-r ${categoryData.color} text-white border-0` : ''}`}
+              data-testid={`button-category-${categoryId}`}
             >
               <Icon className="w-3.5 h-3.5" />
-              {category.label}
+              {t(`feed.events.categories.${categoryId}`)}
             </Button>
           );
         })}
@@ -205,10 +210,10 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                           }}
                         >
                           <div className="text-xs font-semibold">
-                            {safeDateFormat(event.startDate, 'MMM', 'TBD')}
+                            {safeDateFormat(event.startDate, 'MMM', t("feed.events.dateTbd"))}
                           </div>
                           <div className="text-2xl font-bold">
-                            {safeDateFormat(event.startDate, 'd', '?')}
+                            {safeDateFormat(event.startDate, 'd', t("feed.events.dateDay"))}
                           </div>
                         </div>
                       )}
@@ -253,7 +258,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                             data-testid={`rsvp-count-${event.id}`}
                           >
                             <Users className="w-3 h-3" />
-                            {rsvpCount} going
+                            {t("feed.events.going", { count: rsvpCount })}
                           </Badge>
                           
                           {/* Use UnifiedRSVPButton for consistent cache management */}
@@ -273,7 +278,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
         ) : (
           <div className="text-center py-8 text-sm text-muted-foreground">
             <Calendar className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            No {selectedCategory} events at the moment
+            {t("feed.events.noEvents")}
           </div>
         )}
       </div>
@@ -285,7 +290,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
           data-testid="button-create-event"
         >
           <Calendar className="w-4 h-4 mr-2" />
-          Create Event
+          {t("feed.events.createEvent")}
         </Button>
       </Link>
     </Card>

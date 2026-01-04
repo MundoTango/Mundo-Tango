@@ -895,6 +895,24 @@
       "unknown": "Unknown",
       "unknownUser": "Unknown User",
       "unknownUsername": "unknown"
+    },
+    "stories": {
+      "yourStory": "Your Story",
+      "storyAlt": "Story content"
+    },
+    "events": {
+      "upcomingEvents": "Upcoming Events",
+      "viewAll": "View All",
+      "createEvent": "Create Event",
+      "going": "{{count}} going",
+      "noEvents": "No events at the moment",
+      "untitledEvent": "Untitled Event",
+      "categories": {
+        "my-events": "My Events",
+        "upcoming": "Upcoming"
+      },
+      "dateTbd": "TBD",
+      "dateDay": "?"
     }
   },
   "events": {
