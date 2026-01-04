@@ -59,9 +59,8 @@ router.get("/events/search", authenticateToken, async (req, res) => {
     const results = searchedEvents
       .filter((event: any) => {
         const titleMatch = event.title.toLowerCase().includes(searchQuery);
-        const cityMatch = event.city && event.city.toLowerCase().includes(searchQuery);
-        // Ensure strictly relevant matches only
-        return titleMatch || cityMatch;
+        // Strict filtering: only match title to avoid showing incorrect events for a city
+        return titleMatch;
       })
       .map((event: any) => ({
       id: `event_${event.id}`,

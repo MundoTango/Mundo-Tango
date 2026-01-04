@@ -277,16 +277,11 @@ export function SimpleMentionsInput({
           ...resultsByType.group
         ].filter(result => {
           const display = result.display.toLowerCase();
-          const name = (result.name || "").toLowerCase();
           const username = (result.username || "").toLowerCase();
-          const subtitle = (result.subtitle || "").toLowerCase();
-          // Stricter filtering: must start with query OR contain it in display name/username
+          
+          // Strict search: The result MUST contain the query in the display name
+          // OR it must be a direct city match for the city being searched
           return display.includes(lowerQuery) || username.includes(lowerQuery);
-        }).filter(result => {
-          // Additional strict filter to ensure only relevant matches show up
-          const display = result.display.toLowerCase();
-          const query = lowerQuery;
-          return display.includes(query);
         }).map(result => ({
           ...result,
           display: result.display.replace(/\sTango\sCommunity$/i, '')
