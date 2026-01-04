@@ -10,7 +10,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { DemoModal } from "@/components/marketing/DemoModal";
-import { MotionDiv, MotionH2, MotionP } from "@/components/marketing/MotionComponents";
 import {
   MapPin,
   Users,
@@ -51,10 +50,6 @@ const MotionDivSafe = motion.div as any;
 const MotionH2Safe = motion.h2 as any;
 const MotionPSafe = motion.p as any;
 
-// Original Motion components for nested consistency if needed
-const MotionDiv = MotionDivSafe;
-const MotionH2 = MotionH2Safe;
-const MotionP = MotionPSafe;
 
 // Cookie helpers
 const getCookie = (name: string): string | null => {
@@ -568,7 +563,7 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {features.map((feature, index) => (
-                <MotionDiv key={index} variants={fadeInUp}>
+                <MotionDivSafe key={index} variants={fadeInUp}>
                   <Card
                     className="h-full hover-elevate"
                     data-testid={`card-feature-${index}`}
@@ -585,10 +580,10 @@ export default function LandingPage() {
                       </p>
                     </CardContent>
                   </Card>
-                </MotionDiv>
+                </MotionDivSafe>
               ))}
             </div>
-          </MotionDiv>
+          </MotionDivSafe>
         </div>
       </section>
 
@@ -626,7 +621,7 @@ export default function LandingPage() {
                 </Button>
               </Link>
             </div>
-          </MotionDiv>
+          </MotionDivSafe>
         </div>
       </section>
 
@@ -661,7 +656,7 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {steps.map((step, index) => (
-                <MotionDiv
+                <MotionDivSafe
                   key={index}
                   variants={fadeInUp}
                   className="relative"
@@ -682,10 +677,10 @@ export default function LandingPage() {
                   {index < steps.length - 1 && (
                     <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary to-transparent" />
                   )}
-                </MotionDiv>
+                </MotionDivSafe>
               ))}
             </div>
-          </MotionDiv>
+          </MotionDivSafe>
         </div>
       </section>
 
@@ -720,7 +715,7 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {comingSoonFeatures.map((feature, index) => (
-                <MotionDiv key={index} variants={fadeInUp}>
+                <MotionDivSafe key={index} variants={fadeInUp}>
                   <Card
                     className="h-full hover-elevate"
                     data-testid={`card-coming-soon-${index}`}
@@ -737,11 +732,11 @@ export default function LandingPage() {
                       </p>
                     </CardContent>
                   </Card>
-                </MotionDiv>
+                </MotionDivSafe>
               ))}
             </div>
 
-            <MotionDiv
+            <MotionDivSafe
               variants={fadeInUp}
               className="text-center max-w-2xl mx-auto pt-8"
             >
@@ -758,8 +753,8 @@ export default function LandingPage() {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-            </MotionDiv>
-          </MotionDiv>
+            </MotionDivSafe>
+          </MotionDivSafe>
         </div>
       </section>
 
