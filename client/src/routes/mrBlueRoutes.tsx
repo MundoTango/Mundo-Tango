@@ -26,7 +26,7 @@ const MrBlueContextMemoryPage = lazy(() => import("@/pages/mrblue/ContextMemoryP
 const MrBlueAnalyticsPage = lazy(() => import("@/pages/mrblue/AnalyticsPage"));
 const MrBlueOnboardingPage = lazy(() => import("@/pages/mrblue/OnboardingPage"));
 const UnifiedMrBlue = HEAVY_FEATURES_ENABLED
-  ? lazy(() => import("@/components/mr-blue/UnifiedMrBlue"))
+  ? lazy(() => import("@/components/mrBlue/UnifiedMrBlue"))
   : FeatureDisabled;
 const VisualEditorMode = HEAVY_FEATURES_ENABLED
   ? lazy(() =>
