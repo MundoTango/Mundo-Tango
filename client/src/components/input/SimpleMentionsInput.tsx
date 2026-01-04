@@ -105,9 +105,9 @@ export function SimpleMentionsInput({
       case 'event':
         return {
           ...baseStyle,
-          background: 'linear-gradient(135deg, rgba(30, 144, 255, 0.2), rgba(59, 130, 246, 0.2))',
-          borderColor: 'rgba(30, 144, 255, 0.5)',
-          color: 'rgb(30, 144, 255)',
+          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(248, 113, 113, 0.2))',
+          borderColor: 'rgba(239, 68, 68, 0.5)',
+          color: 'rgb(239, 68, 68)',
         };
       default: // user
         return {
@@ -245,7 +245,17 @@ export function SimpleMentionsInput({
             
             if (response.ok) {
               const { data } = await response.json();
-              resultsByType[type] = data as MentionEntity[];
+              // Clean up city displays to remove " Tango Community" suffix if it's there
+              const processedData = (data as MentionEntity[]).map(entity => {
+                if (type === 'city' && entity.display) {
+                  return {
+                    ...entity,
+                    display: entity.display.replace(/\sTango\sCommunity$/i, '')
+                  };
+                }
+                return entity;
+              });
+              resultsByType[type] = processedData;
             }
           })
         );
