@@ -105,9 +105,9 @@ export function SimpleMentionsInput({
       case 'event':
         return {
           ...baseStyle,
-          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(248, 113, 113, 0.2))',
-          borderColor: 'rgba(239, 68, 68, 0.5)',
-          color: 'rgb(239, 68, 68)',
+          background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(74, 222, 128, 0.2))',
+          borderColor: 'rgba(34, 197, 94, 0.5)',
+          color: 'rgb(34, 197, 94)',
         };
       default: // user
         return {
