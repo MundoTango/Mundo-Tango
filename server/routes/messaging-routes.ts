@@ -406,6 +406,32 @@ export function registerMessagingRoutes(app: Express) {
     }
   });
 
+  // Mark all messages from a specific sender as read
+  app.post("/api/messages/mark-read", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+
+    const { senderId } = req.body;
+    if (!senderId) return res.status(400).send("Sender ID is required");
+
+    try {
+      await db
+        .update(directMessages)
+        .set({ isRead: true })
+        .where(
+          and(
+            eq(directMessages.senderId, senderId),
+            eq(directMessages.recipientId, req.user.id),
+            eq(directMessages.isRead, false)
+          )
+        );
+
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error marking messages as read:", error);
+      res.status(500).send("Failed to mark messages as read");
+    }
+  });
+
   // PRO Contact Form - Routes contact form submissions to PRO user's inbox
   const proContactSchema = z.object({
     proUserId: z.number(),

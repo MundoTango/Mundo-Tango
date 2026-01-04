@@ -253,6 +253,8 @@ export default function UnifiedInbox() {
           queryClient.invalidateQueries({ queryKey: ['/api/messages/unread-count'] });
           // Also refresh the messages list to update read status
           queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });
+          // Also refresh conversations to update the blinking circle
+          queryClient.invalidateQueries({ queryKey: ['/api/messages/conversations'] });
         } catch (error) {
           console.error('Failed to mark messages as read:', error);
         }
