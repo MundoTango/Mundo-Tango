@@ -19,6 +19,13 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - Never mark messaging tasks complete without E2E verification - Must test PRO contact → inbox flow and new conversation creation
 - Verify imports exist before using - Check all referenced schemas/tables are imported at file top
 
+## Developer Experience (Updated Jan 4, 2026)
+- **Zero Native Compilation**: `npm install` completes without Python/C++ toolchain requirements
+- **Removed Dependencies**: `@xenova/transformers` (was dead code, caused node-gyp failures for volunteers)
+- **Heuristic AI Detection**: Sentiment analysis and intent detection use lightweight regex/heuristics instead of ML models
+- **Local Setup Guide**: See `docs/dev/LOCAL_SETUP.md` for volunteer onboarding instructions
+- **Design Goal**: Volunteers should be able to `git clone && npm install && npm run dev` without compilation errors
+
 ## System Architecture
 
 ### UI/UX
