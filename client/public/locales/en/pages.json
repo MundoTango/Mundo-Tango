@@ -776,14 +776,115 @@
   "feed": {
     "title": "Feed",
     "description": "Stay updated with the latest from the tango community",
+    "seo": {
+      "title": "Memory Feed - Mundo Tango"
+    },
+    "tabs": {
+      "following": "Following",
+      "discover": "Discover"
+    },
     "filters": {
       "all": "All Posts",
       "following": "Following",
       "popular": "Popular",
-      "recent": "Recent"
+      "recent": "Recent",
+      "friends": "Friends",
+      "public": "Public",
+      "saved": "Saved",
+      "myPosts": "My Posts",
+      "mentions": "Mentions"
     },
     "createPost": "What's on your mind?",
-    "noPost": "No posts to display"
+    "noPost": "No posts to display",
+    "newPosts": {
+      "singular": "{{count}} new post",
+      "plural": "{{count}} new posts"
+    },
+    "comments": {
+      "placeholder": "Write a comment...",
+      "submit": "Comment",
+      "posting": "Posting...",
+      "noComments": "No comments yet. Be the first to comment!",
+      "typingOne": "{{users}} is typing...",
+      "typingMultiple": "{{users}} are typing..."
+    },
+    "posts": {
+      "deleteConfirm": "Are you sure you want to delete this post?",
+      "deleted": "Post deleted",
+      "deletedDescription": "Your post has been removed",
+      "deleteError": "Error",
+      "deleteErrorDescription": "Could not delete post",
+      "endOfFeed": "You've reached the end!",
+      "endOfFeedDescription": "Why not create a new memory?",
+      "createMemory": "Create Memory",
+      "errorLoading": "Error loading feed",
+      "errorDescription": "Could not load posts. Please try again.",
+      "retry": "Retry",
+      "signInRequired": "Sign in required",
+      "signInToReact": "Please sign in to react to posts"
+    },
+    "actions": {
+      "copyLink": "Copy Link",
+      "editPost": "Edit Post",
+      "deletePost": "Delete Post",
+      "reportPost": "Report Post",
+      "undo": "Undo",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "submit": "Submit Report",
+      "submitting": "Submitting..."
+    },
+    "dialogs": {
+      "deleteTitle": "Delete Post",
+      "deleteDescription": "Are you sure you want to delete this post? This action cannot be undone.",
+      "editTitle": "Edit Post",
+      "reportTitle": "Report Post",
+      "reportPlaceholder": "Please describe why you're reporting this post..."
+    },
+    "toasts": {
+      "postDeleted": "Post deleted",
+      "postDeletedDescription": "Your post has been removed",
+      "postRestored": "Post restored",
+      "postRestoredDescription": "Your post is back",
+      "deleteFailed": "Failed to delete",
+      "postUpdated": "Post updated",
+      "postUpdatedDescription": "Your changes have been saved",
+      "updateFailed": "Failed to update",
+      "reportSubmitted": "Report submitted",
+      "reportSubmittedDescription": "We'll review this content soon",
+      "reportFailed": "Failed to report",
+      "linkCopied": "Link copied",
+      "linkCopiedDescription": "Post link copied to clipboard",
+      "tryAgain": "Please try again"
+    },
+    "tags": {
+      "travel": "Travel",
+      "food": "Food",
+      "culture": "Culture",
+      "adventure": "Adventure",
+      "nightlife": "Nightlife",
+      "nature": "Nature",
+      "art": "Art",
+      "music": "Music",
+      "sports": "Sports",
+      "photography": "Photography",
+      "family": "Family",
+      "friends": "Friends",
+      "work": "Work",
+      "milestone": "Milestone",
+      "celebration": "Celebration"
+    },
+    "categories": {
+      "restaurant": "Restaurant",
+      "cafe": "Café",
+      "hotel": "Hotel",
+      "venue": "Tango Venue",
+      "activity": "Activity",
+      "bar": "Bar"
+    }
   },
   "events": {
     "title": "Events",
