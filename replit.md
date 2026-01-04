@@ -66,6 +66,14 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Access Control**: God-level users (scott@boddye.com, admin@mundotango.life, tier === 8) required
 - **Backward Compatibility**: `/admin/founder-approval` redirects to unified queue
 
+### Feed System (Updated Jan 4, 2026)
+- **Following Feed**: Shows posts from users you follow + your own posts (requires following/friends)
+- **Discover Feed**: Shows trending public posts with time-based fallback
+- **Fallback Logic**: When no posts exist within time windows (48h for discover, 24h for trending), falls back to all public posts sorted by recency
+- **Null Handling**: Engagement metrics (likes, comments, shares) safely handle null values to prevent NaN in scoring
+- **CSRF Exempt**: `/api/qa-platform/visitor-email` is exempt for guest email capture (Facebook Live modal)
+- **Location**: `server/services/feedAlgorithm.ts` contains all feed algorithm logic
+
 ### Navigation & Attention Hub (Updated Dec 30, 2025)
 - **Fake User Filter**: `@discovered.mundotango.app` emails excluded from friend requests/suggestions via `not(like(users.email, '%@discovered.mundotango.app'))` filter in storage.ts
 - **Language Selector**: REMOVED from both UnifiedTopBar.tsx and GlobalTopbar.tsx (language setting from user profile only)

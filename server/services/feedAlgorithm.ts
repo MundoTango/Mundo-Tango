@@ -257,11 +257,11 @@ export class FeedAlgorithmService {
    */
   async getDiscoverFeed(userId: number, limit: number = 20, offset: number = 0) {
     try {
-      // Get trending posts from last 48 hours
+      // Try to get trending posts from last 48 hours first
       const fortyEightHoursAgo = new Date();
       fortyEightHoursAgo.setHours(fortyEightHoursAgo.getHours() - 48);
 
-      const trendingPosts = await db
+      let trendingPosts = await db
         .select({
           post: posts,
           user: {
@@ -294,18 +294,49 @@ export class FeedAlgorithmService {
         .orderBy(desc(posts.createdAt))
         .limit(100);
 
+      // Fallback: If no recent posts, get all public posts sorted by recency
+      if (trendingPosts.length === 0) {
+        trendingPosts = await db
+          .select({
+            post: posts,
+            user: {
+              id: users.id,
+              name: users.name,
+              username: users.username,
+              profileImage: users.profileImage,
+              tangoRoles: users.tangoRoles,
+            },
+            likesCount: sql<number>`(
+              SELECT COUNT(*)::int FROM ${reactions}
+              WHERE ${reactions.postId} = ${posts.id}
+              AND ${reactions.reactionType} = 'like'
+            )`,
+            commentsCount: sql<number>`(
+              SELECT COUNT(*)::int FROM ${postComments}
+              WHERE ${postComments.postId} = ${posts.id}
+            )`,
+            sharesCount: posts.shares,
+          })
+          .from(posts)
+          .innerJoin(users, eq(posts.userId, users.id))
+          .where(eq(posts.visibility, 'public'))
+          .orderBy(desc(posts.createdAt))
+          .limit(100);
+      }
+
       // Calculate engagement scores
       const scoredPosts = trendingPosts.map(({ post, user: postUser, likesCount, commentsCount, sharesCount }) => {
         const ageHours = (Date.now() - new Date(post.createdAt).getTime()) / (1000 * 60 * 60);
-        const engagementScore = (likesCount * 1 + commentsCount * 2 + sharesCount * 3) / Math.max(ageHours, 1);
+        const safeShares = sharesCount || 0;
+        const engagementScore = ((likesCount || 0) * 1 + (commentsCount || 0) * 2 + safeShares * 3) / Math.max(ageHours, 1);
 
         return {
           post: {
             ...post,
             user: postUser,
-            likes: likesCount,
-            comments: commentsCount,
-            shares: sharesCount,
+            likes: likesCount || 0,
+            comments: commentsCount || 0,
+            shares: safeShares,
           },
           score: engagementScore,
         };
@@ -340,7 +371,7 @@ export class FeedAlgorithmService {
       const twentyFourHoursAgo = new Date();
       twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
 
-      const trendingCandidates = await db
+      let trendingCandidates = await db
         .select({
           post: posts,
           user: {
@@ -359,6 +390,26 @@ export class FeedAlgorithmService {
             eq(posts.visibility, 'public')
           )
         );
+
+      // Fallback: If no recent posts, get all public posts sorted by recency
+      if (trendingCandidates.length === 0) {
+        trendingCandidates = await db
+          .select({
+            post: posts,
+            user: {
+              id: users.id,
+              name: users.name,
+              username: users.username,
+              profileImage: users.profileImage,
+              tangoRoles: users.tangoRoles,
+            },
+          })
+          .from(posts)
+          .innerJoin(users, eq(posts.userId, users.id))
+          .where(eq(posts.visibility, 'public'))
+          .orderBy(desc(posts.createdAt))
+          .limit(limit * 2);
+      }
 
       // Calculate trending score using post's existing counts
       const scoredPosts = trendingCandidates.map(({ post, user: postUser }) => {

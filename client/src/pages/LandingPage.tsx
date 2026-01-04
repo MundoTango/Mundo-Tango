@@ -454,7 +454,7 @@ export default function LandingPage() {
                     {/* Dynamic next session */}
                     <div className="bg-white/10 rounded-lg px-4 py-2 inline-block">
                       <span className="text-lg font-bold text-amber-200">
-                        {t('pages:landing.hero.nextSession', { date: nextSessionLabel }, 'Next Session: {{date}}')}
+                        {t('pages:landing.hero.nextSession', { date: nextSessionLabel, defaultValue: 'Next Session: {{date}}' })}
                       </span>
                     </div>
                   </div>
@@ -829,8 +829,9 @@ export default function LandingPage() {
                     cities: publicStats?.platformStats?.cities || 79,
                     countries: publicStats?.platformStats?.countries || 27,
                     hours: publicStats?.platformStats?.hoursInvested?.toLocaleString() || "3,000",
-                    amount: (publicStats?.platformStats?.amountInvested || 30000).toLocaleString()
-                  }, "Scott started dancing tango in {{date}} and has traveled to {{cities}} cities across {{countries}} countries for tango. In April 2024, he began building Mundo Tango, investing over {{hours}} hours and ${{amount}} of his own money to create the platform the tango community deserves.")}
+                    amount: (publicStats?.platformStats?.amountInvested || 30000).toLocaleString(),
+                    defaultValue: "Scott started dancing tango in {{date}} and has traveled to {{cities}} cities across {{countries}} countries for tango. In April 2024, he began building Mundo Tango, investing over {{hours}} hours and ${{amount}} of his own money to create the platform the tango community deserves."
+                  })}
                 </p>
               </div>
               <div className="flex gap-3">
