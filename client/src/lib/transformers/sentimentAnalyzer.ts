@@ -1,24 +1,17 @@
 /**
- * Browser-Based Sentiment Analyzer using Transformers.js
+ * Browser-Based Sentiment Analyzer using regex patterns
  * Analyzes user message sentiment to adjust Mr. Blue's tone
  * 
  * Sentiment Types:
  * - positive: Happy, satisfied, encouraging messages
  * - negative: Frustrated, upset, critical messages  
  * - neutral: Informational, factual messages
+ * 
+ * Note: ML-based detection removed to reduce bundle size.
+ * Fast regex-based detection handles common sentiment patterns accurately.
  */
 
 export type Sentiment = 'positive' | 'negative' | 'neutral';
-
-// Dynamic import to avoid bundling the large transformers library
-let pipelineModule: any = null;
-const loadPipeline = async () => {
-  if (!pipelineModule) {
-    const module = await import('@xenova/transformers');
-    pipelineModule = module.pipeline;
-  }
-  return pipelineModule;
-};
 
 export interface SentimentResult {
   sentiment: Sentiment;
@@ -31,112 +24,94 @@ export interface SentimentResult {
   suggestedTone: string;
 }
 
-class TransformersSentimentAnalyzer {
-  private classifier: any = null;
-  private isLoading = false;
-  private loadError: Error | null = null;
-
+class SentimentAnalyzer {
   /**
-   * Lazy-load the sentiment analysis model
-   * Model is cached in browser after first download
-   */
-  private async ensureModel() {
-    if (this.classifier) return this.classifier;
-    if (this.isLoading) {
-      // Wait for ongoing load
-      while (this.isLoading) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      return this.classifier;
-    }
-
-    this.isLoading = true;
-    try {
-      console.log('[SentimentAnalyzer] Loading Transformers.js model...');
-      
-      // Use DistilBERT fine-tuned for sentiment analysis
-      // Fast, accurate, and browser-friendly
-      const pipeline = await loadPipeline();
-      this.classifier = await pipeline(
-        'sentiment-analysis',
-        'Xenova/distilbert-base-uncased-finetuned-sst-2-english'
-      );
-      
-      console.log('[SentimentAnalyzer] ✅ Model loaded and cached');
-      this.loadError = null;
-    } catch (error) {
-      console.error('[SentimentAnalyzer] Failed to load model:', error);
-      this.loadError = error as Error;
-      throw error;
-    } finally {
-      this.isLoading = false;
-    }
-
-    return this.classifier;
-  }
-
-  /**
-   * Analyze sentiment of user message
+   * Analyze sentiment of user message using regex patterns
    * Returns sentiment type and suggested response tone
    */
   async analyzeSentiment(message: string): Promise<SentimentResult> {
-    try {
-      const model = await this.ensureModel();
-      
-      // Run sentiment analysis
-      const results = await model(message);
-      const result = Array.isArray(results) ? results[0] : results;
-      
-      // Map model output to our sentiment types
-      let sentiment: Sentiment;
-      let scores = {
-        positive: 0,
-        negative: 0,
-        neutral: 0,
-      };
-
-      if (result.label === 'POSITIVE') {
-        sentiment = 'positive';
-        scores.positive = result.score;
-        scores.negative = 1 - result.score;
-        scores.neutral = 0.5; // Estimate
-      } else if (result.label === 'NEGATIVE') {
-        sentiment = 'negative';
-        scores.negative = result.score;
-        scores.positive = 1 - result.score;
-        scores.neutral = 0.5; // Estimate
-      } else {
-        // Fallback to neutral
-        sentiment = 'neutral';
-        scores.neutral = 0.8;
-        scores.positive = 0.1;
-        scores.negative = 0.1;
-      }
-
-      // Suggest response tone based on sentiment
-      const suggestedTone = this.getSuggestedTone(sentiment, result.score);
-
-      return {
-        sentiment,
-        confidence: result.score,
-        scores,
-        suggestedTone,
-      };
-    } catch (error) {
-      console.error('[SentimentAnalyzer] Analysis failed:', error);
-      
-      // Fallback to neutral sentiment
-      return {
-        sentiment: 'neutral',
-        confidence: 0.5,
-        scores: {
-          positive: 0.33,
-          negative: 0.33,
-          neutral: 0.34,
-        },
-        suggestedTone: 'friendly and helpful',
-      };
+    const lowerMessage = message.toLowerCase().trim();
+    
+    const positiveScore = this.getPositiveScore(lowerMessage);
+    const negativeScore = this.getNegativeScore(lowerMessage);
+    
+    let sentiment: Sentiment;
+    let confidence: number;
+    
+    if (negativeScore > positiveScore && negativeScore > 0.3) {
+      sentiment = 'negative';
+      confidence = Math.min(0.95, negativeScore);
+    } else if (positiveScore > negativeScore && positiveScore > 0.3) {
+      sentiment = 'positive';
+      confidence = Math.min(0.95, positiveScore);
+    } else {
+      sentiment = 'neutral';
+      confidence = 0.7;
     }
+    
+    const scores = {
+      positive: positiveScore,
+      negative: negativeScore,
+      neutral: 1 - Math.max(positiveScore, negativeScore),
+    };
+    
+    const suggestedTone = this.getSuggestedTone(sentiment, confidence);
+    
+    return {
+      sentiment,
+      confidence,
+      scores,
+      suggestedTone,
+    };
+  }
+
+  /**
+   * Calculate positive sentiment score based on patterns
+   */
+  private getPositiveScore(message: string): number {
+    const positivePatterns = [
+      /\b(great|awesome|amazing|excellent|wonderful|fantastic|perfect|love|thank|thanks|appreciate|happy|glad|excited|beautiful|brilliant)\b/,
+      /\b(good job|well done|nice work|looks great|works well|very helpful)\b/,
+      /\b(yes|yay|woo|hurray|finally)\b/,
+      /[!]{1,2}$/,
+      /:\)|😊|😄|👍|❤️|🎉|✨/,
+    ];
+    
+    let score = 0;
+    for (const pattern of positivePatterns) {
+      if (pattern.test(message)) {
+        score += 0.25;
+      }
+    }
+    
+    return Math.min(1, score);
+  }
+
+  /**
+   * Calculate negative sentiment score based on patterns
+   */
+  private getNegativeScore(message: string): number {
+    const negativePatterns = [
+      /\b(broken|error|bug|issue|problem|wrong|bad|terrible|horrible|awful|hate|frustrated|annoying|annoyed|upset|angry|stupid|useless|waste)\b/,
+      /\b(doesn't work|not working|doesn't help|can't|cannot|won't|failed|failing|crash|crashed)\b/,
+      /\b(why|what the|seriously|again|still|ugh|argh)\b/,
+      /\b(disappointing|disappointed|clumsy|awkward|confusing|confused|difficult|hard to|struggling|stuck)\b/,
+      /\b(slow|laggy|unresponsive|freezing|timeout|taking too long)\b/,
+      /\b(unclear|unhelpful|incomplete|missing|lacking|weird|odd|strange)\b/,
+      /\b(concern|worried|worried about|nervous|anxious|unsure)\b/,
+      /\b(wish|hoped|expected|should have|could have been)\b/,
+      /[!?]{2,}/,
+      /😡|😤|😞|😢|👎|💔|😠/,
+    ];
+    
+    let score = 0;
+    for (const pattern of negativePatterns) {
+      if (pattern.test(message)) {
+        score += 0.25;
+      }
+    }
+    
+    return Math.min(1, score);
   }
 
   /**
@@ -164,10 +139,8 @@ class TransformersSentimentAnalyzer {
     message: string,
     previousMessages: string[] = []
   ): Promise<SentimentResult> {
-    // Analyze current message
     const currentResult = await this.analyzeSentiment(message);
 
-    // If user has been consistently frustrated, maintain empathetic tone
     if (previousMessages.length >= 2) {
       const previousSentiments = await Promise.all(
         previousMessages.slice(-3).map(msg => this.analyzeSentiment(msg))
@@ -186,27 +159,23 @@ class TransformersSentimentAnalyzer {
   }
 
   /**
-   * Check if model is ready or loading
+   * Check if analyzer is ready (always true - no external dependencies)
    */
   getStatus(): { ready: boolean; loading: boolean; error: string | null } {
     return {
-      ready: this.classifier !== null,
-      loading: this.isLoading,
-      error: this.loadError?.message || null,
+      ready: true,
+      loading: false,
+      error: null,
     };
   }
 
   /**
-   * Preload model in background (optional optimization)
+   * Preload (no-op - no external model needed)
    */
   async preload(): Promise<void> {
-    try {
-      await this.ensureModel();
-    } catch (error) {
-      console.warn('[SentimentAnalyzer] Preload failed:', error);
-    }
+    // No-op - regex-based analysis needs no preloading
   }
 }
 
 // Singleton instance
-export const sentimentAnalyzer = new TransformersSentimentAnalyzer();
+export const sentimentAnalyzer = new SentimentAnalyzer();
