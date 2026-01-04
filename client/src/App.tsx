@@ -13,7 +13,7 @@ import { NotificationWebSocketProvider } from "./contexts/NotificationWebSocketC
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingFallback } from "./components/LoadingFallback";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
-import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
+import { MrBlueFloatingButton } from "@/components/mrBlue/core/MrBlueFloatingButton";
 import { CookieConsent } from "./components/marketing/CookieConsent";
 import {
   initErrorDetection,
