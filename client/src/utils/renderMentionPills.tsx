@@ -22,7 +22,9 @@ const getMentionPath = (type: EntityType, id: string): string => {
       return `/groups/${numericId}`;
     case 'city':
       // Cities use /cities/:slug route (MB.MD v9.9.3 compliance)
-      return `/cities/${id.toLowerCase().replace(/\s+/g, '-')}-tango`;
+      // Extract name from ID if possible, or use ID directly
+      const citySlug = id.toLowerCase().replace(/\s+/g, '-');
+      return `/cities/${citySlug}-tango`;
     default:
       return '#';
   }

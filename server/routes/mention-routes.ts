@@ -199,11 +199,11 @@ router.get("/search", authenticateToken, async (req, res) => {
     }
 
     // Search @city-groups (communities)
-    if (!type || type === "city-group") {
+    if (!type || type === "city") {
       const searchedCommunities = await (storage as any).searchCommunities(searchQuery, limit);
       results.push(...searchedCommunities.map((community: any) => ({
         id: community.id,
-        type: "city-group" as const,
+        type: "city" as const,
         name: community.name,
         username: `city-${community.id}`,
         avatar: community.coverPhotoUrl,
@@ -266,10 +266,10 @@ router.post("/resolve", authenticateToken, async (req, res) => {
               url: `/groups/${group.id}`,
             } : null;
 
-          case "city-group":
+          case "city":
             const community = await storage.getCommunityById(mention.id);
             return community ? {
-              type: "city-group",
+              type: "city",
               id: community.id,
               name: community.name,
               url: `/communities/${community.id}`,

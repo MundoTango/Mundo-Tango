@@ -121,10 +121,10 @@ export function SimpleMentionsInput({
 
   const getMentionIcon = (type: EntityType) => {
     switch (type) {
-      case 'group': return <Building2 className="w-3 h-3" />;
-      case 'city': return <MapPin className="w-3 h-3" />;
-      case 'event': return <Calendar className="w-3 h-3" />;
-      default: return <Users className="w-3 h-3" />;
+      case 'group': return <Building2 className="w-3.5 h-3.5" />;
+      case 'city': return <MapPin className="w-3.5 h-3.5" />;
+      case 'event': return <Calendar className="w-3.5 h-3.5" />;
+      default: return <Users className="w-3.5 h-3.5" />;
     }
   };
 
