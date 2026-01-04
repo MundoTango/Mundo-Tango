@@ -43,13 +43,17 @@ A multi-stage scraping architecture is coordinated by a Master Orchestrator, uti
 ### Platform Features
 Core functionalities include social features (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and an International Payment System supporting 30 currencies.
 
-### Messaging System (Updated Dec 30, 2025)
+### Messaging System (Updated Jan 4, 2026)
 - **Database**: Uses `directMessages` table (PRIMARY). `chatRooms`/`chatMessages` are DEPRECATED.
 - **PRO Contact → Inbox**: Contact form via `/api/pro/contact` routes to directMessages ✅ COMPLETE
 - **New Conversations**: User search via `/api/users/search` endpoint
-- **Real-time**: Currently polling (5s), WebSocket planned
+- **Real-time**: Currently polling (30s), WebSocket transition planned (see `docs/prd/REALTIME_WEBSOCKET.md`)
 - **Group Chat**: Uses `group_messages` table via `/api/groups/:id/messages` ✅ FIXED
 - **Documentation**: See `docs/PRD_MESSAGING_AND_PRO_PAGE.md` for full specification
+- **Next Steps**: 
+  1. Implement WebSocket for instant message delivery
+  2. Integrate external channels (Facebook, Gmail) for unified communication
+  3. Enhance notification triggers for all message types
 - **Related PRDs**:
   - `docs/MESSAGING_ECOSYSTEM_MAP.md` - All systems interacting with messaging
   - `docs/prd/NOTIFICATIONS_SYSTEM.md` - 17 notification types (new_message + group_message ADDED)

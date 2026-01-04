@@ -205,6 +205,9 @@ function UnifiedTopBar({
 
   const messageCount = messageData?.count || 0;
 
+  // Sync message count with local state if needed (optional, query already handles it)
+  // But let's ensure it's not hardcoded anywhere else
+
   // Fetch pending friend request count (separate from notifications - shows even if notifs are read)
   const { data: friendRequestsData = [] } = useQuery<any[]>({
     queryKey: ['/api/friends/requests/received'],
