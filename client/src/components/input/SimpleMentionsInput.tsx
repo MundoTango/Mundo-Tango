@@ -280,8 +280,13 @@ export function SimpleMentionsInput({
           const name = (result.name || "").toLowerCase();
           const username = (result.username || "").toLowerCase();
           const subtitle = (result.subtitle || "").toLowerCase();
-          // STricter filtering: must contain query in display name or username
+          // Stricter filtering: must start with query OR contain it in display name/username
           return display.includes(lowerQuery) || username.includes(lowerQuery);
+        }).filter(result => {
+          // Additional strict filter to ensure only relevant matches show up
+          const display = result.display.toLowerCase();
+          const query = lowerQuery;
+          return display.includes(query);
         }).map(result => ({
           ...result,
           display: result.display.replace(/\sTango\sCommunity$/i, '')
