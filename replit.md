@@ -82,10 +82,10 @@ Core functionalities include social features (events, groups, posts, notificatio
 
 ### FeedPage Ecosystem (Updated Jan 4, 2026)
 - **Deep Analysis**: See `docs/FEEDPAGE_DEEP_ANALYSIS.md` for comprehensive 10-phase MB.MD v9.9.5 audit
-- **i18n Status**: ✅ COMPLETE - 6 core components fixed (FeedTabs, CommentsSection, NewPostsBanner, InfiniteScrollFeed, PostActions, PostItem)
+- **i18n Status**: ✅ COMPLETE - 8 components fixed (FeedTabs, CommentsSection, NewPostsBanner, InfiniteScrollFeed, PostActions, PostItem, StoriesCarousel, UpcomingEventsSidebar)
 - **@Mentions System**: ✅ Working - PostCreator uses SimpleMentionsInput, backend APIs verified
 - **Key Components**: PostCreator (1475 lines), InfiniteScrollFeed, StoriesCarousel (lazy), UpcomingEventsSidebar (lazy)
-- **Remaining Fixes**: 4 MEDIUM (StoriesCarousel, UpcomingEventsSidebar, PostCreator i18n), 2 LOW (accessibility polish)
+- **Remaining Fixes**: 2 MEDIUM (PostCreator i18n, FeedPage main), 2 LOW (accessibility polish)
 
 ### Three-Layer Completion Status (Updated Jan 4, 2026)
 | System | UI | Data | Interaction | Notes |
@@ -96,7 +96,7 @@ Core functionalities include social features (events, groups, posts, notificatio
 | External Channels | 80% | 50% | 30% | Facebook partial |
 | Groups | 85% | 90% | 80% | FIXED Dec 30 - group_messages table |
 | Navigation Hub | 95% | 100% | 90% | Fake user filter + badge fix Dec 30 |
-| Feed Page | 95% | 90% | 85% | ✅ i18n FIXED Jan 4 - 6 components |
+| Feed Page | 98% | 95% | 90% | ✅ i18n FIXED Jan 4 - 8 components |
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase
