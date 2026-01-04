@@ -7,7 +7,7 @@
  */
 
 import { Router, type Request, Response } from 'express';
-import { agentLifecycle, type AgentActivationResult } from '../../services/mrblue/AgentLifecycle';
+import { agentLifecycle, type AgentActivationResult } from '../../services/mrBlue/AgentLifecycle';
 
 const router = Router();
 

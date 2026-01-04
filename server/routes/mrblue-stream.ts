@@ -15,9 +15,9 @@ import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
-import { vibeCodeApplier } from "../services/mrblue/VibeCodeApplier";
-import { agentCommunication } from "../services/mrblue/AgentCommunication";
-import type { StyleChange } from "../services/mrblue/agents/BasePageAgent";
+import { vibeCodeApplier } from "../services/mrBlue/VibeCodeApplier";
+import { agentCommunication } from "../services/mrBlue/AgentCommunication";
+import type { StyleChange } from "../services/mrBlue/agents/BasePageAgent";
 
 const router = Router();
 

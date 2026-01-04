@@ -12,7 +12,7 @@ import { PredictiveContextProvider } from "./providers/PredictiveContextProvider
 import { NotificationWebSocketProvider } from "./contexts/NotificationWebSocketContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingFallback } from "./components/LoadingFallback";
-import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
+import { GlobalMrBlue } from "./components/mrBlue/GlobalMrBlue";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { CookieConsent } from "./components/marketing/CookieConsent";
 import {

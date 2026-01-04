@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { MrBlueChatComponent } from '../components/MrBlue/ChatComponent';
+import { MrBlueChatComponent } from '../components/mrBlue/ChatComponent';
 
 export function MrBluePage() {
   const { t } = useTranslation(["pages", "common"]);
