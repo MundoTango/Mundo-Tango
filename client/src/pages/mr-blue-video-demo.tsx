@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MrBlueAvatarVideo } from '@/components/mrBlue/MrBlueAvatarVideo';
+import { MrBlueAvatarVideo } from '@/components/mrBlue/core/MrBlueAvatarVideo';
 import type { VideoState } from '@/hooks/useVideoStateManager';
 import { Sparkles, Brain, Smile, Mic, MessageSquare, ThumbsUp, PartyPopper, AlertCircle, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react';
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';

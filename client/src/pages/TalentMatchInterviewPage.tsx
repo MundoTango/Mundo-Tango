@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, Home, Upload, RefreshCw } from "lucide-react";
-import { TalentMatchInterviewChat, type PhaseConfig } from "@/components/mr-blue/TalentMatchInterviewChat";
+import { TalentMatchInterviewChat, type PhaseConfig } from "@/components/mrBlue/advanced/TalentMatchInterviewChat";
 import { apiRequest } from "@/lib/queryClient";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";

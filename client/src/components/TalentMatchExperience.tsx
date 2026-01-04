@@ -30,7 +30,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTalentMatchSession, type StoredDocument } from "@/contexts/TalentMatchSessionContext";
-import { TalentMatchInterviewChat, type PhaseConfig } from "@/components/mr-blue/TalentMatchInterviewChat";
+import { TalentMatchInterviewChat, type PhaseConfig } from "@/components/mrBlue/advanced/TalentMatchInterviewChat";
 
 interface TalentMatchExperienceProps {
   mode: "authenticated" | "guest";

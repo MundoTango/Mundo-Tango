@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { MrBlueStudio } from '@/components/mr-blue/MrBlueStudio';
+import { MrBlueStudio } from '@/components/mrBlue/advanced/MrBlueStudio';
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function MrBlueStudioPage() {

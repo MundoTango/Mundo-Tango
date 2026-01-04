@@ -22,7 +22,7 @@ async function completeFeatures() {
 5. Pass the context ('Help' or 'Features') to Mr. Blue
 
 Search for existing patterns in:
-- client/src/components/mrBlue/
+- client/src/components/mrBlue/core/
 - client/src/hooks/
 - Look for setOpen, openChat, or similar methods`,
     context: [

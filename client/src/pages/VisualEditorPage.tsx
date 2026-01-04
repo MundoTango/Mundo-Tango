@@ -37,7 +37,7 @@ import { contextBuilder } from "@/services/ContextBuilderService";
 import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer";
 import { SEO } from "@/components/SEO";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { ErrorAnalysisPanel } from "@/components/mr-blue/ErrorAnalysisPanel";
+import { ErrorAnalysisPanel } from "@/components/mrBlue/advanced/ErrorAnalysisPanel";
 import { BackendSaveProgressModal, type BackendSaveProgress } from "@/components/visual-editor/BackendSaveProgressModal";
 import { InlineEditingInstructions } from "@/components/visual-editor/InlineEditingInstructions";
 import { ElementPropertiesPanel } from "@/components/visual-editor/ElementPropertiesPanel";
