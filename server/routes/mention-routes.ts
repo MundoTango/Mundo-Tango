@@ -22,7 +22,12 @@ router.get("/users/search", authenticateToken, async (req, res) => {
     const searchedUsers = isAdmin 
       ? await (storage as any).searchUsersAdmin(searchQuery, limit)
       : await (storage as any).searchUsers(searchQuery, limit);
-    const results = searchedUsers.map((user: any) => ({
+    const results = searchedUsers
+      .filter((user: any) => 
+        user.username.toLowerCase().includes(searchQuery) || 
+        (user.name && user.name.toLowerCase().includes(searchQuery))
+      )
+      .map((user: any) => ({
       id: `user_${user.id}`,
       type: "user" as const,
       display: user.username,
@@ -111,10 +116,18 @@ router.get("/cities/search", authenticateToken, async (req, res) => {
     const limit = 10;
 
     const searchedCommunities = await (storage as any).searchCommunities(searchQuery, limit);
-    const results = searchedCommunities.map((community: any) => ({
+    // Deduplicate and filter results
+    const results = searchedCommunities
+      .filter((community: any, index: number, self: any[]) => 
+        // Strict match on city name or community name
+        (community.name.toLowerCase().includes(searchQuery) || community.cityName.toLowerCase().includes(searchQuery)) &&
+        // Deduplicate by cityName
+        index === self.findIndex((t) => t.cityName === community.cityName)
+      )
+      .map((community: any) => ({
       id: `city_${community.id}`,
       type: "city" as const,
-      display: community.name,
+      display: community.name.replace(/\sTango\sCommunity$/i, ''),
       avatar: community.coverPhotoUrl,
       subtitle: `${community.cityName} • ${community.memberCount || 0} members`,
       metadata: { country: community.country },

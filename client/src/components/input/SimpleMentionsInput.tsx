@@ -267,24 +267,47 @@ export function SimpleMentionsInput({
           })
         );
 
-        // Prioritize cities first, then balance other types
-        // Reserve up to 3 slots for each type, with cities first
-        const cities = resultsByType.city.slice(0, 3);
-        const users = resultsByType.user.slice(0, 3);
-        const events = resultsByType.event.slice(0, 3);
-        const groups = resultsByType.group.slice(0, 3);
+        const lowerQuery = mentionSearchQuery.toLowerCase();
         
-        // Combine with cities first for visibility
+        // Combine results and apply strict filtering + display cleanup
+        const allFiltered = [
+          ...resultsByType.city,
+          ...resultsByType.user,
+          ...resultsByType.event,
+          ...resultsByType.group
+        ].filter(result => {
+          const display = result.display.toLowerCase();
+          const name = (result.name || "").toLowerCase();
+          const username = (result.username || "").toLowerCase();
+          return display.includes(lowerQuery) || name.includes(lowerQuery) || username.includes(lowerQuery);
+        }).map(result => ({
+          ...result,
+          display: result.display.replace(/\sTango\sCommunity$/i, '')
+        }));
+
+        // Group back by type
+        const filteredByType = {
+          user: allFiltered.filter(r => r.type === "user"),
+          city: allFiltered.filter(r => r.type === "city"),
+          event: allFiltered.filter(r => r.type === "event"),
+          group: allFiltered.filter(r => r.type === "group"),
+        };
+
+        // Prioritize cities first, then balance other types
+        const cities = filteredByType.city.slice(0, 3);
+        const users = filteredByType.user.slice(0, 3);
+        const events = filteredByType.event.slice(0, 3);
+        const groups = filteredByType.group.slice(0, 3);
+        
         let allResults = [...cities, ...users, ...events, ...groups];
 
         // Sort results to prioritize those that start with the query, then those that include it
         allResults.sort((a, b) => {
           const aDisplay = a.display.toLowerCase();
           const bDisplay = b.display.toLowerCase();
-          const query = mentionSearchQuery.toLowerCase();
           
-          const aStartsWith = aDisplay.startsWith(query);
-          const bStartsWith = bDisplay.startsWith(query);
+          const aStartsWith = aDisplay.startsWith(lowerQuery);
+          const bStartsWith = bDisplay.startsWith(lowerQuery);
           
           if (aStartsWith && !bStartsWith) return -1;
           if (!aStartsWith && bStartsWith) return 1;
