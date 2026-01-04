@@ -5388,111 +5388,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // });
 
   // IMPORTANT: This route must come BEFORE /api/messages/:conversationId to avoid being caught by dynamic param
-  app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const userId = req.user!.id;
-      const userIdStr = String(userId);
-      
-      // Count messages where user is NOT in the readBy array
-      const result = await db.select({
-        count: sql<number>`count(*)::int`
-      })
-      .from(chatMessages)
-      .where(
-        sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
-      );
-      
-      res.json({ count: result[0]?.count || 0 });
-    } catch (error) {
-      console.error("Get unread message count error:", error);
-      res.json({ count: 0 });
-    }
-  });
-
-  // Get messages in a conversation (alias for MessagesDetailPage compatibility)
-  app.get("/api/messages/:conversationId", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const chatRoomId = parseInt(req.params.conversationId);
-      const { limit = "50", offset = "0" } = req.query;
-      
-      const messages = await storage.getChatRoomMessages(
-        chatRoomId,
-        parseInt(limit as string),
-        parseInt(offset as string)
-      );
-      
-      res.json(messages);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch messages" });
-    }
-  });
-
-  app.get("/api/messages/conversations/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const chatRoomId = parseInt(req.params.id);
-      const { limit = "50", offset = "0" } = req.query;
-      
-      const messages = await storage.getChatRoomMessages(
-        chatRoomId,
-        parseInt(limit as string),
-        parseInt(offset as string)
-      );
-      
-      res.json(messages);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch messages" });
-    }
-  });
-
-  // Send message (alias for MessagesDetailPage compatibility)
-  app.post("/api/messages/:conversationId", authenticateToken, validateRequest(insertChatMessageSchema.omit({ chatRoomId: true, userId: true })), async (req: AuthRequest, res: Response) => {
-    try {
-      const chatRoomId = parseInt(req.params.conversationId);
-      const message = await storage.sendMessage({
-        ...req.body,
-        chatRoomId,
-        userId: req.user!.id
-      });
-      res.status(201).json(message);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to send message" });
-    }
-  });
-
-  app.post("/api/messages/conversations/:id/messages", authenticateToken, validateRequest(insertChatMessageSchema.omit({ chatRoomId: true, userId: true })), async (req: AuthRequest, res: Response) => {
-    try {
-      const chatRoomId = parseInt(req.params.id);
-      const message = await storage.sendMessage({
-        ...req.body,
-        chatRoomId,
-        userId: req.user!.id
-      });
-      res.status(201).json(message);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to send message" });
-    }
-  });
-
-  app.put("/api/messages/conversations/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const chatRoomId = parseInt(req.params.id);
-      await storage.markConversationAsRead(chatRoomId, req.user!.id);
-      res.status(204).send();
-    } catch (error) {
-      res.status(500).json({ message: "Failed to mark as read" });
-    }
-  });
-
-  app.get("/api/notifications", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const { limit = "50" } = req.query;
-      const notifications = await storage.getUserNotifications(req.user!.id, parseInt(limit as string));
-      res.json(notifications);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch notifications" });
-    }
-  });
-
   app.get("/api/notifications/count", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const result = await db.select({
@@ -5508,25 +5403,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Get notification count error:", error);
       res.status(500).json({ message: "Failed to fetch notification count" });
-    }
-  });
-
-  app.put("/api/notifications/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const id = parseInt(req.params.id);
-      await storage.markNotificationAsRead(id);
-      res.status(204).send();
-    } catch (error) {
-      res.status(500).json({ message: "Failed to mark notification as read" });
-    }
-  });
-
-  app.post("/api/notifications/read-all", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      await storage.markAllNotificationsAsRead(req.user!.id);
-      res.status(204).send();
-    } catch (error) {
-      res.status(500).json({ message: "Failed to mark all notifications as read" });
     }
   });
 
