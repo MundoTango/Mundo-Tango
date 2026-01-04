@@ -32,10 +32,14 @@ function isGodLevel(user: any): boolean {
 router.post("/visitor-email", async (req: Request, res: Response) => {
   try {
     const { email, source } = req.body;
-    if (!email) return res.status(400).json({ error: "Email is required" });
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ error: "Invalid email" });
+    }
+
+    console.log(`[VisitorEmail] Capturing email: ${email} from source: ${source}`);
 
     // Store as a "Contact" or "Feedback" in the QA system so it appears in admin
-    await storage.createUserFeedback({
+    const feedback = await storage.createUserFeedback({
       userId: null, // Guest
       sessionId: null,
       feedbackType: "support",
@@ -46,7 +50,7 @@ router.post("/visitor-email", async (req: Request, res: Response) => {
       priority: "medium"
     });
 
-    res.json({ success: true });
+    res.status(201).json(feedback);
   } catch (error) {
     console.error("[QA] Error saving visitor email:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -185,19 +189,19 @@ router.get("/feedback/:id", async (req: Request, res: Response) => {
   }
 });
 
-// ============================================================================
-// ADMIN QUEUE (God-level only)
-// ============================================================================
-
+// Admin Review Endpoints
 router.get("/admin/pending", async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
-    if (!user || !isGodLevel(user)) {
-      return res.status(403).json({ error: "God-level access required" });
+    // Allow God level or regular Admins (tier >= 4)
+    if (!user || (!isGodLevel(user) && user.tier < 4)) {
+      console.log(`[QA Admin] Access denied for user ${user?.id} with tier ${user?.tier}`);
+      return res.status(403).json({ error: "Admin access required" });
     }
 
     const pending = await storage.getPendingFeedback();
-    res.json({ pending, count: pending.length });
+    console.log(`[QA Admin] Returning ${pending.length} pending items`);
+    res.json(pending); // Return the array directly as expected by useQuery
   } catch (error: any) {
     console.error("[QA Platform] Admin pending error:", error);
     res.status(500).json({ error: error.message });
@@ -207,31 +211,23 @@ router.get("/admin/pending", async (req: Request, res: Response) => {
 router.post("/admin/approve/:id", async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
-    if (!user || !isGodLevel(user)) {
-      return res.status(403).json({ error: "God-level access required" });
+    // Allow God level or regular Admins (tier >= 4)
+    if (!user || (!isGodLevel(user) && user.tier < 4)) {
+      return res.status(403).json({ error: "Admin access required" });
     }
 
     const id = parseInt(req.params.id);
-    const { action, reason, executionPlan } = req.body;
-
-    // Create approval record
-    const approval = await storage.createAdminApproval({
-      feedbackId: id,
-      adminId: user.id,
-      action: action || "approve",
-      reason,
-      executionPlan,
-    });
+    const { action, notes } = req.body;
 
     // Update feedback status
-    const newStatus = action === "reject" ? "rejected" : "in_progress";
+    const newStatus = action === "reject" ? "rejected" : "approved";
     await storage.updateUserFeedback(id, {
       status: newStatus,
       assignedTo: user.id,
-      adminNotes: reason,
+      adminNotes: notes,
     });
 
-    res.json({ success: true, approval });
+    res.json({ success: true });
   } catch (error: any) {
     console.error("[QA Platform] Admin approve error:", error);
     res.status(500).json({ error: error.message });

@@ -143,28 +143,54 @@ function FeedbackPanel() {
 
   const { data: feedbackList, isLoading } = useQuery<FeedbackItem[]>({
     queryKey: ['/api/qa-platform/admin/pending'],
+    retry: false,
+    select: (data: any) => Array.isArray(data) ? data : data.pending || [],
   });
 
   const approveMutation = useMutation({
     mutationFn: async ({ id, notes }: { id: number; notes: string }) => {
-      return apiRequest('POST', `/api/qa-platform/admin/approve/${id}`, { action: 'approve', notes });
+      const res = await apiRequest('POST', `/api/qa-platform/admin/approve/${id}`, { action: 'approve', notes });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || error.error || 'Failed to approve');
+      }
+      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
       setSelectedFeedback(null);
       toast({ title: 'Feedback approved', description: 'Mr. Blue will work on this issue.' });
     },
+    onError: (error: Error) => {
+      toast({ 
+        title: 'Error', 
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   });
 
   const rejectMutation = useMutation({
     mutationFn: async ({ id, notes }: { id: number; notes: string }) => {
-      return apiRequest('POST', `/api/qa-platform/admin/approve/${id}`, { action: 'reject', notes });
+      const res = await apiRequest('POST', `/api/qa-platform/admin/approve/${id}`, { action: 'reject', notes });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || error.error || 'Failed to reject');
+      }
+      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
       setSelectedFeedback(null);
       toast({ title: 'Feedback rejected', description: 'The user will be notified.' });
     },
+    onError: (error: Error) => {
+      toast({ 
+        title: 'Error', 
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   });
 
   const filteredFeedback = feedbackList?.filter(f => {
