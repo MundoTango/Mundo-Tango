@@ -25,6 +25,7 @@ import {
   Heart,
   PlusCircle,
   Folder,
+  Inbox,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useTranslation } from "react-i18next";
@@ -51,9 +52,10 @@ const dashboardItems = [
   { title: "Analytics", url: "/platform/analytics", icon: BarChart3 },
 ];
 
-// User Management (3 items)
+// User Management (4 items)
 const userManagementItems = [
   { title: "Users", url: "/admin/users", icon: Users },
+  { title: "Review Queue", url: "/admin/feedback-queue", icon: Inbox },
   { title: "Moderation", url: "/admin/moderation", icon: Shield },
   { title: "Reports", url: "/admin/reports", icon: AlertTriangle },
 ];
