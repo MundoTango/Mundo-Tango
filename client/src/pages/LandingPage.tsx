@@ -30,6 +30,7 @@ import {
   Twitter,
   Instagram,
   Youtube,
+  Heart,
 } from "lucide-react";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -44,6 +45,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import scottPhotoPath from "@assets/scott-founder-optimized.jpg";
+
+// Type-safe motion components for React 19 compatibility
+const MotionDivSafe = motion.div as any;
 
 // Cookie helpers
 const getCookie = (name: string): string | null => {
@@ -402,6 +406,21 @@ export default function LandingPage() {
                           <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
                       </Link>
+                      <a 
+                        href="https://www.gofundme.com/f/join-us-in-bringing-mundo-tango-to-life" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="bg-primary/20 border-primary/40 text-white hover:bg-primary/30 text-lg px-8 py-6 h-auto font-semibold gap-3"
+                          data-testid="button-support-us-hero"
+                        >
+                          <Heart className="h-5 w-5 text-red-400" />
+                          {t('common:supportUs', 'Support Us')}
+                        </Button>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -409,7 +428,7 @@ export default function LandingPage() {
               </div>
 
               {/* Live Sessions Announcement - Permanent recurring Thursday sessions */}
-              <MotionDiv
+              <MotionDivSafe
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.5, type: "spring", stiffness: 100 }}

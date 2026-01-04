@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -6,9 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { Heart, ArrowLeft, ExternalLink, Users, Globe, Clock, DollarSign } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
-import { motion } from "framer-motion";
 import { GoFundMeEmbed } from "@/components/marketing/GoFundMeEmbed";
 import { useQuery } from "@tanstack/react-query";
+
+// Type-safe motion components for React 19 compatibility
+const MotionDiv = motion.div as any;
 
 export default function DonatePage() {
   const { t } = useTranslation(["pages", "common"]);
@@ -40,7 +43,7 @@ export default function DonatePage() {
             </Button>
           </Link>
 
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}

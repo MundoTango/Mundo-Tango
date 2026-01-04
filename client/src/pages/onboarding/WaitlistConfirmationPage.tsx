@@ -11,6 +11,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { TalentMatchModal } from "@/components/TalentMatchModal";
 import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
+// Type-safe motion components for React 19 compatibility
+const MotionDiv = motion.div as any;
+
 export default function WaitlistConfirmationPage() {
   const { user } = useAuth();
   const { t } = useTranslation(['pages', 'common']);
@@ -33,20 +36,20 @@ export default function WaitlistConfirmationPage() {
           </div>
 
           <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-12">
-            <motion.div
+            <MotionDivSafe
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="text-center max-w-lg"
             >
-              <motion.div
+              <MotionDivSafe
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                 className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8"
               >
                 <PartyPopper className="w-12 h-12 text-green-400" />
-              </motion.div>
+              </MotionDivSafe>
 
               <h1 className="text-4xl md:text-5xl font-serif text-white font-bold mb-4" data-testid="heading-waitlist-success">
                 {t('pages:onboarding.waitlist.title', "You're on the List!")}
@@ -56,7 +59,7 @@ export default function WaitlistConfirmationPage() {
                 {t('pages:onboarding.waitlist.welcomeMessage', 'Welcome to the Mundo Tango community, {{name}}!', { name: user?.name || t('pages:onboarding.waitlist.defaultName', 'Dancer') })}
               </p>
 
-              <motion.div
+              <MotionDivSafe
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
