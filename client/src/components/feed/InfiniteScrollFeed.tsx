@@ -10,6 +10,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PostCreator } from "@/components/universal/PostCreator";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 type FeedType = "following" | "discover" | "personalized";
 type FilterType = "all" | "friends" | "public" | "saved" | "my-posts" | "mentions";
@@ -49,6 +50,7 @@ interface FeedResponse {
 }
 
 export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScrollFeedProps) {
+  const { t } = useTranslation("pages");
   const { toast } = useToast();
   const { user } = useAuth();
   const [editingPost, setEditingPost] = useState<Post | null>(null);
@@ -77,19 +79,19 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
   };
 
   const handleDelete = async (postId: number) => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
+    if (!confirm(t("feed.posts.deleteConfirm"))) return;
     
     try {
       await apiRequest('DELETE', `/api/posts/${postId}`);
       queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
       toast({
-        title: "Post deleted",
-        description: "Your post has been removed",
+        title: t("feed.posts.deleted"),
+        description: t("feed.posts.deletedDescription"),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Could not delete post",
+        title: t("feed.posts.deleteError"),
+        description: t("feed.posts.deleteErrorDescription"),
         variant: "destructive",
       });
     }
@@ -204,15 +206,15 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-        <h3 className="text-lg font-semibold mb-2">Failed to load feed</h3>
+        <h3 className="text-lg font-semibold mb-2">{t("feed.posts.errorLoading")}</h3>
         <p className="text-sm text-foreground/60 mb-4">
-          There was an error loading your feed. Please try again.
+          {t("feed.posts.errorDescription")}
         </p>
         <button
           onClick={() => refetch()}
           className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover-elevate active-elevate-2"
         >
-          Try Again
+          {t("feed.posts.retry")}
         </button>
       </div>
     );
@@ -292,12 +294,12 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
           </div>
         ) : hasNextPage ? (
           <div className="text-center text-sm text-foreground/60">
-            Scroll for more posts...
+            {t("feed.posts.scrollForMore", "Scroll for more posts...")}
           </div>
         ) : (
           <div className="text-center py-8 text-sm text-foreground/60" data-testid="text-end-of-feed">
-            <p className="font-medium">You've reached the end!</p>
-            <p className="mt-1">No more posts to show</p>
+            <p className="font-medium">{t("feed.posts.endOfFeed")}</p>
+            <p className="mt-1">{t("feed.posts.endOfFeedDescription")}</p>
           </div>
         )}
       </div>
@@ -306,7 +308,7 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
       <Dialog open={!!editingPost} onOpenChange={(open) => !open && setEditingPost(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="dialog-edit-post-creator">
           <DialogHeader>
-            <DialogTitle>Edit Post</DialogTitle>
+            <DialogTitle>{t("feed.dialogs.editTitle")}</DialogTitle>
           </DialogHeader>
           {editingPost && (
             <PostCreator

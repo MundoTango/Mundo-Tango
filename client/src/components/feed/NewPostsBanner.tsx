@@ -1,15 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNotificationSubscription } from "@/contexts/NotificationWebSocketContext";
+import { useTranslation } from "react-i18next";
 
 interface NewPostsBannerProps {
   onLoadNewPosts: () => void;
 }
 
 export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
+  const { t } = useTranslation("pages");
   const [newPostsCount, setNewPostsCount] = useState(0);
 
   const handleMessage = useCallback((message: { type: string; data?: any }) => {
@@ -29,6 +31,10 @@ export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
     return null;
   }
 
+  const postText = newPostsCount === 1 
+    ? t("feed.newPosts.singular", { count: newPostsCount })
+    : t("feed.newPosts.plural", { count: newPostsCount });
+
   return (
     <AnimatePresence>
       <motion.div
@@ -44,9 +50,7 @@ export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
           data-testid="button-load-new-posts"
         >
           <ChevronUp className="w-4 h-4" />
-          <span>
-            {newPostsCount} new {newPostsCount === 1 ? 'post' : 'posts'}
-          </span>
+          <span>{postText}</span>
           <RefreshCw className="w-4 h-4" />
           <Badge variant="secondary" className="ml-1">
             {newPostsCount}

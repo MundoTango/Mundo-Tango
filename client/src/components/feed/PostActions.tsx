@@ -17,6 +17,7 @@ import { MoreVertical, Pencil, Trash2, Flag, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 interface PostActionsProps {
   postId: number;
@@ -25,6 +26,7 @@ interface PostActionsProps {
 }
 
 export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps) {
+  const { t } = useTranslation("pages");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -46,8 +48,8 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
       queryClient.invalidateQueries({ queryKey: ["infinite-feed"] });
       toast({
-        title: "Post deleted",
-        description: "Your post has been removed",
+        title: t("feed.toasts.postDeleted"),
+        description: t("feed.toasts.postDeletedDescription"),
         action: (
           <button
             onClick={() => {
@@ -59,13 +61,16 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
               }).then(() => {
                 queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
                 queryClient.invalidateQueries({ queryKey: ["infinite-feed"] });
-                toast({ title: "Post restored", description: "Your post is back" });
+                toast({ 
+                  title: t("feed.toasts.postRestored"), 
+                  description: t("feed.toasts.postRestoredDescription") 
+                });
               });
             }}
             className="text-sm font-medium underline"
             data-testid="button-undo-delete"
           >
-            Undo
+            {t("feed.actions.undo")}
           </button>
         ),
       });
@@ -73,8 +78,8 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
     },
     onError: () => {
       toast({
-        title: "Failed to delete",
-        description: "Please try again",
+        title: t("feed.toasts.deleteFailed"),
+        description: t("feed.toasts.tryAgain"),
         variant: "destructive",
       });
     },
@@ -95,15 +100,15 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
       toast({
-        title: "Post updated",
-        description: "Your changes have been saved",
+        title: t("feed.toasts.postUpdated"),
+        description: t("feed.toasts.postUpdatedDescription"),
       });
       setShowEditDialog(false);
     },
     onError: () => {
       toast({
-        title: "Failed to update",
-        description: "Please try again",
+        title: t("feed.toasts.updateFailed"),
+        description: t("feed.toasts.tryAgain"),
         variant: "destructive",
       });
     },
@@ -123,16 +128,16 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
     },
     onSuccess: () => {
       toast({
-        title: "Report submitted",
-        description: "We'll review this content soon",
+        title: t("feed.toasts.reportSubmitted"),
+        description: t("feed.toasts.reportSubmittedDescription"),
       });
       setShowReportDialog(false);
       setReportReason("");
     },
     onError: () => {
       toast({
-        title: "Failed to report",
-        description: "Please try again",
+        title: t("feed.toasts.reportFailed"),
+        description: t("feed.toasts.tryAgain"),
         variant: "destructive",
       });
     },
@@ -141,8 +146,8 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
   const handleCopyLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}/posts/${postId}`);
     toast({
-      title: "Link copied",
-      description: "Post link copied to clipboard",
+      title: t("feed.toasts.linkCopied"),
+      description: t("feed.toasts.linkCopiedDescription"),
     });
   };
 
@@ -162,14 +167,14 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={handleCopyLink} data-testid={`menu-copy-link-${postId}`}>
             <Copy className="h-4 w-4 mr-2" />
-            Copy Link
+            {t("feed.actions.copyLink")}
           </DropdownMenuItem>
           
           {isOwnPost && (
             <>
               <DropdownMenuItem onClick={() => setShowEditDialog(true)} data-testid={`menu-edit-${postId}`}>
                 <Pencil className="h-4 w-4 mr-2" />
-                Edit Post
+                {t("feed.actions.editPost")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setShowDeleteDialog(true)}
@@ -177,7 +182,7 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
                 data-testid={`menu-delete-${postId}`}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete Post
+                {t("feed.actions.deletePost")}
               </DropdownMenuItem>
             </>
           )}
@@ -189,7 +194,7 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
               data-testid={`menu-report-${postId}`}
             >
               <Flag className="h-4 w-4 mr-2" />
-              Report Post
+              {t("feed.actions.reportPost")}
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>
@@ -199,20 +204,22 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogTitle>{t("feed.dialogs.deleteTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this post? This action cannot be undone.
+              {t("feed.dialogs.deleteDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid={`button-cancel-delete-${postId}`}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid={`button-cancel-delete-${postId}`}>
+              {t("feed.actions.cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteMutation.mutate()}
               disabled={deleteMutation.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               data-testid={`button-confirm-delete-${postId}`}
             >
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+              {deleteMutation.isPending ? t("feed.actions.deleting") : t("feed.actions.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -222,7 +229,7 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Post</DialogTitle>
+            <DialogTitle>{t("feed.dialogs.editTitle")}</DialogTitle>
           </DialogHeader>
           <Textarea
             value={editedContent}
@@ -232,14 +239,14 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
           />
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setShowEditDialog(false)}>
-              Cancel
+              {t("feed.actions.cancel")}
             </Button>
             <Button
               onClick={() => editMutation.mutate()}
               disabled={editMutation.isPending || !editedContent.trim()}
               data-testid={`button-save-edit-${postId}`}
             >
-              {editMutation.isPending ? "Saving..." : "Save"}
+              {editMutation.isPending ? t("feed.actions.saving") : t("feed.actions.save")}
             </Button>
           </div>
         </DialogContent>
@@ -249,18 +256,18 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
       <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Report Post</DialogTitle>
+            <DialogTitle>{t("feed.dialogs.reportTitle")}</DialogTitle>
           </DialogHeader>
           <Textarea
             value={reportReason}
             onChange={(e) => setReportReason(e.target.value)}
-            placeholder="Please describe why you're reporting this post..."
+            placeholder={t("feed.dialogs.reportPlaceholder")}
             className="min-h-32"
             data-testid={`input-report-reason-${postId}`}
           />
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setShowReportDialog(false)}>
-              Cancel
+              {t("feed.actions.cancel")}
             </Button>
             <Button
               onClick={() => reportMutation.mutate()}
@@ -268,7 +275,7 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               data-testid={`button-submit-report-${postId}`}
             >
-              {reportMutation.isPending ? "Submitting..." : "Submit Report"}
+              {reportMutation.isPending ? t("feed.actions.submitting") : t("feed.actions.submit")}
             </Button>
           </div>
         </DialogContent>

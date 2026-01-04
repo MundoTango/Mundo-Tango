@@ -1,5 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Compass } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 type FeedType = "following" | "discover";
 
@@ -9,6 +10,8 @@ interface FeedTabsProps {
 }
 
 export function FeedTabs({ value, onChange }: FeedTabsProps) {
+  const { t } = useTranslation("pages");
+
   return (
     <div className="w-full mb-6" data-testid="feed-tabs">
       <Tabs value={value} onValueChange={(v) => onChange(v as FeedType)}>
@@ -19,7 +22,7 @@ export function FeedTabs({ value, onChange }: FeedTabsProps) {
             data-testid="tab-following"
           >
             <Users className="h-4 w-4" />
-            <span>Following</span>
+            <span>{t("feed.tabs.following")}</span>
           </TabsTrigger>
           <TabsTrigger
             value="discover"
@@ -27,7 +30,7 @@ export function FeedTabs({ value, onChange }: FeedTabsProps) {
             data-testid="tab-discover"
           >
             <Compass className="h-4 w-4" />
-            <span>Discover</span>
+            <span>{t("feed.tabs.discover")}</span>
           </TabsTrigger>
         </TabsList>
       </Tabs>

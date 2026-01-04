@@ -22,6 +22,7 @@ import { motion } from "framer-motion";
 import { RoleIcon } from "@/components/RoleIcon";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { getRoleLabel, getRoleByValue } from "@/lib/tangoRoles";
+import { useTranslation } from "react-i18next";
 
 const MEMORY_TAGS = [
   { id: "travel", label: "Travel", icon: Plane, gradient: "from-cyan-500 to-blue-500" },
@@ -86,6 +87,7 @@ interface PostItemProps {
 }
 
 export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
+  const { t } = useTranslation("pages");
   const { user } = useAuth();
   const { toast } = useToast();
   const [showComments, setShowComments] = useState(false);
@@ -150,8 +152,8 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
     if (!user) {
       // User not logged in - show toast instead of making API call
       toast({
-        title: "Sign in required",
-        description: "Please sign in to react to posts",
+        title: t("feed.posts.signInRequired"),
+        description: t("feed.posts.signInToReact"),
         variant: "destructive",
       });
       return;

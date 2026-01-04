@@ -8,12 +8,14 @@ import { Loader2, MessageCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEngagementWebSocket } from "@/hooks/useEngagementWebSocket";
 import { queryClient } from "@/lib/queryClient";
+import { useTranslation } from "react-i18next";
 
 interface CommentsSectionProps {
   postId: number;
 }
 
 export const CommentsSection = ({ postId }: CommentsSectionProps) => {
+  const { t } = useTranslation("pages");
   const { user } = useAuth();
   const [newCommentContent, setNewCommentContent] = useState('');
   const { data: comments, isLoading } = useComments(postId);
@@ -107,6 +109,15 @@ export const CommentsSection = ({ postId }: CommentsSectionProps) => {
 
   const commentTree = comments ? buildCommentTree(comments) : [];
 
+  // Get typing indicator text
+  const getTypingText = () => {
+    if (typingUsers.length === 0) return null;
+    const users = typingUsers.join(', ');
+    return typingUsers.length === 1 
+      ? t("feed.comments.typingOne", { users })
+      : t("feed.comments.typingMultiple", { users });
+  };
+
   return (
     <div className="space-y-4" data-testid={`comments-section-${postId}`}>
       {/* Feature 20: Typing Indicator */}
@@ -117,16 +128,14 @@ export const CommentsSection = ({ postId }: CommentsSectionProps) => {
             <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
             <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
           </div>
-          <span>
-            {typingUsers.join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
-          </span>
+          <span>{getTypingText()}</span>
         </div>
       )}
 
       {/* New Comment Input */}
       <div className="space-y-2">
         <Textarea
-          placeholder="Write a comment..."
+          placeholder={t("feed.comments.placeholder")}
           value={newCommentContent}
           onChange={(e) => {
             setNewCommentContent(e.target.value);
@@ -160,12 +169,12 @@ export const CommentsSection = ({ postId }: CommentsSectionProps) => {
             {createComment.isPending ? (
               <>
                 <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                Posting...
+                {t("feed.comments.posting")}
               </>
             ) : (
               <>
                 <MessageCircle className="w-3 h-3 mr-2" />
-                Comment
+                {t("feed.comments.submit")}
               </>
             )}
           </Button>
@@ -179,7 +188,7 @@ export const CommentsSection = ({ postId }: CommentsSectionProps) => {
         </div>
       ) : commentTree.length === 0 ? (
         <div className="text-center py-4 text-muted-foreground text-sm">
-          No comments yet. Be the first to comment!
+          {t("feed.comments.noComments")}
         </div>
       ) : (
         <div className="space-y-4">
