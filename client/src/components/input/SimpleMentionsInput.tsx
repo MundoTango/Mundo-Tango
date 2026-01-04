@@ -226,7 +226,15 @@ export function SimpleMentionsInput({
         };
 
         // Fetch all entity types in parallel with auto token refresh
-        const responses = await Promise.all(
+        // Store results by type for balanced representation
+        const resultsByType: Record<EntityType, MentionEntity[]> = {
+          city: [],
+          user: [],
+          event: [],
+          group: [],
+        };
+        
+        await Promise.all(
           (Object.keys(endpoints) as EntityType[]).map(async (type) => {
             const response = await fetchWithAuth(endpoints[type]);
             
@@ -237,13 +245,38 @@ export function SimpleMentionsInput({
             
             if (response.ok) {
               const { data } = await response.json();
-              return data as MentionEntity[];
+              resultsByType[type] = data as MentionEntity[];
             }
-            return [];
           })
         );
 
-        const allResults = responses.flat();
+        // Prioritize cities first, then balance other types
+        // Reserve up to 3 slots for each type, with cities first
+        const cities = resultsByType.city.slice(0, 3);
+        const users = resultsByType.user.slice(0, 3);
+        const events = resultsByType.event.slice(0, 3);
+        const groups = resultsByType.group.slice(0, 3);
+        
+        // Combine with cities first for visibility
+        let allResults = [...cities, ...users, ...events, ...groups];
+        
+        // Backfill remaining slots if we have fewer than 10 results
+        // This ensures we show up to 10 results total
+        if (allResults.length < 10) {
+          const remaining = 10 - allResults.length;
+          const usedIds = new Set(allResults.map(r => r.id));
+          
+          // Get additional results from each type (beyond the first 3)
+          const extraUsers = resultsByType.user.slice(3).filter(r => !usedIds.has(r.id));
+          const extraEvents = resultsByType.event.slice(3).filter(r => !usedIds.has(r.id));
+          const extraGroups = resultsByType.group.slice(3).filter(r => !usedIds.has(r.id));
+          const extraCities = resultsByType.city.slice(3).filter(r => !usedIds.has(r.id));
+          
+          // Add extras until we reach 10
+          const extras = [...extraCities, ...extraUsers, ...extraEvents, ...extraGroups];
+          allResults = [...allResults, ...extras.slice(0, remaining)];
+        }
+        
         setMentionResults(allResults.slice(0, 10));
       } catch (error) {
         console.error('Failed to search mentions:', error);
