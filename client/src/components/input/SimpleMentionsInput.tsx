@@ -109,6 +109,13 @@ export function SimpleMentionsInput({
           borderColor: 'rgba(34, 197, 94, 0.5)',
           color: 'rgb(34, 197, 94)',
         };
+      case 'group':
+        return {
+          ...baseStyle,
+          background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(74, 222, 128, 0.2))',
+          borderColor: 'rgba(34, 197, 94, 0.5)',
+          color: 'rgb(34, 197, 94)',
+        };
       default: // user
         return {
           ...baseStyle,
@@ -269,6 +276,21 @@ export function SimpleMentionsInput({
         
         // Combine with cities first for visibility
         let allResults = [...cities, ...users, ...events, ...groups];
+
+        // Sort results to prioritize those that start with the query, then those that include it
+        allResults.sort((a, b) => {
+          const aDisplay = a.display.toLowerCase();
+          const bDisplay = b.display.toLowerCase();
+          const query = mentionSearchQuery.toLowerCase();
+          
+          const aStartsWith = aDisplay.startsWith(query);
+          const bStartsWith = bDisplay.startsWith(query);
+          
+          if (aStartsWith && !bStartsWith) return -1;
+          if (!aStartsWith && bStartsWith) return 1;
+          
+          return aDisplay.localeCompare(bDisplay);
+        });
         
         // Backfill remaining slots if we have fewer than 10 results
         // This ensures we show up to 10 results total

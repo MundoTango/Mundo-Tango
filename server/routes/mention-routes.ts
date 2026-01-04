@@ -52,10 +52,11 @@ router.get("/events/search", authenticateToken, async (req, res) => {
 
     const searchedEvents = await (storage as any).searchEventsSimple(searchQuery, limit);
     const results = searchedEvents
-      .filter((event: any) => 
-        event.title.toLowerCase().includes(searchQuery) || 
-        (event.city && event.city.toLowerCase().includes(searchQuery))
-      )
+      .filter((event: any) => {
+        const titleMatch = event.title.toLowerCase().includes(searchQuery);
+        const cityMatch = event.city && event.city.toLowerCase().includes(searchQuery);
+        return titleMatch || cityMatch;
+      })
       .map((event: any) => ({
       id: `event_${event.id}`,
       type: "event" as const,
