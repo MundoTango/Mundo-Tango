@@ -279,7 +279,9 @@ export function SimpleMentionsInput({
           const display = result.display.toLowerCase();
           const name = (result.name || "").toLowerCase();
           const username = (result.username || "").toLowerCase();
-          return display.includes(lowerQuery) || name.includes(lowerQuery) || username.includes(lowerQuery);
+          const subtitle = (result.subtitle || "").toLowerCase();
+          // STricter filtering: must contain query in display name or username
+          return display.includes(lowerQuery) || username.includes(lowerQuery);
         }).map(result => ({
           ...result,
           display: result.display.replace(/\sTango\sCommunity$/i, '')

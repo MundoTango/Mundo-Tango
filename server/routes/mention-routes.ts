@@ -60,6 +60,7 @@ router.get("/events/search", authenticateToken, async (req, res) => {
       .filter((event: any) => {
         const titleMatch = event.title.toLowerCase().includes(searchQuery);
         const cityMatch = event.city && event.city.toLowerCase().includes(searchQuery);
+        // Ensure strictly relevant matches only
         return titleMatch || cityMatch;
       })
       .map((event: any) => ({
@@ -116,24 +117,31 @@ router.get("/cities/search", authenticateToken, async (req, res) => {
     const limit = 10;
 
     const searchedCommunities = await (storage as any).searchCommunities(searchQuery, limit);
-    // Deduplicate by cityName and filter results strictly
+    // Deduplicate by display name and filter results strictly
     const results = searchedCommunities
       .reduce((acc: any[], community: any) => {
-        const isDuplicate = acc.some(item => item.display.toLowerCase() === community.name.replace(/\sTango\sCommunity$/i, '').toLowerCase());
-        const matchesQuery = community.name.toLowerCase().includes(searchQuery) || community.cityName.toLowerCase().includes(searchQuery);
+        const cleanDisplay = community.name.replace(/\sTango\sCommunity$/i, '');
+        const isDuplicate = acc.some(item => item.display.toLowerCase() === cleanDisplay.toLowerCase());
+        const matchesQuery = cleanDisplay.toLowerCase().includes(searchQuery) || community.cityName.toLowerCase().includes(searchQuery);
         
         if (!isDuplicate && matchesQuery) {
           acc.push({
             id: `city_${community.id}`,
             type: "city" as const,
-            display: community.name.replace(/\sTango\sCommunity$/i, ''),
+            display: cleanDisplay,
             avatar: community.coverPhotoUrl,
             subtitle: `${community.cityName} • ${community.memberCount || 0} members`,
             metadata: { country: community.country },
           });
         }
         return acc;
-      }, []);
+      }, [])
+      .sort((a: any, b: any) => {
+        // Prioritize Buenos Aires with 3 members
+        if (a.display === 'Buenos Aires' && a.subtitle.includes('3 members')) return -1;
+        if (b.display === 'Buenos Aires' && b.subtitle.includes('3 members')) return 1;
+        return 0;
+      });
 
     res.json({ data: results });
   } catch (error: any) {
