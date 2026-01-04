@@ -826,7 +826,8 @@
       "errorDescription": "Could not load posts. Please try again.",
       "retry": "Retry",
       "signInRequired": "Sign in required",
-      "signInToReact": "Please sign in to react to posts"
+      "signInToReact": "Please sign in to react to posts",
+      "postByUser": "Post by {{name}}"
     },
     "actions": {
       "copyLink": "Copy Link",
@@ -889,6 +890,11 @@
       "venue": "Tango Venue",
       "activity": "Activity",
       "bar": "Bar"
+    },
+    "user": {
+      "unknown": "Unknown",
+      "unknownUser": "Unknown User",
+      "unknownUsername": "unknown"
     }
   },
   "events": {

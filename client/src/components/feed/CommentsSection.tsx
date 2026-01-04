@@ -82,8 +82,8 @@ export const CommentsSection = ({ postId }: CommentsSectionProps) => {
           tangoRoles: comment.user.tangoRoles || [],
         } : { 
           id: comment.userId, 
-          name: 'Unknown User',
-          username: 'unknown',
+          name: t("feed.user.unknownUser"),
+          username: t("feed.user.unknownUsername"),
           profileImage: undefined,
           tangoRoles: [],
         },

@@ -24,32 +24,32 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { getRoleLabel, getRoleByValue } from "@/lib/tangoRoles";
 import { useTranslation } from "react-i18next";
 
-const MEMORY_TAGS = [
-  { id: "travel", label: "Travel", icon: Plane, gradient: "from-cyan-500 to-blue-500" },
-  { id: "food", label: "Food", icon: Pizza, gradient: "from-orange-500 to-red-500" },
-  { id: "culture", label: "Culture", icon: Drama, gradient: "from-purple-500 to-pink-500" },
-  { id: "adventure", label: "Adventure", icon: Mountain, gradient: "from-green-500 to-teal-500" },
-  { id: "nightlife", label: "Nightlife", icon: Moon, gradient: "from-indigo-500 to-purple-500" },
-  { id: "nature", label: "Nature", icon: Leaf, gradient: "from-emerald-500 to-green-500" },
-  { id: "art", label: "Art", icon: Palette, gradient: "from-pink-500 to-rose-500" },
-  { id: "music", label: "Music", icon: Music, gradient: "from-violet-500 to-purple-500" },
-  { id: "sports", label: "Sports", icon: Dumbbell, gradient: "from-blue-500 to-cyan-500" },
-  { id: "photography", label: "Photography", icon: PhotoIcon, gradient: "from-gray-500 to-slate-500" },
-  { id: "family", label: "Family", icon: HeartHandshake, gradient: "from-rose-500 to-pink-500" },
-  { id: "friends", label: "Friends", icon: UserPlus, gradient: "from-yellow-500 to-orange-500" },
-  { id: "work", label: "Work", icon: Briefcase, gradient: "from-slate-500 to-gray-500" },
-  { id: "milestone", label: "Milestone", icon: Target, gradient: "from-red-500 to-orange-500" },
-  { id: "celebration", label: "Celebration", icon: PartyPopper, gradient: "from-fuchsia-500 to-pink-500" },
-];
+const MEMORY_TAG_ICONS: Record<string, { icon: any; gradient: string }> = {
+  travel: { icon: Plane, gradient: "from-cyan-500 to-blue-500" },
+  food: { icon: Pizza, gradient: "from-orange-500 to-red-500" },
+  culture: { icon: Drama, gradient: "from-purple-500 to-pink-500" },
+  adventure: { icon: Mountain, gradient: "from-green-500 to-teal-500" },
+  nightlife: { icon: Moon, gradient: "from-indigo-500 to-purple-500" },
+  nature: { icon: Leaf, gradient: "from-emerald-500 to-green-500" },
+  art: { icon: Palette, gradient: "from-pink-500 to-rose-500" },
+  music: { icon: Music, gradient: "from-violet-500 to-purple-500" },
+  sports: { icon: Dumbbell, gradient: "from-blue-500 to-cyan-500" },
+  photography: { icon: PhotoIcon, gradient: "from-gray-500 to-slate-500" },
+  family: { icon: HeartHandshake, gradient: "from-rose-500 to-pink-500" },
+  friends: { icon: UserPlus, gradient: "from-yellow-500 to-orange-500" },
+  work: { icon: Briefcase, gradient: "from-slate-500 to-gray-500" },
+  milestone: { icon: Target, gradient: "from-red-500 to-orange-500" },
+  celebration: { icon: PartyPopper, gradient: "from-fuchsia-500 to-pink-500" },
+};
 
-const RECOMMENDATION_CATEGORIES = [
-  { id: "restaurant", label: "Restaurant", icon: UtensilsCrossed, gradient: "from-amber-500 to-orange-500" },
-  { id: "cafe", label: "Café", icon: Coffee, gradient: "from-amber-600 to-yellow-500" },
-  { id: "hotel", label: "Hotel", icon: Hotel, gradient: "from-blue-500 to-indigo-500" },
-  { id: "venue", label: "Tango Venue", icon: Star, gradient: "from-purple-500 to-pink-500" },
-  { id: "activity", label: "Activity", icon: Target, gradient: "from-green-500 to-teal-500" },
-  { id: "bar", label: "Bar", icon: Wine, gradient: "from-rose-500 to-red-500" },
-];
+const CATEGORY_ICONS: Record<string, { icon: any; gradient: string }> = {
+  restaurant: { icon: UtensilsCrossed, gradient: "from-amber-500 to-orange-500" },
+  cafe: { icon: Coffee, gradient: "from-amber-600 to-yellow-500" },
+  hotel: { icon: Hotel, gradient: "from-blue-500 to-indigo-500" },
+  venue: { icon: Star, gradient: "from-purple-500 to-pink-500" },
+  activity: { icon: Target, gradient: "from-green-500 to-teal-500" },
+  bar: { icon: Wine, gradient: "from-rose-500 to-red-500" },
+};
 
 export interface PostItemData {
   id: number;
@@ -217,9 +217,9 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold text-sm">{post.user?.name || "Unknown"}</span>
+                <span className="font-semibold text-sm">{post.user?.name || t("feed.user.unknown")}</span>
                 <span className="text-xs text-muted-foreground">
-                  @{post.user?.username || "unknown"}
+                  @{post.user?.username || t("feed.user.unknownUsername")}
                 </span>
                 {/* Tango Role Icons */}
                 {post.user?.tangoRoles && post.user.tangoRoles.length > 0 && (
@@ -272,11 +272,11 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         </div>
 
         {/* Recommendation Info - Hidden Gems */}
-        {post.postType && RECOMMENDATION_CATEGORIES.find(c => c.id === post.postType) && (
+        {post.postType && CATEGORY_ICONS[post.postType] && (
           <div className="px-4 pb-3" data-testid={`recommendation-info-${post.id}`}>
             <div className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
               {(() => {
-                const category = RECOMMENDATION_CATEGORIES.find(c => c.id === post.postType);
+                const category = CATEGORY_ICONS[post.postType!];
                 if (!category) return null;
                 const CategoryIcon = category.icon;
                 return (
@@ -285,7 +285,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                     data-testid={`recommendation-category-${post.id}`}
                   >
                     <CategoryIcon className="w-3 h-3" />
-                    <span className="text-xs">{category.label}</span>
+                    <span className="text-xs">{t(`feed.categories.${post.postType}`)}</span>
                   </Badge>
                 );
               })()}
@@ -311,7 +311,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         {post.tags && post.tags.length > 0 && (
           <div className="px-4 pb-3 flex flex-wrap gap-2">
             {post.tags.map(tagId => {
-              const tag = MEMORY_TAGS.find(t => t.id === tagId);
+              const tag = MEMORY_TAG_ICONS[tagId];
               if (!tag) return null;
               const IconComponent = tag.icon;
               return (
@@ -321,7 +321,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                   data-testid={`tag-badge-${tagId}`}
                 >
                   <IconComponent className="w-3 h-3" />
-                  <span className="text-xs">{tag.label}</span>
+                  <span className="text-xs">{t(`feed.tags.${tagId}`)}</span>
                 </Badge>
               );
             })}
@@ -478,7 +478,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
           open={showLightbox}
           onOpenChange={setShowLightbox}
           imageUrl={post.imageUrl}
-          alt={`Post by ${post.user?.name || 'Unknown'}`}
+          alt={t("feed.posts.postByUser", { name: post.user?.name || t("feed.user.unknown") })}
         />
       )}
       {/* Bug #11: Who Liked Modal */}
