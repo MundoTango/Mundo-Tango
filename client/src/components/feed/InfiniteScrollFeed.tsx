@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PostCreator } from "@/components/universal/PostCreator";
+import { useAuth } from "@/contexts/AuthContext";
 
 type FeedType = "following" | "discover" | "personalized";
 type FilterType = "all" | "friends" | "public" | "saved" | "my-posts" | "mentions";
@@ -49,6 +50,7 @@ interface FeedResponse {
 
 export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScrollFeedProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const { ref, inView } = useInView({
     threshold: 0,
@@ -153,7 +155,7 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
     },
     getNextPageParam: (lastPage) => lastPage.nextOffset,
     initialPageParam: 0,
-    enabled: !!token,
+    enabled: !!token || !!user,
     staleTime: 2 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
