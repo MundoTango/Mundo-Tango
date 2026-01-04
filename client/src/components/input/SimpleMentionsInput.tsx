@@ -285,34 +285,27 @@ export function SimpleMentionsInput({
           display: result.display.replace(/\sTango\sCommunity$/i, '')
         }));
 
-        // Group back by type and Deduplicate by display name across types if necessary
-        // but prioritize cities
+        // Group back by type and Deduplicate by display name across ALL types
+        // This prevents the same entity appearing twice if it's in multiple tables
         const uniqueResultsMap = new Map<string, MentionEntity>();
         
-        // Add cities first (priority)
-        allFiltered.filter(r => r.type === "city").forEach(r => {
-          if (!uniqueResultsMap.has(r.display)) {
-            uniqueResultsMap.set(r.display, r);
-          }
+        // Prioritize: City > User > Event > Group
+        const sortedResults = [...allFiltered].sort((a, b) => {
+          const typePriority = { city: 1, user: 2, event: 3, group: 4 };
+          return (typePriority[a.type] || 5) - (typePriority[b.type] || 5);
         });
 
-        // Add others
-        allFiltered.filter(r => r.type !== "city").forEach(r => {
-          if (!uniqueResultsMap.has(r.display)) {
-            uniqueResultsMap.set(r.display, r);
+        sortedResults.forEach(r => {
+          const key = `${r.type}:${r.display.toLowerCase()}`;
+          if (!uniqueResultsMap.has(key)) {
+            uniqueResultsMap.set(key, r);
           }
         });
 
         const deduplicated = Array.from(uniqueResultsMap.values());
 
-        // Prioritize cities first in the final list
-        const cities = deduplicated.filter(r => r.type === "city").slice(0, 3);
-        const others = deduplicated.filter(r => r.type !== "city").slice(0, 7);
-        
-        let allResults = [...cities, ...others];
-
         // Sort results to prioritize those that start with the query
-        allResults.sort((a, b) => {
+        deduplicated.sort((a, b) => {
           const aDisplay = (a.display || "").toLowerCase();
           const bDisplay = (b.display || "").toLowerCase();
           
@@ -326,6 +319,8 @@ export function SimpleMentionsInput({
 
           return aDisplay.localeCompare(bDisplay);
         });
+
+        setMentionResults(deduplicated.slice(0, 10));
         
         // Backfill remaining slots if we have fewer than 10 results
         // This ensures we show up to 10 results total
