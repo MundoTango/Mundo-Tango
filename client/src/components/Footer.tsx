@@ -133,7 +133,7 @@ export function Footer() {
                 {t('common:supportDescription', 'Help us build the future of tango technology')}
               </p>
               <a 
-                href="https://gofundme.com/mundotango" 
+                href="https://www.gofundme.com/f/join-us-in-bringing-mundo-tango-to-life" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"

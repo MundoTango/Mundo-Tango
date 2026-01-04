@@ -86,7 +86,7 @@ export default function WaitlistConfirmationPage() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
 
-                  <a href="https://www.gofundme.com/mundo-tango" target="_blank" rel="noopener noreferrer">
+                  <a href="https://www.gofundme.com/f/join-us-in-bringing-mundo-tango-to-life" target="_blank" rel="noopener noreferrer">
                     <Button 
                       variant="outline" 
                       className="w-full border-white/30 text-white hover:bg-white/10"
