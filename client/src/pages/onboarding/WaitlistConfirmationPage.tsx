@@ -12,7 +12,7 @@ import { TalentMatchModal } from "@/components/TalentMatchModal";
 import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 // Type-safe motion components for React 19 compatibility
-const MotionDiv = motion.div as any;
+const MotionDivSafe = motion.div as any;
 
 export default function WaitlistConfirmationPage() {
   const { user } = useAuth();
@@ -112,8 +112,8 @@ export default function WaitlistConfirmationPage() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </MotionDivSafe>
+            </MotionDivSafe>
           </div>
         </div>
         <TalentMatchModal 

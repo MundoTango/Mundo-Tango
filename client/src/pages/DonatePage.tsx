@@ -117,7 +117,7 @@ export default function DonatePage() {
                 {t('pages:donate.footer.security', 'All donations are processed securely through GoFundMe')}
               </p>
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </div>
     </PublicLayout>

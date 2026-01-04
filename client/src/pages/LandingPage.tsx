@@ -48,6 +48,13 @@ import scottPhotoPath from "@assets/scott-founder-optimized.jpg";
 
 // Type-safe motion components for React 19 compatibility
 const MotionDivSafe = motion.div as any;
+const MotionH2Safe = motion.h2 as any;
+const MotionPSafe = motion.p as any;
+
+// Original Motion components for nested consistency if needed
+const MotionDiv = MotionDivSafe;
+const MotionH2 = MotionH2Safe;
+const MotionP = MotionPSafe;
 
 // Cookie helpers
 const getCookie = (name: string): string | null => {
@@ -527,7 +534,7 @@ export default function LandingPage() {
                     {t('pages:landing.hero.joinFacebook', 'Join on Facebook Live')}
                   </button>
                 </div>
-              </MotionDiv>
+              </MotionDivSafe>
             </div>
           </div>
         </div>
@@ -536,7 +543,7 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="py-20 md:py-24" data-testid="section-features">
         <div className="container mx-auto px-4">
-          <MotionDiv
+          <MotionDivSafe
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -544,19 +551,19 @@ export default function LandingPage() {
             className="space-y-16"
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
-              <MotionH2
+              <MotionH2Safe
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-features-heading"
               >
                 {t('common:featuresTitle', 'Everything You Need for Your Tango Journey')}
-              </MotionH2>
-              <MotionP
+              </MotionH2Safe>
+              <MotionPSafe
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
                 {t('common:featuresSubtitle', 'Powerful features designed to connect dancers, discover events, and grow the global tango community.')}
-              </MotionP>
+              </MotionPSafe>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -588,7 +595,7 @@ export default function LandingPage() {
       {/* Talent Match Section */}
       <section className="py-20 md:py-24 bg-muted/30" data-testid="section-talent-match">
         <div className="container mx-auto px-4">
-          <MotionDiv
+          <MotionDivSafe
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -596,19 +603,19 @@ export default function LandingPage() {
             className="space-y-16"
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
-              <MotionH2
+              <MotionH2Safe
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-talent-match-heading"
               >
                 {t('pages:landing.talentMatch.title', 'Talent Match AI')}
-              </MotionH2>
-              <MotionP
+              </MotionH2Safe>
+              <MotionPSafe
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
                 {t('pages:landing.talentMatch.subtitle', 'Our advanced AI connects tango professionals with global opportunities based on skills, experience, and style.')}
-              </MotionP>
+              </MotionPSafe>
             </div>
 
             <div className="flex justify-center">
@@ -629,7 +636,7 @@ export default function LandingPage() {
         data-testid="section-how-it-works"
       >
         <div className="container mx-auto px-4">
-          <MotionDiv
+          <MotionDivSafe
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -637,19 +644,19 @@ export default function LandingPage() {
             className="space-y-16"
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
-              <MotionH2
+              <MotionH2Safe
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-how-it-works-heading"
               >
                 {t('common:howItWorks', 'How It Works')}
-              </MotionH2>
-              <MotionP
+              </MotionH2Safe>
+              <MotionPSafe
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
                 {t('common:howItWorksSubtitle', 'Get started in minutes and join thousands of tango dancers worldwide.')}
-              </MotionP>
+              </MotionPSafe>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -688,7 +695,7 @@ export default function LandingPage() {
         data-testid="section-coming-soon"
       >
         <div className="container mx-auto px-4">
-          <MotionDiv
+          <MotionDivSafe
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -696,19 +703,19 @@ export default function LandingPage() {
             className="space-y-12"
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
-              <MotionH2
+              <MotionH2Safe
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-coming-soon-heading"
               >
                 {t('common:comingSoon', 'Coming Soon')}
-              </MotionH2>
-              <MotionP
+              </MotionH2Safe>
+              <MotionPSafe
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
                 {t('common:comingSoonSubtitle', "We're building incredible features to transform your tango experience. Here's what's on the horizon.")}
-              </MotionP>
+              </MotionPSafe>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -765,26 +772,26 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-black/10" />
 
         <div className="relative z-10 container mx-auto px-4">
-          <MotionDiv
+          <MotionDivSafe
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
             className="max-w-4xl mx-auto text-center space-y-8"
           >
-            <MotionH2
+            <MotionH2Safe
               variants={fadeInUp}
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-white"
               data-testid="text-cta-heading"
             >
               {t('common:ctaTitle', 'Ready to Join the Global Tango Community?')}
-            </MotionH2>
+            </MotionH2Safe>
 
-            <MotionP variants={fadeInUp} className="text-xl text-white/90">
+            <MotionPSafe variants={fadeInUp} className="text-xl text-white/90">
               {t('common:ctaSubtitle', 'Create your free account and start connecting with dancers worldwide.')}
-            </MotionP>
+            </MotionPSafe>
 
-            <MotionDiv
+            <MotionDivSafe
               variants={fadeInUp}
               className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
             >
@@ -803,14 +810,14 @@ export default function LandingPage() {
                   {t('common:joinNow', 'Join Now')}
                 </Button>
               </Link>
-            </MotionDiv>
+            </MotionDivSafe>
 
             {publicStats?.dancers && (
-              <MotionP variants={fadeInUp} className="text-white/80 text-sm">
+              <MotionPSafe variants={fadeInUp} className="text-white/80 text-sm">
                 {t('common:joinCommunity', { count: publicStats.dancers })}
-              </MotionP>
+              </MotionPSafe>
             )}
-          </MotionDiv>
+          </MotionDivSafe>
         </div>
       </section>
 
