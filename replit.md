@@ -102,11 +102,39 @@ Core functionalities include social features (events, groups, posts, notificatio
 | Navigation Hub | 95% | 100% | 90% | Fake user filter + badge fix Dec 30 |
 | Feed Page | 98% | 95% | 90% | ✅ i18n FIXED Jan 4 - 8 components |
 
+## Database Architecture (Updated Jan 5, 2026)
+
+### Consolidation Status: ✅ COMPLETE
+The platform has been consolidated from dual deployment (Replit + Vercel) to single Replit deployment.
+
+### Database Summary
+| Database | Status | Contents |
+|----------|--------|----------|
+| **Replit Neon (DATABASE_URL)** | **PRIMARY** | 1100+ users (real + scraped), all production data |
+| Supabase (iuvbqahpvpdojiwdpteo) | Legacy/Seed Only | 6 seed users - synced to Neon Jan 5, 2026 |
+
+### Key Findings (Jan 5, 2026)
+- Real production users already exist in Replit Neon (szaltomi@gmail.com, scott@boddye.com, etc.)
+- Supabase contained only 6 seed users - all migrated to Neon
+- 1000+ scraped users (`@discovered.mundotango.app`) in Neon for testing/demo
+- No separate Vercel database exists
+
+### Environment Variables
+- `DATABASE_URL` - Replit Neon PostgreSQL (PRIMARY)
+- `VITE_SUPABASE_URL` - `https://iuvbqahpvpdojiwdpteo.supabase.co` (legacy, for auth fallback only)
+- `SUPABASE_SERVICE_ROLE_KEY` - Service role key for Supabase admin operations
+
+### Next Steps for Full Consolidation
+1. Update DNS: Point mundotango.life to Replit deployment only
+2. Remove Vercel deployment once DNS propagates
+3. Remove Supabase auth dependency (use JWT-only auth)
+4. Clean up legacy Supabase-related code paths
+
 ## External Dependencies
-- **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon, Supabase
+- **Infrastructure:** PostgreSQL (Neon), Redis, Cloudinary, OpenStreetMap
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
 - **AI/ML:** OpenAI, Anthropic, Groq, Google, Luma, ElevenLabs, Bifrost Gateway, LanceDB
-- **Real-time:** Supabase Realtime, WebSocket
+- **Real-time:** WebSocket (planned), Polling (current)
 - **Payments:** Stripe
 - **Email:** Replit Resend Connector
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
