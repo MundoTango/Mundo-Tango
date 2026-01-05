@@ -2,12 +2,14 @@
 
 **Global Tango Community Platform**
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/your-org/mundo-tango)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6.3-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3.1-61dafb)](https://reactjs.org/)
 [![License](https://img.shields.io/badge/license-TBD-lightgrey)](LICENSE)
 
-**Platform Metrics:**
+#### Builds
+[![Tango Event Scraping](https://github.com/MundoTango/Mundo-Tango/actions/workflows/scrape-events.yml/badge.svg)](https://github.com/MundoTango/Mundo-Tango/actions/workflows/scrape-events.yml)
+
+#### Platform Metrics
 - 🎯 **133 Operational Pages** across 10 feature categories
 - 🗄️ **263 Database Tables** with full ACID compliance
 - 🧠 **50+ Production Algorithms** for social intelligence and matching
