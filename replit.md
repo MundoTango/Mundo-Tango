@@ -105,30 +105,34 @@ Core functionalities include social features (events, groups, posts, notificatio
 ## Database Architecture (Updated Jan 5, 2026)
 
 ### Consolidation Status: ✅ COMPLETE
-The platform has been consolidated from dual deployment (Replit + Vercel) to single Replit deployment.
+Development and production now share the same Neon PostgreSQL database (ep-silent-poetry-ahtqg08z).
 
 ### Database Summary
 | Database | Status | Contents |
 |----------|--------|----------|
-| **Replit Neon (DATABASE_URL)** | **PRIMARY** | 1100+ users (real + scraped), all production data |
-| Supabase (iuvbqahpvpdojiwdpteo) | Legacy/Seed Only | 6 seed users - synced to Neon Jan 5, 2026 |
+| **Neon (ep-silent-poetry-ahtqg08z)** | **PRIMARY - DEV & PROD** | 1,205 users (88 real + scraped), 58 waitlist users |
+| Supabase (iuvbqahpvpdojiwdpteo) | Legacy/Seed Only | Historical only, not used for data |
 
-### Key Findings (Jan 5, 2026)
-- Real production users already exist in Replit Neon (szaltomi@gmail.com, scott@boddye.com, etc.)
-- Supabase contained only 6 seed users - all migrated to Neon
-- 1000+ scraped users (`@discovered.mundotango.app`) in Neon for testing/demo
-- No separate Vercel database exists
+### Key Stats (Jan 5, 2026)
+- **Total Users**: 1,205
+- **Waitlist Users**: 58 (preserved from mundotango.life production)
+- **Real Users**: 88 (excludes @discovered.mundotango.app scraped profiles)
+- **Admin Users**: 2 (scott@boddye.com=super_admin, admin@mundotango.life=admin)
+- **Scraped Profiles**: ~1,100 (@discovered.mundotango.app for testing/demo)
 
 ### Environment Variables
-- `DATABASE_URL` - Replit Neon PostgreSQL (PRIMARY)
+- `DATABASE_URL` - Neon PostgreSQL (ep-silent-poetry-ahtqg08z) - PRIMARY for all environments
 - `VITE_SUPABASE_URL` - `https://iuvbqahpvpdojiwdpteo.supabase.co` (legacy, for auth fallback only)
 - `SUPABASE_SERVICE_ROLE_KEY` - Service role key for Supabase admin operations
 
-### Next Steps for Full Consolidation
-1. Update DNS: Point mundotango.life to Replit deployment only
-2. Remove Vercel deployment once DNS propagates
-3. Remove Supabase auth dependency (use JWT-only auth)
-4. Clean up legacy Supabase-related code paths
+### Consolidation History
+- **Previous State**: Separate DEV (1,070 users, 8 waitlist) and PROD (1,205 users, 58 waitlist) databases
+- **Issue**: Waitlist users only visible on mundotango.life, not in dev environment
+- **Solution**: Updated DATABASE_URL to point to production Neon instance
+- **Role Fix**: scott@boddye.com updated from 'user' to 'super_admin' in PROD before consolidation
+
+### Rollback Plan (If Needed)
+Old DEV DATABASE_URL preserved in documentation. Contact support to revert if issues arise.
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL (Neon), Redis, Cloudinary, OpenStreetMap
