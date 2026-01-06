@@ -105,7 +105,6 @@ if (!i18n.isInitialized) {
         'zh-hk': ['zh', 'en'],
         default: ['en'],
       },
-      lng: "en",
       partialBundledLanguages: true,
       nonExplicitSupportedLngs: false,
       cleanCode: false,
