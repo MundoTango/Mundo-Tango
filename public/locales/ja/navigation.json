@@ -28,5 +28,44 @@
   "community": "コミュニティ",
   "careers": "採用情報",
   "press": "プレス",
-  "donate": "寄付"
+  "donate": "寄付",
+  "volunteer": "ボランティア",
+  "ambassadors": "アンバサダー",
+  "adminAccess": "管理者アクセス",
+  "cookieConsent": {
+    "title": "Cookie設定",
+    "description": "当サイトでは、体験の向上とセッション間での認識のためにCookieを使用しています。Mundo Tangoの利用を続けることで、Cookieの使用に同意したことになります。",
+    "accept": "すべて受け入れる",
+    "decline": "拒否する"
+  },
+  "whoItsFor": "誰のためのものか",
+  "forDancers": "ダンサーのために",
+  "forTeachers": "講師のために",
+  "forOrganizers": "主催者のために",
+  "tangoRoles": "タンゴの役割",
+  "openSource": "オープンソース",
+  "supportUs": "サポートする",
+  "joinFree": "無料で参加",
+  "watchDemo": "デモを見る",
+  "getStarted": "はじめる",
+  "learnMore": "詳細を見る",
+  "footer": {
+    "company": "会社",
+    "about": "私たちについて",
+    "support": "サポート",
+    "volunteer": "ボランティア",
+    "legal": "法的情報",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー",
+    "contact": "お問い合わせ"
+  },
+  "sidebar": {
+    "sections": {
+      "social": "ソーシャル",
+      "myStuff": "マイページ",
+      "community": "コミュニティ",
+      "proDiscovery": "PROを発見",
+      "services": "サービス"
+    }
+  }
 }

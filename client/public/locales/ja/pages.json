@@ -1,4 +1,40 @@
 {
+  "landing": {
+    "hero": {
+      "title": "タンゴの世界の中心",
+      "subtitle": "ダンサー、講師、主催者を一つのエコシステムでつなぎ、世界中のタンゴコミュニティへ。",
+      "watchDemo": "デモを見る",
+      "getStarted": "無料で始める",
+      "facebookLive": "毎週木曜日 Facebook Live",
+      "qaScott": "スコットとのライブQ&Aセッション",
+      "nextSession": "次回セッション: {{date}}",
+      "cities": {
+        "losAngeles": "ロサンゼルス",
+        "newYork": "ニューヨーク",
+        "buenosAires": "ブエノスアイレス",
+        "paris": "パリ",
+        "kyiv": "キーウ",
+        "london": "ロンドン",
+        "seoul": "ソウル",
+        "sydney": "シドニー"
+      },
+      "qaDescription": "あなたの質問にお答えします: <span className=\"font-semibold text-amber-200\">Mundo Tangoとは？</span> 誰のためのもので、<span className=\"font-semibold text-amber-200\">あなた</span>にどのような影響を与えるか？なぜ必要なのか？その他たくさん！",
+      "recurringNotice": "<span className=\"font-semibold text-amber-200\">毎週木曜日</span>同じ時間にライブセッションを行い、<span className=\"font-semibold text-amber-200\">あなた</span>がこのプラットフォームに何を求めているかを聞き、最新情報をお伝えします！",
+      "joinFacebook": "Facebook Liveで参加",
+      "thankYou": "ありがとうございます！",
+      "emailSaved": "ライブセッションの最新情報をお届けします。"
+    },
+    "talentMatch": {
+      "title": "タレントマッチAI",
+      "subtitle": "高度なAIがタンゴプロフェッショナルとスキル、経験、スタイルに基づくグローバルな機会をつなぎます。",
+      "cta": "ネットワークに参加"
+    },
+    "features": {
+      "events": "リアルタイムのグローバルイベント発見と管理。",
+      "community": "ミロンガ、フェスティバル、ローカルコミュニティとつながる。",
+      "ai": "Mr. Blueによるインテリジェントなマッチングとコミュニティインサイト。"
+    }
+  },
   "register": {
     "pageName": "新規登録",
     "seo": {
@@ -834,6 +870,105 @@
     },
     "viewProfile": "プロフィールを表示",
     "bookLesson": "レッスンを予約"
+  },
+  "dancers": {
+    "pageName": "ダンサーのために",
+    "seo": {
+      "title": "ダンサーのために - Mundo Tango",
+      "description": "グローバルタンゴコミュニティに参加。パートナーを見つけ、イベントを発見し、世界中のダンサーとつながる。"
+    },
+    "badge": "ダンサーのために",
+    "hero": {
+      "heading": "あなたのタンゴの旅が",
+      "headingHighlight": "ここから始まる",
+      "paragraph": "初めての一歩を踏み出す方も、ボルカーダを完成させる方も、Mundo Tangoがダンサー、イベント、そして情熱を高める体験へとつなぎます。",
+      "button": "今すぐ無料で参加"
+    },
+    "featuresSection": {
+      "heading": "ダンスに必要なすべて",
+      "paragraph": "パートナー探しから次のミロンガ発見まで、すべてをカバー。"
+    },
+    "features": {
+      "findPartners": {
+        "title": "ダンスパートナーを見つける",
+        "description": "どの都市でもあなたのレベルのダンサーとつながる。AIマッチングがスタイル、経験、空き状況を考慮。"
+      },
+      "discoverEvents": {
+        "title": "イベントを発見",
+        "description": "ミロンガ、プラクティカ、フェスティバルを見逃さない。好みに基づいたパーソナライズされたおすすめ。"
+      },
+      "travelDance": {
+        "title": "旅してダンス",
+        "description": "地元のおすすめでタンゴ旅行を計画。どこへ行ってもミロンガ、宿泊、ダンサーを見つけよう。"
+      },
+      "trackJourney": {
+        "title": "旅路を記録",
+        "description": "思い出、参加したイベント、時間とともに身につけたスキルでタンゴポートフォリオを作ろう。"
+      },
+      "communityChat": {
+        "title": "コミュニティチャット",
+        "description": "ディスカッションに参加、質問、グローバルタンゴコミュニティと経験を共有。"
+      },
+      "buildConnections": {
+        "title": "つながりを築く",
+        "description": "ダンスフロアを超えて続く意味ある友情を作ろう。あなたのタンゴファミリーが待っています。"
+      }
+    },
+    "cta": {
+      "heading": "踊る準備はできましたか？",
+      "paragraph": "今日Mundo Tangoに参加して、グローバルタンゴファミリーの一員に。",
+      "button": "踊り始める"
+    }
+  },
+  "organizers": {
+    "pageName": "主催者のために",
+    "seo": {
+      "title": "主催者のために - Mundo Tango",
+      "description": "成功するタンゴイベントを開催。チケット管理、世界中のダンサーへのリーチ、Mundo Tangoでコミュニティを成長。"
+    },
+    "badge": "主催者のために",
+    "hero": {
+      "heading": "忘れられない",
+      "headingHighlight": "タンゴイベントを開催",
+      "paragraph": "親密なミロンガから壮大なフェスティバルまで、すべての詳細を管理し、世界中のダンサーにリーチ。あなたのイベントはスポットライトに値する。",
+      "button": "イベントを作成",
+      "buttonSecondary": "例を見る"
+    },
+    "featuresSection": {
+      "heading": "イベントのためのすべて",
+      "paragraph": "タンゴイベントを管理、プロモーション、分析するパワフルなツール。"
+    },
+    "features": {
+      "eventManagement": {
+        "title": "イベント管理",
+        "description": "ミロンガ、フェスティバル、ワークショップを作成・管理。すべてのイベントを一つのダッシュボードで。"
+      },
+      "ticketingRsvp": {
+        "title": "チケット＆RSVP",
+        "description": "チケット販売、容量管理、RSVP追跡。ウェイトリスト管理も内蔵。"
+      },
+      "attendeeInsights": {
+        "title": "参加者インサイト",
+        "description": "詳細な分析で観客を理解。誰が来るか、何が好きか、いつ来るかを把握。"
+      },
+      "emailMarketing": {
+        "title": "メールマーケティング",
+        "description": "お知らせ、リマインダー、お礼メールを送信。ダンサーとのエンゲージメントを維持。"
+      },
+      "paymentProcessing": {
+        "title": "決済処理",
+        "description": "低手数料でオンライン決済を受付。国際イベント向け多通貨対応。"
+      },
+      "globalReach": {
+        "title": "グローバルリーチ",
+        "description": "世界中のダンサーにプロモーション。旅行者は到着前にあなたのイベントを発見。"
+      }
+    },
+    "cta": {
+      "heading": "ダンスフロアを埋める準備はできましたか？",
+      "paragraph": "最初のイベントを無料で掲載。クレジットカード不要。",
+      "button": "イベントを掲載"
+    }
   },
   "venues": {
     "title": "タンゴ会場",

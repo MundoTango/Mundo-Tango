@@ -100,15 +100,16 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
 - **Internationalization:** i18next
 
-### Internationalization System (Updated Dec 31, 2025)
+### Internationalization System (Updated Jan 6, 2026)
 - **Translation Files Location**: `client/public/locales/{lang}/*.json` - This is where Vite serves static files from
 - **CRITICAL**: Do NOT edit files in `public/locales/` - Vite does not serve from that directory. Always edit `client/public/locales/{lang}/*.json`
 - **Namespaces**: common, navigation, pages, errors
 - **Supported Languages**: 68 languages including regional variants (es-ar, pt-br, zh-tw, zh-hk)
-- **Priority Languages**: English (source), Spanish (105%), Russian (52%), French (49%), German (52%), Italian (52%), Portuguese (52%)
+- **Priority Languages**: English (source), Spanish (105%), Japanese (90%+ - navbar, landing, marketing pages), Russian (52%), French (49%), German (52%), Italian (52%), Portuguese (52%)
 - **Fallback Chain**: Regional variants fall back to base language (es-ar → es → en)
-- **URL Language Param**: Use `?lng=es` to set language via URL (config: `lookupQuerystring: "lng"`)
+- **URL Language Param**: Use `?lng=ja` to set language via URL (config: `lookupQuerystring: "lng"`)
 - **Pattern**: Use `const { t } = useTranslation('pages')` with single namespace string
 - **Translation Guide**: See `translation.md` for comprehensive workflow, quality guidelines, and troubleshooting
 - **TranslationAgent**: `server/services/mrblue/agents/features/TranslationAgent.ts` - Provides audit, sync, coverage reporting, and bulk translation operations
 - **Key Structure**: Login/Register pages use nested structure with hero, form, toast, seo keys. Onboarding pages use pageTitle, seoTitle, seoDescription, step, title, subtitle pattern
+- **Recent Updates (Jan 6, 2026)**: Japanese (ja) translations completed for navbar, landing page hero, For Dancers, and For Organizers marketing pages. All common.json and navigation.json keys synced. Fixed `lng: "en"` hardcode in i18n.ts to enable proper language persistence.
