@@ -336,10 +336,9 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
               onClick={() => setShowLightbox(true)}
               data-testid={`post-image-container-${post.id}`}
             >
-              <motion.div
+              <div
                 className="w-full h-full"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.6 }}
+                data-motion-hover-scale="1.05"
               >
                 <img 
                   src={post.imageUrl} 
@@ -347,7 +346,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                   className="w-full h-full object-cover"
                   data-testid={`post-image-${post.id}`}
                 />
-              </motion.div>
+              </div>
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                 <Maximize2 className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
               </div>
