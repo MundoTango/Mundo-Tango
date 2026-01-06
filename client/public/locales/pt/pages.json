@@ -21,6 +21,16 @@
         "seoul": "Seul",
         "sydney": "Sydney"
       }
+    },
+    "talentMatch": {
+      "title": "Talent Match AI",
+      "subtitle": "Our advanced AI connects tango professionals with global opportunities based on skills, experience, and style.",
+      "cta": "Join the Network"
+    },
+    "features": {
+      "events": "Real-time global event discovery and management.",
+      "community": "Connect with milongas, festivals, and local communities.",
+      "ai": "Intelligent matching and community insights with Mr. Blue."
     }
   },
   "register": {
@@ -488,7 +498,11 @@
       },
       "errors": {
         "saveFailed": "Falha ao salvar. Por favor, tente novamente."
-      }
+      },
+      "visionTitle": "The Mundo Tango Vision",
+      "visionDescription": "We use these shared passions to build local communities where tango serves as the catalyst for deeper relationships and new beginnings.",
+      "beyondTitle": "Beyond the Dance Floor",
+      "beyondQuote": "\"Tango is the bridge to human connection. What other passions ignite your soul and connect you to the world?\""
     },
     "legal": {
       "title": "Diretrizes da comunidade",
@@ -791,7 +805,14 @@
         }
       }
     },
-    "cta": "Começar",
+    "cta": {
+      "heading": "Ready to Join the Community?",
+      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
+      "button": "Join Mundo Tango Free",
+      "freeForever": "Free forever",
+      "noCreditCard": "No credit card",
+      "cancelAnytime": "Cancel anytime"
+    },
     "title": "Bem-vindo ao Mundo Tango",
     "subtitle": "Conecte-se com a comunidade global do tango"
   },
@@ -1037,5 +1058,166 @@
         "processingError": "Peço desculpas, mas tive dificuldades em processar isso. Você poderia tentar novamente?"
       }
     }
+  },
+  "dancers": {
+    "pageName": "For Dancers",
+    "seo": {
+      "title": "For Dancers - Mundo Tango",
+      "description": "Join the global tango community. Find partners, discover events, and connect with dancers worldwide."
+    },
+    "badge": "FOR DANCERS",
+    "hero": {
+      "heading": "Your Tango Journey",
+      "headingHighlight": "Starts Here",
+      "paragraph": "Whether you are taking your first steps or perfecting your volcadas, Mundo Tango connects you with dancers, events, and experiences that elevate your passion.",
+      "button": "Join Free Today"
+    },
+    "featuresSection": {
+      "heading": "Everything You Need to Dance",
+      "paragraph": "From finding partners to discovering your next milonga, we have got you covered."
+    },
+    "features": {
+      "findPartners": {
+        "title": "Find Dance Partners",
+        "description": "Connect with dancers at your level in any city. Our AI matching considers style, experience, and availability."
+      },
+      "discoverEvents": {
+        "title": "Discover Events",
+        "description": "Never miss a milonga, practica, or festival. Get personalized recommendations based on your preferences."
+      },
+      "travelDance": {
+        "title": "Travel & Dance",
+        "description": "Plan tango trips with local recommendations. Find milongas, housing, and dancers wherever you go."
+      },
+      "trackJourney": {
+        "title": "Track Your Journey",
+        "description": "Build your tango portfolio with memories, events attended, and skills developed over time."
+      },
+      "communityChat": {
+        "title": "Community Chat",
+        "description": "Join discussions, ask questions, and share experiences with the global tango community."
+      },
+      "buildConnections": {
+        "title": "Build Connections",
+        "description": "Create meaningful friendships that last beyond the dance floor. Your tango family awaits."
+      }
+    },
+    "cta": {
+      "heading": "Ready to Dance?",
+      "paragraph": "Join Mundo Tango today and become part of the global tango family.",
+      "button": "Start Dancing"
+    }
+  },
+  "organizers": {
+    "pageName": "For Organizers",
+    "seo": {
+      "title": "For Organizers - Mundo Tango",
+      "description": "Host successful tango events. Manage ticketing, reach global dancers, and grow your community with Mundo Tango."
+    },
+    "badge": "FOR ORGANIZERS",
+    "hero": {
+      "heading": "Host Unforgettable",
+      "headingHighlight": "Tango Events",
+      "paragraph": "From intimate milongas to grand festivals, manage every detail and reach dancers worldwide. Your event deserves the spotlight.",
+      "button": "Create Your Event",
+      "buttonSecondary": "See Examples"
+    },
+    "featuresSection": {
+      "heading": "Everything for Your Events",
+      "paragraph": "Powerful tools to manage, promote, and analyze your tango events."
+    },
+    "features": {
+      "eventManagement": {
+        "title": "Event Management",
+        "description": "Create and manage milongas, festivals, and workshops. One dashboard for all your events."
+      },
+      "ticketingRsvp": {
+        "title": "Ticketing & RSVP",
+        "description": "Sell tickets, manage capacity, and track RSVPs. Built-in waitlist management included."
+      },
+      "attendeeInsights": {
+        "title": "Attendee Insights",
+        "description": "Understand your audience with detailed analytics. Know who comes, what they like, and when."
+      },
+      "emailMarketing": {
+        "title": "Email Marketing",
+        "description": "Send announcements, reminders, and thank-you notes. Keep your dancers engaged."
+      },
+      "paymentProcessing": {
+        "title": "Payment Processing",
+        "description": "Accept payments online with low fees. Multi-currency support for international events."
+      },
+      "globalReach": {
+        "title": "Global Reach",
+        "description": "Promote to dancers worldwide. Travelers discover your events before arriving."
+      }
+    },
+    "cta": {
+      "heading": "Ready to Fill Your Dance Floor?",
+      "paragraph": "List your first event free. No credit card required.",
+      "button": "List Your Event"
+    }
+  },
+  "support": {
+    "pageName": "Support",
+    "seo": {
+      "title": "Support Mundo Tango - Become a Tango Legend",
+      "description": "Help build the platform the tango community deserves. Named donation tiers honor the legends who shaped tango: El Cachafaz, Piazzolla, Copes, and Gardel."
+    },
+    "badge": "Community Supported",
+    "hero": {
+      "title": "Become a Tango Legend",
+      "subtitle": "Support the platform that connects dancers worldwide. Your contribution honors the legends who shaped tango and helps build its future."
+    },
+    "stats": {
+      "raised": "Raised",
+      "supporters": "Supporters"
+    },
+    "story": {
+      "title": "Built by a Dancer, For Dancers",
+      "paragraph1": "Scott started dancing tango in September 2007. Over {{years}} years, just in the last 5 years alone he's traveled to 80+ cities across 30+ countries for tango. He knows the frustrations: finding events in new cities, connecting with local dancers, and navigating unfamiliar tango communities.",
+      "paragraph2": "In April 2024, Scott began building Mundo Tango. He's invested over {{hours}} hours and ${{amount}} of his own money to create the platform the tango community deserves.",
+      "paragraph3": "Your support helps cover server costs, AI services, and continued development. Every contribution brings us closer to a self-sustaining platform that serves dancers worldwide.",
+      "hoursInvested": "Hours Invested",
+      "selfFunded": "Self-Funded",
+      "citiesVisited": "Cities Visited",
+      "yearsDancing": "Years Dancing"
+    },
+    "tiers": {
+      "title": "Honor the Legends Who Shaped Tango",
+      "subtitle": "Each tier is named after a tango legend who contributed to the art form we love. Your support helps preserve their legacy while building tango's future.",
+      "benefits": "Benefits:",
+      "supportAs": "Support as {{name}}"
+    },
+    "otherWays": {
+      "title": "Other Ways to Support",
+      "subtitle": "Money isn't the only way to contribute. Join our community of volunteers.",
+      "ambassador": {
+        "title": "Become an Ambassador",
+        "desc": "Represent Mundo Tango in your city. Attend 2+ milongas per week and help connect local dancers."
+      }
+    }
+  },
+  "about": {
+    "pageName": "About",
+    "seo": {
+      "title": "About Us - Mundo Tango",
+      "description": "Learn about Mundo Tango's mission to connect the global tango community. Discover our values, vision, and commitment to fostering authentic connections through Argentine tango."
+    },
+    "badge": "About Us",
+    "title": "About Mundo Tango",
+    "subtitle": "Connecting the global tango community, one dance at a time",
+    "missionTitle": "Our Mission",
+    "missionDescription": "Mundo Tango is dedicated to fostering connections within the global tango community. We believe in the power of dance to bring people together across cultures, languages, and borders. Our platform helps dancers discover events, connect with teachers, find practice partners, and immerse themselves in the rich traditions of Argentine tango.",
+    "valuesTitle": "Our Values",
+    "valueCommunityTitle": "Community First",
+    "valueCommunityDescription": "We prioritize authentic connections and meaningful interactions within our community of dancers, teachers, and organizers.",
+    "valueGlobalTitle": "Global Reach",
+    "valueGlobalDescription": "From Buenos Aires to Tokyo, we connect tango communities across the globe, celebrating diversity and cultural exchange.",
+    "valuePassionTitle": "Passion for Tango",
+    "valuePassionDescription": "Our love for tango drives everything we do. We're dancers ourselves, building tools that we wish existed when we started our journey.",
+    "valueGrowthTitle": "Continuous Growth",
+    "valueGrowthDescription": "We believe in supporting dancers at every level, from complete beginners to professional performers, fostering lifelong learning.",
+    "founderTitle": "Meet the Founder"
   }
 }

@@ -60,7 +60,9 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "submit": "Enviar",
-    "getStarted": "Empezá Gratis"
+    "getStarted": "Empezá Gratis",
+    "share": "Compartir",
+    "viewAll": "Ver Todo"
   },
   "language": "Idioma",
   "theme": "Tema",
@@ -73,7 +75,7 @@
   "venues": "Lugares",
   "organizers": "Organizadores",
   "artists": "Artistas",
-  "bloggers": "Bloggers",
+  "bloggers": "Blogueros",
   "musicians": "Músicos",
   "designers": "Diseñadores",
   "milonga": "Milonga",
@@ -93,5 +95,19 @@
   "joinCommunity": "Únete a nuestra Comunidad",
   "connectTango": "Conéctate con bailarines de tango en todo el mundo",
   "findEvents": "Encuentra eventos cerca de ti",
-  "discoverProfessionals": "Descubre profesionales del tango"
+  "discoverProfessionals": "Descubre profesionales del tango",
+  "email": "Correo electrónico",
+  "password": "Contraseña",
+  "name": "Nombre",
+  "submit": "Enviar",
+  "community": "Comunidad",
+  "connections": "Conexiones",
+  "invitations": "Invitaciones",
+  "admin": "Admin",
+  "globalDancers": "Bailarines Globales",
+  "activeEvents": "Eventos Activos",
+  "communities": "Comunidades",
+  "yourCity": "Tu Ciudad",
+  "globalStatistics": "Estadísticas Globales",
+  "globalCommunity": "Comunidad Global de Tango"
 }

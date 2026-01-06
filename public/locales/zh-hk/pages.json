@@ -1,4 +1,28 @@
 {
+  "landing": {
+    "hero": {
+      "title": "全球探戈之心",
+      "subtitle": "將舞者、老師和組織者連接在一個統一的全球探戈社區生態系統中。",
+      "watchDemo": "觀看演示",
+      "getStarted": "免費開始",
+      "facebookLive": "每週四 Facebook 直播",
+      "qaScott": "與 Scott 進行即時問答",
+      "nextSession": "下一次會議：{{date}}",
+      "joinFacebook": "加入 Facebook 直播",
+      "qaDescription": "回答您所有的問題：<span className=\"font-semibold text-amber-200\">什麼是 Mundo Tango？</span> 它是為誰準備的，以及它將如何影響<span className=\"font-semibold text-amber-200\">您</span>？為什麼我們需要它？還有更多！",
+      "recurringNotice": "我們將在<span className=\"font-semibold text-amber-200\">每週四</span>同一時間進行直播，聽聽<span className=\"font-semibold text-amber-200\">您</span>對這個平台的期望，並告訴您正在發生的事情！",
+      "cities": {
+        "losAngeles": "洛杉磯",
+        "newYork": "紐約",
+        "buenosAires": "布宜諾斯艾利斯",
+        "paris": "巴黎",
+        "kyiv": "基輔",
+        "london": "倫敦",
+        "seoul": "首爾",
+        "sydney": "悉尼"
+      }
+    }
+  },
   "register": {
     "pageName": "註冊",
     "seo": {

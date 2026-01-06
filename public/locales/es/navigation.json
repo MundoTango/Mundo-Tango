@@ -21,12 +21,51 @@
   "organizers": "Organizadores",
   "venues": "Lugares",
   "artists": "Artistas",
-  "bloggers": "Bloggers",
+  "bloggers": "Blogueros",
   "about": "Acerca de",
   "contact": "Contacto",
   "help": "Ayuda y Soporte",
   "community": "Comunidad",
   "careers": "Carreras",
   "press": "Prensa",
-  "donate": "Donar"
+  "donate": "Donar",
+  "volunteer": "Voluntariado",
+  "ambassadors": "Embajadores",
+  "adminAccess": "Acceso Admin",
+  "cookieConsent": {
+    "title": "Configuración de Cookies",
+    "description": "Usamos cookies para mejorar tu experiencia y reconocerte entre sesiones. Al continuar usando Mundo Tango, aceptas nuestro uso de cookies.",
+    "accept": "Aceptar Todo",
+    "decline": "Rechazar"
+  },
+  "whoItsFor": "Para Quién Es",
+  "forDancers": "Para Bailarines",
+  "forTeachers": "Para Profesores",
+  "forOrganizers": "Para Organizadores",
+  "tangoRoles": "Roles del Tango",
+  "openSource": "Código Abierto",
+  "supportUs": "Apóyanos",
+  "joinFree": "Únete Gratis",
+  "watchDemo": "Ver Demo",
+  "getStarted": "Comenzar",
+  "learnMore": "Más Información",
+  "footer": {
+    "company": "Empresa",
+    "about": "Sobre Nosotros",
+    "support": "Soporte",
+    "volunteer": "Voluntariado",
+    "legal": "Legal",
+    "terms": "Términos de Servicio",
+    "privacy": "Política de Privacidad",
+    "contact": "Contacto"
+  },
+  "sidebar": {
+    "sections": {
+      "social": "Social",
+      "myStuff": "Mis Cosas",
+      "community": "Comunidad",
+      "proDiscovery": "Descubrir PRO",
+      "services": "Servicios"
+    }
+  }
 }

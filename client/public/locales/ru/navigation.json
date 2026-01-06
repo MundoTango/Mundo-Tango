@@ -28,5 +28,44 @@
   "community": "Сообщество",
   "careers": "Карьера",
   "press": "Пресса",
-  "donate": "Пожертвовать"
+  "donate": "Пожертвовать",
+  "volunteer": "Volunteer",
+  "ambassadors": "Ambassadors",
+  "adminAccess": "Admin Access",
+  "cookieConsent": {
+    "title": "Cookie Settings",
+    "description": "We use cookies to enhance your experience and recognize you across sessions. By continuing to use Mundo Tango, you agree to our use of cookies.",
+    "accept": "Accept All",
+    "decline": "Decline"
+  },
+  "whoItsFor": "Who It's For",
+  "forDancers": "For Dancers",
+  "forTeachers": "For Teachers",
+  "forOrganizers": "For Organizers",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source",
+  "supportUs": "Support Us",
+  "joinFree": "Join Free",
+  "watchDemo": "Watch Demo",
+  "getStarted": "Get Started",
+  "learnMore": "Learn More",
+  "footer": {
+    "company": "Company",
+    "about": "About Us",
+    "support": "Support",
+    "volunteer": "Volunteer",
+    "legal": "Legal",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "contact": "Contact"
+  },
+  "sidebar": {
+    "sections": {
+      "social": "Social",
+      "myStuff": "My Stuff",
+      "community": "Community",
+      "proDiscovery": "PRO Discovery",
+      "services": "Services"
+    }
+  }
 }

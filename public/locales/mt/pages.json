@@ -892,5 +892,86 @@
       "analytics": "Analiżi",
       "settings": "Impostazzjonijiet"
     }
+  },
+  "talentMatch": {
+    "interview": {
+      "seo": {
+        "title": "AI Interview - Mundo Tango Talent Match",
+        "description": "Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+      },
+      "pageTitle": "AI Interview",
+      "phases": {
+        "resume": "Phase 1: Resume Deep-Dive",
+        "work": "Phase 2: Work Assignment Matching",
+        "complete": "Interview Complete!"
+      },
+      "phaseLabels": {
+        "resume": "Resume",
+        "workAssignment": "Work Assignment"
+      },
+      "progress": {
+        "questionOf": "Question {{current}} of {{total}}",
+        "allQuestionsAnswered": "All questions answered"
+      },
+      "toast": {
+        "invalidFileType": {
+          "title": "Invalid file type",
+          "description": "Please upload PDF, DOCX, or TXT"
+        },
+        "resumeParsed": {
+          "title": "Resume parsed!",
+          "description": "Mr. Blue can now read your resume content."
+        },
+        "uploadFailed": {
+          "title": "Upload failed",
+          "description": "Please try again"
+        },
+        "missingSession": {
+          "title": "Missing session",
+          "description": "Please start from the Talent Match page"
+        },
+        "error": {
+          "title": "Error",
+          "description": "Failed to process your response"
+        }
+      },
+      "resumeBanner": {
+        "title": "Resume content not available",
+        "description": "Re-upload your resume so Mr. Blue can read and reference your experience.",
+        "parsing": "Parsing...",
+        "reupload": "Re-upload"
+      },
+      "buttons": {
+        "viewDashboard": "View H2AC Dashboard",
+        "goHome": "Go Home"
+      },
+      "fallbackQuestions": {
+        "resume": {
+          "q1": "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
+          "q2": "What technologies or tools do you enjoy working with the most?",
+          "q3": "Are there any skills on your resume you'd like to use more in volunteer work?",
+          "q4": "What areas of software development interest you the most right now?",
+          "q5": "Have you worked on any open source projects or community initiatives before?",
+          "q6": "What's your preferred working style - do you like independent work or collaboration?",
+          "q7": "How do you typically approach learning new technologies?",
+          "q8": "What kind of impact do you hope to make through volunteer work?",
+          "q9": "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+        },
+        "work": {
+          "q1": "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
+          "q2": "Mundo Tango connects the global tango community. What features would you be excited to help build?",
+          "q3": "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
+          "q4": "How much time per week could you realistically commit to volunteer work?",
+          "q5": "Do you prefer working independently or as part of a team?",
+          "q6": "Are you comfortable with pair programming or code reviews?",
+          "q7": "What's your experience with agile/sprint-based development?",
+          "q8": "We use GitHub for collaboration. Are you comfortable with Git workflows?",
+          "q9": "Would you prefer to work on new features, bug fixes, or documentation?",
+          "q10": "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+        },
+        "phaseTransition": "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
+        "processingError": "I apologize, but I had trouble processing that. Could you please try again?"
+      }
+    }
   }
 }
