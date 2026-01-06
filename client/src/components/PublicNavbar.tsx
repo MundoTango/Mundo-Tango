@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun, ChevronDown, Users, GraduationCap, CalendarCheck, Code, Shuffle } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { LanguageSelectorButton } from "@/components/LanguageSelector";
 
 export function PublicNavbar() {
   const { t } = useTranslation(['navigation', 'common']);
@@ -116,6 +117,9 @@ export function PublicNavbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
+          {/* Language Selector */}
+          <LanguageSelectorButton />
+
           {/* Theme Toggle */}
           <Button
             variant="ghost"
