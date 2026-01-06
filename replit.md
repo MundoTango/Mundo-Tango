@@ -105,11 +105,19 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **CRITICAL**: Do NOT edit files in `public/locales/` - Vite does not serve from that directory. Always edit `client/public/locales/{lang}/*.json`
 - **Namespaces**: common, navigation, pages, errors
 - **Supported Languages**: 68 languages including regional variants (es-ar, pt-br, zh-tw, zh-hk)
-- **Priority Languages**: English (source), Spanish (105%), Japanese (90%+ - navbar, landing, marketing pages), Russian (52%), French (49%), German (52%), Italian (52%), Portuguese (52%)
+- **Priority Languages Coverage (Jan 6, 2026)**:
+  - English (en): 100% - Source of truth
+  - Spanish (es): 98% - Nearly complete
+  - Japanese (ja): 95% - Navbar, landing, marketing pages complete
+  - Russian (ru): 100% - COMPLETE via MB.MD P109 Locale Sync
+  - French (fr): 100% - COMPLETE via MB.MD P109 Locale Sync
+  - German (de): 100% - COMPLETE via MB.MD P109 Locale Sync
+  - Italian (it): 100% - COMPLETE via MB.MD P109 Locale Sync
+  - Portuguese (pt): 100% - COMPLETE via MB.MD P109 Locale Sync
 - **Fallback Chain**: Regional variants fall back to base language (es-ar → es → en)
 - **URL Language Param**: Use `?lng=ja` to set language via URL (config: `lookupQuerystring: "lng"`)
 - **Pattern**: Use `const { t } = useTranslation('pages')` with single namespace string
 - **Translation Guide**: See `translation.md` for comprehensive workflow, quality guidelines, and troubleshooting
-- **TranslationAgent**: `server/services/mrblue/agents/features/TranslationAgent.ts` - Provides audit, sync, coverage reporting, and bulk translation operations
+- **TranslationAgent**: `server/services/mrBlue/agents/features/TranslationAgent.ts` - Provides audit, sync, coverage reporting, and bulk translation operations
 - **Key Structure**: Login/Register pages use nested structure with hero, form, toast, seo keys. Onboarding pages use pageTitle, seoTitle, seoDescription, step, title, subtitle pattern
-- **Recent Updates (Jan 6, 2026)**: Japanese (ja) translations completed for navbar, landing page hero, For Dancers, and For Organizers marketing pages. All common.json and navigation.json keys synced. Fixed `lng: "en"` hardcode in i18n.ts to enable proper language persistence.
+- **MB.MD P109 Locale Sync (Jan 6, 2026)**: Completed bulk translation for 5 priority languages. Used TranslationAgent to scaffold 925 missing keys, then parallel subagents translated common.json (45 keys), navigation.json (31 keys), and pages.json (109 keys). Navbar, marketing (dancers, organizers, support, about), and onboarding sections now fully localized for RU, FR, DE, IT, PT.
