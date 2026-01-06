@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { format, isToday, isYesterday } from "date-fns";
 import { 
   MessageCircle, 
   Mail, 
@@ -20,7 +21,9 @@ import {
   Smile,
   Eye,
   Music,
-  Lightbulb
+  Lightbulb,
+  Smartphone,
+  Globe
 } from "lucide-react";
 import { SiFacebook, SiInstagram, SiWhatsapp } from "react-icons/si";
 import { formatDistanceToNow } from "date-fns";
@@ -43,6 +46,14 @@ const REACTION_TYPES = [
   { id: 'music', icon: Music, label: 'Music', color: '#A855F7' },
   { id: 'inspiration', icon: Lightbulb, label: 'Inspiration', color: '#10B981' },
 ];
+
+const channelIcons = {
+  mt: Smartphone,
+  gmail: Mail,
+  facebook: SiFacebook,
+  instagram: SiInstagram,
+  whatsapp: SiWhatsapp,
+};
 
 const channelLabels = {
   mt: "Mundo Tango",
@@ -137,7 +148,7 @@ export default function UnifiedInbox() {
     select: (data: any) => data?.messages || data || [],
   });
 
-  const { data: channels } = useQuery({
+  const { data: channels = [] } = useQuery({
     queryKey: ["/api/messages/channels"],
   });
 
@@ -255,6 +266,8 @@ export default function UnifiedInbox() {
           queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });
           // Also refresh conversations to update the blinking circle
           queryClient.invalidateQueries({ queryKey: ['/api/messages/conversations'] });
+          // Ensure unified feed is also aware of read status changes
+          queryClient.invalidateQueries({ queryKey: ['/api/messages/unified', { channel: undefined, search: undefined }] });
         } catch (error) {
           console.error('Failed to mark messages as read:', error);
         }
@@ -591,8 +604,10 @@ function MessageReactionBar({
             const Icon = channel === "all" ? MessageCircle : channelIcons[channel as keyof typeof channelIcons];
             const count = getChannelCount(channel);
             const isActive = selectedChannel === channel;
-            const isConnected = channel === "all" || channel === "mt" || channels?.find((c: any) => c.channel === channel && c.isActive);
+            const isConnected = channel === "all" || channel === "mt" || (Array.isArray(channels) && channels.find((c: any) => c.channel === channel && c.isActive));
             
+            if (!isConnected && channel !== "all") return null;
+
             return (
               <Button
                 key={channel}

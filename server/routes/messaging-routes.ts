@@ -499,8 +499,7 @@ export function registerMessagingRoutes(app: Express) {
           username: 'guest-contact',
           name: 'Guest Contact',
           password: 'no-login',
-          roleLevel: 0,
-          isEmailVerified: true,
+          role: 'user',
         }).returning();
         guestUser = { id: newGuestUser.id };
       }

@@ -207,6 +207,12 @@ function UnifiedTopBar({
 
   // Sync message count with local state if needed (optional, query already handles it)
   // But let's ensure it's not hardcoded anywhere else
+  // Added from replit-agent branch: refetch on mount or focus
+  useEffect(() => {
+    if (user) {
+      queryClient.invalidateQueries({ queryKey: ['/api/messages/unread-count'] });
+    }
+  }, [user, queryClient]);
 
   // Fetch pending friend request count (separate from notifications - shows even if notifs are read)
   const { data: friendRequestsData = [] } = useQuery<any[]>({
