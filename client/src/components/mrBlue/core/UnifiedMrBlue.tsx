@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { useMrBlue } from '@/contexts/MrBlueContext';
 import { CommandCenter } from './CommandCenter';
-import { ThePlanView } from './ThePlanView';
+import { ThePlanView } from '../advanced/ThePlanView';
 import { VisualEditorMode } from './VisualEditorMode';
 import { LoadingFallback } from '@/components/LoadingFallback';
 
