@@ -728,6 +728,9 @@ export class EmailService {
   
   // Helper: Send email verification with 6-digit code (direct send, not queued - time-sensitive)
   static async sendVerificationCodeEmail(email: string, name: string, verificationCode: string): Promise<boolean> {
+    const startTime = Date.now();
+    const emailDomain = email.split('@')[1];
+    
     try {
       const html = this.renderTemplate('emailVerificationCode', {
         name: name || 'Tango Dancer',
@@ -736,12 +739,13 @@ export class EmailService {
       
       const resendClient = await getResendClient();
       if (!resendClient) {
-        console.log(`[EmailService] Verification code email would be sent to ${email} (Resend not configured)`);
-        console.log(`[EmailService] Verification Code: ${verificationCode}`);
-        return true; // Return true so the registration endpoint still responds successfully
+        console.warn(`[EmailService] ⚠️ Resend not configured - verification code NOT sent to ${email}`);
+        console.warn(`[EmailService] Verification Code (DEV ONLY): ${verificationCode}`);
+        return false; // Return false to indicate email was NOT actually sent
       }
       
-      console.log(`[EmailService] Sending verification code email to ${email} from ${resendClient.fromEmail}`);
+      console.log(`[EmailService] 📧 Sending verification code email to ${email} (domain: ${emailDomain}) from ${resendClient.fromEmail}`);
+      
       const result = await resendClient.client.emails.send({
         from: resendClient.fromEmail,
         to: email,
@@ -749,11 +753,29 @@ export class EmailService {
         html: html
       });
       
-      console.log(`[EmailService] Verification code email sent to ${email}`, JSON.stringify(result));
+      const duration = Date.now() - startTime;
+      
+      if (result.error) {
+        console.error(`[EmailService] ❌ Resend API error for ${email}:`, JSON.stringify(result.error));
+        return false;
+      }
+      
+      console.log(`[EmailService] ✅ Verification code email SENT to ${email} in ${duration}ms | ID: ${result.data?.id || 'unknown'}`);
+      console.log(`[EmailService] 📋 Email details: to=${email}, domain=${emailDomain}, resendId=${result.data?.id}`);
+      
+      // Log potential delivery issues based on email domain
+      const commonIssuesDomains = ['yahoo.com', 'aol.com', 'hotmail.com', 'outlook.com'];
+      if (commonIssuesDomains.some(d => emailDomain?.includes(d))) {
+        console.log(`[EmailService] ℹ️ Note: ${emailDomain} may have stricter spam filters. If not received, check spam folder.`);
+      }
+      
       return true;
     } catch (error: any) {
-      console.error(`[EmailService] Failed to send verification code email to ${email}:`, error?.message || error);
-      console.error(`[EmailService] Full error details:`, JSON.stringify(error, null, 2));
+      const duration = Date.now() - startTime;
+      console.error(`[EmailService] ❌ FAILED to send verification code email to ${email} after ${duration}ms`);
+      console.error(`[EmailService] Error message: ${error?.message || 'Unknown error'}`);
+      console.error(`[EmailService] Error code: ${error?.statusCode || error?.code || 'N/A'}`);
+      console.error(`[EmailService] Full error:`, JSON.stringify(error, null, 2));
       return false;
     }
   }

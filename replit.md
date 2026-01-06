@@ -121,3 +121,12 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **TranslationAgent**: `server/services/mrBlue/agents/features/TranslationAgent.ts` - Provides audit, sync, coverage reporting, and bulk translation operations
 - **Key Structure**: Login/Register pages use nested structure with hero, form, toast, seo keys. Onboarding pages use pageTitle, seoTitle, seoDescription, step, title, subtitle pattern
 - **MB.MD P109 Locale Sync (Jan 6, 2026)**: Completed bulk translation for 5 priority languages. Used TranslationAgent to scaffold 925 missing keys, then parallel subagents translated common.json (45 keys), navigation.json (31 keys), and pages.json (109 keys). Navbar, marketing (dancers, organizers, support, about), and onboarding sections now fully localized for RU, FR, DE, IT, PT.
+
+### Email Verification System (Updated Jan 6, 2026)
+- **Provider**: Resend (via Replit Connector)
+- **From Address**: `admin@mundotango.life`
+- **Issue Identified**: Users not receiving verification emails due to missing DNS authentication records (SPF, DKIM, DMARC)
+- **Required DNS Setup**: See `docs/EMAIL_DELIVERABILITY_SETUP.md` for configuration guide
+- **Logging**: Enhanced logging added to `server/services/EmailService.ts` for delivery tracking
+- **Resend Verification**: `/api/auth/resend-verification` endpoint available (rate limited: 3 per hour)
+- **Status**: DNS records need to be configured in domain registrar to fix deliverability
