@@ -842,6 +842,15 @@ Keep the entire response concise (2-3 paragraphs max).`,
         hasResumeContent: resumeContent.length > 50
       });
       
+      // MB.MD Fix: Determine which resume context to send
+      let resumeToUse = "";
+      if (mode === "authenticated") {
+        resumeToUse = uploadedDocumentsRef.current.map(d => d.text).join("\n\n");
+      } else {
+        resumeToUse = storedDocs.map(d => d.parsedText).join("\n\n");
+      }
+      const currentResumeContent = resumeToUse || "";
+
       try {
         // Generate AI-driven first question based on resume (same as authenticated flow)
         const response = await fetch("/api/mrblue/chat", {
@@ -852,18 +861,20 @@ Keep the entire response concise (2-3 paragraphs max).`,
             message: "Generate resume question 1",
             systemPrompt: `${getLanguageInstruction()}You are Mr. Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Background Deep-Dive.
 
+IMPORTANT: You MUST read the following resume content carefully and ask questions that DIRECTLY REFERENCE specific details from it. Do NOT ask generic background questions if specific details are available.
+
 The volunteer ${candidateName} has uploaded this resume/profile:
-${resumeContent}
+${currentResumeContent.substring(0, 4000)}
 
 Question 1 of ${TOTAL_BACKGROUND_QUESTIONS}.
 
-Your goal: Start with a warm greeting acknowledging their resume, then ask ONE specific, insightful question about their background to understand:
-- Their actual experience level and expertise areas
-- Projects they're most proud of
-- Technologies/skills they want to use more
-- Any gaps or areas they want to develop
+Your goal: Start with a warm greeting acknowledging their resume, then ask ONE specific, insightful question about a specific experience, skill, or project found in their resume to understand:
+- Specific technical implementations they worked on
+- Their actual role in projects mentioned
+- Technologies they used in specific contexts
+- How their specific past experience relates to Mundo Tango's mission
 
-Be conversational and warm. Reference specific details from their resume when possible.
+Be conversational and warm. Reference specific details from their resume.
 Format: Start with a personalized greeting (mention their name and 1-2 specific things from their resume), then ask your question clearly marked as **Question 1 of 10 (Background):**
 
 Keep the entire response concise (2-3 paragraphs max).`,
@@ -928,18 +939,27 @@ Keep the entire response concise (2-3 paragraphs max).`,
     const candidateName = user?.name || session?.name || initialName || "there";
     const candidateEmail = user?.email || session?.email || initialEmail || "";
     
-    if (nextIndex >= totalQuestions) {
-      try {
-        const response = await fetch("/api/mrblue/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            message: "Generate interview completion message",
-            systemPrompt: `${getLanguageInstruction()}You are Mr. Blue completing a volunteer interview for Mundo Tango.
+      // MB.MD Fix: Determine which resume context to send
+      let resumeToUse = "";
+      if (mode === "authenticated") {
+        resumeToUse = uploadedDocumentsRef.current.map(d => d.text).join("\n\n");
+      } else {
+        resumeToUse = storedDocs.map(d => d.parsedText).join("\n\n");
+      }
+      const currentResumeContent = resumeToUse || "";
+
+      if (nextIndex >= totalQuestions) {
+        try {
+          const response = await fetch("/api/mrblue/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              message: "Generate interview completion message",
+              systemPrompt: `${getLanguageInstruction()}You are Mr. Blue completing a volunteer interview for Mundo Tango.
 
 The candidate ${candidateName} just answered all 10 questions. Their resume shows:
-${resumeContent.substring(0, 1000)}
+${currentResumeContent.substring(0, 4000)}
 
 Their interview answers were:
 ${updatedMessages.filter(m => m.role === "user").map(m => m.content).join("\n---\n").substring(0, 1500)}
@@ -950,8 +970,8 @@ Generate a warm completion message that:
 3. Explains next steps (team will review and get back to them)
 
 Keep it to 2-3 paragraphs.`,
-          }),
-        });
+            }),
+          });
         
         let completionMessage: { role: "ai", content: string };
         if (response.ok) {
@@ -1034,11 +1054,22 @@ Keep it to 2-3 paragraphs.`,
       // Generate AI-driven question based on resume and previous answers (same as authenticated flow)
       let systemPrompt: string;
       
+      // MB.MD Fix: Determine which resume context to send
+      let resumeToUse = "";
+      if (mode === "authenticated") {
+        resumeToUse = uploadedDocumentsRef.current.map(d => d.text).join("\n\n");
+      } else {
+        resumeToUse = storedDocs.map(d => d.parsedText).join("\n\n");
+      }
+      const currentResumeContent = resumeToUse || "";
+
       if (isBackground) {
         systemPrompt = `${getLanguageInstruction()}You are Mr. Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Background Deep-Dive.
 
+IMPORTANT: You MUST read the following resume content carefully and ask questions that DIRECTLY REFERENCE specific details from it. Do NOT ask generic background questions if specific details are available.
+
 The volunteer ${candidateName} has uploaded this resume/profile:
-${resumeContent}
+${currentResumeContent.substring(0, 4000)}
 
 Previous answers in this interview: ${previousAnswers.join(" | ")}
 
@@ -1046,11 +1077,11 @@ They just answered: "${currentMessage}"
 
 Question ${questionNumber} of ${TOTAL_BACKGROUND_QUESTIONS} in Background phase.
 
-Your goal: First briefly acknowledge their answer (1 sentence), then ask ONE specific, insightful question about their background to understand:
-- Their actual experience level and expertise areas
-- Projects they're most proud of
-- Technologies/skills they want to use more
-- Any gaps or areas they want to develop
+Your goal: First briefly acknowledge their answer (1 sentence), then ask ONE specific, insightful question about a specific experience, skill, or project found in their resume to understand:
+- Specific technical implementations they worked on
+- Their actual role in projects mentioned
+- Technologies they used in specific contexts
+- How their specific past experience relates to Mundo Tango's mission
 
 Be conversational and warm. Reference specific details from their resume and previous answers.
 Format your question clearly as **Question ${questionNumber} of 10 (Background):**
@@ -1059,7 +1090,7 @@ Keep the entire response concise (2-3 sentences max).`;
         systemPrompt = `${getLanguageInstruction()}You are Mr. Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 2: Platform Contribution Matching.
 
 Based on the interview so far, here's what we learned about ${candidateName}:
-Resume highlights: ${resumeContent.substring(0, 1500)}
+Resume highlights: ${currentResumeContent.substring(0, 1500)}
 Previous answers: ${previousAnswers.join(" | ")}
 
 They just answered: "${currentMessage}"
