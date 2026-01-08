@@ -395,27 +395,39 @@ Keep responses concise (2-3 sentences max).`;
         completedAt: completedAt ? new Date(completedAt) : new Date()
       });
 
-      // Create pipeline entry for admin review (authenticated users)
+      // MB.MD FIX (Jan 8, 2026): Ensure pipeline entry is created for BOTH guest and authenticated sessions
+      // and ensure it uses the correct 'offered' stage for the Talent Pipeline UI
       const { db } = await import("./db");
       const { candidatePipelines } = await import("@shared/schema");
-      
-      // Check if pipeline entry already exists for this user
-      const { eq, and } = await import("drizzle-orm");
-      const existingPipeline = await db
-        .select()
-        .from(candidatePipelines)
-        .where(eq(candidatePipelines.candidateId, volunteer.userId || 0))
-        .limit(1);
-      
-      if (existingPipeline.length === 0 && volunteer.userId) {
-        await db.insert(candidatePipelines).values({
-          userId: 1, // System/admin user
-          candidateId: volunteer.userId,
-          stage: "offered",
-          source: "talent_match_authenticated",
-          notes: `Completed AI interview. Session ID: ${clarifierId}. Messages: ${chatLog?.length || 0}`,
-        });
-        console.log(`[TalentMatch] Created pipeline entry for authenticated user ${volunteer.userId}`);
+      const { eq } = await import("drizzle-orm");
+
+      if (volunteer.userId) {
+        const existingPipeline = await db
+          .select()
+          .from(candidatePipelines)
+          .where(eq(candidatePipelines.candidateId, volunteer.userId))
+          .limit(1);
+        
+        if (existingPipeline.length === 0) {
+          await db.insert(candidatePipelines).values({
+            userId: 1, // System/admin user
+            candidateId: volunteer.userId,
+            stage: "offered", // This maps to "Pending Approval" in the UI
+            source: "talent_match_interview",
+            notes: `Completed AI interview. Session ID: ${clarifierId}. Messages: ${chatLog?.length || 0}`,
+          });
+          console.log(`[TalentMatch] Created pipeline entry for user ${volunteer.userId}`);
+        } else {
+          // Update existing to ensure it's in the 'offered' stage if they just finished the interview
+          await db.update(candidatePipelines)
+            .set({ 
+              stage: "offered",
+              notes: (existingPipeline[0].notes || "") + `\nUpdated: Completed AI interview ${clarifierId}.`,
+              updatedAt: new Date() 
+            })
+            .where(eq(candidatePipelines.candidateId, volunteer.userId));
+          console.log(`[TalentMatch] Updated existing pipeline entry for user ${volunteer.userId} to 'offered' stage`);
+        }
       }
 
       console.log(`[TalentMatch] Clarifier session ${clarifierId} completed for volunteer ${session.volunteerId}`);
