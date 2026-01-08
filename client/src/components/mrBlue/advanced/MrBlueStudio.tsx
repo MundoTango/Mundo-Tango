@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Video, Code, Mic, MessageSquare, Sparkles, Facebook, Brain, Box, Film, Loader2 } from 'lucide-react';
-import { VideoConference } from './VideoConference';
+import VideoConference from './VideoConference';
 import { VibeCodingInterface } from './VibeCodingInterface';
 import { VoiceCloning } from './VoiceCloning';
 import { MessengerIntegration } from './MessengerIntegration';
