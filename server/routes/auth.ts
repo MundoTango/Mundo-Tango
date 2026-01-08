@@ -32,10 +32,6 @@ const registerSchema = z.object({
 // Valid invite codes that grant immediate access (not waitlist)
 const VALID_INVITE_CODES = ["nomad"];
 
-// Bypass verification code for users who can't receive emails
-// This allows manual verification when email delivery fails
-// Set via environment variable for security
-const BYPASS_VERIFICATION_CODE = process.env.EMAIL_BYPASS_CODE || null;
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -46,7 +42,6 @@ const loginSchema = z.object({
 
 const verifyEmailSchema = z.object({
   token: z.string().min(1),
-  email: z.string().email().optional(), // Required for bypass code
 });
 
 const forgotPasswordSchema = z.object({

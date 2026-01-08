@@ -9,6 +9,7 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../storage";
 import { z } from "zod";
+import { EmailService } from "../services/EmailService";
 
 const router = Router();
 
@@ -219,6 +220,12 @@ router.post("/admin/approve/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const { action, notes } = req.body;
 
+    // Get the feedback to find the user's email
+    const feedback = await storage.getUserFeedback(id);
+    if (!feedback) {
+      return res.status(404).json({ error: "Feedback not found" });
+    }
+
     // Update feedback status
     const newStatus = action === "reject" ? "rejected" : "approved";
     await storage.updateUserFeedback(id, {
@@ -226,6 +233,25 @@ router.post("/admin/approve/:id", async (req: Request, res: Response) => {
       assignedTo: user.id,
       adminNotes: notes,
     });
+
+    // Send email notification to user (if they have a userId)
+    if (feedback.userId) {
+      const feedbackUser = await storage.getUser(feedback.userId);
+      if (feedbackUser?.email) {
+        const status = action === "reject" ? "rejected" : "approved";
+        console.log(`[QA Platform] Sending ${status} email to ${feedbackUser.email} for feedback: ${feedback.title}`);
+        
+        EmailService.sendFeedbackResponseEmail(
+          feedbackUser.email,
+          feedbackUser.displayName || feedbackUser.username || 'Tango Dancer',
+          feedback.title,
+          status as 'approved' | 'rejected',
+          notes
+        ).catch(err => {
+          console.error(`[QA Platform] Failed to send feedback email:`, err);
+        });
+      }
+    }
 
     res.json({ success: true });
   } catch (error: any) {
@@ -244,12 +270,36 @@ router.post("/admin/resolve/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const { mrBlueResponse, adminNotes } = req.body;
 
+    // Get the feedback to find the user's email
+    const feedback = await storage.getUserFeedback(id);
+    if (!feedback) {
+      return res.status(404).json({ error: "Feedback not found" });
+    }
+
     await storage.updateUserFeedback(id, {
       status: "resolved",
       resolvedAt: new Date(),
       mrBlueResponse,
       adminNotes,
     });
+
+    // Send email notification to user (if they have a userId)
+    if (feedback.userId) {
+      const feedbackUser = await storage.getUser(feedback.userId);
+      if (feedbackUser?.email) {
+        console.log(`[QA Platform] Sending resolved email to ${feedbackUser.email} for feedback: ${feedback.title}`);
+        
+        EmailService.sendFeedbackResponseEmail(
+          feedbackUser.email,
+          feedbackUser.displayName || feedbackUser.username || 'Tango Dancer',
+          feedback.title,
+          'resolved',
+          adminNotes || mrBlueResponse
+        ).catch(err => {
+          console.error(`[QA Platform] Failed to send feedback email:`, err);
+        });
+      }
+    }
 
     res.json({ success: true });
   } catch (error: any) {

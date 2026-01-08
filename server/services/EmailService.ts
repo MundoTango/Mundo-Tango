@@ -814,6 +814,123 @@ export class EmailService {
       return false;
     }
   }
+  
+  // Helper: Send feedback response email (direct send, not queued)
+  static async sendFeedbackResponseEmail(
+    email: string, 
+    name: string, 
+    feedbackTitle: string,
+    status: 'approved' | 'rejected' | 'resolved',
+    adminNotes?: string
+  ): Promise<boolean> {
+    const startTime = Date.now();
+    
+    try {
+      const appUrl = getAppUrl();
+      const statusMessages = {
+        approved: 'Your feedback has been reviewed and approved. Our team is now working on addressing your request.',
+        rejected: 'After careful review, we were unable to proceed with your request at this time.',
+        resolved: 'Great news! Your feedback has been addressed and the issue has been resolved.'
+      };
+      
+      const statusColors = {
+        approved: '#10B981',
+        rejected: '#EF4444', 
+        resolved: '#3B82F6'
+      };
+      
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #0f172a;">
+            <tr>
+              <td align="center" style="padding: 40px 20px;">
+                <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 16px; border: 1px solid #334155;">
+                  <tr>
+                    <td style="padding: 40px;">
+                      <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="display: inline-block; background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); padding: 12px 24px; border-radius: 12px;">
+                          <span style="color: white; font-weight: bold; font-size: 24px;">MT</span>
+                        </div>
+                        <h1 style="color: white; margin-top: 16px; margin-bottom: 0; font-size: 28px;">Mundo Tango</h1>
+                      </div>
+                      
+                      <div style="background-color: #1e293b; border-radius: 12px; padding: 24px; border-left: 4px solid ${statusColors[status]};">
+                        <h2 style="color: white; margin: 0 0 16px 0; font-size: 20px;">Feedback Update</h2>
+                        <p style="color: #94a3b8; margin: 0 0 8px 0;">Hi ${name || 'Tango Dancer'},</p>
+                        <p style="color: #e2e8f0; margin: 0 0 16px 0;">${statusMessages[status]}</p>
+                        
+                        <div style="background-color: #0f172a; border-radius: 8px; padding: 16px; margin: 16px 0;">
+                          <p style="color: #64748b; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase;">Your Feedback</p>
+                          <p style="color: white; margin: 0; font-weight: 500;">${feedbackTitle}</p>
+                          <p style="color: ${statusColors[status]}; margin: 8px 0 0 0; font-weight: 500; text-transform: capitalize;">${status}</p>
+                        </div>
+                        
+                        ${adminNotes ? `
+                        <div style="background-color: #0f172a; border-radius: 8px; padding: 16px; margin: 16px 0;">
+                          <p style="color: #64748b; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase;">Admin Response</p>
+                          <p style="color: #e2e8f0; margin: 0;">${adminNotes}</p>
+                        </div>
+                        ` : ''}
+                      </div>
+                      
+                      <div style="text-align: center; margin-top: 24px;">
+                        <a href="${appUrl}" style="display: inline-block; background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600;">
+                          Visit Mundo Tango
+                        </a>
+                      </div>
+                      
+                      <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #334155;">
+                        <p style="color: #64748b; margin: 0; font-size: 12px;">
+                          Thank you for helping us improve Mundo Tango!
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+      
+      const resendClient = await getResendClient();
+      if (!resendClient) {
+        console.log(`[EmailService] 📧 Feedback response email would be sent to ${email} (Resend not configured)`);
+        return true;
+      }
+      
+      console.log(`[EmailService] 📧 Sending feedback response email to ${email}...`);
+      
+      const result = await resendClient.client.emails.send({
+        from: resendClient.fromEmail,
+        to: email,
+        subject: `Your Feedback Has Been ${status.charAt(0).toUpperCase() + status.slice(1)} - Mundo Tango`,
+        html: html
+      });
+      
+      const duration = Date.now() - startTime;
+      
+      if (result.error) {
+        console.error(`[EmailService] ❌ Resend API error for ${email}:`, JSON.stringify(result.error));
+        return false;
+      }
+      
+      console.log(`[EmailService] ✅ Feedback response email SENT to ${email} in ${duration}ms | ID: ${result.data?.id || 'unknown'}`);
+      return true;
+    } catch (error: any) {
+      const duration = Date.now() - startTime;
+      console.error(`[EmailService] ❌ FAILED to send feedback response email to ${email} after ${duration}ms`);
+      console.error(`[EmailService] Error: ${error?.message || 'Unknown error'}`);
+      return false;
+    }
+  }
 }
 
 // Cron job: Send queued emails every minute
