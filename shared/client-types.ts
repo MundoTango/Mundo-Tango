@@ -143,7 +143,7 @@ export interface SelectEventComment {
   eventId: number;
   userId: number;
   content: string;
-  parentId?: number | null;
+  parentCommentId?: number | null;
   createdAt?: Date | null;
   updatedAt?: Date | null;
 }

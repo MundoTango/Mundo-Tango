@@ -34,7 +34,7 @@ export function EventCard({ event, userRSVPStatus }: EventCardProps) {
     return badges[type] || { label: type ? type.charAt(0).toUpperCase() + type.slice(1) : "Event", variant: "outline" as const };
   };
   
-  const badge = getEventTypeBadge(event.eventType);
+  const badge = getEventTypeBadge(event.eventType || 'event');
   
   return (
     <Card className="hover-elevate" data-testid={`card-event-${event.id}`}>
