@@ -32,6 +32,7 @@ import {
   Heart,
 } from "lucide-react";
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { getZoomCallTimes } from "@/lib/zoomTimeZones";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import {
@@ -479,40 +480,17 @@ export default function LandingPage() {
                   </div>
                 </div>
                 
-                {/* Time zones grid - below header */}
+                {/* Time zones grid - below header (dynamically calculated for DST) */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm text-white/90 mb-4">
-                  <div className="bg-white/10 rounded-lg p-3 text-center">
-                    <span className="text-4xl block mb-1">🇺🇸</span>
-                    <div className="text-xs font-bold">CA 9AM / NY 12PM</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 text-center">
-                    <span className="text-4xl block mb-1">🇦🇷</span>
-                    <div className="text-xs font-bold">1:00 PM</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 text-center border border-amber-400/30">
-                    <span className="text-4xl block mb-1">🇬🇧</span>
-                    <div className="text-xs font-bold">5:00 PM</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 text-center">
-                    <span className="text-4xl block mb-1">🇫🇷</span>
-                    <div className="text-xs font-bold">6:00 PM</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 text-center">
-                    <span className="text-4xl block mb-1">🇺🇦</span>
-                    <div className="text-xs font-bold">7:00 PM</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 text-center">
-                    <span className="text-4xl block mb-1">🇨🇳</span>
-                    <div className="text-xs font-bold">1AM (+1)</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 text-center">
-                    <span className="text-4xl block mb-1">🇰🇷</span>
-                    <div className="text-xs font-bold">2AM (+1)</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 text-center">
-                    <span className="text-4xl block mb-1">🇦🇺</span>
-                    <div className="text-xs font-bold">4AM (+1)</div>
-                  </div>
+                  {getZoomCallTimes().map((tz, index) => (
+                    <div 
+                      key={index}
+                      className={`bg-white/10 rounded-lg p-3 text-center ${tz.isHighlighted ? 'border border-amber-400/30' : ''}`}
+                    >
+                      <span className="text-4xl block mb-1">{tz.flag}</span>
+                      <div className="text-xs font-bold">{tz.time}</div>
+                    </div>
+                  ))}
                 </div>
                 <p className="text-white/90 leading-relaxed text-sm mb-3 text-center">
                   <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.qaDescription', 'Answering all your questions: <span className="font-semibold text-amber-200">What is Mundo Tango?</span> Who is it for and how could it impact <span className="font-semibold text-amber-200">YOU</span>? Why do we need it? And more!') }} />
