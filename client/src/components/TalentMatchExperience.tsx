@@ -29,6 +29,25 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
+
+// Helper function for authenticated fetch calls to Mr. Blue AI
+async function authenticatedFetch(url: string, options: RequestInit): Promise<Response> {
+  const token = localStorage.getItem('accessToken');
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options.headers as Record<string, string> || {})
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return fetch(url, {
+    ...options,
+    headers,
+    credentials: 'include'
+  });
+}
 import { useTalentMatchSession, type StoredDocument } from "@/contexts/TalentMatchSessionContext";
 import { TalentMatchInterviewChat, type PhaseConfig } from "@/components/mrBlue/advanced/TalentMatchInterviewChat";
 
@@ -749,22 +768,22 @@ export function TalentMatchExperience({
           // DEBUG: Log the resume content length being sent
           console.log(`[TalentMatch] Sending interview request with ${resumeContent.length} chars of resume content`);
           
-          const response = await fetch("/api/mrblue/chat", {
+          const response = await authenticatedFetch("/api/mrblue/chat", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
             body: JSON.stringify({
               message: "Generate resume question 1",
               systemPrompt: `${getLanguageInstruction()}You are Mr. Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Background Deep-Dive.
+
+IMPORTANT: You MUST read the following resume content carefully and ask questions that DIRECTLY REFERENCE specific details from it. Do NOT ask generic background questions - reference their actual experience, companies, projects, or skills.
 
 The volunteer ${candidateName} has uploaded this resume/profile:
 ${resumeContent}
 
 Question 1 of ${TOTAL_BACKGROUND_QUESTIONS}.
 
-Your goal: Start with a warm greeting acknowledging their resume, then ask ONE specific, insightful question about their background.
+Your goal: Start with a warm greeting that mentions 1-2 SPECIFIC things from their resume (company names, project titles, technologies, achievements), then ask ONE specific, insightful question about something concrete from their background.
 
-Be conversational and warm. Reference specific details from their resume when possible.
+Be conversational and warm. You MUST reference specific details from their resume.
 Format: Start with a personalized greeting, then ask your question clearly marked as **Question 1 of 10 (Background):**
 
 Keep the entire response concise (2-3 paragraphs max).`,
@@ -853,28 +872,22 @@ Keep the entire response concise (2-3 paragraphs max).`,
 
       try {
         // Generate AI-driven first question based on resume (same as authenticated flow)
-        const response = await fetch("/api/mrblue/chat", {
+        const response = await authenticatedFetch("/api/mrblue/chat", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({
             message: "Generate resume question 1",
             systemPrompt: `${getLanguageInstruction()}You are Mr. Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Background Deep-Dive.
 
-IMPORTANT: You MUST read the following resume content carefully and ask questions that DIRECTLY REFERENCE specific details from it. Do NOT ask generic background questions if specific details are available.
+IMPORTANT: You MUST read the following resume content carefully and ask questions that DIRECTLY REFERENCE specific details from it. Do NOT ask generic background questions - reference their actual companies, project names, technologies, or achievements by name.
 
 The volunteer ${candidateName} has uploaded this resume/profile:
 ${currentResumeContent.substring(0, 4000)}
 
 Question 1 of ${TOTAL_BACKGROUND_QUESTIONS}.
 
-Your goal: Start with a warm greeting acknowledging their resume, then ask ONE specific, insightful question about a specific experience, skill, or project found in their resume to understand:
-- Specific technical implementations they worked on
-- Their actual role in projects mentioned
-- Technologies they used in specific contexts
-- How their specific past experience relates to Mundo Tango's mission
+Your goal: Start with a warm greeting that mentions 1-2 SPECIFIC things from their resume (company names, project titles, technologies, achievements), then ask ONE specific, insightful question about something concrete from their background.
 
-Be conversational and warm. Reference specific details from their resume.
+Be conversational and warm. You MUST reference specific details from their resume.
 Format: Start with a personalized greeting (mention their name and 1-2 specific things from their resume), then ask your question clearly marked as **Question 1 of 10 (Background):**
 
 Keep the entire response concise (2-3 paragraphs max).`,
@@ -950,10 +963,8 @@ Keep the entire response concise (2-3 paragraphs max).`,
 
       if (nextIndex >= totalQuestions) {
         try {
-          const response = await fetch("/api/mrblue/chat", {
+          const response = await authenticatedFetch("/api/mrblue/chat", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
             body: JSON.stringify({
               message: "Generate interview completion message",
               systemPrompt: `${getLanguageInstruction()}You are Mr. Blue completing a volunteer interview for Mundo Tango.
@@ -1119,10 +1130,8 @@ Keep the entire response concise (2-3 sentences max).`;
       }
       
       try {
-        const response = await fetch("/api/mrblue/chat", {
+        const response = await authenticatedFetch("/api/mrblue/chat", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({
             message: `Generate ${isBackground ? "background" : "platform"} question ${questionNumber}`,
             systemPrompt,
