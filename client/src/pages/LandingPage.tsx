@@ -585,44 +585,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Talent Match Section */}
-      <section className="py-20 md:py-24 bg-muted/30" data-testid="section-talent-match">
-        <div className="container mx-auto px-4">
-          <MotionDivSafe
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="space-y-16"
-          >
-            <div className="text-center max-w-3xl mx-auto space-y-4">
-              <MotionH2Safe
-                variants={fadeInUp}
-                className="text-3xl md:text-4xl font-bold ocean-gradient-text"
-                data-testid="text-talent-match-heading"
-              >
-                {t('pages:landing.talentMatch.title', 'Talent Match AI')}
-              </MotionH2Safe>
-              <MotionPSafe
-                variants={fadeInUp}
-                className="text-lg text-muted-foreground"
-              >
-                {t('pages:landing.talentMatch.subtitle', 'Our advanced AI connects tango professionals with global opportunities based on skills, experience, and style.')}
-              </MotionPSafe>
-            </div>
-
-            <div className="flex justify-center">
-              <Link href="/talent-match">
-                <Button size="lg" className="ocean-gradient text-white">
-                  {t('pages:landing.talentMatch.cta', 'Join the Network')}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </div>
-          </MotionDivSafe>
-        </div>
-      </section>
-
       {/* How It Works Section */}
       <section
         className="py-20 md:py-24 gradient-hero"
