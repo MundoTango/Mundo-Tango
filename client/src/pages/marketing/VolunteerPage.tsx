@@ -143,7 +143,7 @@ function VolunteerPageContent() {
                   data-testid="button-apply-volunteer"
                 >
                   <Brain className="h-4 w-4 mr-2" />
-                  {t('pages:volunteer.cta.applyNow', 'Apply Now')}
+                  {t('pages:volunteer.cta.applyNow', 'Volunteer Now')}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </motion.div>
