@@ -291,6 +291,16 @@ export default function LandingPage() {
 
   const comingSoonFeatures = [
     {
+      icon: Briefcase,
+      title: "Talent Match AI",
+      description: "Our advanced AI connects tango professionals with global opportunities based on skills, experience, and style. (Coming Soon)",
+    },
+    {
+      icon: Heart,
+      title: "Community Safety",
+      description: "Developing comprehensive safety protocols with community professionals: AI reporting, consent resources, and clear escalation pathways.",
+    },
+    {
       icon: Home,
       title: t('common:comingHousing', 'Housing Marketplace'),
       description: t('common:comingHousingDesc', 'Find tango-friendly accommodations or host traveling dancers. Build connections through shared spaces.'),
@@ -299,16 +309,6 @@ export default function LandingPage() {
       icon: Briefcase,
       title: t('common:comingProTools', 'Professional Tools'),
       description: t('common:comingProToolsDesc', 'Advanced features for teachers and organizers: student management, event analytics, and booking systems.'),
-    },
-    {
-      icon: Bot,
-      title: t('common:comingAI', 'Enhanced AI Matching'),
-      description: t('common:comingAIDesc', 'Smart algorithms learn your preferences and suggest perfect dance partners based on style, level, and personality.'),
-    },
-    {
-      icon: Users,
-      title: t('common:comingGroupTravel', 'Group Travel Planning'),
-      description: t('common:comingGroupTravelDesc', 'Coordinate festival trips with your tango friends. Shared itineraries, housing, and transportation.'),
     },
   ];
 
@@ -732,6 +732,28 @@ export default function LandingPage() {
                   </Card>
                 </MotionDivSafe>
               ))}
+            </div>
+
+            {/* Roadmap Steps */}
+            <div className="max-w-4xl mx-auto space-y-8 pt-12">
+              <h3 className="text-2xl font-bold text-center text-white">Next Steps for Mundo Tango</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-4">
+                  <div className="text-4xl font-bold text-white/20">01</div>
+                  <h4 className="text-xl font-bold text-white">The Foundation</h4>
+                  <p className="text-muted-foreground">Scott has built the initial platform single-handedly to prove the vision for a unified tango world.</p>
+                </div>
+                <div className="space-y-4 border-l border-white/10 pl-8">
+                  <div className="text-4xl font-bold text-white/20">02</div>
+                  <h4 className="text-xl font-bold text-white">Community Polish</h4>
+                  <p className="text-muted-foreground">We need your help to reach 100% GDPR compliance, verify stability, and secure funding for ongoing development and global marketing.</p>
+                </div>
+                <div className="space-y-4 border-l border-white/10 pl-8">
+                  <div className="text-4xl font-bold text-white/20">03</div>
+                  <h4 className="text-xl font-bold text-white">Full Access</h4>
+                  <p className="text-muted-foreground">Once the foundation is verified and compliant, we open the doors to the global tango community.</p>
+                </div>
+              </div>
             </div>
 
             <MotionDivSafe
