@@ -17,7 +17,6 @@ function RedirectWithQuery({ to }: { to: string }) {
 }
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
-const WaitlistConfirmationPage = lazy(() => import("@/pages/onboarding/WaitlistConfirmationPage"));
 const DemosPage = lazy(() => import("@/pages/DemosPage"));
 const ForDancersPage = lazy(() => import("@/pages/marketing/ForDancersPage"));
 const ForTeachersPage = lazy(() => import("@/pages/marketing/ForTeachersPage"));
@@ -47,7 +46,9 @@ export function MarketingRoutes() {
   const { user } = useAuth();
   return (
     <>
-      <Route path="/" component={WaitlistConfirmationPage} />
+      <Route path="/">
+        {user ? <Redirect to="/feed" /> : <RedirectWithQuery to="/landing" />}
+      </Route>
       <Route path="/lander">
         <RedirectWithQuery to="/landing" />
       </Route>
