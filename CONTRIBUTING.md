@@ -49,15 +49,26 @@ By participating in this project, you agree to maintain a respectful and inclusi
 5. **Set up environment variables**
    ```bash
    cp .env.example .env
-   # Edit .env with your local configuration
+   # Edit .env with your local configuration (DATABASE_URL is required)
    ```
 
-6. **Verify setup**
+6. **Database Setup**
+   ```bash
+   npm run db:push          # Sync local DB with schema
+   ```
+
+7. **Verify setup**
    ```bash
    npm run typecheck
    ```
 
 ## Development Workflow
+
+### Admin Access
+To test admin features (at `/admin`), you must set your user tier to `8` in the `users` table after registering.
+```sql
+UPDATE users SET tier = 8 WHERE email = 'your-email@example.com';
+```
 
 ### Branch Naming
 
@@ -267,6 +278,15 @@ Mundo Tango supports 68 languages. All user-facing text must be internationalize
 - **Bugs**: Open an Issue using the bug report template
 - **Features**: Open an Issue using the feature request template
 - **Live Q&A**: Join our weekly Thursday Zoom sessions
+
+## Troubleshooting
+
+### Common Issues
+
+- **Translations not appearing**: Ensure you are editing files in `client/public/locales/`, not the root `public/locales/`.
+- **Database Connection**: Ensure `DATABASE_URL` is correctly set in your `.env` file and your local/remote Postgres instance is accessible.
+- **Type Errors**: If you've modified the schema, run `npm run db:push` to ensure your database matches your types.
+- **Build Failures**: Check for hardcoded strings in the UI; everything must use the `t()` function.
 
 ## Recognition
 
