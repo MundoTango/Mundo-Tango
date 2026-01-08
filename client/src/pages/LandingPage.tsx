@@ -518,14 +518,16 @@ export default function LandingPage() {
                   <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.recurringNotice', 'We will be doing live sessions <span className="font-semibold text-amber-200">every Thursday</span> at the same time to hear what <span className="font-semibold text-amber-200">YOU</span> want out of this platform and to tell you what is happening!') }} />
                 </p>
                 <div className="text-center">
-                  <button 
-                    onClick={handleFacebookLiveClick}
+                  <a 
+                    href="https://us06web.zoom.us/j/89847301965?pwd=sJakkpF1IUNafBDKJ9V0xl4DyZa1LF.1&jst=3"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-[#2D8CFF] hover:bg-[#2681EF] text-white font-semibold px-5 py-2.5 rounded-lg transition-all hover-elevate text-sm cursor-pointer"
-                    data-testid="button-facebook-live"
+                    data-testid="button-zoom-live"
                   >
                     <Video className="h-4 w-4" />
                     {t('pages:landing.hero.joinFacebook', 'Join on Zoom')}
-                  </button>
+                  </a>
                 </div>
               </MotionDivSafe>
             </div>
