@@ -169,7 +169,7 @@ export default function TalentMatchInterviewPage() {
     
     let resumeContext = "";
     if (hasParsedText) {
-      resumeContext = `The volunteer has uploaded this resume/profile:\n${resume.parsedText.slice(0, 3000)}`;
+      resumeContext = `The volunteer has uploaded this resume/profile:\n${resume.parsedText.slice(0, 4000)}`;
       console.log(`[TalentMatch Interview] Including ${resume.parsedText.length} chars of resume in AI context`);
     } else if (hasResumeFile) {
       resumeContext = `The volunteer has uploaded a resume file: "${resume.filename}". The content couldn't be parsed, so please ask them to describe their background and experience directly.`;
@@ -188,21 +188,23 @@ export default function TalentMatchInterviewPage() {
     const systemPrompt = `You are Mr Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Resume Deep-Dive.
 ${languageInstruction}
 
+IMPORTANT: You MUST read the following resume content carefully and ask questions that DIRECTLY REFERENCE specific details from it. Do NOT ask generic background questions if specific details are available.
+
 ${resumeContext}
 
 Previous answers in this interview: ${previousAnswers.slice(-3).join(" | ")}
 
 Question ${questionNumber} of ${TOTAL_RESUME_QUESTIONS}.
 
-Your goal: Ask ONE specific, insightful question about their resume to understand:
-- Their actual experience level and expertise areas
-- Projects they're most proud of
-- Technologies/skills they want to use more
-- Any gaps or areas they want to develop
+Your goal: Ask ONE specific, insightful question about a specific experience, skill, or project found in their resume to understand:
+- Specific technical implementations they worked on
+- Their actual role in projects mentioned
+- Technologies they used in specific contexts
+- How their specific past experience relates to Mundo Tango's mission
 
-Be conversational and warm. Reference specific details from their resume when possible.
+Be conversational and warm. Reference specific details from their resume.
 Keep questions concise (1-2 sentences).
-If this is question 1, start with a warm greeting acknowledging their resume.
+If this is question 1, start with a warm greeting acknowledging a specific highlight from their resume.
 If this is question ${TOTAL_RESUME_QUESTIONS}, make it a summary/transition question.`;
 
     try {
