@@ -834,6 +834,14 @@ Keep the entire response concise (2-3 paragraphs max).`,
       const resumeContent = parsedDocs.map(d => d.parsedText).join("\n\n").substring(0, 3000);
       const candidateName = session?.name || initialName || "there";
       
+      // MB.MD Debug: Log resume content for guest interview
+      console.log(`[TalentMatch Guest] Starting interview:`, {
+        parsedDocsCount: parsedDocs.length,
+        resumeContentLength: resumeContent.length,
+        candidateName,
+        hasResumeContent: resumeContent.length > 50
+      });
+      
       try {
         // Generate AI-driven first question based on resume (same as authenticated flow)
         const response = await fetch("/api/mrblue/chat", {
@@ -907,6 +915,14 @@ Keep the entire response concise (2-3 paragraphs max).`,
     const nextIndex = questionIndex + 1;
     const parsedDocs = storedDocs.filter(d => d.status === "parsed" && d.parsedText);
     const resumeContent = parsedDocs.map(d => d.parsedText).join("\n\n").substring(0, 2000);
+    
+    // MB.MD Debug: Log resume content for follow-up questions
+    console.log(`[TalentMatch Interview] Question ${nextIndex}:`, {
+      parsedDocsCount: parsedDocs.length,
+      resumeContentLength: resumeContent.length,
+      hasResumeContent: resumeContent.length > 50,
+      mode
+    });
     
     // Get candidate name from user (authenticated) or session (guest)
     const candidateName = user?.name || session?.name || initialName || "there";

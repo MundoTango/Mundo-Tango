@@ -157,13 +157,26 @@ export default function TalentMatchInterviewPage() {
     const hasResumeFile = resume?.filename && resume.filename.length > 0;
     const hasParsedText = resume?.parsedText && resume.parsedText.trim().length > 0;
     
+    // MB.MD Debug: Log resume data status
+    console.log(`[TalentMatch Interview] Resume data check:`, {
+      hasResumeFile,
+      hasParsedText,
+      filename: resume?.filename,
+      parsedTextLength: resume?.parsedText?.length || 0,
+      volunteerId,
+      questionNumber
+    });
+    
     let resumeContext = "";
     if (hasParsedText) {
       resumeContext = `The volunteer has uploaded this resume/profile:\n${resume.parsedText.slice(0, 3000)}`;
+      console.log(`[TalentMatch Interview] Including ${resume.parsedText.length} chars of resume in AI context`);
     } else if (hasResumeFile) {
       resumeContext = `The volunteer has uploaded a resume file: "${resume.filename}". The content couldn't be parsed, so please ask them to describe their background and experience directly.`;
+      console.log(`[TalentMatch Interview] Resume file exists but no parsed text - asking user to describe background`);
     } else {
       resumeContext = `The volunteer hasn't uploaded a resume yet. Please ask them to describe their background, skills, and experience.`;
+      console.log(`[TalentMatch Interview] No resume found - asking user to describe background`);
     }
     
     // Get user's preferred language for Mr Blue to respond in
