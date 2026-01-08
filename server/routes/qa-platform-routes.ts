@@ -10,6 +10,7 @@ import { Router, Request, Response } from "express";
 import { storage } from "../storage";
 import { z } from "zod";
 import { EmailService } from "../services/EmailService";
+import { authenticateToken, AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
@@ -191,9 +192,9 @@ router.get("/feedback/:id", async (req: Request, res: Response) => {
 });
 
 // Admin Review Endpoints
-router.get("/admin/pending", async (req: Request, res: Response) => {
+router.get("/admin/pending", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const user = (req as any).user;
+    const user = (req as AuthRequest).user;
     // Allow God level or regular Admins (tier >= 4)
     if (!user || (!isGodLevel(user) && user.tier < 4)) {
       console.log(`[QA Admin] Access denied for user ${user?.id} with tier ${user?.tier}`);
@@ -209,9 +210,9 @@ router.get("/admin/pending", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/admin/approve/:id", async (req: Request, res: Response) => {
+router.post("/admin/approve/:id", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const user = (req as any).user;
+    const user = (req as AuthRequest).user;
     // Allow God level or regular Admins (tier >= 4)
     if (!user || (!isGodLevel(user) && user.tier < 4)) {
       return res.status(403).json({ error: "Admin access required" });
@@ -260,9 +261,9 @@ router.post("/admin/approve/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/admin/resolve/:id", async (req: Request, res: Response) => {
+router.post("/admin/resolve/:id", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const user = (req as any).user;
+    const user = (req as AuthRequest).user;
     if (!user || !isGodLevel(user)) {
       return res.status(403).json({ error: "God-level access required" });
     }
