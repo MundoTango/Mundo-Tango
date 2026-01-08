@@ -24,7 +24,6 @@ import { VisualEditorMode } from '../advanced/VisualEditorMode';
 import { LoadingFallback } from '@/components/LoadingFallback';
 
 // Lazy load heavy components from MrBlueStudio
-const VideoConference = lazy(() => import('./VideoConference').then(m => ({ default: m.VideoConference })));
 const VibeCodingInterface = lazy(() => import('./VibeCodingInterface').then(m => ({ default: m.VibeCodingInterface })));
 const VoiceCloning = lazy(() => import('./VoiceCloning').then(m => ({ default: m.VoiceCloning })));
 const MessengerIntegration = lazy(() => import('./MessengerIntegration').then(m => ({ default: m.MessengerIntegration })));
@@ -105,13 +104,15 @@ export default function UnifiedMrBlue() {
         <div className="max-w-7xl mx-auto p-6">
           <Suspense fallback={<LoadingFallback message={`Loading ${activeSystem}...`} />}>
             {activeSystem === 'video' && (
-              <VideoConference
-                onCallStart={handleCallStart}
-                onCallEnd={handleCallEnd}
-                onUserSpeaking={handleUserSpeaking}
-                onMrBlueSpeaking={handleMrBlueSpeaking}
-                showChatIntegration={true}
-              />
+              <Card className="p-6">
+                <div className="text-center space-y-4">
+                  <Video className="h-12 w-12 mx-auto text-muted-foreground" />
+                  <h2 className="text-2xl font-bold">Video Conference</h2>
+                  <p className="text-muted-foreground">
+                    Video conferencing feature coming soon.
+                  </p>
+                </div>
+              </Card>
             )}
             {activeSystem === 'chat' && (
               <Card className="p-6">
