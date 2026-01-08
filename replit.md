@@ -130,3 +130,21 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Logging**: Enhanced logging added to `server/services/EmailService.ts` for delivery tracking
 - **Resend Verification**: `/api/auth/resend-verification` endpoint available (rate limited: 3 per hour)
 - **Status**: DNS records need to be configured in domain registrar to fix deliverability
+
+### CI/CD & Contributor Workflow (Added Jan 8, 2026)
+- **GitHub Actions**: `.github/workflows/ci.yml` - Runs on PRs and pushes to main
+- **Pipeline Stages**:
+  1. Type Check & Lint - TypeScript compilation verification
+  2. Commit Lint - Conventional commit message validation
+  3. Unit Tests - Vitest test suite
+  4. Build Verification - Production build test
+  5. Security Audit - npm audit for vulnerabilities
+  6. E2E Tests - Playwright (on main branch only)
+- **Branch Protection**: See `docs/GITHUB_BRANCH_PROTECTION.md` for setup guide
+- **Pre-commit Hooks**: Husky runs type-check and lint-staged before commits
+- **Contributor Docs**:
+  - `CONTRIBUTING.md` - Complete contributor guide
+  - `.github/PULL_REQUEST_TEMPLATE.md` - PR checklist
+  - `.github/ISSUE_TEMPLATE/` - Bug report and feature request templates
+- **Commit Format**: Conventional Commits required (feat, fix, docs, etc.)
+- **Required for PRs**: TypeScript must compile, conventional commit format

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Weekly Q&A Sessions
+    url: https://us06web.zoom.us/j/89847301965?pwd=sJakkpF1IUNafBDKJ9V0xl4DyZa1LF.1
+    about: Join our weekly Thursday Zoom sessions for live Q&A with Scott
+  - name: General Questions
+    url: https://github.com/OWNER/mundo-tango/discussions
+    about: Ask questions and discuss ideas in GitHub Discussions
