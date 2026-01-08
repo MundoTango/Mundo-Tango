@@ -68,6 +68,7 @@
     "@sentry/profiling-node": "^10.29.0",
     "@sentry/react": "^10.29.0",
     "@size-limit/preset-app": "^11.2.0",
+    "@slack/bolt": "^4.6.0",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.5.3",
     "@supabase/auth-helpers-react": "^0.15.0",
