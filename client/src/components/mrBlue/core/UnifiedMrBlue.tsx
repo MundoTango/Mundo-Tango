@@ -20,7 +20,7 @@ import {
 import { useMrBlue } from '@/contexts/MrBlueContext';
 import { CommandCenter } from '../advanced/CommandCenter';
 import { ThePlanView } from '../advanced/ThePlanView';
-import { VisualEditorMode } from './VisualEditorMode';
+import { VisualEditorMode } from '../advanced/VisualEditorMode';
 import { LoadingFallback } from '@/components/LoadingFallback';
 
 // Lazy load heavy components from MrBlueStudio
