@@ -66,6 +66,12 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for visitor email capture (Facebook Live button on landing page)
+  // Guest users submitting emails without authentication
+  if (req.originalUrl === "/api/qa-platform/visitor-email") {
+    return next();
+  }
+  
   // Skip CSRF for public Mr. Blue endpoints (no auth required)
   const publicMrBlueEndpoints = [
     "/api/mrblue/chat",
@@ -253,6 +259,12 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   // Skip CSRF for PRO contact form (public form for anonymous visitors to contact PRO users)
   // Protected by Zod validation and rate limiting in production
   if (req.originalUrl === "/api/pro/contact") {
+    return next();
+  }
+  
+  // Skip CSRF for visitor email capture (Facebook Live button on landing page)
+  // Guest users submitting emails without authentication
+  if (req.originalUrl === "/api/qa-platform/visitor-email") {
     return next();
   }
   
