@@ -1677,7 +1677,9 @@ export class DbStorage implements IStorage {
   }
 
   async createUser(user: InsertUser): Promise<SelectUser> {
-    const result = await db.insert(users).values(user).returning();
+    // Explicitly set isActive: true to ensure new users are active by default
+    // This prevents issues where the database default might not be applied correctly
+    const result = await db.insert(users).values({ ...user, isActive: true } as any).returning();
     return result[0];
   }
 
