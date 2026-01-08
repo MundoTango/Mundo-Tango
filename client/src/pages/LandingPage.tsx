@@ -529,7 +529,7 @@ export default function LandingPage() {
                     data-testid="button-zoom-live"
                   >
                     <Video className="h-4 w-4" />
-                    {t('pages:landing.hero.joinFacebook', 'Join on Zoom')}
+                    {'Join on Zoom'}
                   </a>
                 </div>
               </MotionDivSafe>
