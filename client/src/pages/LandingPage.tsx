@@ -138,16 +138,16 @@ export default function LandingPage() {
       description: t('pages:landing.hero.emailSaved', "We'll keep you updated about our live sessions."),
     });
 
-    // Redirect to Facebook after a tiny delay to ensure toast is visible
+    // Redirect to Zoom after a tiny delay to ensure toast is visible
     setTimeout(() => {
-      window.location.href = 'https://www.facebook.com/sboddye';
+      window.location.href = 'https://us06web.zoom.us/j/89847301965?pwd=sJakkpF1IUNafBDKJ9V0xl4DyZa1LF.1&jst=3';
     }, 1000);
   }, [capturedEmail, t, toast]);
   
   // Skip email capture and go directly
   const handleSkipEmail = useCallback(() => {
     setEmailCaptureOpen(false);
-    window.location.href = 'https://www.facebook.com/sboddye';
+    window.location.href = 'https://us06web.zoom.us/j/89847301965?pwd=sJakkpF1IUNafBDKJ9V0xl4DyZa1LF.1&jst=3';
   }, []);
   
   // Dynamic next Thursday calculation (local time) - always shows upcoming session
@@ -445,11 +445,11 @@ export default function LandingPage() {
                         <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: '0.4s' }} />
                       </div>
                       <span className="text-amber-300 font-bold uppercase tracking-wider text-sm">
-                        {t('pages:landing.hero.facebookLive', 'Facebook Live Every Thursday')}
+                        {t('pages:landing.hero.facebookLive', 'Live Q&A Every Thursday')}
                       </span>
                     </div>
                     <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">
-                      {t('pages:landing.hero.qaScott', 'Live Q&A Sessions with Scott')}
+                      {t('pages:landing.hero.qaScott', 'Join us on Zoom with Scott')}
                     </h3>
                     {/* Dynamic next session */}
                     <div className="bg-white/10 rounded-lg px-4 py-2 inline-block">
@@ -520,11 +520,11 @@ export default function LandingPage() {
                 <div className="text-center">
                   <button 
                     onClick={handleFacebookLiveClick}
-                    className="inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white font-semibold px-5 py-2.5 rounded-lg transition-all hover-elevate text-sm cursor-pointer"
+                    className="inline-flex items-center gap-2 bg-[#2D8CFF] hover:bg-[#2681EF] text-white font-semibold px-5 py-2.5 rounded-lg transition-all hover-elevate text-sm cursor-pointer"
                     data-testid="button-facebook-live"
                   >
-                    <Facebook className="h-4 w-4" />
-                    {t('pages:landing.hero.joinFacebook', 'Join on Facebook Live')}
+                    <Video className="h-4 w-4" />
+                    {t('pages:landing.hero.joinFacebook', 'Join on Zoom')}
                   </button>
                 </div>
               </MotionDivSafe>
@@ -985,7 +985,7 @@ export default function LandingPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Facebook className="h-5 w-5 text-[#1877F2]" />
+              <Video className="h-5 w-5 text-[#2D8CFF]" />
               {t('pages:landing.hero.joinLiveSession', 'Join Our Live Session')}
             </DialogTitle>
             <DialogDescription>
@@ -1009,10 +1009,10 @@ export default function LandingPage() {
             <div className="flex gap-3">
               <Button
                 type="submit"
-                className="flex-1 bg-[#1877F2] hover:bg-[#166FE5] text-white"
+                className="flex-1 bg-[#2D8CFF] hover:bg-[#2681EF] text-white"
                 data-testid="button-submit-email"
               >
-                {t('pages:landing.hero.continueToFacebook', 'Continue to Facebook')}
+                {t('pages:landing.hero.continueToFacebook', 'Continue to Zoom')}
               </Button>
               <Button
                 type="button"
