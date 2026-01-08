@@ -52,11 +52,11 @@ export default function WaitlistConfirmationPage() {
               </MotionDivSafe>
 
               <h1 className="text-4xl md:text-5xl font-serif text-white font-bold mb-4" data-testid="heading-waitlist-success">
-                {t('pages:onboarding.waitlist.title', "You're on the List!")}
+                {"You're on the List!"}
               </h1>
 
-              <p className="text-xl text-white/80 mb-8" data-testid="text-welcome-message">
-                {t('pages:onboarding.waitlist.welcomeMessage', 'Welcome to the Mundo Tango community, {{name}}!', { name: user?.name || t('pages:onboarding.waitlist.defaultName', 'Dancer') })}
+              <p className="text-xl text-white/80 mb-6" data-testid="text-welcome-message">
+                {'Welcome to the Mundo Tango community, ' + (user?.name || 'Dancer') + '!'}
               </p>
 
               <MotionDivSafe
@@ -66,11 +66,16 @@ export default function WaitlistConfirmationPage() {
                 className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl"
                 data-testid="section-waitlist-confirmation"
               >
-                <div className="flex items-center gap-3 p-4 rounded-lg bg-white/5 border border-white/10 mb-6">
+                <div className="flex items-center gap-3 p-4 rounded-lg bg-white/5 border border-white/10 mb-6 text-left">
                   <Mail className="w-5 h-5 text-white/70 flex-shrink-0" />
-                  <p className="text-sm text-white/80 text-left">
-                    {t('pages:onboarding.waitlist.emailNotice', "We'll email you at")} <span className="text-white font-medium">{user?.email}</span> {t('pages:onboarding.waitlist.whenReady', 'when your account is ready for full access.')}
-                  </p>
+                  <div className="text-sm text-white/80">
+                    <p className="mb-2">
+                      {"We've received your request! We're currently carefully rolling out access to ensure your data is handled with the highest standards of European privacy (GDPR) excellence."}
+                    </p>
+                    <p>
+                      {"We'll email you from "} <span className="text-white font-medium">admin@mundotango.life</span> {" as soon as we're ready to welcome you home."}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -85,7 +90,7 @@ export default function WaitlistConfirmationPage() {
                     onClick={() => setShowTalentMatch(true)}
                   >
                     <HandHeart className="mr-2 h-5 w-5" />
-                    {t('pages:onboarding.waitlist.volunteerButton', 'Volunteer with us')}
+                    {"Volunteer with us"}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
 
@@ -97,7 +102,7 @@ export default function WaitlistConfirmationPage() {
                       data-testid="button-support-cta"
                     >
                       <CreditCard className="mr-2 h-5 w-5" />
-                      {t('pages:onboarding.waitlist.supportButton', 'Support Mundo Tango')}
+                      {"Support Mundo Tango"}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </a>
@@ -107,8 +112,8 @@ export default function WaitlistConfirmationPage() {
                   <div className="flex items-start gap-3 text-left">
                     <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-white/70">
-                      <p className="font-medium text-white/90 mb-1">{t('pages:onboarding.waitlist.profileComplete', 'Your profile is complete!')}</p>
-                      <p>{t('pages:onboarding.waitlist.profileCompleteDesc', "You've finished setting up your Mundo Tango profile. We'll notify you as soon as your account is activated.")}</p>
+                      <p className="font-medium text-white/90 mb-1">{"Your profile is complete!"}</p>
+                      <p>{"We're currently scaling our infrastructure to meet European compliance standards. We'll notify you the moment your account is activated."}</p>
                     </div>
                   </div>
                 </div>
