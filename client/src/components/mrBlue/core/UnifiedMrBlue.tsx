@@ -1,8 +1,7 @@
-import { useState, Suspense, lazy } from 'react';
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   LayoutGrid, 
   Target, 
@@ -21,15 +20,6 @@ import { useMrBlue } from '@/contexts/MrBlueContext';
 import { CommandCenter } from '../advanced/CommandCenter';
 import { ThePlanView } from '../advanced/ThePlanView';
 import { VisualEditorMode } from '../advanced/VisualEditorMode';
-import { LoadingFallback } from '@/components/LoadingFallback';
-
-// Lazy load heavy components from MrBlueStudio
-const VibeCodingInterface = lazy(() => import('./VibeCodingInterface').then(m => ({ default: m.VibeCodingInterface })));
-const VoiceCloning = lazy(() => import('./VoiceCloning').then(m => ({ default: m.VoiceCloning })));
-const MessengerIntegration = lazy(() => import('./MessengerIntegration').then(m => ({ default: m.MessengerIntegration })));
-const MemoryDashboard = lazy(() => import('./MemoryDashboard').then(m => ({ default: m.MemoryDashboard })));
-const ThreeDCreatorTab = lazy(() => import('./ThreeDCreatorTab').then(m => ({ default: m.ThreeDCreatorTab })));
-const AIVideoStudioTab = lazy(() => import('./AIVideoStudioTab').then(m => ({ default: m.AIVideoStudioTab })));
 
 /**
  * UNIFIED MR BLUE - Single Interface at /mr-blue
@@ -102,39 +92,78 @@ export default function UnifiedMrBlue() {
         </div>
         
         <div className="max-w-7xl mx-auto p-6">
-          <Suspense fallback={<LoadingFallback message={`Loading ${activeSystem}...`} />}>
-            {activeSystem === 'video' && (
-              <Card className="p-6">
-                <div className="text-center space-y-4">
-                  <Video className="h-12 w-12 mx-auto text-muted-foreground" />
-                  <h2 className="text-2xl font-bold">Video Conference</h2>
-                  <p className="text-muted-foreground">
-                    Video conferencing feature coming soon.
-                  </p>
-                </div>
-              </Card>
-            )}
-            {activeSystem === 'chat' && (
-              <Card className="p-6">
-                <div className="text-center space-y-4">
-                  <h2 className="text-2xl font-bold">Mr Blue Chat</h2>
-                  <p className="text-muted-foreground">
-                    Context-aware chat with semantic search over 134,648 lines of documentation.
-                  </p>
-                  <Button variant="default" data-testid="button-open-chat">
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Open Chat Interface
-                  </Button>
-                </div>
-              </Card>
-            )}
-            {activeSystem === 'vibecode' && <VibeCodingInterface />}
-            {activeSystem === 'voice' && <VoiceCloning />}
-            {activeSystem === 'messenger' && <MessengerIntegration />}
-            {activeSystem === 'memory' && <MemoryDashboard />}
-            {activeSystem === '3d-creator' && <ThreeDCreatorTab />}
-            {activeSystem === 'ai-video' && <AIVideoStudioTab />}
-          </Suspense>
+          {activeSystem === 'video' && (
+            <Card className="p-6">
+              <div className="text-center space-y-4">
+                <Video className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h2 className="text-2xl font-bold">Video Conference</h2>
+                <p className="text-muted-foreground">Coming soon.</p>
+              </div>
+            </Card>
+          )}
+          {activeSystem === 'chat' && (
+            <Card className="p-6">
+              <div className="text-center space-y-4">
+                <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h2 className="text-2xl font-bold">Mr Blue Chat</h2>
+                <p className="text-muted-foreground">Coming soon.</p>
+              </div>
+            </Card>
+          )}
+          {activeSystem === 'vibecode' && (
+            <Card className="p-6">
+              <div className="text-center space-y-4">
+                <Code className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h2 className="text-2xl font-bold">Vibe Coding</h2>
+                <p className="text-muted-foreground">Coming soon.</p>
+              </div>
+            </Card>
+          )}
+          {activeSystem === 'voice' && (
+            <Card className="p-6">
+              <div className="text-center space-y-4">
+                <Mic className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h2 className="text-2xl font-bold">Voice Cloning</h2>
+                <p className="text-muted-foreground">Coming soon.</p>
+              </div>
+            </Card>
+          )}
+          {activeSystem === 'messenger' && (
+            <Card className="p-6">
+              <div className="text-center space-y-4">
+                <Facebook className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h2 className="text-2xl font-bold">Messenger Integration</h2>
+                <p className="text-muted-foreground">Coming soon.</p>
+              </div>
+            </Card>
+          )}
+          {activeSystem === 'memory' && (
+            <Card className="p-6">
+              <div className="text-center space-y-4">
+                <Brain className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h2 className="text-2xl font-bold">Memory Dashboard</h2>
+                <p className="text-muted-foreground">Coming soon.</p>
+              </div>
+            </Card>
+          )}
+          {activeSystem === '3d-creator' && (
+            <Card className="p-6">
+              <div className="text-center space-y-4">
+                <Box className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h2 className="text-2xl font-bold">3D Creator</h2>
+                <p className="text-muted-foreground">Coming soon.</p>
+              </div>
+            </Card>
+          )}
+          {activeSystem === 'ai-video' && (
+            <Card className="p-6">
+              <div className="text-center space-y-4">
+                <Film className="h-12 w-12 mx-auto text-muted-foreground" />
+                <h2 className="text-2xl font-bold">AI Video Studio</h2>
+                <p className="text-muted-foreground">Coming soon.</p>
+              </div>
+            </Card>
+          )}
         </div>
       </div>
     );
