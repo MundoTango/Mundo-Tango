@@ -746,27 +746,53 @@ What interests you?`,
       )
       .join("\n");
 
+    // Enhanced context from journey tracker
+    const openDialogs = (snapshot as any).openDialogs || [];
+    const consoleErrors = (snapshot as any).consoleErrors || [];
+    const networkFailures = (snapshot as any).networkFailures || [];
+    const rageClicks = (snapshot as any).rageClicks || [];
+    const theme = (snapshot as any).browserInfo?.theme || 'unknown';
+    const locale = (snapshot as any).browserInfo?.locale || navigator.language;
+    const scrollPos = (snapshot as any).browserInfo?.scrollPosition || { x: 0, y: 0 };
+
+    // Build enhanced context sections
+    const dialogSection = openDialogs.length > 0 
+      ? `\n**Open Dialogs:** ${openDialogs.join(', ')}` 
+      : '';
+    
+    const errorSection = consoleErrors.length > 0
+      ? `\n**Recent Errors:** ${consoleErrors.slice(-3).map((e: any) => e.message.substring(0, 80)).join('; ')}`
+      : '';
+    
+    const networkSection = networkFailures.length > 0
+      ? `\n**Failed API Calls:** ${networkFailures.slice(-3).map((n: any) => `${n.method} ${n.url} (${n.status})`).join('; ')}`
+      : '';
+    
+    const rageSection = rageClicks.length > 0
+      ? `\n**Frustration Detected:** ${rageClicks.length} rage click events`
+      : '';
+
     const bugMessage: Message = {
       id: `qa-bug-${Date.now()}`,
       role: "assistant",
-      content: `**Bug Report Mode**
-
-I've captured your session context for the development team:
+      content: `**Bug Report Mode - Context Captured**
 
 **Session:** ${sessionId}
 **Current Page:** ${snapshot.currentPath}
 **Browser:** ${snapshot.browserInfo.platform}
 **Viewport:** ${snapshot.browserInfo.viewport.width}x${snapshot.browserInfo.viewport.height}
+**Theme:** ${theme} | **Locale:** ${locale}
+**Scroll:** ${scrollPos.x}, ${scrollPos.y}${dialogSection}${errorSection}${networkSection}${rageSection}
 
-**Recent Activity:**
+**Recent Activity (Last 5 Steps):**
 ${recentJourney}
 
-Please describe the issue you encountered:
+**Describe your issue:**
 - What were you trying to do?
 - What happened instead?
-- Any error messages?
+- Any error messages you saw?
 
-I'll analyze this and may be able to fix it automatically. Use the **Submit** button when you're ready.`,
+Type your description and click **Submit** to send to developers.`,
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, bugMessage]);

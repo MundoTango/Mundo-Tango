@@ -246,7 +246,7 @@ router.post("/admin/approve/:id", authenticateToken, async (req: Request, res: R
         
         EmailService.sendFeedbackResponseEmail(
           feedbackUser.email,
-          feedbackUser.displayName || feedbackUser.username || 'Tango Dancer',
+          feedbackUser.name || feedbackUser.username || 'Tango Dancer',
           feedback.title,
           status as 'approved' | 'rejected',
           notes
@@ -294,7 +294,7 @@ router.post("/admin/resolve/:id", authenticateToken, async (req: Request, res: R
         
         EmailService.sendFeedbackResponseEmail(
           feedbackUser.email,
-          feedbackUser.displayName || feedbackUser.username || 'Tango Dancer',
+          feedbackUser.name || feedbackUser.username || 'Tango Dancer',
           feedback.title,
           'resolved',
           adminNotes || mrBlueResponse

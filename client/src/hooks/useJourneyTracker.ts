@@ -301,7 +301,7 @@ export function useJourneyTracker(userId?: number) {
       }
     });
     
-    return [...new Set(dialogs)];
+    return Array.from(new Set(dialogs));
   }, []);
 
   // Capture form state
