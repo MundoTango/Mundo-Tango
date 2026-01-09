@@ -77,7 +77,7 @@ export function MrBlueChat({ onClose }: MrBlueChatProps) {
     setWalkthroughResult,
   } = useMrBlue();
   const { user } = useAuth();
-  const { getSnapshot, trackStep, sessionId, captureScreenshot } = useJourneyTracker(user?.id);
+  const { getSnapshot, getEnhancedSnapshot, trackStep, sessionId, captureScreenshot } = useJourneyTracker(user?.id);
 
   // QA Mode state - tracks if user is in help/feature request mode
   const [qaMode, setQaMode] = useState<"none" | "help" | "features" | "bug">(
@@ -749,9 +749,9 @@ What interests you?`,
     setMessages((prev) => [...prev, featuresMessage]);
   }, [getSnapshot, trackStep, location]);
 
-  // QA System Handler: Bug Report - Captures full context with screenshot
+  // QA System Handler: Bug Report - Captures full context with screenshot using enhanced diagnostics
   const handleBugReport = useCallback(async () => {
-    const snapshot = getSnapshot();
+    const enhancedSnapshot = getEnhancedSnapshot();
     trackStep({ path: location, action: "qa_bug_report" });
     setQaMode("bug");
 
@@ -761,21 +761,46 @@ What interests you?`,
       setBugScreenshot(screenshot);
     }
 
-    const recentJourney = snapshot.journey
-      .slice(-5)
-      .map(
-        (s) => `- ${s.action}: ${s.path}${s.element ? ` (${s.element})` : ""}`,
-      )
+    // Format recent journey with section/tab context
+    const recentJourney = enhancedSnapshot.journey
+      .slice(-8)
+      .map((s) => {
+        const actionIcon = s.action === 'tab_switch' ? '📑' : 
+                          s.action === 'section_view' ? '📋' : 
+                          s.action === 'button_action' ? '🔘' : 
+                          s.action === 'navigation' ? '🔗' : '👆';
+        return `- ${actionIcon} ${s.action}: ${s.path}${s.element ? ` → **${s.element}**` : ""}`;
+      })
       .join("\n");
 
+    // User context for permissions/tier issues
+    const userContext = enhancedSnapshot.userContext;
+    const userSection = userContext.isLoggedIn 
+      ? `**User:** Tier ${userContext.tier} | City: ${userContext.cityId || 'None'} | Verified: ${userContext.isVerified ? 'Yes' : 'No'}`
+      : '**User:** Not logged in';
+    
+    // API calls with payload info
+    const recentAPICalls = enhancedSnapshot.apiCalls
+      .slice(-5)
+      .map(call => {
+        const status = call.status >= 400 ? `❌ ${call.status}` : `✅ ${call.status}`;
+        return `- ${call.method} ${call.url.substring(0, 50)} ${status}`;
+      })
+      .join("\n");
+    const apiSection = recentAPICalls ? `\n**Recent API Calls:**\n${recentAPICalls}` : '';
+
+    // Breadcrumb path for quick context
+    const breadcrumbPath = enhancedSnapshot.breadcrumb.length > 0
+      ? `**Path:** ${enhancedSnapshot.breadcrumb.join(' → ')}`
+      : '';
+
     // Enhanced context from journey tracker
-    const openDialogs = (snapshot as any).openDialogs || [];
-    const consoleErrors = (snapshot as any).consoleErrors || [];
-    const networkFailures = (snapshot as any).networkFailures || [];
-    const rageClicks = (snapshot as any).rageClicks || [];
-    const theme = (snapshot as any).browserInfo?.theme || 'unknown';
-    const locale = (snapshot as any).browserInfo?.locale || navigator.language;
-    const scrollPos = (snapshot as any).browserInfo?.scrollPosition || { x: 0, y: 0 };
+    const openDialogs = enhancedSnapshot.openDialogs || [];
+    const consoleErrors = enhancedSnapshot.consoleErrors || [];
+    const networkFailures = enhancedSnapshot.networkFailures || [];
+    const rageClicks = enhancedSnapshot.rageClicks || [];
+    const theme = enhancedSnapshot.browserInfo?.theme || 'unknown';
+    const locale = enhancedSnapshot.browserInfo?.locale || navigator.language;
 
     // Build enhanced context sections
     const dialogSection = openDialogs.length > 0 
@@ -783,44 +808,52 @@ What interests you?`,
       : '';
     
     const errorSection = consoleErrors.length > 0
-      ? `\n**Recent Errors:** ${consoleErrors.slice(-3).map((e: any) => e.message.substring(0, 80)).join('; ')}`
+      ? `\n**⚠️ Recent Errors:** ${consoleErrors.slice(-3).map((e: any) => e.message.substring(0, 80)).join('; ')}`
       : '';
     
     const networkSection = networkFailures.length > 0
-      ? `\n**Failed API Calls:** ${networkFailures.slice(-3).map((n: any) => `${n.method} ${n.url} (${n.status})`).join('; ')}`
+      ? `\n**❌ Failed API Calls:** ${networkFailures.slice(-3).map((n: any) => `${n.method} ${n.url} (${n.status})`).join('; ')}`
       : '';
     
     const rageSection = rageClicks.length > 0
-      ? `\n**Frustration Detected:** ${rageClicks.length} rage click events`
+      ? `\n**😤 Frustration Detected:** ${rageClicks.length} rage click events`
       : '';
 
-    const screenshotNote = screenshot ? '\n**Screenshot:** Captured automatically' : '';
+    const screenshotNote = screenshot ? '\n**📸 Screenshot:** Captured automatically' : '';
+    
+    // Last interaction for precise location
+    const lastInteraction = enhancedSnapshot.lastTestId 
+      ? `\n**Last Interaction:** ${enhancedSnapshot.lastTestId}` 
+      : '';
 
     const bugMessage: Message = {
       id: `qa-bug-${Date.now()}`,
       role: "assistant",
-      content: `**Bug Report Mode - Context Captured**
+      content: `**🐛 Bug Report Mode - Enhanced Context Captured**
 
-**Session:** ${sessionId}
-**Current Page:** ${snapshot.currentPath}
-**Browser:** ${snapshot.browserInfo.platform}
-**Viewport:** ${snapshot.browserInfo.viewport.width}x${snapshot.browserInfo.viewport.height}
-**Theme:** ${theme} | **Locale:** ${locale}
-**Scroll:** ${scrollPos.x}, ${scrollPos.y}${dialogSection}${errorSection}${networkSection}${rageSection}${screenshotNote}
+**Session:** \`${sessionId}\`
+**Page:** ${enhancedSnapshot.currentPath}
+${userSection}
+**Browser:** ${enhancedSnapshot.browserInfo.platform} | **Theme:** ${theme} | **Locale:** ${locale}
+**Viewport:** ${enhancedSnapshot.browserInfo.viewport.width}×${enhancedSnapshot.browserInfo.viewport.height}
+${breadcrumbPath}${lastInteraction}${dialogSection}${errorSection}${networkSection}${rageSection}${screenshotNote}
+${apiSection}
 
-**Recent Activity (Last 5 Steps):**
+**📍 Recent Activity (Last 8 Steps):**
 ${recentJourney}
+
+---
 
 **Describe your issue:**
 - What were you trying to do?
 - What happened instead?
 - Any error messages you saw?
 
-Type your description and click **Submit** to send to developers.`,
+Type your description and click **Submit** to send to developers with full diagnostic context.`,
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, bugMessage]);
-  }, [getSnapshot, trackStep, location, sessionId, captureScreenshot]);
+  }, [getEnhancedSnapshot, trackStep, location, sessionId, captureScreenshot]);
 
   return (
     <main className="flex flex-col h-full bg-gradient-to-b from-background via-background to-muted/30">
