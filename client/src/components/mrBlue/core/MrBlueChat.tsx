@@ -77,7 +77,7 @@ export function MrBlueChat({ onClose }: MrBlueChatProps) {
     setWalkthroughResult,
   } = useMrBlue();
   const { user } = useAuth();
-  const { getSnapshot, trackStep, sessionId } = useJourneyTracker(user?.id);
+  const { getSnapshot, trackStep, sessionId, captureScreenshot } = useJourneyTracker(user?.id);
 
   // QA Mode state - tracks if user is in help/feature request mode
   const [qaMode, setQaMode] = useState<"none" | "help" | "features" | "bug">(
@@ -605,6 +605,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
 
   const [attachments, setAttachments] = useState<File[]>([]);
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
+  const [bugScreenshot, setBugScreenshot] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // QA System: Submission logic
@@ -619,7 +620,6 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
       // Handle media attachments like PostCreator
       const processedAttachments = await Promise.all(attachments.map(async (file) => {
         if (file.type.startsWith('image/')) {
-          // Use a simple base64 for now, mimicking PostCreator's fileToBase64 logic
           return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onloadend = () => resolve({ name: file.name, type: file.type, data: reader.result });
@@ -628,6 +628,16 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         }
         return { name: file.name, type: file.type };
       }));
+
+      // Add auto-captured screenshot for bug reports
+      if (qaMode === "bug" && bugScreenshot) {
+        processedAttachments.push({
+          name: 'auto-screenshot.jpg',
+          type: 'image/jpeg',
+          data: bugScreenshot,
+          isAutoCapture: true
+        });
+      }
 
       const response = await apiRequest("POST", "/api/qa-platform/feedback", {
         feedbackType: qaMode === "bug" ? "bug" : qaMode === "features" ? "feature" : "support",
@@ -645,7 +655,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
           id: `qa-success-${Date.now()}`,
           role: "assistant",
           content: qaMode === "bug" 
-            ? "Bug report submitted successfully! Our developers have been notified."
+            ? "Bug report submitted successfully! Screenshot and context captured for developers."
             : "Request recorded! This has been passed through @mb.md for architectural review and is now pending admin approval for build.",
           timestamp: new Date(),
         };
@@ -653,6 +663,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         setQaMode("none");
         setAttachments([]);
         setAttachmentPreviews([]);
+        setBugScreenshot(null);
         setInput("");
       }
     } catch (error) {
@@ -660,7 +671,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     } finally {
       setIsLoading(false);
     }
-  }, [qaMode, input, attachments, location, getSnapshot, sessionId]);
+  }, [qaMode, input, attachments, location, getSnapshot, sessionId, bugScreenshot]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -733,11 +744,17 @@ What interests you?`,
     setMessages((prev) => [...prev, featuresMessage]);
   }, [getSnapshot, trackStep, location]);
 
-  // QA System Handler: Bug Report - Captures full context
-  const handleBugReport = useCallback(() => {
+  // QA System Handler: Bug Report - Captures full context with screenshot
+  const handleBugReport = useCallback(async () => {
     const snapshot = getSnapshot();
     trackStep({ path: location, action: "qa_bug_report" });
     setQaMode("bug");
+
+    // Capture screenshot immediately when entering bug mode
+    const screenshot = await captureScreenshot();
+    if (screenshot) {
+      setBugScreenshot(screenshot);
+    }
 
     const recentJourney = snapshot.journey
       .slice(-5)
@@ -772,6 +789,8 @@ What interests you?`,
       ? `\n**Frustration Detected:** ${rageClicks.length} rage click events`
       : '';
 
+    const screenshotNote = screenshot ? '\n**Screenshot:** Captured automatically' : '';
+
     const bugMessage: Message = {
       id: `qa-bug-${Date.now()}`,
       role: "assistant",
@@ -782,7 +801,7 @@ What interests you?`,
 **Browser:** ${snapshot.browserInfo.platform}
 **Viewport:** ${snapshot.browserInfo.viewport.width}x${snapshot.browserInfo.viewport.height}
 **Theme:** ${theme} | **Locale:** ${locale}
-**Scroll:** ${scrollPos.x}, ${scrollPos.y}${dialogSection}${errorSection}${networkSection}${rageSection}
+**Scroll:** ${scrollPos.x}, ${scrollPos.y}${dialogSection}${errorSection}${networkSection}${rageSection}${screenshotNote}
 
 **Recent Activity (Last 5 Steps):**
 ${recentJourney}
@@ -796,7 +815,7 @@ Type your description and click **Submit** to send to developers.`,
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, bugMessage]);
-  }, [getSnapshot, trackStep, location, sessionId]);
+  }, [getSnapshot, trackStep, location, sessionId, captureScreenshot]);
 
   return (
     <main className="flex flex-col h-full bg-gradient-to-b from-background via-background to-muted/30">

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import html2canvas from 'html2canvas';
 
 export interface JourneyStep {
   timestamp: number;
@@ -364,9 +365,45 @@ export function useJourneyTracker(userId?: number) {
     };
   }, [sessionId, userId, getOpenDialogs, getFormState, getCurrentTheme, getCurrentLocale]);
 
+  // Capture screenshot of the current page
+  const captureScreenshot = useCallback(async (): Promise<string | null> => {
+    try {
+      // Hide the Mr. Blue panel temporarily for clean screenshot
+      const mrBluePanel = document.querySelector('[data-testid="mr-blue-panel"]');
+      const mrBlueButton = document.querySelector('[data-testid="button-ask-mr-blue"]');
+      
+      if (mrBluePanel) (mrBluePanel as HTMLElement).style.visibility = 'hidden';
+      if (mrBlueButton) (mrBlueButton as HTMLElement).style.visibility = 'hidden';
+      
+      const canvas = await html2canvas(document.body, {
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        scale: 0.5, // Reduce size for faster capture
+        ignoreElements: (element) => {
+          // Ignore video/canvas elements that might cause issues
+          return element.tagName === 'VIDEO' || 
+                 element.classList.contains('mr-blue-panel') ||
+                 element.getAttribute('data-testid') === 'mr-blue-panel';
+        }
+      });
+      
+      // Restore visibility
+      if (mrBluePanel) (mrBluePanel as HTMLElement).style.visibility = 'visible';
+      if (mrBlueButton) (mrBlueButton as HTMLElement).style.visibility = 'visible';
+      
+      // Convert to base64 with reduced quality for smaller size
+      return canvas.toDataURL('image/jpeg', 0.6);
+    } catch (error) {
+      console.error('[JourneyTracker] Screenshot capture failed:', error);
+      return null;
+    }
+  }, []);
+
   return {
     sessionId,
     trackStep,
     getSnapshot,
+    captureScreenshot,
   };
 }

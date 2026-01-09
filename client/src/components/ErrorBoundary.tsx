@@ -1,8 +1,9 @@
 import { Component, ReactNode } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, Bug } from "lucide-react";
 import { logger } from "@/lib/logger";
+import { apiRequest } from "@/lib/queryClient";
 
 interface Props {
   children: ReactNode;
@@ -11,8 +12,21 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  errorInfo: React.ErrorInfo | null;
   errorCount: number;
   autoRecoveryAttempted: boolean;
+  reportSent: boolean;
+}
+
+// Store captured error for QA system access
+let lastCapturedError: { error: Error; componentStack: string; timestamp: number } | null = null;
+
+export function getLastCapturedError() {
+  return lastCapturedError;
+}
+
+export function clearCapturedError() {
+  lastCapturedError = null;
 }
 
 /**
@@ -31,8 +45,10 @@ export class ErrorBoundary extends Component<Props, State> {
     this.state = { 
       hasError: false, 
       error: null,
+      errorInfo: null,
       errorCount: 0,
       autoRecoveryAttempted: false,
+      reportSent: false,
     };
   }
 
@@ -42,6 +58,16 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const { errorCount } = this.state;
+    
+    // Store error for QA system access
+    lastCapturedError = {
+      error,
+      componentStack: errorInfo.componentStack || '',
+      timestamp: Date.now(),
+    };
+    
+    // Store errorInfo in state for the Report Bug button
+    this.setState({ errorInfo });
     
     console.error("Error caught by boundary:", error, errorInfo);
     logger.error('React Error Boundary caught error', error, {
@@ -93,8 +119,52 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   handleReload = () => {
-    this.setState({ hasError: false, error: null, errorCount: 0 });
+    this.setState({ hasError: false, error: null, errorCount: 0, reportSent: false });
     window.location.reload();
+  };
+
+  handleReportBug = async () => {
+    const { error, errorInfo } = this.state;
+    if (!error) return;
+    
+    try {
+      await apiRequest("POST", "/api/qa-platform/feedback", {
+        feedbackType: "bug",
+        title: `React Crash: ${error.message.substring(0, 50)}`,
+        description: `**Automatic Bug Report - React Error Boundary**
+
+**Error:** ${error.message}
+
+**Stack Trace:**
+\`\`\`
+${error.stack || 'No stack available'}
+\`\`\`
+
+**Component Stack:**
+\`\`\`
+${errorInfo?.componentStack || 'No component stack available'}
+\`\`\`
+
+**Browser:** ${navigator.userAgent}
+**URL:** ${window.location.href}
+**Timestamp:** ${new Date().toISOString()}`,
+        currentPage: window.location.pathname,
+        sessionSnapshot: {
+          browserInfo: {
+            userAgent: navigator.userAgent,
+            viewport: { width: window.innerWidth, height: window.innerHeight },
+            language: navigator.language,
+            platform: navigator.platform,
+          }
+        },
+        priority: "critical",
+        sessionId: sessionStorage.getItem('mt_session_id') || 'unknown',
+      });
+      
+      this.setState({ reportSent: true });
+    } catch (err) {
+      console.error('[ErrorBoundary] Failed to send bug report:', err);
+    }
   };
 
   render() {
@@ -131,13 +201,30 @@ export class ErrorBoundary extends Component<Props, State> {
                   </pre>
                 </details>
               )}
-              <Button
-                onClick={this.handleReload}
-                className="w-full"
-                data-testid="button-reload"
-              >
-                Reload Page
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={this.handleReload}
+                  className="flex-1"
+                  data-testid="button-reload"
+                >
+                  Reload Page
+                </Button>
+                <Button
+                  onClick={this.handleReportBug}
+                  variant="outline"
+                  className="flex-1"
+                  disabled={this.state.reportSent}
+                  data-testid="button-report-crash"
+                >
+                  <Bug className="h-4 w-4 mr-2" />
+                  {this.state.reportSent ? 'Reported' : 'Report Bug'}
+                </Button>
+              </div>
+              {this.state.reportSent && (
+                <p className="text-xs text-center text-green-600">
+                  Bug report sent to developers. Thank you!
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>
