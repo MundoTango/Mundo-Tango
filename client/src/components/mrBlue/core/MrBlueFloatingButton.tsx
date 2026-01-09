@@ -102,7 +102,7 @@ export function MrBlueFloatingButton() {
       {/* MB.MD Pattern 63: Only render FAB when chat is closed */}
       {!isChatOpen && (
         <div 
-          className="fixed bottom-6 right-6 z-[9999]" 
+          className="fixed bottom-6 right-6 z-[10001]" 
           data-testid="global-mr-blue"
           data-mr-blue-fab="true"
           data-instance={instanceId.current}
@@ -124,7 +124,7 @@ export function MrBlueFloatingButton() {
         {isChatOpen && (
           <div 
             key="mr-blue-chat-panel"
-            className="fixed right-0 top-0 h-screen w-full sm:w-[420px] md:w-[480px] lg:w-[560px] z-[9999] bg-background border-l shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
+            className="fixed right-0 top-0 h-screen w-full sm:w-[420px] md:w-[480px] lg:w-[560px] z-[10001] bg-background border-l shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
             data-testid="chat-side-panel"
             data-mr-blue-chat="true"
           >

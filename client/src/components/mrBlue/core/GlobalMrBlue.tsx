@@ -24,7 +24,7 @@ const MARKETING_PAGES = ['/', '/landing', '/about', '/pricing', '/features', '/c
  * - Authenticated: Hidden (MrBlueFloatingButton takes over with full features)
  * 
  * Features:
- * - Fixed bottom-right positioning with z-[9999] (above all overlays)
+ * - Fixed bottom-right positioning with z-[10001] (above all overlays including modals)
  * - Uses React Portal to render at document.body level
  * - Opens ChatSidePanel on click (marketing FAQ mode)
  * - Hidden on dedicated chat page and for authenticated users
@@ -64,7 +64,7 @@ export function GlobalMrBlue() {
 
   const buttonContent = (
     <div 
-      className="fixed bottom-6 right-6 z-[9999]"
+      className="fixed bottom-6 right-6 z-[10001]"
       data-testid="global-mr-blue"
     >
       <Button
