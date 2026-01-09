@@ -388,11 +388,15 @@ export function useJourneyTracker(userId?: number) {
 
   // Capture screenshot of the current page
   const captureScreenshot = useCallback(async (): Promise<string | null> => {
+    // Hide the Mr. Blue panel temporarily for clean screenshot
+    const mrBluePanel = document.querySelector('[data-testid="mr-blue-panel"]');
+    const mrBlueButton = document.querySelector('[data-testid="button-ask-mr-blue"]');
+    
+    // Store original visibility values to restore later
+    const originalPanelVisibility = mrBluePanel ? (mrBluePanel as HTMLElement).style.visibility : '';
+    const originalButtonVisibility = mrBlueButton ? (mrBlueButton as HTMLElement).style.visibility : '';
+    
     try {
-      // Hide the Mr. Blue panel temporarily for clean screenshot
-      const mrBluePanel = document.querySelector('[data-testid="mr-blue-panel"]');
-      const mrBlueButton = document.querySelector('[data-testid="button-ask-mr-blue"]');
-      
       if (mrBluePanel) (mrBluePanel as HTMLElement).style.visibility = 'hidden';
       if (mrBlueButton) (mrBlueButton as HTMLElement).style.visibility = 'hidden';
       
@@ -409,15 +413,15 @@ export function useJourneyTracker(userId?: number) {
         }
       });
       
-      // Restore visibility
-      if (mrBluePanel) (mrBluePanel as HTMLElement).style.visibility = 'visible';
-      if (mrBlueButton) (mrBlueButton as HTMLElement).style.visibility = 'visible';
-      
       // Convert to base64 with reduced quality for smaller size
       return canvas.toDataURL('image/jpeg', 0.6);
     } catch (error) {
       console.error('[JourneyTracker] Screenshot capture failed:', error);
       return null;
+    } finally {
+      // ALWAYS restore visibility, even if screenshot failed
+      if (mrBluePanel) (mrBluePanel as HTMLElement).style.visibility = originalPanelVisibility;
+      if (mrBlueButton) (mrBlueButton as HTMLElement).style.visibility = originalButtonVisibility;
     }
   }, []);
 
