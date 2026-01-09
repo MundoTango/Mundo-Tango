@@ -736,9 +736,14 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
             .join("\n\n")
         : "";
 
-      // Build description: current input + any conversation transcript
+      // Generate AI diagnosis summary for engineers
+      const aiDiagnosis = isBugMode && snapshot
+        ? generateDiagnosisSummary(snapshot, messageText || conversationTranscript)
+        : "";
+
+      // Build description: AI diagnosis + current input + conversation transcript
       const fullDescription = isBugMode
-        ? [messageText, conversationTranscript].filter(Boolean).join("\n\n---\n\n")
+        ? [aiDiagnosis, messageText, conversationTranscript].filter(Boolean).join("\n\n---\n\n")
         : messageText;
 
       // Extract title from first user message in conversation
@@ -884,6 +889,94 @@ What interests you?`,
     setMessages((prev) => [...prev, featuresMessage]);
   }, [getSnapshot, trackStep, location]);
 
+  // Generate diagnostic-aware observations from snapshot
+  const generateDiagnosticObservations = (snapshot: any): string[] => {
+    const observations: string[] = [];
+    
+    // Check for API failures
+    const failedCalls = snapshot.apiCalls?.filter((c: any) => c.status >= 400 || c.status === 0) || [];
+    if (failedCalls.length > 0) {
+      const lastFailed = failedCalls[failedCalls.length - 1];
+      if (lastFailed.status === 404) {
+        observations.push(`I noticed a "not found" error on ${lastFailed.url.replace('/api/', '')} - was something missing?`);
+      } else if (lastFailed.status === 401 || lastFailed.status === 403) {
+        observations.push(`I see an authorization issue occurred - were you unexpectedly logged out?`);
+      } else if (lastFailed.status >= 500) {
+        observations.push(`A server error occurred (${lastFailed.status}) - did you see an error message on screen?`);
+      } else if (lastFailed.status === 0) {
+        observations.push(`A network request failed - are you having connectivity issues?`);
+      }
+    }
+    
+    // Check for rage clicks (frustration indicator)
+    if (snapshot.rageClicks?.length > 0) {
+      const lastRage = snapshot.rageClicks[snapshot.rageClicks.length - 1];
+      observations.push(`I noticed you clicked "${lastRage.element}" multiple times quickly - was it not responding?`);
+    }
+    
+    // Check for console errors
+    if (snapshot.consoleErrors?.length > 0) {
+      observations.push(`I detected ${snapshot.consoleErrors.length} error(s) in the background - this may be related to your issue.`);
+    }
+    
+    // Check for empty API responses (might indicate missing data)
+    const emptyResponses = snapshot.apiCalls?.filter((c: any) => 
+      c.status === 200 && c.responseBody && 
+      (Array.isArray(c.responseBody) && c.responseBody.length === 0)
+    ) || [];
+    if (emptyResponses.length > 0) {
+      observations.push(`Some requests returned empty results - were you expecting to see data that wasn't there?`);
+    }
+    
+    return observations;
+  };
+  
+  // Generate AI diagnosis summary for engineers
+  const generateDiagnosisSummary = (snapshot: any, userDescription: string): string => {
+    const lines: string[] = ['**AI Diagnosis Summary for Engineers:**'];
+    
+    // User context
+    const uc = snapshot.userContext;
+    lines.push(`- User: ${uc?.isLoggedIn ? `@${uc.username || 'unknown'} (${uc.tier})` : 'Not logged in'}`);
+    if (uc?.role) lines.push(`- Role: ${uc.role}`);
+    
+    // Page context
+    lines.push(`- Page: ${snapshot.currentPath}`);
+    if (snapshot.breadcrumb?.length > 0) {
+      lines.push(`- Path: ${snapshot.breadcrumb.join(' → ')}`);
+    }
+    
+    // API analysis
+    const failedCalls = snapshot.apiCalls?.filter((c: any) => c.status >= 400 || c.status === 0) || [];
+    if (failedCalls.length > 0) {
+      lines.push(`- Failed API calls: ${failedCalls.map((c: any) => `${c.method} ${c.url} (${c.status})`).join(', ')}`);
+    }
+    
+    // Error analysis
+    if (snapshot.consoleErrors?.length > 0) {
+      const errorSummary = snapshot.consoleErrors.slice(-3).map((e: any) => e.message.substring(0, 80)).join('; ');
+      lines.push(`- Console errors: ${errorSummary}`);
+    }
+    
+    // Likely cause analysis
+    if (failedCalls.some((c: any) => c.status === 404)) {
+      lines.push(`- Likely cause: Resource not found - check if ID exists or was deleted`);
+    } else if (failedCalls.some((c: any) => c.status === 401 || c.status === 403)) {
+      lines.push(`- Likely cause: Auth issue - check session validity and permissions`);
+    } else if (failedCalls.some((c: any) => c.status >= 500)) {
+      lines.push(`- Likely cause: Server error - check backend logs for stack trace`);
+    } else if (snapshot.rageClicks?.length > 0) {
+      lines.push(`- Likely cause: UI not responding - check event handlers and loading states`);
+    }
+    
+    // Suggested files to investigate
+    if (snapshot.lastTestId) {
+      lines.push(`- Last interaction: ${snapshot.lastTestId} (check component registry for file mapping)`);
+    }
+    
+    return lines.join('\n');
+  };
+
   // QA System Handler: Bug Report - Captures full context with screenshot using enhanced diagnostics
   const handleBugReport = useCallback(async () => {
     // Pass user from AuthContext for accurate auth state in diagnostics
@@ -903,13 +996,19 @@ What interests you?`,
       setBugScreenshot(screenshot);
     }
 
-    // Conversational message - Mr. Blue asks clarifying questions
+    // Generate diagnostic-aware observations
+    const observations = generateDiagnosticObservations(enhancedSnapshot);
+    const observationsText = observations.length > 0 
+      ? `\n\n**I noticed:**\n${observations.map(o => `- ${o}`).join('\n')}\n` 
+      : '';
+
+    // Conversational message - Mr. Blue asks clarifying questions with diagnostic insights
     const bugMessage: Message = {
       id: `qa-bug-${Date.now()}`,
       role: "assistant",
       content: `**Bug Report Mode**
 
-I've captured your session context and I'm ready to help document this issue.
+I've captured your session context and I'm ready to help document this issue.${observationsText}
 
 **Tell me what happened:**
 - What were you trying to do?
@@ -920,7 +1019,7 @@ Chat with me to describe the problem, then click **Submit Bug Report** when you'
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, bugMessage]);
-  }, [getEnhancedSnapshot, trackStep, location, captureScreenshot, messages.length]);
+  }, [getEnhancedSnapshot, trackStep, location, captureScreenshot, messages.length, user]);
 
   return (
     <main className="flex flex-col h-full bg-gradient-to-b from-background via-background to-muted/30">
