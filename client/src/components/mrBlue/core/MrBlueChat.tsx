@@ -1108,7 +1108,6 @@ Describe what went wrong below, then click **Submit Bug Report** to send everyth
             <DiagnosisSummary 
               context={{
                 testId: bugDiagnosticSnapshot.lastTestId || '',
-                path: bugDiagnosticSnapshot.currentPath || '',
                 breadcrumb: bugDiagnosticSnapshot.breadcrumb || [],
                 userContext: bugDiagnosticSnapshot.userContext || {
                   userId: null,
