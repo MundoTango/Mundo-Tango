@@ -599,7 +599,12 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      // In QA mode (help/features/bug), submit to QA system instead of chat
+      if (qaMode !== "none") {
+        submitQaRequest();
+      } else {
+        sendMessage();
+      }
     }
   };
 

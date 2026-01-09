@@ -218,14 +218,35 @@ export function useJourneyTracker(userId?: number) {
       const testId = target.closest('[data-testid]')?.getAttribute('data-testid');
       const buttonText = target.closest('button')?.textContent?.substring(0, 50);
       const linkHref = target.closest('a')?.getAttribute('href');
-      const elementId = testId || buttonText || linkHref || target.tagName.toLowerCase();
+      
+      // Enhanced tab/navigation detection
+      const tabTrigger = target.closest('[role="tab"]');
+      const tabLabel = tabTrigger?.textContent?.trim()?.substring(0, 30);
+      const navItem = target.closest('[role="menuitem"], nav a, [data-nav-item]');
+      const navLabel = navItem?.textContent?.trim()?.substring(0, 30);
+      
+      // Build descriptive element ID with breadcrumb info
+      let elementId = testId || tabLabel || navLabel || buttonText || linkHref || target.tagName.toLowerCase();
+      
+      // Add context about what type of interaction
+      let action = 'click';
+      if (tabTrigger) {
+        action = 'tab_switch';
+        elementId = `tab:${tabLabel}`;
+      } else if (navItem) {
+        action = 'nav_click';
+        elementId = `nav:${navLabel}`;
+      }
 
-      // Track the click
-      if (testId || buttonText || linkHref) {
+      // Track the click with enhanced context
+      if (testId || buttonText || linkHref || tabTrigger || navItem) {
         trackStep({
           path: window.location.pathname,
-          action: 'click',
+          action,
           element: elementId,
+          details: {
+            pageTitle: document.title?.substring(0, 50),
+          }
         });
       }
       

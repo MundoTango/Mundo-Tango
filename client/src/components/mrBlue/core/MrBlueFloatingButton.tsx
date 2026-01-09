@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MrBlueChat } from "./MrBlueChat";
-import { CTOWalkthroughPreview } from "./CTOWalkthroughPreview";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMrBlue } from "@/contexts/MrBlueContext";
 import { useLocation } from "wouter";
@@ -62,7 +61,14 @@ export function MrBlueFloatingButton() {
   }, []);
   
   // Debounced toggle to prevent rapid clicks causing issues
-  const handleToggle = useCallback(() => {
+  // MB.MD Pattern 67: Prevent event bubbling to avoid closing other dialogs
+  const handleToggle = useCallback((e?: React.MouseEvent) => {
+    // Stop propagation to prevent closing other open modals/dialogs
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
     const now = Date.now();
     if (now - lastToggleTime.current < 200) return; // Debounce 200ms
     lastToggleTime.current = now;
@@ -120,13 +126,16 @@ export function MrBlueFloatingButton() {
       )}
 
       {/* Chat Panel - MB.MD Pattern 66: Full-screen on mobile, side panel on desktop */}
+      {/* MB.MD Pattern 67: Isolated panel that doesn't affect other UI elements */}
       <AnimatePresence mode="wait">
         {isChatOpen && (
           <div 
             key="mr-blue-chat-panel"
             className="fixed right-0 top-0 h-screen w-full sm:w-[420px] md:w-[480px] lg:w-[560px] z-[10001] bg-background border-l shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
-            data-testid="chat-side-panel"
+            data-testid="mr-blue-panel"
             data-mr-blue-chat="true"
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
           >
             {/* Chat Interface with integrated header */}
             <div className="flex-1 overflow-hidden flex flex-col">
