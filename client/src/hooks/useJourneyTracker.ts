@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import html2canvas from 'html2canvas';
+import { getRecordedCalls, getFailedCalls } from '@/lib/qa/networkInterceptor';
+import { captureUserContext, captureAppState } from '@/lib/qa/userContextCapture';
+import type { APICallRecord, UserContext, ErrorRecord } from '@/lib/qa/componentRegistry';
 
 export interface JourneyStep {
   timestamp: number;
@@ -52,6 +55,14 @@ export interface JourneySnapshot {
   formState: Record<string, string>;
   startedAt: number;
   lastActivity: number;
+}
+
+export interface EnhancedDiagnosticSnapshot extends JourneySnapshot {
+  userContext: UserContext;
+  apiCalls: APICallRecord[];
+  appState: Record<string, unknown>;
+  breadcrumb: string[];
+  lastTestId?: string;
 }
 
 const generateSessionId = () => {
@@ -232,6 +243,14 @@ export function useJourneyTracker(userId?: number) {
       const isProfileTab = testId?.startsWith('button-tab-');
       const profileTabName = isProfileTab ? testId.replace('button-tab-', '') : null;
       
+      // Detect section-level interactions
+      const isSection = testId?.startsWith('section-');
+      const sectionName = isSection ? testId.replace(/section-|-\d+$/g, '') : null;
+      
+      // Detect button actions within sections
+      const isButtonAction = testId?.startsWith('button-add-') || testId?.startsWith('button-edit-') || testId?.startsWith('button-delete-');
+      const buttonAction = isButtonAction ? testId.replace(/button-|-\d+$/g, '') : null;
+      
       // Build descriptive element ID with breadcrumb info
       let elementId = testId || tabLabel || navLabel || buttonText || linkHref || target.tagName.toLowerCase();
       
@@ -241,6 +260,12 @@ export function useJourneyTracker(userId?: number) {
         // Profile tabs use button-tab-* pattern, treat as tab switch
         action = 'tab_switch';
         elementId = `tab:${profileTabName}`;
+      } else if (isSection) {
+        action = 'section_view';
+        elementId = `section:${sectionName}`;
+      } else if (isButtonAction) {
+        action = 'button_action';
+        elementId = `button:${buttonAction}`;
       } else if (tabTrigger) {
         action = 'tab_switch';
         elementId = `tab:${tabLabel}`;
@@ -398,6 +423,43 @@ export function useJourneyTracker(userId?: number) {
   }, [sessionId, userId, getOpenDialogs, getFormState, getCurrentTheme, getCurrentLocale]);
 
   // Capture screenshot of the current page
+  // Get enhanced diagnostic snapshot with user context, API calls, and app state
+  const getEnhancedSnapshot = useCallback((): EnhancedDiagnosticSnapshot => {
+    const baseSnapshot = getSnapshot();
+    const userContext = captureUserContext();
+    const apiCalls = getRecordedCalls();
+    const appState = captureAppState();
+    
+    // Build breadcrumb from journey
+    const breadcrumb: string[] = [];
+    for (const step of baseSnapshot.journey) {
+      if (!step.element) continue;
+      if (step.element.startsWith('tab:')) {
+        breadcrumb.push(step.element.replace('tab:', ''));
+      } else if (step.element.startsWith('section:')) {
+        breadcrumb.push(step.element.replace('section:', ''));
+      } else if (step.element.startsWith('button:')) {
+        breadcrumb.push(step.element.replace('button:', ''));
+      }
+    }
+    
+    // Find last meaningful testId
+    const lastInteraction = [...baseSnapshot.journey].reverse().find(
+      s => s.element && !s.element.startsWith('nav:')
+    );
+    const lastTestId = lastInteraction?.element?.replace(/^(tab:|section:|button:)/, '');
+    
+    return {
+      ...baseSnapshot,
+      userContext,
+      apiCalls,
+      appState,
+      breadcrumb,
+      lastTestId,
+    };
+  }, [getSnapshot]);
+
+  // Capture screenshot of the current page
   const captureScreenshot = useCallback(async (): Promise<string | null> => {
     // Hide the Mr. Blue panel temporarily for clean screenshot
     const mrBluePanel = document.querySelector('[data-testid="mr-blue-panel"]');
@@ -440,6 +502,7 @@ export function useJourneyTracker(userId?: number) {
     sessionId,
     trackStep,
     getSnapshot,
+    getEnhancedSnapshot,
     captureScreenshot,
   };
 }

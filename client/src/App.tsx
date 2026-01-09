@@ -7,6 +7,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/theme-context";
 import { AuthProvider } from "./contexts/AuthContext";
 import { MrBlueProvider } from "./contexts/MrBlueContext";
+import { BreadcrumbProvider } from "./contexts/BreadcrumbContext";
+import { startNetworkInterceptor } from "./lib/qa/networkInterceptor";
 import { TalentMatchSessionProvider } from "./contexts/TalentMatchSessionContext";
 import { PredictiveContextProvider } from "./providers/PredictiveContextProvider";
 import { NotificationWebSocketProvider } from "./contexts/NotificationWebSocketContext";
@@ -54,6 +56,11 @@ function AppContent() {
     };
     initI18n();
   }, [location]);
+
+  // Start network interceptor for QA diagnostics
+  useEffect(() => {
+    startNetworkInterceptor();
+  }, []);
 
   useEffect(() => {
     const enableSelfHealing = !import.meta.env.DEV || import.meta.env.VITE_ENABLE_SELF_HEALING === "true";
@@ -161,11 +168,13 @@ function App() {
             <TalentMatchSessionProvider>
               <PredictiveContextProvider>
                 <MrBlueProvider>
-                  <NotificationWebSocketProvider>
-                    <TooltipProvider>
-                      <AppContent />
-                    </TooltipProvider>
-                  </NotificationWebSocketProvider>
+                  <BreadcrumbProvider>
+                    <NotificationWebSocketProvider>
+                      <TooltipProvider>
+                        <AppContent />
+                      </TooltipProvider>
+                    </NotificationWebSocketProvider>
+                  </BreadcrumbProvider>
                 </MrBlueProvider>
               </PredictiveContextProvider>
             </TalentMatchSessionProvider>
