@@ -215,22 +215,45 @@ export function useJourneyTracker(userId?: number) {
 
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const testId = target.closest('[data-testid]')?.getAttribute('data-testid');
-      const buttonText = target.closest('button')?.textContent?.substring(0, 50);
-      const linkHref = target.closest('a')?.getAttribute('href');
+      const testIdEl = target.closest('[data-testid]');
+      const testId = testIdEl?.getAttribute('data-testid');
+      const buttonEl = target.closest('button');
+      const buttonText = buttonEl?.textContent?.trim()?.substring(0, 50);
+      const linkEl = target.closest('a');
+      const linkHref = linkEl?.getAttribute('href');
       
-      // Enhanced tab/navigation detection
+      // Enhanced tab/navigation detection - also check for button-tab-* pattern
       const tabTrigger = target.closest('[role="tab"]');
       const tabLabel = tabTrigger?.textContent?.trim()?.substring(0, 30);
       const navItem = target.closest('[role="menuitem"], nav a, [data-nav-item]');
       const navLabel = navItem?.textContent?.trim()?.substring(0, 30);
+      
+      // Detect profile tab buttons by data-testid pattern
+      const isProfileTab = testId?.startsWith('button-tab-');
+      const profileTabName = isProfileTab ? testId.replace('button-tab-', '') : null;
+      
+      // DEBUG: Log all clicks to console for diagnosis
+      console.log('[JourneyTracker] Click detected:', {
+        target: target.tagName,
+        testId,
+        buttonText,
+        linkHref,
+        isProfileTab,
+        profileTabName,
+        tabTrigger: !!tabTrigger,
+        navItem: !!navItem
+      });
       
       // Build descriptive element ID with breadcrumb info
       let elementId = testId || tabLabel || navLabel || buttonText || linkHref || target.tagName.toLowerCase();
       
       // Add context about what type of interaction
       let action = 'click';
-      if (tabTrigger) {
+      if (isProfileTab) {
+        // Profile tabs use button-tab-* pattern, treat as tab switch
+        action = 'tab_switch';
+        elementId = `tab:${profileTabName}`;
+      } else if (tabTrigger) {
         action = 'tab_switch';
         elementId = `tab:${tabLabel}`;
       } else if (navItem) {
@@ -238,8 +261,9 @@ export function useJourneyTracker(userId?: number) {
         elementId = `nav:${navLabel}`;
       }
 
-      // Track the click with enhanced context
-      if (testId || buttonText || linkHref || tabTrigger || navItem) {
+      // Track the click with enhanced context - more permissive now
+      if (testId || buttonText || linkHref || tabTrigger || navItem || buttonEl) {
+        console.log('[JourneyTracker] Tracking step:', { action, element: elementId, path: window.location.pathname });
         trackStep({
           path: window.location.pathname,
           action,

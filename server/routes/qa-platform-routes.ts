@@ -124,9 +124,9 @@ const feedbackSchema = z.object({
   priority: z.enum(["low", "medium", "high", "critical"]).optional(),
 });
 
-router.post("/feedback", async (req: Request, res: Response) => {
+router.post("/feedback", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const user = (req as any).user;
+    const user = (req as AuthRequest).user;
     if (!user) {
       return res.status(401).json({ error: "Authentication required" });
     }
