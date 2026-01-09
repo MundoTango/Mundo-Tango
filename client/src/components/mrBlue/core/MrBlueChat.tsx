@@ -601,11 +601,76 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     }
   };
 
+  // Bug conversation: Chat with Mr. Blue to gather more details before submission
+  const sendBugMessage = async () => {
+    if (!input.trim()) return;
+    
+    const messageText = input.trim();
+    setInput("");
+    setIsLoading(true);
+
+    // Add user's message to chat
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: messageText,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+
+    try {
+      // Send to Mr. Blue with bug context so he can ask clarifying questions
+      const response = await apiRequest("POST", "/api/mrblue/chat", {
+        message: messageText,
+        conversationId: currentConversationId,
+        context: {
+          currentPage: location,
+          pageTitle: document.title,
+          mode: "bug_report",
+          diagnosticSnapshot: bugDiagnosticSnapshot ? {
+            currentPath: bugDiagnosticSnapshot.currentPath,
+            userTier: bugDiagnosticSnapshot.userContext?.tier,
+            recentErrors: bugDiagnosticSnapshot.consoleErrors?.slice(-3),
+            lastApiCalls: bugDiagnosticSnapshot.apiCalls?.slice(-3),
+          } : null,
+        },
+      });
+
+      const data = await response.json();
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: data.response || data.content || "I understand. Can you tell me more about what happened?",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      if (data.conversationId && !currentConversationId) {
+        setCurrentConversationId(data.conversationId);
+      }
+    } catch (error) {
+      // Fallback response if API fails
+      const fallbackMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Thanks for that information. Is there anything else you'd like to add before submitting the bug report?",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, fallbackMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      // In QA mode (help/features/bug), submit to QA system instead of chat
-      if (qaMode !== "none") {
+      // Bug mode: Allow conversation with Mr. Blue (Enter = chat, button = submit)
+      // Help/Features mode: Submit directly to QA system
+      if (qaMode === "bug") {
+        sendBugMessage();
+      } else if (qaMode !== "none") {
         submitQaRequest();
       } else {
         sendMessage();
@@ -617,17 +682,27 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
   const [bugScreenshot, setBugScreenshot] = useState<string | null>(null);
   const [bugDiagnosticSnapshot, setBugDiagnosticSnapshot] = useState<any>(null);
+  const [bugModeStartIndex, setBugModeStartIndex] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // QA System: Submission logic - Uses enhanced diagnostic snapshot for bug reports
   const submitQaRequest = useCallback(async (finalMessage?: string) => {
+    // For bug reports, we allow submission even without current input if there's conversation
+    const isBugMode = qaMode === "bug";
+    const bugConversation = isBugMode ? messages.slice(bugModeStartIndex) : [];
+    const hasConversation = bugConversation.some(m => m.role === "user");
+    
     const messageText = finalMessage || input;
-    if (!messageText.trim() && attachments.length === 0) return;
+    
+    // Bug mode: need either current input OR previous conversation
+    // Other modes: need input or attachments
+    if (!isBugMode && !messageText.trim() && attachments.length === 0) return;
+    if (isBugMode && !messageText.trim() && !hasConversation) return;
 
     setIsLoading(true);
     try {
       // Use enhanced snapshot for bug reports, basic for others
-      const snapshot = qaMode === "bug" && bugDiagnosticSnapshot 
+      const snapshot = isBugMode && bugDiagnosticSnapshot 
         ? bugDiagnosticSnapshot 
         : getEnhancedSnapshot();
       
@@ -644,7 +719,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
       }));
 
       // Add auto-captured screenshot for bug reports
-      if (qaMode === "bug" && bugScreenshot) {
+      if (isBugMode && bugScreenshot) {
         processedAttachments.push({
           name: 'auto-screenshot.jpg',
           type: 'image/jpeg',
@@ -653,11 +728,29 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         });
       }
 
+      // Build conversation transcript for bug reports
+      const conversationTranscript = isBugMode 
+        ? bugConversation
+            .filter(m => m.role === "user" || m.role === "assistant")
+            .map(m => `[${m.role.toUpperCase()}]: ${m.content}`)
+            .join("\n\n")
+        : "";
+
+      // Build description: current input + any conversation transcript
+      const fullDescription = isBugMode
+        ? [messageText, conversationTranscript].filter(Boolean).join("\n\n---\n\n")
+        : messageText;
+
+      // Extract title from first user message in conversation
+      const firstUserMessage = bugConversation.find(m => m.role === "user")?.content || messageText;
+      const title = (firstUserMessage || "Bug Report").substring(0, 50) + 
+        ((firstUserMessage || "").length > 50 ? "..." : "");
+
       // Build comprehensive session snapshot with all diagnostic data for admin queue
       const sessionSnapshotPayload = {
         ...snapshot,
         // Transform journey to events format expected by admin queue
-        events: snapshot.journey.map((step: any) => ({
+        events: snapshot.journey?.map((step: any) => ({
           type: step.action || 'navigation',
           timestamp: step.timestamp,
           data: {
@@ -667,7 +760,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
             text: step.element?.split(':')[1] || '',
             ...step.details
           }
-        })),
+        })) || [],
         // Include user context for permissions debugging
         userContext: snapshot.userContext,
         // Include API calls for backend issue diagnosis
@@ -678,17 +771,19 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         breadcrumb: snapshot.breadcrumb || [],
         // Include browser info
         browserInfo: snapshot.browserInfo,
+        // Include conversation transcript for bug reports
+        conversationTranscript: isBugMode ? conversationTranscript : undefined,
         // Capture timestamp
         capturedAt: Date.now()
       };
 
       const response = await apiRequest("POST", "/api/qa-platform/feedback", {
-        feedbackType: qaMode === "bug" ? "bug" : qaMode === "features" ? "feature" : "support",
-        title: messageText.substring(0, 50) + (messageText.length > 50 ? "..." : ""),
-        description: messageText,
+        feedbackType: isBugMode ? "bug" : qaMode === "features" ? "feature" : "support",
+        title,
+        description: fullDescription,
         currentPage: location,
         sessionSnapshot: sessionSnapshotPayload,
-        priority: qaMode === "bug" ? "high" : "medium",
+        priority: isBugMode ? "high" : "medium",
         sessionId,
         attachments: processedAttachments
       });
@@ -697,8 +792,8 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         const successMessage: Message = {
           id: `qa-success-${Date.now()}`,
           role: "assistant",
-          content: qaMode === "bug" 
-            ? "Bug report submitted successfully! Full diagnostic context (journey, API calls, user tier, errors) captured for developers."
+          content: isBugMode 
+            ? "Bug report submitted successfully! Your conversation and full diagnostic context have been sent to the development team."
             : "Request recorded! This has been passed through @mb.md for architectural review and is now pending admin approval for build.",
           timestamp: new Date(),
         };
@@ -708,6 +803,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         setAttachmentPreviews([]);
         setBugScreenshot(null);
         setBugDiagnosticSnapshot(null);
+        setBugModeStartIndex(0);
         setInput("");
       }
     } catch (error) {
@@ -715,7 +811,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     } finally {
       setIsLoading(false);
     }
-  }, [qaMode, input, attachments, location, getEnhancedSnapshot, sessionId, bugScreenshot, bugDiagnosticSnapshot]);
+  }, [qaMode, input, attachments, location, getEnhancedSnapshot, sessionId, bugScreenshot, bugDiagnosticSnapshot, messages, bugModeStartIndex]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -794,6 +890,9 @@ What interests you?`,
     trackStep({ path: location, action: "qa_bug_report" });
     setQaMode("bug");
 
+    // Track where bug conversation starts for transcript extraction
+    setBugModeStartIndex(messages.length);
+
     // Store the diagnostic snapshot for later submission
     setBugDiagnosticSnapshot(enhancedSnapshot);
 
@@ -803,22 +902,24 @@ What interests you?`,
       setBugScreenshot(screenshot);
     }
 
-    // Simple message - visual components will be rendered separately in bug mode
+    // Conversational message - Mr. Blue asks clarifying questions
     const bugMessage: Message = {
       id: `qa-bug-${Date.now()}`,
       role: "assistant",
       content: `**Bug Report Mode**
 
-I've captured your current session context including:
-- Your navigation path and recent actions
-- API calls and any errors  
-- User permissions and page state
+I've captured your session context and I'm ready to help document this issue.
 
-Describe what went wrong below, then click **Submit Bug Report** to send everything to the development team.`,
+**Tell me what happened:**
+- What were you trying to do?
+- What went wrong or didn't work as expected?
+- Did you see any error messages?
+
+Chat with me to describe the problem, then click **Submit Bug Report** when you're ready to send it to the development team.`,
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, bugMessage]);
-  }, [getEnhancedSnapshot, trackStep, location, captureScreenshot]);
+  }, [getEnhancedSnapshot, trackStep, location, captureScreenshot, messages.length]);
 
   return (
     <main className="flex flex-col h-full bg-gradient-to-b from-background via-background to-muted/30">
