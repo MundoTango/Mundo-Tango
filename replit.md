@@ -64,11 +64,14 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Vanity URLs**: `/:username` resolves to PRO page or user profile
 - **Documentation**: See `docs/prd/VANITY_URLS.md` for URL routing spec
 
-### Admin Feedback & QA System (Updated Jan 2, 2026)
+### Admin Feedback & QA System (Updated Jan 9, 2026)
 - **Unified Admin Queue**: Single tabbed interface at `/admin/feedback-queue` consolidates user feedback triage + founder feature approvals
 - **Tabs**: "User Feedback" (bug reports, feature requests, help) + "Feature Approval" (agent-built features pending review)
 - **Mr. Blue Integration**: Chat modes (Help, Features, Bug Report) with attachment support and session tracking
 - **Journey Replay**: Session events captured for bug context (clicks, navigation, scrolls, errors, forms)
+- **Automatic Screenshot Capture**: Bug reports auto-capture page screenshot using html2canvas (0.5 scale, 60% JPEG quality)
+- **ErrorBoundary Enhancement**: "Report Bug" button on crash screen auto-submits critical bug reports with component stack
+- **Screenshot Implementation**: `captureScreenshot()` in `useJourneyTracker.ts`, hides Mr. Blue panel during capture
 - **Backend Routes**: `/api/qa-platform/*` for feedback, `/api/admin/founder-approval/*` for feature reviews
 - **Access Control**: God-level users (scott@boddye.com, admin@mundotango.life, tier === 8) required
 - **Backward Compatibility**: `/admin/founder-approval` redirects to unified queue
