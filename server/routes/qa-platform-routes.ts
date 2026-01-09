@@ -196,8 +196,9 @@ router.get("/admin/pending", authenticateToken, async (req: Request, res: Respon
   try {
     const user = (req as AuthRequest).user;
     // Allow God level or regular Admins (tier >= 4)
-    if (!user || (!isGodLevel(user) && user.tier < 4)) {
-      console.log(`[QA Admin] Access denied for user ${user?.id} with tier ${user?.tier}`);
+    const userWithTier = user as any;
+    if (!user || (!isGodLevel(user) && (userWithTier.tier ?? 0) < 4)) {
+      console.log(`[QA Admin] Access denied for user ${user?.id} with tier ${userWithTier?.tier}`);
       return res.status(403).json({ error: "Admin access required" });
     }
 
@@ -214,7 +215,8 @@ router.post("/admin/approve/:id", authenticateToken, async (req: Request, res: R
   try {
     const user = (req as AuthRequest).user;
     // Allow God level or regular Admins (tier >= 4)
-    if (!user || (!isGodLevel(user) && user.tier < 4)) {
+    const userWithTier = user as any;
+    if (!user || (!isGodLevel(user) && (userWithTier.tier ?? 0) < 4)) {
       return res.status(403).json({ error: "Admin access required" });
     }
 
@@ -286,7 +288,7 @@ router.post("/admin/resolve/:id", authenticateToken, async (req: Request, res: R
 
     // Send email notification to user (if they have a userId)
     if (feedback.userId) {
-      const feedbackUser = await storage.getUser(feedback.userId);
+      const feedbackUser = await storage.getUserById(feedback.userId);
       if (feedbackUser?.email) {
         console.log(`[QA Platform] Sending resolved email to ${feedbackUser.email} for feedback: ${feedback.title}`);
         
