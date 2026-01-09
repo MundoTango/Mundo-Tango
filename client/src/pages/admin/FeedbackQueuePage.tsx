@@ -20,9 +20,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { 
   Bug, Lightbulb, HelpCircle, AlertTriangle, Check, X, Eye, Clock, User, Calendar,
-  CheckCircle, XCircle, Search, Filter, FileText, Inbox, Rocket
+  CheckCircle, XCircle, Search, Filter, FileText, Inbox, Rocket, Globe, Shield
 } from 'lucide-react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { JourneyTimeline } from '@/components/qa/JourneyTimeline';
+import { ContextCards } from '@/components/qa/ContextCards';
 import { useToast } from '@/hooks/use-toast';
 import { safeDateFormat } from '@/lib/safeDateFormat';
 import { SEO } from '@/components/SEO';
@@ -334,7 +336,61 @@ function FeedbackPanel() {
                 )}
 
                 {selectedFeedback.sessionSnapshot && (
-                  <div>
+                  <div className="space-y-4">
+                    {/* User Context Card */}
+                    {selectedFeedback.sessionSnapshot.userContext && (
+                      <div className="p-3 rounded-md bg-muted/50 border">
+                        <div className="flex items-center gap-2 text-sm font-medium mb-2">
+                          <Shield className="h-4 w-4" />
+                          User Context
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>Tier: <span className="font-medium">{selectedFeedback.sessionSnapshot.userContext.tier || 'unknown'}</span></div>
+                          <div>Verified: <span className="font-medium">{selectedFeedback.sessionSnapshot.userContext.isVerified ? 'Yes' : 'No'}</span></div>
+                          {selectedFeedback.sessionSnapshot.userContext.cityName && (
+                            <div className="col-span-2">City: <span className="font-medium">{selectedFeedback.sessionSnapshot.userContext.cityName}</span></div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* API Calls */}
+                    {selectedFeedback.sessionSnapshot.apiCalls?.length > 0 && (
+                      <div className="p-3 rounded-md bg-muted/50 border">
+                        <div className="flex items-center gap-2 text-sm font-medium mb-2">
+                          <Globe className="h-4 w-4" />
+                          Recent API Calls ({selectedFeedback.sessionSnapshot.apiCalls.length})
+                        </div>
+                        <div className="space-y-1 max-h-32 overflow-y-auto">
+                          {selectedFeedback.sessionSnapshot.apiCalls.slice(-5).map((call: any, idx: number) => (
+                            <div key={idx} className="text-xs flex items-center gap-2">
+                              <span className={`px-1 rounded ${call.status >= 400 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}`}>
+                                {call.status}
+                              </span>
+                              <span className="font-mono">{call.method}</span>
+                              <span className="truncate text-muted-foreground">{call.url?.replace('/api/', '')}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Journey Timeline */}
+                    {selectedFeedback.sessionSnapshot.journey?.length > 0 && (
+                      <div className="p-3 rounded-md bg-muted/50 border">
+                        <div className="flex items-center gap-2 text-sm font-medium mb-2">
+                          <Eye className="h-4 w-4" />
+                          User Journey ({selectedFeedback.sessionSnapshot.journey.length} steps)
+                        </div>
+                        <JourneyTimeline 
+                          journey={selectedFeedback.sessionSnapshot.journey}
+                          maxSteps={6}
+                          compact={true}
+                        />
+                      </div>
+                    )}
+
+                    {/* Session Replay Button */}
                     <Button 
                       variant="outline" 
                       size="sm"
@@ -342,7 +398,7 @@ function FeedbackPanel() {
                       data-testid="button-view-session"
                     >
                       <Eye className="h-4 w-4 mr-2" />
-                      View Session Replay ({selectedFeedback.sessionSnapshot.events?.length || 0} events)
+                      View Full Session Replay ({selectedFeedback.sessionSnapshot.events?.length || 0} events)
                     </Button>
                   </div>
                 )}

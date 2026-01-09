@@ -16,7 +16,12 @@ import {
   Paperclip,
   FileText,
   Trash2,
+  Upload,
 } from "lucide-react";
+import { JourneyTimeline } from "@/components/qa/JourneyTimeline";
+import { ContextCards } from "@/components/qa/ContextCards";
+import { DiagnosisSummary } from "@/components/qa/DiagnosisSummary";
+import type { DiagnosticContext, UserContext, APICallRecord, ErrorRecord } from "@/lib/qa/componentRegistry";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -611,16 +616,20 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   const [attachments, setAttachments] = useState<File[]>([]);
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
   const [bugScreenshot, setBugScreenshot] = useState<string | null>(null);
+  const [bugDiagnosticSnapshot, setBugDiagnosticSnapshot] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // QA System: Submission logic
+  // QA System: Submission logic - Uses enhanced diagnostic snapshot for bug reports
   const submitQaRequest = useCallback(async (finalMessage?: string) => {
     const messageText = finalMessage || input;
     if (!messageText.trim() && attachments.length === 0) return;
 
     setIsLoading(true);
     try {
-      const snapshot = getSnapshot();
+      // Use enhanced snapshot for bug reports, basic for others
+      const snapshot = qaMode === "bug" && bugDiagnosticSnapshot 
+        ? bugDiagnosticSnapshot 
+        : getEnhancedSnapshot();
       
       // Handle media attachments like PostCreator
       const processedAttachments = await Promise.all(attachments.map(async (file) => {
@@ -644,12 +653,41 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         });
       }
 
+      // Build comprehensive session snapshot with all diagnostic data for admin queue
+      const sessionSnapshotPayload = {
+        ...snapshot,
+        // Transform journey to events format expected by admin queue
+        events: snapshot.journey.map((step: any) => ({
+          type: step.action || 'navigation',
+          timestamp: step.timestamp,
+          data: {
+            pathname: step.path,
+            element: step.element,
+            tagName: step.element?.split(':')[0] || 'div',
+            text: step.element?.split(':')[1] || '',
+            ...step.details
+          }
+        })),
+        // Include user context for permissions debugging
+        userContext: snapshot.userContext,
+        // Include API calls for backend issue diagnosis
+        apiCalls: snapshot.apiCalls || [],
+        // Include errors for quick identification
+        errors: snapshot.consoleErrors || [],
+        // Include breadcrumb for navigation path
+        breadcrumb: snapshot.breadcrumb || [],
+        // Include browser info
+        browserInfo: snapshot.browserInfo,
+        // Capture timestamp
+        capturedAt: Date.now()
+      };
+
       const response = await apiRequest("POST", "/api/qa-platform/feedback", {
         feedbackType: qaMode === "bug" ? "bug" : qaMode === "features" ? "feature" : "support",
         title: messageText.substring(0, 50) + (messageText.length > 50 ? "..." : ""),
         description: messageText,
         currentPage: location,
-        sessionSnapshot: snapshot,
+        sessionSnapshot: sessionSnapshotPayload,
         priority: qaMode === "bug" ? "high" : "medium",
         sessionId,
         attachments: processedAttachments
@@ -660,7 +698,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
           id: `qa-success-${Date.now()}`,
           role: "assistant",
           content: qaMode === "bug" 
-            ? "Bug report submitted successfully! Screenshot and context captured for developers."
+            ? "Bug report submitted successfully! Full diagnostic context (journey, API calls, user tier, errors) captured for developers."
             : "Request recorded! This has been passed through @mb.md for architectural review and is now pending admin approval for build.",
           timestamp: new Date(),
         };
@@ -669,6 +707,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         setAttachments([]);
         setAttachmentPreviews([]);
         setBugScreenshot(null);
+        setBugDiagnosticSnapshot(null);
         setInput("");
       }
     } catch (error) {
@@ -676,7 +715,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     } finally {
       setIsLoading(false);
     }
-  }, [qaMode, input, attachments, location, getSnapshot, sessionId, bugScreenshot]);
+  }, [qaMode, input, attachments, location, getEnhancedSnapshot, sessionId, bugScreenshot, bugDiagnosticSnapshot]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -755,105 +794,31 @@ What interests you?`,
     trackStep({ path: location, action: "qa_bug_report" });
     setQaMode("bug");
 
+    // Store the diagnostic snapshot for later submission
+    setBugDiagnosticSnapshot(enhancedSnapshot);
+
     // Capture screenshot immediately when entering bug mode
     const screenshot = await captureScreenshot();
     if (screenshot) {
       setBugScreenshot(screenshot);
     }
 
-    // Format recent journey with section/tab context
-    const recentJourney = enhancedSnapshot.journey
-      .slice(-8)
-      .map((s) => {
-        const actionIcon = s.action === 'tab_switch' ? '📑' : 
-                          s.action === 'section_view' ? '📋' : 
-                          s.action === 'button_action' ? '🔘' : 
-                          s.action === 'navigation' ? '🔗' : '👆';
-        return `- ${actionIcon} ${s.action}: ${s.path}${s.element ? ` → **${s.element}**` : ""}`;
-      })
-      .join("\n");
-
-    // User context for permissions/tier issues
-    const userContext = enhancedSnapshot.userContext;
-    const userSection = userContext.isLoggedIn 
-      ? `**User:** Tier ${userContext.tier} | City: ${userContext.cityId || 'None'} | Verified: ${userContext.isVerified ? 'Yes' : 'No'}`
-      : '**User:** Not logged in';
-    
-    // API calls with payload info
-    const recentAPICalls = enhancedSnapshot.apiCalls
-      .slice(-5)
-      .map(call => {
-        const status = call.status >= 400 ? `❌ ${call.status}` : `✅ ${call.status}`;
-        return `- ${call.method} ${call.url.substring(0, 50)} ${status}`;
-      })
-      .join("\n");
-    const apiSection = recentAPICalls ? `\n**Recent API Calls:**\n${recentAPICalls}` : '';
-
-    // Breadcrumb path for quick context
-    const breadcrumbPath = enhancedSnapshot.breadcrumb.length > 0
-      ? `**Path:** ${enhancedSnapshot.breadcrumb.join(' → ')}`
-      : '';
-
-    // Enhanced context from journey tracker
-    const openDialogs = enhancedSnapshot.openDialogs || [];
-    const consoleErrors = enhancedSnapshot.consoleErrors || [];
-    const networkFailures = enhancedSnapshot.networkFailures || [];
-    const rageClicks = enhancedSnapshot.rageClicks || [];
-    const theme = enhancedSnapshot.browserInfo?.theme || 'unknown';
-    const locale = enhancedSnapshot.browserInfo?.locale || navigator.language;
-
-    // Build enhanced context sections
-    const dialogSection = openDialogs.length > 0 
-      ? `\n**Open Dialogs:** ${openDialogs.join(', ')}` 
-      : '';
-    
-    const errorSection = consoleErrors.length > 0
-      ? `\n**⚠️ Recent Errors:** ${consoleErrors.slice(-3).map((e: any) => e.message.substring(0, 80)).join('; ')}`
-      : '';
-    
-    const networkSection = networkFailures.length > 0
-      ? `\n**❌ Failed API Calls:** ${networkFailures.slice(-3).map((n: any) => `${n.method} ${n.url} (${n.status})`).join('; ')}`
-      : '';
-    
-    const rageSection = rageClicks.length > 0
-      ? `\n**😤 Frustration Detected:** ${rageClicks.length} rage click events`
-      : '';
-
-    const screenshotNote = screenshot ? '\n**📸 Screenshot:** Captured automatically' : '';
-    
-    // Last interaction for precise location
-    const lastInteraction = enhancedSnapshot.lastTestId 
-      ? `\n**Last Interaction:** ${enhancedSnapshot.lastTestId}` 
-      : '';
-
+    // Simple message - visual components will be rendered separately in bug mode
     const bugMessage: Message = {
       id: `qa-bug-${Date.now()}`,
       role: "assistant",
-      content: `**🐛 Bug Report Mode - Enhanced Context Captured**
+      content: `**Bug Report Mode**
 
-**Session:** \`${sessionId}\`
-**Page:** ${enhancedSnapshot.currentPath}
-${userSection}
-**Browser:** ${enhancedSnapshot.browserInfo.platform} | **Theme:** ${theme} | **Locale:** ${locale}
-**Viewport:** ${enhancedSnapshot.browserInfo.viewport.width}×${enhancedSnapshot.browserInfo.viewport.height}
-${breadcrumbPath}${lastInteraction}${dialogSection}${errorSection}${networkSection}${rageSection}${screenshotNote}
-${apiSection}
+I've captured your current session context including:
+- Your navigation path and recent actions
+- API calls and any errors  
+- User permissions and page state
 
-**📍 Recent Activity (Last 8 Steps):**
-${recentJourney}
-
----
-
-**Describe your issue:**
-- What were you trying to do?
-- What happened instead?
-- Any error messages you saw?
-
-Type your description and click **Submit** to send to developers with full diagnostic context.`,
+Describe what went wrong below, then click **Submit Bug Report** to send everything to the development team.`,
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, bugMessage]);
-  }, [getEnhancedSnapshot, trackStep, location, sessionId, captureScreenshot]);
+  }, [getEnhancedSnapshot, trackStep, location, captureScreenshot]);
 
   return (
     <main className="flex flex-col h-full bg-gradient-to-b from-background via-background to-muted/30">
@@ -1135,10 +1100,83 @@ Type your description and click **Submit** to send to developers with full diagn
         </div>
       </div>
 
+      {/* Bug Report Diagnostic Panel - Shows visual components when in bug mode */}
+      {qaMode === "bug" && bugDiagnosticSnapshot && (
+        <div className="px-4 py-3 border-t bg-muted/30 max-h-[40vh] overflow-y-auto" data-testid="panel-bug-diagnostics">
+          <div className="max-w-2xl mx-auto space-y-4">
+            {/* Mr. Blue Analysis */}
+            <DiagnosisSummary 
+              context={{
+                testId: bugDiagnosticSnapshot.lastTestId || '',
+                path: bugDiagnosticSnapshot.currentPath || '',
+                breadcrumb: bugDiagnosticSnapshot.breadcrumb || [],
+                userContext: bugDiagnosticSnapshot.userContext || {
+                  userId: null,
+                  tier: 'free',
+                  isVerified: false,
+                  cityId: null,
+                  cityName: null,
+                  profileComplete: false,
+                  isLoggedIn: false,
+                  permissions: []
+                },
+                apiCalls: bugDiagnosticSnapshot.apiCalls || [],
+                errors: (bugDiagnosticSnapshot.consoleErrors || []).map((e: any) => ({
+                  type: 'console',
+                  message: e.message || '',
+                  timestamp: e.timestamp || Date.now(),
+                  componentName: ''
+                })),
+                appState: {}
+              }}
+              showRaw={false}
+            />
+            
+            {/* Journey Timeline */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium flex items-center gap-2">
+                <Eye className="h-4 w-4 text-muted-foreground" />
+                Your Recent Activity
+              </h4>
+              <JourneyTimeline 
+                journey={bugDiagnosticSnapshot.journey || []} 
+                maxSteps={8} 
+                compact={false}
+              />
+            </div>
+            
+            {/* Context Cards */}
+            <ContextCards
+              userContext={bugDiagnosticSnapshot.userContext}
+              apiCalls={bugDiagnosticSnapshot.apiCalls || []}
+              errors={(bugDiagnosticSnapshot.consoleErrors || []).map((e: any) => ({
+                type: 'console',
+                message: e.message || '',
+                timestamp: e.timestamp || Date.now(),
+                componentName: ''
+              }))}
+              compact={false}
+            />
+
+            {/* Screenshot Preview */}
+            {bugScreenshot && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium">Screenshot Captured</h4>
+                <img 
+                  src={bugScreenshot} 
+                  alt="Auto-captured screenshot" 
+                  className="rounded-md border max-h-32 w-auto"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Input Area */}
       <div className="p-4 border-t bg-background/80 backdrop-blur-sm">
-        {/* Smart Suggestions */}
-        <div className="flex flex-wrap gap-1.5 mb-3 max-w-2xl mx-auto">
+        {/* Smart Suggestions - Hidden in bug mode */}
+        <div className={`flex flex-wrap gap-1.5 mb-3 max-w-2xl mx-auto ${qaMode === "bug" ? "hidden" : ""}`}>
           <button
             onClick={() => {
               setInput("Find milongas this weekend");
@@ -1224,12 +1262,17 @@ Type your description and click **Submit** to send to developers with full diagn
             {qaMode !== "none" ? (
               <Button
                 size="sm"
-                className="h-9 px-3 rounded-full bg-primary hover:bg-primary/90 shadow-sm"
+                className={`h-9 px-3 rounded-full shadow-sm ${qaMode === "bug" ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-primary/90"}`}
                 disabled={(!input.trim() && attachments.length === 0) || isLoading}
                 onClick={() => submitQaRequest()}
                 data-testid="button-submit-qa"
               >
-                Submit
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                ) : qaMode === "bug" ? (
+                  <Upload className="h-4 w-4 mr-1" />
+                ) : null}
+                {qaMode === "bug" ? "Submit Bug Report" : "Submit"}
               </Button>
             ) : (
               <Button
