@@ -1363,7 +1363,13 @@ Chat with me to describe the problem, then click **Submit Bug Report** when you'
               <Button
                 size="sm"
                 className={`h-9 px-3 rounded-full shadow-sm ${qaMode === "bug" ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-primary/90"}`}
-                disabled={(!input.trim() && attachments.length === 0) || isLoading}
+                disabled={
+                  isLoading || (
+                    qaMode === "bug" 
+                      ? (!input.trim() && !messages.slice(bugModeStartIndex).some(m => m.role === "user"))
+                      : (!input.trim() && attachments.length === 0)
+                  )
+                }
                 onClick={() => submitQaRequest()}
                 data-testid="button-submit-qa"
               >
