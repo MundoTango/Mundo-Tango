@@ -232,18 +232,6 @@ export function useJourneyTracker(userId?: number) {
       const isProfileTab = testId?.startsWith('button-tab-');
       const profileTabName = isProfileTab ? testId.replace('button-tab-', '') : null;
       
-      // DEBUG: Log all clicks to console for diagnosis
-      console.log('[JourneyTracker] Click detected:', {
-        target: target.tagName,
-        testId,
-        buttonText,
-        linkHref,
-        isProfileTab,
-        profileTabName,
-        tabTrigger: !!tabTrigger,
-        navItem: !!navItem
-      });
-      
       // Build descriptive element ID with breadcrumb info
       let elementId = testId || tabLabel || navLabel || buttonText || linkHref || target.tagName.toLowerCase();
       
@@ -263,7 +251,6 @@ export function useJourneyTracker(userId?: number) {
 
       // Track the click with enhanced context - more permissive now
       if (testId || buttonText || linkHref || tabTrigger || navItem || buttonEl) {
-        console.log('[JourneyTracker] Tracking step:', { action, element: elementId, path: window.location.pathname });
         trackStep({
           path: window.location.pathname,
           action,
