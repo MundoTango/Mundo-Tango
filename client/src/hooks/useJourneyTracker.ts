@@ -240,16 +240,16 @@ export function useJourneyTracker(userId?: number) {
       const navLabel = navItem?.textContent?.trim()?.substring(0, 30);
       
       // Detect profile tab buttons by data-testid pattern
-      const isProfileTab = testId?.startsWith('button-tab-');
-      const profileTabName = isProfileTab ? testId.replace('button-tab-', '') : null;
+      const isProfileTab = testId?.startsWith('button-tab-') ?? false;
+      const profileTabName = isProfileTab && testId ? testId.replace('button-tab-', '') : null;
       
       // Detect section-level interactions
-      const isSection = testId?.startsWith('section-');
-      const sectionName = isSection ? testId.replace(/section-|-\d+$/g, '') : null;
+      const isSection = testId?.startsWith('section-') ?? false;
+      const sectionName = isSection && testId ? testId.replace(/section-|-\d+$/g, '') : null;
       
       // Detect button actions within sections
-      const isButtonAction = testId?.startsWith('button-add-') || testId?.startsWith('button-edit-') || testId?.startsWith('button-delete-');
-      const buttonAction = isButtonAction ? testId.replace(/button-|-\d+$/g, '') : null;
+      const isButtonAction = (testId?.startsWith('button-add-') || testId?.startsWith('button-edit-') || testId?.startsWith('button-delete-')) ?? false;
+      const buttonAction = isButtonAction && testId ? testId.replace(/button-|-\d+$/g, '') : null;
       
       // Build descriptive element ID with breadcrumb info
       let elementId = testId || tabLabel || navLabel || buttonText || linkHref || target.tagName.toLowerCase();
@@ -422,11 +422,11 @@ export function useJourneyTracker(userId?: number) {
     };
   }, [sessionId, userId, getOpenDialogs, getFormState, getCurrentTheme, getCurrentLocale]);
 
-  // Capture screenshot of the current page
   // Get enhanced diagnostic snapshot with user context, API calls, and app state
-  const getEnhancedSnapshot = useCallback((): EnhancedDiagnosticSnapshot => {
+  // Accepts optional user object from AuthContext for accurate auth state
+  const getEnhancedSnapshot = useCallback((user?: { id: number; username?: string; role?: string; isVerified?: boolean; city?: string | null; cityId?: number; isPro?: boolean; tier?: number; bio?: string | null; firstName?: string } | null): EnhancedDiagnosticSnapshot => {
     const baseSnapshot = getSnapshot();
-    const userContext = captureUserContext();
+    const userContext = captureUserContext(user);
     const apiCalls = getRecordedCalls();
     const appState = captureAppState();
     

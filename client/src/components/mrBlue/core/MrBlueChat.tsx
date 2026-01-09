@@ -886,7 +886,8 @@ What interests you?`,
 
   // QA System Handler: Bug Report - Captures full context with screenshot using enhanced diagnostics
   const handleBugReport = useCallback(async () => {
-    const enhancedSnapshot = getEnhancedSnapshot();
+    // Pass user from AuthContext for accurate auth state in diagnostics
+    const enhancedSnapshot = getEnhancedSnapshot(user);
     trackStep({ path: location, action: "qa_bug_report" });
     setQaMode("bug");
 

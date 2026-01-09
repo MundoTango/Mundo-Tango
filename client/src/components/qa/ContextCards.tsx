@@ -87,15 +87,38 @@ function UserContextCard({ context }: { context: UserContext }) {
       title="User Context" 
       icon={<User className="h-4 w-4" />}
       defaultOpen={true}
-      badge={context.tier.toUpperCase()}
-      badgeVariant={context.tier === 'god' ? 'success' : context.tier === 'pro' ? 'success' : 'default'}
+      badge={context.isLoggedIn ? context.tier.toUpperCase() : 'NOT LOGGED IN'}
+      badgeVariant={!context.isLoggedIn ? 'error' : context.tier === 'god' ? 'success' : context.tier === 'admin' ? 'success' : context.tier === 'pro' ? 'success' : 'default'}
     >
       <div className="grid grid-cols-2 gap-2 text-xs mt-2">
+        <div className="flex items-center gap-1">
+          {context.isLoggedIn ? (
+            <Check className="h-3 w-3 text-green-500" />
+          ) : (
+            <X className="h-3 w-3 text-red-500" />
+          )}
+          <span>Logged In:</span>
+          <span className="font-medium">{context.isLoggedIn ? 'Yes' : 'No'}</span>
+        </div>
+        {context.username && (
+          <div className="flex items-center gap-1">
+            <User className="h-3 w-3 text-muted-foreground" />
+            <span>User:</span>
+            <span className="font-medium">@{context.username}</span>
+          </div>
+        )}
         <div className="flex items-center gap-1">
           <Shield className="h-3 w-3 text-muted-foreground" />
           <span>Tier:</span>
           <span className="font-medium">{context.tier}</span>
         </div>
+        {context.role && (
+          <div className="flex items-center gap-1">
+            <Shield className="h-3 w-3 text-muted-foreground" />
+            <span>Role:</span>
+            <span className="font-medium">{context.role}</span>
+          </div>
+        )}
         <div className="flex items-center gap-1">
           {context.isVerified ? (
             <Check className="h-3 w-3 text-green-500" />
@@ -106,7 +129,7 @@ function UserContextCard({ context }: { context: UserContext }) {
           <span className="font-medium">{context.isVerified ? 'Yes' : 'No'}</span>
         </div>
         {context.cityName && (
-          <div className="flex items-center gap-1 col-span-2">
+          <div className="flex items-center gap-1">
             <MapPin className="h-3 w-3 text-muted-foreground" />
             <span>City:</span>
             <span className="font-medium">{context.cityName}</span>

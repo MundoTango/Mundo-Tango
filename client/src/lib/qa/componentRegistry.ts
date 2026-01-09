@@ -44,7 +44,10 @@ export interface APICallRecord {
 
 export interface UserContext {
   id?: number;
+  username?: string;
+  isLoggedIn: boolean;
   tier: 'free' | 'pro' | 'admin' | 'god';
+  role?: string;
   cityId?: number;
   cityName?: string;
   isVerified: boolean;

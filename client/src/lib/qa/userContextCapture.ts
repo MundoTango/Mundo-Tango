@@ -5,26 +5,40 @@
 
 import type { UserContext } from './componentRegistry';
 
-export function captureUserContext(): UserContext {
-  // Get user from localStorage (stored by AuthContext)
-  let user: any = null;
-  try {
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      user = JSON.parse(stored);
-    }
-  } catch {
-    // Ignore parse errors
-  }
+// User type matching AuthContext's ExpressUser - exported for use in other modules
+export interface AuthUser {
+  id: number;
+  email?: string;
+  username?: string;
+  name?: string;
+  isVerified?: boolean;
+  role?: string;
+  profileImage?: string | null;
+  bio?: string | null;
+  city?: string | null;
+  cityId?: number;
+  cityName?: string;
+  country?: string | null;
+  isPro?: boolean;
+  tier?: number;
+  canCreateEvents?: boolean;
+  canModerate?: boolean;
+  firstName?: string;
+}
+
+export function captureUserContext(user?: AuthUser | null): UserContext {
+  // Check if user has access token (indicates logged in even if user object not passed)
+  const hasAccessToken = !!localStorage.getItem('accessToken');
+  const isLoggedIn = !!(user?.id) || hasAccessToken;
   
   // Determine tier based on user properties
   let tier: UserContext['tier'] = 'free';
   if (user) {
     if (user.role === 'god' || user.tier === 8) {
       tier = 'god';
-    } else if (user.role === 'admin' || user.tier >= 6) {
+    } else if (user.role === 'admin' || (user.tier && user.tier >= 6)) {
       tier = 'admin';
-    } else if (user.isPro || user.tier >= 3) {
+    } else if (user.isPro || (user.tier && user.tier >= 3)) {
       tier = 'pro';
     }
   }
@@ -48,9 +62,12 @@ export function captureUserContext(): UserContext {
   
   return {
     id: user?.id,
+    username: user?.username,
+    isLoggedIn,
     tier,
+    role: user?.role,
     cityId: user?.cityId,
-    cityName: user?.cityName || user?.city,
+    cityName: user?.cityName || user?.city || undefined,
     isVerified: !!user?.isVerified,
     profileComplete,
     permissions,
@@ -127,9 +144,10 @@ export function captureFullDiagnosticContext(
     message: string;
     stack?: string;
     componentName?: string;
-  }>
+  }>,
+  user?: AuthUser | null
 ) {
-  const userContext = captureUserContext();
+  const userContext = captureUserContext(user);
   const appState = captureAppState();
   
   // Build breadcrumb from journey
