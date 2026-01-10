@@ -687,17 +687,27 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
 
   // QA System: Submission logic - Uses enhanced diagnostic snapshot for bug reports
   const submitQaRequest = useCallback(async (finalMessage?: string) => {
+    console.log('[MrBlueChat] submitQaRequest called', { qaMode, input, finalMessage, bugModeStartIndex, messagesLength: messages.length });
+    
     // For bug reports, we allow submission even without current input if there's conversation
     const isBugMode = qaMode === "bug";
     const bugConversation = isBugMode ? messages.slice(bugModeStartIndex) : [];
     const hasConversation = bugConversation.some(m => m.role === "user");
     
+    console.log('[MrBlueChat] Bug mode check', { isBugMode, hasConversation, bugConversationLength: bugConversation.length });
+    
     const messageText = finalMessage || input;
     
     // Bug mode: need either current input OR previous conversation
     // Other modes: need input or attachments
-    if (!isBugMode && !messageText.trim() && attachments.length === 0) return;
-    if (isBugMode && !messageText.trim() && !hasConversation) return;
+    if (!isBugMode && !messageText.trim() && attachments.length === 0) {
+      console.log('[MrBlueChat] Early return: non-bug mode with no input/attachments');
+      return;
+    }
+    if (isBugMode && !messageText.trim() && !hasConversation) {
+      console.log('[MrBlueChat] Early return: bug mode with no input and no conversation');
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -782,6 +792,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         capturedAt: Date.now()
       };
 
+      console.log('[MrBlueChat] Sending bug report to /api/qa-platform/feedback...');
       const response = await apiRequest("POST", "/api/qa-platform/feedback", {
         feedbackType: isBugMode ? "bug" : qaMode === "features" ? "feature" : "support",
         title,
@@ -792,6 +803,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         sessionId,
         attachments: processedAttachments
       });
+      console.log('[MrBlueChat] Response received:', response.status, response.ok);
 
       if (response.ok) {
         const successMessage: Message = {
