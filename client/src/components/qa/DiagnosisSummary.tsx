@@ -53,9 +53,10 @@ interface DiagnosisSummaryProps {
   context: DiagnosticContext;
   showRaw?: boolean;
   onAutoFixAttempt?: (pattern: BugPattern, result: AutoFixResult) => void;
+  isGodLevel?: boolean;
 }
 
-export function DiagnosisSummary({ context, showRaw = false, onAutoFixAttempt }: DiagnosisSummaryProps) {
+export function DiagnosisSummary({ context, showRaw = false, onAutoFixAttempt, isGodLevel = false }: DiagnosisSummaryProps) {
   const { toast } = useToast();
   const [fixingPatternId, setFixingPatternId] = useState<string | null>(null);
   const [fixResults, setFixResults] = useState<Record<string, AutoFixResult>>({});
@@ -260,7 +261,7 @@ export function DiagnosisSummary({ context, showRaw = false, onAutoFixAttempt }:
                       </div>
                     )}
                   </div>
-                ) : (
+                ) : isGodLevel ? (
                   <div className="mt-3">
                     <Button
                       size="sm"
@@ -283,7 +284,7 @@ export function DiagnosisSummary({ context, showRaw = false, onAutoFixAttempt }:
                       )}
                     </Button>
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
           ))}

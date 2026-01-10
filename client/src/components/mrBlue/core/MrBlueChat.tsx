@@ -187,6 +187,51 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   // UX-004 FIX: Track context key to avoid wiping history on context changes
   const lastContextKeyRef = useRef<string | null>(null);
 
+  // MB.MD Pattern 67: Detect ?mrblue=debug param and auto-open VibeCoding mode for bug fixing
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const debugMode = urlParams.get('mrblue');
+    
+    if (debugMode === 'debug') {
+      const storedContext = sessionStorage.getItem('bugDiagnosticContext');
+      if (storedContext) {
+        try {
+          const context = JSON.parse(storedContext);
+          console.log('[MrBlueChat] Debug mode activated with context:', context);
+          
+          setMode('vibecoding');
+          
+          const debugMessage: Message = {
+            id: `debug-${Date.now()}`,
+            role: 'assistant',
+            content: `**VibeCoding Mode - Bug Fix Session**
+
+I've loaded the diagnostic context for bug: **"${context.title}"**
+
+**Page:** ${context.currentPage}
+**Description:** ${context.description?.substring(0, 200) || 'No description'}
+
+I'm analyzing the issue now. You can ask me to:
+- Analyze the root cause
+- Generate a fix
+- Apply the fix automatically
+
+What would you like me to do?`,
+            timestamp: new Date(),
+          };
+          
+          setMessages(prev => [debugMessage, ...prev.filter(m => m.id !== '1')]);
+          
+          sessionStorage.removeItem('bugDiagnosticContext');
+          
+          window.history.replaceState({}, '', window.location.pathname);
+        } catch (e) {
+          console.error('[MrBlueChat] Failed to parse debug context:', e);
+        }
+      }
+    }
+  }, []);
+
   // UX-004 FIX: Update welcome message when CTO, self-heal, or walkthrough result context changes
   // PREPEND context message instead of replacing entire history
   useEffect(() => {

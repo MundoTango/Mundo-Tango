@@ -263,6 +263,48 @@ router.post("/admin/approve/:id", authenticateToken, async (req: Request, res: R
   }
 });
 
+router.post("/admin/reply/:id", authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const user = (req as AuthRequest).user;
+    const userWithTier = user as any;
+    if (!user || (!isGodLevel(user) && (userWithTier.tier ?? 0) < 4)) {
+      return res.status(403).json({ error: "Admin access required" });
+    }
+
+    const feedbackId = parseInt(req.params.id);
+    const { recipientId, message } = req.body;
+
+    if (!recipientId || !message?.trim()) {
+      return res.status(400).json({ error: "Recipient and message are required" });
+    }
+
+    const feedback = await storage.getUserFeedback(feedbackId);
+    if (!feedback) {
+      return res.status(404).json({ error: "Feedback not found" });
+    }
+
+    const messageContent = `**Regarding your feedback: "${feedback.title}"**\n\n${message}`;
+    
+    const directMessage = await storage.createDirectMessage({
+      senderId: user.id,
+      recipientId: recipientId,
+      content: messageContent,
+    });
+
+    await storage.updateUserFeedback(feedbackId, {
+      relatedMessageId: directMessage.id,
+      adminNotes: (feedback.adminNotes || '') + `\n[${new Date().toISOString()}] Replied to user: ${message.substring(0, 100)}...`,
+    });
+
+    console.log(`[QA Platform] Admin ${user.id} replied to user ${recipientId} for feedback ${feedbackId}`);
+
+    res.json({ success: true, messageId: directMessage.id });
+  } catch (error: any) {
+    console.error("[QA Platform] Admin reply error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post("/admin/resolve/:id", authenticateToken, async (req: Request, res: Response) => {
   try {
     const user = (req as AuthRequest).user;

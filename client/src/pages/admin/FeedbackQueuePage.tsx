@@ -20,8 +20,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { 
   Bug, Lightbulb, HelpCircle, AlertTriangle, Check, X, Eye, Clock, User, Calendar,
-  CheckCircle, XCircle, Search, Filter, FileText, Inbox, Rocket, Globe, Shield
+  CheckCircle, XCircle, Search, Filter, FileText, Inbox, Rocket, Globe, Shield,
+  MessageSquare, Wrench, Send
 } from 'lucide-react';
+import { useLocation } from 'wouter';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { JourneyTimeline } from '@/components/qa/JourneyTimeline';
 import { ContextCards } from '@/components/qa/ContextCards';
@@ -140,8 +142,11 @@ function FeedbackPanel() {
   const [selectedFeedback, setSelectedFeedback] = useState<FeedbackItem | null>(null);
   const [showSessionReplay, setShowSessionReplay] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
+  const [replyMessage, setReplyMessage] = useState('');
+  const [showReplyForm, setShowReplyForm] = useState(false);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
   const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   const { data: feedbackList, isLoading } = useQuery<FeedbackItem[]>({
     queryKey: ['/api/qa-platform/admin/pending'],
@@ -160,8 +165,7 @@ function FeedbackPanel() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
-      setSelectedFeedback(null);
-      toast({ title: 'Feedback approved', description: 'Mr. Blue will work on this issue.' });
+      toast({ title: 'Ready to fix', description: 'Navigating to the impacted page...' });
     },
     onError: (error: Error) => {
       toast({ 
@@ -171,6 +175,52 @@ function FeedbackPanel() {
       });
     }
   });
+
+  const replyToUserMutation = useMutation({
+    mutationFn: async ({ feedbackId, userId, message }: { feedbackId: number; userId: number; message: string }) => {
+      const res = await apiRequest('POST', `/api/qa-platform/admin/reply/${feedbackId}`, { 
+        recipientId: userId, 
+        message 
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || error.error || 'Failed to send message');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
+      setReplyMessage('');
+      setShowReplyForm(false);
+      toast({ title: 'Message sent', description: 'User will receive your message in their inbox.' });
+    },
+    onError: (error: Error) => {
+      toast({ 
+        title: 'Error', 
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleLetsFixIt = (feedback: FeedbackItem) => {
+    sessionStorage.setItem('bugDiagnosticContext', JSON.stringify({
+      feedbackId: feedback.id,
+      title: feedback.title,
+      description: feedback.description,
+      currentPage: feedback.currentPage,
+      sessionSnapshot: feedback.sessionSnapshot,
+      userId: feedback.userId,
+    }));
+    
+    approveMutation.mutate({ id: feedback.id, notes: adminNotes }, {
+      onSuccess: () => {
+        setSelectedFeedback(null);
+        const targetPage = feedback.currentPage || '/feed';
+        navigate(`${targetPage}?mrblue=debug`);
+      }
+    });
+  };
 
   const rejectMutation = useMutation({
     mutationFn: async ({ id, notes }: { id: number; notes: string }) => {
@@ -417,25 +467,66 @@ function FeedbackPanel() {
                 </div>
               </div>
 
-              <DialogFooter className="flex-col gap-2 sm:flex-row">
-                <Button
-                  variant="outline"
-                  onClick={() => rejectMutation.mutate({ id: selectedFeedback.id, notes: adminNotes })}
-                  disabled={rejectMutation.isPending}
-                  data-testid="button-reject"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Reject
-                </Button>
-                <Button
-                  onClick={() => approveMutation.mutate({ id: selectedFeedback.id, notes: adminNotes })}
-                  disabled={approveMutation.isPending}
-                  data-testid="button-approve"
-                >
-                  <Check className="h-4 w-4 mr-2" />
-                  Approve for Mr. Blue
-                </Button>
-              </DialogFooter>
+              {showReplyForm ? (
+                <div className="space-y-3 w-full">
+                  <Textarea
+                    value={replyMessage}
+                    onChange={(e) => setReplyMessage(e.target.value)}
+                    placeholder="Type your message to the user..."
+                    className="min-h-[80px]"
+                    data-testid="input-reply-message"
+                  />
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowReplyForm(false)}
+                      data-testid="button-cancel-reply"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => replyToUserMutation.mutate({ 
+                        feedbackId: selectedFeedback.id, 
+                        userId: selectedFeedback.userId, 
+                        message: replyMessage 
+                      })}
+                      disabled={replyToUserMutation.isPending || !replyMessage.trim()}
+                      data-testid="button-send-reply"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      Send to Inbox
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <DialogFooter className="flex-col gap-2 sm:flex-row">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowReplyForm(true)}
+                    data-testid="button-reply-user"
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Reply to User
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => rejectMutation.mutate({ id: selectedFeedback.id, notes: adminNotes })}
+                    disabled={rejectMutation.isPending}
+                    data-testid="button-reject"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Reject
+                  </Button>
+                  <Button
+                    onClick={() => handleLetsFixIt(selectedFeedback)}
+                    disabled={approveMutation.isPending}
+                    data-testid="button-lets-fix-it"
+                  >
+                    <Wrench className="h-4 w-4 mr-2" />
+                    Let's Fix It
+                  </Button>
+                </DialogFooter>
+              )}
             </>
           )}
         </DialogContent>

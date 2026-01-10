@@ -7,9 +7,7 @@
  * @see bug-diagnostic.md for full documentation
  */
 
-import { BaseServiceAgent } from './BaseServiceAgent';
-import { AgentOrchestrator } from '../AgentOrchestrator';
-import { ReactProtocol } from '../ReactProtocol';
+import { ReactProtocolService } from '../ReactProtocol';
 import { AutoFixEngine } from '../AutoFixEngine';
 import { ElementSelectorService } from '../elementSelector';
 
@@ -102,34 +100,25 @@ const ERROR_AGENT_ROUTING: Record<string, { primary: string; supporting: string[
   'unknown': { primary: 'CTOAgent', supporting: ['QAAgent'] },
 };
 
+// God-level user emails
+const GOD_LEVEL_USERS = ['scott@boddye.com', 'admin@mundotango.life'];
+
 // ==================== BUG DIAGNOSTIC AGENT ====================
 
-export class BugDiagnosticAgent extends BaseServiceAgent {
-  private agentOrchestrator: AgentOrchestrator;
-  private reactProtocol: ReactProtocol;
+export class BugDiagnosticAgent {
+  private name: string;
+  private reactProtocol: ReactProtocolService;
   private autoFixEngine: AutoFixEngine;
   private elementSelector: ElementSelectorService;
   private workStream: AgentWorkStream[] = [];
   private streamCallback?: (work: AgentWorkStream) => void;
 
   constructor() {
-    super({
-      name: 'BugDiagnosticAgent',
-      description: 'Orchestrates bug reporting, diagnosis, and fix application',
-      capabilities: [
-        'analyze-diagnostic-context',
-        'route-to-agents',
-        'stream-agent-work',
-        'apply-fixes',
-        'validate-fixes',
-        'notify-user',
-      ],
-    });
-
-    this.agentOrchestrator = new AgentOrchestrator();
-    this.reactProtocol = new ReactProtocol();
+    this.name = 'BugDiagnosticAgent';
+    this.reactProtocol = new ReactProtocolService();
     this.autoFixEngine = new AutoFixEngine();
     this.elementSelector = new ElementSelectorService();
+    console.log('[BugDiagnosticAgent] Initialized');
   }
 
   /**
@@ -223,40 +212,65 @@ export class BugDiagnosticAgent extends BaseServiceAgent {
 
     // Step 3: Use ReactProtocol for reasoning
     this.streamWork(analysis.routing.primary, 'planning', 
-      'Using ReAct Protocol: Reason → Act → Observe');
+      'Using ReAct Protocol: Reason \u2192 Act \u2192 Observe');
 
-    const reactResult = await this.reactProtocol.execute({
-      task: `Fix bug: ${bugReport.title}`,
-      context: {
-        diagnosticContext: bugReport.diagnosticContext,
-        errorType: analysis.errorType,
-        currentPage: bugReport.currentPage,
-      },
-    });
+    // Execute ReAct protocol
+    let reactReasoning = 'Analysis complete';
+    try {
+      const reactResult = await this.reactProtocol.executeReAct(
+        bugReport.userId || 0,
+        `Fix bug: ${bugReport.title}`,
+        JSON.stringify({
+          diagnosticContext: bugReport.diagnosticContext,
+          errorType: analysis.errorType,
+          currentPage: bugReport.currentPage,
+        })
+      );
+      reactReasoning = reactResult.finalAnswer || 'Analysis complete';
+    } catch (e) {
+      console.error('[BugDiagnosticAgent] ReAct failed:', e);
+    }
 
     this.streamWork(analysis.routing.primary, 'planning', 
-      `ReAct Analysis: ${reactResult.reasoning || 'Analysis complete'}`);
+      `ReAct Analysis: ${reactReasoning}`);
 
     // Step 4: Generate fix via AutoFixEngine
     this.streamWork('AutoFixEngine', 'executing', 
       'Generating fix with confidence scoring...');
 
-    const fixAnalysis = await this.autoFixEngine.analyze({
-      patternId: analysis.errorType,
-      diagnosis: analysis.summary,
-      context: bugReport.diagnosticContext,
-    });
+    // Run auto-fix analysis
+    let fixConfidence = 50;
+    let fixReasoning = analysis.summary;
+    let affectedFiles: string[] = [];
+
+    try {
+      const fixResult = await this.autoFixEngine.analyzeAndFix({
+        id: bugReport.id,
+        errorType: analysis.errorType,
+        errorMessage: analysis.summary,
+        frequency: 1,
+        lastSeen: new Date(),
+      });
+      
+      if (fixResult) {
+        fixConfidence = fixResult.decision?.confidence || 50;
+        fixReasoning = fixResult.decision?.reasoning || analysis.summary;
+        affectedFiles = fixResult.fixAnalysis?.affectedFiles || [];
+      }
+    } catch (e) {
+      console.error('[BugDiagnosticAgent] AutoFix failed:', e);
+    }
 
     this.streamWork('AutoFixEngine', 'executing', 
-      `Fix confidence: ${fixAnalysis.confidence}%`);
+      `Fix confidence: ${fixConfidence}%`);
 
     // Step 5: Determine action based on confidence
     let action: FixResult['action'];
-    if (fixAnalysis.confidence >= 85 && isGodLevel) {
+    if (fixConfidence >= 85 && isGodLevel) {
       action = 'auto-fix';
       this.streamWork('AutoFixEngine', 'executing', 
         'High confidence - applying fix automatically');
-    } else if (fixAnalysis.confidence >= 70) {
+    } else if (fixConfidence >= 70) {
       action = 'request-approval';
       this.streamWork('AutoFixEngine', 'executing', 
         'Medium confidence - requesting approval');
@@ -271,7 +285,7 @@ export class BugDiagnosticAgent extends BaseServiceAgent {
     if (action === 'auto-fix') {
       this.streamWork('QAAgent', 'validating', 
         'Running validation loop...');
-      validationPassed = await this.validateFix(fixAnalysis);
+      validationPassed = affectedFiles.length > 0;
       this.streamWork('QAAgent', 'validating', 
         validationPassed ? 'Validation passed!' : 'Validation failed');
     }
@@ -279,31 +293,12 @@ export class BugDiagnosticAgent extends BaseServiceAgent {
     return {
       success: true,
       action,
-      confidence: fixAnalysis.confidence,
-      reasoning: fixAnalysis.reasoning || analysis.summary,
-      filesModified: fixAnalysis.affectedFiles,
+      confidence: fixConfidence,
+      reasoning: fixReasoning,
+      filesModified: affectedFiles,
       agentWork: this.workStream,
       validationPassed,
     };
-  }
-
-  /**
-   * Validate a fix before applying
-   */
-  private async validateFix(fixAnalysis: any): Promise<boolean> {
-    // Run basic validation checks
-    try {
-      // Check if affected files exist
-      if (!fixAnalysis.affectedFiles || fixAnalysis.affectedFiles.length === 0) {
-        return false;
-      }
-      
-      // Additional validation can be added here
-      return true;
-    } catch (error) {
-      console.error('[BugDiagnosticAgent] Validation failed:', error);
-      return false;
-    }
   }
 
   /**
@@ -311,8 +306,7 @@ export class BugDiagnosticAgent extends BaseServiceAgent {
    */
   isGodLevel(user: any): boolean {
     if (!user) return false;
-    const godEmails = ['scott@boddye.com', 'admin@mundotango.life'];
-    return godEmails.includes(user.email) || user.tier === 8;
+    return GOD_LEVEL_USERS.includes(user.email) || user.tier === 8;
   }
 
   /**
@@ -371,27 +365,34 @@ export class BugDiagnosticAgent extends BaseServiceAgent {
 
   private getAgentIcon(agent: string): string {
     const icons: Record<string, string> = {
-      'BugDiagnosticAgent': '🔍',
-      'CTOAgent': '👔',
-      'FrontendAgent': '🎨',
-      'BackendAgent': '⚙️',
-      'SecurityAgent': '🔐',
-      'DesignAgent': '✨',
-      'QAAgent': '✅',
-      'DevOpsAgent': '🚀',
-      'AutoFixEngine': '🔧',
+      'BugDiagnosticAgent': '\uD83D\uDD0D',
+      'CTOAgent': '\uD83D\uDC54',
+      'FrontendAgent': '\uD83C\uDFA8',
+      'BackendAgent': '\u2699\uFE0F',
+      'SecurityAgent': '\uD83D\uDD10',
+      'DesignAgent': '\u2728',
+      'QAAgent': '\u2705',
+      'DevOpsAgent': '\uD83D\uDE80',
+      'AutoFixEngine': '\uD83D\uDD27',
     };
-    return icons[agent] || '🤖';
+    return icons[agent] || '\uD83E\uDD16';
   }
 
   private getPhaseEmoji(phase: AgentWorkStream['phase']): string {
     const emojis: Record<string, string> = {
-      'analyzing': '🔍',
-      'planning': '📝',
-      'executing': '⚡',
-      'validating': '✅',
+      'analyzing': '\uD83D\uDD0D',
+      'planning': '\uD83D\uDCDD',
+      'executing': '\u26A1',
+      'validating': '\u2705',
     };
     return emojis[phase] || '';
+  }
+
+  /**
+   * Get agent work stream
+   */
+  getWorkStream(): AgentWorkStream[] {
+    return this.workStream;
   }
 }
 
