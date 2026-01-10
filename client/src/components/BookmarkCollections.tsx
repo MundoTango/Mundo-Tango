@@ -23,7 +23,7 @@ export function BookmarkCollections({ postId, open, onOpenChange }: BookmarkColl
   const [newCollectionName, setNewCollectionName] = useState("");
   const { toast } = useToast();
 
-  const { data: collections = [] } = useQuery({
+  const { data: collections = [] } = useQuery<string[]>({
     queryKey: ["/api/bookmarks/collections"],
     enabled: open,
   });
