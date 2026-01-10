@@ -8,7 +8,10 @@ interface PlanProgressData {
   active: boolean;
   pagesCompleted: number;
   totalPages: number;
-  currentPhase?: string;
+  currentPage?: {
+    name: string;
+    checklist?: Array<{ label: string; status: string }>;
+  };
 }
 
 export function ThePlanProgressBar() {
