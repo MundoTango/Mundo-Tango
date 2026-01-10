@@ -12,7 +12,7 @@ interface PostEditHistoryProps {
 }
 
 export function PostEditHistory({ postId, open, onOpenChange }: PostEditHistoryProps) {
-  const { data: editHistory = [] } = useQuery({
+  const { data: editHistory = [] } = useQuery<Array<{ id: number; userName: string; content: string; createdAt: Date }>>({
     queryKey: ["/api/posts", postId, "edits"],
     enabled: open && !!postId,
   });

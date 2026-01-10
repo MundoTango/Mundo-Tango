@@ -134,10 +134,10 @@ export default function ProfileTabsNav({
                       layoutId="activeTabUnderline"
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-foreground"
                       initial={false}
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      transition={{ type: "spring" as const, stiffness: 500, damping: 30 }}
                     />
                   )}
-                  
+
                   {/* Hover indicator */}
                   {!isActive && isHovered && (
                     <motion.div
