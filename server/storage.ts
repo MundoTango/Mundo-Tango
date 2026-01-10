@@ -75,6 +75,11 @@ import {
   userPreferences,
   planSessions,
   placeRecommendations,
+  cities,
+  cityMembers,
+  userLocationHistory,
+  type City,
+  type CityMember,
   type SelectUser,
   type InsertUser,
   type SelectRefreshToken,
@@ -240,7 +245,8 @@ const db = drizzle(sqlClient, { schema: {
   lifeCeoDomains, lifeCeoGoals, lifeCeoTasks, lifeCeoMilestones, lifeCeoRecommendations,
   h2acMessages, memories, recommendations, roleInvitations, favorites,
   communityStats, facebookImports, facebookPosts, facebookFriends,
-  mrBlueConversations, mrBlueMessages, // FIX: Added for Mr. Blue chat memory
+  mrBlueConversations, mrBlueMessages,
+  cities, cityMembers, userLocationHistory,
 }});
 
 // Export db for use in other modules
