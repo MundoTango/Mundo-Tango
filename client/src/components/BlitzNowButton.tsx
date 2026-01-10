@@ -97,9 +97,9 @@ export function BlitzNowButton() {
       {/* Floating BLITZ NOW Button */}
       <motion.div
         className="fixed bottom-6 right-6 z-50"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring" as const, stiffness: 260, damping: 20 }}
+        initial={{ scale: 0 } as any}
+        animate={{ scale: 1 } as any}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
         <Button
           size="lg"
@@ -120,10 +120,10 @@ export function BlitzNowButton() {
         {isOpen && (
           <motion.div
             className="fixed bottom-24 right-6 z-50"
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            transition={{ type: "spring" as const, stiffness: 300, damping: 30 }}
+            initial={{ opacity: 0, y: 20, scale: 0.9 } as any}
+            animate={{ opacity: 1, y: 0, scale: 1 } as any}
+            exit={{ opacity: 0, y: 20, scale: 0.9 } as any}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
             <Card className="w-80 shadow-2xl">
               <CardHeader className="pb-4">

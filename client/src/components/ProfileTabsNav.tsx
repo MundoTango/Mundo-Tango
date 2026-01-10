@@ -133,8 +133,8 @@ export default function ProfileTabsNav({
                     <motion.div
                       layoutId="activeTabUnderline"
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-foreground"
-                      initial={false}
-                      transition={{ type: "spring" as const, stiffness: 500, damping: 30 }}
+                      initial={false as any}
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     />
                   )}
 
@@ -142,9 +142,9 @@ export default function ProfileTabsNav({
                   {!isActive && isHovered && (
                     <motion.div
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary/50"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      exit={{ scaleX: 0 }}
+                      initial={{ scaleX: 0 } as any}
+                      animate={{ scaleX: 1 } as any}
+                      exit={{ scaleX: 0 } as any}
                       transition={{ duration: 0.2 }}
                     />
                   )}

@@ -4,11 +4,22 @@ import { Progress } from '@/components/ui/progress';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 
+interface SelfHealingStatusData {
+  agentsActive: string[];
+  issuesFound?: number;
+  fixesApplied?: number;
+  currentOperation?: {
+    phase: string;
+    progress: number;
+  };
+}
+
 export function SelfHealingStatus() {
-  const { data: status, isError } = useQuery({
+  const { data: status, isError } = useQuery<SelfHealingStatusData>({
     queryKey: ['/api/self-healing/status'],
-    refetchInterval: (data) => {
+    refetchInterval: (query) => {
       // ✅ MB.MD v9.2 Fix: Stop polling if error or no agents active
+      const data = query.state.data;
       if (!data?.agentsActive || data.agentsActive.length === 0) return false;
       return 10000; // Poll every 10 seconds when active (reduced from 5s)
     },
