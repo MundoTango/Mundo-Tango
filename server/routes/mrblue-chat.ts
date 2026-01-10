@@ -26,7 +26,12 @@ router.post("/chat", authenticateToken, async (req: Request, res: Response) => {
 
     const reply = response.choices[0].message.content;
     console.log("[MrBlue Chat] Success, reply length:", reply?.length);
-    res.json({ message: reply });
+    res.json({ 
+      role: "assistant",
+      response: reply,
+      content: reply,
+      timestamp: new Date().toISOString()
+    });
   } catch (error: any) {
     console.error("[MrBlue Chat] Error:", error);
     res.status(500).json({ error: "Failed to communicate with AI" });
