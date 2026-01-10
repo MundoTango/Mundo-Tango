@@ -166,5 +166,25 @@
     "analyzingIssue": "Analyzing Issue",
     "applyFix": "Apply Fix",
     "generateFix": "Generate Fix"
+  },
+  "bugFix": {
+    "title": "Bug Fix Stream",
+    "thought": "THOUGHT",
+    "action": "ACTION",
+    "observation": "OBSERVATION",
+    "agent": "AGENT",
+    "phase": "PHASE",
+    "analysis": "ANALYSIS",
+    "validation": "VALIDATION",
+    "complete": "COMPLETE",
+    "error": "ERROR",
+    "startFix": "Start Fix",
+    "stop": "Stop",
+    "working": "Working...",
+    "clickStart": "Click 'Start Fix' to begin agent-driven fix",
+    "analyzing": "Analyzing",
+    "planning": "Planning",
+    "executing": "Executing",
+    "validating": "Validating"
   }
 }

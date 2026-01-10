@@ -11,6 +11,7 @@ import { storage } from "../storage";
 import { z } from "zod";
 import { EmailService } from "../services/EmailService";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import { BugDiagnosticAgent, type AgentWorkStream } from "../services/mrBlue/agents/BugDiagnosticAgent";
 
 const router = Router();
 
@@ -410,6 +411,189 @@ router.post("/execute", async (req: Request, res: Response) => {
     console.error("[QA Platform] Execute error:", error);
     res.status(500).json({ error: error.message });
   }
+});
+
+// ============================================================================
+// BUG FIX STREAMING (SSE for VibeCoding Integration)
+// MB.MD Pattern 67 - Stream agent work to admin's VibeCoding chat
+// ============================================================================
+
+// Track active SSE connections for bug fix streaming
+const activeBugFixStreams = new Map<string, { res: Response; aborted: boolean }>();
+
+/**
+ * POST /api/qa-platform/fix-stream/start
+ * Start streaming bug fix agent work to VibeCoding chat
+ * God-level only - uses SSE for real-time ReAct protocol updates
+ */
+router.post("/fix-stream/start", authenticateToken, async (req: Request, res: Response) => {
+  const user = (req as AuthRequest).user;
+  if (!user || !isGodLevel(user)) {
+    return res.status(403).json({ error: "God-level access required" });
+  }
+
+  const { feedbackId, diagnosticContext } = req.body;
+  if (!feedbackId) {
+    return res.status(400).json({ error: "Feedback ID required" });
+  }
+
+  const streamId = `fix_${feedbackId}_${Date.now()}`;
+  const session = { aborted: false };
+
+  // Handle client disconnect
+  req.on('close', () => {
+    console.log(`[BugFixStream] Client disconnected: ${streamId}`);
+    session.aborted = true;
+    activeBugFixStreams.delete(streamId);
+  });
+
+  // Initialize SSE stream
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+
+  activeBugFixStreams.set(streamId, { res, aborted: false });
+
+  // Helper to send SSE event
+  const sendEvent = (type: string, data: any) => {
+    if (session.aborted || res.writableEnded) return;
+    try {
+      res.write(`data: ${JSON.stringify({ type, ...data, timestamp: Date.now() })}\n\n`);
+    } catch (e) {
+      console.error('[BugFixStream] Send error:', e);
+    }
+  };
+
+  try {
+    // Initialize agent
+    const bugAgent = new BugDiagnosticAgent();
+    
+    // Set up streaming callback
+    bugAgent.setStreamCallback((work: AgentWorkStream) => {
+      sendEvent('agent-work', {
+        agent: work.agent,
+        phase: work.phase,
+        message: work.message,
+        data: work.data
+      });
+    });
+
+    // Send initial connection event
+    sendEvent('connected', { 
+      message: 'Bug fix stream connected',
+      streamId,
+      feedbackId
+    });
+
+    // Get feedback details
+    const feedback = await storage.getUserFeedback(feedbackId);
+    if (!feedback) {
+      sendEvent('error', { message: 'Feedback not found' });
+      res.end();
+      return;
+    }
+
+    // Parse diagnostic context
+    const context = diagnosticContext || feedback.sessionSnapshot || {};
+
+    // Send phase: analyzing
+    sendEvent('phase', { phase: 'analyzing', message: 'Analyzing diagnostic context...' });
+
+    // Analyze context
+    const analysis = await bugAgent.analyzeContext({
+      testId: `bug_${feedbackId}`,
+      breadcrumb: context.breadcrumb || [],
+      apiCalls: context.apiCalls || [],
+      userContext: context.userContext || { isLoggedIn: false, tier: 'free', isVerified: false, profileComplete: false, permissions: [] },
+      errors: context.errors || [],
+      appState: context.appState || {},
+      selectedElement: context.selectedElement,
+    });
+
+    sendEvent('analysis-complete', {
+      errorType: analysis.errorType,
+      routing: analysis.routing,
+      summary: analysis.summary
+    });
+
+    // Send phase: planning
+    sendEvent('phase', { phase: 'planning', message: 'Creating fix plan...' });
+
+    // Send ReAct protocol reasoning
+    sendEvent('thought', { 
+      content: `Error Type: ${analysis.errorType}. Routing to ${analysis.routing.primary} with support from ${analysis.routing.supporting.join(', ')}.`
+    });
+
+    sendEvent('action', {
+      content: `Deploy ${analysis.routing.primary} for primary analysis`
+    });
+
+    // Send phase: executing
+    sendEvent('phase', { phase: 'executing', message: 'Executing fix...' });
+
+    // Deploy agents and execute fix
+    const fixResult = await bugAgent.deployAgentsForFix({
+      id: feedbackId,
+      userId: feedback.userId || undefined,
+      title: feedback.title,
+      description: feedback.description || '',
+      currentPage: feedback.currentPage || '/',
+      diagnosticContext: context,
+      status: 'in-progress',
+      assignedAgents: [analysis.routing.primary, ...analysis.routing.supporting],
+    }, true);
+
+    sendEvent('observation', {
+      content: `Fix ${fixResult.success ? 'succeeded' : 'requires manual review'}: ${fixResult.reasoning}`
+    });
+
+    // Send phase: validating
+    sendEvent('phase', { phase: 'validating', message: 'Validating fix...' });
+
+    sendEvent('validation', {
+      success: fixResult.success,
+      confidence: fixResult.confidence,
+      action: fixResult.action,
+      filesModified: fixResult.filesModified || []
+    });
+
+    // Complete
+    sendEvent('complete', {
+      success: fixResult.success,
+      action: fixResult.action,
+      confidence: fixResult.confidence,
+      reasoning: fixResult.reasoning,
+      agentWork: fixResult.agentWork
+    });
+
+    // Update feedback status
+    await storage.updateUserFeedback(feedbackId, {
+      status: fixResult.success ? 'resolved' : 'in-progress',
+      adminNotes: (feedback.adminNotes || '') + `\n[${new Date().toISOString()}] Auto-fix attempted: ${fixResult.action} (${fixResult.confidence}% confidence)`
+    });
+
+    res.end();
+  } catch (error: any) {
+    console.error('[BugFixStream] Error:', error);
+    sendEvent('error', { message: error.message });
+    res.end();
+  } finally {
+    activeBugFixStreams.delete(streamId);
+  }
+});
+
+/**
+ * GET /api/qa-platform/fix-stream/status
+ * Check if bug fix streaming is available for user
+ */
+router.get("/fix-stream/status", authenticateToken, async (req: Request, res: Response) => {
+  const user = (req as AuthRequest).user;
+  res.json({
+    available: user ? isGodLevel(user) : false,
+    tier: user?.tier || 0,
+    activeStreams: activeBugFixStreams.size
+  });
 });
 
 // ============================================================================

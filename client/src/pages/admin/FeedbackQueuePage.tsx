@@ -21,12 +21,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { 
   Bug, Lightbulb, HelpCircle, AlertTriangle, Check, X, Eye, Clock, User, Calendar,
   CheckCircle, XCircle, Search, Filter, FileText, Inbox, Rocket, Globe, Shield,
-  MessageSquare, Wrench, Send
+  MessageSquare, Wrench, Send, Zap
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { JourneyTimeline } from '@/components/qa/JourneyTimeline';
 import { ContextCards } from '@/components/qa/ContextCards';
+import { BugFixStream } from '@/components/mrBlue/advanced/BugFixStream';
 import { useToast } from '@/hooks/use-toast';
 import { safeDateFormat } from '@/lib/safeDateFormat';
 import { SEO } from '@/components/SEO';
@@ -141,6 +142,7 @@ export default function FeedbackQueuePage() {
 function FeedbackPanel() {
   const [selectedFeedback, setSelectedFeedback] = useState<FeedbackItem | null>(null);
   const [showSessionReplay, setShowSessionReplay] = useState(false);
+  const [showBugFixStream, setShowBugFixStream] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
   const [replyMessage, setReplyMessage] = useState('');
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -518,6 +520,14 @@ function FeedbackPanel() {
                     Reject
                   </Button>
                   <Button
+                    variant="secondary"
+                    onClick={() => setShowBugFixStream(true)}
+                    data-testid="button-try-autofix"
+                  >
+                    <Zap className="h-4 w-4 mr-2" />
+                    Try Auto-Fix
+                  </Button>
+                  <Button
                     onClick={() => handleLetsFixIt(selectedFeedback)}
                     disabled={approveMutation.isPending}
                     data-testid="button-lets-fix-it"
@@ -559,6 +569,38 @@ function FeedbackPanel() {
               ))}
             </div>
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showBugFixStream} onOpenChange={setShowBugFixStream}>
+        <DialogContent className="max-w-4xl h-[80vh]" data-testid="dialog-bug-fix-stream">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-yellow-500" />
+              Auto-Fix Stream
+            </DialogTitle>
+            <DialogDescription>
+              Watch agents work on fixing the issue in real-time using ReAct protocol
+            </DialogDescription>
+          </DialogHeader>
+          {selectedFeedback && (
+            <div className="flex-1 min-h-0">
+              <BugFixStream
+                feedbackId={selectedFeedback.id}
+                diagnosticContext={selectedFeedback.sessionSnapshot}
+                onComplete={(result) => {
+                  if (result.success) {
+                    toast({
+                      title: 'Fix applied successfully',
+                      description: `Confidence: ${result.confidence}%`
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
+                  }
+                }}
+                onClose={() => setShowBugFixStream(false)}
+              />
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
