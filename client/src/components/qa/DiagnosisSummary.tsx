@@ -2,32 +2,122 @@
  * DiagnosisSummary - Mr. Blue's analysis of the bug context
  * Shows detected issues, suggested fixes, and related files
  * MB.MD Pattern 67: Universal Bug Diagnostic System
+ * 
+ * Enhanced with Auto-Fix capabilities - connects diagnostics to AutoFixEngine
  */
 
+import { useState } from 'react';
 import { 
   Brain, 
   FileCode, 
   Lightbulb, 
   AlertCircle,
   CheckCircle,
-  ArrowRight
+  ArrowRight,
+  Wrench,
+  Loader2,
+  Sparkles,
+  AlertTriangle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 import type { DiagnosticContext } from '@/lib/qa/componentRegistry';
 import { 
   findMatchingBugPatterns, 
   findComponentForTestId,
-  generateDiagnosisSummary 
+  generateDiagnosisSummary,
+  type BugPattern
 } from '@/lib/qa/componentRegistry';
+
+interface AutoFixResult {
+  success: boolean;
+  decision?: {
+    action: 'auto-fix' | 'request-approval' | 'manual-review';
+    confidence: number;
+    reasoning: string;
+  };
+  fixAnalysis?: {
+    rootCause: string;
+    suggestedFix: string;
+    affectedFiles: string[];
+    estimatedComplexity: string;
+    confidence: number;
+  };
+  error?: string;
+  errorPatternId?: number;
+}
 
 interface DiagnosisSummaryProps {
   context: DiagnosticContext;
   showRaw?: boolean;
+  onAutoFixAttempt?: (pattern: BugPattern, result: AutoFixResult) => void;
 }
 
-export function DiagnosisSummary({ context, showRaw = false }: DiagnosisSummaryProps) {
+export function DiagnosisSummary({ context, showRaw = false, onAutoFixAttempt }: DiagnosisSummaryProps) {
+  const { toast } = useToast();
+  const [fixingPatternId, setFixingPatternId] = useState<string | null>(null);
+  const [fixResults, setFixResults] = useState<Record<string, AutoFixResult>>({});
+  
   const matchedPatterns = findMatchingBugPatterns(context);
   const componentInfo = context.testId ? findComponentForTestId(context.testId) : null;
+
+  const handleAutoFix = async (pattern: BugPattern) => {
+    setFixingPatternId(pattern.id);
+    
+    try {
+      const response = await apiRequest('POST', '/api/mrblue/diagnostic-auto-fix', {
+        patternId: pattern.id,
+        diagnosis: pattern.diagnosis,
+        suggestedFix: pattern.suggestedFix,
+        relatedFiles: pattern.relatedFiles,
+        severity: pattern.severity,
+        context: {
+          errors: context.errors,
+          apiCalls: context.apiCalls,
+          testId: context.testId,
+          breadcrumb: context.breadcrumb,
+          userContext: context.userContext
+        }
+      });
+
+      const result: AutoFixResult = await response.json();
+      setFixResults(prev => ({ ...prev, [pattern.id]: result }));
+      
+      if (result.success) {
+        if (result.decision?.action === 'auto-fix') {
+          toast({
+            title: "Fix Applied",
+            description: `Auto-fix applied with ${result.decision.confidence}% confidence`,
+          });
+        } else if (result.decision?.action === 'request-approval') {
+          toast({
+            title: "Fix Pending Approval",
+            description: "Fix requires admin approval before applying",
+          });
+        }
+      } else {
+        toast({
+          title: "Auto-Fix Failed",
+          description: result.error || "Unable to generate fix",
+          variant: "destructive",
+        });
+      }
+      
+      onAutoFixAttempt?.(pattern, result);
+    } catch (error: any) {
+      const errorResult: AutoFixResult = { success: false, error: error.message };
+      setFixResults(prev => ({ ...prev, [pattern.id]: errorResult }));
+      toast({
+        title: "Auto-Fix Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setFixingPatternId(null);
+    }
+  };
   
   const hasIssues = matchedPatterns.length > 0 || context.errors.length > 0;
   
@@ -124,6 +214,74 @@ export function DiagnosisSummary({ context, showRaw = false }: DiagnosisSummaryP
                   <div className="mt-2 text-xs text-muted-foreground">
                     <span>Related files: </span>
                     <span className="font-mono">{pattern.relatedFiles.join(', ')}</span>
+                  </div>
+                )}
+                
+                {fixResults[pattern.id] ? (
+                  <div className={cn(
+                    "mt-3 p-2 rounded-md text-xs",
+                    fixResults[pattern.id].success 
+                      ? "bg-green-500/10 border border-green-500/30"
+                      : "bg-red-500/10 border border-red-500/30"
+                  )}>
+                    {fixResults[pattern.id].success ? (
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          {fixResults[pattern.id].decision?.action === 'auto-fix' ? (
+                            <CheckCircle className="h-3 w-3 text-green-500" />
+                          ) : fixResults[pattern.id].decision?.action === 'request-approval' ? (
+                            <AlertTriangle className="h-3 w-3 text-yellow-500" />
+                          ) : (
+                            <Sparkles className="h-3 w-3 text-blue-500" />
+                          )}
+                          <span className={cn(
+                            fixResults[pattern.id].decision?.action === 'auto-fix' ? "text-green-400" :
+                            fixResults[pattern.id].decision?.action === 'request-approval' ? "text-yellow-400" :
+                            "text-blue-400"
+                          )}>
+                            {fixResults[pattern.id].decision?.action === 'auto-fix' 
+                              ? `Fix Applied (${fixResults[pattern.id].decision?.confidence}% confidence)`
+                              : fixResults[pattern.id].decision?.action === 'request-approval'
+                              ? `Pending Admin Approval (${fixResults[pattern.id].decision?.confidence}% confidence)`
+                              : `Manual Review Required (${fixResults[pattern.id].decision?.confidence}% confidence)`
+                            }
+                          </span>
+                        </div>
+                        {fixResults[pattern.id].fixAnalysis && (
+                          <div className="text-muted-foreground">
+                            Root cause: {fixResults[pattern.id].fixAnalysis?.rootCause}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-red-400">
+                        <AlertCircle className="h-3 w-3" />
+                        <span>{fixResults[pattern.id].error || 'Fix failed'}</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="mt-3">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 text-xs gap-1.5 border-primary/30 hover:bg-primary/10"
+                      onClick={() => handleAutoFix(pattern)}
+                      disabled={fixingPatternId === pattern.id}
+                      data-testid={`button-auto-fix-${pattern.id}`}
+                    >
+                      {fixingPatternId === pattern.id ? (
+                        <>
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Analyzing...
+                        </>
+                      ) : (
+                        <>
+                          <Wrench className="h-3 w-3" />
+                          Try Auto-Fix
+                        </>
+                      )}
+                    </Button>
                   </div>
                 )}
               </div>
