@@ -21,6 +21,8 @@ import {
 import { JourneyTimeline } from "@/components/qa/JourneyTimeline";
 import { ContextCards } from "@/components/qa/ContextCards";
 import { DiagnosisSummary } from "@/components/qa/DiagnosisSummary";
+import { ElementSelectorButton } from "@/components/qa/ElementSelector";
+import { JourneyReplay } from "@/components/qa/JourneyReplay";
 import type { DiagnosticContext, UserContext, APICallRecord, ErrorRecord } from "@/lib/qa/componentRegistry";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -728,6 +730,7 @@ What would you like me to do?`,
   const [bugScreenshot, setBugScreenshot] = useState<string | null>(null);
   const [bugDiagnosticSnapshot, setBugDiagnosticSnapshot] = useState<any>(null);
   const [bugModeStartIndex, setBugModeStartIndex] = useState<number>(0);
+  const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // QA System: Submission logic - Uses enhanced diagnostic snapshot for bug reports
@@ -866,6 +869,7 @@ What would you like me to do?`,
         setBugScreenshot(null);
         setBugDiagnosticSnapshot(null);
         setBugModeStartIndex(0);
+        setSelectedElement(null);
         setInput("");
       }
     } catch (error) {
@@ -1362,6 +1366,31 @@ Chat with me to describe the problem, then click **Submit Bug Report** when you'
       {qaMode === "bug" && bugDiagnosticSnapshot && (
         <div className="px-4 py-3 border-t bg-muted/30 max-h-[40vh] overflow-y-auto" data-testid="panel-bug-diagnostics">
           <div className="max-w-2xl mx-auto space-y-4">
+            {/* Element Selector + Actions */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <ElementSelectorButton
+                onElementSelected={(selector) => {
+                  setSelectedElement(selector);
+                  const elementInfo = `I'm having an issue with this element: ${selector}`;
+                  setInput(prev => prev ? `${prev}\n\n${elementInfo}` : elementInfo);
+                }}
+                selectedSelector={selectedElement || undefined}
+              />
+              {selectedElement && (
+                <span className="text-xs text-muted-foreground font-mono bg-muted px-2 py-1 rounded">
+                  {selectedElement}
+                </span>
+              )}
+            </div>
+
+            {/* Journey Replay */}
+            <JourneyReplay
+              journey={bugDiagnosticSnapshot.journey || []}
+              networkFailures={bugDiagnosticSnapshot.networkFailures || []}
+              consoleErrors={bugDiagnosticSnapshot.consoleErrors || []}
+              rageClicks={bugDiagnosticSnapshot.rageClicks || []}
+            />
+
             {/* Mr. Blue Analysis */}
             <DiagnosisSummary 
               context={{

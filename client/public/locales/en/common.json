@@ -150,5 +150,21 @@
   "aboutUs": "About Us",
   "volunteer": "Volunteer",
   "ambassadors": "Ambassadors",
-  "supportUs": "Support Us"
+  "supportUs": "Support Us",
+  "confirm": "Confirm",
+  "bugReport": {
+    "elementSelected": "Element Selected",
+    "selectElement": "Click on an element",
+    "elementTargeted": "Element Targeted",
+    "targetElement": "Target Element",
+    "noJourneyData": "No journey data to replay",
+    "journeyReplay": "User Journey Replay",
+    "letsFixIt": "Let's Fix It",
+    "replyToUser": "Reply to User",
+    "sendToInbox": "Send to Inbox",
+    "debugModeActive": "Debug Mode Active",
+    "analyzingIssue": "Analyzing Issue",
+    "applyFix": "Apply Fix",
+    "generateFix": "Generate Fix"
+  }
 }
