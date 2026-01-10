@@ -45,8 +45,28 @@ Public profiles feature a glassmorphic design with bio, gallery, and testimonial
 ### Admin Feedback & QA System
 A unified admin queue at `/admin/feedback-queue` consolidates user feedback triage and founder feature approvals. It includes tabs for "User Feedback" and "Feature Approval." Mr. Blue integration supports chat modes (Help, Features, Bug Report) with attachment support and session tracking. The system captures session events for journey replay, including automatic screenshots and enhanced error boundary reporting.
 
-### Universal Bug Diagnostic System
-This system captures comprehensive context for diagnosing and fixing issues. It tracks user paths, API calls with payloads, user context (tier, permissions), console errors, network failures, rage clicks, open dialogs, and form state. It uses a component registry, network interceptor, user context capture, and a breadcrumb context. Diagnostic data is displayed in MrBlueChat with icons for action types.
+### Universal Bug Diagnostic System (MB.MD Pattern 67)
+This system captures comprehensive context for diagnosing and fixing issues. It tracks user paths, API calls with payloads, user context (tier, permissions), console errors, network failures, rage clicks, open dialogs, and form state. It uses a component registry, network interceptor, user context capture, and a breadcrumb context.
+
+**User Bug Reporting Flow:**
+- Users click "Report Bug" in Mr. Blue chat to enter bug mode
+- ElementSelector (`client/src/components/qa/ElementSelector.tsx`) allows targeting specific DOM elements
+- JourneyReplay (`client/src/components/qa/JourneyReplay.tsx`) provides interactive playback of user journey with network failures, console errors, and rage clicks
+- Conversational AI analysis helps users describe issues naturally
+- Full diagnostic context is captured and submitted with bug reports
+
+**Admin Fix Flow:**
+- Admins view bug reports at `/admin/feedback-queue`
+- "Let's Fix It" button navigates to impacted page with `?mrblue=debug` parameter
+- VibeCoding mode auto-opens with diagnostic context pre-loaded
+- God-level gating (tier 8+) restricts "Try Auto-Fix" button visibility
+- Admin can reply directly to user's Messages Inbox
+
+**Key Components:**
+- `useJourneyTracker` hook captures session activity
+- `DiagnosisSummary` displays AI analysis of diagnostic context
+- `ContextCards` shows user context, API calls, and errors
+- `JourneyTimeline` shows step-by-step navigation history
 
 ### CI/CD & Contributor Workflow
 The project utilizes GitHub Actions for CI/CD, running on PRs and pushes to main. The pipeline includes type checking, linting, unit tests, build verification, security audits, and E2E tests (on main only). Branch protection is enforced, and pre-commit hooks run type-check and lint-staged. Conventional Commits are required for all contributions.
