@@ -12,6 +12,14 @@ import { agenticExecutor } from "../services/mrBlue/AgenticExecutor";
 
 const router = Router();
 
+// God-level user emails for direct agentic execution
+const GOD_LEVEL_USERS = ['scott@boddye.com', 'admin@mundotango.life'];
+
+function isGodLevel(user: any): boolean {
+  if (!user) return false;
+  return GOD_LEVEL_USERS.includes(user.email) || user.tier >= 8;
+}
+
 // Main VibeCoding endpoint with streaming support
 router.post("/vibecoding", async (req: Request, res: Response) => {
   try {
@@ -124,8 +132,8 @@ router.post("/agentic-execute", async (req: Request, res: Response) => {
     const { prompt, context } = req.body;
     const user = (req as any).user;
 
-    // God-level check (tier 8)
-    if (!user || user.tier < 8) {
+    // God-level check (tier 8 OR in GOD_LEVEL_USERS list)
+    if (!isGodLevel(user)) {
       return res.status(403).json({
         success: false,
         error: "God-level (Tier 8) access required for direct agentic execution",
