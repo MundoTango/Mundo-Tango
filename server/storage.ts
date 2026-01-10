@@ -2200,9 +2200,6 @@ export class DbStorage implements IStorage {
         closenessScore: friendships.closenessScore,
         lastInteractionAt: friendships.lastInteractionAt,
         status: friendships.status,
-        ourStory: friendships.ourStory,
-        whenWeMet: friendships.whenWeMet,
-        whereWeMet: friendships.whereWeMet,
         friendName: users.name,
         friendUsername: users.username,
         friendEmail: users.email,
@@ -2227,9 +2224,6 @@ export class DbStorage implements IStorage {
       closenessScore: result[0].closenessScore,
       lastInteractionAt: result[0].lastInteractionAt,
       status: result[0].status,
-      ourStory: result[0].ourStory,
-      whenWeMet: result[0].whenWeMet,
-      whereWeMet: result[0].whereWeMet,
       friend: {
         id: result[0].friendId,
         name: result[0].friendName,
@@ -2490,7 +2484,7 @@ export class DbStorage implements IStorage {
       connectionDegree: friendships.connectionDegree,
       lastInteractionAt: friendships.lastInteractionAt,
       createdAt: friendships.createdAt,
-      updatedAt: friendships.updatedAt,
+      // Note: friendships schema doesn't have updatedAt column
     }).from(friendships).where(eq(friendships.id, friendshipId)).limit(1);
     if (!friendship[0]) return 0;
     
@@ -2915,32 +2909,30 @@ export class DbStorage implements IStorage {
               console.log(`[getFriendshipSharedData] Could not check saved status for post ${post.id}`);
             }
 
-            // Get current user's reaction
+            // Get current user's like status (simplified - no reactionType in schema)
             let currentReaction: string | null = null;
             try {
-              const userReaction = await db.select({ reactionType: postLikes.reactionType })
+              const userLike = await db.select({ id: postLikes.id })
                 .from(postLikes)
                 .where(and(eq(postLikes.postId, post.id), eq(postLikes.userId, userId)))
                 .limit(1);
-              currentReaction = userReaction[0]?.reactionType || null;
+              currentReaction = userLike[0] ? 'like' : null;
             } catch (reactionErr) {
               console.log(`[getFriendshipSharedData] Could not get reaction for post ${post.id}`);
             }
 
-            // Get reaction counts
+            // Get reaction counts (simplified - schema only has likes, not typed reactions)
             const reactions: Record<string, number> = {};
             try {
-              const reactionCounts = await db.select({ 
-                reactionType: postLikes.reactionType, 
+              const likeTotal = await db.select({ 
                 count: sql<number>`count(*)::int` 
               })
                 .from(postLikes)
-                .where(eq(postLikes.postId, post.id))
-                .groupBy(postLikes.reactionType);
+                .where(eq(postLikes.postId, post.id));
 
-              reactionCounts.forEach(r => {
-                if (r.reactionType) reactions[r.reactionType] = r.count;
-              });
+              if (likeTotal[0]?.count) {
+                reactions['like'] = likeTotal[0].count;
+              }
             } catch (reactionCountErr) {
               console.log(`[getFriendshipSharedData] Could not get reaction counts for post ${post.id}`);
             }
@@ -3273,28 +3265,28 @@ export class DbStorage implements IStorage {
   }
 
   // Blocked Users
-  async blockUser(userId: number, blockedUserId: number): Promise<any> {
+  async blockUser(blockerId: number, blockedId: number): Promise<any> {
     try {
-      const result = await db.insert(blockedUsers).values({ userId, blockedUserId }).returning();
+      const result = await db.insert(blockedUsers).values({ blockerId, blockedId }).returning();
       return result[0];
     } catch (error) {
       throw new Error('User already blocked');
     }
   }
 
-  async unblockUser(userId: number, blockedUserId: number): Promise<void> {
-    await db.delete(blockedUsers).where(and(eq(blockedUsers.userId, userId), eq(blockedUsers.blockedUserId, blockedUserId)));
+  async unblockUser(blockerId: number, blockedId: number): Promise<void> {
+    await db.delete(blockedUsers).where(and(eq(blockedUsers.blockerId, blockerId), eq(blockedUsers.blockedId, blockedId)));
   }
 
-  async getBlockedUsers(userId: number): Promise<any[]> {
-    return await db.select().from(blockedUsers).where(eq(blockedUsers.userId, userId));
+  async getBlockedUsers(blockerId: number): Promise<any[]> {
+    return await db.select().from(blockedUsers).where(eq(blockedUsers.blockerId, blockerId));
   }
 
-  async isUserBlocked(userId: number, blockedUserId: number): Promise<boolean> {
+  async isUserBlocked(blockerId: number, blockedId: number): Promise<boolean> {
     const result = await db
       .select()
       .from(blockedUsers)
-      .where(and(eq(blockedUsers.userId, userId), eq(blockedUsers.blockedUserId, blockedUserId)))
+      .where(and(eq(blockedUsers.blockerId, blockerId), eq(blockedUsers.blockedId, blockedId)))
       .limit(1);
     return result.length > 0;
   }
@@ -3626,14 +3618,14 @@ export class DbStorage implements IStorage {
         venue: events.venue,
         startDate: events.startDate,
         endDate: events.endDate,
-        startTime: events.startTime,
-        endTime: events.endTime,
+        startDateTime: events.startDateTime,
+        endDateTime: events.endDateTime,
         price: events.price,
         currency: events.currency,
         eventType: events.eventType,
         imageUrl: events.imageUrl,
         status: events.status,
-        capacity: events.capacity,
+        maxAttendees: events.maxAttendees,
         userId: events.userId,
         organizerId: events.organizerId,
         createdAt: events.createdAt,
@@ -4421,10 +4413,10 @@ export class DbStorage implements IStorage {
       reason: moderationQueue.reason,
       status: moderationQueue.status,
       createdAt: moderationQueue.createdAt,
-      contentPreview: moderationQueue.details,
+      contentPreview: moderationQueue.reportDetails,
     })
     .from(moderationQueue)
-    .leftJoin(users, eq(moderationQueue.reporterId, users.id))
+    .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
     .where(eq(moderationQueue.status, 'pending'))
     .orderBy(desc(moderationQueue.createdAt))
     .limit(20);
