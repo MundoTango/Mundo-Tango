@@ -59,14 +59,23 @@ This system captures comprehensive context for diagnosing and fixing issues. It 
 - Admins view bug reports at `/admin/feedback-queue`
 - "Let's Fix It" button navigates to impacted page with `?mrblue=debug` parameter
 - VibeCoding mode auto-opens with diagnostic context pre-loaded
+- "Try Auto-Fix" button opens BugFixStream dialog with real-time agent work streaming
 - God-level gating (tier 8+) restricts "Try Auto-Fix" button visibility
 - Admin can reply directly to user's Messages Inbox
+
+**Auto-Fix Streaming Architecture (SSE):**
+- SSE endpoint: `/api/qa-platform/fix-stream/start` streams agent work in real-time
+- BugDiagnosticAgent executes ReAct protocol phases: analyzing → planning → executing → validating
+- Each phase streams Thought/Action/Observation markers to the frontend
+- Frontend component: `BugFixStream.tsx` displays real-time agent reasoning with progress tracking
+- Phases include confidence scores and completion status
 
 **Key Components:**
 - `useJourneyTracker` hook captures session activity
 - `DiagnosisSummary` displays AI analysis of diagnostic context
 - `ContextCards` shows user context, API calls, and errors
 - `JourneyTimeline` shows step-by-step navigation history
+- `BugFixStream` displays real-time agent work with ReAct protocol visualization
 
 ### CI/CD & Contributor Workflow
 The project utilizes GitHub Actions for CI/CD, running on PRs and pushes to main. The pipeline includes type checking, linting, unit tests, build verification, security audits, and E2E tests (on main only). Branch protection is enforced, and pre-commit hooks run type-check and lint-staged. Conventional Commits are required for all contributions.
