@@ -10,6 +10,7 @@
 import { ReactProtocolService } from '../ReactProtocol';
 import { AutoFixEngine } from '../AutoFixEngine';
 import { ElementSelectorService } from '../elementSelector';
+import { agenticExecutor, ExecutionStep } from '../AgenticExecutor';
 
 // ==================== TYPES ====================
 
@@ -280,22 +281,55 @@ export class BugDiagnosticAgent {
         'Low confidence - requires manual review');
     }
 
-    // Step 6: Validate if applying
+    // Step 6: Execute with AgenticExecutor for REAL code changes
     let validationPassed = false;
+    let filesActuallyModified: string[] = [];
+    
     if (action === 'auto-fix') {
+      this.streamWork('AgenticExecutor', 'executing', 
+        'Starting REAL code execution with AgenticExecutor...');
+      
+      try {
+        // Use AgenticExecutor for actual file modifications
+        const agenticResult = await agenticExecutor.execute(
+          `Fix this bug: ${bugReport.title}\n\nDescription: ${bugReport.description}\n\nError: ${analysis.summary}\n\nCurrent Page: ${bugReport.currentPage}`,
+          { currentPage: bugReport.currentPage },
+          (step: ExecutionStep) => {
+            // Stream each step to the work stream
+            if (step.type === 'thought') {
+              this.streamWork('AgenticExecutor', 'analyzing', step.content);
+            } else if (step.type === 'action') {
+              this.streamWork('AgenticExecutor', 'executing', step.content);
+            } else if (step.type === 'observation') {
+              this.streamWork('AgenticExecutor', 'validating', step.content);
+            }
+          }
+        );
+        
+        filesActuallyModified = [...agenticResult.filesModified, ...agenticResult.filesCreated];
+        validationPassed = agenticResult.success && filesActuallyModified.length > 0;
+        
+        this.streamWork('AgenticExecutor', 'validating', 
+          validationPassed 
+            ? `SUCCESS: Modified ${filesActuallyModified.length} files: ${filesActuallyModified.join(', ')}`
+            : `No files modified: ${agenticResult.error || 'Unknown reason'}`);
+            
+      } catch (e: any) {
+        console.error('[BugDiagnosticAgent] AgenticExecutor failed:', e);
+        this.streamWork('AgenticExecutor', 'validating', 
+          `Execution failed: ${e.message}`);
+      }
+    } else {
       this.streamWork('QAAgent', 'validating', 
-        'Running validation loop...');
-      validationPassed = affectedFiles.length > 0;
-      this.streamWork('QAAgent', 'validating', 
-        validationPassed ? 'Validation passed!' : 'Validation failed');
+        'Skipping auto-fix (confidence too low or not god-level)');
     }
 
     return {
-      success: true,
+      success: validationPassed || action !== 'auto-fix',
       action,
       confidence: fixConfidence,
       reasoning: fixReasoning,
-      filesModified: affectedFiles,
+      filesModified: filesActuallyModified.length > 0 ? filesActuallyModified : affectedFiles,
       agentWork: this.workStream,
       validationPassed,
     };

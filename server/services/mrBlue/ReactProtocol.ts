@@ -235,7 +235,7 @@ If the task is complete:
     action: { tool: string; params: Record<string, any> }
   ): Promise<{ result: any; summary: string }> {
     try {
-      const result = await vibeCodingToolService.executeTool(userId, action.tool, action.params);
+      const result = await vibeCodingToolService.executeTool(action.tool as any, action.params);
       
       let summary: string;
       if (typeof result === 'string') {
