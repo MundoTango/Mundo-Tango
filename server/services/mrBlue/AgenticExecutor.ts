@@ -398,11 +398,13 @@ When the task is complete, respond with a summary of what you did. Do not call a
 
   private async callOpenAI(messages: any[]): Promise<{ content: string; tool_calls?: any[] }> {
     const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+    const baseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || 'https://api.openai.com/v1';
+    
     if (!apiKey) {
       throw new Error('OpenAI API key not configured');
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -414,7 +416,7 @@ When the task is complete, respond with a summary of what you did. Do not call a
         tools: TOOL_SCHEMAS,
         tool_choice: 'auto',
         temperature: 0.2,
-        max_tokens: 4000
+        max_completion_tokens: 4000
       })
     });
 

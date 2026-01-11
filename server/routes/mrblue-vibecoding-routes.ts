@@ -9,8 +9,12 @@ import { Router, type Request, Response } from "express";
 import { vibeCodingMasterLoop } from "../services/mrBlue/VibeCodingMasterLoop";
 import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
 import { agenticExecutor } from "../services/mrBlue/AgenticExecutor";
+import { optionalAuth, AuthRequest } from "../middleware/auth";
 
 const router = Router();
+
+// Apply optional auth middleware to all routes
+router.use(optionalAuth);
 
 // God-level user emails for direct agentic execution
 const GOD_LEVEL_USERS = ['scott@boddye.com', 'admin@mundotango.life'];
