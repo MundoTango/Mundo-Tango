@@ -91,6 +91,46 @@ function detectToolIntent(message: string): { hasTool: boolean; tool: string | n
     return { hasTool: true, tool: "agenticExecute", args: { instruction: message, bugId }, confidence: 0.85 };
   }
   
+  // MB.MD Pattern 67: Database query patterns
+  const dbQueryMatch = originalMessage.match(/(?:query|select|show|check|get)\s+(?:database|db|events?|series|scraped)/i) ||
+                       originalMessage.match(/sql\s+(.+)/i);
+  if (dbQueryMatch || lowerMessage.includes("query database") || lowerMessage.includes("show events") ||
+      lowerMessage.includes("check scraped") || lowerMessage.includes("event series")) {
+    return { hasTool: true, tool: "queryDatabase", args: { query: message }, confidence: 0.85 };
+  }
+  
+  // MB.MD: Scraper status patterns
+  if (lowerMessage.includes("scraper status") || lowerMessage.includes("scraping status") ||
+      lowerMessage.includes("last scrape") || lowerMessage.includes("when did scraper")) {
+    return { hasTool: true, tool: "getScraperStatus", args: {}, confidence: 0.9 };
+  }
+  
+  // MB.MD: Branch creation patterns (triggered on "let's fix it")
+  if (lowerMessage.includes("let's fix") || lowerMessage.includes("lets fix") ||
+      lowerMessage.includes("create branch") || lowerMessage.includes("new branch for")) {
+    const branchName = `fix/bug-${Date.now()}`;
+    return { hasTool: true, tool: "createBranch", args: { branchName }, confidence: 0.9 };
+  }
+  
+  // MB.MD: Commit patterns
+  if (lowerMessage.includes("commit changes") || lowerMessage.includes("commit this") ||
+      lowerMessage.includes("save changes") || lowerMessage.includes("commit the fix")) {
+    return { hasTool: true, tool: "commitChanges", args: { message: message }, confidence: 0.85 };
+  }
+  
+  // MB.MD: PR creation patterns (triggered on "work complete")
+  if (lowerMessage.includes("work complete") || lowerMessage.includes("create pr") ||
+      lowerMessage.includes("create pull request") || lowerMessage.includes("ready for review") ||
+      lowerMessage.includes("merge to main")) {
+    return { hasTool: true, tool: "createPullRequest", args: { title: "Bug fix", body: message }, confidence: 0.85 };
+  }
+  
+  // MB.MD: Test execution patterns
+  if (lowerMessage.includes("run tests") || lowerMessage.includes("run playwright") ||
+      lowerMessage.includes("test this") || lowerMessage.includes("e2e test")) {
+    return { hasTool: true, tool: "runPlaywrightTest", args: {}, confidence: 0.85 };
+  }
+  
   return { hasTool: false, tool: null, args: {}, confidence: 0 };
 }
 
@@ -190,6 +230,24 @@ async function executeToolWithContext(tool: string, args: Record<string, any>): 
           },
           error: agenticResult.success ? undefined : agenticResult.summary
         };
+      case "queryDatabase":
+        const dbResult = await VibeCodingTools.queryDatabase(args.query || "SELECT 1");
+        return { success: dbResult.success, tool, data: dbResult.data, error: dbResult.error };
+      case "getScraperStatus":
+        const scraperResult = await VibeCodingTools.getScraperStatus();
+        return { success: scraperResult.success, tool, data: scraperResult.data, error: scraperResult.error };
+      case "createBranch":
+        const branchResult = await VibeCodingTools.createBranch(args.branchName);
+        return { success: branchResult.success, tool, data: branchResult.data, error: branchResult.error };
+      case "commitChanges":
+        const commitResult = await VibeCodingTools.commitChanges(args.message);
+        return { success: commitResult.success, tool, data: commitResult.data, error: commitResult.error };
+      case "createPullRequest":
+        const prResult = await VibeCodingTools.createPullRequest(args.title, args.body);
+        return { success: prResult.success, tool, data: prResult.data, error: prResult.error };
+      case "runPlaywrightTest":
+        const testResult = await VibeCodingTools.runPlaywrightTest(args.testFile, args.testName);
+        return { success: testResult.success, tool, data: testResult.data, error: testResult.error };
       default:
         return { success: false, tool, data: null, error: "Unknown tool" };
     }

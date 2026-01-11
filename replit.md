@@ -81,18 +81,35 @@ This system captures comprehensive context for diagnosing and fixing issues. It 
 - God-level users (tier 8+ or scott@boddye.com, admin@mundotango.life) can execute VibeCoding tools via Mr. Blue chat
 - Route: POST /api/mrblue/chat (handled by `server/routes/mrblue-chat.ts`)
 - Tool detection uses pattern matching with confidence threshold (0.7)
-- Supported tools: getGitStatus, listDirectory, readFile, grepFiles, writeFile, editFile
-- Tool commands: 
-  - "git status" - Show repository status
-  - "list directory [path]" or "ls [path]" - List files
-  - "read file [path]" or "cat [path]" - Read file contents (case-sensitive paths preserved)
-  - "grep [pattern]" or "search [pattern]" - Search files
-  - "write file [path] ```content```" - Write file with content in code block
-  - "edit [path] replace 'old' with 'new'" - Edit file with search/replace
-- Response includes: toolExecuted, toolSuccess, godLevelExecution, rawData with actual repository data
 - Tool service: `server/services/mrBlue/VibeCodingToolService.ts`
 - God-level check: `isGodLevelUser()` from `server/services/mrBlue/TaskExecutorService.ts`
 - IMPORTANT: Path case is preserved (originalMessage used for extraction, lowerMessage for pattern matching)
+
+**Core VibeCoding Tools:**
+- getGitStatus - "git status" - Show repository status
+- listDirectory - "ls [path]" - List files  
+- readFile - "cat [path]" - Read file contents (case-sensitive paths preserved)
+- grepFiles - "grep [pattern]" - Search files
+- writeFile - "write file [path] ```content```" - Write file with content in code block
+- editFile - "edit [path] replace 'old' with 'new'" - Edit file with search/replace
+
+**Autonomous Workflow Tools (MB.MD Pattern 67 - added 2026-01-11):**
+- queryDatabase - "query database [SQL]" - Execute read-only SELECT queries for diagnostics
+- getScraperStatus - "scraper status" - Get scraper last run times and event counts
+- createBranch - "let's fix it" / "create branch" - Create feature branch for bug fixes
+- commitChanges - "commit changes" / "commit the fix" - Commit with conventional commit message
+- createPullRequest - "work complete" / "create PR" - Create GitHub PR for review
+- runPlaywrightTest - "run tests" / "e2e test" - Execute Playwright E2E tests
+
+**Autonomous Workflow Execution:**
+Full workflow: bug report → Mr. Blue diagnoses → creates branch → fixes code → commits → runs tests → creates PR → merge
+- Mr. Blue investigates bugs using queryDatabase, getGitStatus, readFile, grepFiles
+- Creates feature branch with createBranch tool
+- Fixes code using editFile with guardrails (80% size, 50% line count minimums)
+- Commits changes with conventional commit messages via commitChanges
+- Runs E2E tests with runPlaywrightTest to validate fixes
+- Creates GitHub PR for human review with createPullRequest
+- Admin only watches progress - agent does the work autonomously
 
 **VibeCoding Guardrails (CRITICAL - MB.MD Pattern 67):**
 - **Implemented:** `server/routes/mrblue-chat.ts` (editFile case) and `server/services/mrBlue/autonomousAgent.ts` (editFile method)

@@ -6,7 +6,7 @@
 
 import { db } from '@shared/db';
 import { eventSeries, events } from '@shared/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and, sql, desc } from 'drizzle-orm';
 
 export interface RecurringEventPattern {
   title: string;
@@ -106,6 +106,7 @@ export class RecurringEventDetector {
 
   /**
    * Create event series from recurring pattern
+   * MB.MD: Fixed to match actual event_series schema columns
    */
   static async createSeriesFromPattern(
     pattern: RecurringEventPattern,
@@ -113,25 +114,145 @@ export class RecurringEventDetector {
     baseEventData: any
   ): Promise<number | null> {
     try {
-      // Map pattern.frequency to recurrenceType enum values
-      const recurrenceType = pattern.frequency; // 'daily' | 'weekly' | 'biweekly' | 'monthly' maps directly
+      // Check if series with this name already exists in the same city
+      const existing = await db
+        .select({ id: eventSeries.id })
+        .from(eventSeries)
+        .where(eq(eventSeries.name, pattern.title))
+        .limit(1);
+      
+      if (existing.length > 0) {
+        console.log(`[RecurringEventDetector] Series "${pattern.title}" already exists, returning existing ID ${existing[0].id}`);
+        return existing[0].id;
+      }
+      
+      // Generate slug from title
+      const slug = pattern.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+      
+      // Map pattern.frequency to recurrenceType enum values  
+      const recurrenceType = pattern.frequency as 'weekly' | 'monthly' | 'yearly';
       
       const result = await db.insert(eventSeries).values({
-        title: pattern.title,
-        description: baseEventData.description,
-        groupId,
-        recurrenceType: recurrenceType as any, // Schema uses recurrenceType, not frequency
-        recurrenceDay: pattern.dayOfWeek, // Schema uses recurrenceDay, not dayOfWeek
-        startDate: pattern.startDate,
-        endDate: pattern.endDate || new Date(pattern.startDate.getTime() + 365 * 24 * 60 * 60 * 1000), // 1 year default
-        venue: pattern.venue,
-        status: 'active'
-      }).returning();
+        name: pattern.title, // Schema uses 'name' not 'title'
+        slug: `${slug}-${Date.now()}`, // Unique slug
+        description: baseEventData.description || null,
+        recurrenceType: recurrenceType,
+        recurrenceDay: pattern.dayOfWeek,
+        city: pattern.city || baseEventData.city || null,
+        country: baseEventData.country || null,
+        isActive: true, // Schema uses 'isActive' not 'status'
+      }).returning({ id: eventSeries.id });
 
+      console.log(`[RecurringEventDetector] Created series "${pattern.title}" with ID ${result[0]?.id}`);
       return result[0]?.id || null;
-    } catch (error) {
-      console.error('[RecurringEventDetector] Failed to create series:', error);
+    } catch (error: any) {
+      console.error('[RecurringEventDetector] Failed to create series:', error.message);
       return null;
+    }
+  }
+  
+  /**
+   * Generate future events from existing series
+   * MB.MD: Fills gaps like Jan 19-31 with recurring milongas
+   */
+  static async generateFutureEvents(seriesId: number, weeksAhead: number = 8): Promise<number> {
+    try {
+      const [series] = await db
+        .select()
+        .from(eventSeries)
+        .where(eq(eventSeries.id, seriesId))
+        .limit(1);
+      
+      if (!series || !series.isActive) {
+        return 0;
+      }
+      
+      // Get the most recent event from this series to use as template
+      const [templateEvent] = await db
+        .select()
+        .from(events)
+        .where(eq(events.seriesId, seriesId))
+        .orderBy(desc(events.startDate))
+        .limit(1);
+      
+      if (!templateEvent) {
+        console.log(`[RecurringEventDetector] No template event found for series ${seriesId}`);
+        return 0;
+      }
+      
+      // Generate dates for the next N weeks
+      const today = new Date();
+      const generatedDates: Date[] = [];
+      
+      for (let week = 0; week < weeksAhead; week++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() + (week * 7));
+        
+        // Adjust to the correct day of week
+        if (series.recurrenceDay !== null) {
+          const currentDay = date.getDay();
+          const daysUntilTarget = (series.recurrenceDay - currentDay + 7) % 7;
+          date.setDate(date.getDate() + daysUntilTarget);
+        }
+        
+        // Skip dates in the past
+        if (date > today) {
+          generatedDates.push(date);
+        }
+      }
+      
+      let created = 0;
+      for (const eventDate of generatedDates) {
+        // Check if event already exists for this date
+        const dateStr = eventDate.toISOString().split('T')[0];
+        const existing = await db
+          .select({ id: events.id })
+          .from(events)
+          .where(
+            and(
+              eq(events.seriesId, seriesId),
+              sql`DATE(${events.startDate}) = ${dateStr}`
+            )
+          )
+          .limit(1);
+        
+        if (existing.length === 0) {
+          // Create new event based on template
+          const newStartDate = new Date(eventDate);
+          if (templateEvent.startDate) {
+            const templateTime = new Date(templateEvent.startDate);
+            newStartDate.setHours(templateTime.getHours(), templateTime.getMinutes());
+          }
+          
+          await db.insert(events).values({
+            title: templateEvent.title,
+            description: templateEvent.description,
+            startDate: newStartDate,
+            endDate: templateEvent.endDate ? new Date(newStartDate.getTime() + 
+              (new Date(templateEvent.endDate).getTime() - new Date(templateEvent.startDate!).getTime())) : null,
+            city: templateEvent.city,
+            country: templateEvent.country,
+            venue: templateEvent.venue,
+            address: templateEvent.address,
+            userId: templateEvent.userId,
+            groupId: templateEvent.groupId,
+            seriesId: seriesId,
+            eventType: templateEvent.eventType,
+            latitude: templateEvent.latitude,
+            longitude: templateEvent.longitude,
+          });
+          created++;
+        }
+      }
+      
+      console.log(`[RecurringEventDetector] Generated ${created} future events for series ${seriesId}`);
+      return created;
+    } catch (error: any) {
+      console.error(`[RecurringEventDetector] Failed to generate future events:`, error.message);
+      return 0;
     }
   }
 }

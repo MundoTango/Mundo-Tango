@@ -11,10 +11,11 @@
  */
 
 import { db } from '../db';
-import { eventScrapingSources, scrapedEvents } from '@shared/schema';
+import { eventScrapingSources, scrapedEvents, eventSeries } from '@shared/schema';
 import { eq, and, sql, desc, lt, isNull, or } from 'drizzle-orm';
 import { scrapedEventIngestionService } from '../services/ScrapedEventIngestionService';
 import { geocodingService } from '../services/GeocodingService';
+import { RecurringEventDetector } from '../services/scraping/RecurringEventDetector';
 
 // 6 AM PST = 14:00 UTC (standard time) or 13:00 UTC (daylight saving)
 // Using 14:00 UTC as the target hour
@@ -179,6 +180,38 @@ async function getScrapingStats() {
 }
 
 /**
+ * Generate future events from all active series
+ * MB.MD Pattern 67: Fill gaps like Jan 19-31 with recurring milongas
+ */
+async function generateFutureEventsFromSeries(): Promise<{ seriesProcessed: number; eventsGenerated: number }> {
+  console.log('[Scraping Scheduler] Generating future events from active series...');
+  
+  try {
+    // Get all active series
+    const activeSeries = await db
+      .select({ id: eventSeries.id, name: eventSeries.name })
+      .from(eventSeries)
+      .where(eq(eventSeries.isActive, true));
+    
+    let totalGenerated = 0;
+    
+    for (const series of activeSeries) {
+      const generated = await RecurringEventDetector.generateFutureEvents(series.id, 8);
+      if (generated > 0) {
+        console.log(`[Scraping Scheduler] Series "${series.name}": ${generated} events generated`);
+      }
+      totalGenerated += generated;
+    }
+    
+    console.log(`[Scraping Scheduler] Series generation complete: ${activeSeries.length} series processed, ${totalGenerated} events generated`);
+    return { seriesProcessed: activeSeries.length, eventsGenerated: totalGenerated };
+  } catch (error: any) {
+    console.error('[Scraping Scheduler] Series generation failed:', error.message);
+    return { seriesProcessed: 0, eventsGenerated: 0 };
+  }
+}
+
+/**
  * Initialize the scraping scheduler
  * Daily scraping at 6 AM PST (14:00 UTC) with geocoding
  */
@@ -208,6 +241,9 @@ export function initScrapingScheduler() {
     // Log final stats
     const postStats = await getScrapingStats();
     console.log('[Scraping Scheduler] Post-scrape stats:', JSON.stringify(postStats));
+    
+    // Generate future events from active series (MB.MD Pattern 67)
+    await generateFutureEventsFromSeries();
   });
   
   // Run initial ingestion and geocoding check on startup (after 30 seconds)

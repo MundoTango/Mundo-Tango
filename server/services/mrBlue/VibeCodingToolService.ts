@@ -500,6 +500,315 @@ export async function getProjectStructure(): Promise<ToolResult> {
 }
 
 /**
+ * TOOL: Query database (read-only SQL for diagnostics)
+ * MB.MD Pattern 67: Mr. Blue needs database vision to diagnose data issues
+ */
+export async function queryDatabase(sql: string): Promise<ToolResult> {
+  try {
+    // Security: Only allow SELECT queries (read-only)
+    const normalizedSql = sql.trim().toLowerCase();
+    if (!normalizedSql.startsWith('select')) {
+      return {
+        success: false,
+        tool: "queryDatabase",
+        data: null,
+        error: "Only SELECT queries allowed for safety. Use other tools for modifications.",
+      };
+    }
+    
+    // Dangerous keywords check
+    const dangerous = ['drop', 'delete', 'update', 'insert', 'truncate', 'alter', 'create'];
+    if (dangerous.some(kw => normalizedSql.includes(kw))) {
+      return {
+        success: false,
+        tool: "queryDatabase",
+        data: null,
+        error: "Query contains forbidden keywords. Only read-only SELECT allowed.",
+      };
+    }
+    
+    // Execute via psql
+    const { stdout, stderr } = await execAsync(
+      `psql "$DATABASE_URL" -c "${sql.replace(/"/g, '\\"')}" --csv`,
+      { cwd: basePath, timeout: 30000 }
+    );
+    
+    // Parse CSV output
+    const lines = stdout.trim().split('\n');
+    const headers = lines[0]?.split(',') || [];
+    const rows = lines.slice(1).map(line => {
+      const values = line.split(',');
+      const row: Record<string, string> = {};
+      headers.forEach((h, i) => row[h] = values[i] || '');
+      return row;
+    });
+    
+    return {
+      success: true,
+      tool: "queryDatabase",
+      data: { 
+        query: sql, 
+        rowCount: rows.length, 
+        columns: headers,
+        rows: rows.slice(0, 50), // Limit to 50 rows for display
+        truncated: rows.length > 50
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "queryDatabase",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Create git branch for feature work
+ * MB.MD Pattern 65: Auto-create branch when "Let's Fix It" engaged
+ */
+export async function createBranch(branchName: string): Promise<ToolResult> {
+  try {
+    // Sanitize branch name
+    const safeBranch = branchName.replace(/[^a-zA-Z0-9\-_\/]/g, '-').toLowerCase();
+    
+    // Check if branch exists
+    const { stdout: existingBranches } = await execAsync('git branch -a', { cwd: basePath });
+    if (existingBranches.includes(safeBranch)) {
+      // Checkout existing branch
+      await execAsync(`git checkout ${safeBranch}`, { cwd: basePath });
+      return {
+        success: true,
+        tool: "createBranch",
+        data: { branch: safeBranch, action: "switched", message: `Switched to existing branch: ${safeBranch}` },
+      };
+    }
+    
+    // Create and checkout new branch
+    await execAsync(`git checkout -b ${safeBranch}`, { cwd: basePath });
+    
+    return {
+      success: true,
+      tool: "createBranch",
+      data: { branch: safeBranch, action: "created", message: `Created and switched to new branch: ${safeBranch}` },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "createBranch",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Commit changes with conventional commit message
+ * MB.MD GOD Command #0: Auto-invoke GitHub Practices
+ */
+export async function commitChanges(message: string, files?: string[]): Promise<ToolResult> {
+  try {
+    // Validate conventional commit format
+    const conventionalPattern = /^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+/;
+    if (!conventionalPattern.test(message)) {
+      // Auto-format if not conventional
+      const prefix = message.toLowerCase().includes('fix') ? 'fix' : 
+                    message.toLowerCase().includes('add') ? 'feat' : 'chore';
+      message = `${prefix}: ${message}`;
+    }
+    
+    // Stage files
+    if (files && files.length > 0) {
+      for (const file of files) {
+        await execAsync(`git add "${file}"`, { cwd: basePath });
+      }
+    } else {
+      // Stage all changes
+      await execAsync('git add -A', { cwd: basePath });
+    }
+    
+    // Check if there are changes to commit
+    const { stdout: status } = await execAsync('git status --porcelain', { cwd: basePath });
+    if (!status.trim()) {
+      return {
+        success: true,
+        tool: "commitChanges",
+        data: { message: "No changes to commit", committed: false },
+      };
+    }
+    
+    // Commit
+    const { stdout } = await execAsync(`git commit -m "${message.replace(/"/g, '\\"')}"`, { cwd: basePath });
+    
+    // Get commit SHA
+    const { stdout: sha } = await execAsync('git rev-parse HEAD', { cwd: basePath });
+    
+    return {
+      success: true,
+      tool: "commitChanges",
+      data: { 
+        message, 
+        sha: sha.trim().substring(0, 7),
+        committed: true,
+        output: stdout.trim()
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "commitChanges",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Create pull request via GitHub API
+ * MB.MD: Triggered when user says "work complete"
+ */
+export async function createPullRequest(title: string, body: string, targetBranch?: string): Promise<ToolResult> {
+  try {
+    const octokit = await getUncachableGitHubClient();
+    
+    // Get current branch
+    const { stdout: currentBranch } = await execAsync('git branch --show-current', { cwd: basePath });
+    const sourceBranch = currentBranch.trim();
+    const target = targetBranch || 'main';
+    
+    // Push current branch to remote first
+    try {
+      await execAsync(`git push -u origin ${sourceBranch}`, { cwd: basePath, timeout: 60000 });
+    } catch (pushError: any) {
+      // If push fails, might need to set upstream
+      if (pushError.message.includes('no upstream')) {
+        await execAsync(`git push --set-upstream origin ${sourceBranch}`, { cwd: basePath, timeout: 60000 });
+      } else {
+        throw pushError;
+      }
+    }
+    
+    // Create PR
+    const { data: pr } = await octokit.pulls.create({
+      owner: 'MundoTango',
+      repo: 'Mundo-Tango',
+      title,
+      body,
+      head: sourceBranch,
+      base: target,
+    });
+    
+    return {
+      success: true,
+      tool: "createPullRequest",
+      data: {
+        number: pr.number,
+        url: pr.html_url,
+        title: pr.title,
+        sourceBranch,
+        targetBranch: target,
+        state: pr.state,
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "createPullRequest",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Run Playwright E2E tests
+ * MB.MD GOD Command #1: Test before completing any task
+ */
+export async function runPlaywrightTest(testFile?: string, testName?: string): Promise<ToolResult> {
+  try {
+    let command = 'npx playwright test';
+    
+    if (testFile) {
+      command += ` ${testFile}`;
+    }
+    if (testName) {
+      command += ` --grep "${testName}"`;
+    }
+    
+    // Add common options
+    command += ' --reporter=line --timeout=60000';
+    
+    const { stdout, stderr } = await execAsync(command, { 
+      cwd: basePath, 
+      timeout: 300000, // 5 minute timeout for tests
+      env: { ...process.env, CI: 'true' }
+    });
+    
+    // Parse results
+    const passed = (stdout.match(/(\d+) passed/)?.[1] || '0');
+    const failed = (stdout.match(/(\d+) failed/)?.[1] || '0');
+    const skipped = (stdout.match(/(\d+) skipped/)?.[1] || '0');
+    
+    return {
+      success: parseInt(failed) === 0,
+      tool: "runPlaywrightTest",
+      data: {
+        passed: parseInt(passed),
+        failed: parseInt(failed),
+        skipped: parseInt(skipped),
+        output: stdout.substring(0, 3000),
+        errors: stderr ? stderr.substring(0, 1000) : null,
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "runPlaywrightTest",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Get scraper status - last run times and event counts
+ * MB.MD: For diagnosing scraping issues
+ */
+export async function getScraperStatus(): Promise<ToolResult> {
+  try {
+    const { stdout } = await execAsync(
+      `psql "$DATABASE_URL" -c "SELECT source_name, MAX(scraped_at) as last_scraped, COUNT(*) as event_count FROM scraped_events GROUP BY source_name ORDER BY last_scraped DESC LIMIT 20" --csv`,
+      { cwd: basePath, timeout: 30000 }
+    );
+    
+    const lines = stdout.trim().split('\n');
+    const headers = lines[0]?.split(',') || [];
+    const rows = lines.slice(1).map(line => {
+      const values = line.split(',');
+      return {
+        source: values[0],
+        lastScraped: values[1],
+        eventCount: parseInt(values[2]) || 0
+      };
+    });
+    
+    return {
+      success: true,
+      tool: "getScraperStatus",
+      data: { sources: rows, count: rows.length },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "getScraperStatus",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
  * Available tools registry
  */
 export const VIBECODING_TOOLS = {
@@ -552,6 +861,36 @@ export const VIBECODING_TOOLS = {
     name: "getProjectStructure",
     description: "Get project overview",
     handler: getProjectStructure,
+  },
+  queryDatabase: {
+    name: "queryDatabase",
+    description: "Query database with SELECT (read-only) for diagnostics",
+    handler: queryDatabase,
+  },
+  createBranch: {
+    name: "createBranch",
+    description: "Create and checkout git branch for feature work",
+    handler: createBranch,
+  },
+  commitChanges: {
+    name: "commitChanges",
+    description: "Commit changes with conventional commit message",
+    handler: commitChanges,
+  },
+  createPullRequest: {
+    name: "createPullRequest",
+    description: "Create GitHub pull request",
+    handler: createPullRequest,
+  },
+  runPlaywrightTest: {
+    name: "runPlaywrightTest",
+    description: "Run Playwright E2E tests",
+    handler: runPlaywrightTest,
+  },
+  getScraperStatus: {
+    name: "getScraperStatus",
+    description: "Get scraper status and last run times",
+    handler: getScraperStatus,
   },
 };
 
