@@ -77,6 +77,16 @@ This system captures comprehensive context for diagnosing and fixing issues. It 
 - `JourneyTimeline` shows step-by-step navigation history
 - `BugFixStream` displays real-time agent work with ReAct protocol visualization
 
+**VibeCoding Tool Execution (MB.MD Pattern 65):**
+- God-level users (tier 8+ or scott@boddye.com, admin@mundotango.life) can execute VibeCoding tools via Mr. Blue chat
+- Route: POST /api/mrblue/chat (handled by `server/routes/mrblue-chat.ts`)
+- Tool detection uses pattern matching with confidence threshold (0.7)
+- Supported tools: getGitStatus, listDirectory, readFile, grepFiles
+- Tool commands: "git status", "list directory [path]", "read file [path]", "grep [pattern]"
+- Response includes: toolExecuted, toolSuccess, godLevelExecution, rawData with actual repository data
+- Tool service: `server/services/mrBlue/VibeCodingToolService.ts`
+- God-level check: `isGodLevelUser()` from `server/services/mrBlue/TaskExecutorService.ts`
+
 ### CI/CD & Contributor Workflow
 The project utilizes GitHub Actions for CI/CD, running on PRs and pushes to main. The pipeline includes type checking, linting, unit tests, build verification, security audits, and E2E tests (on main only). Branch protection is enforced, and pre-commit hooks run type-check and lint-staged. Conventional Commits are required for all contributions.
 
