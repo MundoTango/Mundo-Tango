@@ -4,11 +4,22 @@ import { Progress } from '@/components/ui/progress';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 
+interface PlanProgressData {
+  active: boolean;
+  pagesCompleted: number;
+  totalPages: number;
+  currentPage?: {
+    name: string;
+    checklist?: Array<{ label: string; status: string }>;
+  };
+}
+
 export function ThePlanProgressBar() {
-  const { data: progress, isError } = useQuery({
+  const { data: progress, isError } = useQuery<PlanProgressData>({
     queryKey: ['/api/the-plan/progress'],
-    refetchInterval: (data) => {
+    refetchInterval: (query) => {
       // ✅ MB.MD v9.2 Fix: Stop polling if error or inactive
+      const data = query.state.data;
       if (!data?.active) return false; // Don't poll if inactive
       return 10000; // Poll every 10 seconds when active (reduced from 5s)
     },
