@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts. Its extensive AI ecosystem provides strategic oversight and execution capabilities, positioning Mundo Tango as a comprehensive solution for the global tango market. The business vision includes capturing market potential through advanced AI, robust social features, and a scalable architecture.
+Mundo Tango Platform is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts. Its extensive AI ecosystem provides strategic oversight and execution capabilities, positioning Mundo Tango as a comprehensive solution for the global tango market. The business vision includes capturing market potential through advanced AI, robust social features, and a scalable architecture.
 
 ## User Preferences
 - Work Simultaneously - Run operations in parallel (use Promise.all, parallel tool calls)
