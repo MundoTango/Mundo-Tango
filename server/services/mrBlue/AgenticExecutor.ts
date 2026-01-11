@@ -8,9 +8,13 @@
  * 3. Executes REAL tools from VibeCodingToolService
  * 4. Returns results to AI, loops until done
  * 5. Tracks all files modified/created
+ * 6. Commits changes with conventional commit messages (GOD Command #0)
+ * 7. Updates bug status and notifies users
  * 
  * GOD COMMANDS ENFORCED:
+ * #0: AUTO-INVOKE GitHub Practices + Plan Tracker
  * #2: Work Simultaneously - Promise.all for parallel tool execution
+ * #3: Work Recursively - Read imports, dependencies, related files
  * #4: Work Critically - Validate file actually changed after each write
  * #7: Auto-Fix - 3-attempt retry on tool failures
  * #8: Validation Loop - observe → decide → act → validate → adapt
@@ -18,6 +22,8 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import {
   readFile,
   writeFile,
@@ -29,7 +35,122 @@ import {
   ToolResult
 } from './VibeCodingToolService';
 
+const execAsync = promisify(exec);
 const basePath = process.cwd();
+
+// ==================== MB.MD CONTEXT ====================
+
+const MB_MD_GOD_COMMANDS = `
+## GOD COMMANDS (HIGHEST PRIORITY - from mb.md)
+
+| ID | Command | Scope |
+|----|---------|-------|
+| #0 | AUTO-INVOKE GitHub Practices - Commit changes with conventional messages | Global |
+| #1 | Test before completing any task | Global |
+| #2 | Work Simultaneously - Parallel operations (Promise.all) | Global |
+| #3 | Work Recursively - Read imports, dependencies, related files BEFORE editing | Global |
+| #4 | Work Critically - Target 95-99/100 quality (validate edge cases) | Global |
+| #5 | Check Documentation First - Use existing systems before building new | Global |
+| #6 | Never change ID column types (serial ↔ varchar breaks data) | Database |
+| #7 | Auto-Fix Maximization - 3-attempt retry, <10% escalation rate | Global |
+| #8 | Validation Loop - observe → decide → act → validate → adapt | Global |
+| #9 | Zero Hardcoding - All UI text MUST use i18next t() function | Global |
+`;
+
+const ARCHITECTURE_CONTEXT = `
+## Mundo Tango Architecture (from replit.md)
+
+### Backend Structure:
+- Express + TypeScript + Drizzle ORM
+- Routes: server/routes/*.ts (modular route files)
+- Services: server/services/*.ts
+- Schema: shared/schema.ts (Drizzle tables + Zod validation)
+- Storage: server/storage.ts (IStorage interface)
+
+### Frontend Structure:
+- React + Vite + Tailwind CSS + shadcn/ui
+- Components: client/src/components/
+- Pages: client/src/pages/
+- Hooks: client/src/hooks/
+
+### Key Route Files by Feature:
+- Travel/Events: server/routes/travel-routes.ts
+- Events: server/routes/event-routes.ts
+- Users/Auth: server/routes/auth-routes.ts
+- Cities: server/routes/city-routes.ts
+- Admin: server/routes/admin-routes.ts
+- Messaging: server/routes/messaging-routes.ts
+`;
+
+// Error type to file hint mapping
+const ERROR_FILE_HINTS: Record<string, string[]> = {
+  'travel': ['server/routes/travel-routes.ts', 'client/src/pages/profile.tsx', 'shared/schema.ts'],
+  'events': ['server/routes/event-routes.ts', 'server/routes/travel-routes.ts', 'shared/schema.ts'],
+  'auth': ['server/routes/auth-routes.ts', 'server/middleware/auth.ts'],
+  'city': ['server/routes/city-routes.ts', 'client/src/pages/city.tsx'],
+  'profile': ['server/routes/user-routes.ts', 'client/src/pages/profile.tsx'],
+  'messaging': ['server/routes/messaging-routes.ts', 'shared/schema.ts'],
+  'talent': ['server/routes/talent-match-routes.ts', 'server/services/talent-match/'],
+};
+
+export interface DiagnosticContext {
+  bugId?: number;
+  userId?: number;
+  currentPage?: string;
+  failedApiCalls?: Array<{ url: string; status: number; error?: string }>;
+  consoleErrors?: string[];
+  userJourney?: string[];
+  selectedElement?: string;
+}
+
+function buildDiagnosticPrompt(diagnostic?: DiagnosticContext): string {
+  if (!diagnostic) return '';
+  
+  let prompt = '\n## BUG DIAGNOSTIC CONTEXT:\n';
+  
+  if (diagnostic.bugId) {
+    prompt += `Bug ID: ${diagnostic.bugId}\n`;
+  }
+  
+  if (diagnostic.currentPage) {
+    prompt += `Current Page: ${diagnostic.currentPage}\n`;
+    
+    // Add file hints based on page/error
+    const pageKey = Object.keys(ERROR_FILE_HINTS).find(key => 
+      diagnostic.currentPage?.toLowerCase().includes(key)
+    );
+    if (pageKey) {
+      prompt += `\nRELEVANT FILES TO CHECK:\n${ERROR_FILE_HINTS[pageKey].map(f => `- ${f}`).join('\n')}\n`;
+    }
+  }
+  
+  if (diagnostic.failedApiCalls?.length) {
+    prompt += `\nFAILED API CALLS:\n`;
+    diagnostic.failedApiCalls.forEach(call => {
+      prompt += `- ${call.url} → ${call.status}${call.error ? ` (${call.error})` : ''}\n`;
+      
+      // Add hints for failed endpoints
+      const endpoint = call.url.split('/api/')[1]?.split('/')[0] || '';
+      if (ERROR_FILE_HINTS[endpoint]) {
+        prompt += `  → Check: ${ERROR_FILE_HINTS[endpoint].join(', ')}\n`;
+      }
+    });
+  }
+  
+  if (diagnostic.consoleErrors?.length) {
+    prompt += `\nCONSOLE ERRORS:\n${diagnostic.consoleErrors.map(e => `- ${e}`).join('\n')}\n`;
+  }
+  
+  if (diagnostic.userJourney?.length) {
+    prompt += `\nUSER JOURNEY:\n${diagnostic.userJourney.map((j, i) => `${i + 1}. ${j}`).join('\n')}\n`;
+  }
+  
+  if (diagnostic.selectedElement) {
+    prompt += `\nSELECTED ELEMENT: ${diagnostic.selectedElement}\n`;
+  }
+  
+  return prompt;
+}
 
 export interface ToolSchema {
   type: 'function';
@@ -70,7 +191,7 @@ const TOOL_SCHEMAS: ToolSchema[] = [
     type: 'function',
     function: {
       name: 'readFile',
-      description: 'Read the contents of a file from the project',
+      description: 'Read the contents of a file from the project. ALWAYS read files before editing them (GOD Command #3).',
       parameters: {
         type: 'object',
         properties: {
@@ -166,6 +287,39 @@ const TOOL_SCHEMAS: ToolSchema[] = [
         required: []
       }
     }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'gitCommit',
+      description: 'Commit changes with a conventional commit message (GOD Command #0). Use after making file changes.',
+      parameters: {
+        type: 'object',
+        properties: {
+          type: { type: 'string', description: 'Commit type: fix, feat, refactor, docs, style, test, chore' },
+          scope: { type: 'string', description: 'Scope of change: travel, events, auth, profile, messaging, etc.' },
+          message: { type: 'string', description: 'Brief description of what was fixed/changed' }
+        },
+        required: ['type', 'scope', 'message']
+      }
+    }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'updateBugStatus',
+      description: 'Mark a bug report as resolved and optionally notify the reporting user',
+      parameters: {
+        type: 'object',
+        properties: {
+          bugId: { type: 'number', description: 'The ID of the bug report to update' },
+          status: { type: 'string', description: 'New status: resolved, in-progress, rejected' },
+          resolution: { type: 'string', description: 'Summary of how the bug was fixed' },
+          notifyUser: { type: 'boolean', description: 'Whether to send a message to the reporting user' }
+        },
+        required: ['bugId', 'status', 'resolution']
+      }
+    }
   }
 ];
 
@@ -175,7 +329,11 @@ class AgenticExecutorService {
 
   async execute(
     task: string,
-    context?: { currentPage?: string; relevantFiles?: string[] },
+    context?: { 
+      currentPage?: string; 
+      relevantFiles?: string[];
+      diagnostic?: DiagnosticContext;
+    },
     onStream?: StreamCallback
   ): Promise<AgenticResult> {
     const startTime = Date.now();
@@ -192,23 +350,36 @@ class AgenticExecutorService {
       console.log(`[AgenticExecutor] ${type.toUpperCase()}: ${content.substring(0, 100)}...`);
     };
 
+    // Build enhanced system prompt with MB.MD context
+    const diagnosticPrompt = buildDiagnosticPrompt(context?.diagnostic);
+    
+    const systemPrompt = `You are Mr. Blue, an autonomous AI coding agent for the Mundo Tango platform.
+You have access to real filesystem tools to read, write, and modify code files.
+
+${MB_MD_GOD_COMMANDS}
+
+${ARCHITECTURE_CONTEXT}
+
+## CRITICAL WORKFLOW (ReAct Protocol):
+1. THINK: Analyze the bug and identify likely cause
+2. READ: Always read relevant files BEFORE editing (GOD Command #3)
+3. PLAN: Determine the minimal fix needed
+4. EDIT: Make precise, targeted edits
+5. VERIFY: Read the file after editing to confirm change
+6. COMMIT: Use gitCommit to save changes with conventional message
+7. UPDATE: If fixing a bug, use updateBugStatus to mark resolved and notify user
+
+## CURRENT CONTEXT:
+${context?.currentPage ? `Current Page: ${context.currentPage}` : ''}
+${context?.relevantFiles?.length ? `Relevant Files: ${context.relevantFiles.join(', ')}` : ''}
+${diagnosticPrompt}
+
+When the task is complete, respond with a summary of what you did. Do not call any more tools.`;
+
     const messages: Array<{ role: string; content: string; tool_call_id?: string; name?: string }> = [
       {
         role: 'system',
-        content: `You are Mr. Blue, an autonomous AI coding agent for the Mundo Tango platform.
-You have access to real filesystem tools to read, write, and modify code files.
-
-CRITICAL RULES:
-1. Actually execute changes - don't just describe what you would do
-2. Read files before editing to understand current state
-3. Make precise, targeted edits
-4. Verify your changes worked by reading the file after editing
-
-PROJECT CONTEXT:
-${context?.currentPage ? `Current Page: ${context.currentPage}` : ''}
-${context?.relevantFiles?.length ? `Relevant Files: ${context.relevantFiles.join(', ')}` : ''}
-
-When the task is complete, respond with a summary of what you did. Do not call any more tools.`
+        content: systemPrompt
       },
       {
         role: 'user',
@@ -388,6 +559,90 @@ When the task is complete, respond with a summary of what you did. Do not call a
       case 'getProjectStructure':
         result = await getProjectStructure();
         break;
+
+      case 'gitCommit': {
+        // GOD Command #0: Conventional commit with GitHub practices
+        const commitType = args.type || 'fix';
+        const scope = args.scope || 'general';
+        const message = args.message || 'Auto-fix applied by Mr. Blue';
+        const commitMessage = `${commitType}(${scope}): ${message}`;
+        
+        try {
+          // Stage all changes
+          await execAsync('git add -A', { cwd: basePath });
+          
+          // Create commit
+          const { stdout } = await execAsync(
+            `git commit -m "${commitMessage.replace(/"/g, '\\"')}"`,
+            { cwd: basePath }
+          );
+          
+          result = {
+            success: true,
+            tool: 'gitCommit',
+            data: { 
+              commitMessage,
+              output: stdout.substring(0, 500),
+              filesCommitted: filesModified.length + filesCreated.length
+            }
+          };
+        } catch (err: any) {
+          // Handle "nothing to commit" case
+          if (err.message.includes('nothing to commit')) {
+            result = {
+              success: true,
+              tool: 'gitCommit',
+              data: { commitMessage, note: 'No changes to commit' }
+            };
+          } else {
+            result = { success: false, tool: 'gitCommit', data: null, error: err.message };
+          }
+        }
+        break;
+      }
+
+      case 'updateBugStatus': {
+        // Update bug status and optionally notify user
+        const bugId = args.bugId;
+        const status = args.status || 'resolved';
+        const resolution = args.resolution || 'Fixed by Mr. Blue auto-fix';
+        const notifyUser = args.notifyUser !== false; // Default to true
+        
+        try {
+          // Import storage dynamically to avoid circular deps
+          const { storage } = await import('../../storage');
+          
+          // Update the bug status
+          await storage.updateFeedbackStatus(bugId, status, resolution);
+          
+          // Get bug details for user notification
+          const feedback = await storage.getFeedbackById(bugId);
+          
+          // Send message to user if requested
+          if (notifyUser && feedback?.userId) {
+            await storage.createDirectMessage({
+              senderId: 1, // System/Admin user
+              recipientId: feedback.userId,
+              content: `Your bug report "${feedback.title}" has been resolved.\n\n**Resolution:** ${resolution}\n\nThank you for reporting this issue!`,
+              isRead: false
+            });
+          }
+          
+          result = {
+            success: true,
+            tool: 'updateBugStatus',
+            data: { 
+              bugId,
+              newStatus: status,
+              resolution,
+              userNotified: notifyUser && !!feedback?.userId
+            }
+          };
+        } catch (err: any) {
+          result = { success: false, tool: 'updateBugStatus', data: null, error: err.message };
+        }
+        break;
+      }
 
       default:
         result = { success: false, tool: toolName, data: null, error: `Unknown tool: ${toolName}` };
