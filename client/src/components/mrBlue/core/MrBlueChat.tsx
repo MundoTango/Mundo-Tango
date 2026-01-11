@@ -401,9 +401,11 @@ What would you like me to do?`,
   };
 
   const sendMessage = async () => {
+    console.log("[MrBlueChat] sendMessage called, input:", input, "isLoading:", isLoading);
     if (!input.trim() || isLoading) return;
 
     const messageText = input;
+    console.log("[MrBlueChat] Processing message:", messageText, "isVibecodingTask:", isVibecodingTask(messageText));
     const userMessage: Message = {
       id: `temp-${Date.now()}`, // UX-001 FIX: Use temp- prefix for optimistic messages
       role: "user",
@@ -495,6 +497,7 @@ What would you like me to do?`,
 
     // Check if this is a VibeCoding task and user might be god-level
     // Try streaming first, fall back to regular chat if not authorized
+    console.log("[MrBlueChat] Checking VibeCoding:", isVibecodingTask(messageText), "qaMode:", qaMode);
     if (isVibecodingTask(messageText)) {
       try {
         console.log(
@@ -503,6 +506,7 @@ What would you like me to do?`,
 
         // Get auth token from localStorage
         const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
+        console.log("[MrBlueChat] Token found:", !!token);
 
         // Call new SSE streaming endpoint for autonomous VibeCoding
         const response = await fetch("/api/mrblue/vibe-stream", {
@@ -520,13 +524,15 @@ What would you like me to do?`,
           }),
         });
 
+        console.log("[MrBlueChat] vibe-stream response:", response.status, response.headers.get("content-type"));
+        
         // Check if streaming is available (god-level users)
         // Only add starting message AFTER confirming streaming works
         if (
           response.ok &&
           response.headers.get("content-type")?.includes("text/event-stream")
         ) {
-          console.log("[MrBlueChat] Streaming response received");
+          console.log("[MrBlueChat] Streaming response received - SUCCESS");
 
           // Now add the starting message since we confirmed streaming
           const startMessage: Message = {
