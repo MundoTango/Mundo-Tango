@@ -8,6 +8,11 @@
 import { test, expect, Page, BrowserContext } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
 const SCREENSHOTS_DIR = path.join(__dirname, '../screenshots');
@@ -102,8 +107,8 @@ test.describe('02-feed-social', () => {
 
     // Login first
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', TEST_USER.email);
-    await page.fill('input[name="password"]', TEST_USER.password);
+    await page.fill('[data-testid="input-email"]', TEST_USER.email);
+    await page.fill('[data-testid="input-password"]', TEST_USER.password);
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
@@ -145,8 +150,8 @@ test.describe('03-events', () => {
 
     // Login first
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', TEST_USER.email);
-    await page.fill('input[name="password"]', TEST_USER.password);
+    await page.fill('[data-testid="input-email"]', TEST_USER.email);
+    await page.fill('[data-testid="input-password"]', TEST_USER.password);
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
@@ -194,8 +199,8 @@ test.describe('04-cities-groups', () => {
 
     // Login
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', TEST_USER.email);
-    await page.fill('input[name="password"]', TEST_USER.password);
+    await page.fill('[data-testid="input-email"]', TEST_USER.email);
+    await page.fill('[data-testid="input-password"]', TEST_USER.password);
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
@@ -237,8 +242,8 @@ test.describe('05-profile', () => {
 
     // Login
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', TEST_USER.email);
-    await page.fill('input[name="password"]', TEST_USER.password);
+    await page.fill('[data-testid="input-email"]', TEST_USER.email);
+    await page.fill('[data-testid="input-password"]', TEST_USER.password);
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
@@ -288,8 +293,8 @@ test.describe('06-friends', () => {
 
     // Login
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', TEST_USER.email);
-    await page.fill('input[name="password"]', TEST_USER.password);
+    await page.fill('[data-testid="input-email"]', TEST_USER.email);
+    await page.fill('[data-testid="input-password"]', TEST_USER.password);
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
@@ -322,8 +327,8 @@ test.describe('07-messages', () => {
 
     // Login
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', TEST_USER.email);
-    await page.fill('input[name="password"]', TEST_USER.password);
+    await page.fill('[data-testid="input-email"]', TEST_USER.email);
+    await page.fill('[data-testid="input-password"]', TEST_USER.password);
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
@@ -362,8 +367,8 @@ test.describe('08-travel', () => {
 
     // Login
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', TEST_USER.email);
-    await page.fill('input[name="password"]', TEST_USER.password);
+    await page.fill('[data-testid="input-email"]', TEST_USER.email);
+    await page.fill('[data-testid="input-password"]', TEST_USER.password);
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
@@ -403,8 +408,8 @@ test.describe('09-housing', () => {
 
     // Login
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', TEST_USER.email);
-    await page.fill('input[name="password"]', TEST_USER.password);
+    await page.fill('[data-testid="input-email"]', TEST_USER.email);
+    await page.fill('[data-testid="input-password"]', TEST_USER.password);
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
@@ -441,8 +446,8 @@ test.describe('10-mr-blue', () => {
 
     // Login
     await page.goto(`${BASE_URL}/login`);
-    await page.fill('input[name="email"]', TEST_USER.email);
-    await page.fill('input[name="password"]', TEST_USER.password);
+    await page.fill('[data-testid="input-email"]', TEST_USER.email);
+    await page.fill('[data-testid="input-password"]', TEST_USER.password);
     await page.click('button[type="submit"]');
     await page.waitForLoadState('networkidle');
 
