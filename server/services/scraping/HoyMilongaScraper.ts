@@ -14,6 +14,7 @@ import * as cheerio from 'cheerio';
 import { db } from '@shared/db';
 import { scrapedEvents, eventScrapingSources, events, groups } from '@shared/schema';
 import { eq, and, ilike, sql } from 'drizzle-orm';
+import { RecurringEventDetector } from './RecurringEventDetector';
 
 export interface HoyMilongaEvent {
   title: string;
@@ -307,7 +308,8 @@ export class HoyMilongaScraper {
             status: 'approved',
             city: cityConfig.city,
             country: cityConfig.country,
-            groupId: cityGroup?.id
+            groupId: cityGroup?.id,
+            isRecurring: RecurringEventDetector.isRecurring(event.title)
           }).onConflictDoNothing();
 
           storedCount++;

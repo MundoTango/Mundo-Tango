@@ -14,6 +14,7 @@ import * as cheerio from 'cheerio';
 import { db } from '@shared/db';
 import { scrapedEvents, eventScrapingSources } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import { RecurringEventDetector } from './RecurringEventDetector';
 
 export interface ScrapedEvent {
   title: string;
@@ -392,7 +393,8 @@ export class RSSFeedService {
           price: event.price ? event.price.toString() : null,
           imageUrl: event.imageUrl,
           externalId: event.externalId,
-          status: 'approved'
+          status: 'approved',
+          isRecurring: RecurringEventDetector.isRecurring(event.title)
         }).onConflictDoNothing();
         
         storedCount++;

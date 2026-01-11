@@ -19,6 +19,7 @@ import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from 
 import { languageAwareFieldMapper, SupportedLanguage } from './LanguageAwareFieldMapper';
 import { detailDiscoveryService } from './DetailDiscoveryService';
 import { attachParticipantProfiles } from './ParticipantProfileHelper';
+import { RecurringEventDetector } from './RecurringEventDetector';
 
 export interface ScrapedEventData {
   title: string;
@@ -445,7 +446,8 @@ Extract all tango events from this page as JSON array:`
             djText: participantData.djText,
             teacherText: participantData.teacherText,
             performerText: participantData.performerText,
-            participantProfiles: participantData.participantProfiles
+            participantProfiles: participantData.participantProfiles,
+            isRecurring: RecurringEventDetector.isRecurring(event.title)
           }).onConflictDoNothing();
 
           savedCount++;
