@@ -75,6 +75,11 @@ import {
   userPreferences,
   planSessions,
   placeRecommendations,
+  cities,
+  cityMembers,
+  userLocationHistory,
+  type City,
+  type CityMember,
   type SelectUser,
   type InsertUser,
   type SelectRefreshToken,
@@ -240,7 +245,8 @@ const db = drizzle(sqlClient, { schema: {
   lifeCeoDomains, lifeCeoGoals, lifeCeoTasks, lifeCeoMilestones, lifeCeoRecommendations,
   h2acMessages, memories, recommendations, roleInvitations, favorites,
   communityStats, facebookImports, facebookPosts, facebookFriends,
-  mrBlueConversations, mrBlueMessages, // FIX: Added for Mr. Blue chat memory
+  mrBlueConversations, mrBlueMessages,
+  cities, cityMembers, userLocationHistory,
 }});
 
 // Export db for use in other modules
@@ -2194,9 +2200,6 @@ export class DbStorage implements IStorage {
         closenessScore: friendships.closenessScore,
         lastInteractionAt: friendships.lastInteractionAt,
         status: friendships.status,
-        ourStory: friendships.ourStory,
-        whenWeMet: friendships.whenWeMet,
-        whereWeMet: friendships.whereWeMet,
         friendName: users.name,
         friendUsername: users.username,
         friendEmail: users.email,
@@ -2221,9 +2224,6 @@ export class DbStorage implements IStorage {
       closenessScore: result[0].closenessScore,
       lastInteractionAt: result[0].lastInteractionAt,
       status: result[0].status,
-      ourStory: result[0].ourStory,
-      whenWeMet: result[0].whenWeMet,
-      whereWeMet: result[0].whereWeMet,
       friend: {
         id: result[0].friendId,
         name: result[0].friendName,
@@ -2484,7 +2484,7 @@ export class DbStorage implements IStorage {
       connectionDegree: friendships.connectionDegree,
       lastInteractionAt: friendships.lastInteractionAt,
       createdAt: friendships.createdAt,
-      updatedAt: friendships.updatedAt,
+      // Note: friendships schema doesn't have updatedAt column
     }).from(friendships).where(eq(friendships.id, friendshipId)).limit(1);
     if (!friendship[0]) return 0;
     
@@ -2909,32 +2909,30 @@ export class DbStorage implements IStorage {
               console.log(`[getFriendshipSharedData] Could not check saved status for post ${post.id}`);
             }
 
-            // Get current user's reaction
+            // Get current user's like status (simplified - no reactionType in schema)
             let currentReaction: string | null = null;
             try {
-              const userReaction = await db.select({ reactionType: postLikes.reactionType })
+              const userLike = await db.select({ id: postLikes.id })
                 .from(postLikes)
                 .where(and(eq(postLikes.postId, post.id), eq(postLikes.userId, userId)))
                 .limit(1);
-              currentReaction = userReaction[0]?.reactionType || null;
+              currentReaction = userLike[0] ? 'like' : null;
             } catch (reactionErr) {
               console.log(`[getFriendshipSharedData] Could not get reaction for post ${post.id}`);
             }
 
-            // Get reaction counts
+            // Get reaction counts (simplified - schema only has likes, not typed reactions)
             const reactions: Record<string, number> = {};
             try {
-              const reactionCounts = await db.select({ 
-                reactionType: postLikes.reactionType, 
+              const likeTotal = await db.select({ 
                 count: sql<number>`count(*)::int` 
               })
                 .from(postLikes)
-                .where(eq(postLikes.postId, post.id))
-                .groupBy(postLikes.reactionType);
+                .where(eq(postLikes.postId, post.id));
 
-              reactionCounts.forEach(r => {
-                if (r.reactionType) reactions[r.reactionType] = r.count;
-              });
+              if (likeTotal[0]?.count) {
+                reactions['like'] = likeTotal[0].count;
+              }
             } catch (reactionCountErr) {
               console.log(`[getFriendshipSharedData] Could not get reaction counts for post ${post.id}`);
             }
@@ -3076,7 +3074,7 @@ export class DbStorage implements IStorage {
             if (event[0]) {
               sharedEventsDetails.push({
                 id: event[0].id,
-                title: event[0].name || event[0].title || 'Untitled Event',
+                title: event[0].title || 'Untitled Event',
                 date: event[0].startDate?.toISOString() || new Date().toISOString(),
                 location: event[0].location || event[0].city || 'Unknown'
               });
@@ -3267,28 +3265,28 @@ export class DbStorage implements IStorage {
   }
 
   // Blocked Users
-  async blockUser(userId: number, blockedUserId: number): Promise<any> {
+  async blockUser(blockerId: number, blockedId: number): Promise<any> {
     try {
-      const result = await db.insert(blockedUsers).values({ userId, blockedUserId }).returning();
+      const result = await db.insert(blockedUsers).values({ blockerId, blockedId }).returning();
       return result[0];
     } catch (error) {
       throw new Error('User already blocked');
     }
   }
 
-  async unblockUser(userId: number, blockedUserId: number): Promise<void> {
-    await db.delete(blockedUsers).where(and(eq(blockedUsers.userId, userId), eq(blockedUsers.blockedUserId, blockedUserId)));
+  async unblockUser(blockerId: number, blockedId: number): Promise<void> {
+    await db.delete(blockedUsers).where(and(eq(blockedUsers.blockerId, blockerId), eq(blockedUsers.blockedId, blockedId)));
   }
 
-  async getBlockedUsers(userId: number): Promise<any[]> {
-    return await db.select().from(blockedUsers).where(eq(blockedUsers.userId, userId));
+  async getBlockedUsers(blockerId: number): Promise<any[]> {
+    return await db.select().from(blockedUsers).where(eq(blockedUsers.blockerId, blockerId));
   }
 
-  async isUserBlocked(userId: number, blockedUserId: number): Promise<boolean> {
+  async isUserBlocked(blockerId: number, blockedId: number): Promise<boolean> {
     const result = await db
       .select()
       .from(blockedUsers)
-      .where(and(eq(blockedUsers.userId, userId), eq(blockedUsers.blockedUserId, blockedUserId)))
+      .where(and(eq(blockedUsers.blockerId, blockerId), eq(blockedUsers.blockedId, blockedId)))
       .limit(1);
     return result.length > 0;
   }
@@ -3620,14 +3618,14 @@ export class DbStorage implements IStorage {
         venue: events.venue,
         startDate: events.startDate,
         endDate: events.endDate,
-        startTime: events.startTime,
-        endTime: events.endTime,
+        startDateTime: events.startDateTime,
+        endDateTime: events.endDateTime,
         price: events.price,
         currency: events.currency,
         eventType: events.eventType,
         imageUrl: events.imageUrl,
         status: events.status,
-        capacity: events.capacity,
+        maxAttendees: events.maxAttendees,
         userId: events.userId,
         organizerId: events.organizerId,
         createdAt: events.createdAt,
@@ -4415,10 +4413,10 @@ export class DbStorage implements IStorage {
       reason: moderationQueue.reason,
       status: moderationQueue.status,
       createdAt: moderationQueue.createdAt,
-      contentPreview: moderationQueue.details,
+      contentPreview: moderationQueue.reportDetails,
     })
     .from(moderationQueue)
-    .leftJoin(users, eq(moderationQueue.reporterId, users.id))
+    .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
     .where(eq(moderationQueue.status, 'pending'))
     .orderBy(desc(moderationQueue.createdAt))
     .limit(20);
@@ -4651,13 +4649,15 @@ export class DbStorage implements IStorage {
   async getUserMemories(userId: number, params?: { type?: string; limit?: number; offset?: number }): Promise<SelectMemory[]> {
     const { type, limit = 50, offset = 0 } = params || {};
     
-    let query = db.select().from(memories).where(eq(memories.userId, userId));
-    
+    const conditions = [eq(memories.userId, userId)];
     if (type) {
-      query = query.where(and(eq(memories.userId, userId), eq(memories.type, type)));
+      conditions.push(eq(memories.type, type));
     }
     
-    const result = await query
+    const result = await db
+      .select()
+      .from(memories)
+      .where(and(...conditions))
       .orderBy(desc(memories.date))
       .limit(limit)
       .offset(offset);
@@ -4974,7 +4974,7 @@ export class DbStorage implements IStorage {
         groupId: invite[0].groupId,
         userId: invite[0].inviteeId,
         role: 'member',
-        joinedVia: 'invite',
+        joinedAt: new Date(),
         invitedBy: invite[0].inviterId,
       });
       await db
@@ -5039,7 +5039,7 @@ export class DbStorage implements IStorage {
   async updateGroupPost(id: number, data: Partial<SelectGroupPost>): Promise<SelectGroupPost | undefined> {
     const result = await db
       .update(groupPosts)
-      .set({ ...data, editedAt: new Date() })
+      .set({ ...data, updatedAt: new Date() })
       .where(eq(groupPosts.id, id))
       .returning();
     return result[0];
@@ -5070,7 +5070,7 @@ export class DbStorage implements IStorage {
       .set({ 
         isApproved: true,
         approvedBy: approverId,
-        approvedAt: new Date(),
+        updatedAt: new Date(),
       })
       .where(eq(groupPosts.id, postId));
   }
@@ -5085,8 +5085,7 @@ export class DbStorage implements IStorage {
     return await db
       .select()
       .from(groupCategories)
-      .where(eq(groupCategories.isActive, true))
-      .orderBy(asc(groupCategories.displayOrder), asc(groupCategories.name));
+      .orderBy(asc(groupCategories.sortOrder), asc(groupCategories.name));
   }
 
   async assignGroupCategory(groupId: number, categoryId: number): Promise<void> {
@@ -5166,8 +5165,8 @@ export class DbStorage implements IStorage {
       .from(groups)
       .where(
         and(
-          eq(groups.privacy, 'public'),
-          ne(groups.joinApprovalRequired, true)
+          eq(groups.visibility, 'public'),
+          ne(groups.joinApproval, true)
         )
       )
       .orderBy(desc(groups.memberCount), desc(groups.lastActivityAt))
@@ -5276,7 +5275,7 @@ export class DbStorage implements IStorage {
       .update(eventRsvps)
       .set({ 
         checkedIn: true,
-        checkInTime: new Date(),
+        checkedInAt: new Date(),
       })
       .where(
         and(
@@ -5326,7 +5325,7 @@ export class DbStorage implements IStorage {
   }): Promise<SelectEvent[]> {
     const { query, eventType, city, startDate, endDate, musicStyle, limit = 20, offset = 0 } = params;
     
-    let conditions = [eq(events.isPublic, true)];
+    let conditions = [eq(events.visibility, 'public')];
     
     if (query) {
       conditions.push(
@@ -5597,45 +5596,55 @@ export class DbStorage implements IStorage {
   }
   
   async searchProfiles(filters: { 
-    query?: string; 
-    city?: string; 
-    country?: string; 
-    role?: string; 
-    limit?: number; 
+    profileTypes?: string[];
+    location?: { city?: string; country?: string; radius?: number };
+    priceRange?: { min?: number; max?: number };
+    availability?: string;
+    experience?: { min?: number; max?: number };
+    languages?: string[];
+    specialties?: string[];
+    rating?: { min?: number };
+    searchQuery?: string;
+    sortBy?: 'relevance' | 'rating' | 'price' | 'experience' | 'recent';
+    limit?: number;
     offset?: number;
-  }): Promise<any[]> {
-    const { query, city, country, role, limit = 20, offset = 0 } = filters;
+  }): Promise<{ profiles: any[]; total: number }> {
+    const { searchQuery, location, limit = 20, offset = 0 } = filters;
     
     let conditions: any[] = [eq(users.isActive, true)];
     
-    if (query) {
+    if (searchQuery) {
       conditions.push(
         or(
-          ilike(users.name, `%${query}%`),
-          ilike(users.username, `%${query}%`),
-          ilike(users.bio, `%${query}%`)
+          ilike(users.name, `%${searchQuery}%`),
+          ilike(users.username, `%${searchQuery}%`),
+          ilike(users.bio, `%${searchQuery}%`)
         )
       );
     }
     
-    if (city) {
-      conditions.push(ilike(users.city, `%${city}%`));
+    if (location?.city) {
+      conditions.push(ilike(users.city, `%${location.city}%`));
     }
     
-    if (country) {
-      conditions.push(ilike(users.country, `%${country}%`));
+    if (location?.country) {
+      conditions.push(ilike(users.country, `%${location.country}%`));
     }
     
-    if (role && role !== 'user') {
-      conditions.push(eq(users.role, role));
-    }
-    
-    return await db
+    const profiles = await db
       .select()
       .from(users)
       .where(and(...conditions))
       .limit(limit)
       .offset(offset);
+    
+    // Get total count
+    const countResult = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(users)
+      .where(and(...conditions));
+    
+    return { profiles, total: countResult[0]?.count || 0 };
   }
 
   async searchAllProfiles(filters: {
@@ -5875,7 +5884,7 @@ export class DbStorage implements IStorage {
     if (user) {
       const fields = [
         user.name, user.bio, user.city, user.country, 
-        user.profileImage, user.website
+        user.profileImage
       ];
       completeness = (fields.filter(f => f).length / fields.length) * 100;
     }
@@ -6170,14 +6179,15 @@ export class DbStorage implements IStorage {
   }
   
   async getProfileViewStats(userId: number): Promise<any> {
+    // Note: activityLogs schema only has: id, userId, type, text, time, createdAt
+    // We'll search by type and use text to find profile views for this user
     const logs = await db
       .select()
       .from(activityLogs)
       .where(
         and(
-          eq(activityLogs.targetType, 'user'),
-          eq(activityLogs.targetId, userId),
-          eq(activityLogs.action, 'profile_view')
+          eq(activityLogs.type, 'profile_view'),
+          ilike(activityLogs.text, `%user_id:${userId}%`)
         )
       )
       .orderBy(desc(activityLogs.createdAt))
@@ -6251,33 +6261,36 @@ export class DbStorage implements IStorage {
     return result?.count || 0;
   }
   
-  async getProfileStats(userId: number): Promise<any> {
-    const [followers, following, userPosts, userEvents] = await Promise.all([
-      db.select().from(follows).where(eq(follows.followingId, userId)),
-      db.select().from(follows).where(eq(follows.followerId, userId)),
-      db.select().from(posts).where(eq(posts.userId, userId)),
-      db.select().from(events).where(eq(events.userId, userId)),
+  async getProfileStats(): Promise<any> {
+    // Get profile counts by type
+    const [teacherCount, djCount, photographerCount, performerCount] = await Promise.all([
+      db.select({ count: sql<number>`count(*)::int` }).from(teacherProfiles),
+      db.select({ count: sql<number>`count(*)::int` }).from(djProfiles),
+      db.select({ count: sql<number>`count(*)::int` }).from(photographerProfiles),
+      db.select({ count: sql<number>`count(*)::int` }).from(performerProfiles),
     ]);
     
     return {
-      followersCount: followers.length,
-      followingCount: following.length,
-      postsCount: userPosts.length,
-      eventsCount: userEvents.length,
+      teachers: teacherCount[0]?.count || 0,
+      djs: djCount[0]?.count || 0,
+      photographers: photographerCount[0]?.count || 0,
+      performers: performerCount[0]?.count || 0,
     };
   }
   
   async getFeaturedProfiles(params: { profileType?: string; limit?: number }): Promise<any[]> {
     const { profileType, limit = 10 } = params;
     
+    // Note: Most profile tables don't have isFeatured column, 
+    // so we return verified/active profiles ordered by rating instead
     if (!profileType || profileType === 'all') {
       const allProfiles = await Promise.all([
-        db.select().from(teacherProfiles).where(eq(teacherProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
-        db.select().from(djProfiles).where(eq(djProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
-        db.select().from(performerProfiles).where(eq(performerProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
-        db.select().from(photographerProfiles).where(eq(photographerProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
-        db.select().from(vendorProfiles).where(eq(vendorProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
-        db.select().from(musicianProfiles).where(eq(musicianProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
+        db.select().from(teacherProfiles).where(eq(teacherProfiles.isVerified, true)).limit(Math.floor(limit / 6)),
+        db.select().from(djProfiles).where(eq(djProfiles.isVerified, true)).limit(Math.floor(limit / 6)),
+        db.select().from(performerProfiles).where(eq(performerProfiles.isVerified, true)).limit(Math.floor(limit / 6)),
+        db.select().from(photographerProfiles).where(eq(photographerProfiles.isVerified, true)).limit(Math.floor(limit / 6)),
+        db.select().from(vendorProfiles).where(eq(vendorProfiles.isVerified, true)).limit(Math.floor(limit / 6)),
+        db.select().from(musicianProfiles).where(eq(musicianProfiles.isVerified, true)).limit(Math.floor(limit / 6)),
       ]);
       return allProfiles.flat().slice(0, limit);
     }
@@ -6944,8 +6957,9 @@ export class DbStorage implements IStorage {
     if (city) conditions.push(sql`LOWER(${users.city}) = LOWER(${city})`);
     if (country) conditions.push(sql`LOWER(${users.country}) = LOWER(${country})`);
     if (minRating !== undefined) conditions.push(gte(teacherProfiles.averageRating, minRating));
-    if (minRate !== undefined) conditions.push(gte(teacherProfiles.hourlyRate, minRate));
-    if (maxRate !== undefined) conditions.push(lte(teacherProfiles.hourlyRate, maxRate));
+    // hourlyRate is numeric (string) type, use sql comparison
+    if (minRate !== undefined) conditions.push(sql`CAST(${teacherProfiles.hourlyRate} AS DECIMAL) >= ${minRate}`);
+    if (maxRate !== undefined) conditions.push(sql`CAST(${teacherProfiles.hourlyRate} AS DECIMAL) <= ${maxRate}`);
     if (verified !== undefined) conditions.push(eq(teacherProfiles.isVerified, verified));
     if (minExperience !== undefined) conditions.push(gte(teacherProfiles.yearsExperience, minExperience));
     
@@ -7040,27 +7054,42 @@ export class DbStorage implements IStorage {
     availability?: string;
     limit?: number; 
     offset?: number;
-  }): Promise<SelectDJProfile[]> {
-    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, musicStyles, minExperience, availability, limit = 20, offset = 0 } = params;
+  }): Promise<{ results: SelectDJProfile[]; total: number; facets: Record<string, Record<string, number>> }> {
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, musicStyles, minExperience, limit = 20, offset = 0 } = params;
     const conditions: any[] = [eq(djProfiles.isActive, true)];
     
-    if (city) conditions.push(sql`LOWER(${djProfiles.city}) = LOWER(${city})`);
-    if (country) conditions.push(sql`LOWER(${djProfiles.country}) = LOWER(${country})`);
+    // Location is on users table, not djProfiles
+    if (city) conditions.push(sql`LOWER(${users.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${users.country}) = LOWER(${country})`);
     if (minRating !== undefined) conditions.push(gte(djProfiles.averageRating, minRating));
-    if (maxHourlyRate !== undefined) conditions.push(lte(djProfiles.hourlyRate, maxHourlyRate));
-    if (minHourlyRate !== undefined) conditions.push(gte(djProfiles.hourlyRate, minHourlyRate));
+    // hourlyRate is numeric (string) so use sql comparison
+    if (maxHourlyRate !== undefined) conditions.push(sql`CAST(${djProfiles.hourlyRate} AS DECIMAL) <= ${maxHourlyRate}`);
+    if (minHourlyRate !== undefined) conditions.push(sql`CAST(${djProfiles.hourlyRate} AS DECIMAL) >= ${minHourlyRate}`);
     if (verified !== undefined) conditions.push(eq(djProfiles.isVerified, verified));
     if (musicStyles && musicStyles.length > 0) {
       conditions.push(sql`${djProfiles.musicStyles} && ARRAY[${sql.join(musicStyles.map(s => sql`${s}`), sql`, `)}]::text[]`);
     }
-    if (minExperience !== undefined) conditions.push(gte(djProfiles.yearsOfExperience, minExperience));
-    if (availability) conditions.push(eq(djProfiles.availabilityStatus, availability));
+    if (minExperience !== undefined) conditions.push(gte(djProfiles.yearsExperience, minExperience));
     
-    return db.select().from(djProfiles)
+    const results = await db.select({ profile: djProfiles })
+      .from(djProfiles)
+      .innerJoin(users, eq(djProfiles.userId, users.id))
       .where(and(...conditions))
       .orderBy(desc(djProfiles.averageRating))
       .limit(limit)
       .offset(offset);
+    
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(djProfiles)
+      .innerJoin(users, eq(djProfiles.userId, users.id))
+      .where(and(...conditions));
+    
+    return {
+      results: results.map(r => r.profile),
+      total: countResult?.count || 0,
+      facets: {}
+    };
   }
 
   async searchPhotographerProfiles(params: { 
@@ -7075,27 +7104,42 @@ export class DbStorage implements IStorage {
     availability?: string;
     limit?: number; 
     offset?: number;
-  }): Promise<SelectPhotographerProfile[]> {
-    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, specialties, minExperience, availability, limit = 20, offset = 0 } = params;
+  }): Promise<{ results: SelectPhotographerProfile[]; total: number; facets: Record<string, Record<string, number>> }> {
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, specialties, minExperience, limit = 20, offset = 0 } = params;
     const conditions: any[] = [eq(photographerProfiles.isActive, true)];
     
-    if (city) conditions.push(sql`LOWER(${photographerProfiles.city}) = LOWER(${city})`);
-    if (country) conditions.push(sql`LOWER(${photographerProfiles.country}) = LOWER(${country})`);
+    // Location is on users table, not photographerProfiles
+    if (city) conditions.push(sql`LOWER(${users.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${users.country}) = LOWER(${country})`);
     if (minRating !== undefined) conditions.push(gte(photographerProfiles.averageRating, minRating));
-    if (maxHourlyRate !== undefined) conditions.push(lte(photographerProfiles.hourlyRate, maxHourlyRate));
-    if (minHourlyRate !== undefined) conditions.push(gte(photographerProfiles.hourlyRate, minHourlyRate));
+    // hourlyRate is numeric (string) so use sql comparison
+    if (maxHourlyRate !== undefined) conditions.push(sql`CAST(${photographerProfiles.hourlyRate} AS DECIMAL) <= ${maxHourlyRate}`);
+    if (minHourlyRate !== undefined) conditions.push(sql`CAST(${photographerProfiles.hourlyRate} AS DECIMAL) >= ${minHourlyRate}`);
     if (verified !== undefined) conditions.push(eq(photographerProfiles.isVerified, verified));
     if (specialties && specialties.length > 0) {
       conditions.push(sql`${photographerProfiles.specialties} && ARRAY[${sql.join(specialties.map(s => sql`${s}`), sql`, `)}]::text[]`);
     }
-    if (minExperience !== undefined) conditions.push(gte(photographerProfiles.yearsOfExperience, minExperience));
-    if (availability) conditions.push(eq(photographerProfiles.availabilityStatus, availability));
+    if (minExperience !== undefined) conditions.push(gte(photographerProfiles.yearsExperience, minExperience));
     
-    return db.select().from(photographerProfiles)
+    const results = await db.select({ profile: photographerProfiles })
+      .from(photographerProfiles)
+      .innerJoin(users, eq(photographerProfiles.userId, users.id))
       .where(and(...conditions))
       .orderBy(desc(photographerProfiles.averageRating))
       .limit(limit)
       .offset(offset);
+    
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(photographerProfiles)
+      .innerJoin(users, eq(photographerProfiles.userId, users.id))
+      .where(and(...conditions));
+    
+    return {
+      results: results.map(r => r.profile),
+      total: countResult?.count || 0,
+      facets: {}
+    };
   }
 
   async searchPerformerProfiles(params: { 
@@ -7111,26 +7155,30 @@ export class DbStorage implements IStorage {
     limit?: number; 
     offset?: number;
   }): Promise<SelectPerformerProfile[]> {
-    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, performanceTypes, minExperience, availability, limit = 20, offset = 0 } = params;
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, performanceTypes, minExperience, limit = 20, offset = 0 } = params;
     const conditions: any[] = [eq(performerProfiles.isActive, true)];
     
-    if (city) conditions.push(sql`LOWER(${performerProfiles.city}) = LOWER(${city})`);
-    if (country) conditions.push(sql`LOWER(${performerProfiles.country}) = LOWER(${country})`);
+    // Location is on users table
+    if (city) conditions.push(sql`LOWER(${users.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${users.country}) = LOWER(${country})`);
     if (minRating !== undefined) conditions.push(gte(performerProfiles.averageRating, minRating));
-    if (maxHourlyRate !== undefined) conditions.push(lte(performerProfiles.hourlyRate, maxHourlyRate));
-    if (minHourlyRate !== undefined) conditions.push(gte(performerProfiles.hourlyRate, minHourlyRate));
+    if (maxHourlyRate !== undefined) conditions.push(sql`CAST(${performerProfiles.hourlyRate} AS DECIMAL) <= ${maxHourlyRate}`);
+    if (minHourlyRate !== undefined) conditions.push(sql`CAST(${performerProfiles.hourlyRate} AS DECIMAL) >= ${minHourlyRate}`);
     if (verified !== undefined) conditions.push(eq(performerProfiles.isVerified, verified));
     if (performanceTypes && performanceTypes.length > 0) {
       conditions.push(sql`${performerProfiles.performanceTypes} && ARRAY[${sql.join(performanceTypes.map(s => sql`${s}`), sql`, `)}]::text[]`);
     }
-    if (minExperience !== undefined) conditions.push(gte(performerProfiles.yearsOfExperience, minExperience));
-    if (availability) conditions.push(eq(performerProfiles.availabilityStatus, availability));
+    if (minExperience !== undefined) conditions.push(gte(performerProfiles.yearsPerforming, minExperience));
     
-    return db.select().from(performerProfiles)
+    const results = await db.select({ profile: performerProfiles })
+      .from(performerProfiles)
+      .innerJoin(users, eq(performerProfiles.userId, users.id))
       .where(and(...conditions))
       .orderBy(desc(performerProfiles.averageRating))
       .limit(limit)
       .offset(offset);
+    
+    return results.map(r => r.profile);
   }
 
   async searchVendorProfiles(params: { 
@@ -7145,19 +7193,24 @@ export class DbStorage implements IStorage {
     const { city, country, minRating, verified, productCategories, limit = 20, offset = 0 } = params;
     const conditions: any[] = [eq(vendorProfiles.isActive, true)];
     
-    if (city) conditions.push(sql`LOWER(${vendorProfiles.city}) = LOWER(${city})`);
-    if (country) conditions.push(sql`LOWER(${vendorProfiles.country}) = LOWER(${country})`);
+    // Location is on users table
+    if (city) conditions.push(sql`LOWER(${users.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${users.country}) = LOWER(${country})`);
     if (minRating !== undefined) conditions.push(gte(vendorProfiles.averageRating, minRating));
     if (verified !== undefined) conditions.push(eq(vendorProfiles.isVerified, verified));
     if (productCategories && productCategories.length > 0) {
       conditions.push(sql`${vendorProfiles.productCategories} && ARRAY[${sql.join(productCategories.map(s => sql`${s}`), sql`, `)}]::text[]`);
     }
     
-    return db.select().from(vendorProfiles)
+    const results = await db.select({ profile: vendorProfiles })
+      .from(vendorProfiles)
+      .innerJoin(users, eq(vendorProfiles.userId, users.id))
       .where(and(...conditions))
       .orderBy(desc(vendorProfiles.averageRating))
       .limit(limit)
       .offset(offset);
+    
+    return results.map(r => r.profile);
   }
 
   async searchMusicianProfiles(params: { 
@@ -7174,14 +7227,15 @@ export class DbStorage implements IStorage {
     limit?: number; 
     offset?: number;
   }): Promise<SelectMusicianProfile[]> {
-    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, instruments, genres, minExperience, availability, limit = 20, offset = 0 } = params;
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, instruments, genres, minExperience, limit = 20, offset = 0 } = params;
     const conditions: any[] = [eq(musicianProfiles.isActive, true)];
     
-    if (city) conditions.push(sql`LOWER(${musicianProfiles.city}) = LOWER(${city})`);
-    if (country) conditions.push(sql`LOWER(${musicianProfiles.country}) = LOWER(${country})`);
+    // Location is on users table
+    if (city) conditions.push(sql`LOWER(${users.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${users.country}) = LOWER(${country})`);
     if (minRating !== undefined) conditions.push(gte(musicianProfiles.averageRating, minRating));
-    if (maxHourlyRate !== undefined) conditions.push(lte(musicianProfiles.hourlyRate, maxHourlyRate));
-    if (minHourlyRate !== undefined) conditions.push(gte(musicianProfiles.hourlyRate, minHourlyRate));
+    if (maxHourlyRate !== undefined) conditions.push(sql`CAST(${musicianProfiles.hourlyRate} AS DECIMAL) <= ${maxHourlyRate}`);
+    if (minHourlyRate !== undefined) conditions.push(sql`CAST(${musicianProfiles.hourlyRate} AS DECIMAL) >= ${minHourlyRate}`);
     if (verified !== undefined) conditions.push(eq(musicianProfiles.isVerified, verified));
     if (instruments && instruments.length > 0) {
       conditions.push(sql`${musicianProfiles.instruments} && ARRAY[${sql.join(instruments.map(s => sql`${s}`), sql`, `)}]::text[]`);
@@ -7189,14 +7243,17 @@ export class DbStorage implements IStorage {
     if (genres && genres.length > 0) {
       conditions.push(sql`${musicianProfiles.genres} && ARRAY[${sql.join(genres.map(s => sql`${s}`), sql`, `)}]::text[]`);
     }
-    if (minExperience !== undefined) conditions.push(gte(musicianProfiles.yearsOfExperience, minExperience));
-    if (availability) conditions.push(eq(musicianProfiles.availabilityStatus, availability));
+    if (minExperience !== undefined) conditions.push(gte(musicianProfiles.yearsExperience, minExperience));
     
-    return db.select().from(musicianProfiles)
+    const results = await db.select({ profile: musicianProfiles })
+      .from(musicianProfiles)
+      .innerJoin(users, eq(musicianProfiles.userId, users.id))
       .where(and(...conditions))
       .orderBy(desc(musicianProfiles.averageRating))
       .limit(limit)
       .offset(offset);
+    
+    return results.map(r => r.profile);
   }
 
   async searchChoreographerProfiles(params: { 
@@ -7212,20 +7269,20 @@ export class DbStorage implements IStorage {
     limit?: number; 
     offset?: number;
   }): Promise<SelectChoreographerProfile[]> {
-    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, styles, minExperience, availability, limit = 20, offset = 0 } = params;
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, styles, minExperience, limit = 20, offset = 0 } = params;
     const conditions: any[] = [eq(choreographerProfiles.isActive, true)];
     
-    if (city) conditions.push(sql`LOWER(${choreographerProfiles.city}) = LOWER(${city})`);
-    if (country) conditions.push(sql`LOWER(${choreographerProfiles.country}) = LOWER(${country})`);
+    // Location is on users table
+    if (city) conditions.push(sql`LOWER(${users.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${users.country}) = LOWER(${country})`);
     if (minRating !== undefined) conditions.push(gte(choreographerProfiles.averageRating, minRating));
-    if (maxHourlyRate !== undefined) conditions.push(lte(choreographerProfiles.hourlyRate, maxHourlyRate));
-    if (minHourlyRate !== undefined) conditions.push(gte(choreographerProfiles.hourlyRate, minHourlyRate));
+    if (maxHourlyRate !== undefined) conditions.push(sql`CAST(${choreographerProfiles.hourlyRate} AS DECIMAL) <= ${maxHourlyRate}`);
+    if (minHourlyRate !== undefined) conditions.push(sql`CAST(${choreographerProfiles.hourlyRate} AS DECIMAL) >= ${minHourlyRate}`);
     if (verified !== undefined) conditions.push(eq(choreographerProfiles.isVerified, verified));
     if (styles && styles.length > 0) {
       conditions.push(sql`${choreographerProfiles.styles} && ARRAY[${sql.join(styles.map(s => sql`${s}`), sql`, `)}]::text[]`);
     }
-    if (minExperience !== undefined) conditions.push(gte(choreographerProfiles.yearsOfExperience, minExperience));
-    if (availability) conditions.push(eq(choreographerProfiles.availabilityStatus, availability));
+    if (minExperience !== undefined) conditions.push(gte(choreographerProfiles.yearsExperience, minExperience));
     
     return db.select().from(choreographerProfiles)
       .where(and(...conditions))
@@ -8775,12 +8832,6 @@ export class DbStorage implements IStorage {
       .from(venues)
       .where(ilike(venues.city, city));
     return result[0]?.count || 0;
-  }
-
-  // Notification system
-  async createNotification(notification: any): Promise<any> {
-    const [newNotification] = await db.insert(notifications).values(notification).returning();
-    return newNotification;
   }
 
   // ============================================================================

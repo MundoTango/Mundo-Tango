@@ -486,4 +486,156 @@ router.post("/fix-feedback", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * POST /api/mrblue/diagnostic-auto-fix
+ * MB.MD Pattern 67: Bridge diagnostic patterns to AutoFixEngine
+ * Takes diagnostic context from bug reports and attempts auto-fix
+ */
+const diagnosticAutoFixSchema = z.object({
+  patternId: z.string(),
+  diagnosis: z.string(),
+  suggestedFix: z.string(),
+  relatedFiles: z.array(z.string()),
+  severity: z.enum(['low', 'medium', 'high', 'critical']),
+  context: z.object({
+    errors: z.array(z.any()).optional(),
+    apiCalls: z.array(z.any()).optional(),
+    testId: z.string().optional(),
+    breadcrumb: z.array(z.string()).optional(),
+    userContext: z.any().optional(),
+  }).optional(),
+});
+
+router.post("/diagnostic-auto-fix", async (req: Request, res: Response) => {
+  try {
+    console.log('[DiagnosticAutoFix] Request received:', req.body);
+
+    const validationResult = diagnosticAutoFixSchema.safeParse(req.body);
+    if (!validationResult.success) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid request format",
+        details: validationResult.error.errors,
+      });
+    }
+
+    const { patternId, diagnosis, suggestedFix, relatedFiles, severity, context } = validationResult.data;
+    const userId = (req as any).user?.id;
+
+    console.log(`[DiagnosticAutoFix] Processing diagnostic pattern: ${patternId}`);
+    console.log(`[DiagnosticAutoFix] Diagnosis: ${diagnosis}`);
+    console.log(`[DiagnosticAutoFix] Suggested fix: ${suggestedFix}`);
+    console.log(`[DiagnosticAutoFix] Related files: ${relatedFiles.join(', ')}`);
+
+    // Create or find an error pattern entry for this diagnostic
+    let errorPatternId: number | null = null;
+
+    // Check if an error pattern already exists for similar diagnosis
+    const existingPatterns = await db
+      .select()
+      .from(errorPatterns)
+      .where(eq(errorPatterns.errorType, `diagnostic_${patternId}`))
+      .limit(1);
+
+    if (existingPatterns.length > 0) {
+      errorPatternId = existingPatterns[0].id;
+      console.log(`[DiagnosticAutoFix] Found existing error pattern: ${errorPatternId}`);
+    } else {
+      // Create new error pattern from diagnostic
+      const errorMessage = context?.errors?.[0]?.message || diagnosis;
+      
+      const confidenceValue = severity === 'critical' ? '0.90' : 
+                               severity === 'high' ? '0.80' : 
+                               severity === 'medium' ? '0.70' : '0.60';
+      
+      const [newPattern] = await db
+        .insert(errorPatterns)
+        .values({
+          errorType: `diagnostic_${patternId}`,
+          errorMessage: errorMessage.substring(0, 500),
+          suggestedFix,
+          status: 'pending',
+          frequency: 1,
+          firstSeen: new Date(),
+          lastSeen: new Date(),
+          aiAnalysis: {
+            diagnosis,
+            severity,
+            relatedFiles,
+            context: context || {},
+            source: 'mr-blue-diagnostic'
+          },
+          fixConfidence: confidenceValue,
+        })
+        .returning();
+      
+      errorPatternId = newPattern.id;
+      console.log(`[DiagnosticAutoFix] Created new error pattern: ${errorPatternId}`);
+    }
+
+    // Initialize AutoFixEngine
+    await ensureAutoFixInitialized();
+
+    // Process through AutoFixEngine
+    console.log(`[DiagnosticAutoFix] Running AutoFixEngine for pattern ${errorPatternId}...`);
+    const result = await autoFixEngine.processError(errorPatternId);
+
+    if (!result.success) {
+      console.log(`[DiagnosticAutoFix] AutoFix analysis returned: ${result.error}`);
+      
+      // Return a helpful response even if auto-fix fails
+      return res.status(200).json({
+        success: false,
+        errorPatternId,
+        error: result.error || "Unable to generate fix",
+        decision: {
+          action: 'manual-review',
+          confidence: 50,
+          reasoning: result.error || "AutoFixEngine could not process this pattern"
+        },
+        fixAnalysis: {
+          rootCause: diagnosis,
+          suggestedFix,
+          affectedFiles: relatedFiles,
+          estimatedComplexity: severity === 'critical' ? 'high' : 
+                               severity === 'high' ? 'medium' : 'low',
+          confidence: 50,
+        }
+      });
+    }
+
+    console.log(`[DiagnosticAutoFix] ✅ Analysis complete:`);
+    console.log(`  Decision: ${result.decision.action}`);
+    console.log(`  Confidence: ${result.decision.confidence}%`);
+    console.log(`  Affected files: ${result.fixAnalysis.affectedFiles.length}`);
+
+    // Broadcast status to user if available
+    if (userId) {
+      broadcastToUser(userId, 'diagnostic_auto_fix', {
+        patternId,
+        errorPatternId,
+        decision: result.decision,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      errorPatternId,
+      decision: result.decision,
+      fixAnalysis: result.fixAnalysis,
+      vibeCodeResult: result.vibeCodeResult,
+      gitCommitId: result.gitCommitId,
+      appliedAt: result.appliedAt,
+    });
+  } catch (error: any) {
+    console.error('[DiagnosticAutoFix] Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      message: error.message,
+    });
+  }
+});
+
 export default router;

@@ -8,8 +8,21 @@
 import { Router, type Request, Response } from "express";
 import { vibeCodingMasterLoop } from "../services/mrBlue/VibeCodingMasterLoop";
 import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
+import { agenticExecutor } from "../services/mrBlue/AgenticExecutor";
+import { optionalAuth, AuthRequest } from "../middleware/auth";
 
 const router = Router();
+
+// Apply optional auth middleware to all routes
+router.use(optionalAuth);
+
+// God-level user emails for direct agentic execution
+const GOD_LEVEL_USERS = ['scott@boddye.com', 'admin@mundotango.life'];
+
+function isGodLevel(user: any): boolean {
+  if (!user) return false;
+  return GOD_LEVEL_USERS.includes(user.email) || user.tier >= 8;
+}
 
 // Main VibeCoding endpoint with streaming support
 router.post("/vibecoding", async (req: Request, res: Response) => {
@@ -114,6 +127,73 @@ router.post("/generate-code", async (req: Request, res: Response) => {
       success: false,
       error: error.message || "Code generation failed",
     });
+  }
+});
+
+// Direct AgenticExecutor test endpoint (God-level only)
+router.post("/agentic-execute", async (req: Request, res: Response) => {
+  try {
+    const { prompt, context } = req.body;
+    const user = (req as any).user;
+
+    // God-level check (tier 8 OR in GOD_LEVEL_USERS list)
+    if (!isGodLevel(user)) {
+      return res.status(403).json({
+        success: false,
+        error: "God-level (Tier 8) access required for direct agentic execution",
+      });
+    }
+
+    if (!prompt) {
+      return res.status(400).json({ success: false, error: "Prompt is required" });
+    }
+
+    // Set up SSE for streaming
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+
+    console.log(`[AgenticExecutor] Starting direct execution: ${prompt.substring(0, 100)}...`);
+
+    // Execute with AgenticExecutor
+    const result = await agenticExecutor.execute(
+      prompt,
+      context || {},
+      (step) => {
+        // Stream each step
+        res.write(`data: ${JSON.stringify({
+          type: step.type,
+          content: step.content,
+          timestamp: step.timestamp,
+          toolName: step.toolName,
+          toolResult: step.toolResult,
+        })}\n\n`);
+      }
+    );
+
+    // Send final result
+    res.write(`data: ${JSON.stringify({
+      type: "complete",
+      success: result.success,
+      filesModified: result.filesModified,
+      filesCreated: result.filesCreated,
+      error: result.error,
+    })}\n\n`);
+
+    res.end();
+  } catch (error: any) {
+    console.error("[AgenticExecutor] Direct execution error:", error);
+    
+    if (!res.headersSent) {
+      return res.status(500).json({
+        success: false,
+        error: error.message || "Agentic execution failed",
+      });
+    }
+    
+    res.write(`data: ${JSON.stringify({ type: "error", content: error.message })}\n\n`);
+    res.end();
   }
 });
 

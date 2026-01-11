@@ -16,7 +16,14 @@ import {
   Paperclip,
   FileText,
   Trash2,
+  Upload,
 } from "lucide-react";
+import { JourneyTimeline } from "@/components/qa/JourneyTimeline";
+import { ContextCards } from "@/components/qa/ContextCards";
+import { DiagnosisSummary } from "@/components/qa/DiagnosisSummary";
+import { ElementSelectorButton } from "@/components/qa/ElementSelector";
+import { JourneyReplay } from "@/components/qa/JourneyReplay";
+import type { DiagnosticContext, UserContext, APICallRecord, ErrorRecord } from "@/lib/qa/componentRegistry";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -77,7 +84,7 @@ export function MrBlueChat({ onClose }: MrBlueChatProps) {
     setWalkthroughResult,
   } = useMrBlue();
   const { user } = useAuth();
-  const { getSnapshot, trackStep, sessionId, captureScreenshot } = useJourneyTracker(user?.id);
+  const { getSnapshot, getEnhancedSnapshot, trackStep, sessionId, captureScreenshot } = useJourneyTracker(user?.id);
 
   // QA Mode state - tracks if user is in help/feature request mode
   const [qaMode, setQaMode] = useState<"none" | "help" | "features" | "bug">(
@@ -181,6 +188,51 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   const lastFetchedIdRef = useRef<string | null>(null);
   // UX-004 FIX: Track context key to avoid wiping history on context changes
   const lastContextKeyRef = useRef<string | null>(null);
+
+  // MB.MD Pattern 67: Detect ?mrblue=debug param and auto-open VibeCoding mode for bug fixing
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const debugMode = urlParams.get('mrblue');
+    
+    if (debugMode === 'debug') {
+      const storedContext = sessionStorage.getItem('bugDiagnosticContext');
+      if (storedContext) {
+        try {
+          const context = JSON.parse(storedContext);
+          console.log('[MrBlueChat] Debug mode activated with context:', context);
+          
+          setMode('vibecoding');
+          
+          const debugMessage: Message = {
+            id: `debug-${Date.now()}`,
+            role: 'assistant',
+            content: `**VibeCoding Mode - Bug Fix Session**
+
+I've loaded the diagnostic context for bug: **"${context.title}"**
+
+**Page:** ${context.currentPage}
+**Description:** ${context.description?.substring(0, 200) || 'No description'}
+
+I'm analyzing the issue now. You can ask me to:
+- Analyze the root cause
+- Generate a fix
+- Apply the fix automatically
+
+What would you like me to do?`,
+            timestamp: new Date(),
+          };
+          
+          setMessages(prev => [debugMessage, ...prev.filter(m => m.id !== '1')]);
+          
+          sessionStorage.removeItem('bugDiagnosticContext');
+          
+          window.history.replaceState({}, '', window.location.pathname);
+        } catch (e) {
+          console.error('[MrBlueChat] Failed to parse debug context:', e);
+        }
+      }
+    }
+  }, []);
 
   // UX-004 FIX: Update welcome message when CTO, self-heal, or walkthrough result context changes
   // PREPEND context message instead of replacing entire history
@@ -596,11 +648,76 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     }
   };
 
+  // Bug conversation: Chat with Mr. Blue to gather more details before submission
+  const sendBugMessage = async () => {
+    if (!input.trim()) return;
+    
+    const messageText = input.trim();
+    setInput("");
+    setIsLoading(true);
+
+    // Add user's message to chat
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: messageText,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+
+    try {
+      // Send to Mr. Blue with bug context so he can ask clarifying questions
+      const response = await apiRequest("POST", "/api/mrblue/chat", {
+        message: messageText,
+        conversationId: currentConversationId,
+        context: {
+          currentPage: location,
+          pageTitle: document.title,
+          mode: "bug_report",
+          diagnosticSnapshot: bugDiagnosticSnapshot ? {
+            currentPath: bugDiagnosticSnapshot.currentPath,
+            userTier: bugDiagnosticSnapshot.userContext?.tier,
+            recentErrors: bugDiagnosticSnapshot.consoleErrors?.slice(-3),
+            lastApiCalls: bugDiagnosticSnapshot.apiCalls?.slice(-3),
+          } : null,
+        },
+      });
+
+      const data = await response.json();
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: data.response || data.content || "I understand. Can you tell me more about what happened?",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      if (data.conversationId && !currentConversationId) {
+        setCurrentConversationId(data.conversationId);
+      }
+    } catch (error) {
+      // Fallback response if API fails
+      const fallbackMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Thanks for that information. Is there anything else you'd like to add before submitting the bug report?",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, fallbackMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      // In QA mode (help/features/bug), submit to QA system instead of chat
-      if (qaMode !== "none") {
+      // Bug mode: Allow conversation with Mr. Blue (Enter = chat, button = submit)
+      // Help/Features mode: Submit directly to QA system
+      if (qaMode === "bug") {
+        sendBugMessage();
+      } else if (qaMode !== "none") {
         submitQaRequest();
       } else {
         sendMessage();
@@ -611,16 +728,41 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   const [attachments, setAttachments] = useState<File[]>([]);
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
   const [bugScreenshot, setBugScreenshot] = useState<string | null>(null);
+  const [bugDiagnosticSnapshot, setBugDiagnosticSnapshot] = useState<any>(null);
+  const [bugModeStartIndex, setBugModeStartIndex] = useState<number>(0);
+  const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // QA System: Submission logic
+  // QA System: Submission logic - Uses enhanced diagnostic snapshot for bug reports
   const submitQaRequest = useCallback(async (finalMessage?: string) => {
+    console.log('[MrBlueChat] submitQaRequest called', { qaMode, input, finalMessage, bugModeStartIndex, messagesLength: messages.length });
+    
+    // For bug reports, we allow submission even without current input if there's conversation
+    const isBugMode = qaMode === "bug";
+    const bugConversation = isBugMode ? messages.slice(bugModeStartIndex) : [];
+    const hasConversation = bugConversation.some(m => m.role === "user");
+    
+    console.log('[MrBlueChat] Bug mode check', { isBugMode, hasConversation, bugConversationLength: bugConversation.length });
+    
     const messageText = finalMessage || input;
-    if (!messageText.trim() && attachments.length === 0) return;
+    
+    // Bug mode: need either current input OR previous conversation
+    // Other modes: need input or attachments
+    if (!isBugMode && !messageText.trim() && attachments.length === 0) {
+      console.log('[MrBlueChat] Early return: non-bug mode with no input/attachments');
+      return;
+    }
+    if (isBugMode && !messageText.trim() && !hasConversation) {
+      console.log('[MrBlueChat] Early return: bug mode with no input and no conversation');
+      return;
+    }
 
     setIsLoading(true);
     try {
-      const snapshot = getSnapshot();
+      // Use enhanced snapshot for bug reports, basic for others
+      const snapshot = isBugMode && bugDiagnosticSnapshot 
+        ? bugDiagnosticSnapshot 
+        : getEnhancedSnapshot();
       
       // Handle media attachments like PostCreator
       const processedAttachments = await Promise.all(attachments.map(async (file) => {
@@ -635,7 +777,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
       }));
 
       // Add auto-captured screenshot for bug reports
-      if (qaMode === "bug" && bugScreenshot) {
+      if (isBugMode && bugScreenshot) {
         processedAttachments.push({
           name: 'auto-screenshot.jpg',
           type: 'image/jpeg',
@@ -644,23 +786,79 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         });
       }
 
+      // Build conversation transcript for bug reports
+      const conversationTranscript = isBugMode 
+        ? bugConversation
+            .filter(m => m.role === "user" || m.role === "assistant")
+            .map(m => `[${m.role.toUpperCase()}]: ${m.content}`)
+            .join("\n\n")
+        : "";
+
+      // Generate AI diagnosis summary for engineers
+      const aiDiagnosis = isBugMode && snapshot
+        ? generateDiagnosisSummary(snapshot, messageText || conversationTranscript)
+        : "";
+
+      // Build description: AI diagnosis + current input + conversation transcript
+      const fullDescription = isBugMode
+        ? [aiDiagnosis, messageText, conversationTranscript].filter(Boolean).join("\n\n---\n\n")
+        : messageText;
+
+      // Extract title from first user message in conversation
+      const firstUserMessage = bugConversation.find(m => m.role === "user")?.content || messageText;
+      const title = (firstUserMessage || "Bug Report").substring(0, 50) + 
+        ((firstUserMessage || "").length > 50 ? "..." : "");
+
+      // Build comprehensive session snapshot with all diagnostic data for admin queue
+      const sessionSnapshotPayload = {
+        ...snapshot,
+        // Transform journey to events format expected by admin queue
+        events: snapshot.journey?.map((step: any) => ({
+          type: step.action || 'navigation',
+          timestamp: step.timestamp,
+          data: {
+            pathname: step.path,
+            element: step.element,
+            tagName: step.element?.split(':')[0] || 'div',
+            text: step.element?.split(':')[1] || '',
+            ...step.details
+          }
+        })) || [],
+        // Include user context for permissions debugging
+        userContext: snapshot.userContext,
+        // Include API calls for backend issue diagnosis
+        apiCalls: snapshot.apiCalls || [],
+        // Include errors for quick identification
+        errors: snapshot.consoleErrors || [],
+        // Include breadcrumb for navigation path
+        breadcrumb: snapshot.breadcrumb || [],
+        // Include browser info
+        browserInfo: snapshot.browserInfo,
+        // Include conversation transcript for bug reports
+        conversationTranscript: isBugMode ? conversationTranscript : undefined,
+        // Capture timestamp
+        capturedAt: Date.now()
+      };
+
+      console.log('[MrBlueChat] Sending bug report to /api/qa-platform/feedback...');
       const response = await apiRequest("POST", "/api/qa-platform/feedback", {
-        feedbackType: qaMode === "bug" ? "bug" : qaMode === "features" ? "feature" : "support",
-        title: messageText.substring(0, 50) + (messageText.length > 50 ? "..." : ""),
-        description: messageText,
+        feedbackType: isBugMode ? "bug" : qaMode === "features" ? "feature" : "support",
+        title,
+        description: fullDescription,
         currentPage: location,
-        sessionSnapshot: snapshot,
-        priority: qaMode === "bug" ? "high" : "medium",
+        sessionSnapshot: sessionSnapshotPayload,
+        priority: isBugMode ? "high" : "medium",
         sessionId,
         attachments: processedAttachments
       });
+      console.log('[MrBlueChat] Response received:', response.status, response.ok);
 
       if (response.ok) {
         const successMessage: Message = {
           id: `qa-success-${Date.now()}`,
           role: "assistant",
-          content: qaMode === "bug" 
-            ? "Bug report submitted successfully! Screenshot and context captured for developers."
+          content: isBugMode 
+            ? "Bug report submitted successfully! Your conversation and full diagnostic context have been sent to the development team."
             : "Request recorded! This has been passed through @mb.md for architectural review and is now pending admin approval for build.",
           timestamp: new Date(),
         };
@@ -669,6 +867,9 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         setAttachments([]);
         setAttachmentPreviews([]);
         setBugScreenshot(null);
+        setBugDiagnosticSnapshot(null);
+        setBugModeStartIndex(0);
+        setSelectedElement(null);
         setInput("");
       }
     } catch (error) {
@@ -676,7 +877,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
     } finally {
       setIsLoading(false);
     }
-  }, [qaMode, input, attachments, location, getSnapshot, sessionId, bugScreenshot]);
+  }, [qaMode, input, attachments, location, getEnhancedSnapshot, sessionId, bugScreenshot, bugDiagnosticSnapshot, messages, bugModeStartIndex]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -749,11 +950,106 @@ What interests you?`,
     setMessages((prev) => [...prev, featuresMessage]);
   }, [getSnapshot, trackStep, location]);
 
-  // QA System Handler: Bug Report - Captures full context with screenshot
+  // Generate diagnostic-aware observations from snapshot
+  const generateDiagnosticObservations = (snapshot: any): string[] => {
+    const observations: string[] = [];
+    
+    // Check for API failures
+    const failedCalls = snapshot.apiCalls?.filter((c: any) => c.status >= 400 || c.status === 0) || [];
+    if (failedCalls.length > 0) {
+      const lastFailed = failedCalls[failedCalls.length - 1];
+      if (lastFailed.status === 404) {
+        observations.push(`I noticed a "not found" error on ${lastFailed.url.replace('/api/', '')} - was something missing?`);
+      } else if (lastFailed.status === 401 || lastFailed.status === 403) {
+        observations.push(`I see an authorization issue occurred - were you unexpectedly logged out?`);
+      } else if (lastFailed.status >= 500) {
+        observations.push(`A server error occurred (${lastFailed.status}) - did you see an error message on screen?`);
+      } else if (lastFailed.status === 0) {
+        observations.push(`A network request failed - are you having connectivity issues?`);
+      }
+    }
+    
+    // Check for rage clicks (frustration indicator)
+    if (snapshot.rageClicks?.length > 0) {
+      const lastRage = snapshot.rageClicks[snapshot.rageClicks.length - 1];
+      observations.push(`I noticed you clicked "${lastRage.element}" multiple times quickly - was it not responding?`);
+    }
+    
+    // Check for console errors
+    if (snapshot.consoleErrors?.length > 0) {
+      observations.push(`I detected ${snapshot.consoleErrors.length} error(s) in the background - this may be related to your issue.`);
+    }
+    
+    // Check for empty API responses (might indicate missing data)
+    const emptyResponses = snapshot.apiCalls?.filter((c: any) => 
+      c.status === 200 && c.responseBody && 
+      (Array.isArray(c.responseBody) && c.responseBody.length === 0)
+    ) || [];
+    if (emptyResponses.length > 0) {
+      observations.push(`Some requests returned empty results - were you expecting to see data that wasn't there?`);
+    }
+    
+    return observations;
+  };
+  
+  // Generate AI diagnosis summary for engineers
+  const generateDiagnosisSummary = (snapshot: any, userDescription: string): string => {
+    const lines: string[] = ['**AI Diagnosis Summary for Engineers:**'];
+    
+    // User context
+    const uc = snapshot.userContext;
+    lines.push(`- User: ${uc?.isLoggedIn ? `@${uc.username || 'unknown'} (${uc.tier})` : 'Not logged in'}`);
+    if (uc?.role) lines.push(`- Role: ${uc.role}`);
+    
+    // Page context
+    lines.push(`- Page: ${snapshot.currentPath}`);
+    if (snapshot.breadcrumb?.length > 0) {
+      lines.push(`- Path: ${snapshot.breadcrumb.join(' → ')}`);
+    }
+    
+    // API analysis
+    const failedCalls = snapshot.apiCalls?.filter((c: any) => c.status >= 400 || c.status === 0) || [];
+    if (failedCalls.length > 0) {
+      lines.push(`- Failed API calls: ${failedCalls.map((c: any) => `${c.method} ${c.url} (${c.status})`).join(', ')}`);
+    }
+    
+    // Error analysis
+    if (snapshot.consoleErrors?.length > 0) {
+      const errorSummary = snapshot.consoleErrors.slice(-3).map((e: any) => e.message.substring(0, 80)).join('; ');
+      lines.push(`- Console errors: ${errorSummary}`);
+    }
+    
+    // Likely cause analysis
+    if (failedCalls.some((c: any) => c.status === 404)) {
+      lines.push(`- Likely cause: Resource not found - check if ID exists or was deleted`);
+    } else if (failedCalls.some((c: any) => c.status === 401 || c.status === 403)) {
+      lines.push(`- Likely cause: Auth issue - check session validity and permissions`);
+    } else if (failedCalls.some((c: any) => c.status >= 500)) {
+      lines.push(`- Likely cause: Server error - check backend logs for stack trace`);
+    } else if (snapshot.rageClicks?.length > 0) {
+      lines.push(`- Likely cause: UI not responding - check event handlers and loading states`);
+    }
+    
+    // Suggested files to investigate
+    if (snapshot.lastTestId) {
+      lines.push(`- Last interaction: ${snapshot.lastTestId} (check component registry for file mapping)`);
+    }
+    
+    return lines.join('\n');
+  };
+
+  // QA System Handler: Bug Report - Captures full context with screenshot using enhanced diagnostics
   const handleBugReport = useCallback(async () => {
-    const snapshot = getSnapshot();
+    // Pass user from AuthContext for accurate auth state in diagnostics
+    const enhancedSnapshot = getEnhancedSnapshot(user);
     trackStep({ path: location, action: "qa_bug_report" });
     setQaMode("bug");
+
+    // Track where bug conversation starts for transcript extraction
+    setBugModeStartIndex(messages.length);
+
+    // Store the diagnostic snapshot for later submission
+    setBugDiagnosticSnapshot(enhancedSnapshot);
 
     // Capture screenshot immediately when entering bug mode
     const screenshot = await captureScreenshot();
@@ -761,66 +1057,30 @@ What interests you?`,
       setBugScreenshot(screenshot);
     }
 
-    const recentJourney = snapshot.journey
-      .slice(-5)
-      .map(
-        (s) => `- ${s.action}: ${s.path}${s.element ? ` (${s.element})` : ""}`,
-      )
-      .join("\n");
-
-    // Enhanced context from journey tracker
-    const openDialogs = (snapshot as any).openDialogs || [];
-    const consoleErrors = (snapshot as any).consoleErrors || [];
-    const networkFailures = (snapshot as any).networkFailures || [];
-    const rageClicks = (snapshot as any).rageClicks || [];
-    const theme = (snapshot as any).browserInfo?.theme || 'unknown';
-    const locale = (snapshot as any).browserInfo?.locale || navigator.language;
-    const scrollPos = (snapshot as any).browserInfo?.scrollPosition || { x: 0, y: 0 };
-
-    // Build enhanced context sections
-    const dialogSection = openDialogs.length > 0 
-      ? `\n**Open Dialogs:** ${openDialogs.join(', ')}` 
-      : '';
-    
-    const errorSection = consoleErrors.length > 0
-      ? `\n**Recent Errors:** ${consoleErrors.slice(-3).map((e: any) => e.message.substring(0, 80)).join('; ')}`
-      : '';
-    
-    const networkSection = networkFailures.length > 0
-      ? `\n**Failed API Calls:** ${networkFailures.slice(-3).map((n: any) => `${n.method} ${n.url} (${n.status})`).join('; ')}`
-      : '';
-    
-    const rageSection = rageClicks.length > 0
-      ? `\n**Frustration Detected:** ${rageClicks.length} rage click events`
+    // Generate diagnostic-aware observations
+    const observations = generateDiagnosticObservations(enhancedSnapshot);
+    const observationsText = observations.length > 0 
+      ? `\n\n**I noticed:**\n${observations.map(o => `- ${o}`).join('\n')}\n` 
       : '';
 
-    const screenshotNote = screenshot ? '\n**Screenshot:** Captured automatically' : '';
-
+    // Conversational message - Mr. Blue asks clarifying questions with diagnostic insights
     const bugMessage: Message = {
       id: `qa-bug-${Date.now()}`,
       role: "assistant",
-      content: `**Bug Report Mode - Context Captured**
+      content: `**Bug Report Mode**
 
-**Session:** ${sessionId}
-**Current Page:** ${snapshot.currentPath}
-**Browser:** ${snapshot.browserInfo.platform}
-**Viewport:** ${snapshot.browserInfo.viewport.width}x${snapshot.browserInfo.viewport.height}
-**Theme:** ${theme} | **Locale:** ${locale}
-**Scroll:** ${scrollPos.x}, ${scrollPos.y}${dialogSection}${errorSection}${networkSection}${rageSection}${screenshotNote}
+I've captured your session context and I'm ready to help document this issue.${observationsText}
 
-**Recent Activity (Last 5 Steps):**
-${recentJourney}
-
-**Describe your issue:**
+**Tell me what happened:**
 - What were you trying to do?
-- What happened instead?
-- Any error messages you saw?
+- What went wrong or didn't work as expected?
+- Did you see any error messages?
 
-Type your description and click **Submit** to send to developers.`,
+Chat with me to describe the problem, then click **Submit Bug Report** when you're ready to send it to the development team.`,
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, bugMessage]);
-  }, [getSnapshot, trackStep, location, sessionId, captureScreenshot]);
+  }, [getEnhancedSnapshot, trackStep, location, captureScreenshot, messages.length, user]);
 
   return (
     <main className="flex flex-col h-full bg-gradient-to-b from-background via-background to-muted/30">
@@ -1102,10 +1362,107 @@ Type your description and click **Submit** to send to developers.`,
         </div>
       </div>
 
+      {/* Bug Report Diagnostic Panel - Shows visual components when in bug mode */}
+      {qaMode === "bug" && bugDiagnosticSnapshot && (
+        <div className="px-4 py-3 border-t bg-muted/30 max-h-[40vh] overflow-y-auto" data-testid="panel-bug-diagnostics">
+          <div className="max-w-2xl mx-auto space-y-4">
+            {/* Element Selector + Actions */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <ElementSelectorButton
+                onElementSelected={(selector) => {
+                  setSelectedElement(selector);
+                  const elementInfo = `I'm having an issue with this element: ${selector}`;
+                  setInput(prev => prev ? `${prev}\n\n${elementInfo}` : elementInfo);
+                }}
+                selectedSelector={selectedElement || undefined}
+              />
+              {selectedElement && (
+                <span className="text-xs text-muted-foreground font-mono bg-muted px-2 py-1 rounded">
+                  {selectedElement}
+                </span>
+              )}
+            </div>
+
+            {/* Journey Replay */}
+            <JourneyReplay
+              journey={bugDiagnosticSnapshot.journey || []}
+              networkFailures={bugDiagnosticSnapshot.networkFailures || []}
+              consoleErrors={bugDiagnosticSnapshot.consoleErrors || []}
+              rageClicks={bugDiagnosticSnapshot.rageClicks || []}
+            />
+
+            {/* Mr. Blue Analysis */}
+            <DiagnosisSummary 
+              context={{
+                testId: bugDiagnosticSnapshot.lastTestId || '',
+                breadcrumb: bugDiagnosticSnapshot.breadcrumb || [],
+                userContext: bugDiagnosticSnapshot.userContext || {
+                  userId: null,
+                  tier: 'free',
+                  isVerified: false,
+                  cityId: null,
+                  cityName: null,
+                  profileComplete: false,
+                  isLoggedIn: false,
+                  permissions: []
+                },
+                apiCalls: bugDiagnosticSnapshot.apiCalls || [],
+                errors: (bugDiagnosticSnapshot.consoleErrors || []).map((e: any) => ({
+                  type: 'console',
+                  message: e.message || '',
+                  timestamp: e.timestamp || Date.now(),
+                  componentName: ''
+                })),
+                appState: {}
+              }}
+              showRaw={false}
+            />
+            
+            {/* Journey Timeline */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium flex items-center gap-2">
+                <Eye className="h-4 w-4 text-muted-foreground" />
+                Your Recent Activity
+              </h4>
+              <JourneyTimeline 
+                journey={bugDiagnosticSnapshot.journey || []} 
+                maxSteps={8} 
+                compact={false}
+              />
+            </div>
+            
+            {/* Context Cards */}
+            <ContextCards
+              userContext={bugDiagnosticSnapshot.userContext}
+              apiCalls={bugDiagnosticSnapshot.apiCalls || []}
+              errors={(bugDiagnosticSnapshot.consoleErrors || []).map((e: any) => ({
+                type: 'console',
+                message: e.message || '',
+                timestamp: e.timestamp || Date.now(),
+                componentName: ''
+              }))}
+              compact={false}
+            />
+
+            {/* Screenshot Preview */}
+            {bugScreenshot && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium">Screenshot Captured</h4>
+                <img 
+                  src={bugScreenshot} 
+                  alt="Auto-captured screenshot" 
+                  className="rounded-md border max-h-32 w-auto"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Input Area */}
       <div className="p-4 border-t bg-background/80 backdrop-blur-sm">
-        {/* Smart Suggestions */}
-        <div className="flex flex-wrap gap-1.5 mb-3 max-w-2xl mx-auto">
+        {/* Smart Suggestions - Hidden in bug mode */}
+        <div className={`flex flex-wrap gap-1.5 mb-3 max-w-2xl mx-auto ${qaMode === "bug" ? "hidden" : ""}`}>
           <button
             onClick={() => {
               setInput("Find milongas this weekend");
@@ -1191,12 +1548,23 @@ Type your description and click **Submit** to send to developers.`,
             {qaMode !== "none" ? (
               <Button
                 size="sm"
-                className="h-9 px-3 rounded-full bg-primary hover:bg-primary/90 shadow-sm"
-                disabled={(!input.trim() && attachments.length === 0) || isLoading}
+                className={`h-9 px-3 rounded-full shadow-sm ${qaMode === "bug" ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-primary/90"}`}
+                disabled={
+                  isLoading || (
+                    qaMode === "bug" 
+                      ? (!input.trim() && !messages.slice(bugModeStartIndex).some(m => m.role === "user"))
+                      : (!input.trim() && attachments.length === 0)
+                  )
+                }
                 onClick={() => submitQaRequest()}
                 data-testid="button-submit-qa"
               >
-                Submit
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                ) : qaMode === "bug" ? (
+                  <Upload className="h-4 w-4 mr-1" />
+                ) : null}
+                {qaMode === "bug" ? "Submit Bug Report" : "Submit"}
               </Button>
             ) : (
               <Button

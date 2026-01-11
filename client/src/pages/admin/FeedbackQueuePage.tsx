@@ -20,9 +20,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { 
   Bug, Lightbulb, HelpCircle, AlertTriangle, Check, X, Eye, Clock, User, Calendar,
-  CheckCircle, XCircle, Search, Filter, FileText, Inbox, Rocket
+  CheckCircle, XCircle, Search, Filter, FileText, Inbox, Rocket, Globe, Shield,
+  MessageSquare, Wrench, Send, Zap
 } from 'lucide-react';
+import { useLocation } from 'wouter';
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { JourneyTimeline } from '@/components/qa/JourneyTimeline';
+import { ContextCards } from '@/components/qa/ContextCards';
+import { BugFixStream } from '@/components/mrBlue/advanced/BugFixStream';
 import { useToast } from '@/hooks/use-toast';
 import { safeDateFormat } from '@/lib/safeDateFormat';
 import { SEO } from '@/components/SEO';
@@ -137,9 +142,13 @@ export default function FeedbackQueuePage() {
 function FeedbackPanel() {
   const [selectedFeedback, setSelectedFeedback] = useState<FeedbackItem | null>(null);
   const [showSessionReplay, setShowSessionReplay] = useState(false);
+  const [showBugFixStream, setShowBugFixStream] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
+  const [replyMessage, setReplyMessage] = useState('');
+  const [showReplyForm, setShowReplyForm] = useState(false);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
   const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   const { data: feedbackList, isLoading } = useQuery<FeedbackItem[]>({
     queryKey: ['/api/qa-platform/admin/pending'],
@@ -158,8 +167,7 @@ function FeedbackPanel() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
-      setSelectedFeedback(null);
-      toast({ title: 'Feedback approved', description: 'Mr. Blue will work on this issue.' });
+      toast({ title: 'Ready to fix', description: 'Navigating to the impacted page...' });
     },
     onError: (error: Error) => {
       toast({ 
@@ -169,6 +177,52 @@ function FeedbackPanel() {
       });
     }
   });
+
+  const replyToUserMutation = useMutation({
+    mutationFn: async ({ feedbackId, userId, message }: { feedbackId: number; userId: number; message: string }) => {
+      const res = await apiRequest('POST', `/api/qa-platform/admin/reply/${feedbackId}`, { 
+        recipientId: userId, 
+        message 
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || error.error || 'Failed to send message');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
+      setReplyMessage('');
+      setShowReplyForm(false);
+      toast({ title: 'Message sent', description: 'User will receive your message in their inbox.' });
+    },
+    onError: (error: Error) => {
+      toast({ 
+        title: 'Error', 
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleLetsFixIt = (feedback: FeedbackItem) => {
+    sessionStorage.setItem('bugDiagnosticContext', JSON.stringify({
+      feedbackId: feedback.id,
+      title: feedback.title,
+      description: feedback.description,
+      currentPage: feedback.currentPage,
+      sessionSnapshot: feedback.sessionSnapshot,
+      userId: feedback.userId,
+    }));
+    
+    approveMutation.mutate({ id: feedback.id, notes: adminNotes }, {
+      onSuccess: () => {
+        setSelectedFeedback(null);
+        const targetPage = feedback.currentPage || '/feed';
+        navigate(`${targetPage}?mrblue=debug`);
+      }
+    });
+  };
 
   const rejectMutation = useMutation({
     mutationFn: async ({ id, notes }: { id: number; notes: string }) => {
@@ -334,7 +388,61 @@ function FeedbackPanel() {
                 )}
 
                 {selectedFeedback.sessionSnapshot && (
-                  <div>
+                  <div className="space-y-4">
+                    {/* User Context Card */}
+                    {selectedFeedback.sessionSnapshot.userContext && (
+                      <div className="p-3 rounded-md bg-muted/50 border">
+                        <div className="flex items-center gap-2 text-sm font-medium mb-2">
+                          <Shield className="h-4 w-4" />
+                          User Context
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>Tier: <span className="font-medium">{selectedFeedback.sessionSnapshot.userContext.tier || 'unknown'}</span></div>
+                          <div>Verified: <span className="font-medium">{selectedFeedback.sessionSnapshot.userContext.isVerified ? 'Yes' : 'No'}</span></div>
+                          {selectedFeedback.sessionSnapshot.userContext.cityName && (
+                            <div className="col-span-2">City: <span className="font-medium">{selectedFeedback.sessionSnapshot.userContext.cityName}</span></div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* API Calls */}
+                    {selectedFeedback.sessionSnapshot.apiCalls?.length > 0 && (
+                      <div className="p-3 rounded-md bg-muted/50 border">
+                        <div className="flex items-center gap-2 text-sm font-medium mb-2">
+                          <Globe className="h-4 w-4" />
+                          Recent API Calls ({selectedFeedback.sessionSnapshot.apiCalls.length})
+                        </div>
+                        <div className="space-y-1 max-h-32 overflow-y-auto">
+                          {selectedFeedback.sessionSnapshot.apiCalls.slice(-5).map((call: any, idx: number) => (
+                            <div key={idx} className="text-xs flex items-center gap-2">
+                              <span className={`px-1 rounded ${call.status >= 400 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}`}>
+                                {call.status}
+                              </span>
+                              <span className="font-mono">{call.method}</span>
+                              <span className="truncate text-muted-foreground">{call.url?.replace('/api/', '')}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Journey Timeline */}
+                    {selectedFeedback.sessionSnapshot.journey?.length > 0 && (
+                      <div className="p-3 rounded-md bg-muted/50 border">
+                        <div className="flex items-center gap-2 text-sm font-medium mb-2">
+                          <Eye className="h-4 w-4" />
+                          User Journey ({selectedFeedback.sessionSnapshot.journey.length} steps)
+                        </div>
+                        <JourneyTimeline 
+                          journey={selectedFeedback.sessionSnapshot.journey}
+                          maxSteps={6}
+                          compact={true}
+                        />
+                      </div>
+                    )}
+
+                    {/* Session Replay Button */}
                     <Button 
                       variant="outline" 
                       size="sm"
@@ -342,7 +450,7 @@ function FeedbackPanel() {
                       data-testid="button-view-session"
                     >
                       <Eye className="h-4 w-4 mr-2" />
-                      View Session Replay ({selectedFeedback.sessionSnapshot.events?.length || 0} events)
+                      View Full Session Replay ({selectedFeedback.sessionSnapshot.events?.length || 0} events)
                     </Button>
                   </div>
                 )}
@@ -361,25 +469,74 @@ function FeedbackPanel() {
                 </div>
               </div>
 
-              <DialogFooter className="flex-col gap-2 sm:flex-row">
-                <Button
-                  variant="outline"
-                  onClick={() => rejectMutation.mutate({ id: selectedFeedback.id, notes: adminNotes })}
-                  disabled={rejectMutation.isPending}
-                  data-testid="button-reject"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Reject
-                </Button>
-                <Button
-                  onClick={() => approveMutation.mutate({ id: selectedFeedback.id, notes: adminNotes })}
-                  disabled={approveMutation.isPending}
-                  data-testid="button-approve"
-                >
-                  <Check className="h-4 w-4 mr-2" />
-                  Approve for Mr. Blue
-                </Button>
-              </DialogFooter>
+              {showReplyForm ? (
+                <div className="space-y-3 w-full">
+                  <Textarea
+                    value={replyMessage}
+                    onChange={(e) => setReplyMessage(e.target.value)}
+                    placeholder="Type your message to the user..."
+                    className="min-h-[80px]"
+                    data-testid="input-reply-message"
+                  />
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowReplyForm(false)}
+                      data-testid="button-cancel-reply"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => replyToUserMutation.mutate({ 
+                        feedbackId: selectedFeedback.id, 
+                        userId: selectedFeedback.userId, 
+                        message: replyMessage 
+                      })}
+                      disabled={replyToUserMutation.isPending || !replyMessage.trim()}
+                      data-testid="button-send-reply"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      Send to Inbox
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <DialogFooter className="flex-col gap-2 sm:flex-row">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowReplyForm(true)}
+                    data-testid="button-reply-user"
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Reply to User
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => rejectMutation.mutate({ id: selectedFeedback.id, notes: adminNotes })}
+                    disabled={rejectMutation.isPending}
+                    data-testid="button-reject"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Reject
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowBugFixStream(true)}
+                    data-testid="button-try-autofix"
+                  >
+                    <Zap className="h-4 w-4 mr-2" />
+                    Try Auto-Fix
+                  </Button>
+                  <Button
+                    onClick={() => handleLetsFixIt(selectedFeedback)}
+                    disabled={approveMutation.isPending}
+                    data-testid="button-lets-fix-it"
+                  >
+                    <Wrench className="h-4 w-4 mr-2" />
+                    Let's Fix It
+                  </Button>
+                </DialogFooter>
+              )}
             </>
           )}
         </DialogContent>
@@ -412,6 +569,38 @@ function FeedbackPanel() {
               ))}
             </div>
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showBugFixStream} onOpenChange={setShowBugFixStream}>
+        <DialogContent className="max-w-4xl h-[80vh]" data-testid="dialog-bug-fix-stream">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-yellow-500" />
+              Auto-Fix Stream
+            </DialogTitle>
+            <DialogDescription>
+              Watch agents work on fixing the issue in real-time using ReAct protocol
+            </DialogDescription>
+          </DialogHeader>
+          {selectedFeedback && (
+            <div className="flex-1 min-h-0">
+              <BugFixStream
+                feedbackId={selectedFeedback.id}
+                diagnosticContext={selectedFeedback.sessionSnapshot}
+                onComplete={(result) => {
+                  if (result.success) {
+                    toast({
+                      title: 'Fix applied successfully',
+                      description: `Confidence: ${result.confidence}%`
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['/api/qa-platform/admin/pending'] });
+                  }
+                }}
+                onClose={() => setShowBugFixStream(false)}
+              />
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
