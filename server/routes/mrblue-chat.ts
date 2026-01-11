@@ -91,12 +91,26 @@ function detectToolIntent(message: string): { hasTool: boolean; tool: string | n
     return { hasTool: true, tool: "agenticExecute", args: { instruction: message, bugId }, confidence: 0.85 };
   }
   
-  // MB.MD Pattern 67: Database query patterns
-  const dbQueryMatch = originalMessage.match(/(?:query|select|show|check|get)\s+(?:database|db|events?|series|scraped)/i) ||
+  // MB.MD Pattern 67: Database query patterns - extract actual SQL
+  const dbQueryMatch = originalMessage.match(/query\s+database\s+(.+)/i) ||
                        originalMessage.match(/sql\s+(.+)/i);
-  if (dbQueryMatch || lowerMessage.includes("query database") || lowerMessage.includes("show events") ||
-      lowerMessage.includes("check scraped") || lowerMessage.includes("event series")) {
-    return { hasTool: true, tool: "queryDatabase", args: { query: message }, confidence: 0.85 };
+  if (dbQueryMatch) {
+    // Extract just the SQL part after "query database" or "sql"
+    const extractedSql = dbQueryMatch[1]?.trim() || message;
+    return { hasTool: true, tool: "queryDatabase", args: { query: extractedSql }, confidence: 0.85 };
+  }
+  // Alternative patterns that need SQL extraction
+  if (lowerMessage.includes("show events") || lowerMessage.includes("check scraped") || lowerMessage.includes("event series")) {
+    // Generate appropriate SELECT queries for common patterns
+    let autoQuery = "SELECT 1"; // fallback
+    if (lowerMessage.includes("show events")) {
+      autoQuery = "SELECT id, title, city, start_date FROM events ORDER BY start_date DESC LIMIT 20";
+    } else if (lowerMessage.includes("check scraped")) {
+      autoQuery = "SELECT id, title, source, status, created_at FROM scraped_events ORDER BY created_at DESC LIMIT 20";
+    } else if (lowerMessage.includes("event series")) {
+      autoQuery = "SELECT id, name, city, recurrence_type, is_active FROM event_series LIMIT 20";
+    }
+    return { hasTool: true, tool: "queryDatabase", args: { query: autoQuery }, confidence: 0.85 };
   }
   
   // MB.MD: Scraper status patterns

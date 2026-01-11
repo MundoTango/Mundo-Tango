@@ -567,7 +567,7 @@ router.delete("/plans/:planId/items/:itemId", authenticateToken, async (req: Aut
 });
 
 // GET /api/travel/events-by-city - Get events in a city within date range
-router.get("/events-by-city", optionalAuth, async (req: AuthRequest, res: Response) => {
+router.get(["/events-by-city", "/api/events/by-city"], optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     const { city, startDate, endDate, categories } = req.query;
 
