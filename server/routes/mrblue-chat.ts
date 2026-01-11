@@ -82,6 +82,15 @@ function detectToolIntent(message: string): { hasTool: boolean; tool: string | n
     return { hasTool: true, tool: "agenticExecute", args: { instruction: message }, confidence: 0.8 };
   }
   
+  // Bug/ticket management patterns - triggers AgenticExecutor with updateBugStatus tool
+  const ticketMatch = originalMessage.match(/(?:update|resolve|close|mark)\s+(?:ticket|bug|feedback|issue)\s*#?(\d+)/i);
+  if (ticketMatch || lowerMessage.includes("update ticket") || lowerMessage.includes("resolve bug") ||
+      lowerMessage.includes("mark as resolved") || lowerMessage.includes("notify the user") ||
+      lowerMessage.includes("fixed the bug") || lowerMessage.includes("completed the fix")) {
+    const bugId = ticketMatch ? parseInt(ticketMatch[1]) : undefined;
+    return { hasTool: true, tool: "agenticExecute", args: { instruction: message, bugId }, confidence: 0.85 };
+  }
+  
   return { hasTool: false, tool: null, args: {}, confidence: 0 };
 }
 
@@ -121,6 +130,23 @@ async function executeToolWithContext(tool: string, args: Record<string, any>): 
           tool, 
           data: { path: args.path, replaced: true, bytesWritten: newContent.length },
           error: editWriteResult.error 
+        };
+      case "agenticExecute":
+        // Delegate to AgenticExecutor for complex multi-step tasks
+        console.log("[MrBlue Chat] Delegating to AgenticExecutor for:", args.instruction);
+        const agenticResult = await agenticExecutor.execute(args.instruction, {
+          diagnostic: args.bugId ? { bugId: args.bugId } : undefined
+        });
+        return { 
+          success: agenticResult.success, 
+          tool: "agenticExecute", 
+          data: {
+            summary: agenticResult.summary,
+            filesModified: agenticResult.filesModified,
+            filesCreated: agenticResult.filesCreated,
+            toolCalls: agenticResult.toolCallsExecuted
+          },
+          error: agenticResult.success ? undefined : agenticResult.summary
         };
       default:
         return { success: false, tool, data: null, error: "Unknown tool" };
