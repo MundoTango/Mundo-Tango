@@ -11,7 +11,7 @@ import { eq } from 'drizzle-orm';
 export interface RecurringEventPattern {
   title: string;
   dayOfWeek?: number; // 0-6 (Sunday-Saturday)
-  frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly';
+  frequency: 'weekly' | 'monthly' | 'yearly'; // Must match recurrenceTypeEnum in schema
   startDate: Date;
   endDate?: Date;
   venue?: string;
@@ -95,12 +95,15 @@ export class RecurringEventDetector {
     baseEventData: any
   ): Promise<number | null> {
     try {
+      // Map pattern.frequency to recurrenceType enum values
+      const recurrenceType = pattern.frequency; // 'daily' | 'weekly' | 'biweekly' | 'monthly' maps directly
+      
       const result = await db.insert(eventSeries).values({
         title: pattern.title,
         description: baseEventData.description,
         groupId,
-        frequency: pattern.frequency,
-        dayOfWeek: pattern.dayOfWeek,
+        recurrenceType: recurrenceType as any, // Schema uses recurrenceType, not frequency
+        recurrenceDay: pattern.dayOfWeek, // Schema uses recurrenceDay, not dayOfWeek
         startDate: pattern.startDate,
         endDate: pattern.endDate || new Date(pattern.startDate.getTime() + 365 * 24 * 60 * 60 * 1000), // 1 year default
         venue: pattern.venue,

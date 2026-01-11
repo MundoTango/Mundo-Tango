@@ -8,6 +8,7 @@ import { db } from '@shared/db';
 import { events, scrapedEvents, users, eventTeamMembers, groups } from '@shared/schema';
 import { eq, and, isNull, ilike, or, sql } from 'drizzle-orm';
 import { extractParticipants } from './participant-extraction';
+import { RecurringEventDetector } from './scraping/RecurringEventDetector';
 
 const SCRAPER_BOT_USERNAME = 'scraper_bot';
 
@@ -657,6 +658,35 @@ class ScrapedEventIngestionService {
         .where(eq(scrapedEvents.id, scrapedEventId));
 
       const result = { eventId: inserted.id };
+
+      // Detect recurring events and link to series (non-critical)
+      try {
+        if (RecurringEventDetector.isRecurring(scraped.title, scraped.venue || undefined)) {
+          const pattern = RecurringEventDetector.detectPattern(scraped.title);
+          if (pattern) {
+            // Enrich pattern with event data
+            pattern.venue = scraped.venue || undefined;
+            pattern.city = city || undefined;
+            pattern.startDate = scraped.startDate ? new Date(scraped.startDate) : new Date();
+            
+            const seriesId = await RecurringEventDetector.createSeriesFromPattern(
+              pattern,
+              resolvedGroupId || null,
+              eventData
+            );
+            
+            if (seriesId) {
+              // Link the event to the series
+              await db.update(events)
+                .set({ seriesId })
+                .where(eq(events.id, inserted.id));
+              console.log(`[Ingestion] 🔄 Linked recurring event "${scraped.title}" to series ${seriesId}`);
+            }
+          }
+        }
+      } catch (seriesError) {
+        console.warn(`[Ingestion] Series detection failed for event ${result.eventId}:`, seriesError);
+      }
 
       // Team member extraction is non-critical - done outside transaction
       // If this fails, the event is still ingested, just without team links

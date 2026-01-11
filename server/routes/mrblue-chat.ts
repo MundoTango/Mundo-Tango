@@ -8,18 +8,20 @@ const router = Router();
 const openai = new OpenAI();
 
 // MB.MD Pattern 65: Tool intent detection for god-level VibeCoding
+// IMPORTANT: Use lowerMessage for pattern detection but ORIGINAL message for extracting paths
 function detectToolIntent(message: string): { hasTool: boolean; tool: string | null; args: Record<string, any>; confidence: number } {
   const lowerMessage = message.toLowerCase().trim();
+  const originalMessage = message.trim();
   
   // Git status patterns
   if (lowerMessage.includes("git status") || lowerMessage.includes("show git") || lowerMessage.includes("repo status")) {
     return { hasTool: true, tool: "getGitStatus", args: {}, confidence: 0.95 };
   }
   
-  // List directory patterns
-  const listDirMatch = lowerMessage.match(/list\s+(?:directory|dir|files|folder)\s+([^\s]+)/i) ||
-                       lowerMessage.match(/ls\s+([^\s]+)/i) ||
-                       lowerMessage.match(/show\s+files\s+in\s+([^\s]+)/i);
+  // List directory patterns - match on ORIGINAL to preserve path case
+  const listDirMatch = originalMessage.match(/list\s+(?:directory|dir|files|folder)\s+([^\s]+)/i) ||
+                       originalMessage.match(/ls\s+([^\s]+)/i) ||
+                       originalMessage.match(/show\s+files\s+in\s+([^\s]+)/i);
   if (listDirMatch) {
     return { hasTool: true, tool: "listDirectory", args: { path: listDirMatch[1] }, confidence: 0.9 };
   }
@@ -27,18 +29,30 @@ function detectToolIntent(message: string): { hasTool: boolean; tool: string | n
     return { hasTool: true, tool: "listDirectory", args: { path: "." }, confidence: 0.85 };
   }
   
-  // Read file patterns
-  const readMatch = lowerMessage.match(/read\s+(?:file\s+)?([^\s]+)/i) ||
-                    lowerMessage.match(/show\s+(?:contents?\s+of\s+)?([^\s]+\.(?:ts|tsx|js|jsx|json|md|css|html))/i) ||
-                    lowerMessage.match(/cat\s+([^\s]+)/i);
+  // Read file patterns - match on ORIGINAL to preserve path case
+  const readMatch = originalMessage.match(/read\s+(?:file\s+)?([^\s]+)/i) ||
+                    originalMessage.match(/show\s+(?:contents?\s+of\s+)?([^\s]+\.(?:ts|tsx|js|jsx|json|md|css|html))/i) ||
+                    originalMessage.match(/cat\s+([^\s]+)/i);
   if (readMatch) {
     return { hasTool: true, tool: "readFile", args: { path: readMatch[1] }, confidence: 0.9 };
   }
   
-  // Grep/search patterns
-  const grepMatch = lowerMessage.match(/(?:grep|search|find)\s+["']?([^"']+)["']?\s+(?:in\s+)?([^\s]+)?/i);
+  // Grep/search patterns - match on ORIGINAL to preserve path case, but pattern can be from lower
+  const grepMatch = originalMessage.match(/(?:grep|search|find)\s+["']?([^"']+)["']?\s+(?:in\s+)?([^\s]+)?/i);
   if (grepMatch) {
     return { hasTool: true, tool: "grepFiles", args: { pattern: grepMatch[1], path: grepMatch[2] || "." }, confidence: 0.85 };
+  }
+  
+  // Write file patterns - format: write file <path> ```content```
+  const writeMatch = originalMessage.match(/write\s+(?:file\s+)?([^\s`]+)\s+```([\s\S]+?)```/i);
+  if (writeMatch) {
+    return { hasTool: true, tool: "writeFile", args: { path: writeMatch[1], content: writeMatch[2] }, confidence: 0.95 };
+  }
+  
+  // Edit file patterns - format: edit <path> replace "old" with "new"
+  const editMatch = originalMessage.match(/edit\s+([^\s]+)\s+replace\s+["'](.+?)["']\s+with\s+["'](.+?)["']/is);
+  if (editMatch) {
+    return { hasTool: true, tool: "editFile", args: { path: editMatch[1], oldText: editMatch[2], newText: editMatch[3] }, confidence: 0.95 };
   }
   
   // Fix/execute patterns
@@ -67,6 +81,27 @@ async function executeToolWithContext(tool: string, args: Record<string, any>): 
       case "grepFiles":
         const matches = await VibeCodingTools.grepFiles(args.pattern, args.path || ".");
         return { success: true, tool, data: matches };
+      case "writeFile":
+        const writeResult = await VibeCodingTools.writeFile(args.path, args.content);
+        return { success: writeResult.success, tool, data: writeResult.data, error: writeResult.error };
+      case "editFile":
+        // Read file, replace text, write back
+        const readResult = await VibeCodingTools.readFile(args.path);
+        if (!readResult.success) {
+          return { success: false, tool, data: null, error: readResult.error };
+        }
+        const originalContent = readResult.data.content;
+        if (!originalContent.includes(args.oldText)) {
+          return { success: false, tool, data: null, error: "Text to replace not found in file" };
+        }
+        const newContent = originalContent.replace(args.oldText, args.newText);
+        const editWriteResult = await VibeCodingTools.writeFile(args.path, newContent);
+        return { 
+          success: editWriteResult.success, 
+          tool, 
+          data: { path: args.path, replaced: true, bytesWritten: newContent.length },
+          error: editWriteResult.error 
+        };
       default:
         return { success: false, tool, data: null, error: "Unknown tool" };
     }

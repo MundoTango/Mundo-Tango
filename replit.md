@@ -81,11 +81,24 @@ This system captures comprehensive context for diagnosing and fixing issues. It 
 - God-level users (tier 8+ or scott@boddye.com, admin@mundotango.life) can execute VibeCoding tools via Mr. Blue chat
 - Route: POST /api/mrblue/chat (handled by `server/routes/mrblue-chat.ts`)
 - Tool detection uses pattern matching with confidence threshold (0.7)
-- Supported tools: getGitStatus, listDirectory, readFile, grepFiles
-- Tool commands: "git status", "list directory [path]", "read file [path]", "grep [pattern]"
+- Supported tools: getGitStatus, listDirectory, readFile, grepFiles, writeFile, editFile
+- Tool commands: 
+  - "git status" - Show repository status
+  - "list directory [path]" or "ls [path]" - List files
+  - "read file [path]" or "cat [path]" - Read file contents (case-sensitive paths preserved)
+  - "grep [pattern]" or "search [pattern]" - Search files
+  - "write file [path] ```content```" - Write file with content in code block
+  - "edit [path] replace 'old' with 'new'" - Edit file with search/replace
 - Response includes: toolExecuted, toolSuccess, godLevelExecution, rawData with actual repository data
 - Tool service: `server/services/mrBlue/VibeCodingToolService.ts`
 - God-level check: `isGodLevelUser()` from `server/services/mrBlue/TaskExecutorService.ts`
+- IMPORTANT: Path case is preserved (originalMessage used for extraction, lowerMessage for pattern matching)
+
+### Event Series System
+- RecurringEventDetector (`server/services/scraping/RecurringEventDetector.ts`) detects weekly/monthly patterns from event titles
+- Detection patterns: "Milonga de los [day]", "Every [day]", "Cada [day]"
+- ScrapedEventIngestionService automatically links recurring events to eventSeries during ingestion
+- Schema fields: `recurrenceType` (weekly/monthly/yearly), `recurrenceDay` (0-6 for day of week)
 
 ### CI/CD & Contributor Workflow
 The project utilizes GitHub Actions for CI/CD, running on PRs and pushes to main. The pipeline includes type checking, linting, unit tests, build verification, security audits, and E2E tests (on main only). Branch protection is enforced, and pre-commit hooks run type-check and lint-staged. Conventional Commits are required for all contributions.
