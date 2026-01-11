@@ -8927,6 +8927,27 @@ export class DbStorage implements IStorage {
       .where(eq(adminApprovals.feedbackId, feedbackId))
       .orderBy(desc(adminApprovals.createdAt));
   }
+
+  // Direct messaging for agent notifications
+  async createDirectMessage(data: {
+    senderId: number;
+    recipientId: number;
+    content: string;
+    isRead?: boolean;
+    mediaUrl?: string;
+    mediaType?: string;
+  }): Promise<any> {
+    const { directMessages } = await import("@shared/schema");
+    const [result] = await db.insert(directMessages).values({
+      senderId: data.senderId,
+      recipientId: data.recipientId,
+      content: data.content,
+      isRead: data.isRead ?? false,
+      mediaUrl: data.mediaUrl,
+      mediaType: data.mediaType,
+    }).returning();
+    return result;
+  }
 }
 
 export const storage = new DbStorage();

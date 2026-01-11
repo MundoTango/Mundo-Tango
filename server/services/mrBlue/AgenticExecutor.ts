@@ -612,18 +612,22 @@ When the task is complete, respond with a summary of what you did. Do not call a
           // Import storage dynamically to avoid circular deps
           const { storage } = await import('../../storage');
           
-          // Update the bug status
-          await storage.updateFeedbackStatus(bugId, status, resolution);
-          
           // Get bug details for user notification
-          const feedback = await storage.getFeedbackById(bugId);
+          const feedback = await storage.getUserFeedback(bugId);
+          
+          // Update the bug status
+          await storage.updateUserFeedback(bugId, { 
+            status, 
+            resolution,
+            resolvedAt: new Date()
+          });
           
           // Send message to user if requested
           if (notifyUser && feedback?.userId) {
             await storage.createDirectMessage({
               senderId: 1, // System/Admin user
               recipientId: feedback.userId,
-              content: `Your bug report "${feedback.title}" has been resolved.\n\n**Resolution:** ${resolution}\n\nThank you for reporting this issue!`,
+              content: `Your bug report "${feedback.title || 'Bug Report'}" has been resolved.\n\n**Resolution:** ${resolution}\n\nThank you for reporting this issue!`,
               isRead: false
             });
           }

@@ -20049,6 +20049,7 @@ export const userFeedback = pgTable("user_feedback", {
   playwrightVideoUrl: text("playwright_video_url"),
   relatedMessageId: integer("related_message_id"),
   selectedElement: varchar("selected_element", { length: 500 }),
+  resolution: text("resolution"),
   resolvedAt: timestamp("resolved_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -20064,6 +20065,7 @@ export const insertUserFeedbackSchema = createInsertSchema(userFeedback).omit({
   createdAt: true,
   updatedAt: true,
   resolvedAt: true,
+  resolution: true,
 });
 export type InsertUserFeedback = z.infer<typeof insertUserFeedbackSchema>;
 export type SelectUserFeedback = typeof userFeedback.$inferSelect;
