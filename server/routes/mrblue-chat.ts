@@ -114,21 +114,63 @@ async function executeToolWithContext(tool: string, args: Record<string, any>): 
         const writeResult = await VibeCodingTools.writeFile(args.path, args.content);
         return { success: writeResult.success, tool, data: writeResult.data, error: writeResult.error };
       case "editFile":
-        // Read file, replace text, write back
+        // MB.MD PATTERN 67 GUARDRAILS: Prevent file corruption from bad edits
         const readResult = await VibeCodingTools.readFile(args.path);
         if (!readResult.success) {
           return { success: false, tool, data: null, error: readResult.error };
         }
         const originalContent = readResult.data.content;
+        const originalLines = originalContent.split('\n').length;
+        const originalSize = originalContent.length;
+        
+        // GUARDRAIL 1: Verify old text exists
         if (!originalContent.includes(args.oldText)) {
-          return { success: false, tool, data: null, error: "Text to replace not found in file" };
+          return { success: false, tool, data: null, error: `Text to replace not found in file. Old text (${args.oldText.length} chars) not in ${args.path}` };
         }
+        
         const newContent = originalContent.replace(args.oldText, args.newText);
+        const newLines = newContent.split('\n').length;
+        const newSize = newContent.length;
+        
+        // GUARDRAIL 2: Size validation - new content must be at least 80% of original
+        const sizeRatio = newSize / originalSize;
+        if (sizeRatio < 0.8) {
+          console.error(`[MrBlue GUARDRAIL] BLOCKED: Edit would reduce file size from ${originalSize} to ${newSize} bytes (${(sizeRatio * 100).toFixed(1)}%)`);
+          return { 
+            success: false, 
+            tool, 
+            data: null, 
+            error: `GUARDRAIL BLOCKED: Edit would reduce file size by ${((1 - sizeRatio) * 100).toFixed(1)}% (from ${originalSize} to ${newSize} bytes). Maximum reduction is 20%.` 
+          };
+        }
+        
+        // GUARDRAIL 3: Line count validation - no more than 50% reduction
+        const lineRatio = newLines / originalLines;
+        if (lineRatio < 0.5) {
+          console.error(`[MrBlue GUARDRAIL] BLOCKED: Edit would reduce line count from ${originalLines} to ${newLines} lines (${(lineRatio * 100).toFixed(1)}%)`);
+          return { 
+            success: false, 
+            tool, 
+            data: null, 
+            error: `GUARDRAIL BLOCKED: Edit would reduce line count by ${((1 - lineRatio) * 100).toFixed(1)}% (from ${originalLines} to ${newLines} lines). Maximum reduction is 50%.` 
+          };
+        }
+        
+        console.log(`[MrBlue EditFile] Validated: ${args.path} - Size ${originalSize}→${newSize} (${(sizeRatio * 100).toFixed(1)}%), Lines ${originalLines}→${newLines} (${(lineRatio * 100).toFixed(1)}%)`);
+        
         const editWriteResult = await VibeCodingTools.writeFile(args.path, newContent);
         return { 
           success: editWriteResult.success, 
           tool, 
-          data: { path: args.path, replaced: true, bytesWritten: newContent.length },
+          data: { 
+            path: args.path, 
+            replaced: true, 
+            bytesWritten: newContent.length,
+            originalSize,
+            newSize,
+            originalLines,
+            newLines
+          },
           error: editWriteResult.error 
         };
       case "agenticExecute":

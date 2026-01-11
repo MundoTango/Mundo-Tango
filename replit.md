@@ -94,6 +94,15 @@ This system captures comprehensive context for diagnosing and fixing issues. It 
 - God-level check: `isGodLevelUser()` from `server/services/mrBlue/TaskExecutorService.ts`
 - IMPORTANT: Path case is preserved (originalMessage used for extraction, lowerMessage for pattern matching)
 
+**VibeCoding Guardrails (CRITICAL - MB.MD Pattern 67):**
+- **Implemented:** `server/routes/mrblue-chat.ts` (editFile case) and `server/services/mrBlue/autonomousAgent.ts` (editFile method)
+- **GUARDRAIL 1 - Size Validation:** New file content must be at least 80% of original size. Blocks catastrophic file truncation.
+- **GUARDRAIL 2 - Line Count Validation:** New file line count cannot drop by more than 50%. Prevents accidental bulk deletions.
+- **Logging:** All edits log before/after sizes and percentages for audit trail.
+- **Error Messages:** Clear "GUARDRAIL BLOCKED" prefix with exact reduction percentages helps diagnose issues.
+- **Why:** On 2026-01-11, an AI edit corrupted travel-routes.ts (1562→102 lines). These guardrails prevent similar catastrophes.
+- **Thresholds:** 80% size minimum, 50% line count minimum - tuned to allow reasonable refactoring while blocking corruption.
+
 ### Event Series System
 - RecurringEventDetector (`server/services/scraping/RecurringEventDetector.ts`) detects weekly/monthly patterns from event titles
 - Detection patterns: "Milonga de los [day]", "Every [day]", "Cada [day]"

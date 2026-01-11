@@ -214,6 +214,7 @@ class AutonomousAgent {
 
   /**
    * Edit file by replacing old string with new string
+   * MB.MD PATTERN 67 GUARDRAILS: Prevents file corruption from bad edits
    * @param filePath - Relative or absolute path to file
    * @param oldString - String to find
    * @param newString - Replacement string
@@ -222,16 +223,33 @@ class AutonomousAgent {
     this.checkRateLimit();
     
     try {
-      const content = await this.readFile(filePath);
+      const originalContent = await this.readFile(filePath);
+      const originalSize = originalContent.length;
+      const originalLines = originalContent.split('\n').length;
       
-      if (!content.includes(oldString)) {
+      if (!originalContent.includes(oldString)) {
         throw new Error(`String not found in file: ${oldString.substring(0, 50)}...`);
       }
       
-      const newContent = content.replace(oldString, newString);
+      const newContent = originalContent.replace(oldString, newString);
+      const newSize = newContent.length;
+      const newLines = newContent.split('\n').length;
+      
+      // GUARDRAIL 1: Size validation - new content must be at least 80% of original
+      const sizeRatio = newSize / originalSize;
+      if (sizeRatio < 0.8) {
+        throw new Error(`GUARDRAIL BLOCKED: Edit would reduce file size by ${((1 - sizeRatio) * 100).toFixed(1)}% (from ${originalSize} to ${newSize} bytes). Maximum reduction is 20%.`);
+      }
+      
+      // GUARDRAIL 2: Line count validation - no more than 50% reduction
+      const lineRatio = newLines / originalLines;
+      if (lineRatio < 0.5) {
+        throw new Error(`GUARDRAIL BLOCKED: Edit would reduce line count by ${((1 - lineRatio) * 100).toFixed(1)}% (from ${originalLines} to ${newLines} lines). Maximum reduction is 50%.`);
+      }
+      
       await this.writeFile(filePath, newContent);
       
-      this.log('editFile', `Edited ${filePath}: replaced ${oldString.length} chars with ${newString.length} chars`);
+      this.log('editFile', `Edited ${filePath}: ${originalSize}→${newSize} bytes (${(sizeRatio * 100).toFixed(1)}%), ${originalLines}→${newLines} lines (${(lineRatio * 100).toFixed(1)}%)`);
     } catch (error: any) {
       this.log('editFile', `Failed to edit ${filePath}: ${error.message}`, false);
       throw new Error(`Failed to edit file ${filePath}: ${error.message}`);
