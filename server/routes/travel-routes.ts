@@ -2,7 +2,7 @@ import { Router, Response } from "express";
 import { db } from "@shared/db";
 import { travelPlans, travelPlanItems, users, events, housingListings, tripJoinRequests, notifications } from "@shared/schema";
 import { eq, desc, and, gte, lte, or, ilike, isNotNull } from "drizzle-orm";
-import { authenticateToken, AuthRequest } from "../middleware/auth";
+import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth";
 import * as cheerio from "cheerio";
 import axios from "axios";
 
@@ -567,7 +567,7 @@ router.delete("/plans/:planId/items/:itemId", authenticateToken, async (req: Aut
 });
 
 // GET /api/travel/events-by-city - Get events in a city within date range
-router.get("/events-by-city", async (req: AuthRequest, res: Response) => {
+router.get("/events-by-city", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     const { city, startDate, endDate, categories } = req.query;
 
@@ -635,7 +635,7 @@ router.get("/events-by-city", async (req: AuthRequest, res: Response) => {
 });
 
 // GET /api/travel/housing-by-city - Get MT Host housing listings in a city during travel dates
-router.get("/housing-by-city", async (req: AuthRequest, res: Response) => {
+router.get("/housing-by-city", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     const { city, startDate, endDate, maxGuests } = req.query;
 
