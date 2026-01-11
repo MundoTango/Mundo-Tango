@@ -662,7 +662,8 @@ class ScrapedEventIngestionService {
       // Detect recurring events and link to series (non-critical)
       try {
         if (RecurringEventDetector.isRecurring(scraped.title, scraped.venue || undefined)) {
-          const pattern = RecurringEventDetector.detectPattern(scraped.title);
+          const eventDate = scraped.startDate ? new Date(scraped.startDate) : undefined;
+          const pattern = RecurringEventDetector.detectPattern(scraped.title, eventDate);
           if (pattern) {
             // Enrich pattern with event data
             pattern.venue = scraped.venue || undefined;

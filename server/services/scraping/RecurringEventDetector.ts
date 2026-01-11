@@ -34,53 +34,71 @@ export class RecurringEventDetector {
   }
 
   /**
-   * Detect recurrence pattern from title
+   * Day name mapping for pattern detection
    */
-  static detectPattern(title: string): RecurringEventPattern | null {
-    const patterns: Array<[RegExp, () => RecurringEventPattern | null]> = [
-      // "Milonga de los Domingos" / "Milonga de los Lunes"
-      [/Milonga (?:de los?|del) (\w+)/i, (match) => {
-        const dayNames: Record<string, number> = {
-          'lunes': 1, 'martes': 2, 'miércoles': 3, 'jueves': 4, 'viernes': 5, 'sábado': 6, 'domingo': 0,
-          'monday': 1, 'tuesday': 2, 'wednesday': 3, 'thursday': 4, 'friday': 5, 'saturday': 6, 'sunday': 0
-        };
-        const day = dayNames[match[1].toLowerCase()];
-        if (day !== undefined) {
-          return {
-            title,
-            dayOfWeek: day,
-            frequency: 'weekly',
-            startDate: new Date()
-          };
-        }
-        return null;
-      }],
-      // "Every Friday" / "Every Monday"
-      [/Every (\w+)|Cada (\w+)/i, (match) => {
-        const dayNames: Record<string, number> = {
-          'monday': 1, 'tuesday': 2, 'wednesday': 3, 'thursday': 4, 'friday': 5, 'saturday': 6, 'sunday': 0,
-          'lunes': 1, 'martes': 2, 'miércoles': 3, 'jueves': 4, 'viernes': 5, 'sábado': 6, 'domingo': 0
-        };
-        const dayName = (match[1] || match[2]).toLowerCase();
-        const day = dayNames[dayName];
-        if (day !== undefined) {
-          return {
-            title,
-            dayOfWeek: day,
-            frequency: 'weekly',
-            startDate: new Date()
-          };
-        }
-        return null;
-      }]
-    ];
+  private static readonly dayNames: Record<string, number> = {
+    'monday': 1, 'tuesday': 2, 'wednesday': 3, 'thursday': 4, 'friday': 5, 'saturday': 6, 'sunday': 0,
+    'lunes': 1, 'martes': 2, 'miércoles': 3, 'miercoles': 3, 'jueves': 4, 'viernes': 5, 'sábado': 6, 'sabado': 6, 'domingo': 0,
+    'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 0
+  };
 
-    for (const [regex, handler] of patterns) {
-      const match = title.match(regex);
-      if (match) {
-        const pattern = handler(match);
-        if (pattern) return pattern;
+  /**
+   * Detect recurrence pattern from title with expanded patterns
+   */
+  static detectPattern(title: string, eventDate?: Date): RecurringEventPattern | null {
+    // Pattern 1: "Milonga de los [day]" / "Milonga del [day]"
+    const milongaDePattern = title.match(/Milonga (?:de los?|del) (\w+)/i);
+    if (milongaDePattern) {
+      const day = this.dayNames[milongaDePattern[1].toLowerCase()];
+      if (day !== undefined) {
+        return { title, dayOfWeek: day, frequency: 'weekly', startDate: eventDate || new Date() };
       }
+    }
+    
+    // Pattern 2: "Every [day]" / "Cada [day]"
+    const everyPattern = title.match(/(?:Every|Cada)\s+(\w+)/i);
+    if (everyPattern) {
+      const day = this.dayNames[everyPattern[1].toLowerCase()];
+      if (day !== undefined) {
+        return { title, dayOfWeek: day, frequency: 'weekly', startDate: eventDate || new Date() };
+      }
+    }
+    
+    // Pattern 3: "[Day] Milonga" / "[Day] Night Milonga" / "[Day] Practica"
+    const dayFirstPattern = title.match(/^(monday|tuesday|wednesday|thursday|friday|saturday|sunday|lunes|martes|miércoles|miercoles|jueves|viernes|sábado|sabado|domingo)\s+(?:night\s+)?(?:milonga|practica|práctica)/i);
+    if (dayFirstPattern) {
+      const day = this.dayNames[dayFirstPattern[1].toLowerCase()];
+      if (day !== undefined) {
+        return { title, dayOfWeek: day, frequency: 'weekly', startDate: eventDate || new Date() };
+      }
+    }
+    
+    // Pattern 4: "Milonga [Day]" / "Practica [Day]"
+    const milongaDayPattern = title.match(/(?:milonga|practica|práctica)\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday|lunes|martes|miércoles|miercoles|jueves|viernes|sábado|sabado|domingo)/i);
+    if (milongaDayPattern) {
+      const day = this.dayNames[milongaDayPattern[1].toLowerCase()];
+      if (day !== undefined) {
+        return { title, dayOfWeek: day, frequency: 'weekly', startDate: eventDate || new Date() };
+      }
+    }
+    
+    // Pattern 5: Generic "Milonga" or "Practica" - use event date to determine day
+    if (eventDate && /(?:milonga|practica|práctica)/i.test(title)) {
+      const dayOfWeek = eventDate.getDay();
+      return { title, dayOfWeek, frequency: 'weekly', startDate: eventDate };
+    }
+    
+    // Pattern 6: Weekly/Semanal keyword
+    if (/\b(?:weekly|semanal)\b/i.test(title)) {
+      const dayOfWeek = eventDate ? eventDate.getDay() : undefined;
+      return { title, dayOfWeek, frequency: 'weekly', startDate: eventDate || new Date() };
+    }
+    
+    // Pattern 7: Monthly patterns
+    if (/\b(?:monthly|mensual|first|second|third|fourth|last)\s+(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i.test(title)) {
+      const dayMatch = title.match(/(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i);
+      const day = dayMatch ? this.dayNames[dayMatch[0].toLowerCase()] : (eventDate?.getDay());
+      return { title, dayOfWeek: day, frequency: 'monthly', startDate: eventDate || new Date() };
     }
 
     return null;
