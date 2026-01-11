@@ -8,7 +8,7 @@ interface MutualFriendsProps {
 }
 
 export function MutualFriends({ userId, currentUserId }: MutualFriendsProps) {
-  const { data: mutualFriends = [] } = useQuery({
+  const { data: mutualFriends = [] } = useQuery<Array<{ id: number; name: string; profileImage?: string }>>({
     queryKey: ["/api/friends/mutual", userId],
     enabled: userId !== currentUserId,
   });

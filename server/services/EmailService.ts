@@ -726,49 +726,80 @@ export class EmailService {
     }
   }
   
+  // Helper: Log email attempt to database for debugging
+  private static async logEmailAttempt(
+    userId: number | undefined,
+    toEmail: string,
+    emailType: string,
+    status: 'sent' | 'failed',
+    externalId: string | null,
+    errorMessage: string | null
+  ): Promise<void> {
+    try {
+      await db.insert(emailLogs).values({
+        userId: userId || null,
+        emailType,
+        toEmail,
+        status,
+        externalId,
+        errorMessage,
+      });
+      console.log(`[EmailService] 📝 Logged email attempt: ${emailType} to ${toEmail} - ${status}`);
+    } catch (logError) {
+      // Don't fail the email send if logging fails
+      console.error(`[EmailService] Failed to log email attempt:`, logError);
+    }
+  }
+
   // Helper: Send email verification with 6-digit code (direct send, not queued - time-sensitive)
-  static async sendVerificationCodeEmail(email: string, name: string, verificationCode: string): Promise<boolean> {
+  // Now includes database logging for debugging delivery issues
+  static async sendVerificationCodeEmail(email: string, name: string, verificationCode: string, userId?: number): Promise<boolean> {
     const startTime = Date.now();
     const emailDomain = email.split('@')[1];
-    
+
     try {
       const html = this.renderTemplate('emailVerificationCode', {
         name: name || 'Tango Dancer',
         code: verificationCode
       });
-      
+
       const resendClient = await getResendClient();
       if (!resendClient) {
         console.warn(`[EmailService] ⚠️ Resend not configured - verification code NOT sent to ${email}`);
         console.warn(`[EmailService] Verification Code (DEV ONLY): ${verificationCode}`);
-        return false; // Return false to indicate email was NOT actually sent
+        await this.logEmailAttempt(userId, email, 'verification_code', 'failed', null, 'Resend not configured');
+        return false;
       }
-      
+
       console.log(`[EmailService] 📧 Sending verification code email to ${email} (domain: ${emailDomain}) from ${resendClient.fromEmail}`);
-      
+
       const result = await resendClient.client.emails.send({
         from: resendClient.fromEmail,
         to: email,
         subject: 'Your Verification Code - Mundo Tango',
         html: html
       });
-      
+
       const duration = Date.now() - startTime;
-      
+
       if (result.error) {
         console.error(`[EmailService] ❌ Resend API error for ${email}:`, JSON.stringify(result.error));
+        await this.logEmailAttempt(userId, email, 'verification_code', 'failed', null, JSON.stringify(result.error));
         return false;
       }
-      
+
       console.log(`[EmailService] ✅ Verification code email SENT to ${email} in ${duration}ms | ID: ${result.data?.id || 'unknown'}`);
       console.log(`[EmailService] 📋 Email details: to=${email}, domain=${emailDomain}, resendId=${result.data?.id}`);
-      
+
+      // Log successful send to database
+      await this.logEmailAttempt(userId, email, 'verification_code', 'sent', result.data?.id || null, null);
+
       // Log potential delivery issues based on email domain
       const commonIssuesDomains = ['yahoo.com', 'aol.com', 'hotmail.com', 'outlook.com'];
       if (commonIssuesDomains.some(d => emailDomain?.includes(d))) {
         console.log(`[EmailService] ℹ️ Note: ${emailDomain} may have stricter spam filters. If not received, check spam folder.`);
       }
-      
+
       return true;
     } catch (error: any) {
       const duration = Date.now() - startTime;
@@ -776,6 +807,7 @@ export class EmailService {
       console.error(`[EmailService] Error message: ${error?.message || 'Unknown error'}`);
       console.error(`[EmailService] Error code: ${error?.statusCode || error?.code || 'N/A'}`);
       console.error(`[EmailService] Full error:`, JSON.stringify(error, null, 2));
+      await this.logEmailAttempt(userId, email, 'verification_code', 'failed', null, error?.message || 'Unknown error');
       return false;
     }
   }

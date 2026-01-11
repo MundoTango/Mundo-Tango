@@ -144,6 +144,9 @@ export interface SelectEventComment {
   userId: number;
   content: string;
   parentCommentId?: number | null;
+  likeCount?: number;
+  isEdited?: boolean;
+  isDeleted?: boolean;
   createdAt?: Date | null;
   updatedAt?: Date | null;
 }
@@ -151,10 +154,16 @@ export interface SelectEventComment {
 export interface SelectEventPhoto {
   id: number;
   eventId: number;
-  userId: number;
-  url: string;
+  uploaderId: number;
+  photoUrl: string;
+  thumbnailUrl?: string | null;
   caption?: string | null;
+  taggedUsers?: number[] | null;
+  likeCount?: number;
+  commentCount?: number;
+  visibility?: string;
   isApproved?: boolean;
+  isFeatured?: boolean;
   createdAt?: Date | null;
 }
 
@@ -193,13 +202,22 @@ export interface SelectGroupMember {
 export interface SelectGroupPost {
   id: number;
   groupId: number;
-  userId: number;
-  content?: string | null;
+  authorId: number;
+  title?: string | null;
+  content: string;
   mediaUrls?: string[] | null;
+  mediaType?: string | null;
+  postType?: string;
+  linkedEventId?: number | null;
+  likeCount?: number;
+  commentCount?: number;
+  shareCount?: number;
   isPinned?: boolean;
-  likesCount?: number;
-  commentsCount?: number;
-  closenessVisibility?: ClosenessVisibility;
+  pinnedBy?: number | null;
+  pinnedAt?: Date | null;
+  isApproved?: boolean;
+  approvedBy?: number | null;
+  status?: string;
   createdAt?: Date | null;
   updatedAt?: Date | null;
 }

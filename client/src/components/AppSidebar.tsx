@@ -451,7 +451,7 @@ function AppSidebarComponent() {
     });
 
     // Add tango roles (PRO discovery links)
-    userTangoRoles.forEach((roleValue) => {
+    userTangoRoles.forEach((roleValue: string) => {
       const role = getRoleByValue(roleValue);
       const normalizedValue = normalizeRole(roleValue);
       const proUrl = roleToProDiscoveryMap[normalizedValue];
