@@ -432,6 +432,19 @@ function detectToolIntent(message: string): {
     };
   }
 
+  // MB.MD Pattern 67: Auto-fix and VibeCoding execution patterns
+  if (
+    /\b(fix\s+this|apply\s+the\s+fix|make\s+the\s+change|edit\s+the\s+file|execute\s+now|do\s+it\s+now|fix\s+it\s+now|apply\s+fix\s+automatically)\b/i.test(msg) ||
+    /\b(auto.?fix|apply.*automatically|make.*code\s+change|update\s+the\s+code)\b/i.test(msg)
+  ) {
+    return {
+      hasTool: true,
+      tool: "agenticExecute",
+      args: { goal: message },
+      confidence: 0.9,
+    };
+  }
+
   return { hasTool: false, tool: null, args: {}, confidence: 0 };
 }
 
@@ -459,6 +472,33 @@ async function executeToolWithContext(
       return await VibeCodingTools.grepFiles(args.searchTerm);
     case "searchFiles":
       return await VibeCodingTools.searchFiles(args.pattern);
+    case "agenticExecute":
+      // MB.MD Pattern 67: Execute AgenticExecutor for bug fixes
+      try {
+        const { agenticExecutor } = await import("../services/mrBlue/AgenticExecutor");
+        const result = await agenticExecutor.execute({
+          goal: args.goal,
+          context: args.context || "",
+          maxIterations: 5,
+        });
+        return {
+          success: result.success,
+          tool: "agenticExecute",
+          data: {
+            filesModified: result.filesModified || [],
+            actions: result.actions || [],
+            summary: result.summary || "Execution completed",
+          },
+          error: result.error,
+        };
+      } catch (error: any) {
+        return {
+          success: false,
+          tool: "agenticExecute",
+          data: null,
+          error: error.message || "AgenticExecutor failed",
+        };
+      }
     default:
       return { success: false, tool, data: null, error: "Unknown tool" };
   }
@@ -485,6 +525,71 @@ router.post("/api/mrblue/chat", authenticateToken, async (req, res) => {
 
     if (!message || typeof message !== "string") {
       return res.status(400).json({ error: "Message is required" });
+    }
+
+    // MB.MD Pattern 65: CHECK GOD-LEVEL TOOLS FIRST (before any early returns)
+    // This ensures VibeCoding tools work even when systemPrompt is provided
+    const userId = (req as any).user?.id;
+    const userRoleLevel = (req as any).user?.roleLevel || 0;
+    const userEmail = (req as any).user?.email || "";
+    
+    if (userId) {
+      const isGodLevel = isGodLevelUser(userRoleLevel) || isGodLevelUser(userEmail);
+      const toolIntent = detectToolIntent(message);
+      
+      console.log(
+        `[Mr. Blue] Tool detection: isGodLevel=${isGodLevel} (roleLevel=${userRoleLevel}, email=${userEmail}), tool=${toolIntent.tool}, confidence=${toolIntent.confidence}`,
+      );
+
+      if (isGodLevel && toolIntent.hasTool && toolIntent.tool && toolIntent.confidence >= 0.7) {
+        console.log(`[Mr. Blue] Tool execution request from god-level user: ${toolIntent.tool}`);
+        
+        try {
+          const toolResult = await executeToolWithContext(toolIntent.tool, toolIntent.args);
+          
+          if (toolResult.success) {
+            const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+            const formatResponse = await groq.chat.completions.create({
+              model: "llama-3.3-70b-versatile",
+              messages: [
+                {
+                  role: "system",
+                  content: `You are Mr. Blue, a VibeCoding agent with god-level powers. You just executed a tool and got real data. Format this data conversationally for the user. Be helpful and informative. Do not use emojis.`,
+                },
+                {
+                  role: "user",
+                  content: `User asked: "${message}"\n\nTool executed: ${toolResult.tool}\n\nResult data:\n${JSON.stringify(toolResult.data, null, 2)}`,
+                },
+              ],
+              max_tokens: 500,
+              temperature: 0.7,
+            });
+            
+            const formattedResponse = formatResponse.choices[0]?.message?.content || JSON.stringify(toolResult.data, null, 2);
+            
+            return res.json({
+              role: "assistant",
+              content: formattedResponse,
+              timestamp: new Date().toISOString(),
+              toolExecuted: toolResult.tool,
+              toolSuccess: true,
+              godLevelExecution: true,
+              rawData: toolResult.data,
+            });
+          } else {
+            return res.json({
+              role: "assistant",
+              content: `I tried to execute ${toolResult.tool} but encountered an error: ${toolResult.error}. Please check that the required integrations are connected.`,
+              timestamp: new Date().toISOString(),
+              toolExecuted: toolResult.tool,
+              toolSuccess: false,
+              godLevelExecution: true,
+            });
+          }
+        } catch (error: any) {
+          console.error("[Mr. Blue] Tool execution error:", error);
+        }
+      }
     }
 
     // MB.MD Pattern 67: Build session context string for AI injection
@@ -587,96 +692,11 @@ router.post("/api/mrblue/chat", authenticateToken, async (req, res) => {
       }
     }
 
-    const userId = (req as any).user?.id;
-    const userRoleLevel = (req as any).user?.roleLevel || 0;
-    const userEmail = (req as any).user?.email || "";
-
-    if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    // Check if user is god-level (used for all god-level features)
-    const isGodLevel =
-      isGodLevelUser(userRoleLevel) || isGodLevelUser(userEmail);
-
-    // MB.MD Pattern 65: TOOL EXECUTION for God-Level Users
-    // This is what makes Mr. Blue a TRUE VibeCoding agent - the ability to DO things
-    const toolIntent = detectToolIntent(message);
-
-    console.log(
-      `[Mr. Blue] Tool detection: isGodLevel=${isGodLevel} (roleLevel=${userRoleLevel}, email=${userEmail}), tool=${toolIntent.tool}, confidence=${toolIntent.confidence}`,
-    );
-
-    if (
-      isGodLevel &&
-      toolIntent.hasTool &&
-      toolIntent.tool &&
-      toolIntent.confidence >= 0.7
-    ) {
-      console.log(
-        `[Mr. Blue] Tool execution request from god-level user: ${toolIntent.tool}`,
-      );
-
-      try {
-        const toolResult = await executeToolWithContext(
-          toolIntent.tool,
-          toolIntent.args,
-        );
-
-        if (toolResult.success) {
-          // Use AI to format the tool result conversationally
-          const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-          const formatResponse = await groq.chat.completions.create({
-            model: "llama-3.3-70b-versatile",
-            messages: [
-              {
-                role: "system",
-                content: `You are Mr. Blue, a VibeCoding agent with god-level powers. You just executed a tool and got real data. Format this data conversationally for the user. Be helpful and informative. Do not use emojis.`,
-              },
-              {
-                role: "user",
-                content: `User asked: "${message}"\n\nTool executed: ${toolResult.tool}\n\nResult data:\n${JSON.stringify(toolResult.data, null, 2)}`,
-              },
-            ],
-            max_tokens: 500,
-            temperature: 0.7,
-          });
-
-          const formattedResponse =
-            formatResponse.choices[0]?.message?.content ||
-            JSON.stringify(toolResult.data, null, 2);
-
-          return res.json({
-            role: "assistant",
-            content: formattedResponse,
-            timestamp: new Date().toISOString(),
-            toolExecuted: toolResult.tool,
-            toolSuccess: true,
-            godLevelExecution: true,
-            rawData: toolResult.data,
-          });
-        } else {
-          return res.json({
-            role: "assistant",
-            content: `I tried to execute ${toolResult.tool} but encountered an error: ${toolResult.error}. Please check that the required integrations are connected.`,
-            timestamp: new Date().toISOString(),
-            toolExecuted: toolResult.tool,
-            toolSuccess: false,
-            godLevelExecution: true,
-            error: toolResult.error,
-          });
-        }
-      } catch (toolError: any) {
-        console.error("[Mr. Blue] Tool execution error:", toolError);
-        return res.json({
-          role: "assistant",
-          content: `I encountered an error while trying to help: ${toolError.message}`,
-          timestamp: new Date().toISOString(),
-          godLevelExecution: true,
-          error: toolError.message,
-        });
-      }
-    }
+    // NOTE: God-level tool detection moved to the top of the handler
+    // to ensure it runs before any early returns (like customSystemPrompt)
+    
+    // Fallback variable declarations for code that still needs them
+    const isGodLevel = userId ? (isGodLevelUser(userRoleLevel) || isGodLevelUser(userEmail)) : false;
 
     // MB.MD Pattern 65: VibeCoding Code Generation for God-Level Users
     const vibeCodingIntent = detectVibeCodingIntent(message);

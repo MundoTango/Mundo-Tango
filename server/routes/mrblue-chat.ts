@@ -1,20 +1,148 @@
 import { Router, type Request, Response } from "express";
 import { authenticateToken } from "../middleware/auth";
 import OpenAI from "openai";
+import * as VibeCodingTools from "../services/mrBlue/VibeCodingToolService";
+import { isGodLevelUser } from "../services/mrBlue/TaskExecutorService";
 
 const router = Router();
 const openai = new OpenAI();
 
+// MB.MD Pattern 65: Tool intent detection for god-level VibeCoding
+function detectToolIntent(message: string): { hasTool: boolean; tool: string | null; args: Record<string, any>; confidence: number } {
+  const lowerMessage = message.toLowerCase().trim();
+  
+  // Git status patterns
+  if (lowerMessage.includes("git status") || lowerMessage.includes("show git") || lowerMessage.includes("repo status")) {
+    return { hasTool: true, tool: "getGitStatus", args: {}, confidence: 0.95 };
+  }
+  
+  // List directory patterns
+  const listDirMatch = lowerMessage.match(/list\s+(?:directory|dir|files|folder)\s+([^\s]+)/i) ||
+                       lowerMessage.match(/ls\s+([^\s]+)/i) ||
+                       lowerMessage.match(/show\s+files\s+in\s+([^\s]+)/i);
+  if (listDirMatch) {
+    return { hasTool: true, tool: "listDirectory", args: { path: listDirMatch[1] }, confidence: 0.9 };
+  }
+  if (lowerMessage === "list files" || lowerMessage === "ls" || lowerMessage === "show files") {
+    return { hasTool: true, tool: "listDirectory", args: { path: "." }, confidence: 0.85 };
+  }
+  
+  // Read file patterns
+  const readMatch = lowerMessage.match(/read\s+(?:file\s+)?([^\s]+)/i) ||
+                    lowerMessage.match(/show\s+(?:contents?\s+of\s+)?([^\s]+\.(?:ts|tsx|js|jsx|json|md|css|html))/i) ||
+                    lowerMessage.match(/cat\s+([^\s]+)/i);
+  if (readMatch) {
+    return { hasTool: true, tool: "readFile", args: { path: readMatch[1] }, confidence: 0.9 };
+  }
+  
+  // Grep/search patterns
+  const grepMatch = lowerMessage.match(/(?:grep|search|find)\s+["']?([^"']+)["']?\s+(?:in\s+)?([^\s]+)?/i);
+  if (grepMatch) {
+    return { hasTool: true, tool: "grepFiles", args: { pattern: grepMatch[1], path: grepMatch[2] || "." }, confidence: 0.85 };
+  }
+  
+  // Fix/execute patterns
+  if (lowerMessage.includes("fix this") || lowerMessage.includes("apply the fix") || 
+      lowerMessage.includes("make the change") || lowerMessage.includes("execute") ||
+      lowerMessage.includes("fix it now") || lowerMessage.includes("do it now")) {
+    return { hasTool: true, tool: "agenticExecute", args: { instruction: message }, confidence: 0.8 };
+  }
+  
+  return { hasTool: false, tool: null, args: {}, confidence: 0 };
+}
+
+// Execute tool with context
+async function executeToolWithContext(tool: string, args: Record<string, any>): Promise<{ success: boolean; tool: string; data: any; error?: string }> {
+  try {
+    switch (tool) {
+      case "getGitStatus":
+        const gitStatus = await VibeCodingTools.getGitStatus();
+        return { success: true, tool, data: gitStatus };
+      case "listDirectory":
+        const files = await VibeCodingTools.listDirectory(args.path || ".");
+        return { success: true, tool, data: files };
+      case "readFile":
+        const content = await VibeCodingTools.readFile(args.path);
+        return { success: true, tool, data: content };
+      case "grepFiles":
+        const matches = await VibeCodingTools.grepFiles(args.pattern, args.path || ".");
+        return { success: true, tool, data: matches };
+      default:
+        return { success: false, tool, data: null, error: "Unknown tool" };
+    }
+  } catch (error: any) {
+    return { success: false, tool, data: null, error: error.message };
+  }
+}
+
 router.post("/chat", authenticateToken, async (req: Request, res: Response) => {
   const { message, systemPrompt } = req.body;
+  const userEmail = (req as any).user?.email || "";
+  const userRoleLevel = (req as any).user?.roleLevel || 0;
   
   console.log("[MrBlue Chat] Received request:", { 
     message, 
     systemPromptLength: systemPrompt?.length,
-    hasSystemPrompt: !!systemPrompt
+    hasSystemPrompt: !!systemPrompt,
+    userEmail
   });
 
   try {
+    // MB.MD Pattern 65: Check for god-level tool execution FIRST
+    const isGodLevel = isGodLevelUser(userRoleLevel) || isGodLevelUser(userEmail);
+    const toolIntent = detectToolIntent(message);
+    
+    console.log(`[MrBlue Chat] Tool detection: isGodLevel=${isGodLevel}, tool=${toolIntent.tool}, confidence=${toolIntent.confidence}`);
+    
+    if (isGodLevel && toolIntent.hasTool && toolIntent.tool && toolIntent.confidence >= 0.7) {
+      console.log(`[MrBlue Chat] Executing tool for god-level user: ${toolIntent.tool}`);
+      
+      const toolResult = await executeToolWithContext(toolIntent.tool, toolIntent.args);
+      
+      if (toolResult.success) {
+        // Format the result conversationally using AI
+        const formatResponse = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content: "You are Mr. Blue, a VibeCoding agent with god-level powers. You just executed a real tool and got actual data from the repository. Present this data clearly and conversationally. Do not use emojis."
+            },
+            {
+              role: "user",
+              content: `User asked: "${message}"\n\nTool executed: ${toolResult.tool}\n\nActual result:\n${JSON.stringify(toolResult.data, null, 2)}`
+            }
+          ],
+          temperature: 0.7,
+        });
+        
+        const formattedReply = formatResponse.choices[0].message.content;
+        console.log("[MrBlue Chat] Tool execution success, formatted reply length:", formattedReply?.length);
+        
+        return res.json({
+          role: "assistant",
+          response: formattedReply,
+          content: formattedReply,
+          timestamp: new Date().toISOString(),
+          toolExecuted: toolResult.tool,
+          toolSuccess: true,
+          godLevelExecution: true,
+          rawData: toolResult.data
+        });
+      } else {
+        return res.json({
+          role: "assistant",
+          response: `I tried to execute ${toolResult.tool} but encountered an error: ${toolResult.error}`,
+          content: `I tried to execute ${toolResult.tool} but encountered an error: ${toolResult.error}`,
+          timestamp: new Date().toISOString(),
+          toolExecuted: toolResult.tool,
+          toolSuccess: false,
+          godLevelExecution: true
+        });
+      }
+    }
+    
+    // Standard AI response for non-tool requests
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
