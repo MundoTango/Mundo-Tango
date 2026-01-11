@@ -498,14 +498,14 @@ What would you like me to do?`,
     if (isVibecodingTask(messageText)) {
       try {
         console.log(
-          "[MrBlueChat] VibeCoding task detected, attempting stream...",
+          "[MrBlueChat] VibeCoding task detected, attempting vibe-stream...",
         );
 
         // Get auth token from localStorage
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
 
-        // Call streaming endpoint
-        const response = await fetch("/api/mrblue/vibecoding", {
+        // Call new SSE streaming endpoint for autonomous VibeCoding
+        const response = await fetch("/api/mrblue/vibe-stream", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

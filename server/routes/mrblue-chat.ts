@@ -3,9 +3,29 @@ import { authenticateToken } from "../middleware/auth";
 import OpenAI from "openai";
 import * as VibeCodingTools from "../services/mrBlue/VibeCodingToolService";
 import { isGodLevelUser } from "../services/mrBlue/TaskExecutorService";
+import { agenticExecutor, ExecutionStep } from "../services/mrBlue/AgenticExecutor";
 
 const router = Router();
 const openai = new OpenAI();
+
+// Track active SSE streams for cleanup
+const activeVibeStreams = new Map<string, { res: Response; aborted: boolean }>();
+
+// Detect if message requires autonomous agentic work (not just a single tool)
+function isAgenticTask(message: string): boolean {
+  const lowerMessage = message.toLowerCase().trim();
+  const patterns = [
+    /\b(fix|repair|patch|debug|solve)\b.*\b(bug|error|issue|problem)\b/i,
+    /\b(implement|add|create|build)\b.*\b(feature|functionality|system)\b/i,
+    /\b(refactor|improve|optimize|enhance)\b/i,
+    /\b(investigate|analyze|diagnose)\b.*\b(and|then)\b.*\b(fix|solve|implement)\b/i,
+    /\bwork on\b/i,
+    /\bdo it\b/i,
+    /\bfix it\b/i,
+    /\bhandle this\b/i,
+  ];
+  return patterns.some(p => p.test(lowerMessage));
+}
 
 // MB.MD Pattern 65: Tool intent detection for god-level VibeCoding
 // IMPORTANT: Use lowerMessage for pattern detection but ORIGINAL message for extracting paths
@@ -198,6 +218,112 @@ router.post("/chat", authenticateToken, async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("[MrBlue Chat] Error:", error);
     res.status(500).json({ error: "Failed to communicate with AI" });
+  }
+});
+
+/**
+ * POST /api/mrblue/vibe-stream
+ * SSE endpoint for streaming autonomous VibeCoding work
+ * Streams Thought/Action/Observation in real-time as Mr Blue works
+ * God-level users only
+ */
+router.post("/vibe-stream", authenticateToken, async (req: Request, res: Response) => {
+  const { message, context } = req.body;
+  const userEmail = (req as any).user?.email || "";
+  const userRoleLevel = (req as any).user?.roleLevel || 0;
+  const userId = (req as any).user?.id;
+  
+  // Verify god-level access
+  const isGodLevel = isGodLevelUser(userRoleLevel) || isGodLevelUser(userEmail);
+  if (!isGodLevel) {
+    return res.status(403).json({ error: "God-level access required for VibeCoding stream" });
+  }
+  
+  const streamId = `vibe_${userId}_${Date.now()}`;
+  const session = { aborted: false };
+  
+  // Handle client disconnect
+  req.on('close', () => {
+    console.log(`[VibeStream] Client disconnected: ${streamId}`);
+    session.aborted = true;
+    activeVibeStreams.delete(streamId);
+  });
+  
+  // Initialize SSE stream
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  
+  activeVibeStreams.set(streamId, { res, aborted: false });
+  
+  // Helper to send SSE event with ReAct markers
+  const sendEvent = (type: string, data: any) => {
+    if (session.aborted || res.writableEnded) return;
+    try {
+      const marker = type === 'thought' ? 'THOUGHT' : 
+                     type === 'action' ? 'ACTION' : 
+                     type === 'observation' ? 'OBSERVATION' : 
+                     type === 'complete' ? 'COMPLETE' :
+                     type === 'error' ? 'ERROR' : type.toUpperCase();
+      res.write(`data: ${JSON.stringify({ type, marker, ...data, timestamp: Date.now() })}\n\n`);
+    } catch (e) {
+      console.error('[VibeStream] Send error:', e);
+    }
+  };
+  
+  try {
+    // Send initial connection
+    sendEvent('connected', { 
+      message: 'VibeCoding stream connected - I will work autonomously until the task is complete',
+      streamId
+    });
+    
+    // Initial thinking
+    sendEvent('thought', { 
+      content: `Analyzing task: "${message.substring(0, 100)}..."`,
+      phase: 'analyzing'
+    });
+    
+    // Execute agentic task with streaming
+    const result = await agenticExecutor.execute(
+      message,
+      {
+        currentPage: context?.currentPage,
+        relevantFiles: context?.relevantFiles,
+        diagnostic: context?.diagnostic
+      },
+      (step: ExecutionStep) => {
+        // Stream each execution step to the client
+        sendEvent(step.type, {
+          content: step.content,
+          toolName: step.toolName,
+          toolResult: step.toolResult,
+          phase: step.type === 'thought' ? 'thinking' :
+                 step.type === 'action' ? 'executing' :
+                 step.type === 'observation' ? 'observing' :
+                 step.type === 'complete' ? 'complete' : 'processing'
+        });
+      }
+    );
+    
+    // Send completion summary
+    sendEvent('complete', {
+      success: result.success,
+      filesModified: result.filesModified,
+      filesCreated: result.filesCreated,
+      iterations: result.iterations,
+      toolCallsExecuted: result.toolCallsExecuted,
+      summary: result.finalResponse
+    });
+    
+    res.end();
+  } catch (error: any) {
+    console.error('[VibeStream] Error:', error);
+    sendEvent('error', { message: error.message || 'VibeCoding execution failed' });
+    res.end();
+  } finally {
+    activeVibeStreams.delete(streamId);
   }
 });
 
