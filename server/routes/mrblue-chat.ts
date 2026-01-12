@@ -27,6 +27,9 @@ import {
   getProjectStructure,
   getSecurityAuditLogs,
   getProjectContext,
+  getRecentErrors,
+  triggerAutoFix,
+  recordLearning,
   formatToolResponse,
 } from "../services/mrBlue/VibeCodingToolService";
 
@@ -146,6 +149,51 @@ const MRBLUE_TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
       parameters: { type: "object", properties: {}, required: [] },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "getRecentErrors",
+      description: "Get recent errors from the error_patterns table that could be auto-fixed. Use this to see what errors are occurring.",
+      parameters: {
+        type: "object",
+        properties: {
+          limit: { type: "number", description: "Max errors to return (default 10)" },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "triggerAutoFix",
+      description: "Trigger the AutoFixEngine to automatically diagnose and fix an error. It will analyze the error, calculate confidence, and either auto-fix (>95%), stage for approval (80-95%), or escalate (<80%).",
+      parameters: {
+        type: "object",
+        properties: {
+          errorId: { type: "number", description: "The ID of the error to auto-fix" },
+        },
+        required: ["errorId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "recordLearning",
+      description: "Record a learning pattern when you successfully complete a task. This helps the system learn from successes.",
+      parameters: {
+        type: "object",
+        properties: {
+          agentId: { type: "string", description: "Agent ID (e.g., 'mr-blue')" },
+          task: { type: "string", description: "Description of the task completed" },
+          solution: { type: "string", description: "The solution or approach used" },
+          validationScore: { type: "number", description: "Score 0-1 indicating success level" },
+        },
+        required: ["agentId", "task", "solution", "validationScore"],
+      },
+    },
+  },
 ];
 
 async function executeTool(name: string, args: Record<string, any>): Promise<any> {
@@ -170,6 +218,12 @@ async function executeTool(name: string, args: Record<string, any>): Promise<any
       return await getSecurityAuditLogs(args.userId, args.action, args.limit || 50);
     case "getProjectContext":
       return await getProjectContext();
+    case "getRecentErrors":
+      return await getRecentErrors(args.limit || 10);
+    case "triggerAutoFix":
+      return await triggerAutoFix(args.errorId);
+    case "recordLearning":
+      return await recordLearning(args.agentId, args.task, args.solution, args.validationScore);
     default:
       return { success: false, error: `Unknown tool: ${name}` };
   }
@@ -279,6 +333,11 @@ AVAILABLE TOOLS:
 - writeFile: Write/modify project files to fix issues
 - grepFiles: Search the codebase for code patterns
 - getProjectStructure: Get project overview
+
+SELF-HEALING TOOLS (MB.MD Pattern 99):
+- getRecentErrors: Get errors from error_patterns table that could be auto-fixed
+- triggerAutoFix: Trigger AutoFixEngine to autonomously fix an error (>95% confidence = auto-apply)
+- recordLearning: Record success patterns for learning retention (helps future tasks)
 
 METHODOLOGY (MB.MD v9.9.4):
 1. Research → Use getProjectContext first to understand the codebase

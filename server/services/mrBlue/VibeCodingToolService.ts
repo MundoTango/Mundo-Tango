@@ -717,6 +717,131 @@ export async function queryDatabase(query: string): Promise<ToolResult> {
 }
 
 /**
+ * TOOL: Get recent errors from error_patterns table for auto-fix
+ * MB.MD Pattern 67 + Self-Healing Integration
+ */
+export async function getRecentErrors(limit: number = 10): Promise<ToolResult> {
+  try {
+    const { db } = await import("../../db");
+    const { sql } = await import("drizzle-orm");
+    
+    const result = await db.execute(sql.raw(`
+      SELECT id, error_type, error_message, frequency, status, confidence, last_seen, metadata
+      FROM error_patterns 
+      WHERE status != 'resolved'
+      ORDER BY last_seen DESC
+      LIMIT ${Math.min(limit, 50)}
+    `));
+    
+    const errors = (result as any).rows || result || [];
+    
+    return {
+      success: true,
+      tool: "getRecentErrors",
+      data: {
+        count: errors.length,
+        errors: errors.map((e: any) => ({
+          id: e.id,
+          errorType: e.error_type,
+          errorMessage: e.error_message?.substring(0, 200),
+          frequency: e.frequency,
+          status: e.status,
+          confidence: e.confidence,
+          lastSeen: e.last_seen,
+        })),
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "getRecentErrors",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Trigger AutoFixEngine for a specific error
+ * MB.MD Pattern 67 + Self-Healing Integration
+ */
+export async function triggerAutoFix(errorId: number): Promise<ToolResult> {
+  try {
+    const { AutoFixEngine } = await import("./AutoFixEngine");
+    
+    const engine = new AutoFixEngine();
+    await engine.initialize();
+    
+    console.log(`[VibeCoding] 🔧 Triggering AutoFix for error ${errorId}`);
+    const result = await engine.processError(errorId);
+    
+    return {
+      success: result.success,
+      tool: "triggerAutoFix",
+      data: {
+        errorId: result.errorId,
+        decision: result.decision,
+        confidence: result.fixAnalysis.confidence,
+        rootCause: result.fixAnalysis.rootCause,
+        suggestedFix: result.fixAnalysis.suggestedFix,
+        affectedFiles: result.fixAnalysis.affectedFiles,
+        gitCommitId: result.gitCommitId,
+        error: result.error,
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "triggerAutoFix",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Record a learning pattern for successful task completion
+ * MB.MD Pattern 67 + LearningRetentionService Integration
+ */
+export async function recordLearning(
+  agentId: string,
+  task: string,
+  solution: string,
+  validationScore: number
+): Promise<ToolResult> {
+  try {
+    const { LearningRetentionService } = await import("./LearningRetentionService");
+    
+    console.log(`[VibeCoding] 📚 Recording learning pattern: ${task.substring(0, 50)}...`);
+    
+    await LearningRetentionService.recordSuccessPattern({
+      agentId,
+      task,
+      solution,
+      validationScore: Math.min(1, Math.max(0, validationScore)),
+    });
+    
+    return {
+      success: true,
+      tool: "recordLearning",
+      data: {
+        agentId,
+        task: task.substring(0, 100),
+        validationScore,
+        message: "Learning pattern recorded successfully",
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "recordLearning",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
  * Available tools registry
  */
 export const VIBECODING_TOOLS = {
@@ -784,6 +909,21 @@ export const VIBECODING_TOOLS = {
     name: "queryDatabase",
     description: "Execute a safe SELECT query on the database",
     handler: queryDatabase,
+  },
+  getRecentErrors: {
+    name: "getRecentErrors",
+    description: "Get recent errors from the error_patterns table for auto-fix",
+    handler: getRecentErrors,
+  },
+  triggerAutoFix: {
+    name: "triggerAutoFix",
+    description: "Trigger the AutoFixEngine to automatically fix an error",
+    handler: triggerAutoFix,
+  },
+  recordLearning: {
+    name: "recordLearning",
+    description: "Record a learning pattern for successful task completion",
+    handler: recordLearning,
   },
 };
 
