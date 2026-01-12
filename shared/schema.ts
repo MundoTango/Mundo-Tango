@@ -20100,6 +20100,37 @@ export type InsertAdminApproval = z.infer<typeof insertAdminApprovalSchema>;
 export type SelectAdminApproval = typeof adminApprovals.$inferSelect;
 
 // ============================================================================
+// FEEDBACK MESSAGES - MB.MD Pattern 67 Bug Conversation History
+// ============================================================================
+
+export const feedbackMessageRoleEnum = pgEnum("feedback_message_role", [
+  "user",
+  "admin",
+  "mr_blue",
+  "system"
+]);
+
+export const feedbackMessages = pgTable("feedback_messages", {
+  id: serial("id").primaryKey(),
+  feedbackId: integer("feedback_id").references(() => userFeedback.id, { onDelete: "cascade" }).notNull(),
+  senderId: integer("sender_id").references(() => users.id),
+  role: feedbackMessageRoleEnum("role").notNull(),
+  content: text("content").notNull(),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  feedbackIdx: index("feedback_messages_feedback_idx").on(table.feedbackId),
+  senderIdx: index("feedback_messages_sender_idx").on(table.senderId),
+}));
+
+export const insertFeedbackMessageSchema = createInsertSchema(feedbackMessages).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertFeedbackMessage = z.infer<typeof insertFeedbackMessageSchema>;
+export type SelectFeedbackMessage = typeof feedbackMessages.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 

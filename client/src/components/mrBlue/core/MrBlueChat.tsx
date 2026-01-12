@@ -192,11 +192,13 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
   const lastContextKeyRef = useRef<string | null>(null);
 
   // MB.MD Pattern 67: Detect ?mrblue=debug param and auto-open VibeCoding mode for bug fixing
+  // Security: Only god-level users (tier 8+) can enter debug/VibeCoding mode
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const debugMode = urlParams.get('mrblue');
     
-    if (debugMode === 'debug') {
+    // Guard: Only god-level users can trigger VibeCoding via URL param
+    if (debugMode === 'debug' && isGodLevel) {
       const storedContext = sessionStorage.getItem('bugDiagnosticContext');
       if (storedContext) {
         try {
@@ -234,7 +236,7 @@ What would you like me to do?`,
         }
       }
     }
-  }, []);
+  }, [isGodLevel]);
 
   // UX-004 FIX: Update welcome message when CTO, self-heal, or walkthrough result context changes
   // PREPEND context message instead of replacing entire history

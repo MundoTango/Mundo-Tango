@@ -46,6 +46,8 @@ interface FeedbackItem {
   priority: 'low' | 'medium' | 'high' | 'critical';
   mrBlueResponse: string;
   adminNotes: string;
+  playwrightVideoUrl?: string;
+  selectedElement?: string;
   createdAt: string;
   user?: { email: string; displayName: string };
 }
@@ -379,6 +381,29 @@ function FeedbackPanel() {
                     {selectedFeedback.currentPage}
                   </code>
                 </div>
+
+                {/* MB.MD Pattern 67: Show selected element if available */}
+                {selectedFeedback.selectedElement && (
+                  <div>
+                    <h4 className="text-sm font-medium mb-1">Target Element</h4>
+                    <code className="text-xs bg-muted px-2 py-1 rounded font-mono break-all">
+                      {selectedFeedback.selectedElement}
+                    </code>
+                  </div>
+                )}
+
+                {/* MB.MD Pattern 67: Playwright video recording */}
+                {selectedFeedback.playwrightVideoUrl && (
+                  <div>
+                    <h4 className="text-sm font-medium mb-1">Session Recording</h4>
+                    <video 
+                      src={selectedFeedback.playwrightVideoUrl} 
+                      controls 
+                      className="w-full rounded-md border max-h-48"
+                      data-testid="video-session-recording"
+                    />
+                  </div>
+                )}
 
                 {selectedFeedback.mrBlueResponse && (
                   <div>
