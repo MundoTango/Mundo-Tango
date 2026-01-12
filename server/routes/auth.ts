@@ -4,7 +4,10 @@ import crypto from "crypto";
 import speakeasy from "speakeasy";
 import QRCode from "qrcode";
 import { z } from "zod";
+import { eq } from "drizzle-orm";
 import { storage } from "../storage";
+import { db } from "@shared/db";
+import { emailVerificationTokens } from "@shared/schema";
 import {
   authenticateToken,
   generateAccessToken,
@@ -232,22 +235,49 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.status(403).json({ message: "Account is suspended" });
     }
 
-    // Check for valid invite code BEFORE email verification check
-    // MB.MD Pattern 67: Valid invite codes (nomad/tango) can auto-verify users during login
+    // Check for valid invite code
     const trimmedCode = inviteCode?.toLowerCase().trim();
     const isValidInviteCode = trimmedCode && VALID_INVITE_CODES.includes(trimmedCode);
 
-    // If user is unverified but has valid invite code, auto-verify them
-    if (!user.isVerified && isValidInviteCode) {
-      await storage.updateUser(user.id, { 
-        isVerified: true,
-        isOnboardingComplete: true,
-        formStatus: 100,
-        waitlist: false
-      });
-      console.log(`[Auth] User ${user.id} auto-verified during login with invite code '${trimmedCode}'`);
-    } else if (!user.isVerified) {
-      // No valid invite code - require email verification
+    // Check if user has verified their email
+    if (!user.isVerified) {
+      // MB.MD Pattern 67: If user provides valid invite code and is unverified,
+      // send verification email and redirect to verification flow
+      if (isValidInviteCode) {
+        // Generate new verification code
+        const verificationCode = crypto.randomInt(100000, 999999).toString();
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        
+        // Delete any existing verification tokens for this user
+        await db.delete(emailVerificationTokens).where(eq(emailVerificationTokens.userId, user.id));
+        
+        // Create new verification token
+        await storage.createEmailVerificationToken({
+          userId: user.id,
+          token: verificationCode,
+          expiresAt,
+        });
+        
+        // Send verification email (fire and forget)
+        EmailService.sendVerificationCodeEmail(user.email, user.name || user.username, verificationCode)
+          .then(sent => {
+            if (sent) {
+              console.log(`[Auth] Verification email sent to ${user.email} via invite code '${trimmedCode}'`);
+            }
+          })
+          .catch(err => console.error('[Auth] Failed to send verification email:', err));
+        
+        console.log(`[Auth] User ${user.id} used invite code '${trimmedCode}' - sending verification email`);
+        
+        return res.status(403).json({ 
+          message: "Verification email sent! Please check your inbox for the 6-digit code.",
+          requiresVerification: true,
+          email: user.email,
+          emailSent: true
+        });
+      }
+      
+      // No invite code - standard verification required message
       return res.status(403).json({ 
         message: "Please verify your email before logging in. Check your inbox for the verification link.",
         requiresVerification: true,

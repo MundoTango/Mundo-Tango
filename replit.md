@@ -67,19 +67,26 @@ This system enables autonomous actions via OpenAI function calling for god-level
 - Test Flow: Login → Open Mr. Blue → Click VibeCoding tab → Send diagnostic prompts → Verify tool execution
 - Verified Working: getUserStats (returns 81 real users), getUsersNeedingOnboarding (returns user list)
 
-### Registration Invite Codes (MB.MD Pattern 67 - Jan 12, 2026)
-Special invite codes that auto-complete user verification and onboarding:
+### Registration Invite Codes (MB.MD Pattern 67 - Updated Jan 12, 2026)
+Special invite codes for user recovery and new registrations:
 
 **Valid Invite Codes**: `nomad`, `tango`
 
-**Behavior when using valid invite code**:
+**Behavior during NEW REGISTRATION with invite code**:
 - `emailVerified: true` - Skips email verification step
 - `isOnboardingComplete: true` - Skips onboarding wizard
 - `formStatus: 100` - Full profile completion
 - `waitlist: false` - Bypasses waitlist
 - Issues JWT tokens immediately on registration
 
-**Implementation**: `server/routes/auth.ts` - VALID_INVITE_CODES array
+**Behavior during LOGIN with invite code (for unverified users)**:
+- Generates new 6-digit verification code
+- Sends verification email immediately via Resend
+- Redirects to email verification page with `emailSent: true`
+- User must complete verification + onboarding flow
+- Use case: Users who had registration issues and never received initial verification email
+
+**Implementation**: `server/routes/auth.ts` - VALID_INVITE_CODES array, login route handles unverified users with invite codes
 
 ### Password Management System (Jan 12, 2026)
 All users can manage their passwords:
