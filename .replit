@@ -67,7 +67,7 @@ SUPABASE_DATABASE_URL = "postgresql://postgres:Lij558X%25tDy%23fFN@db.iuvbqahpvp
 
 [userenv.shared]
 VITE_STRIPE_PUBLIC_KEY = "pk_test_51R6baSPWgXkvbq8nFPhziGyPhczSPida5cGqS3IISoXYChYG53tYLNCdPCI3MoNdPac48pR5IW2l9Pv3bs4iqiIp00abWe17cI"
-RESEND_DOMAIN_VERIFIED = "true"
+RESEND_DOMAIN_VERIFIED = "false"
 MAINTENANCE_TOKEN = "mt-cleanup-2024-secure"
 MAINTENANCE_ALLOWED_PATTERNS = "scott%@boddye.com,test%@test.com"
 INTERNAL_ADMIN_KEY = "mt-internal-56c3f94e00af3667f9c56aedbb4d2ad5"
