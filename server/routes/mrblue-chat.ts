@@ -30,6 +30,9 @@ import {
   getRecentErrors,
   triggerAutoFix,
   recordLearning,
+  sendOnboardingReminder,
+  markUserOnboarded,
+  bulkSendOnboardingReminders,
   formatToolResponse,
 } from "../services/mrBlue/VibeCodingToolService";
 
@@ -194,6 +197,48 @@ const MRBLUE_TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "sendOnboardingReminder",
+      description: "Send an onboarding reminder email to a specific user who hasn't completed onboarding. This TAKES ACTION to fix the issue.",
+      parameters: {
+        type: "object",
+        properties: {
+          userId: { type: "number", description: "The user ID to send reminder to" },
+        },
+        required: ["userId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "markUserOnboarded",
+      description: "Mark a user's onboarding as complete in the database. Use this when a user should be considered fully onboarded.",
+      parameters: {
+        type: "object",
+        properties: {
+          userId: { type: "number", description: "The user ID to mark as onboarded" },
+        },
+        required: ["userId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "bulkSendOnboardingReminders",
+      description: "Send onboarding reminder emails to multiple users who haven't completed onboarding. This TAKES ACTION to resolve the issue at scale.",
+      parameters: {
+        type: "object",
+        properties: {
+          limit: { type: "number", description: "Maximum number of users to send reminders to (default 10)" },
+        },
+        required: [],
+      },
+    },
+  },
 ];
 
 async function executeTool(name: string, args: Record<string, any>): Promise<any> {
@@ -224,6 +269,12 @@ async function executeTool(name: string, args: Record<string, any>): Promise<any
       return await triggerAutoFix(args.errorId);
     case "recordLearning":
       return await recordLearning(args.agentId, args.task, args.solution, args.validationScore);
+    case "sendOnboardingReminder":
+      return await sendOnboardingReminder(args.userId);
+    case "markUserOnboarded":
+      return await markUserOnboarded(args.userId);
+    case "bulkSendOnboardingReminders":
+      return await bulkSendOnboardingReminders(args.limit || 10);
     default:
       return { success: false, error: `Unknown tool: ${name}` };
   }

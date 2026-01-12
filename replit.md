@@ -45,6 +45,12 @@ This system enables autonomous actions via OpenAI function calling for god-level
 - `triggerAutoFix()` - Trigger AutoFixEngine (>95% confidence = auto-apply, 80-95% = stage, <80% = escalate)
 - `recordLearning()` - Record success patterns via LearningRetentionService
 
+**Action Tools (Pattern 67 - Jan 12, 2026)**:
+- `sendOnboardingReminder(userId)` - Send onboarding reminder email to specific user via EmailService
+- `markUserOnboarded(userId)` - Update database to mark user as onboarding complete
+- `bulkSendOnboardingReminders(limit)` - Send reminders to multiple users (max 10 per call)
+- Note: Uses `storage.getUserById()` (not getUser) for database lookups
+
 **Multi-AI Orchestration**:
 - Regular chat mode: Routes via Groq→Gemini→Claude for speed/cost optimization
 - VibeCoding mode: Uses OpenAI GPT-4o (required for function calling/tools API)

@@ -815,6 +815,83 @@ export class EmailService {
     }
   }
   
+  // Helper: Send onboarding reminder email (direct send, not queued)
+  // MB.MD Pattern 67 - Action tool for Mr. Blue to resolve user issues
+  static async sendOnboardingReminderEmail(email: string, name: string): Promise<boolean> {
+    const startTime = Date.now();
+    
+    try {
+      const appUrl = getAppUrl();
+      const profileUrl = `${appUrl}/onboarding`;
+      
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+              <h1 style="margin: 0; font-size: 24px;">Complete Your Tango Journey</h1>
+              <p style="margin: 10px 0 0 0; opacity: 0.9;">Your profile is waiting for you</p>
+            </div>
+            <div style="padding: 30px; background: #1e293b; border-radius: 0 0 12px 12px;">
+              <p style="color: #e2e8f0; font-size: 16px; line-height: 1.6;">Hi ${name},</p>
+              <p style="color: #94a3b8; font-size: 16px; line-height: 1.6;">
+                We noticed you haven't completed your Mundo Tango profile yet. Complete your onboarding to:
+              </p>
+              <ul style="color: #94a3b8; font-size: 14px; line-height: 1.8;">
+                <li>Connect with dancers worldwide</li>
+                <li>Discover tango events near you</li>
+                <li>Join the global tango community</li>
+                <li>Find teachers and classes</li>
+              </ul>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${profileUrl}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                  Complete My Profile
+                </a>
+              </div>
+              <p style="color: #64748b; font-size: 14px; text-align: center;">
+                This email was sent by Mr. Blue, your Mundo Tango AI assistant.
+              </p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+      
+      const resendClient = await getResendClient();
+      if (!resendClient) {
+        console.log(`[EmailService] Onboarding reminder would be sent to ${email} (Resend not configured)`);
+        return false;
+      }
+      
+      console.log(`[EmailService] 📧 Sending onboarding reminder to ${email}`);
+      const result = await resendClient.client.emails.send({
+        from: resendClient.fromEmail,
+        to: email,
+        subject: 'Complete Your Tango Profile - Mundo Tango',
+        html: html
+      });
+      
+      const duration = Date.now() - startTime;
+      
+      if (result.error) {
+        console.error(`[EmailService] ❌ Failed to send onboarding reminder to ${email}:`, result.error);
+        return false;
+      }
+      
+      console.log(`[EmailService] ✅ Onboarding reminder sent to ${email} in ${duration}ms | ID: ${result.data?.id}`);
+      return true;
+    } catch (error: any) {
+      const duration = Date.now() - startTime;
+      console.error(`[EmailService] ❌ FAILED to send onboarding reminder to ${email} after ${duration}ms:`, error?.message);
+      return false;
+    }
+  }
+  
   // Helper: Send feedback response email (direct send, not queued)
   static async sendFeedbackResponseEmail(
     email: string, 

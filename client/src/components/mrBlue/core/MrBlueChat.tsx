@@ -842,12 +842,12 @@ Type your description and click **Submit** to send to developers.`,
 
         {/* Mode Toggle & Close Button */}
         <div className="flex items-center gap-2">
-          <Tabs value={mode} onValueChange={(value) => setMode(value as 'chat' | 'vibecoding')} className="w-auto">
+          <Tabs value={mode} onValueChange={(value) => { console.log('[MrBlueChat] Mode changed to:', value); setMode(value as 'chat' | 'vibecoding'); }} className="w-auto">
             <TabsList className="grid w-32 grid-cols-2">
-              <TabsTrigger value="chat" className="p-1">
+              <TabsTrigger value="chat" className="p-1" data-testid="toggle-chat-mode">
                 <Brain className="h-4 w-4" />
               </TabsTrigger>
-              <TabsTrigger value="vibecoding" className="p-1">
+              <TabsTrigger value="vibecoding" className="p-1" data-testid="toggle-vibecoding-mode">
                 <Code className="h-4 w-4" />
               </TabsTrigger>
             </TabsList>

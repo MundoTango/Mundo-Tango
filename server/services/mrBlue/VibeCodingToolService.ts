@@ -842,6 +842,176 @@ export async function recordLearning(
 }
 
 /**
+ * TOOL: Send onboarding reminder email to a specific user
+ * MB.MD Pattern 67 - ACTION TOOL for resolving user issues
+ */
+export async function sendOnboardingReminder(userId: number): Promise<ToolResult> {
+  try {
+    const { storage } = await import("../../storage");
+    const { EmailService } = await import("../EmailService");
+    
+    const user = await storage.getUserById(userId);
+    if (!user) {
+      return {
+        success: false,
+        tool: "sendOnboardingReminder",
+        data: null,
+        error: `User ${userId} not found`,
+      };
+    }
+    
+    if (user.isOnboardingComplete) {
+      return {
+        success: true,
+        tool: "sendOnboardingReminder",
+        data: {
+          userId,
+          email: user.email,
+          message: "User has already completed onboarding - no reminder needed",
+          skipped: true,
+        },
+      };
+    }
+    
+    // Send reminder email
+    const sent = await EmailService.sendOnboardingReminderEmail(
+      user.email,
+      user.name || user.username || "Tango Enthusiast"
+    );
+    
+    console.log(`[VibeCoding] 📧 Onboarding reminder sent to user ${userId}: ${user.email}`);
+    
+    return {
+      success: true,
+      tool: "sendOnboardingReminder",
+      data: {
+        userId,
+        email: user.email,
+        name: user.name,
+        emailSent: sent,
+        message: sent ? "Onboarding reminder email sent successfully" : "Email service unavailable, but action logged",
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "sendOnboardingReminder",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Mark a user's onboarding as complete
+ * MB.MD Pattern 67 - ACTION TOOL for resolving user issues
+ */
+export async function markUserOnboarded(userId: number): Promise<ToolResult> {
+  try {
+    const { storage } = await import("../../storage");
+    
+    const user = await storage.getUserById(userId);
+    if (!user) {
+      return {
+        success: false,
+        tool: "markUserOnboarded",
+        data: null,
+        error: `User ${userId} not found`,
+      };
+    }
+    
+    await storage.updateUser(userId, { isOnboardingComplete: true });
+    
+    console.log(`[VibeCoding] ✅ User ${userId} marked as onboarded: ${user.email}`);
+    
+    return {
+      success: true,
+      tool: "markUserOnboarded",
+      data: {
+        userId,
+        email: user.email,
+        name: user.name,
+        message: "User successfully marked as onboarded",
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "markUserOnboarded",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Bulk send onboarding reminders to multiple users
+ * MB.MD Pattern 67 - ACTION TOOL for bulk resolution
+ */
+export async function bulkSendOnboardingReminders(limit: number = 10): Promise<ToolResult> {
+  try {
+    const { storage } = await import("../../storage");
+    const { EmailService } = await import("../EmailService");
+    
+    const users = await storage.getUsersNeedingOnboarding(limit);
+    
+    if (users.length === 0) {
+      return {
+        success: true,
+        tool: "bulkSendOnboardingReminders",
+        data: {
+          totalProcessed: 0,
+          message: "No users need onboarding reminders",
+        },
+      };
+    }
+    
+    const results = {
+      sent: [] as { userId: number; email: string }[],
+      failed: [] as { userId: number; email: string; error: string }[],
+    };
+    
+    for (const user of users) {
+      try {
+        const sent = await EmailService.sendOnboardingReminderEmail(
+          user.email,
+          user.name || user.username || "Tango Enthusiast"
+        );
+        if (sent) {
+          results.sent.push({ userId: user.id, email: user.email });
+        } else {
+          results.failed.push({ userId: user.id, email: user.email, error: "Email service unavailable" });
+        }
+      } catch (err: any) {
+        results.failed.push({ userId: user.id, email: user.email, error: err.message });
+      }
+    }
+    
+    console.log(`[VibeCoding] 📧 Bulk onboarding reminders: ${results.sent.length} sent, ${results.failed.length} failed`);
+    
+    return {
+      success: true,
+      tool: "bulkSendOnboardingReminders",
+      data: {
+        totalProcessed: users.length,
+        sent: results.sent.length,
+        failed: results.failed.length,
+        sentDetails: results.sent,
+        failedDetails: results.failed,
+        message: `Sent ${results.sent.length} reminders, ${results.failed.length} failed`,
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "bulkSendOnboardingReminders",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
  * Available tools registry
  */
 export const VIBECODING_TOOLS = {
@@ -924,6 +1094,21 @@ export const VIBECODING_TOOLS = {
     name: "recordLearning",
     description: "Record a learning pattern for successful task completion",
     handler: recordLearning,
+  },
+  sendOnboardingReminder: {
+    name: "sendOnboardingReminder",
+    description: "Send an onboarding reminder email to a specific user who hasn't completed onboarding",
+    handler: sendOnboardingReminder,
+  },
+  markUserOnboarded: {
+    name: "markUserOnboarded",
+    description: "Mark a user's onboarding as complete in the database",
+    handler: markUserOnboarded,
+  },
+  bulkSendOnboardingReminders: {
+    name: "bulkSendOnboardingReminders",
+    description: "Send onboarding reminder emails to multiple users who haven't completed onboarding",
+    handler: bulkSendOnboardingReminders,
   },
 };
 
