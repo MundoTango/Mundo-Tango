@@ -561,6 +561,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
       const response = await apiRequest("POST", "/api/mrblue/chat", {
         message: messageText,
         conversationId: currentConversationId,
+        mode: mode === 'vibecoding' ? 'vibe-coding' : 'chat',
         context: {
           currentPage: location,
           pageTitle: document.title,
@@ -573,6 +574,7 @@ Would you like me to help apply the fix, or explain the issue in more detail?`;
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content:
+          data.message ||
           data.response ||
           data.content ||
           "I'm sorry, I couldn't process that request.",

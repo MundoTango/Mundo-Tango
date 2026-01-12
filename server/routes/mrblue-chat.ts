@@ -1,13 +1,22 @@
 /**
- * MR. BLUE CHAT ROUTES - MB.MD Pattern 67
- * Universal Bug Diagnostic System with Function Calling
+ * MR. BLUE CHAT ROUTES - MB.MD Pattern 67 + Pattern 99
+ * Universal Bug Diagnostic System with Multi-AI Orchestration
  * 
- * Now supports OpenAI function calling for autonomous actions
+ * AI Platform Routing:
+ * - Regular Chat → UnifiedAIOrchestrator (Groq→Gemini→OpenRouter for speed, Claude for reasoning)
+ * - VibeCoding Mode → OpenAI GPT-4o (required for function calling/tools)
+ * 
+ * This hybrid approach uses the right AI platform for each task:
+ * - Groq (Llama 3.3): Fast, FREE - classification, simple Q&A
+ * - Claude (Anthropic): Best reasoning - complex analysis
+ * - GPT-4o (OpenAI): Reliable - code generation, function calling
+ * - Gemini: Cheapest - bulk operations
  */
 
 import { Router, type Request, Response } from "express";
 import { authenticateToken } from "../middleware/auth";
 import OpenAI from "openai";
+import { smartRoute, collaborativeAnalysis } from "../services/ai/UnifiedAIOrchestrator";
 import {
   getUserStats,
   getUsersNeedingOnboarding,
@@ -212,6 +221,48 @@ router.post("/chat", authenticateToken, async (req: Request, res: Response) => {
   try {
     const isVibeCodingMode = mode === "vibe-coding" || mode === "vibecoding";
     const isGodLevel = user?.role === "admin" || user?.tier >= 8;
+    
+    // ============================================================================
+    // REGULAR CHAT MODE - Use Multi-AI Orchestration (Groq→Claude→Gemini)
+    // Routes to best AI based on task type for speed and cost optimization
+    // ============================================================================
+    if (!isVibeCodingMode || !isGodLevel) {
+      console.log("[MrBlue Chat] Using Multi-AI Orchestrator (smartRoute)");
+      
+      const mrBlueSystemPrompt = systemPrompt || `You are Mr. Blue, an AI assistant for Mundo Tango - a social platform for the global tango community. Be helpful, concise, and action-oriented.`;
+      
+      try {
+        const aiResponse = await smartRoute({
+          query: message,
+          useCase: 'chat',
+          priority: 'speed',
+          systemPrompt: mrBlueSystemPrompt,
+          temperature: 0.7,
+          maxTokens: 1500,
+        });
+        
+        console.log(`[MrBlue Chat] Multi-AI response from ${aiResponse.platform}/${aiResponse.model} | $${aiResponse.cost.toFixed(6)} | ${aiResponse.latency}ms`);
+        
+        return res.json({
+          message: aiResponse.content,
+          metadata: {
+            platform: aiResponse.platform,
+            model: aiResponse.model,
+            cost: aiResponse.cost,
+            latency: aiResponse.latency,
+            cached: aiResponse.cached || false,
+          },
+        });
+      } catch (orchestratorError: any) {
+        console.warn("[MrBlue Chat] Multi-AI Orchestrator failed, falling back to OpenAI:", orchestratorError.message);
+      }
+    }
+    
+    // ============================================================================
+    // VIBE CODING MODE - Use OpenAI GPT-4o (Required for Function Calling/Tools)
+    // Only OpenAI supports the function calling API needed for autonomous actions
+    // ============================================================================
+    console.log("[MrBlue Chat] Using OpenAI GPT-4o for VibeCoding with tools");
     
     const baseSystemPrompt = systemPrompt || `You are Mr. Blue, an AI assistant for Mundo Tango - a social platform for the global tango community.
 
