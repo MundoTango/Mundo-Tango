@@ -8876,6 +8876,46 @@ export class DbStorage implements IStorage {
       .where(eq(adminApprovals.feedbackId, feedbackId))
       .orderBy(desc(adminApprovals.createdAt));
   }
+
+  // ==================== MR. BLUE DIAGNOSTIC TOOLS (Pattern 67) ====================
+
+  async getUserStats(): Promise<{
+    totalUsers: number;
+    onboardedUsers: number;
+    notOnboardedUsers: number;
+    nomadTangoRoles: number;
+  }> {
+    const result = await db.execute(sql`
+      SELECT 
+        COUNT(*) as total_users,
+        COUNT(CASE WHEN is_onboarding_complete = true THEN 1 END) as onboarded_users,
+        COUNT(CASE WHEN is_onboarding_complete = false OR is_onboarding_complete IS NULL THEN 1 END) as not_onboarded,
+        COUNT(CASE WHEN role IN ('nomad', 'tango') THEN 1 END) as nomad_tango_roles
+      FROM users
+      WHERE email NOT LIKE '%@discovered.mundotango.app%'
+    `);
+    
+    const row = result[0] as any;
+    return {
+      totalUsers: parseInt(row.total_users || '0'),
+      onboardedUsers: parseInt(row.onboarded_users || '0'),
+      notOnboardedUsers: parseInt(row.not_onboarded || '0'),
+      nomadTangoRoles: parseInt(row.nomad_tango_roles || '0'),
+    };
+  }
+
+  async getUsersNeedingOnboarding(limit: number = 20): Promise<any[]> {
+    const result = await db.execute(sql`
+      SELECT id, email, name, role, is_onboarding_complete, tango_roles, created_at
+      FROM users
+      WHERE email NOT LIKE '%@discovered.mundotango.app%'
+        AND (is_onboarding_complete = false OR is_onboarding_complete IS NULL)
+      ORDER BY created_at DESC
+      LIMIT ${limit}
+    `);
+    
+    return result as any[];
+  }
 }
 
 export const storage = new DbStorage();
