@@ -81,7 +81,7 @@ export default function EmailVerificationPage() {
         if (data.user && data.user.onboardingCompleted) {
           navigate("/home");
         } else {
-          navigate("/onboarding");
+          navigate("/onboarding/welcome");
         }
       } else {
         toast({
