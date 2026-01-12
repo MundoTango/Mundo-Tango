@@ -17,6 +17,7 @@ import { safetyConfirmationService } from './SafetyConfirmation';
 import { checkpointManager } from './CheckpointManager';
 import { vibeCodingToolService } from './VibeCodingToolService';
 import { godCommandEnforcer } from './brain/GodCommandEnforcer';
+import { agenticExecutor, ExecutionStep } from './AgenticExecutor';
 
 export interface VibeCodingRequest {
   goal: string;
@@ -183,9 +184,23 @@ class VibeCodingMasterLoopService {
   }
 
   private async phaseExecute(plan: any, research: any, req: VibeCodingRequest, emit: Function) {
-    emit('action', 'Executing plan steps with ReAct protocol');
-    const result = await planExecuteLoopService.executePlan(plan.id, { sessionId: req.sessionId, userId: req.userId, roleLevel: 8 });
-    return { filesModified: [], filesCreated: [], result };
+    emit('action', 'Executing with AgenticExecutor - REAL file modifications');
+    
+    // Use the new AgenticExecutor for ACTUAL code changes
+    const agenticResult = await agenticExecutor.execute(
+      req.goal,
+      req.context,
+      (step: ExecutionStep) => {
+        // Stream each step through the main callback
+        emit(step.type, step.content);
+      }
+    );
+    
+    return {
+      filesModified: agenticResult.filesModified,
+      filesCreated: agenticResult.filesCreated,
+      result: agenticResult
+    };
   }
 
   private async phaseVerify(execution: any, req: VibeCodingRequest, emit: Function) {

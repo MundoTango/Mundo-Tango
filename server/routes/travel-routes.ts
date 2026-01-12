@@ -79,6 +79,85 @@ interface MTHost {
 
 const router = Router();
 
+// GET /api/travel/packages - Get upcoming tango events as travel packages
+router.get("/packages", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const now = new Date();
+    
+    // Fetch upcoming events as travel packages
+    const upcomingEvents = await db.select({
+      id: events.id,
+      title: events.title,
+      location: events.city,
+      startDate: events.startDate,
+      endDate: events.endDate,
+      description: events.description,
+      eventType: events.eventType,
+      venueName: events.venueName,
+    })
+    .from(events)
+    .where(gte(events.startDate, now))
+    .orderBy(events.startDate)
+    .limit(20);
+
+    // Transform to travel package format
+    const packages = upcomingEvents.map(event => ({
+      id: event.id,
+      title: event.title,
+      location: event.location || event.venueName || 'TBA',
+      startDate: event.startDate?.toISOString().split('T')[0],
+      endDate: event.endDate?.toISOString().split('T')[0] || event.startDate?.toISOString().split('T')[0],
+      description: event.description,
+      category: event.eventType || 'tango',
+      price: 'Varies',
+    }));
+
+    res.json(packages);
+  } catch (error) {
+    console.error("Error fetching travel packages:", error);
+    res.status(500).json({ message: "Failed to fetch travel packages" });
+  }
+});
+
+// GET /api/travel/destinations - Get popular tango destinations
+router.get("/destinations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    // Return popular tango destinations
+    const destinations = [
+      { id: 1, name: "Buenos Aires", description: "The birthplace of tango", image: "https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=800", popularity: 100 },
+      { id: 2, name: "Berlin", description: "Europe's tango capital", image: "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800", popularity: 85 },
+      { id: 3, name: "Istanbul", description: "A growing tango scene", image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800", popularity: 75 },
+      { id: 4, name: "Paris", description: "Romantic milongas await", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800", popularity: 80 },
+      { id: 5, name: "New York", description: "Vibrant American tango", image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800", popularity: 70 },
+    ];
+    
+    res.json(destinations);
+  } catch (error) {
+    console.error("Error fetching destinations:", error);
+    res.status(500).json({ message: "Failed to fetch destinations" });
+  }
+});
+
+// GET /api/travel/trips - Get user's travel trips
+router.get("/trips", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const trips = await db.select()
+      .from(travelPlans)
+      .where(eq(travelPlans.userId, userId))
+      .orderBy(desc(travelPlans.startDate));
+
+    res.json(trips);
+  } catch (error) {
+    console.error("Error fetching trips:", error);
+    res.status(500).json({ message: "Failed to fetch trips" });
+  }
+});
+
 // GET /api/travel/plans - Get user's travel plans (public with userId query param)
 router.get("/plans", async (req: AuthRequest, res: Response) => {
   try {

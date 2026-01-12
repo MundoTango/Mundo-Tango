@@ -1311,7 +1311,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                 )}
 
                                 {/* Accommodation Section */}
-                                <Card>
+                                <Card data-testid={`section-accommodation-${index}`}>
                                   <CardHeader className="pb-3">
                                     <div className="flex items-center justify-between">
                                       <CardTitle className="flex items-center gap-2 text-lg"><Building2 className="h-5 w-5 text-purple-600" />Accommodation</CardTitle>
@@ -1363,7 +1363,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                 </Card>
 
                                 {/* Transport Section */}
-                                <Card>
+                                <Card data-testid={`section-transport-${index}`}>
                                   <CardHeader className="pb-3">
                                     <div className="flex items-center justify-between">
                                       <CardTitle className="flex items-center gap-2 text-lg"><Plane className="h-5 w-5 text-blue-600" />Transport</CardTitle>
@@ -1441,7 +1441,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                             )}
 
                             {/* Events Section */}
-                            <Card>
+                            <Card data-testid={`section-events-milongas-${index}`}>
                               <CardHeader className="pb-3">
                                 <div className="flex items-center justify-between">
                                   <CardTitle className="flex items-center gap-2 text-lg"><Music className="h-5 w-5 text-pink-600" />Events & Milongas</CardTitle>
@@ -1494,7 +1494,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                             {!isPublicView && (
                               <>
                                 {/* Travel Companions Section */}
-                                <Card className="border-cyan-500/20">
+                                <Card className="border-cyan-500/20" data-testid={`section-travel-companions-${index}`}>
                                   <CardHeader className="pb-3">
                                     <div className="flex items-center justify-between gap-2">
                                       <CardTitle className="flex items-center gap-2 text-lg"><Users className="h-5 w-5 text-cyan-600" />Travel Companions</CardTitle>

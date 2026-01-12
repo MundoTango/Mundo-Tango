@@ -16508,6 +16508,10 @@ export const emailLogs = pgTable(
     id: serial("id").primaryKey(),
     userId: integer("user_id").references(() => users.id),
     emailType: varchar("email_type", { length: 100 }).notNull(),
+    toEmail: varchar("to_email", { length: 255 }),
+    status: varchar("status", { length: 20 }).default("sent"), // 'sent', 'failed', 'pending'
+    errorMessage: text("error_message"),
+    externalId: varchar("external_id", { length: 100 }), // Resend message ID
 
     sentAt: timestamp("sent_at").defaultNow(),
     opened: boolean("opened").default(false),
@@ -16519,6 +16523,7 @@ export const emailLogs = pgTable(
     userIdIdx: index("email_logs_user_id_idx").on(table.userId),
     emailTypeIdx: index("email_logs_email_type_idx").on(table.emailType),
     sentAtIdx: index("email_logs_sent_at_idx").on(table.sentAt),
+    toEmailIdx: index("email_logs_to_email_idx").on(table.toEmail),
   }),
 );
 
@@ -20046,6 +20051,9 @@ export const userFeedback = pgTable("user_feedback", {
   assignedTo: integer("assigned_to").references(() => users.id),
   mrBlueResponse: text("mr_blue_response"),
   adminNotes: text("admin_notes"),
+  playwrightVideoUrl: text("playwright_video_url"),
+  relatedMessageId: integer("related_message_id"),
+  selectedElement: varchar("selected_element", { length: 500 }),
   resolvedAt: timestamp("resolved_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

@@ -184,7 +184,8 @@ router.post("/register", async (req: Request, res: Response) => {
     });
     
     // Send verification email with 6-digit code (don't await - fire and forget to not block registration)
-    EmailService.sendVerificationCodeEmail(user.email, user.name || user.username, verificationCode)
+    // Pass userId for logging to email_logs table
+    EmailService.sendVerificationCodeEmail(user.email, user.name || user.username, verificationCode, user.id)
       .then(sent => {
         if (sent) {
           console.log(`[Auth] Verification email sent to ${user.email}`);
@@ -750,8 +751,8 @@ router.post("/resend-verification", async (req: Request, res: Response) => {
       expiresAt,
     });
     
-    // Send verification email with code
-    await EmailService.sendVerificationCodeEmail(user.email, user.name || user.username, verificationCode);
+    // Send verification email with code (pass userId for logging)
+    await EmailService.sendVerificationCodeEmail(user.email, user.name || user.username, verificationCode, user.id);
     
     res.json({ message: "If an account exists with this email, a verification code has been sent." });
   } catch (error) {

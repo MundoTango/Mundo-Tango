@@ -150,5 +150,41 @@
   "aboutUs": "About Us",
   "volunteer": "Volunteer",
   "ambassadors": "Ambassadors",
-  "supportUs": "Support Us"
+  "supportUs": "Support Us",
+  "confirm": "Confirm",
+  "bugReport": {
+    "elementSelected": "Element Selected",
+    "selectElement": "Click on an element",
+    "elementTargeted": "Element Targeted",
+    "targetElement": "Target Element",
+    "noJourneyData": "No journey data to replay",
+    "journeyReplay": "User Journey Replay",
+    "letsFixIt": "Let's Fix It",
+    "replyToUser": "Reply to User",
+    "sendToInbox": "Send to Inbox",
+    "debugModeActive": "Debug Mode Active",
+    "analyzingIssue": "Analyzing Issue",
+    "applyFix": "Apply Fix",
+    "generateFix": "Generate Fix"
+  },
+  "bugFix": {
+    "title": "Bug Fix Stream",
+    "thought": "THOUGHT",
+    "action": "ACTION",
+    "observation": "OBSERVATION",
+    "agent": "AGENT",
+    "phase": "PHASE",
+    "analysis": "ANALYSIS",
+    "validation": "VALIDATION",
+    "complete": "COMPLETE",
+    "error": "ERROR",
+    "startFix": "Start Fix",
+    "stop": "Stop",
+    "working": "Working...",
+    "clickStart": "Click 'Start Fix' to begin agent-driven fix",
+    "analyzing": "Analyzing",
+    "planning": "Planning",
+    "executing": "Executing",
+    "validating": "Validating"
+  }
 }

@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import html2canvas from 'html2canvas';
+import { getRecordedCalls, getFailedCalls } from '@/lib/qa/networkInterceptor';
+import { captureUserContext, captureAppState } from '@/lib/qa/userContextCapture';
+import type { APICallRecord, UserContext, ErrorRecord } from '@/lib/qa/componentRegistry';
 
 export interface JourneyStep {
   timestamp: number;
@@ -52,6 +55,14 @@ export interface JourneySnapshot {
   formState: Record<string, string>;
   startedAt: number;
   lastActivity: number;
+}
+
+export interface EnhancedDiagnosticSnapshot extends JourneySnapshot {
+  userContext: UserContext;
+  apiCalls: APICallRecord[];
+  appState: Record<string, unknown>;
+  breadcrumb: string[];
+  lastTestId?: string;
 }
 
 const generateSessionId = () => {
@@ -215,22 +226,47 @@ export function useJourneyTracker(userId?: number) {
 
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const testId = target.closest('[data-testid]')?.getAttribute('data-testid');
-      const buttonText = target.closest('button')?.textContent?.substring(0, 50);
-      const linkHref = target.closest('a')?.getAttribute('href');
+      const testIdEl = target.closest('[data-testid]');
+      const testId = testIdEl?.getAttribute('data-testid');
+      const buttonEl = target.closest('button');
+      const buttonText = buttonEl?.textContent?.trim()?.substring(0, 50);
+      const linkEl = target.closest('a');
+      const linkHref = linkEl?.getAttribute('href');
       
-      // Enhanced tab/navigation detection
+      // Enhanced tab/navigation detection - also check for button-tab-* pattern
       const tabTrigger = target.closest('[role="tab"]');
       const tabLabel = tabTrigger?.textContent?.trim()?.substring(0, 30);
       const navItem = target.closest('[role="menuitem"], nav a, [data-nav-item]');
       const navLabel = navItem?.textContent?.trim()?.substring(0, 30);
+      
+      // Detect profile tab buttons by data-testid pattern
+      const isProfileTab = testId?.startsWith('button-tab-') ?? false;
+      const profileTabName = isProfileTab && testId ? testId.replace('button-tab-', '') : null;
+      
+      // Detect section-level interactions
+      const isSection = testId?.startsWith('section-') ?? false;
+      const sectionName = isSection && testId ? testId.replace(/section-|-\d+$/g, '') : null;
+      
+      // Detect button actions within sections
+      const isButtonAction = (testId?.startsWith('button-add-') || testId?.startsWith('button-edit-') || testId?.startsWith('button-delete-')) ?? false;
+      const buttonAction = isButtonAction && testId ? testId.replace(/button-|-\d+$/g, '') : null;
       
       // Build descriptive element ID with breadcrumb info
       let elementId = testId || tabLabel || navLabel || buttonText || linkHref || target.tagName.toLowerCase();
       
       // Add context about what type of interaction
       let action = 'click';
-      if (tabTrigger) {
+      if (isProfileTab) {
+        // Profile tabs use button-tab-* pattern, treat as tab switch
+        action = 'tab_switch';
+        elementId = `tab:${profileTabName}`;
+      } else if (isSection) {
+        action = 'section_view';
+        elementId = `section:${sectionName}`;
+      } else if (isButtonAction) {
+        action = 'button_action';
+        elementId = `button:${buttonAction}`;
+      } else if (tabTrigger) {
         action = 'tab_switch';
         elementId = `tab:${tabLabel}`;
       } else if (navItem) {
@@ -238,8 +274,8 @@ export function useJourneyTracker(userId?: number) {
         elementId = `nav:${navLabel}`;
       }
 
-      // Track the click with enhanced context
-      if (testId || buttonText || linkHref || tabTrigger || navItem) {
+      // Track the click with enhanced context - more permissive now
+      if (testId || buttonText || linkHref || tabTrigger || navItem || buttonEl) {
         trackStep({
           path: window.location.pathname,
           action,
@@ -386,6 +422,43 @@ export function useJourneyTracker(userId?: number) {
     };
   }, [sessionId, userId, getOpenDialogs, getFormState, getCurrentTheme, getCurrentLocale]);
 
+  // Get enhanced diagnostic snapshot with user context, API calls, and app state
+  // Accepts optional user object from AuthContext for accurate auth state
+  const getEnhancedSnapshot = useCallback((user?: { id: number; username?: string; role?: string; isVerified?: boolean; city?: string | null; cityId?: number; isPro?: boolean; tier?: number; bio?: string | null; firstName?: string } | null): EnhancedDiagnosticSnapshot => {
+    const baseSnapshot = getSnapshot();
+    const userContext = captureUserContext(user);
+    const apiCalls = getRecordedCalls();
+    const appState = captureAppState();
+    
+    // Build breadcrumb from journey
+    const breadcrumb: string[] = [];
+    for (const step of baseSnapshot.journey) {
+      if (!step.element) continue;
+      if (step.element.startsWith('tab:')) {
+        breadcrumb.push(step.element.replace('tab:', ''));
+      } else if (step.element.startsWith('section:')) {
+        breadcrumb.push(step.element.replace('section:', ''));
+      } else if (step.element.startsWith('button:')) {
+        breadcrumb.push(step.element.replace('button:', ''));
+      }
+    }
+    
+    // Find last meaningful testId
+    const lastInteraction = [...baseSnapshot.journey].reverse().find(
+      s => s.element && !s.element.startsWith('nav:')
+    );
+    const lastTestId = lastInteraction?.element?.replace(/^(tab:|section:|button:)/, '');
+    
+    return {
+      ...baseSnapshot,
+      userContext,
+      apiCalls,
+      appState,
+      breadcrumb,
+      lastTestId,
+    };
+  }, [getSnapshot]);
+
   // Capture screenshot of the current page
   const captureScreenshot = useCallback(async (): Promise<string | null> => {
     // Hide the Mr. Blue panel temporarily for clean screenshot
@@ -429,6 +502,7 @@ export function useJourneyTracker(userId?: number) {
     sessionId,
     trackStep,
     getSnapshot,
+    getEnhancedSnapshot,
     captureScreenshot,
   };
 }
