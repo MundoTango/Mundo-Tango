@@ -16,6 +16,8 @@ import {
   writeFile,
   grepFiles,
   getProjectStructure,
+  getSecurityAuditLogs,
+  getProjectContext,
   formatToolResponse,
 } from "../services/mrBlue/VibeCodingToolService";
 
@@ -111,6 +113,30 @@ const MRBLUE_TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
       parameters: { type: "object", properties: {}, required: [] },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "getSecurityAuditLogs",
+      description: "Get security audit logs to investigate user actions like login attempts, password changes, failed logins. Use this to see what a specific user tried to do.",
+      parameters: {
+        type: "object",
+        properties: {
+          userId: { type: "number", description: "Optional user ID to filter logs" },
+          action: { type: "string", description: "Optional action type: login, logout, password_change, password_reset_request, password_reset_complete, failed_login" },
+          limit: { type: "number", description: "Max logs to return (default 50)" },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "getProjectContext",
+      description: "Get full project context including replit.md documentation and database schema. Use this first to understand the codebase like Replit Agent does.",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  },
 ];
 
 async function executeTool(name: string, args: Record<string, any>): Promise<any> {
@@ -131,6 +157,10 @@ async function executeTool(name: string, args: Record<string, any>): Promise<any
       return await grepFiles(args.searchTerm, args.directory || ".");
     case "getProjectStructure":
       return await getProjectStructure();
+    case "getSecurityAuditLogs":
+      return await getSecurityAuditLogs(args.userId, args.action, args.limit || 50);
+    case "getProjectContext":
+      return await getProjectContext();
     default:
       return { success: false, error: `Unknown tool: ${name}` };
   }
@@ -186,7 +216,11 @@ router.post("/chat", authenticateToken, async (req: Request, res: Response) => {
     const baseSystemPrompt = systemPrompt || `You are Mr. Blue, an AI assistant for Mundo Tango - a social platform for the global tango community.
 
 ${isVibeCodingMode && isGodLevel ? `
-VIBE CODING MODE ACTIVE - You have access to powerful tools:
+VIBE CODING MODE ACTIVE - You have full codebase awareness like Replit Agent.
+
+AVAILABLE TOOLS:
+- getProjectContext: START HERE - Get replit.md docs and database schema for full codebase understanding
+- getSecurityAuditLogs: Investigate what users tried to do (login, password changes, failed attempts)
 - getUserStats: Get user statistics (total, onboarded, not onboarded)
 - getUsersNeedingOnboarding: Get list of users who haven't completed onboarding
 - queryDatabase: Execute safe SELECT queries to investigate data
@@ -195,8 +229,15 @@ VIBE CODING MODE ACTIVE - You have access to powerful tools:
 - grepFiles: Search the codebase for code patterns
 - getProjectStructure: Get project overview
 
+METHODOLOGY (MB.MD v9.9.4):
+1. Research → Use getProjectContext first to understand the codebase
+2. Plan → Identify what needs to change
+3. Build → Use readFile then writeFile to make changes
+4. Test → Verify changes work
+5. Fix → Handle any errors
+
 When asked to diagnose or fix issues, use these tools proactively. Don't just explain - take action.
-If you need to query user data, use getUserStats or getUsersNeedingOnboarding instead of queryDatabase when possible.
+You have autonomous capabilities - investigate, decide, act, validate, adapt.
 ` : ''}
 
 Be helpful, concise, and action-oriented.`;
@@ -227,8 +268,9 @@ Be helpful, concise, and action-oriented.`;
       messages.push(assistantMessage);
 
       for (const toolCall of assistantMessage.tool_calls) {
-        const toolName = toolCall.function.name;
-        const toolArgs = JSON.parse(toolCall.function.arguments || "{}");
+        const tc = toolCall as any;
+        const toolName = tc.function.name;
+        const toolArgs = JSON.parse(tc.function.arguments || "{}");
         
         const result = await executeTool(toolName, toolArgs);
         toolResults.push({ tool: toolName, result });

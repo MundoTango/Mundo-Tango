@@ -561,6 +561,112 @@ export async function getUsersNeedingOnboarding(limit: number = 20): Promise<Too
 }
 
 /**
+ * TOOL: Get security audit logs for user activity investigation
+ * MB.MD Pattern 67 - Allows Mr. Blue to see what users tried to do
+ */
+export async function getSecurityAuditLogs(
+  userId?: number,
+  action?: string,
+  limit: number = 50
+): Promise<ToolResult> {
+  try {
+    const { db } = await import("../../db");
+    const { sql } = await import("drizzle-orm");
+    
+    let query = `
+      SELECT 
+        sal.id,
+        sal.user_id,
+        sal.action,
+        sal.ip_address,
+        sal.user_agent,
+        sal.metadata,
+        sal.created_at,
+        u.email,
+        u.name
+      FROM security_audit_logs sal
+      LEFT JOIN users u ON sal.user_id = u.id
+      WHERE 1=1
+    `;
+    
+    if (userId) {
+      query += ` AND sal.user_id = ${userId}`;
+    }
+    if (action) {
+      query += ` AND sal.action = '${action}'`;
+    }
+    
+    query += ` ORDER BY sal.created_at DESC LIMIT ${limit}`;
+    
+    const result = await db.execute(sql.raw(query));
+    const rows = (result as any).rows || result || [];
+    
+    return {
+      success: true,
+      tool: "getSecurityAuditLogs",
+      data: {
+        count: rows.length,
+        logs: rows.map((log: any) => ({
+          id: log.id,
+          userId: log.user_id,
+          email: log.email,
+          name: log.name,
+          action: log.action,
+          ipAddress: log.ip_address,
+          metadata: log.metadata,
+          createdAt: log.created_at,
+        })),
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "getSecurityAuditLogs",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * TOOL: Get dynamic project context (replit.md + schema summary)
+ * MB.MD Pattern 67 - Gives Mr. Blue full codebase awareness like Replit Agent
+ */
+export async function getProjectContext(): Promise<ToolResult> {
+  try {
+    const replitMd = await readFile("replit.md");
+    
+    const { db } = await import("../../db");
+    const { sql } = await import("drizzle-orm");
+    
+    const tablesResult = await db.execute(sql.raw(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      ORDER BY table_name
+    `));
+    const tables = ((tablesResult as any).rows || tablesResult || []).map((t: any) => t.table_name);
+    
+    return {
+      success: true,
+      tool: "getProjectContext",
+      data: {
+        replitMd: replitMd.success ? replitMd.data.content : "Could not read replit.md",
+        databaseTables: tables,
+        tableCount: tables.length,
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      tool: "getProjectContext",
+      data: null,
+      error: error.message,
+    };
+  }
+}
+
+/**
  * TOOL: Execute a database query safely (SELECT only)
  * MB.MD Pattern 67 - Safe SQL execution for diagnostics
  */

@@ -778,6 +778,52 @@ router.post("/reset-password", async (req: Request, res: Response) => {
   }
 });
 
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(8).max(100),
+});
+
+router.post("/change-password", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const { currentPassword, newPassword } = changePasswordSchema.parse(req.body);
+
+    const user = await storage.getUserById(req.user.id);
+    if (!user || !user.password) {
+      return res.status(400).json({ message: "User not found or no password set" });
+    }
+
+    const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ message: "New password must be different from current password" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+    await storage.updateUserPassword(req.user.id, hashedPassword);
+
+    await storage.deleteUserRefreshTokens(req.user.id);
+
+    console.log(`[Auth] Password changed successfully for user: ${req.user.email}`);
+    res.json({ message: "Password changed successfully. Please log in again." });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        message: "Validation error", 
+        errors: error.errors 
+      });
+    }
+    console.error("Change password error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {

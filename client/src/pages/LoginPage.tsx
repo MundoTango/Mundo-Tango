@@ -62,8 +62,13 @@ export default function LoginPage() {
           description: t('login.toast.successDescription', "You've successfully logged in."),
         });
       }
+      
+      const finalRedirect = result?.user?.isOnboardingComplete === false 
+        ? "/onboarding" 
+        : redirectTo;
+      
       setTimeout(() => {
-        window.location.href = redirectTo;
+        window.location.href = finalRedirect;
       }, 100);
     } catch (error: any) {
       toast({
