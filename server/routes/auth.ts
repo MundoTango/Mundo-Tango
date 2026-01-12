@@ -232,8 +232,22 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.status(403).json({ message: "Account is suspended" });
     }
 
-    // Check if user has verified their email
-    if (!user.isVerified) {
+    // Check for valid invite code BEFORE email verification check
+    // MB.MD Pattern 67: Valid invite codes (nomad/tango) can auto-verify users during login
+    const trimmedCode = inviteCode?.toLowerCase().trim();
+    const isValidInviteCode = trimmedCode && VALID_INVITE_CODES.includes(trimmedCode);
+
+    // If user is unverified but has valid invite code, auto-verify them
+    if (!user.isVerified && isValidInviteCode) {
+      await storage.updateUser(user.id, { 
+        isVerified: true,
+        isOnboardingComplete: true,
+        formStatus: 100,
+        waitlist: false
+      });
+      console.log(`[Auth] User ${user.id} auto-verified during login with invite code '${trimmedCode}'`);
+    } else if (!user.isVerified) {
+      // No valid invite code - require email verification
       return res.status(403).json({ 
         message: "Please verify your email before logging in. Check your inbox for the verification link.",
         requiresVerification: true,
@@ -242,9 +256,6 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     // Check if user is on waitlist and provided valid invite code to upgrade
-    const trimmedCode = inviteCode?.toLowerCase().trim();
-    const isValidInviteCode = trimmedCode && VALID_INVITE_CODES.includes(trimmedCode);
-    
     if (user.waitlist && isValidInviteCode) {
       // Upgrade user from waitlist to full access
       await storage.updateUser(user.id, { waitlist: false });
