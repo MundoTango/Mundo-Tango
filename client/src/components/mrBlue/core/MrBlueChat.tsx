@@ -39,6 +39,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMrBlue } from "@/contexts/MrBlueContext";
 import { useJourneyTracker } from "@/hooks/useJourneyTracker";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserTier } from "@/hooks/useUserTier";
 
 interface Message {
   id: string;
@@ -84,6 +85,7 @@ export function MrBlueChat({ onClose }: MrBlueChatProps) {
     setWalkthroughResult,
   } = useMrBlue();
   const { user } = useAuth();
+  const { isGodLevel } = useUserTier();
   const { getSnapshot, getEnhancedSnapshot, trackStep, sessionId, captureScreenshot } = useJourneyTracker(user?.id);
 
   // QA Mode state - tracks if user is in help/feature request mode
@@ -1102,16 +1104,18 @@ Chat with me to describe the problem, then click **Submit Bug Report** when you'
 
         {/* Mode Toggle & Close Button */}
         <div className="flex items-center gap-2">
-          <Tabs value={mode} onValueChange={(value) => { console.log('[MrBlueChat] Mode changed to:', value); setMode(value as 'chat' | 'vibecoding'); }} className="w-auto">
-            <TabsList className="grid w-32 grid-cols-2">
-              <TabsTrigger value="chat" className="p-1" data-testid="toggle-chat-mode">
-                <Brain className="h-4 w-4" />
-              </TabsTrigger>
-              <TabsTrigger value="vibecoding" className="p-1" data-testid="toggle-vibecoding-mode">
-                <Code className="h-4 w-4" />
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {isGodLevel && (
+            <Tabs value={mode} onValueChange={(value) => { console.log('[MrBlueChat] Mode changed to:', value); setMode(value as 'chat' | 'vibecoding'); }} className="w-auto">
+              <TabsList className="grid w-32 grid-cols-2">
+                <TabsTrigger value="chat" className="p-1" data-testid="toggle-chat-mode">
+                  <Brain className="h-4 w-4" />
+                </TabsTrigger>
+                <TabsTrigger value="vibecoding" className="p-1" data-testid="toggle-vibecoding-mode">
+                  <Code className="h-4 w-4" />
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          )}
 
           {onClose && (
             <Button
@@ -1364,8 +1368,8 @@ Chat with me to describe the problem, then click **Submit Bug Report** when you'
         </div>
       </div>
 
-      {/* Bug Report Diagnostic Panel - Shows visual components when in bug mode */}
-      {qaMode === "bug" && bugDiagnosticSnapshot && (
+      {/* Bug Report Diagnostic Panel - Shows visual components when in bug mode (GOD-LEVEL ONLY) */}
+      {isGodLevel && qaMode === "bug" && bugDiagnosticSnapshot && (
         <div className="px-4 py-3 border-t bg-muted/30 max-h-[40vh] overflow-y-auto" data-testid="panel-bug-diagnostics">
           <div className="max-w-2xl mx-auto space-y-4">
             {/* Element Selector + Actions */}
@@ -1547,26 +1551,51 @@ Chat with me to describe the problem, then click **Submit Bug Report** when you'
           </div>
 
           <div className="flex flex-col gap-2">
-            {qaMode !== "none" ? (
+            {qaMode === "bug" ? (
+              <>
+                {/* Send button for chat in bug mode */}
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-9 w-9 rounded-full shadow-sm"
+                  disabled={!input.trim() || isLoading}
+                  onClick={sendBugMessage}
+                  data-testid="button-bug-send"
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                </Button>
+                {/* Submit bug report button */}
+                <Button
+                  size="sm"
+                  className="h-9 px-3 rounded-full shadow-sm bg-red-600 hover:bg-red-700"
+                  disabled={
+                    isLoading || (!input.trim() && !messages.slice(bugModeStartIndex).some(m => m.role === "user"))
+                  }
+                  onClick={() => submitQaRequest()}
+                  data-testid="button-submit-qa"
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                  ) : (
+                    <Upload className="h-4 w-4 mr-1" />
+                  )}
+                  Submit Bug Report
+                </Button>
+              </>
+            ) : qaMode !== "none" ? (
               <Button
                 size="sm"
-                className={`h-9 px-3 rounded-full shadow-sm ${qaMode === "bug" ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-primary/90"}`}
-                disabled={
-                  isLoading || (
-                    qaMode === "bug" 
-                      ? (!input.trim() && !messages.slice(bugModeStartIndex).some(m => m.role === "user"))
-                      : (!input.trim() && attachments.length === 0)
-                  )
-                }
+                className="h-9 px-3 rounded-full shadow-sm bg-primary hover:bg-primary/90"
+                disabled={isLoading || (!input.trim() && attachments.length === 0)}
                 onClick={() => submitQaRequest()}
                 data-testid="button-submit-qa"
               >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                ) : qaMode === "bug" ? (
-                  <Upload className="h-4 w-4 mr-1" />
-                ) : null}
-                {qaMode === "bug" ? "Submit Bug Report" : "Submit"}
+                {isLoading && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
+                Submit
               </Button>
             ) : (
               <Button
