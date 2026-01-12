@@ -61,11 +61,23 @@ export default function EmailVerificationPage() {
       
       if (response.ok) {
         setIsVerified(true);
+        
+        // Store the access token from the response
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+        }
+        
         toast({
           title: t('pages:emailVerification.toast.verified.title', 'Email verified!'),
           description: t('pages:emailVerification.toast.verified.description', 'Your email has been verified. Redirecting...'),
         });
-        navigate("/login");
+        
+        // Check if user needs onboarding or can go directly to home
+        if (data.user && data.user.onboardingCompleted) {
+          navigate("/home");
+        } else {
+          navigate("/onboarding");
+        }
       } else {
         toast({
           title: t('pages:emailVerification.toast.verifyError.title', 'Verification failed'),
