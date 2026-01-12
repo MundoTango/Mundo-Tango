@@ -62,6 +62,11 @@ This system enables autonomous actions via OpenAI function calling for god-level
 
 **Performance**: Max 3 tool iterations, max_tokens=2000 to prevent timeouts. E2E tested via Playwright.
 
+**Security (Updated Jan 12, 2026)**:
+- VibeCoding mode: Only accessible to god-level users (roleLevel >= 8)
+- Debug mode URL param (`?mrblue=debug`): Guarded by isGodLevel check in useEffect
+- VibeCoding tab: Hidden for non-god users via conditional render
+
 **VibeCoding E2E Testing (Updated Jan 12, 2026)**:
 - UI Selectors: `data-testid="toggle-vibecoding-mode"` (tab), `data-testid="input-mrblue-chat"` (input), `data-testid="button-mrblue-send"` (send)
 - Test Flow: Login → Open Mr. Blue → Click VibeCoding tab → Send diagnostic prompts → Verify tool execution
