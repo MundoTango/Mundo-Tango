@@ -1185,7 +1185,7 @@ Type your description and click **Submit** to send to developers.`,
               placeholder={qaMode !== "none" ? "Describe your request..." : "Ask about events, cities, tango tips..."}
               className="min-h-[48px] max-h-32 resize-none rounded-2xl pr-14 border-muted-foreground/20 focus:border-primary/50 transition-colors"
               disabled={isLoading}
-              data-testid="input-chat-message"
+              data-testid="input-mrblue-chat"
             />
           </div>
 
@@ -1206,7 +1206,7 @@ Type your description and click **Submit** to send to developers.`,
                 className="h-9 w-9 rounded-full shadow-sm"
                 disabled={!input.trim() || isLoading}
                 onClick={sendMessage}
-                data-testid="button-send-message"
+                data-testid="button-mrblue-send"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
