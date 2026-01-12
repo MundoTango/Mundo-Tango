@@ -8895,7 +8895,8 @@ export class DbStorage implements IStorage {
       WHERE email NOT LIKE '%@discovered.mundotango.app%'
     `);
     
-    const row = result[0] as any;
+    const rows = result.rows || result;
+    const row = (rows[0] || {}) as any;
     return {
       totalUsers: parseInt(row.total_users || '0'),
       onboardedUsers: parseInt(row.onboarded_users || '0'),
@@ -8914,7 +8915,7 @@ export class DbStorage implements IStorage {
       LIMIT ${limit}
     `);
     
-    return result as any[];
+    return result.rows || result || [];
   }
 }
 

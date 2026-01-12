@@ -30,8 +30,14 @@ The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon
 ### AI Systems
 Mundo Tango integrates a comprehensive AI ecosystem with over 140 specialized agents, including self-healing infrastructure, a production-ready validation loop, and a Visual Validation Framework. A Bifrost AI Gateway facilitates multi-provider AI interactions. A RecursiveContextService manages hierarchical code summarization. The core AI brain in `/mr-blue-brain/` is modular, encompassing Identity, Cognition (e.g., ReAct Protocol, Chain-of-Thought), Operations, Orchestration (e.g., Mixture of Experts Router), Patterns, and specialized Agents. This includes a Multi-Agent Orchestration System, a Leadership Agent System with "God Commands," and the Mr. Blue AI Assistant providing real-time data access and intelligent task routing via a Multi-AI Orchestrator.
 
-### Mr. Blue Diagnostic System
+### Mr. Blue Diagnostic System (MB.MD Pattern 67 - Updated Jan 12, 2026)
 This system enables autonomous actions via OpenAI function calling for god-level users (tier 8+). It provides tools like `getUserStats()`, `getUsersNeedingOnboarding()`, `queryDatabase()` (SELECT-only), `readFile()`, `writeFile()`, `grepFiles()`, and `getProjectStructure()` for diagnostics, data investigation, and code manipulation. Tools access `storage.ts` directly to bypass LLM content restrictions.
+
+**Direct API Endpoints** (for fast testing/debugging - god-level access required):
+- `GET /api/mrblue/diagnostics/user-stats` - Returns user counts (total, onboarded, not onboarded)
+- `GET /api/mrblue/diagnostics/users-needing-onboarding?limit=20` - Returns users with incomplete onboarding
+
+**Performance**: Max 3 tool iterations, max_tokens=2000 to prevent timeouts. E2E tested via Playwright.
 
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator, utilizes Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation. Scraped events are stored in a `scraped_events` table and ingested into the main events table, with an Admin UI for real-time status and moderation.

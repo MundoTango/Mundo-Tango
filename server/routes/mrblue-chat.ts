@@ -136,6 +136,39 @@ async function executeTool(name: string, args: Record<string, any>): Promise<any
   }
 }
 
+router.get("/diagnostics/user-stats", authenticateToken, async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  
+  const isGodLevel = user?.role === "admin" || user?.tier >= 8;
+  if (!isGodLevel) {
+    return res.status(403).json({ error: "God-level access required" });
+  }
+
+  try {
+    const stats = await getUserStats();
+    res.json(stats);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/diagnostics/users-needing-onboarding", authenticateToken, async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  
+  const isGodLevel = user?.role === "admin" || user?.tier >= 8;
+  if (!isGodLevel) {
+    return res.status(403).json({ error: "God-level access required" });
+  }
+
+  try {
+    const limit = parseInt(req.query.limit as string) || 20;
+    const result = await getUsersNeedingOnboarding(limit);
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post("/chat", authenticateToken, async (req: Request, res: Response) => {
   const { message, systemPrompt, mode } = req.body;
   const user = (req as any).user;
@@ -177,15 +210,19 @@ Be helpful, concise, and action-oriented.`;
       model: "gpt-4o",
       messages,
       temperature: 0.7,
+      max_tokens: 2000,
       tools: isVibeCodingMode && isGodLevel ? MRBLUE_TOOLS : undefined,
       tool_choice: isVibeCodingMode && isGodLevel ? "auto" : undefined,
     });
 
     let assistantMessage = response.choices[0].message;
     const toolResults: { tool: string; result: any }[] = [];
+    let iterations = 0;
+    const MAX_ITERATIONS = 3;
 
-    while (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
-      console.log("[MrBlue] Processing tool calls:", assistantMessage.tool_calls.length);
+    while (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0 && iterations < MAX_ITERATIONS) {
+      iterations++;
+      console.log(`[MrBlue] Processing tool calls (iteration ${iterations}/${MAX_ITERATIONS}):`, assistantMessage.tool_calls.length);
       
       messages.push(assistantMessage);
 
@@ -207,8 +244,9 @@ Be helpful, concise, and action-oriented.`;
         model: "gpt-4o",
         messages,
         temperature: 0.7,
+        max_tokens: 2000,
         tools: MRBLUE_TOOLS,
-        tool_choice: "auto",
+        tool_choice: iterations >= MAX_ITERATIONS - 1 ? "none" : "auto",
       });
 
       assistantMessage = response.choices[0].message;
