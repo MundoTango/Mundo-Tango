@@ -11,11 +11,13 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 export default function EmailVerificationPage() {
   const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
+  const { refreshCurrentUser } = useAuth();
   const [, navigate] = useLocation();
   const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
@@ -66,6 +68,9 @@ export default function EmailVerificationPage() {
         if (data.accessToken) {
           localStorage.setItem("accessToken", data.accessToken);
         }
+        
+        // Refresh auth context to update user state
+        await refreshCurrentUser();
         
         toast({
           title: t('pages:emailVerification.toast.verified.title', 'Email verified!'),
