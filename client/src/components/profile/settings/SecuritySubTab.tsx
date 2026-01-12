@@ -182,14 +182,91 @@ export default function SecuritySubTab() {
                 Update your password regularly for better security
               </p>
             </div>
-            <Button 
-              variant="outline" 
-              className="w-full" 
-              onClick={handleChangePassword}
-              data-testid="button-change-password"
-            >
-              Change Password
-            </Button>
+            <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  data-testid="button-change-password"
+                >
+                  Change Password
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Lock className="h-5 w-5" />
+                    Change Password
+                  </DialogTitle>
+                  <DialogDescription>
+                    Enter your current password and choose a new one.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="current-password">Current Password</Label>
+                    <Input
+                      id="current-password"
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Enter current password"
+                      data-testid="input-current-password"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">New Password</Label>
+                    <Input
+                      id="new-password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter new password (min 8 characters)"
+                      data-testid="input-new-password"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm New Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      data-testid="input-confirm-password"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setPasswordDialogOpen(false);
+                      setCurrentPassword('');
+                      setNewPassword('');
+                      setConfirmPassword('');
+                    }}
+                    data-testid="button-cancel-password"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleChangePassword}
+                    disabled={changePasswordMutation.isPending}
+                    data-testid="button-submit-password"
+                  >
+                    {changePasswordMutation.isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Changing...
+                      </>
+                    ) : (
+                      'Change Password'
+                    )}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>

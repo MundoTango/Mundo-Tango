@@ -62,6 +62,39 @@ This system enables autonomous actions via OpenAI function calling for god-level
 
 **Performance**: Max 3 tool iterations, max_tokens=2000 to prevent timeouts. E2E tested via Playwright.
 
+**VibeCoding E2E Testing (Updated Jan 12, 2026)**:
+- UI Selectors: `data-testid="toggle-vibecoding-mode"` (tab), `data-testid="input-mrblue-chat"` (input), `data-testid="button-mrblue-send"` (send)
+- Test Flow: Login → Open Mr. Blue → Click VibeCoding tab → Send diagnostic prompts → Verify tool execution
+- Verified Working: getUserStats (returns 81 real users), getUsersNeedingOnboarding (returns user list)
+
+### Registration Invite Codes (MB.MD Pattern 67 - Jan 12, 2026)
+Special invite codes that auto-complete user verification and onboarding:
+
+**Valid Invite Codes**: `nomad`, `tango`
+
+**Behavior when using valid invite code**:
+- `emailVerified: true` - Skips email verification step
+- `isOnboardingComplete: true` - Skips onboarding wizard
+- `formStatus: 100` - Full profile completion
+- `waitlist: false` - Bypasses waitlist
+- Issues JWT tokens immediately on registration
+
+**Implementation**: `server/routes/auth.ts` - VALID_INVITE_CODES array
+
+### Password Management System (Jan 12, 2026)
+All users can manage their passwords:
+
+**Change Password (Logged In)**:
+- Endpoint: `POST /api/auth/change-password`
+- Body: `{ currentPassword, newPassword }`
+- UI: Settings → Security → Change Password dialog
+- Selectors: `data-testid="button-change-password"`, `data-testid="input-current-password"`, `data-testid="input-new-password"`
+
+**Forgot Password Flow**:
+- Request: `POST /api/auth/forgot-password` with `{ email }`
+- Reset: `POST /api/auth/reset-password` with `{ token, newPassword }`
+- UI: `/password-reset` page sends reset email, `/new-password?token=xxx` page to set new password
+
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator, utilizes Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation. Scraped events are stored in a `scraped_events` table and ingested into the main events table, with an Admin UI for real-time status and moderation.
 
