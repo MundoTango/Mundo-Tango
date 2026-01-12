@@ -30,10 +30,27 @@ The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon
 ### AI Systems
 Mundo Tango integrates a comprehensive AI ecosystem with over 140 specialized agents, including self-healing infrastructure, a production-ready validation loop, and a Visual Validation Framework. A Bifrost AI Gateway facilitates multi-provider AI interactions. A RecursiveContextService manages hierarchical code summarization. The core AI brain in `/mr-blue-brain/` is modular, encompassing Identity, Cognition (e.g., ReAct Protocol, Chain-of-Thought), Operations, Orchestration (e.g., Mixture of Experts Router), Patterns, and specialized Agents. This includes a Multi-Agent Orchestration System, a Leadership Agent System with "God Commands," and the Mr. Blue AI Assistant providing real-time data access and intelligent task routing via a Multi-AI Orchestrator.
 
-### Mr. Blue Diagnostic System (MB.MD Pattern 67 - Updated Jan 12, 2026)
-This system enables autonomous actions via OpenAI function calling for god-level users (tier 8+). It provides tools like `getUserStats()`, `getUsersNeedingOnboarding()`, `queryDatabase()` (SELECT-only), `readFile()`, `writeFile()`, `grepFiles()`, and `getProjectStructure()` for diagnostics, data investigation, and code manipulation. Tools access `storage.ts` directly to bypass LLM content restrictions.
+### Mr. Blue Diagnostic System (MB.MD Pattern 67 + Pattern 99 - Updated Jan 12, 2026)
+This system enables autonomous actions via OpenAI function calling for god-level users (tier 8+). It provides comprehensive diagnostic and self-healing tools:
 
-**Direct API Endpoints** (for fast testing/debugging - god-level access required):
+**Diagnostic Tools**:
+- `getProjectContext()` - Get replit.md docs and database schema for full codebase understanding
+- `getUserStats()`, `getUsersNeedingOnboarding()` - User statistics and onboarding status
+- `queryDatabase()` - Safe SELECT-only database queries
+- `readFile()`, `writeFile()`, `grepFiles()` - File system operations
+- `getProjectStructure()`, `getSecurityAuditLogs()` - Project overview and audit trails
+
+**Self-Healing Tools (Pattern 99)**:
+- `getRecentErrors()` - Retrieve errors from `error_patterns` table for auto-fix
+- `triggerAutoFix()` - Trigger AutoFixEngine (>95% confidence = auto-apply, 80-95% = stage, <80% = escalate)
+- `recordLearning()` - Record success patterns via LearningRetentionService
+
+**Multi-AI Orchestration**:
+- Regular chat mode: Routes via Groq→Gemini→Claude for speed/cost optimization
+- VibeCoding mode: Uses OpenAI GPT-4o (required for function calling/tools API)
+- Platforms: Groq (fastest, FREE), OpenAI (reliable, function calling), Claude (best reasoning), Gemini (cheapest), OpenRouter (fallback)
+
+**Direct API Endpoints** (god-level access required):
 - `GET /api/mrblue/diagnostics/user-stats` - Returns user counts (total, onboarded, not onboarded)
 - `GET /api/mrblue/diagnostics/users-needing-onboarding?limit=20` - Returns users with incomplete onboarding
 
