@@ -10,9 +10,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { Shield, Key, Lock, CheckCircle, Trash2, AlertTriangle } from "lucide-react";
+import { Shield, Key, Lock, CheckCircle, Trash2, AlertTriangle, Loader2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
+import { useMutation } from "@tanstack/react-query";
 
 export default function SecuritySubTab() {
   const { profile, logout } = useAuth();
@@ -23,6 +24,34 @@ export default function SecuritySubTab() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const changePasswordMutation = useMutation({
+    mutationFn: async (data: { currentPassword: string; newPassword: string }) => {
+      const response = await apiRequest("POST", "/api/auth/change-password", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Password changed",
+        description: "Your password has been updated successfully.",
+      });
+      setPasswordDialogOpen(false);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Password change failed",
+        description: error.message || "Failed to change password. Please check your current password.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleTwoFactorChange = (checked: boolean) => {
     setTwoFactorEnabled(checked);
@@ -35,10 +64,31 @@ export default function SecuritySubTab() {
   };
 
   const handleChangePassword = () => {
-    toast({
-      title: "Password change",
-      description: "Password change functionality coming soon.",
-    });
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast({
+        title: "Missing fields",
+        description: "Please fill in all password fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Passwords don't match",
+        description: "New password and confirmation must match.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 8 characters.",
+        variant: "destructive",
+      });
+      return;
+    }
+    changePasswordMutation.mutate({ currentPassword, newPassword });
   };
 
   const handleDeleteAccount = async () => {

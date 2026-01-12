@@ -30,7 +30,8 @@ const registerSchema = z.object({
 });
 
 // Valid invite codes that grant immediate access (not waitlist)
-const VALID_INVITE_CODES = ["nomad"];
+// MB.MD Pattern 67: nomad/tango codes auto-complete email verification + onboarding
+const VALID_INVITE_CODES = ["nomad", "tango"];
 
 
 const loginSchema = z.object({
@@ -113,11 +114,13 @@ router.post("/register", async (req: Request, res: Response) => {
     // Remove inviteCode from user data before creating (it's not a user field)
     const { inviteCode: _inviteCode, ...userData } = validatedData as any;
 
+    // MB.MD Pattern 67: Valid invite codes (nomad/tango) auto-complete email verification + onboarding
     const user = await storage.createUser({
       ...userData,
       password: hashedPassword,
-      isOnboardingComplete: false,
-      formStatus: 0,
+      emailVerified: isValidInviteCode ? true : false,
+      isOnboardingComplete: isValidInviteCode ? true : false,
+      formStatus: isValidInviteCode ? 100 : 0,
       waitlist: isWaitlist,
       waitlistDate: isWaitlist ? new Date() : undefined,
     });
@@ -138,7 +141,36 @@ router.post("/register", async (req: Request, res: Response) => {
       }
     }
 
-    // Generate 6-digit verification code (easier for users to enter)
+    // MB.MD Pattern 67: Skip email verification for valid invite codes (nomad/tango)
+    if (isValidInviteCode) {
+      console.log(`[Auth] User ${user.id} registered with valid invite code '${inviteCode}' - auto-completed email verification and onboarding`);
+      
+      // Generate tokens immediately for valid invite code users
+      const accessToken = generateAccessToken(user);
+      const refreshToken = generateRefreshToken(user);
+      await storage.createRefreshToken({
+        userId: user.id,
+        token: refreshToken,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      });
+
+      return res.status(201).json({
+        message: "Registration successful! Welcome to Mundo Tango.",
+        requiresVerification: false,
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          name: user.name,
+          emailVerified: true,
+          isOnboardingComplete: true,
+        },
+        accessToken,
+        refreshToken,
+      });
+    }
+
+    // Standard flow: Generate 6-digit verification code (easier for users to enter)
     const verificationCode = crypto.randomInt(100000, 999999).toString();
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
     
