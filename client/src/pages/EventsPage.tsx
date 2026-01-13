@@ -25,10 +25,12 @@ import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import L from 'leaflet';
+import 'leaflet.markercluster';
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -95,81 +97,67 @@ function FitBoundsToEvents({ events }: { events: Array<{ lat: number; lng: numbe
   return null;
 }
 
-// Wrapper component that ensures MarkerClusterGroup only renders when map context is fully available
+// Native Leaflet MarkerCluster implementation - bypasses react-leaflet-cluster context issues
 function MapMarkersWithClusters({ events }: { events: Array<{ lat: number; lng: number; event?: any }> }) {
   const map = useMap();
-  const [isContextReady, setIsContextReady] = useState(false);
-  const [renderKey, setRenderKey] = useState(0);
   
   useEffect(() => {
-    if (!map) return;
+    if (!map || events.length === 0) return;
     
-    let mounted = true;
-    let timeoutId: ReturnType<typeof setTimeout>;
-    
-    // Reset readiness when map changes
-    setIsContextReady(false);
-    
-    // Wait for map.whenReady AND use setTimeout to defer until after React's context is fully propagated
-    map.whenReady(() => {
-      // Use setTimeout with delay to ensure context is ready after React's commit phase
-      timeoutId = setTimeout(() => {
-        if (mounted) {
-          setIsContextReady(true);
-          setRenderKey(prev => prev + 1); // Force fresh render
-        }
-      }, 100); // 100ms delay for safety
-    });
-    
-    return () => {
-      mounted = false;
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [map]);
-  
-  // Don't render until context is ready and we have events
-  if (!isContextReady || events.length === 0) {
-    return null;
-  }
-  
-  // Render with a key to ensure fresh mount after context is ready
-  return (
-    <MarkerClusterGroup
-      key={renderKey}
-      chunkedLoading
-      iconCreateFunction={(cluster) => {
+    // Create cluster group with custom styling
+    const clusterGroup = (L as any).markerClusterGroup({
+      chunkedLoading: true,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      maxClusterRadius: 50,
+      iconCreateFunction: (cluster: any) => {
         const count = cluster.getChildCount();
         return L.divIcon({
           html: `<div class="cluster-marker">${count}</div>`,
           className: 'custom-cluster-icon',
           iconSize: L.point(40, 40, true),
         });
-      }}
-    >
-      {events.map((event: any, index: number) => {
-        const eventData = event.event || event;
-        const eventId = eventData.id;
-        return (
-          <Marker key={eventId || `map-event-${index}`} position={[event.lat, event.lng]}>
-            <Popup>
-              <div className="p-2 min-w-[200px]">
-                <h3 className="font-semibold text-base mb-1" dangerouslySetInnerHTML={{ __html: eventData.title || "Event" }} />
-                <p className="text-sm text-gray-600 mb-1">
-                  {eventData.venue || eventData.location || eventData.city}
-                </p>
-                <p className="text-sm text-gray-500 mb-3">
-                  {safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
-                </p>
-                <Link href={`/events/${eventId}`}>
-                  <Button size="sm" className="w-full">View Details</Button>
-                </Link>
-              </div>
-            </Popup>
-          </Marker>
-        );
-      })}
-    </MarkerClusterGroup>
-  );
+      }
+    });
+    
+    // Add markers to cluster group
+    events.forEach((event: any, index: number) => {
+      const eventData = event.event || event;
+      const eventId = eventData.id;
+      
+      const marker = L.marker([event.lat, event.lng]);
+      
+      // Create popup content
+      const popupContent = `
+        <div style="padding: 8px; min-width: 200px;">
+          <h3 style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">${eventData.title || "Event"}</h3>
+          <p style="font-size: 12px; color: #666; margin-bottom: 4px;">
+            ${eventData.venue || eventData.location || eventData.city || ''}
+          </p>
+          <p style="font-size: 12px; color: #888; margin-bottom: 12px;">
+            ${safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
+          </p>
+          <a href="/events/${eventId}" style="display: block; text-align: center; background: hsl(var(--primary)); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px;">
+            View Details
+          </a>
+        </div>
+      `;
+      
+      marker.bindPopup(popupContent);
+      clusterGroup.addLayer(marker);
+    });
+    
+    // Add cluster group to map
+    map.addLayer(clusterGroup);
+    
+    // Cleanup on unmount or when events change
+    return () => {
+      map.removeLayer(clusterGroup);
+    };
+  }, [map, events]);
+  
+  return null;
 }
 
 function EventCard({ event, index = 0 }: { event: any; index?: number }) {
