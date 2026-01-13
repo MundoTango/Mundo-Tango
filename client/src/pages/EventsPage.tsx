@@ -95,33 +95,47 @@ function FitBoundsToEvents({ events }: { events: Array<{ lat: number; lng: numbe
   return null;
 }
 
-// Wrapper component that ensures MarkerClusterGroup only renders when map is ready
+// Wrapper component that ensures MarkerClusterGroup only renders when map context is fully available
 function MapMarkersWithClusters({ events }: { events: Array<{ lat: number; lng: number; event?: any }> }) {
   const map = useMap();
-  const [isMapReady, setIsMapReady] = useState(false);
+  const [isContextReady, setIsContextReady] = useState(false);
+  const [renderKey, setRenderKey] = useState(0);
   
   useEffect(() => {
     if (!map) return;
     
-    // Use whenReady to ensure map context is fully initialized
-    const handleReady = () => {
-      setIsMapReady(true);
-    };
+    let mounted = true;
+    let timeoutId: ReturnType<typeof setTimeout>;
     
-    // Always use whenReady - it fires immediately if already ready, or waits if not
-    map.whenReady(handleReady);
+    // Reset readiness when map changes
+    setIsContextReady(false);
+    
+    // Wait for map.whenReady AND use setTimeout to defer until after React's context is fully propagated
+    map.whenReady(() => {
+      // Use setTimeout with delay to ensure context is ready after React's commit phase
+      timeoutId = setTimeout(() => {
+        if (mounted) {
+          setIsContextReady(true);
+          setRenderKey(prev => prev + 1); // Force fresh render
+        }
+      }, 100); // 100ms delay for safety
+    });
     
     return () => {
-      setIsMapReady(false);
+      mounted = false;
+      if (timeoutId) clearTimeout(timeoutId);
     };
   }, [map]);
   
-  if (!isMapReady || events.length === 0) {
+  // Don't render until context is ready and we have events
+  if (!isContextReady || events.length === 0) {
     return null;
   }
   
+  // Render with a key to ensure fresh mount after context is ready
   return (
     <MarkerClusterGroup
+      key={renderKey}
       chunkedLoading
       iconCreateFunction={(cluster) => {
         const count = cluster.getChildCount();
