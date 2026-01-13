@@ -50,6 +50,16 @@ Manages trip travelers with owner/participant roles. Owners can invite/remove pa
 ### Profile System
 Comprehensive user profiles feature 8 main tabs (About, Posts, Events, Groups, Media, Friends, Places, Travel) and 5 sub-tabs for "About" (Bio, Identity, Education/Work, Preferences, Settings). A permission matrix defines access based on owner, friend, or standard user roles. Privacy controls allow users to manage profile visibility, discoverability, online status, and messaging permissions. GDPR tools enable data export and account deletion.
 
+**UI Components:**
+- `UserIdentityHeader`: Consistent identity display across Friends/Travel tabs with turquoise gradient avatars, tango role icons, connection degrees, closeness scores
+- `PrivacySubTab`: 11 privacy toggle switches, GDPR data export with authenticated download flow, 2FA settings, account deletion with 30-day grace period
+
+**GDPR Compliance (Verified 2026-01-13):**
+- Authenticated data export: `POST /api/gdpr/request-export` → `GET /api/gdpr/export/:id/download`
+- 2FA: TOTP via speakeasy, QR codes, encrypted secrets, 8 backup codes per user
+- Account deletion: 30-day grace period with soft delete (isActive:false, suspended:true)
+- Test selectors: `data-testid="privacy-subtab"`, `data-testid="button-download-data"`
+
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator utilizes Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation. Scraped events are stored in a `scraped_events` table and ingested into the main events table, with an Admin UI for real-time status and moderation.
 
