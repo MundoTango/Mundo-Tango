@@ -233,32 +233,9 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   const [updatingTripId, setUpdatingTripId] = useState<number | null>(null);
   const [completionDialogTrip, setCompletionDialogTrip] = useState<TravelPlan | null>(null);
   
-  // Travel Companions dialogs
-  const [findCompanionsDialog, setFindCompanionsDialog] = useState<{ tripId: number; city: string } | null>(null);
-  const [inviteFriendsDialog, setInviteFriendsDialog] = useState<{ tripId: number; city: string } | null>(null);
-  const [groupChatDialog, setGroupChatDialog] = useState<{ tripId: number; city: string; companions: TravelCompanion[] } | null>(null);
-  
   // Request to Book modal state
   const [requestToBookTrip, setRequestToBookTrip] = useState<TravelPlan | null>(null);
-  
-  // Travel Companion types and state management
-  type TravelCompanion = {
-    id: string;
-    requesterId?: number; // Actual user ID of the requester
-    name: string;
-    avatar: string;
-    initials: string;
-    matchScore: number;
-    details: string;
-    status: 'pending_incoming' | 'pending_outgoing' | 'confirmed';
-    requestId?: number; // Links to database tripJoinRequests.id
-    message?: string;
-  };
-  
-  // State for join requests from database
-  const [joinRequests, setJoinRequests] = useState<Record<number, any[]>>({});
-  
-  // Fetch travel plans FIRST (before allJoinRequests which depends on it)
+
   const { data: travelPlans, isLoading } = useQuery({
     queryKey: ['/api/travel/plans', profileId],
     queryFn: async () => {
@@ -268,118 +245,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
     }
   });
   
-  // Fetch join requests for all trips the user owns
-  const { data: allJoinRequests, refetch: refetchJoinRequests } = useQuery({
-    queryKey: ['/api/travel/join-requests', profileId],
-    queryFn: async () => {
-      // Only fetch if viewing own profile
-      if (!isOwnProfile) return {};
-      
-      const tripRequestsMap: Record<number, any[]> = {};
-      const plans = travelPlans || [];
-      
-      await Promise.all(plans.map(async (trip) => {
-        try {
-          const response = await fetch(`/api/travel/trips/${trip.id}/requests`, {
-            credentials: 'include',
-          });
-          if (response.ok) {
-            const requests = await response.json();
-            tripRequestsMap[trip.id] = requests;
-          }
-        } catch (e) {
-          console.error(`Failed to fetch join requests for trip ${trip.id}:`, e);
-        }
-      }));
-      
-      return tripRequestsMap;
-    },
-    enabled: isOwnProfile && !isPublicView && !!travelPlans,
-  });
-  
-  // Get companions for a specific trip - combines real join requests with mock data
-  const getCompanionsForTrip = (tripId: number): TravelCompanion[] => {
-    const requests = allJoinRequests?.[tripId] || [];
-    
-    // Map real join requests to TravelCompanion format
-    const realCompanions: TravelCompanion[] = requests.map((req: any) => ({
-      id: `request-${req.id}`,
-      requestId: req.id,
-      requesterId: req.requesterId, // Actual user ID for DM/profile links
-      name: req.requesterName || 'Unknown User',
-      avatar: req.requesterProfileImage || '',
-      initials: (req.requesterName || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
-      matchScore: 85, // Default score for now
-      details: req.message || 'Wants to join your trip',
-      status: req.status === 'pending' ? 'pending_incoming' as const : 
-              req.status === 'accepted' ? 'confirmed' as const : 
-              'pending_incoming' as const,
-      message: req.message,
-    }));
-    
-    return realCompanions;
-  };
-  
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
-  // Accept a companion request - calls API
-  const acceptCompanionRequest = async (tripId: number, companionId: string) => {
-    const requestId = parseInt(companionId.replace('request-', ''));
-    if (isNaN(requestId)) {
-      toast({ title: "Error", description: "Invalid request ID", variant: "destructive" });
-      return;
-    }
-    
-    try {
-      const response = await fetch(`/api/travel/join-requests/${requestId}/respond`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ status: 'accepted' }),
-      });
-      
-      if (response.ok) {
-        toast({ title: "Request Accepted!", description: "Companion has been added to your trip." });
-        refetchJoinRequests();
-        queryClient.invalidateQueries({ queryKey: ['/api/travel/join-requests', profileId] });
-      } else {
-        const error = await response.json();
-        toast({ title: "Error", description: error.message || "Failed to accept request", variant: "destructive" });
-      }
-    } catch (e) {
-      toast({ title: "Error", description: "Failed to accept request", variant: "destructive" });
-    }
-  };
-  
-  // Decline a companion request - calls API
-  const declineCompanionRequest = async (tripId: number, companionId: string) => {
-    const requestId = parseInt(companionId.replace('request-', ''));
-    if (isNaN(requestId)) {
-      toast({ title: "Error", description: "Invalid request ID", variant: "destructive" });
-      return;
-    }
-    
-    try {
-      const response = await fetch(`/api/travel/join-requests/${requestId}/respond`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ status: 'rejected' }),
-      });
-      
-      if (response.ok) {
-        toast({ title: "Request Declined", description: "Request has been declined." });
-        refetchJoinRequests();
-        queryClient.invalidateQueries({ queryKey: ['/api/travel/join-requests', profileId] });
-      } else {
-        const error = await response.json();
-        toast({ title: "Error", description: error.message || "Failed to decline request", variant: "destructive" });
-      }
-    } catch (e) {
-      toast({ title: "Error", description: "Failed to decline request", variant: "destructive" });
-    }
-  };
 
   const [pickerKey, setPickerKey] = useState(0);
   
