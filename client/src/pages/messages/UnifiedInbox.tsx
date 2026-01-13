@@ -60,6 +60,14 @@ const channelColors = {
   whatsapp: "#25D366",
 };
 
+const channelIcons = {
+  mt: MessageCircle,
+  gmail: Mail,
+  facebook: SiFacebook,
+  instagram: SiInstagram,
+  whatsapp: SiWhatsapp,
+};
+
 type Channel = "all" | "mt" | "gmail" | "facebook" | "instagram" | "whatsapp";
 
 // Helper to get initials from name

@@ -242,21 +242,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                           } : {}}
                           transition={{ duration: 0.5 }}
                         >
-                          <Badge 
-                            variant="secondary" 
-                            className="text-xs gap-1"
-                            style={{
-                              background: isPulsingRsvp 
-                                ? 'linear-gradient(90deg, rgba(64, 224, 208, 0.3), rgba(30, 144, 255, 0.3))'
-                                : undefined,
-                            }}
-                            data-testid={`rsvp-count-${event.id}`}
-                          >
-                            <Users className="w-3 h-3" />
-                            {rsvpCount} going
-                          </Badge>
-                          
-                          {/* Use UnifiedRSVPButton for consistent cache management */}
+                          {/* Use UnifiedRSVPButton for consistent cache management - removed redundant "going" badge */}
                           <UnifiedRSVPButton
                             eventId={event.id}
                             currentStatus={currentStatus}
