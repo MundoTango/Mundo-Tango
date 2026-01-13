@@ -1,10 +1,8 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users, Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette, Music, Dumbbell, Camera as PhotoIcon, HeartHandshake, UserPlus, Briefcase, Target, PartyPopper, MapPin, UtensilsCrossed, Coffee, Hotel, Wine, DollarSign, Star, Maximize2 } from "lucide-react";
-import { safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { PostActionsMenu } from "@/components/ui/PostActionsMenu";
@@ -19,9 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CommentsSection } from "./CommentsSection";
 import { renderMentionPills } from "@/utils/renderMentionPills";
 import { motion } from "framer-motion";
-import { RoleIcon } from "@/components/RoleIcon";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { getRoleLabel, getRoleByValue } from "@/lib/tangoRoles";
+import { UserIdentityHeader } from "@/components/UserIdentityHeader";
 
 const MEMORY_TAGS = [
   { id: "travel", label: "Travel", icon: Plane, gradient: "from-cyan-500 to-blue-500" },
@@ -204,53 +200,20 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
           data-testid={`post-item-${post.id}`}
         >
         {/* Header */}
-        <div className="p-4 flex items-start justify-between">
-          <div className="flex items-start gap-3 flex-1">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={post.user?.profileImage || ""} />
-              <AvatarFallback style={{ background: 'linear-gradient(135deg, #40E0D0, #1E90FF)' }}>
-                {post.user?.name?.charAt(0) || "U"}
-              </AvatarFallback>
-            </Avatar>
-            
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold text-sm">{post.user?.name || "Unknown"}</span>
-                <span className="text-xs text-muted-foreground">
-                  @{post.user?.username || "unknown"}
-                </span>
-                {/* Tango Role Icons */}
-                {post.user?.tangoRoles && post.user.tangoRoles.length > 0 && (
-                  <div className="flex items-center gap-1 flex-wrap" data-testid={`user-roles-${post.userId}`}>
-                    {post.user.tangoRoles.map((role) => {
-                      const roleData = getRoleByValue(role);
-                      return (
-                        <Tooltip key={role}>
-                          <TooltipTrigger asChild>
-                            <span 
-                              className="inline-flex items-center justify-center w-5 h-5 rounded-full"
-                              style={{ 
-                                backgroundColor: `${roleData?.color}20`,
-                                color: roleData?.color
-                              }}
-                            >
-                              <RoleIcon role={role} size={12} />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent side="right" className="text-xs" sideOffset={8}>
-                            {getRoleLabel(role)}
-                          </TooltipContent>
-                        </Tooltip>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {safeDateDistance(post.createdAt, { addSuffix: true })}
-              </p>
-            </div>
-          </div>
+        <div className="p-4 flex items-start justify-between gap-2">
+          <UserIdentityHeader
+            user={{
+              id: post.user?.id,
+              name: post.user?.name,
+              username: post.user?.username,
+              profileImage: post.user?.profileImage || undefined,
+              tangoRoles: post.user?.tangoRoles || undefined,
+            }}
+            timestamp={post.createdAt}
+            showTimestamp={true}
+            size="md"
+            testIdPrefix={`post-${post.id}-user`}
+          />
 
           <PostActionsMenu
             postId={post.id}
