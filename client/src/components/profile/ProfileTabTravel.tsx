@@ -1963,166 +1963,83 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
             </DialogTitle>
           </DialogHeader>
 
-          <Tabs defaultValue="search" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="search" data-testid="tab-search-events">Search Events</TabsTrigger>
-              <TabsTrigger value="create" data-testid="tab-create-event">Create New</TabsTrigger>
-            </TabsList>
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search milongas, events..." 
+                value={eventSearchQuery}
+                onChange={(e) => setEventSearchQuery(e.target.value)}
+                className="pl-10"
+                data-testid="input-event-search"
+              />
+            </div>
 
-            {/* Search MT Events Tab */}
-            <TabsContent value="search" className="space-y-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search milongas, events..." 
-                  value={eventSearchQuery}
-                  onChange={(e) => setEventSearchQuery(e.target.value)}
-                  className="pl-10"
-                  data-testid="input-event-search"
-                />
-              </div>
-
-              <ScrollArea className="h-[300px] pr-4">
-                {eventsLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                  </div>
-                ) : filteredEvents.length > 0 ? (
-                  <div className="space-y-2">
-                    {filteredEvents.map((event) => (
-                      <div 
-                        key={event.id}
-                        className={cn(
-                          "p-3 rounded-lg border cursor-pointer hover-elevate transition-all",
-                          selectedEvent?.id === event.id && "border-primary bg-primary/5"
-                        )}
-                        onClick={() => setSelectedEvent(event)}
-                        data-testid={`event-result-${event.id}`}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <h5 className="font-medium">{event.title}</h5>
-                              <Badge variant="outline" className={event.eventType === 'milonga' ? 'bg-red-500/10 text-red-600' : 'bg-pink-500/10 text-pink-600'}>
-                                {event.eventType}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                              <MapPin className="h-3 w-3" />{event.venue || event.location}
-                            </p>
-                            <p className="text-sm text-muted-foreground flex items-center gap-1">
-                              <CalendarIcon className="h-3 w-3" />
-                              {new Date(event.startDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                            </p>
+            <ScrollArea className="h-[300px] pr-4">
+              {eventsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : filteredEvents.length > 0 ? (
+                <div className="space-y-2">
+                  {filteredEvents.map((event) => (
+                    <div 
+                      key={event.id}
+                      className={cn(
+                        "p-3 rounded-lg border cursor-pointer hover-elevate transition-all",
+                        selectedEvent?.id === event.id && "border-primary bg-primary/5"
+                      )}
+                      onClick={() => setSelectedEvent(event)}
+                      data-testid={`event-result-${event.id}`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h5 className="font-medium">{event.title}</h5>
+                            <Badge variant="outline" className={event.eventType === 'milonga' ? 'bg-red-500/10 text-red-600' : 'bg-pink-500/10 text-pink-600'}>
+                              {event.eventType}
+                            </Badge>
                           </div>
-                          <div className="text-right">
-                            {event.isFree ? (
-                              <Badge variant="outline" className="bg-green-500/10 text-green-600">Free</Badge>
-                            ) : event.price ? (
-                              <p className="font-bold text-primary">{event.price}</p>
-                            ) : null}
-                          </div>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                            <MapPin className="h-3 w-3" />{event.venue || event.location}
+                          </p>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <CalendarIcon className="h-3 w-3" />
+                            {new Date(event.startDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          {event.isFree ? (
+                            <Badge variant="outline" className="bg-green-500/10 text-green-600">Free</Badge>
+                          ) : event.price ? (
+                            <p className="font-bold text-primary">{event.price}</p>
+                          ) : null}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Music className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                    <p className="text-sm">No events found in {eventsDialog?.city}</p>
-                    <p className="text-xs mt-1">Try the manual entry or create a new event</p>
-                  </div>
-                )}
-              </ScrollArea>
-
-              {selectedEvent && (
-                <div className="flex gap-2 pt-2 border-t">
-                  <Button type="button" variant="outline" onClick={() => setSelectedEvent(null)} className="flex-1">Cancel</Button>
-                  <Button 
-                    onClick={() => eventsDialog && addEventToTrip(eventsDialog.tripId, selectedEvent)} 
-                    className="flex-1"
-                    disabled={addItemMutation.isPending}
-                  >
-                    {addItemMutation.isPending ? "Adding..." : "Add to Trip"}
-                  </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Music className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">No events found in {eventsDialog?.city}</p>
                 </div>
               )}
-            </TabsContent>
+            </ScrollArea>
 
-            {/* Create New Event Tab */}
-            <TabsContent value="create">
-              <Form {...itemForm}>
-                <form onSubmit={itemForm.handleSubmit(async (data) => { 
-                  if (eventsDialog) { 
-                    try {
-                      // 1. Create the actual event in the database
-                      const eventResponse = await apiRequest("POST", "/api/events", {
-                        title: data.title,
-                        eventType: data.type || 'event',
-                        startDate: data.date,
-                        location: data.location,
-                        venue: data.location, // Simple mapping for inline form
-                        description: data.description,
-                        price: data.cost ? `$${data.cost}` : undefined,
-                        isPublic: true,
-                        cityId: eventsDialog.cityId // We need to ensure cityId is available
-                      });
-                      const newEvent = await eventResponse.json();
-                      
-                      // 2. Add it to the trip
-                      addEventToTrip(eventsDialog.tripId, newEvent);
-                      setEventsDialog(null);
-                      itemForm.reset();
-                      toast({ title: "Event created!", description: "The event has been created and added to your trip." });
-                    } catch (error) {
-                      toast({ title: "Error creating event", description: "Failed to create the new event.", variant: "destructive" });
-                    }
-                  } 
-                })} className="space-y-4">
-                  <FormField control={itemForm.control} name="type" render={({ field }) => (
-                    <FormItem><FormLabel>Event Type *</FormLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger></FormControl>
-                        <SelectContent>
-                          <SelectItem value="milonga">Milonga</SelectItem>
-                          <SelectItem value="event">Tango Event</SelectItem>
-                          <SelectItem value="activity">Activity</SelectItem>
-                          <SelectItem value="dining">Dining</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-
-                  <FormField control={itemForm.control} name="title" render={({ field }) => (
-                    <FormItem><FormLabel>Event Name *</FormLabel><FormControl><Input placeholder="e.g., La Catedral Milonga" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField control={itemForm.control} name="date" render={({ field }) => (
-                      <FormItem><FormLabel>Date/Time</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    <FormField control={itemForm.control} name="cost" render={({ field }) => (
-                      <FormItem><FormLabel>Entry Fee (USD)</FormLabel><FormControl><Input type="number" placeholder="15" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                  </div>
-
-                  <FormField control={itemForm.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel>Venue/Location</FormLabel><FormControl><UnifiedLocationPicker mode="address" value={field.value || ""} onChange={(location) => field.onChange(location)} placeholder="Search for venue or address..." data-testid="input-event-location" /></FormControl><FormMessage /></FormItem>
-                  )} />
-
-                  <FormField control={itemForm.control} name="description" render={({ field }) => (
-                    <FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Dress code, DJ, special notes..." {...field} rows={2} /></FormControl><FormMessage /></FormItem>
-                  )} />
-
-                  <div className="flex gap-2 pt-2">
-                    <Button type="button" variant="outline" onClick={() => { setEventsDialog(null); itemForm.reset(); }} className="flex-1">Cancel</Button>
-                    <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Creating..." : "Create & Add"}</Button>
-                  </div>
-                </form>
-              </Form>
-            </TabsContent>
-          </Tabs>
+            {selectedEvent && (
+              <div className="flex gap-2 pt-2 border-t">
+                <Button type="button" variant="outline" onClick={() => setSelectedEvent(null)} className="flex-1">Cancel</Button>
+                <Button 
+                  onClick={() => eventsDialog && addEventToTrip(eventsDialog.tripId, selectedEvent)} 
+                  className="flex-1"
+                  disabled={addItemMutation.isPending}
+                >
+                  {addItemMutation.isPending ? "Adding..." : "Add to Trip"}
+                </Button>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
