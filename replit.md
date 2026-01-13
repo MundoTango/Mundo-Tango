@@ -63,6 +63,15 @@ Comprehensive user profiles feature 8 main tabs (About, Posts, Events, Groups, M
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator utilizes Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation. Scraped events are stored in a `scraped_events` table and ingested into the main events table, with an Admin UI for real-time status and moderation.
 
+### Event Series & Placeholder System (Updated 2026-01-13)
+**RecurringEventDetector** (`server/services/scraping/RecurringEventDetector.ts`) provides:
+- **Global Series Detection**: Scans ALL cities for recurring patterns (same title + venue + day of week, 2+ occurrences)
+- **12-Month Placeholder Generation**: 365-day horizon for travel planning
+- **Full Pipeline Orchestration**: run-all-scrapers.ts runs scrapers → ingest → detect series → generate placeholders
+- **Stats (Jan 2026)**: 1,953 active series, 2,515 placeholders, 12,133 total events, 30+ cities covered
+- **Key Files**: `RecurringEventDetector.ts`, `run-all-scrapers.ts`, `event_series` schema
+- **API**: `GET /api/travel/events-by-city?city={city}&startDate={date}&endDate={date}`
+
 ### Platform Features
 Core functionalities include social features (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and an International Payment System supporting 30 currencies.
 
