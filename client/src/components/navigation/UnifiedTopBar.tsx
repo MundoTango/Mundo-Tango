@@ -379,10 +379,10 @@ function UnifiedTopBar({
               <MessageSquare className="h-5 w-5 transition-colors duration-200" style={{ color: messageCount > 0 ? '#40E0D0' : 'currentColor' }} />
               {messageCount > 0 && (
                 <span 
-                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg animate-pulse pointer-events-none"
+                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg animate-pulse pointer-events-none z-10"
                   style={{
-                    background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
-                    boxShadow: '0 2px 8px rgba(64, 224, 208, 0.4)',
+                    background: 'linear-gradient(135deg, #FF4500 0%, #FF8C00 100%)',
+                    boxShadow: '0 2px 8px rgba(255, 69, 0, 0.4)',
                   }}
                 >
                   {messageCount > 9 ? '9+' : messageCount}
