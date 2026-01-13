@@ -33,6 +33,8 @@ export interface ScrapedEventData {
   city?: string;
   state?: string;
   country?: string;
+  latitude?: string;
+  longitude?: string;
   price?: string;
   imageUrl?: string;
   organizer?: string;
@@ -80,6 +82,8 @@ export interface LocationData {
   state?: string;
   country?: string;
   fullAddress?: string;
+  latitude?: string;
+  longitude?: string;
 }
 
 class UnifiedEventScraper {
@@ -342,6 +346,8 @@ Extract all tango events from this page as JSON array:`
           city: addr.city || addr.town || addr.village || addr.municipality,
           state: addr.state || addr.province || addr.region,
           country: addr.country,
+          latitude: result.lat,
+          longitude: result.lon,
         };
       }
     } catch (error) {
@@ -385,13 +391,16 @@ Extract all tango events from this page as JSON array:`
             event.country = source.country;
           }
 
-          if (event.address && (!event.city || !event.country)) {
+          // Geocode if we have address but missing city/country or coordinates
+          if (event.address && (!event.city || !event.country || !event.latitude)) {
             const geoData = await this.parseLocationWithGeocoding(
               [event.address, event.venue, event.city, event.country].filter(Boolean).join(', ')
             );
             if (geoData.city) event.city = geoData.city;
             if (geoData.state) event.state = geoData.state;
             if (geoData.country) event.country = geoData.country;
+            if (geoData.latitude) event.latitude = geoData.latitude;
+            if (geoData.longitude) event.longitude = geoData.longitude;
           }
 
           // Append team data to description if found and not already present
@@ -435,6 +444,8 @@ Extract all tango events from this page as JSON array:`
             address: event.address || '',
             city: event.city || source.city || '',
             country: event.country || source.country || '',
+            latitude: event.latitude || null,
+            longitude: event.longitude || null,
             organizer: event.organizer || '',
             price: parsePrice(event.price),
             imageUrl: event.imageUrl || '',

@@ -35,6 +35,7 @@ import { BannerAd } from "@/components/ads/BannerAd";
 import { EventFiltersCompact, type EventFilterValues } from "@/components/events/EventFiltersCompact";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { optimizeCover } from "@/lib/imageOptimizer";
+import { getCityCoordinates, getCityCoordinatesWithOffset, hasCityCoordinates, BUENOS_AIRES_DEFAULT } from "@/lib/cityCoordinates";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -437,98 +438,39 @@ export default function EventsPage() {
     });
   }, [events]);
 
-  // Use real event coordinates when available, fallback to city-based defaults
+  // Use real event coordinates when available, fallback to centralized city coordinates
   const eventsWithCoordinates = useMemo(() => {
     if (!events) return [];
-    
-    // City coordinate defaults - Comprehensive list of 60+ tango cities worldwide
-    const cityCoords: Record<string, [number, number]> = {
-      // Americas
-      'Buenos Aires': [-34.6037, -58.3816],
-      'New York': [40.7128, -74.0060],
-      'San Francisco': [37.7749, -122.4194],
-      'Los Angeles': [34.0522, -118.2437],
-      'Sacramento': [38.5816, -121.4944],
-      'San Diego': [32.7157, -117.1611],
-      'Miami': [25.7617, -80.1918],
-      'Philadelphia': [39.9526, -75.1652],
-      'Boston': [42.3601, -71.0589],
-      'Toronto': [43.6532, -79.3832],
-      'Vancouver': [49.2827, -123.1207],
-      'Quebec City': [46.8139, -71.2080],
-      'Mississauga': [43.5890, -79.6441],
-      'Bogotá': [4.7110, -74.0721],
-      'São Paulo': [-23.5505, -46.6333],
-      'Spokane': [47.6588, -117.4260],
-      // Europe
-      'London': [51.5074, -0.1278],
-      'Paris': [48.8566, 2.3522],
-      'Berlin': [52.5200, 13.4050],
-      'Vienna': [48.2082, 16.3738],
-      'Wien': [48.2082, 16.3738],
-      'Munich': [48.1351, 11.5820],
-      'Frankfurt': [50.1109, 8.6821],
-      'Hamburg': [53.5511, 9.9937],
-      'Karlsruhe': [49.0069, 8.4037],
-      'Baden-Württemberg': [48.6616, 9.3501],
-      'Nordrhein-Westfalen': [51.4332, 7.6616],
-      'North Bavaria': [49.4521, 11.0767],
-      'Ostsee': [54.1839, 12.0955],
-      'Lake Constance': [47.6583, 9.1750],
-      'Milan': [45.4642, 9.1900],
-      'Rome': [41.9028, 12.4964],
-      'Siena': [43.3188, 11.3308],
-      'Amsterdam': [52.3676, 4.9041],
-      'Leiden': [52.1601, 4.4970],
-      'Brussels': [50.8503, 4.3517],
-      'Antwerpen': [51.2194, 4.4025],
-      'Antwerp': [51.2194, 4.4025],
-      'Athens': [37.9838, 23.7275],
-      'Istanbul': [41.0082, 28.9784],
-      'Prague': [50.0755, 14.4378],
-      'Warsaw': [52.2297, 21.0122],
-      'Madrid': [40.4168, -3.7038],
-      'Barcelona': [41.3851, 2.1734],
-      'Valencia': [39.4699, -0.3763],
-      'Seville': [37.3891, -5.9845],
-      'Costa Brava': [41.8610, 3.0630],
-      'Pamplona': [42.8125, -1.6458],
-      'Valls': [41.2861, 1.2497],
-      'Lyon': [45.7640, 4.8357],
-      'Geneva': [46.2044, 6.1432],
-      'Laško': [46.1541, 15.2355],
-      'Saint Petersburg': [59.9311, 30.3609],
-      'Санкт-Петербург': [59.9311, 30.3609],
-      'Tenerife': [28.2916, -16.6291],
-      // Asia & Middle East
-      'Tokyo': [35.6762, 139.6503],
-      'Taipei': [25.0330, 121.5654],
-      'Hong Kong': [22.3193, 114.1694],
-      'Beijing': [39.9042, 116.4074],
-      'Dubai': [25.2048, 55.2708],
-      'Cairo': [30.0444, 31.2357],
-      // Oceania
-      'Melbourne': [-37.8136, 144.9631],
-      'Sydney': [-33.8688, 151.2093],
-      'Brisbane': [-27.4698, 153.0251],
-      'Adelaide': [-34.9285, 138.6007],
-    };
     
     return events.map((event: any, index: number) => {
       const eventData = event.event || event;
       const city = eventData.city || 'Buenos Aires';
-      const defaultCoords = cityCoords[city] || [-34.6037, -58.3816];
       
       // Track if using real coordinates or city-level fallback
       const hasRealCoords = Boolean(eventData.latitude && eventData.longitude);
-      const lat = hasRealCoords ? parseFloat(eventData.latitude) : defaultCoords[0] + (Math.random() - 0.5) * 0.05;
-      const lng = hasRealCoords ? parseFloat(eventData.longitude) : defaultCoords[1] + (Math.random() - 0.5) * 0.05;
+      
+      if (hasRealCoords) {
+        return {
+          ...event,
+          lat: parseFloat(eventData.latitude),
+          lng: parseFloat(eventData.longitude),
+          isApproximate: false,
+        };
+      }
+      
+      // Use centralized city coordinates with offset to prevent marker stacking
+      const [lat, lng] = getCityCoordinatesWithOffset(city, index);
+      
+      // Development warning for unmapped cities
+      if (process.env.NODE_ENV === 'development' && !hasCityCoordinates(city)) {
+        console.warn(`[EventsPage] Unmapped city "${city}" - event "${eventData.title}" using default Buenos Aires coordinates`);
+      }
       
       return {
         ...event,
         lat,
         lng,
-        isApproximate: !hasRealCoords,
+        isApproximate: true,
       };
     });
   }, [events]);

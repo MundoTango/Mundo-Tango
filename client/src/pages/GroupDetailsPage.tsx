@@ -25,6 +25,7 @@ import { useMyRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { UnifiedRSVPButton, type RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { getCityCoordinates, getCityCoordinatesWithOffset, BUENOS_AIRES_DEFAULT } from "@/lib/cityCoordinates";
 import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
@@ -359,34 +360,28 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   
   const eventsWithCoordinates = useMemo(() => {
     if (!displayEvents) return [];
-    const cityCoords: { [key: string]: [number, number] } = {
-      'Buenos Aires': [-34.6037, -58.3816],
-      'New York': [40.7128, -74.0060],
-      'Berlin': [52.5200, 13.4050],
-      'Paris': [48.8566, 2.3522],
-      'London': [51.5074, -0.1278],
-    };
-    const defaultCoords = cityCoords[groupCity || ''] || [-34.6037, -58.3816];
     
-    return displayEvents.map((event, index) => ({
-      ...event,
-      lat: (event.latitude ? parseFloat(event.latitude) : defaultCoords[0]) + (Math.random() - 0.5) * 0.1,
-      lng: (event.longitude ? parseFloat(event.longitude) : defaultCoords[1]) + (Math.random() - 0.5) * 0.1,
-    }));
+    return displayEvents.map((event, index) => {
+      // Use real coordinates if available
+      if (event.latitude && event.longitude) {
+        return {
+          ...event,
+          lat: parseFloat(event.latitude) + (Math.random() - 0.5) * 0.02,
+          lng: parseFloat(event.longitude) + (Math.random() - 0.5) * 0.02,
+        };
+      }
+      
+      // Use centralized city coordinates with offset
+      const [lat, lng] = getCityCoordinatesWithOffset(groupCity || 'Buenos Aires', index);
+      return { ...event, lat, lng };
+    });
   }, [displayEvents, groupCity]);
   
   const mapCenter: [number, number] = useMemo(() => {
     if (eventsWithCoordinates.length > 0) {
       return [eventsWithCoordinates[0].lat, eventsWithCoordinates[0].lng];
     }
-    const cityCoords: { [key: string]: [number, number] } = {
-      'Buenos Aires': [-34.6037, -58.3816],
-      'New York': [40.7128, -74.0060],
-      'Berlin': [52.5200, 13.4050],
-      'Paris': [48.8566, 2.3522],
-      'London': [51.5074, -0.1278],
-    };
-    return cityCoords[groupCity || ''] || [-34.6037, -58.3816];
+    return getCityCoordinates(groupCity || 'Buenos Aires');
   }, [eventsWithCoordinates, groupCity]);
   
   const activeFilterCount = useMemo(() => {
@@ -1236,14 +1231,7 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
   // Build map locations
   const mapLocations = useMemo(() => {
     const locations: any[] = [];
-    const cityCoords: { [key: string]: [number, number] } = {
-      'Buenos Aires': [-34.6037, -58.3816],
-      'New York': [40.7128, -74.0060],
-      'Berlin': [52.5200, 13.4050],
-      'Paris': [48.8566, 2.3522],
-      'London': [51.5074, -0.1278],
-    };
-    const defaultCoords = cityCoords[groupCity || ''] || [-34.6037, -58.3816];
+    const defaultCoords = getCityCoordinates(groupCity || 'Buenos Aires');
     
     if (activeLayer === 'all' || activeLayer === 'events') {
       events.forEach((event, index) => {
@@ -1253,9 +1241,8 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
           lat = typeof event.latitude === 'string' ? parseFloat(event.latitude) : event.latitude;
           lng = typeof event.longitude === 'string' ? parseFloat(event.longitude) : event.longitude;
         } else {
-          // Add small jitter to city center so multiple events don't stack (0.02° ≈ 2km)
-          lat = defaultCoords[0] + (Math.random() - 0.5) * 0.02;
-          lng = defaultCoords[1] + (Math.random() - 0.5) * 0.02;
+          // Use centralized city coordinates with offset to prevent stacking
+          [lat, lng] = getCityCoordinatesWithOffset(groupCity || 'Buenos Aires', index);
         }
         
         locations.push({
