@@ -284,7 +284,7 @@ export default function EventsPage() {
   const [sortBy, setSortBy] = useState<"relevance" | "date" | "price">("date");
 
   // Build query params for search
-  const buildSearchParams = () => {
+  const buildSearchParams = (forMapView: boolean = false) => {
     const params = new URLSearchParams();
     if (filters.q) params.append("q", filters.q);
     if (filters.city) params.append("city", filters.city);
@@ -307,8 +307,14 @@ export default function EventsPage() {
     if (filters.languages && filters.languages.length > 0) params.append("languages", filters.languages.join(","));
     if (filters.languageMatchOnly) params.append("languageMatchOnly", "true");
     params.append("sortBy", sortBy);
-    params.append("page", String(page));
-    params.append("limit", "20");
+    
+    // Map view shows ALL events (no pagination), list view uses pagination
+    if (forMapView) {
+      params.append("limit", "500"); // Show up to 500 events on map
+    } else {
+      params.append("page", String(page));
+      params.append("limit", "20");
+    }
     return params.toString();
   };
 
@@ -337,19 +343,31 @@ export default function EventsPage() {
     enabled: activeTab === "past",
   });
 
-  // TAB 4: Discover - Global search
+  // TAB 4: Discover - Global search (paginated for list view)
   const { data: searchResults, isLoading: isLoadingDiscover } = useQuery({
     queryKey: ["/api/events/search", filters, page, sortBy],
     queryFn: async () => {
-      const params = buildSearchParams();
+      const params = buildSearchParams(false);
       const response = await fetch(`/api/events/search?${params}`);
       if (!response.ok) throw new Error("Failed to fetch events");
       return response.json();
     },
-    enabled: activeTab === "discover",
+    enabled: activeTab === "discover" && viewMode !== "map",
   });
 
-  // Select events based on active tab
+  // MAP VIEW: Fetch ALL events (up to 500) without pagination
+  const { data: mapSearchResults, isLoading: isLoadingMapEvents } = useQuery({
+    queryKey: ["/api/events/search", "map", filters, sortBy],
+    queryFn: async () => {
+      const params = buildSearchParams(true);
+      const response = await fetch(`/api/events/search?${params}`);
+      if (!response.ok) throw new Error("Failed to fetch events for map");
+      return response.json();
+    },
+    enabled: activeTab === "discover" && viewMode === "map",
+  });
+
+  // Select events based on active tab and view mode
   const events = useMemo(() => {
     switch (activeTab) {
       case "my-events":
@@ -360,15 +378,20 @@ export default function EventsPage() {
         return pastEventsData?.events || [];
       case "discover":
       default:
+        // Use map results when in map view (no pagination, up to 500 events)
+        if (viewMode === "map") {
+          return mapSearchResults?.events || [];
+        }
         return searchResults?.events || [];
     }
-  }, [activeTab, myEventsData, upcomingData, pastEventsData, searchResults]);
+  }, [activeTab, myEventsData, upcomingData, pastEventsData, searchResults, mapSearchResults, viewMode]);
 
   const pagination = activeTab === "discover" ? searchResults?.pagination : 
                      activeTab === "past" ? pastEventsData?.pagination : null;
   const isLoading = activeTab === "my-events" ? isLoadingMyEvents : 
                     activeTab === "upcoming" ? isLoadingUpcoming : 
-                    activeTab === "past" ? isLoadingPast : isLoadingDiscover;
+                    activeTab === "past" ? isLoadingPast : 
+                    viewMode === "map" ? isLoadingMapEvents : isLoadingDiscover;
   
   // Active filter count
   const activeFilterCount = Object.keys(filters).filter(
