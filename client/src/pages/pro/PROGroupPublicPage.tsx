@@ -300,7 +300,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
                               )}
                             </div>
                           )}
-                          {pro.yearsExperience && pro.yearsExperience > 0 && (
+                          {pro.yearsExperience !== undefined && pro.yearsExperience !== null && pro.yearsExperience > 0 && (
                             <div className="flex items-center gap-1 text-muted-foreground">
                               <Briefcase className="w-4 h-4" />
                               <span>{pro.yearsExperience}y</span>
@@ -852,7 +852,7 @@ export function DancersPage() {
                               )}
                             </div>
                           )}
-                          {pro.yearsExperience && pro.yearsExperience > 0 && (
+                          {pro.yearsExperience !== undefined && pro.yearsExperience !== null && pro.yearsExperience > 0 && (
                             <div className="flex items-center gap-1 text-muted-foreground">
                               <Briefcase className="w-4 h-4" />
                               <span>{pro.yearsExperience}y</span>
