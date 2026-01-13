@@ -107,6 +107,39 @@ All users can manage their passwords:
 - Reset: `POST /api/auth/reset-password` with `{ token, newPassword }`
 - UI: `/password-reset` page sends reset email, `/new-password?token=xxx` page to set new password
 
+### Trip Participant Management System (Jan 13, 2026)
+Full lifecycle management for trip travelers with owner/participant role separation:
+
+**Owner Capabilities**:
+- Invite users to trips via AddTravelerDialog (data-testid="button-invite-traveler-{index}")
+- Remove participants from trips
+- Edit all trip details (itinerary, accommodations, etc.)
+
+**Participant Capabilities**:
+- View shared trip details in read-only mode
+- Leave trips they've been invited to
+- See trip in "Trips I'm Joining" section on Travel tab
+
+**Access Control Pattern**:
+- Entity ownership check: `trip.userId === currentUser?.id` for per-item permissions
+- Backend: GET /api/travel/plans/:id checks `isOwner OR isActiveParticipant` before allowing access
+- UI: TravelItineraryPage shows owner controls only when `isOwner===true`
+
+**Notification System**:
+- Type: `trip_invite` sent when participant added
+- Data includes: tripId, tripCity, ownerId, ownerName, actionUrl
+- Created via `storage.createNotification()` in POST /api/travel/trips/:tripId/participants
+
+**UI Test Selectors**:
+- `card-travel-plan-${index}` - Trip card
+- `section-participants-${index}` - Travelers section
+- `button-invite-traveler-${index}` - Opens AddTravelerDialog
+- `input-search-travelers` - Search input
+- `user-search-result-${userId}` - Search result
+- `button-add-traveler-${userId}` - Add button
+
+**Test Credentials**: admin@mundotango.life / admin123
+
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator, utilizes Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation. Scraped events are stored in a `scraped_events` table and ingested into the main events table, with an Admin UI for real-time status and moderation.
 
