@@ -5391,18 +5391,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const userId = req.user!.id;
-      const userIdStr = String(userId);
       
-      // Count messages where user is NOT in the readBy array
-      const result = await db.select({
+      // Count unread direct messages (DMs) specifically for the logged-in user
+      const [dmCount] = await db.select({
+        count: sql<number>`count(*)::int`
+      })
+      .from(directMessages)
+      .where(
+        and(
+          eq(directMessages.recipientId, userId),
+          eq(directMessages.isRead, false)
+        )
+      );
+
+      // Count unread group/room messages ONLY for groups the user is actually a member of
+      // This prevents global/system messages from inflating the personal unread count
+      const userIdStr = String(userId);
+      const [chatCount] = await db.select({
         count: sql<number>`count(*)::int`
       })
       .from(chatMessages)
+      .innerJoin(groupMembers, eq(chatMessages.chatRoomId, groupMembers.groupId))
       .where(
-        sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
+        and(
+          eq(groupMembers.userId, userId),
+          sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
+        )
       );
       
-      res.json({ count: result[0]?.count || 0 });
+      const totalUnread = (dmCount?.count || 0) + (chatCount?.count || 0);
+      res.json({ count: totalUnread });
     } catch (error) {
       console.error("Get unread message count error:", error);
       res.json({ count: 0 });
@@ -6255,13 +6273,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Search endpoint
   app.get("/api/search", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const query = (req.query.query as string) || "";
+      const query = (req.query.query as string) || (req.query.q as string) || "";
       if (query.length < 2) {
-        return res.json({ users: [], events: [], groups: [] });
+        return res.json({ users: [], events: [], groups: [], posts: [] });
       }
       
       // storage.search() returns flat array with 'type' field
-      // Frontend expects { users: [], events: [], groups: [] }
+      // Frontend expects { users: [], events: [], groups: [], posts: [] }
       const flatResults = await storage.search(query, req.user!.id);
       
       // Transform flat array to categorized object
@@ -6269,11 +6287,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         users: flatResults.filter((r: any) => r.type === 'user'),
         events: flatResults.filter((r: any) => r.type === 'event'),
         groups: flatResults.filter((r: any) => r.type === 'group'),
+        posts: flatResults.filter((r: any) => r.type === 'post'),
       };
       
       res.json(categorizedResults);
     } catch (error) {
       console.error('Search failed:', error);
+      res.status(500).json({ message: "Search failed" });
+    }
+  });
+
+  // Alias for global-search used by InlineSearchInput
+  app.get("/api/user/global-search", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const query = (req.query.q as string) || (req.query.query as string) || "";
+      if (query.length < 2) {
+        return res.json({ users: [], events: [], groups: [], posts: [] });
+      }
+      
+      const flatResults = await storage.search(query, req.user!.id);
+      const categorizedResults = {
+        users: flatResults.filter((r: any) => r.type === 'user'),
+        events: flatResults.filter((r: any) => r.type === 'event'),
+        groups: flatResults.filter((r: any) => r.type === 'group'),
+        posts: flatResults.filter((r: any) => r.type === 'post'),
+      };
+      
+      res.json(categorizedResults);
+    } catch (error) {
+      console.error('Global search failed:', error);
       res.status(500).json({ message: "Search failed" });
     }
   });
