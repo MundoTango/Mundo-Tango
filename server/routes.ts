@@ -303,6 +303,7 @@ import {
   storyViews,
   groupMembers,
   friendRequests,
+  directMessages,
 } from "@shared/schema";
 import { 
   esaAgents,

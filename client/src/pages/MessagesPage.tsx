@@ -446,6 +446,31 @@ function ConversationView({ conversationId }: { conversationId: string }) {
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { typingUsers, broadcastTyping } = useMessagesRealtime(conversationId);
   const markAsRead = useMarkMessagesAsRead(conversationId);
+  
+  // Parse conversation ID to get recipient info
+  const recipientId = useMemo(() => {
+    if (conversationId.startsWith('direct-')) {
+      return parseInt(conversationId.replace('direct-', ''));
+    }
+    return parseInt(conversationId);
+  }, [conversationId]);
+  
+  // Fetch recipient's profile
+  const { data: recipient } = useQuery({
+    queryKey: ["/api/users", recipientId, "profile"],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const response = await fetch(`/api/users/${recipientId}`, {
+        credentials: "include",
+        headers,
+      });
+      if (!response.ok) return null;
+      return response.json();
+    },
+    enabled: !!recipientId && !conversationId.startsWith('group-'),
+  });
 
   useEffect(() => {
     if (conversationId) {
@@ -495,14 +520,20 @@ function ConversationView({ conversationId }: { conversationId: string }) {
       <div className="p-4 border-b flex items-center justify-between gap-2 bg-card/30">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 ring-2 ring-primary/10">
+            {recipient?.profileImageUrl ? (
+              <AvatarImage src={recipient.profileImageUrl} alt={recipient?.name || ''} />
+            ) : null}
             <AvatarFallback>
-              <Users className="w-5 h-5 text-muted-foreground" />
+              {recipient?.name?.charAt(0)?.toUpperCase() || <Users className="w-5 h-5 text-muted-foreground" />}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-sm leading-none mb-1">
-              {t('pages:messages.conversation', 'Conversation')}
+            <h3 className="font-semibold text-sm leading-none mb-1" data-testid="text-conversation-recipient">
+              {recipient?.name || t('pages:messages.conversation', 'Conversation')}
             </h3>
+            {recipient?.username && (
+              <p className="text-xs text-muted-foreground/60 mb-0.5">@{recipient.username}</p>
+            )}
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-green-500" />
               <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Online</span>
