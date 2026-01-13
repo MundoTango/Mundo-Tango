@@ -251,32 +251,70 @@ router.get("/upcoming-visitors", async (req: AuthRequest, res: Response) => {
 });
 
 // GET /api/travel/plans/:id - Get single travel plan (auth required)
+// Allows both trip owner AND participants to view the trip
 router.get("/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { id } = req.params;
+    const tripId = parseInt(req.params.id);
 
+    // First, get the trip
     const planResult = await db.select()
       .from(travelPlans)
-      .where(and(
-        eq(travelPlans.id, parseInt(id)),
-        eq(travelPlans.userId, userId)
-      ))
+      .where(eq(travelPlans.id, tripId))
       .limit(1);
 
     if (planResult.length === 0) {
       return res.status(404).json({ message: "Travel plan not found" });
     }
 
+    const trip = planResult[0];
+    const isOwner = trip.userId === userId;
+
+    // Check if user is a participant (if not owner)
+    let isParticipant = false;
+    if (!isOwner) {
+      const participantCheck = await db.select()
+        .from(tripParticipants)
+        .where(and(
+          eq(tripParticipants.tripId, tripId),
+          eq(tripParticipants.userId, userId),
+          eq(tripParticipants.status, 'active')
+        ))
+        .limit(1);
+      isParticipant = participantCheck.length > 0;
+    }
+
+    // Only allow access to owner or participants
+    if (!isOwner && !isParticipant) {
+      return res.status(403).json({ message: "You don't have access to this trip" });
+    }
+
     // Get plan items/destinations
     const itemsResult = await db.select()
       .from(travelPlanItems)
-      .where(eq(travelPlanItems.travelPlanId, parseInt(id)))
+      .where(eq(travelPlanItems.travelPlanId, tripId))
       .orderBy(travelPlanItems.date);
 
+    // Get owner info for participants
+    let ownerInfo = null;
+    if (!isOwner) {
+      const ownerResult = await db.select({
+        name: users.name,
+        profileImage: users.profileImage,
+      })
+        .from(users)
+        .where(eq(users.id, trip.userId))
+        .limit(1);
+      ownerInfo = ownerResult[0] || null;
+    }
+
     res.json({
-      ...planResult[0],
+      ...trip,
       items: itemsResult,
+      isOwner,
+      isParticipant,
+      ownerName: ownerInfo?.name || null,
+      ownerProfileImage: ownerInfo?.profileImage || null,
     });
   } catch (error) {
     console.error("Error fetching travel plan:", error);

@@ -48,6 +48,9 @@ interface TravelPlan {
   notes?: string;
   items?: TravelPlanItem[];
   userId?: number;
+  isOwner?: boolean;
+  ownerName?: string | null;
+  ownerProfileImage?: string | null;
 }
 
 interface TravelPlanItem {
@@ -264,6 +267,19 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
       if (!response.ok) throw new Error('Failed to fetch travel plans');
       return response.json() as Promise<TravelPlan[]>;
     }
+  });
+
+  // Fetch trips the current user is participating in (only for own profile)
+  const { data: participatingTrips } = useQuery({
+    queryKey: ['/api/travel/my-trips'],
+    queryFn: async () => {
+      const response = await fetch('/api/travel/my-trips');
+      if (!response.ok) throw new Error('Failed to fetch participating trips');
+      const allTrips = await response.json() as TravelPlan[];
+      // Only return trips where user is NOT the owner (participating)
+      return allTrips.filter(trip => trip.isOwner === false);
+    },
+    enabled: isOwnProfile && !isPublicView, // Only fetch for own profile
   });
   
   const { toast } = useToast();
@@ -1604,6 +1620,64 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
         </div>
         );
       })()}
+
+      {/* Trips I'm Joining - Trips where current user is a participant (not owner) */}
+      {isOwnProfile && !isPublicView && participatingTrips && participatingTrips.length > 0 && (
+        <div className="space-y-4" data-testid="section-trips-joining">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                Trips I'm Joining
+              </h2>
+              <p className="text-sm text-muted-foreground">Trips you've been invited to by other travelers</p>
+            </div>
+            <Badge variant="secondary">{participatingTrips.length} trip{participatingTrips.length !== 1 ? 's' : ''}</Badge>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {participatingTrips.map((trip, index) => (
+              <Card key={trip.id} className="overflow-hidden hover-elevate" data-testid={`card-joining-trip-${index}`}>
+                <div 
+                  className="relative h-32 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20"
+                  style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <h3 className="text-lg font-semibold text-white">{trip.city}{trip.country && <span className="text-white/70 text-sm ml-1.5">• {trip.country}</span>}</h3>
+                    <div className="flex items-center gap-2 text-white/80 text-xs mt-1">
+                      <CalendarIcon className="w-3 h-3" />
+                      <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    </div>
+                  </div>
+                  <Badge className="absolute top-3 right-3 bg-primary/80 text-primary-foreground text-xs">Invited</Badge>
+                </div>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={trip.ownerProfileImage || undefined} />
+                      <AvatarFallback className="text-xs">{trip.ownerName?.charAt(0)?.toUpperCase() || '?'}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">Organized by {trip.ownerName || 'Unknown'}</p>
+                      <p className="text-xs text-muted-foreground">{trip.tripDuration} {trip.tripDuration === 1 ? 'day' : 'days'}</p>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => window.location.href = `/travel/trip/${trip.id}`}
+                      data-testid={`button-view-joining-trip-${index}`}
+                    >
+                      <Eye className="h-4 w-4 mr-1.5" />
+                      View
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Enhanced Accommodation Dialog with MT Host Integration */}
       <Dialog open={!!accommodationDialog} onOpenChange={(open) => { if (!open) { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); setAccommodationTab('mthost'); } }}>
