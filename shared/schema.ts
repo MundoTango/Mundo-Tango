@@ -947,6 +947,7 @@ export const events = pgTable(
 
     // Event Series (for grouping recurring events)
     seriesId: integer("series_id").references(() => eventSeries.id),
+    isPlaceholder: boolean("is_placeholder").default(false),
 
     // Timestamps
     createdAt: timestamp("created_at").defaultNow(),

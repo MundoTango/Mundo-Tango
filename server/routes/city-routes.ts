@@ -58,10 +58,71 @@ router.get("/:city/scrapers", async (req: Request, res: Response) => {
  * Auto-verification helper: Analyzes a submitted URL against approved sources
  * Returns a confidence score (0-100) and reason
  */
-async function autoVerifyWebsite(websiteUrl: string): Promise<{ 
+const CITY_NAME_PATTERNS: Record<string, string[]> = {
+  'paris': ['paris', 'parisien', 'parisian'],
+  'london': ['london', 'londres'],
+  'berlin': ['berlin', 'berliner'],
+  'rome': ['roma', 'rome', 'romano'],
+  'madrid': ['madrid', 'madrileño'],
+  'barcelona': ['barcelona', 'bcn'],
+  'buenos aires': ['buenosaires', 'bsas', 'buenos-aires', 'porteno', 'porteño'],
+  'new york': ['newyork', 'nyc', 'ny'],
+  'los angeles': ['losangeles', 'la'],
+  'san francisco': ['sanfrancisco', 'sf'],
+  'tokyo': ['tokyo', 'tokio'],
+  'sydney': ['sydney'],
+  'melbourne': ['melbourne'],
+  'amsterdam': ['amsterdam'],
+  'vienna': ['vienna', 'wien'],
+  'prague': ['prague', 'praha'],
+  'lisbon': ['lisbon', 'lisboa'],
+  'milan': ['milan', 'milano'],
+  'munich': ['munich', 'munchen', 'münchen'],
+  'hamburg': ['hamburg'],
+  'frankfurt': ['frankfurt'],
+  'zurich': ['zurich', 'zürich'],
+  'stockholm': ['stockholm'],
+  'copenhagen': ['copenhagen', 'kobenhavn'],
+  'budapest': ['budapest'],
+  'warsaw': ['warsaw', 'warszawa'],
+  'riga': ['riga'],
+  'vilnius': ['vilnius'],
+  'seattle': ['seattle'],
+  'portland': ['portland'],
+  'chicago': ['chicago'],
+  'austin': ['austin'],
+  'minneapolis': ['minneapolis'],
+  'victoria': ['victoria'],
+  'mannheim': ['mannheim'],
+  'luxembourg': ['luxembourg', 'luxemburg'],
+  'brugge': ['brugge', 'bruges'],
+  'trier': ['trier'],
+};
+
+function detectCityMismatch(url: string, submittedCity: string): { mismatch: boolean; detectedCity: string | null; } {
+  const urlLower = url.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const submittedCityNormalized = submittedCity.toLowerCase().replace(/[^a-z0-9]/g, '');
+  
+  for (const [cityName, patterns] of Object.entries(CITY_NAME_PATTERNS)) {
+    const cityNormalized = cityName.replace(/[^a-z0-9]/g, '');
+    for (const pattern of patterns) {
+      if (urlLower.includes(pattern)) {
+        if (cityNormalized !== submittedCityNormalized && !submittedCityNormalized.includes(pattern)) {
+          return { mismatch: true, detectedCity: cityName };
+        }
+        return { mismatch: false, detectedCity: cityName };
+      }
+    }
+  }
+  
+  return { mismatch: false, detectedCity: null };
+}
+
+async function autoVerifyWebsite(websiteUrl: string, submittedCity?: string): Promise<{ 
   autoApproved: boolean; 
   confidence: number; 
   reason: string;
+  cityMismatch?: { detected: string; submitted: string };
 }> {
   try {
     const url = new URL(websiteUrl);
@@ -107,6 +168,19 @@ async function autoVerifyWebsite(websiteUrl: string): Promise<{
     
     if (isSuspicious) {
       return { autoApproved: false, confidence: 10, reason: 'Domain contains suspicious patterns' };
+    }
+    
+    // Check for city mismatch (e.g., paris URL submitted for Buenos Aires)
+    if (submittedCity) {
+      const cityCheck = detectCityMismatch(websiteUrl, submittedCity);
+      if (cityCheck.mismatch && cityCheck.detectedCity) {
+        return { 
+          autoApproved: false, 
+          confidence: 20, 
+          reason: `City mismatch detected: URL appears to be for ${cityCheck.detectedCity}, not ${submittedCity}`,
+          cityMismatch: { detected: cityCheck.detectedCity, submitted: submittedCity }
+        };
+      }
     }
     
     if (isTrustedPlatform) {
@@ -198,8 +272,8 @@ router.post("/suggest-source", authenticateToken, async (req: AuthRequest, res: 
       }
     }
 
-    // Auto-verify the website
-    const verification = await autoVerifyWebsite(websiteUrl);
+    // Auto-verify the website with city validation
+    const verification = await autoVerifyWebsite(websiteUrl, city);
     const submissionStatus = verification.autoApproved ? 'approved' : 'pending_review';
     
     console.log(`[SuggestSource] Auto-verification for ${websiteUrl}: ${JSON.stringify(verification)}`);
