@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Plane, Hotel, Music, Plus, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, Plane, Hotel, Music, Plus, ChevronRight, Users } from "lucide-react";
+import { Link } from "wouter";
 import { AppLayout } from "@/components/AppLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -47,6 +48,9 @@ interface TravelPlan {
   travelStyle?: string;
   status: string;
   notes?: string;
+  isOwner?: boolean;
+  ownerName?: string | null;
+  ownerProfileImage?: string | null;
 }
 
 export default function TravelPlannerPage() {
@@ -69,7 +73,7 @@ export default function TravelPlannerPage() {
   });
 
   const { data: myTrips = [] } = useQuery<TravelPlan[]>({
-    queryKey: ["/api/travel/trips"],
+    queryKey: ["/api/travel/my-trips"],
   });
 
   const createTripMutation = useMutation({
@@ -77,6 +81,7 @@ export default function TravelPlannerPage() {
       return await apiRequest("POST", "/api/travel/trips", data);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/my-trips"] });
       queryClient.invalidateQueries({ queryKey: ["/api/travel/trips"] });
       toast({
         title: t('pages:travelPlanner.tripCreated', 'Trip created!'),
@@ -165,9 +170,9 @@ export default function TravelPlannerPage() {
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="mb-6 w-full">
-                <TabsTrigger value="packages" data-testid="tab-packages">{t('pages:travelPlanner.eventPackages', 'Event Packages')}</TabsTrigger>
-                <TabsTrigger value="destinations" data-testid="tab-destinations">{t('pages:travelPlanner.destinations', 'Destinations')}</TabsTrigger>
-                <TabsTrigger value="my-trips" data-testid="tab-my-trips">{t('pages:travelPlanner.myTrips', 'My Trips')}</TabsTrigger>
+                <TabsTrigger value="packages" data-testid="trigger-packages">{t('pages:travelPlanner.eventPackages', 'Event Packages')}</TabsTrigger>
+                <TabsTrigger value="destinations" data-testid="trigger-destinations">{t('pages:travelPlanner.destinations', 'Destinations')}</TabsTrigger>
+                <TabsTrigger value="my-trips" data-testid="trigger-my-trips">{t('pages:travelPlanner.myTrips', 'My Trips')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="packages">
@@ -287,12 +292,25 @@ export default function TravelPlannerPage() {
                     myTrips.map((trip) => (
                       <Card key={trip.id} className="hover-elevate" data-testid={`trip-${trip.id}`}>
                         <CardHeader>
-                          <div className="flex items-start justify-between">
+                          <div className="flex items-start justify-between gap-2 flex-wrap">
                             <div>
-                              <CardTitle>{trip.city}{trip.country ? `, ${trip.country}` : ""}</CardTitle>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <CardTitle>{trip.city}{trip.country ? `, ${trip.country}` : ""}</CardTitle>
+                                {trip.isOwner === false && (
+                                  <Badge variant="outline" className="text-xs">
+                                    <Users className="h-3 w-3 mr-1" />
+                                    {t('pages:travelPlanner.participant', 'Participant')}
+                                  </Badge>
+                                )}
+                              </div>
                               <p className="text-sm text-muted-foreground mt-1">
                                 {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()} ({t('pages:travelPlanner.days', '{{count}} days', { count: trip.tripDuration })})
                               </p>
+                              {trip.isOwner === false && trip.ownerName && (
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {t('pages:travelPlanner.organizedBy', 'Organized by {{name}}', { name: trip.ownerName })}
+                                </p>
+                              )}
                             </div>
                             <Badge variant={trip.status === "confirmed" ? "default" : "secondary"}>
                               {trip.status}
@@ -300,12 +318,15 @@ export default function TravelPlannerPage() {
                           </div>
                         </CardHeader>
                         <CardContent>
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between gap-2 flex-wrap">
                             <span className="text-sm text-muted-foreground">
                               {t('pages:travelPlanner.budget', 'Budget')}: ${trip.budget || "0"}
                             </span>
-                            <Button size="sm" variant="outline" data-testid={`button-edit-${trip.id}`}>
-                              {t('pages:travelPlanner.editPlan', 'Edit Plan')}
+                            <Button size="sm" variant="outline" asChild data-testid={`button-view-trip-${trip.id}`}>
+                              <Link href={`/travel/trip/${trip.id}`}>
+                                {t('pages:travelPlanner.viewTrip', 'View Trip')}
+                                <ChevronRight className="h-4 w-4 ml-1" />
+                              </Link>
                             </Button>
                           </div>
                         </CardContent>
