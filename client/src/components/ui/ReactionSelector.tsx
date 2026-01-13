@@ -95,22 +95,58 @@ export const ReactionSelector = ({
     // but the user wants it to "persist" and "change to the new icon" if they change their mind.
     // The current logic already handles changing (previous reaction is decremented, new one incremented).
     // Let's ensure the toggledReaction logic is solid for "changing mind".
-    const toggledReaction = localReaction === reactionId ? '' : reactionId;
+    const toggledReaction = reactionId;
     const previousReaction = localReaction;
     const previousReactions = { ...localReactions };
     
-    setLocalReaction(toggledReaction || undefined);
+    // Optimistically update local state
+    setLocalReaction(toggledReaction);
     const newReactions = { ...localReactions };
     
-    // Decrement previous if it exists
-    if (previousReaction && newReactions[previousReaction]) {
-      newReactions[previousReaction] = Math.max(0, newReactions[previousReaction] - 1);
+    if (previousReaction && previousReaction === reactionId) {
+      // Toggling off the same reaction
+      setLocalReaction(undefined);
+      newReactions[reactionId] = Math.max(0, newReactions[reactionId] - 1);
+      setLocalReactions(newReactions);
+      
+      try {
+        const toggledOffReaction = '';
+        if (onReact) {
+          await onReact(toggledOffReaction);
+        } else {
+          const endpoint = targetType === 'post' 
+            ? `/api/posts/${targetId}/react`
+            : `/api/comments/${targetId}/react`;
+          
+          await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ reactionType: toggledOffReaction })
+          });
+          
+          if (targetType === 'comment' && postId) {
+            queryClient.invalidateQueries({ queryKey: ['/api/posts', postId, 'comments'] });
+          } else if (targetType === 'post') {
+            queryClient.invalidateQueries({ queryKey: ['/api/posts', targetId] });
+          }
+        }
+      } catch (error) {
+        console.error('Reaction failed:', error);
+        setLocalReaction(previousReaction);
+        setLocalReactions(previousReactions);
+      }
+      setShowReactions(false);
+      return;
     }
-    
-    // Increment new one if it's not a toggle-off
-    if (toggledReaction) {
-      newReactions[toggledReaction] = (newReactions[toggledReaction] || 0) + 1;
+
+    // Changing mind or first time reacting
+    if (previousReaction && previousReaction !== reactionId) {
+      if (newReactions[previousReaction]) {
+        newReactions[previousReaction] = Math.max(0, newReactions[previousReaction] - 1);
+      }
     }
+    newReactions[reactionId] = (newReactions[reactionId] || 0) + 1;
     setLocalReactions(newReactions);
     
     try {
@@ -132,11 +168,9 @@ export const ReactionSelector = ({
           throw new Error(`Reaction failed: ${response.status}`);
         }
         
-        // Use more specific invalidation to ensure UI updates across components
         if (targetType === 'comment' && postId) {
           queryClient.invalidateQueries({ queryKey: ['/api/posts', postId, 'comments'] });
         } else if (targetType === 'post') {
-          queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
           queryClient.invalidateQueries({ queryKey: ['/api/posts', targetId] });
         }
       }
