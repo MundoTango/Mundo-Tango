@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
 import { db } from "@shared/db";
-import { travelPlans, travelPlanItems, users, events, housingListings, tripJoinRequests, notifications } from "@shared/schema";
+import { travelPlans, travelPlanItems, users, events, housingListings, tripJoinRequests, tripParticipants, notifications } from "@shared/schema";
 import { eq, desc, and, gte, lte, or, ilike, isNotNull } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import * as cheerio from "cheerio";

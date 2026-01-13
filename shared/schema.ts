@@ -7257,6 +7257,47 @@ export const insertTripJoinRequestSchema = createInsertSchema(
 export type InsertTripJoinRequest = z.infer<typeof insertTripJoinRequestSchema>;
 export type SelectTripJoinRequest = typeof tripJoinRequests.$inferSelect;
 
+// ============================================================================
+// TRIP PARTICIPANTS - Travel Companions Added by Trip Owner
+// ============================================================================
+
+export const tripParticipants = pgTable(
+  "trip_participants",
+  {
+    id: serial("id").primaryKey(),
+    tripId: integer("trip_id")
+      .references(() => travelPlans.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: integer("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    addedById: integer("added_by_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    role: varchar("role", { length: 50 }).default("traveler").notNull(),
+    status: varchar("status", { length: 20 }).default("active").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    tripIdx: index("idx_trip_participants_trip").on(table.tripId),
+    userIdx: index("idx_trip_participants_user").on(table.userId),
+    uniqueParticipant: uniqueIndex("idx_trip_participant_unique").on(
+      table.tripId,
+      table.userId,
+    ),
+  }),
+);
+
+export const insertTripParticipantSchema = createInsertSchema(
+  tripParticipants,
+).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertTripParticipant = z.infer<typeof insertTripParticipantSchema>;
+export type SelectTripParticipant = typeof tripParticipants.$inferSelect;
+
 // Venue Recommendations System (PART 1-14)
 export const venueRecommendations = pgTable(
   "venue_recommendations",
