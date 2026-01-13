@@ -644,6 +644,30 @@ class ScrapedEventIngestionService {
       
       const eventData = this.mapToEvent(scraped, userId, resolvedGroupId);
 
+      // Check for duplicate event (same title, city, and date) BEFORE inserting
+      const startDateOnly = scraped.startDate ? new Date(scraped.startDate).toISOString().split('T')[0] : null;
+      if (startDateOnly && eventData.title && eventData.city) {
+        const [existingEvent] = await db
+          .select({ id: events.id })
+          .from(events)
+          .where(and(
+            ilike(events.title, eventData.title),
+            ilike(events.city, eventData.city),
+            sql`DATE(${events.startDate}) = ${startDateOnly}`
+          ))
+          .limit(1);
+        
+        if (existingEvent) {
+          console.log(`[Ingestion] ⏭️ Duplicate found: "${eventData.title}" in ${eventData.city} on ${startDateOnly} (existing id=${existingEvent.id})`);
+          // Mark as ingested to prevent re-processing
+          await db
+            .update(scrapedEvents)
+            .set({ status: 'ingested' })
+            .where(eq(scrapedEvents.id, scrapedEventId));
+          return null;
+        }
+      }
+
       // Insert event (no transaction - Neon HTTP driver doesn't support them)
       const [inserted] = await db
         .insert(events)
