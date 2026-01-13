@@ -11,9 +11,29 @@
  * - Efficient batch operations
  */
 
-import { connect, Connection, Table } from '@lancedb/lancedb';
 import OpenAI from 'openai';
 import * as path from 'path';
+
+// Types for lazy-loaded LanceDB
+type Connection = any;
+type Table = any;
+let lancedbModule: any = null;
+let lancedbLoadError: Error | null = null;
+
+// Lazy load LanceDB to prevent crash if native module is missing
+async function getLanceDB(): Promise<{ connect: typeof import('@lancedb/lancedb')['connect'] } | null> {
+  if (lancedbLoadError) return null;
+  if (lancedbModule) return lancedbModule;
+  
+  try {
+    lancedbModule = await import('@lancedb/lancedb');
+    return lancedbModule;
+  } catch (error) {
+    console.warn('[LanceDB] ⚠️ Native module not available - vector storage disabled');
+    lancedbLoadError = error as Error;
+    return null;
+  }
+}
 
 // OpenAI client with Bifrost gateway support
 const openai = new OpenAI({
@@ -63,7 +83,13 @@ class LanceDBService {
     
     try {
       console.log('[LanceDB] Initializing connection...');
-      this.connection = await connect(LANCEDB_PATH);
+      const lancedb = await getLanceDB();
+      if (!lancedb) {
+        this.initializationFailed = true;
+        console.log('[LanceDB] ⚠️ Vector storage disabled - app will continue without AI memory features');
+        return;
+      }
+      this.connection = await lancedb.connect(LANCEDB_PATH);
       console.log(`[LanceDB] ✅ Connected to ${LANCEDB_PATH}`);
     } catch (error) {
       console.error('[LanceDB] ❌ Failed to initialize (non-fatal):', error);

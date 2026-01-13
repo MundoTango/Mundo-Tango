@@ -26,6 +26,7 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { motion } from "framer-motion";
@@ -704,23 +705,6 @@ export default function EventsPage() {
                 </TabsList>
               </Tabs>
 
-              <div className="flex items-center gap-4">
-                {activeTab === "my-events" && myEventsData && (
-                  <p className="text-sm text-muted-foreground" data-testid="text-my-events-count">
-                    {myEventsData.length} event{myEventsData.length !== 1 ? 's' : ''} you're attending
-                  </p>
-                )}
-                {activeTab === "upcoming" && upcomingData && (
-                  <p className="text-sm text-muted-foreground" data-testid="text-upcoming-count">
-                    {upcomingData.events?.length || 0} upcoming in your area
-                  </p>
-                )}
-                {pagination && activeTab === "discover" && (
-                  <p className="text-sm text-muted-foreground" data-testid="text-results-count">
-                    Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} events
-                  </p>
-                )}
-              </div>
             </div>
 
             {/* Content */}
@@ -884,12 +868,6 @@ export default function EventsPage() {
                 {/* Map View */}
                 {viewMode === "map" && (
                   <Card className="p-0 overflow-hidden">
-                    {approximateLocationCount > 0 && (
-                      <div className="px-4 py-2 bg-amber-500/10 border-b border-amber-500/20 text-sm text-amber-600 dark:text-amber-400 flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        {approximateLocationCount} of {eventsWithCoordinates.length} events showing approximate city-level locations
-                      </div>
-                    )}
                     <div style={{ height: '600px' }}>
                       <MapContainer
                         center={[20, 0]}
@@ -901,25 +879,40 @@ export default function EventsPage() {
                           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                         />
                         <FitBoundsToEvents events={eventsWithCoordinates} />
-                        {eventsWithCoordinates.map((event: any, index: number) => {
-                          const eventData = event.event || event;
-                          const eventId = eventData.id;
-                          return (
-                            <Marker key={eventId || `map-event-${index}`} position={[event.lat, event.lng]}>
-                              <Popup>
-                                <div className="p-2">
-                                  <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: eventData.title || "Event" }} />
-                                  <p className="text-sm text-muted-foreground mb-2">
-                                    {safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
-                                  </p>
-                                  <Link href={`/events/${eventId}`}>
-                                    <Button size="sm" className="w-full">View Details</Button>
-                                  </Link>
-                                </div>
-                              </Popup>
-                            </Marker>
-                          );
-                        })}
+                        <MarkerClusterGroup
+                          chunkedLoading
+                          iconCreateFunction={(cluster) => {
+                            const count = cluster.getChildCount();
+                            return L.divIcon({
+                              html: `<div class="cluster-marker">${count}</div>`,
+                              className: 'custom-cluster-icon',
+                              iconSize: L.point(40, 40, true),
+                            });
+                          }}
+                        >
+                          {eventsWithCoordinates.map((event: any, index: number) => {
+                            const eventData = event.event || event;
+                            const eventId = eventData.id;
+                            return (
+                              <Marker key={eventId || `map-event-${index}`} position={[event.lat, event.lng]}>
+                                <Popup>
+                                  <div className="p-2 min-w-[200px]">
+                                    <h3 className="font-semibold text-base mb-1" dangerouslySetInnerHTML={{ __html: eventData.title || "Event" }} />
+                                    <p className="text-sm text-gray-600 mb-1">
+                                      {eventData.venue || eventData.location || eventData.city}
+                                    </p>
+                                    <p className="text-sm text-gray-500 mb-3">
+                                      {safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
+                                    </p>
+                                    <Link href={`/events/${eventId}`}>
+                                      <Button size="sm" className="w-full">View Details</Button>
+                                    </Link>
+                                  </div>
+                                </Popup>
+                              </Marker>
+                            );
+                          })}
+                        </MarkerClusterGroup>
                       </MapContainer>
                     </div>
                   </Card>
