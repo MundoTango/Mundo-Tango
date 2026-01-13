@@ -95,6 +95,69 @@ function FitBoundsToEvents({ events }: { events: Array<{ lat: number; lng: numbe
   return null;
 }
 
+// Wrapper component that ensures MarkerClusterGroup only renders when map is ready
+function MapMarkersWithClusters({ events }: { events: Array<{ lat: number; lng: number; event?: any }> }) {
+  const map = useMap();
+  const [isMapReady, setIsMapReady] = useState(false);
+  
+  useEffect(() => {
+    if (!map) return;
+    
+    // Use whenReady to ensure map context is fully initialized
+    const handleReady = () => {
+      setIsMapReady(true);
+    };
+    
+    // Always use whenReady - it fires immediately if already ready, or waits if not
+    map.whenReady(handleReady);
+    
+    return () => {
+      setIsMapReady(false);
+    };
+  }, [map]);
+  
+  if (!isMapReady || events.length === 0) {
+    return null;
+  }
+  
+  return (
+    <MarkerClusterGroup
+      chunkedLoading
+      iconCreateFunction={(cluster) => {
+        const count = cluster.getChildCount();
+        return L.divIcon({
+          html: `<div class="cluster-marker">${count}</div>`,
+          className: 'custom-cluster-icon',
+          iconSize: L.point(40, 40, true),
+        });
+      }}
+    >
+      {events.map((event: any, index: number) => {
+        const eventData = event.event || event;
+        const eventId = eventData.id;
+        return (
+          <Marker key={eventId || `map-event-${index}`} position={[event.lat, event.lng]}>
+            <Popup>
+              <div className="p-2 min-w-[200px]">
+                <h3 className="font-semibold text-base mb-1" dangerouslySetInnerHTML={{ __html: eventData.title || "Event" }} />
+                <p className="text-sm text-gray-600 mb-1">
+                  {eventData.venue || eventData.location || eventData.city}
+                </p>
+                <p className="text-sm text-gray-500 mb-3">
+                  {safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
+                </p>
+                <Link href={`/events/${eventId}`}>
+                  <Button size="sm" className="w-full">View Details</Button>
+                </Link>
+              </div>
+            </Popup>
+          </Marker>
+        );
+      })}
+    </MarkerClusterGroup>
+  );
+}
+
 function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
@@ -879,40 +942,7 @@ export default function EventsPage() {
                           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                         />
                         <FitBoundsToEvents events={eventsWithCoordinates} />
-                        <MarkerClusterGroup
-                          chunkedLoading
-                          iconCreateFunction={(cluster) => {
-                            const count = cluster.getChildCount();
-                            return L.divIcon({
-                              html: `<div class="cluster-marker">${count}</div>`,
-                              className: 'custom-cluster-icon',
-                              iconSize: L.point(40, 40, true),
-                            });
-                          }}
-                        >
-                          {eventsWithCoordinates.map((event: any, index: number) => {
-                            const eventData = event.event || event;
-                            const eventId = eventData.id;
-                            return (
-                              <Marker key={eventId || `map-event-${index}`} position={[event.lat, event.lng]}>
-                                <Popup>
-                                  <div className="p-2 min-w-[200px]">
-                                    <h3 className="font-semibold text-base mb-1" dangerouslySetInnerHTML={{ __html: eventData.title || "Event" }} />
-                                    <p className="text-sm text-gray-600 mb-1">
-                                      {eventData.venue || eventData.location || eventData.city}
-                                    </p>
-                                    <p className="text-sm text-gray-500 mb-3">
-                                      {safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
-                                    </p>
-                                    <Link href={`/events/${eventId}`}>
-                                      <Button size="sm" className="w-full">View Details</Button>
-                                    </Link>
-                                  </div>
-                                </Popup>
-                              </Marker>
-                            );
-                          })}
-                        </MarkerClusterGroup>
+                        <MapMarkersWithClusters events={eventsWithCoordinates} />
                       </MapContainer>
                     </div>
                   </Card>
