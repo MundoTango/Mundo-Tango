@@ -26,8 +26,13 @@ import {
   Bell,
   BellOff,
   UserX,
-  Radio
+  Radio,
+  Download,
+  Loader2,
+  CheckCircle
 } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 type VisibilityLevel = 'public' | 'friends' | 'private';
 type PermissionLevel = 'everyone' | 'friends' | 'none';
@@ -119,6 +124,41 @@ export default function PrivacySubTab() {
       description: "You have no blocked users.",
     });
   };
+
+  // GDPR Data Export
+  const { data: dataExports = [], refetch: refetchExports } = useQuery<any[]>({
+    queryKey: ['/api/gdpr/exports'],
+    enabled: !!profile,
+  });
+
+  const requestExportMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/gdpr/export");
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Data export requested",
+        description: "Your data export is being prepared. You'll be notified when it's ready.",
+      });
+      refetchExports();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Export failed",
+        description: error.message || "Failed to request data export.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleRequestDataExport = () => {
+    requestExportMutation.mutate();
+  };
+
+  const latestExport = dataExports.length > 0 ? dataExports[0] : null;
+  const hasCompletedExport = latestExport?.status === 'completed';
+  const hasPendingExport = latestExport?.status === 'pending' || latestExport?.status === 'processing';
 
   const isPending = updatePreferencesMutation.isPending;
 
@@ -443,6 +483,73 @@ export default function PrivacySubTab() {
               </SelectContent>
             </Select>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Download className="h-5 w-5 text-primary" />
+            Your Data
+          </CardTitle>
+          <CardDescription>
+            Download a copy of your data or delete your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label className="flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Download Your Data
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Get a copy of all your data including profile, posts, messages, and more
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {hasCompletedExport && (
+                <a 
+                  href={latestExport.fileUrl}
+                  download="my-data-export.json"
+                  className="inline-flex"
+                >
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    data-testid="button-download-data"
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                    Download
+                  </Button>
+                </a>
+              )}
+              <Button 
+                variant={hasCompletedExport ? "ghost" : "outline"}
+                size="sm"
+                onClick={handleRequestDataExport}
+                disabled={requestExportMutation.isPending || hasPendingExport}
+                data-testid="button-request-data-export"
+              >
+                {requestExportMutation.isPending || hasPendingExport ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : hasCompletedExport ? (
+                  "Request New Export"
+                ) : (
+                  "Request Export"
+                )}
+              </Button>
+            </div>
+          </div>
+          {latestExport && (
+            <p className="text-xs text-muted-foreground">
+              Last export: {latestExport.status === 'completed' ? 'Ready to download' : `Status: ${latestExport.status}`}
+              {latestExport.completedAt && ` (${new Date(latestExport.completedAt).toLocaleDateString()})`}
+            </p>
+          )}
         </CardContent>
       </Card>
 

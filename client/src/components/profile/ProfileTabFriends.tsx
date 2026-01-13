@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, Search, Star, MapPin, MessageCircle, UserMinus } from "lucide-react";
+import { Users, Search, MapPin, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
-import { getRoleIcon, getRoleLabel, TANGO_ROLES } from "@/lib/tangoRoles";
+import { TANGO_ROLES } from "@/lib/tangoRoles";
+import { UserIdentityHeader } from "@/components/UserIdentityHeader";
 
 interface Friend {
   id: number;
@@ -65,13 +65,6 @@ export default function ProfileTabFriends({
     return matchesSearch && matchesRole;
   });
 
-  const getClosenessColor = (score?: number) => {
-    if (!score) return "bg-muted text-muted-foreground";
-    if (score >= 80) return "bg-gradient-to-r from-amber-500 to-orange-500 text-white";
-    if (score >= 60) return "bg-gradient-to-r from-cyan-500 to-blue-500 text-white";
-    if (score >= 40) return "bg-gradient-to-r from-purple-500 to-pink-500 text-white";
-    return "bg-muted text-muted-foreground";
-  };
 
   if (isLoading) {
     return (
@@ -189,57 +182,25 @@ export default function ProfileTabFriends({
                 className="block"
               >
                 <div 
-                  className="flex items-center gap-3 p-3 rounded-lg border bg-card hover-elevate active-elevate-2 transition-all"
+                  className="flex items-start gap-3 p-3 rounded-lg border bg-card hover-elevate active-elevate-2 transition-all"
                   data-testid={`card-friend-${friend.id}`}
                 >
-                  <Avatar className="h-12 w-12 ring-2 ring-primary/20">
-                    <AvatarImage src={friend.profileImage} alt={friend.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-primary/80 to-primary text-primary-foreground">
-                      {friend.name?.charAt(0) || "?"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <UserIdentityHeader
+                    user={{
+                      id: friend.id,
+                      name: friend.name,
+                      username: friend.username,
+                      profileImage: friend.profileImage,
+                      tangoRoles: friend.tangoRoles,
+                    }}
+                    closenessScore={friend.closenessScore && friend.closenessScore > 0 ? friend.closenessScore : null}
+                    size="md"
+                    showRoles={true}
+                    showTimestamp={false}
+                    testIdPrefix={`friend-${friend.id}`}
+                  />
                   
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="font-medium truncate" data-testid={`text-friend-name-${friend.id}`}>
-                        {friend.name}
-                      </h4>
-                      {friend.closenessScore !== undefined && friend.closenessScore > 0 && (
-                        <Badge 
-                          className={`text-xs ${getClosenessColor(friend.closenessScore)}`}
-                          data-testid={`badge-closeness-${friend.id}`}
-                        >
-                          <Star className="w-3 h-3 mr-1 fill-current" />
-                          {friend.closenessScore}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1.5 flex-wrap mt-1">
-                      {friend.tangoRoles && friend.tangoRoles.length > 0 && 
-                        friend.tangoRoles.slice(0, 3).map((role) => {
-                          const RoleIcon = getRoleIcon(role);
-                          return (
-                            <Badge 
-                              key={role}
-                              variant="secondary" 
-                              className="text-xs gap-1 py-0.5"
-                              data-testid={`badge-role-${role}`}
-                            >
-                              <RoleIcon className="w-3 h-3" />
-                              {getRoleLabel(role).split(" ").slice(0, 1).join("")}
-                            </Badge>
-                          );
-                        })
-                      }
-                      {friend.tangoRoles && friend.tangoRoles.length > 3 && (
-                        <Badge variant="secondary" className="text-xs py-0.5">
-                          +{friend.tangoRoles.length - 3}
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground truncate mt-1">
-                      @{friend.username}
-                    </p>
+                  <div className="flex-1 min-w-0 flex flex-col">
                     {friend.city && (
                       <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                         <MapPin className="w-3 h-3" />

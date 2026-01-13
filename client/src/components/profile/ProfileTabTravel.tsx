@@ -20,6 +20,7 @@ import { TravelCalendar } from "@/components/unified/TravelCalendar";
 import { AddTravelerDialog } from "@/components/travel/AddTravelerDialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/hooks/use-auth";
+import { UserIdentityHeader } from "@/components/UserIdentityHeader";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -1472,15 +1473,21 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                   {participantsCache[trip.id]?.length ? (
                                     participantsCache[trip.id].map((participant, pIdx) => (
                                       <div key={participant.id} className="flex items-center justify-between p-2 rounded-lg border bg-card hover-elevate group" data-testid={`participant-item-${pIdx}`}>
-                                        <div className="flex items-center gap-3">
-                                          <Avatar className="h-8 w-8">
-                                            <AvatarImage src={participant.userProfileImage || undefined} />
-                                            <AvatarFallback>{participant.userName?.slice(0, 2).toUpperCase() || '?'}</AvatarFallback>
-                                          </Avatar>
-                                          <div>
-                                            <p className="font-medium text-sm">{participant.userName}</p>
-                                            <p className="text-xs text-muted-foreground capitalize">{participant.status}</p>
-                                          </div>
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                          <UserIdentityHeader
+                                            user={{
+                                              id: participant.userId,
+                                              name: participant.userName,
+                                              profileImage: participant.userProfileImage || undefined,
+                                            }}
+                                            size="sm"
+                                            showRoles={false}
+                                            showTimestamp={false}
+                                            testIdPrefix={`participant-${pIdx}`}
+                                          />
+                                          <Badge variant="secondary" className="text-xs capitalize ml-auto" data-testid={`participant-status-${pIdx}`}>
+                                            {participant.status}
+                                          </Badge>
                                         </div>
                                         <AlertDialog>
                                           <AlertDialogTrigger asChild>

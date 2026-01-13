@@ -3,8 +3,8 @@
  * Data export, privacy settings, account deletion
  */
 
-import { Router, Request, Response } from 'express';
-import { AuthRequest } from '../middleware/auth';
+import { Router, Response } from 'express';
+import { AuthRequest, authenticateToken } from '../middleware/auth';
 import {
   requestDataExport,
   getDataExportStatus,
@@ -19,13 +19,9 @@ const router = Router();
 /**
  * Request full data export
  */
-router.post('/api/gdpr/export', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-
+router.post('/api/gdpr/export', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const requestId = await requestDataExport(req.user!.id);
+    const requestId = await requestDataExport(req.userId!);
     
     res.json({
       requestId,
@@ -41,15 +37,11 @@ router.post('/api/gdpr/export', async (req: AuthRequest, res: Response) => {
 /**
  * Get data export status
  */
-router.get('/api/gdpr/export/:requestId', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-
+router.get('/api/gdpr/export/:requestId', authenticateToken, async (req: AuthRequest, res: Response) => {
   const requestId = parseInt(req.params.requestId);
 
   try {
-    const exportRequest = await getDataExportStatus(requestId, req.user!.id);
+    const exportRequest = await getDataExportStatus(requestId, req.userId!);
 
     if (!exportRequest) {
       return res.status(404).json({ message: 'Export request not found' });
@@ -65,13 +57,9 @@ router.get('/api/gdpr/export/:requestId', async (req: AuthRequest, res: Response
 /**
  * Get all data exports for user
  */
-router.get('/api/gdpr/exports', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-
+router.get('/api/gdpr/exports', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const exports = await getUserDataExports(req.user!.id);
+    const exports = await getUserDataExports(req.userId!);
     res.json(exports);
   } catch (error: any) {
     console.error('Get user exports error:', error);
@@ -82,20 +70,16 @@ router.get('/api/gdpr/exports', async (req: AuthRequest, res: Response) => {
 /**
  * Get privacy settings
  */
-router.get('/api/gdpr/privacy-settings', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-
+router.get('/api/gdpr/privacy-settings', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     let settings = await db.query.userPrivacySettings.findFirst({
-      where: eq(userPrivacySettings.userId, req.user!.id)
+      where: eq(userPrivacySettings.userId, req.userId!)
     });
 
     if (!settings) {
       // Create default settings
       [settings] = await db.insert(userPrivacySettings).values({
-        userId: req.user!.id
+        userId: req.userId!
       }).returning();
     }
 
@@ -109,11 +93,7 @@ router.get('/api/gdpr/privacy-settings', async (req: AuthRequest, res: Response)
 /**
  * Update privacy settings
  */
-router.put('/api/gdpr/privacy-settings', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-
+router.put('/api/gdpr/privacy-settings', authenticateToken, async (req: AuthRequest, res: Response) => {
   const {
     marketingEmails,
     analytics,
@@ -126,7 +106,7 @@ router.put('/api/gdpr/privacy-settings', async (req: AuthRequest, res: Response)
   try {
     const [settings] = await db.insert(userPrivacySettings)
       .values({
-        userId: req.user!.id,
+        userId: req.userId!,
         marketingEmails,
         analytics,
         thirdPartySharing,
@@ -158,11 +138,7 @@ router.put('/api/gdpr/privacy-settings', async (req: AuthRequest, res: Response)
 /**
  * Request account deletion (30-day grace period)
  */
-router.post('/api/gdpr/delete-account', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-
+router.post('/api/gdpr/delete-account', authenticateToken, async (req: AuthRequest, res: Response) => {
   const { password } = req.body;
 
   if (!password) {
@@ -177,15 +153,9 @@ router.post('/api/gdpr/delete-account', async (req: AuthRequest, res: Response) 
         isActive: false,
         suspended: true
       })
-      .where(eq(users.id, req.user!.id));
+      .where(eq(users.id, req.userId!));
 
-    // Logout user
-    req.logout((err) => {
-      if (err) {
-        console.error('Logout error:', err);
-      }
-    });
-
+    // Session will be invalidated on next request since user is deactivated
     res.json({
       message: 'Account deletion scheduled. You have 30 days to cancel.'
     });
