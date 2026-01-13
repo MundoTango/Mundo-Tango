@@ -232,8 +232,8 @@ export default function FriendsListPage() {
 
   const filteredFriends = friends.filter(
     (friend) =>
-      friend.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      friend.username.toLowerCase().includes(searchQuery.toLowerCase())
+      (friend.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (friend.username || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const getConnectionBadge = (degree?: number) => {
