@@ -216,13 +216,30 @@ export function useMessagesRealtime(conversationId: string | null) {
 }
 
 export function useMarkMessagesAsRead(conversationId: string | null) {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async () => {
       if (!conversationId) return;
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const response = await fetch("/api/messages/mark-read", {
+        method: "POST",
+        credentials: "include",
+        headers,
+        body: JSON.stringify({ conversationId }),
+      });
+      if (!response.ok) throw new Error("Failed to mark messages as read");
+      return response.json();
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/unread-count"] });
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
       if (conversationId) {
-        queryClient.invalidateQueries({ queryKey: ["conversations"] });
         queryClient.invalidateQueries({ queryKey: ["conversations", conversationId, "messages"] });
       }
     },

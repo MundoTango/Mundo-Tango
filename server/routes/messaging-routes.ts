@@ -537,6 +537,79 @@ export function registerMessagingRoutes(app: Express) {
     }
   });
 
+  app.post("/api/messages/mark-read", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+
+    const { conversationId } = req.body;
+    if (!conversationId) return res.status(400).send("Conversation ID is required");
+
+    try {
+      if (conversationId.startsWith('direct-')) {
+        const targetUserId = parseInt(conversationId.replace('direct-', ''));
+        await db
+          .update(directMessages)
+          .set({ isRead: true })
+          .where(
+            and(
+              eq(directMessages.recipientId, req.user.id),
+              eq(directMessages.senderId, targetUserId),
+              eq(directMessages.isRead, false)
+            )
+          );
+      } else if (conversationId.startsWith('group-')) {
+        const groupId = parseInt(conversationId.replace('group-', ''));
+        // For groups, we append the user ID to the readBy array
+        await db.execute(sql`
+          UPDATE chat_messages 
+          SET read_by = array_append(COALESCE(read_by, ARRAY[]::text[]), ${String(req.user.id)})
+          WHERE chat_room_id = ${groupId} 
+          AND NOT (${String(req.user.id)} = ANY(COALESCE(read_by, ARRAY[]::text[])))
+        `);
+      }
+
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error marking messages as read:", error);
+      res.status(500).send("Failed to mark messages as read");
+    }
+  });
+
+  app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      
+      const [dmCount] = await db.select({
+        count: sql<number>`count(*)::int`
+      })
+      .from(directMessages)
+      .where(
+        and(
+          eq(directMessages.recipientId, userId),
+          eq(directMessages.isRead, false)
+        )
+      );
+
+      const userIdStr = String(userId);
+      const [chatCount] = await db.select({
+        count: sql<number>`count(*)::int`
+      })
+      .from(chatMessages)
+      .innerJoin(groupMembers, eq(chatMessages.chatRoomId, groupMembers.groupId))
+      .where(
+        and(
+          eq(groupMembers.userId, userId),
+          sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
+        )
+      );
+      
+      const totalUnread = (dmCount?.count || 0) + (chatCount?.count || 0);
+      res.json({ count: totalUnread });
+    } catch (error) {
+      console.error("Get unread message count error:", error);
+      res.json({ count: 0 });
+    }
+  });
+
   app.delete("/api/messages/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
