@@ -1,13 +1,18 @@
 /**
  * RECURRING EVENT DETECTOR
  * Detects and creates event series from recurring events
- * Generates placeholder events for future occurrences (90-day horizon)
+ * Generates placeholder events for future occurrences (12-month horizon)
  * MB.MD Pattern: Handle recurring events as series
+ * 
+ * Key Features:
+ * - detectAndCreateSeriesFromEvents(): Scans ALL cities for recurring milongas
+ *   matching same title + venue + day of week appearing 2+ times
+ * - generatePlaceholdersForAllActiveSeries(): Creates 12-month future events
  */
 
 import { db } from '@shared/db';
 import { eventSeries, events, groups } from '@shared/schema';
-import { eq, and, ilike, gte, sql } from 'drizzle-orm';
+import { eq, and, ilike, gte, sql, isNotNull } from 'drizzle-orm';
 
 export interface RecurringEventPattern {
   title: string;
@@ -34,7 +39,7 @@ interface PlaceholderEvent {
 }
 
 export class RecurringEventDetector {
-  private static PLACEHOLDER_HORIZON_DAYS = 90;
+  private static PLACEHOLDER_HORIZON_DAYS = 365; // 12-month horizon for travel planning
 
   static isRecurring(title: string, venue?: string): boolean {
     const text = `${title} ${venue || ''}`.toLowerCase();
@@ -245,7 +250,7 @@ export class RecurringEventDetector {
           slug: `${seriesData.slug}-${occurrenceDate.toISOString().split('T')[0]}`,
           description: placeholderDescription,
           eventType: 'milonga',
-          userId: seriesData.organizerId || 1,
+          userId: seriesData.organizerId || 62, // 62 = scraper_bot system user
           startDate: occurrenceDate,
           venue: venueInfo?.name || undefined,
           address: venueInfo?.address || undefined,
@@ -328,5 +333,156 @@ export class RecurringEventDetector {
 
     console.log(`[RecurringEventDetector] Total: ${totalCreated} placeholders created, ${totalSkipped} skipped`);
     return { totalCreated, totalSkipped };
+  }
+
+  /**
+   * Detect and create series from ALL ingested events across ALL cities.
+   * Scans events table for recurring patterns: same title + venue + day of week appearing 2+ times.
+   * MB.MD Pattern: Automatic series detection from scraped data.
+   */
+  static async detectAndCreateSeriesFromEvents(): Promise<{ seriesCreated: number; eventsLinked: number }> {
+    console.log('[RecurringEventDetector] Scanning ALL cities for recurring event patterns...');
+    
+    const result = { seriesCreated: 0, eventsLinked: 0 };
+
+    // Query to find recurring patterns: same title + venue + day of week appearing 2+ times
+    const recurringPatterns = await db.execute(sql`
+      SELECT 
+        LOWER(TRIM(title)) as normalized_title,
+        LOWER(TRIM(COALESCE(venue, location, ''))) as normalized_venue,
+        EXTRACT(DOW FROM start_date)::integer as day_of_week,
+        city,
+        country,
+        COUNT(*) as occurrence_count,
+        MIN(title) as original_title,
+        MIN(COALESCE(venue, location)) as original_venue
+      FROM events
+      WHERE 
+        city IS NOT NULL 
+        AND city != ''
+        AND title IS NOT NULL
+        AND title != ''
+        AND start_date IS NOT NULL
+        AND is_placeholder = false
+        AND series_id IS NULL
+      GROUP BY 
+        LOWER(TRIM(title)), 
+        LOWER(TRIM(COALESCE(venue, location, ''))),
+        EXTRACT(DOW FROM start_date)::integer,
+        city,
+        country
+      HAVING COUNT(*) >= 2
+      ORDER BY occurrence_count DESC
+    `);
+
+    console.log(`[RecurringEventDetector] Found ${recurringPatterns.rows.length} recurring patterns across all cities`);
+
+    for (const row of recurringPatterns.rows as any[]) {
+      const { 
+        normalized_title, 
+        normalized_venue, 
+        day_of_week, 
+        city, 
+        country, 
+        occurrence_count,
+        original_title,
+        original_venue 
+      } = row;
+
+      if (!city) continue;
+
+      // Check if series already exists for this pattern
+      const existingSeries = await db
+        .select({ id: eventSeries.id })
+        .from(eventSeries)
+        .where(
+          and(
+            ilike(eventSeries.name, original_title),
+            ilike(eventSeries.city, city),
+            eq(eventSeries.recurrenceDay, day_of_week)
+          )
+        )
+        .limit(1);
+
+      let seriesId: number;
+
+      if (existingSeries.length > 0) {
+        seriesId = existingSeries[0].id;
+      } else {
+        // Create new series
+        const slug = original_title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+          .substring(0, 100);
+
+        try {
+          const [newSeries] = await db.insert(eventSeries).values({
+            name: original_title,
+            slug: `${slug}-${Date.now()}`,
+            description: `Weekly recurring event: ${original_title} at ${original_venue || 'TBD'}`,
+            recurrenceType: 'weekly',
+            recurrenceDay: day_of_week,
+            city,
+            country: country || '',
+            isActive: true,
+            isClaimed: false,
+          }).returning();
+
+          seriesId = newSeries.id;
+          result.seriesCreated++;
+          console.log(`[RecurringEventDetector] Created series: "${original_title}" in ${city} (day ${day_of_week}, ${occurrence_count} occurrences)`);
+        } catch (error: any) {
+          console.error(`[RecurringEventDetector] Failed to create series for ${original_title}:`, error.message);
+          continue;
+        }
+      }
+
+      // Link existing events to this series
+      const linkedResult = await db.execute(sql`
+        UPDATE events
+        SET series_id = ${seriesId}, is_recurring = true, updated_at = NOW()
+        WHERE 
+          LOWER(TRIM(title)) = ${normalized_title}
+          AND LOWER(TRIM(COALESCE(venue, location, ''))) = ${normalized_venue}
+          AND EXTRACT(DOW FROM start_date)::integer = ${day_of_week}
+          AND LOWER(city) = LOWER(${city})
+          AND series_id IS NULL
+      `);
+
+      result.eventsLinked += (linkedResult as any).rowCount || 0;
+    }
+
+    console.log(`[RecurringEventDetector] Complete: ${result.seriesCreated} series created, ${result.eventsLinked} events linked`);
+    return result;
+  }
+
+  /**
+   * Full pipeline: Detect series from events, then generate placeholders for all.
+   * Call this after scraping and ingestion to fully populate future events.
+   */
+  static async runFullPipeline(): Promise<{
+    seriesCreated: number;
+    eventsLinked: number;
+    placeholdersCreated: number;
+    placeholdersSkipped: number;
+  }> {
+    console.log('[RecurringEventDetector] Running full pipeline...');
+    
+    // Step 1: Detect and create series from existing events
+    const seriesResult = await this.detectAndCreateSeriesFromEvents();
+    
+    // Step 2: Generate 12-month placeholders for all active series
+    const placeholderResult = await this.generatePlaceholdersForAllActiveSeries();
+    
+    const finalResult = {
+      seriesCreated: seriesResult.seriesCreated,
+      eventsLinked: seriesResult.eventsLinked,
+      placeholdersCreated: placeholderResult.totalCreated,
+      placeholdersSkipped: placeholderResult.totalSkipped,
+    };
+
+    console.log('[RecurringEventDetector] Full pipeline complete:', finalResult);
+    return finalResult;
   }
 }

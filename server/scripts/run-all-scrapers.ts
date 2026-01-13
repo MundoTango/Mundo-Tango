@@ -2,7 +2,14 @@
  * RUN ALL SCRAPERS SCRIPT
  * MB.MD Pattern: Execute scrapers to populate events for all cities
  * 
- * Includes: HoyMilonga (Playwright), TangoMango, TangoCat, TangoFestivals
+ * Pipeline (7 steps):
+ * 1. TangoMango scraper (US cities + regional)
+ * 2. HoyMilonga Playwright scraper (30+ cities)
+ * 3. TangoCat scraper (international festivals)
+ * 4. TangoFestivals scraper
+ * 5. Ingest approved scraped events
+ * 6. Detect & create series from recurring events (ALL cities)
+ * 7. Generate 12-month placeholders for all active series
  * 
  * IMPORTANT: HoyMilonga is a JavaScript SPA - requires Playwright scraper!
  * The HTML/Cheerio version DOES NOT WORK because events are loaded dynamically.
@@ -13,8 +20,9 @@ import { TangoMangoScraper } from '../agents/scraping/TangoMangoScraper';
 import { TangoCatScraper } from '../agents/scraping/TangoCatScraper';
 import { TangoFestivalsScraper } from '../agents/scraping/TangoFestivalsScraper';
 import { scrapedEventIngestionService } from '../services/ScrapedEventIngestionService';
+import { RecurringEventDetector } from '../services/scraping/RecurringEventDetector';
 import { db } from '@shared/db';
-import { scrapedEvents, events, groups } from '@shared/schema';
+import { scrapedEvents, events, groups, eventSeries } from '@shared/schema';
 import { eq, sql } from 'drizzle-orm';
 
 async function main() {
@@ -23,7 +31,7 @@ async function main() {
   console.log('========================================\n');
   
   // Step 1: Run TangoMango scraper (US cities + regional multi-county - most reliable)
-  console.log('[1/5] Running TangoMango scraper (US cities + regional multi-county)...');
+  console.log('[1/7] Running TangoMango scraper (US cities + regional multi-county)...');
   try {
     const tangoMangoScraper = new TangoMangoScraper();
     const mangoCount = await tangoMangoScraper.scrapeAll(); // Uses both city and regional configs
@@ -34,7 +42,7 @@ async function main() {
   
   // Step 2: Run HoyMilonga Playwright scraper (30+ cities including Buenos Aires, Berlin, Paris, Istanbul)
   // CRITICAL: HoyMilonga is a JavaScript SPA - must use Playwright, not HTML scraper
-  console.log('\n[2/5] Running HoyMilonga Playwright scraper (30+ cities)...');
+  console.log('\n[2/7] Running HoyMilonga Playwright scraper (30+ cities)...');
   try {
     const hoyMilongaScraper = new HoyMilongaScraper();
     const sourceId = 1; // HoyMilonga source ID
@@ -45,7 +53,7 @@ async function main() {
   }
   
   // Step 3: Run TangoCat scraper (international festivals)
-  console.log('\n[3/5] Running TangoCat scraper (festivals)...');
+  console.log('\n[3/7] Running TangoCat scraper (festivals)...');
   try {
     const tangoCatScraper = new TangoCatScraper();
     const catCount = await tangoCatScraper.scrapeAllYears(1);
@@ -55,7 +63,7 @@ async function main() {
   }
   
   // Step 4: Run TangoFestivals scraper
-  console.log('\n[4/5] Running TangoFestivals scraper...');
+  console.log('\n[4/7] Running TangoFestivals scraper...');
   try {
     const tangoFestivalsScraper = new TangoFestivalsScraper();
     const festivalsCount = await tangoFestivalsScraper.scrapeAllEvents(1);
@@ -65,7 +73,7 @@ async function main() {
   }
   
   // Step 5: Check scraped events status and ingest
-  console.log('\n[5/5] Checking and ingesting scraped events...');
+  console.log('\n[5/7] Checking and ingesting scraped events...');
   const scrapedCountResult = await db.execute(sql`
     SELECT COUNT(*) as count FROM scraped_events WHERE status = 'pending'
   `);
@@ -87,6 +95,24 @@ async function main() {
     console.error('Ingestion error:', error.message);
   }
   
+  // Step 6: Detect and create series from recurring events across ALL cities
+  console.log('\n[6/7] Detecting recurring events and creating series (ALL cities)...');
+  try {
+    const seriesResult = await RecurringEventDetector.detectAndCreateSeriesFromEvents();
+    console.log(`Series detection: ${seriesResult.seriesCreated} new series, ${seriesResult.eventsLinked} events linked`);
+  } catch (error: any) {
+    console.error('Series detection error:', error.message);
+  }
+  
+  // Step 7: Generate 12-month placeholders for all active series
+  console.log('\n[7/7] Generating 12-month placeholders for all active series...');
+  try {
+    const placeholderResult = await RecurringEventDetector.generatePlaceholdersForAllActiveSeries();
+    console.log(`Placeholders: ${placeholderResult.totalCreated} created, ${placeholderResult.totalSkipped} skipped`);
+  } catch (error: any) {
+    console.error('Placeholder generation error:', error.message);
+  }
+  
   // Final stats
   console.log('\n========================================');
   console.log('FINAL STATS');
@@ -94,10 +120,14 @@ async function main() {
   
   const cityCountResult = await db.execute(sql`SELECT COUNT(*) as count FROM groups WHERE type = 'city'`);
   const eventCountResult = await db.execute(sql`SELECT COUNT(*) as count FROM events`);
+  const seriesCountResult = await db.execute(sql`SELECT COUNT(*) as count FROM event_series WHERE is_active = true`);
+  const placeholderCountResult = await db.execute(sql`SELECT COUNT(*) as count FROM events WHERE is_placeholder = true`);
   const scrapedTotalResult = await db.execute(sql`SELECT COUNT(*) as count FROM scraped_events`);
   
   console.log(`Cities: ${(cityCountResult.rows[0] as any)?.count}`);
-  console.log(`Events: ${(eventCountResult.rows[0] as any)?.count}`);
+  console.log(`Total Events: ${(eventCountResult.rows[0] as any)?.count}`);
+  console.log(`Active Series: ${(seriesCountResult.rows[0] as any)?.count}`);
+  console.log(`Placeholder Events (12-month): ${(placeholderCountResult.rows[0] as any)?.count}`);
   console.log(`Scraped Events: ${(scrapedTotalResult.rows[0] as any)?.count}`);
   
   // Show cities with most events
