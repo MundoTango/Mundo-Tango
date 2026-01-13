@@ -378,13 +378,11 @@ router.get("/users", authenticateToken, requireAdmin, async (req, res: Response)
       });
     }
 
-    if (tab === "active") {
-      // Use admin-specific search for active tab to see discovered users
-      const lowerQuery = `%${search.toLowerCase()}%`;
+    if (tab === "discovered") {
       const activeBaseFilter = and(
-        eq(users.isActive, true), 
+        eq(users.isActive, true),
         eq(users.waitlist, false),
-        not(like(users.email, "%@discovered.mundotango.app"))
+        like(users.email, "%@discovered.mundotango.app")
       );
       
       let finalFilter: any = activeBaseFilter;
@@ -400,10 +398,6 @@ router.get("/users", authenticateToken, requireAdmin, async (req, res: Response)
         );
       }
       
-      if (role && typeof role === "string") {
-        finalFilter = and(finalFilter, eq(users.role, role));
-      }
-
       const results = await db.select().from(users)
         .where(finalFilter as any)
         .orderBy(desc(users.createdAt))
@@ -433,11 +427,12 @@ router.get("/users/counts", authenticateToken, requireAdmin, async (req, res: Re
   try {
     const { scrapedProfiles, friendInvitations } = await import("@shared/schema");
     
-    const [activeCount, waitlistCount, scrapedCount, invitedCount] = await Promise.all([
-      db.select({ count: count() }).from(users).where(and(eq(users.isActive, true), eq(users.waitlist, false))),
+    const [activeCount, waitlistCount, scrapedCount, invitedCount, discoveredCount] = await Promise.all([
+      db.select({ count: count() }).from(users).where(and(eq(users.isActive, true), eq(users.waitlist, false), not(like(users.email, "%@discovered.mundotango.app")))),
       db.select({ count: count() }).from(users).where(eq(users.waitlist, true)),
       db.select({ count: count() }).from(scrapedProfiles).catch(() => [{ count: 0 }]),
       db.select({ count: count() }).from(friendInvitations).catch(() => [{ count: 0 }]),
+      db.select({ count: count() }).from(users).where(and(eq(users.isActive, true), eq(users.waitlist, false), like(users.email, "%@discovered.mundotango.app"))),
     ]);
     
     res.json({
@@ -445,6 +440,7 @@ router.get("/users/counts", authenticateToken, requireAdmin, async (req, res: Re
       waitlist: waitlistCount[0]?.count || 0,
       scraped: scrapedCount[0]?.count || 0,
       invited: invitedCount[0]?.count || 0,
+      discovered: discoveredCount[0]?.count || 0,
     });
   } catch (error: any) {
     console.error("Error fetching user counts:", error);
