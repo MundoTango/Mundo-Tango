@@ -1808,4 +1808,167 @@ router.get("/:id/tips", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * GET /api/cities/admin/pending-websites
+ * Get all pending city_websites submissions for admin review
+ */
+router.get("/admin/pending-websites", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.tier < 8) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const pending = await db
+      .select()
+      .from(cityWebsites)
+      .where(eq(cityWebsites.submissionStatus, 'pending_review'))
+      .orderBy(desc(cityWebsites.createdAt));
+
+    res.json({ pending, count: pending.length });
+  } catch (error) {
+    console.error("[AdminPendingWebsites] Error:", error);
+    res.status(500).json({ error: "Failed to fetch pending websites" });
+  }
+});
+
+/**
+ * PATCH /api/cities/admin/websites/:id/approve
+ * Approve a pending city_website and add to event_scraping_sources
+ */
+router.patch("/admin/websites/:id/approve", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.tier < 8) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const websiteId = parseInt(req.params.id);
+    if (isNaN(websiteId)) {
+      return res.status(400).json({ error: "Invalid website ID" });
+    }
+
+    const [website] = await db
+      .select()
+      .from(cityWebsites)
+      .where(eq(cityWebsites.id, websiteId))
+      .limit(1);
+
+    if (!website) {
+      return res.status(404).json({ error: "Website not found" });
+    }
+
+    await db
+      .update(cityWebsites)
+      .set({ 
+        submissionStatus: 'approved', 
+        updatedAt: new Date() 
+      })
+      .where(eq(cityWebsites.id, websiteId));
+
+    const existingSource = await db
+      .select()
+      .from(eventScrapingSources)
+      .where(eq(eventScrapingSources.baseUrl, website.websiteUrl))
+      .limit(1);
+
+    let sourceId = null;
+    if (existingSource.length === 0) {
+      const [newSource] = await db
+        .insert(eventScrapingSources)
+        .values({
+          name: `${website.city} Community Website`,
+          baseUrl: website.websiteUrl,
+          scraperType: 'community',
+          city: website.city,
+          country: website.country || '',
+          isActive: true,
+          priority: 5,
+        })
+        .returning();
+      sourceId = newSource.id;
+      console.log(`[AdminApprove] Added new scraping source: ${website.websiteUrl}`);
+    }
+
+    console.log(`[AdminApprove] Approved website ${websiteId}: ${website.websiteUrl} for ${website.city}`);
+    res.json({ 
+      success: true, 
+      message: `Approved ${website.websiteUrl}`,
+      sourceId 
+    });
+  } catch (error) {
+    console.error("[AdminApprove] Error:", error);
+    res.status(500).json({ error: "Failed to approve website" });
+  }
+});
+
+/**
+ * PATCH /api/cities/admin/websites/:id/reject
+ * Reject a pending city_website
+ */
+router.patch("/admin/websites/:id/reject", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.tier < 8) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const websiteId = parseInt(req.params.id);
+    const { reason } = req.body;
+
+    if (isNaN(websiteId)) {
+      return res.status(400).json({ error: "Invalid website ID" });
+    }
+
+    await db
+      .update(cityWebsites)
+      .set({ 
+        submissionStatus: 'rejected',
+        updatedAt: new Date()
+      })
+      .where(eq(cityWebsites.id, websiteId));
+
+    console.log(`[AdminReject] Rejected website ${websiteId}: ${reason || 'No reason provided'}`);
+    res.json({ success: true, message: "Website rejected" });
+  } catch (error) {
+    console.error("[AdminReject] Error:", error);
+    res.status(500).json({ error: "Failed to reject website" });
+  }
+});
+
+/**
+ * PATCH /api/cities/admin/websites/:id/reassign
+ * Reassign a pending city_website to the correct city
+ */
+router.patch("/admin/websites/:id/reassign", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.tier < 8) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const websiteId = parseInt(req.params.id);
+    const { city, country } = req.body;
+
+    if (isNaN(websiteId)) {
+      return res.status(400).json({ error: "Invalid website ID" });
+    }
+
+    if (!city) {
+      return res.status(400).json({ error: "City is required" });
+    }
+
+    await db
+      .update(cityWebsites)
+      .set({ 
+        city,
+        country: country || null,
+        updatedAt: new Date()
+      })
+      .where(eq(cityWebsites.id, websiteId));
+
+    console.log(`[AdminReassign] Reassigned website ${websiteId} to ${city}, ${country}`);
+    res.json({ success: true, message: `Reassigned to ${city}` });
+  } catch (error) {
+    console.error("[AdminReassign] Error:", error);
+    res.status(500).json({ error: "Failed to reassign website" });
+  }
+});
+
 export default router;

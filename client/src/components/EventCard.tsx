@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Clock, Users, Music, ExternalLink } from "lucide-react";
+import { MapPin, Calendar, Clock, Users, Music, ExternalLink, AlertCircle } from "lucide-react";
 import { Link } from "wouter";
 import { SelectEvent } from "@shared/client-types";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { optimizeCover } from "@/lib/imageOptimizer";
 import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
+import { useTranslation } from "react-i18next";
 
 interface EventCardProps {
   event: SelectEvent;
@@ -14,6 +15,8 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, userRSVPStatus }: EventCardProps) {
+  const { t } = useTranslation('events');
+  
   const getEventTypeBadge = (type: string) => {
     const badges: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
       milonga: { label: "Milonga", variant: "default" },
@@ -49,12 +52,32 @@ export function EventCard({ event, userRSVPStatus }: EventCardProps) {
             height={256}
             data-testid={`img-event-cover-${event.id}`}
           />
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-3 right-3 flex flex-col gap-2 items-end">
             <Badge variant={badge.variant} data-testid={`badge-event-type-${event.id}`}>
               {badge.label}
             </Badge>
+            {event.isPlaceholder && (
+              <Badge 
+                variant="outline" 
+                className="bg-amber-100 dark:bg-amber-900 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200"
+                data-testid={`badge-placeholder-${event.id}`}
+              >
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {t('placeholderBadge', 'Recurring Pattern')}
+              </Badge>
+            )}
           </div>
         </div>
+        
+        {event.isPlaceholder && (
+          <div 
+            className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md p-2 mx-4 mt-2 text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2"
+            data-testid={`alert-placeholder-${event.id}`}
+          >
+            <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+            <span>{t('placeholderWarning', 'Based on recurring pattern - check back closer to date for confirmation')}</span>
+          </div>
+        )}
       
       <CardHeader className="space-y-3">
         <Link href={`/events/${event.id}`}>
