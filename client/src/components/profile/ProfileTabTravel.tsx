@@ -17,6 +17,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send, Globe, Lock, Eye, MessageCircle } from "lucide-react";
 import { RequestToBookModal } from "./RequestToBookModal";
 import { TravelCalendar } from "@/components/unified/TravelCalendar";
+import { AddTravelerDialog } from "@/components/travel/AddTravelerDialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useAuth } from "@/hooks/use-auth";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -44,6 +47,7 @@ interface TravelPlan {
   visibility?: 'public' | 'friends' | 'private';
   notes?: string;
   items?: TravelPlanItem[];
+  userId?: number;
 }
 
 interface TravelPlanItem {
@@ -87,6 +91,16 @@ interface CityEvent {
   imageUrl?: string;
   ticketUrl?: string;
   numericPrice: number;
+}
+
+interface TripParticipant {
+  id: number;
+  tripId: number;
+  userId: number;
+  status: string;
+  joinedAt: string;
+  userName: string;
+  userProfileImage: string | null;
 }
 
 // MT Host housing listing from City Groups
@@ -201,6 +215,8 @@ const transportTypes = [
 ];
 
 export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPublicView = false }: ProfileTabTravelProps) {
+  // Get current user for trip ownership checks
+  const { user: currentUser } = useAuth();
   // Privacy check: Only show public trips in public view (filter applied in render)
   const canEdit = isOwnProfile && !isPublicView;
   const [expandedTrips, setExpandedTrips] = useState<Set<number>>(new Set([0]));
@@ -235,6 +251,11 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   
   // Request to Book modal state
   const [requestToBookTrip, setRequestToBookTrip] = useState<TravelPlan | null>(null);
+  
+  // Participant management state
+  const [addTravelerDialog, setAddTravelerDialog] = useState<{ tripId: number; tripCity: string } | null>(null);
+  const [participantsCache, setParticipantsCache] = useState<Record<number, TripParticipant[]>>({});
+  const [removingParticipantId, setRemovingParticipantId] = useState<number | null>(null);
 
   const { data: travelPlans, isLoading } = useQuery({
     queryKey: ['/api/travel/plans', profileId],
@@ -497,6 +518,49 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
     },
   });
 
+  // Fetch participants for a trip
+  const fetchParticipants = async (tripId: number): Promise<TripParticipant[]> => {
+    const token = localStorage.getItem('accessToken');
+    const res = await fetch(`/api/travel/trips/${tripId}/participants`, {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) return [];
+    return res.json();
+  };
+
+  // Load participants when trip expands
+  const loadParticipantsForTrip = async (tripId: number) => {
+    if (!participantsCache[tripId]) {
+      const participants = await fetchParticipants(tripId);
+      setParticipantsCache(prev => ({ ...prev, [tripId]: participants }));
+    }
+  };
+
+  // Remove participant mutation
+  const removeParticipantMutation = useMutation({
+    mutationFn: async ({ tripId, participantId }: { tripId: number; participantId: number }) => {
+      setRemovingParticipantId(participantId);
+      const res = await apiRequest("DELETE", `/api/travel/trips/${tripId}/participants/${participantId}`);
+      return res.json();
+    },
+    onSuccess: (_, { tripId }) => {
+      // Refresh participants cache
+      setParticipantsCache(prev => {
+        const updated = { ...prev };
+        delete updated[tripId];
+        return updated;
+      });
+      loadParticipantsForTrip(tripId);
+      setRemovingParticipantId(null);
+      toast({ title: "Traveler removed", description: "The participant has been removed from this trip." });
+    },
+    onError: () => {
+      setRemovingParticipantId(null);
+      toast({ title: "Failed to remove traveler", description: "Please try again.", variant: "destructive" });
+    },
+  });
+
   // Open edit dialog with item data pre-filled
   const openEditDialog = (tripId: number, item: TravelPlanItem, itemType: 'accommodation' | 'transport' | 'event') => {
     itemForm.reset({
@@ -632,11 +696,18 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
     setSelectedEvent(null);
   };
 
-  const toggleTrip = (index: number) => {
+  const toggleTrip = (index: number, tripId?: number) => {
     setExpandedTrips(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(index)) newSet.delete(index);
-      else newSet.add(index);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+        // Load participants when trip is expanded
+        if (tripId && canEdit) {
+          loadParticipantsForTrip(tripId);
+        }
+      }
       return newSet;
     });
   };
@@ -934,7 +1005,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
             if (shouldHide) return null;
 
             return (
-              <Collapsible key={trip.id || index} open={isExpanded} onOpenChange={() => toggleTrip(index)} className={cn(isExpanded && "lg:col-span-2")}>
+              <Collapsible key={trip.id || index} open={isExpanded} onOpenChange={() => toggleTrip(index, trip.id)} className={cn(isExpanded && "lg:col-span-2")}>
                 <Card data-testid={`card-travel-plan-${index}`} className="overflow-hidden flex flex-col">
                   {/* Hero Header - Aspect ratio changes when expanded */}
                   <div className={cn("relative bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20", isExpanded ? "aspect-[3/1]" : "aspect-square")} style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
@@ -1357,6 +1428,90 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                 )}
                               </CardContent>
                             </Card>
+
+                            {/* Participants Section - Trip owner can invite travelers */}
+                            {(trip.userId === currentUser?.id || canEdit) && !isPublicView && (
+                              <Card data-testid={`section-participants-${index}`}>
+                                <CardHeader className="pb-3">
+                                  <div className="flex items-center justify-between">
+                                    <CardTitle className="flex items-center gap-2 text-lg">
+                                      <Users className="h-5 w-5 text-indigo-600" />
+                                      Travelers
+                                    </CardTitle>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        setAddTravelerDialog({ tripId: trip.id, tripCity: trip.city });
+                                        loadParticipantsForTrip(trip.id);
+                                      }}
+                                      data-testid={`button-invite-traveler-${index}`}
+                                    >
+                                      <Plus className="h-4 w-4 mr-1" />
+                                      Invite
+                                    </Button>
+                                  </div>
+                                </CardHeader>
+                                <CardContent className="space-y-3">
+                                  {participantsCache[trip.id]?.length ? (
+                                    participantsCache[trip.id].map((participant, pIdx) => (
+                                      <div key={participant.id} className="flex items-center justify-between p-2 rounded-lg border bg-card hover-elevate group" data-testid={`participant-item-${pIdx}`}>
+                                        <div className="flex items-center gap-3">
+                                          <Avatar className="h-8 w-8">
+                                            <AvatarImage src={participant.userProfileImage || undefined} />
+                                            <AvatarFallback>{participant.userName?.slice(0, 2).toUpperCase() || '?'}</AvatarFallback>
+                                          </Avatar>
+                                          <div>
+                                            <p className="font-medium text-sm">{participant.userName}</p>
+                                            <p className="text-xs text-muted-foreground capitalize">{participant.status}</p>
+                                          </div>
+                                        </div>
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                                              disabled={removingParticipantId === participant.id}
+                                              data-testid={`button-remove-participant-${pIdx}`}
+                                            >
+                                              {removingParticipantId === participant.id ? (
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                              ) : (
+                                                <X className="h-3 w-3" />
+                                              )}
+                                            </Button>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>Remove Traveler</AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                Are you sure you want to remove {participant.userName} from this trip? They will need to be re-invited to rejoin.
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                              <AlertDialogAction
+                                                onClick={() => removeParticipantMutation.mutate({ tripId: trip.id, participantId: participant.id })}
+                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                              >
+                                                Remove
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="text-center py-4 text-muted-foreground">
+                                      <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                                      <p className="text-sm">No travelers added yet</p>
+                                      <p className="text-xs mt-1">Invite friends to join this trip</p>
+                                    </div>
+                                  )}
+                                </CardContent>
+                              </Card>
+                            )}
 
                             {/* Add Item Dialog */}
                             <Dialog open={addingItemToTrip === trip.id} onOpenChange={(open) => setAddingItemToTrip(open ? trip.id : null)}>
@@ -1991,6 +2146,24 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
             ownerName: profileOwner.name || profileOwner.username || 'Unknown',
             ownerUsername: profileOwner.username || '',
             ownerProfileImage: profileOwner.profileImage,
+          }}
+        />
+      )}
+
+      {/* Add Traveler Dialog */}
+      {addTravelerDialog && (
+        <AddTravelerDialog
+          open={!!addTravelerDialog}
+          onOpenChange={(open) => !open && setAddTravelerDialog(null)}
+          tripId={addTravelerDialog.tripId}
+          tripCity={addTravelerDialog.tripCity}
+          onTravelerAdded={() => {
+            setParticipantsCache(prev => {
+              const updated = { ...prev };
+              delete updated[addTravelerDialog.tripId];
+              return updated;
+            });
+            loadParticipantsForTrip(addTravelerDialog.tripId);
           }}
         />
       )}

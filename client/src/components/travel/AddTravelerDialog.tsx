@@ -17,6 +17,7 @@ interface AddTravelerDialogProps {
   onOpenChange: (open: boolean) => void;
   tripId: number;
   tripCity: string;
+  onTravelerAdded?: () => void;
 }
 
 interface UserSearchResult {
@@ -33,7 +34,8 @@ export function AddTravelerDialog({
   open, 
   onOpenChange, 
   tripId,
-  tripCity 
+  tripCity,
+  onTravelerAdded 
 }: AddTravelerDialogProps) {
   const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
@@ -61,6 +63,7 @@ export function AddTravelerDialog({
         description: t("pages:travel.addTraveler.success_desc", "The traveler has been added to your trip."),
       });
       setAddingUserId(null);
+      onTravelerAdded?.();
     },
     onError: (error: any) => {
       toast({
