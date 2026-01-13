@@ -1558,4 +1558,432 @@ router.get("/pending-requests-count", authenticateToken, async (req: AuthRequest
   }
 });
 
+// ============================================================================
+// TRIP PARTICIPANTS - Add/Remove Travelers to Trips
+// ============================================================================
+
+// GET /api/travel/trips/:tripId/participants - Get all participants for a trip
+router.get("/trips/:tripId/participants", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const tripId = parseInt(req.params.tripId);
+
+    // Get the trip to check access
+    const tripResult = await db.select()
+      .from(travelPlans)
+      .where(eq(travelPlans.id, tripId))
+      .limit(1);
+
+    if (tripResult.length === 0) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+
+    // Get all active participants with user info
+    const participants = await db.select({
+      id: tripParticipants.id,
+      tripId: tripParticipants.tripId,
+      userId: tripParticipants.userId,
+      role: tripParticipants.role,
+      status: tripParticipants.status,
+      createdAt: tripParticipants.createdAt,
+      userName: users.name,
+      userUsername: users.username,
+      userProfileImage: users.profileImage,
+      userCity: users.city,
+      userCountry: users.country,
+      userTangoRoles: users.tangoRoles,
+    })
+      .from(tripParticipants)
+      .leftJoin(users, eq(tripParticipants.userId, users.id))
+      .where(and(
+        eq(tripParticipants.tripId, tripId),
+        eq(tripParticipants.status, 'active')
+      ))
+      .orderBy(tripParticipants.createdAt);
+
+    res.json(participants);
+  } catch (error) {
+    console.error("Error fetching trip participants:", error);
+    res.status(500).json({ message: "Failed to fetch participants" });
+  }
+});
+
+// POST /api/travel/trips/:tripId/participants - Add a participant to a trip (owner only)
+router.post("/trips/:tripId/participants", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const ownerId = req.user!.id;
+    const tripId = parseInt(req.params.tripId);
+    const { userId, role } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+
+    // Verify trip ownership
+    const tripResult = await db.select()
+      .from(travelPlans)
+      .where(and(
+        eq(travelPlans.id, tripId),
+        eq(travelPlans.userId, ownerId)
+      ))
+      .limit(1);
+
+    if (tripResult.length === 0) {
+      return res.status(404).json({ message: "Trip not found or you don't have permission" });
+    }
+
+    const trip = tripResult[0];
+
+    // Prevent adding self
+    if (userId === ownerId) {
+      return res.status(400).json({ message: "You cannot add yourself as a participant" });
+    }
+
+    // Check if user exists
+    const userResult = await db.select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      profileImage: users.profileImage,
+    })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (userResult.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const invitedUser = userResult[0];
+
+    // Check if already a participant (including removed/left status)
+    const existingParticipant = await db.select()
+      .from(tripParticipants)
+      .where(and(
+        eq(tripParticipants.tripId, tripId),
+        eq(tripParticipants.userId, userId)
+      ))
+      .limit(1);
+
+    if (existingParticipant.length > 0) {
+      if (existingParticipant[0].status === 'active') {
+        return res.status(400).json({ message: "User is already a participant" });
+      }
+      // Reactivate if previously removed/left
+      await db.update(tripParticipants)
+        .set({ status: 'active', addedById: ownerId })
+        .where(eq(tripParticipants.id, existingParticipant[0].id));
+    } else {
+      // Create new participant
+      await db.insert(tripParticipants).values({
+        tripId,
+        userId,
+        addedById: ownerId,
+        role: role || 'traveler',
+        status: 'active',
+      });
+    }
+
+    // Get owner info for notification
+    const ownerResult = await db.select({
+      name: users.name,
+    })
+      .from(users)
+      .where(eq(users.id, ownerId))
+      .limit(1);
+
+    const owner = ownerResult[0];
+
+    // Create notification for invited user
+    await db.insert(notifications).values({
+      userId: userId,
+      type: 'trip_invite',
+      title: 'You\'ve been added to a trip!',
+      message: `${owner.name} added you to their trip to ${trip.city}`,
+      data: JSON.stringify({
+        tripId: trip.id,
+        tripCity: trip.city,
+        ownerId: ownerId,
+        ownerName: owner.name,
+      }),
+      actionUrl: `/travel/trip/${trip.id}`,
+      isRead: false,
+    });
+
+    res.status(201).json({
+      message: "Participant added successfully",
+      participant: {
+        userId,
+        userName: invitedUser.name,
+        userUsername: invitedUser.username,
+        userProfileImage: invitedUser.profileImage,
+        role: role || 'traveler',
+        status: 'active',
+      },
+    });
+  } catch (error) {
+    console.error("Error adding trip participant:", error);
+    res.status(500).json({ message: "Failed to add participant" });
+  }
+});
+
+// DELETE /api/travel/trips/:tripId/participants/:userId - Remove a participant (owner only)
+router.delete("/trips/:tripId/participants/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const ownerId = req.user!.id;
+    const tripId = parseInt(req.params.tripId);
+    const participantUserId = parseInt(req.params.userId);
+
+    // Verify trip ownership
+    const tripResult = await db.select()
+      .from(travelPlans)
+      .where(and(
+        eq(travelPlans.id, tripId),
+        eq(travelPlans.userId, ownerId)
+      ))
+      .limit(1);
+
+    if (tripResult.length === 0) {
+      return res.status(404).json({ message: "Trip not found or you don't have permission" });
+    }
+
+    const trip = tripResult[0];
+
+    // Update participant status to 'removed'
+    const result = await db.update(tripParticipants)
+      .set({ status: 'removed' })
+      .where(and(
+        eq(tripParticipants.tripId, tripId),
+        eq(tripParticipants.userId, participantUserId),
+        eq(tripParticipants.status, 'active')
+      ))
+      .returning();
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Participant not found" });
+    }
+
+    // Get owner info for notification
+    const ownerResult = await db.select({
+      name: users.name,
+    })
+      .from(users)
+      .where(eq(users.id, ownerId))
+      .limit(1);
+
+    const owner = ownerResult[0];
+
+    // Notify removed user
+    await db.insert(notifications).values({
+      userId: participantUserId,
+      type: 'trip_removed',
+      title: 'Trip Update',
+      message: `You have been removed from the trip to ${trip.city}`,
+      data: JSON.stringify({
+        tripId: trip.id,
+        tripCity: trip.city,
+        ownerId: ownerId,
+        ownerName: owner.name,
+      }),
+      actionUrl: `/travel`,
+      isRead: false,
+    });
+
+    res.json({ message: "Participant removed successfully" });
+  } catch (error) {
+    console.error("Error removing trip participant:", error);
+    res.status(500).json({ message: "Failed to remove participant" });
+  }
+});
+
+// POST /api/travel/trips/:tripId/leave - Leave a trip (participant only)
+router.post("/trips/:tripId/leave", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const tripId = parseInt(req.params.tripId);
+
+    // Get trip info
+    const tripResult = await db.select()
+      .from(travelPlans)
+      .where(eq(travelPlans.id, tripId))
+      .limit(1);
+
+    if (tripResult.length === 0) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+
+    const trip = tripResult[0];
+
+    // Prevent owner from leaving (they should delete the trip instead)
+    if (trip.userId === userId) {
+      return res.status(400).json({ message: "Trip owner cannot leave. Delete the trip instead." });
+    }
+
+    // Update participant status to 'left'
+    const result = await db.update(tripParticipants)
+      .set({ status: 'left' })
+      .where(and(
+        eq(tripParticipants.tripId, tripId),
+        eq(tripParticipants.userId, userId),
+        eq(tripParticipants.status, 'active')
+      ))
+      .returning();
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "You are not a participant of this trip" });
+    }
+
+    // Get user info for notification
+    const userResult = await db.select({
+      name: users.name,
+    })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    const leavingUser = userResult[0];
+
+    // Notify trip owner
+    await db.insert(notifications).values({
+      userId: trip.userId,
+      type: 'trip_participant_left',
+      title: 'Traveler Left Your Trip',
+      message: `${leavingUser.name} has left your trip to ${trip.city}`,
+      data: JSON.stringify({
+        tripId: trip.id,
+        tripCity: trip.city,
+        userId: userId,
+        userName: leavingUser.name,
+      }),
+      actionUrl: `/travel/trip/${trip.id}`,
+      isRead: false,
+    });
+
+    res.json({ message: "You have left the trip" });
+  } catch (error) {
+    console.error("Error leaving trip:", error);
+    res.status(500).json({ message: "Failed to leave trip" });
+  }
+});
+
+// GET /api/travel/my-trips - Get trips where user is owner OR participant
+router.get("/my-trips", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    // Get trips user owns
+    const ownedTrips = await db.select({
+      id: travelPlans.id,
+      userId: travelPlans.userId,
+      city: travelPlans.city,
+      country: travelPlans.country,
+      startDate: travelPlans.startDate,
+      endDate: travelPlans.endDate,
+      tripDuration: travelPlans.tripDuration,
+      status: travelPlans.status,
+      visibility: travelPlans.visibility,
+    })
+      .from(travelPlans)
+      .where(eq(travelPlans.userId, userId))
+      .orderBy(desc(travelPlans.startDate));
+
+    // Get trips user is a participant of
+    const participatingTrips = await db.select({
+      id: travelPlans.id,
+      userId: travelPlans.userId,
+      city: travelPlans.city,
+      country: travelPlans.country,
+      startDate: travelPlans.startDate,
+      endDate: travelPlans.endDate,
+      tripDuration: travelPlans.tripDuration,
+      status: travelPlans.status,
+      visibility: travelPlans.visibility,
+      ownerName: users.name,
+      ownerProfileImage: users.profileImage,
+    })
+      .from(tripParticipants)
+      .innerJoin(travelPlans, eq(tripParticipants.tripId, travelPlans.id))
+      .innerJoin(users, eq(travelPlans.userId, users.id))
+      .where(and(
+        eq(tripParticipants.userId, userId),
+        eq(tripParticipants.status, 'active')
+      ))
+      .orderBy(desc(travelPlans.startDate));
+
+    // Mark owned vs participating
+    const allTrips = [
+      ...ownedTrips.map(t => ({ ...t, isOwner: true, ownerName: null, ownerProfileImage: null })),
+      ...participatingTrips.map(t => ({ ...t, isOwner: false })),
+    ].sort((a, b) => {
+      const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
+      const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
+      return dateB - dateA;
+    });
+
+    res.json(allTrips);
+  } catch (error) {
+    console.error("Error fetching my trips:", error);
+    res.status(500).json({ message: "Failed to fetch trips" });
+  }
+});
+
+// GET /api/travel/users/search - Search users to add as participants
+router.get("/users/search", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { q, tripId } = req.query;
+
+    if (!q || typeof q !== 'string' || q.length < 2) {
+      return res.json([]);
+    }
+
+    const searchTerm = `%${q}%`;
+
+    // Search for users by name or username
+    let searchResults = await db.select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      profileImage: users.profileImage,
+      city: users.city,
+      country: users.country,
+      tangoRoles: users.tangoRoles,
+    })
+      .from(users)
+      .where(or(
+        ilike(users.name, searchTerm),
+        ilike(users.username, searchTerm)
+      ))
+      .limit(20);
+
+    // If tripId provided, exclude existing participants
+    if (tripId) {
+      const tripIdNum = parseInt(tripId as string);
+      const existingParticipants = await db.select({ userId: tripParticipants.userId })
+        .from(tripParticipants)
+        .where(and(
+          eq(tripParticipants.tripId, tripIdNum),
+          eq(tripParticipants.status, 'active')
+        ));
+      
+      const existingIds = new Set(existingParticipants.map(p => p.userId));
+      
+      // Also exclude trip owner
+      const tripResult = await db.select({ userId: travelPlans.userId })
+        .from(travelPlans)
+        .where(eq(travelPlans.id, tripIdNum))
+        .limit(1);
+      
+      if (tripResult.length > 0) {
+        existingIds.add(tripResult[0].userId);
+      }
+
+      searchResults = searchResults.filter(u => !existingIds.has(u.id));
+    }
+
+    res.json(searchResults);
+  } catch (error) {
+    console.error("Error searching users:", error);
+    res.status(500).json({ message: "Failed to search users" });
+  }
+});
+
 export default router;
