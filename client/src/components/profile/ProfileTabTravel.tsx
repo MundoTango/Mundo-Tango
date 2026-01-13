@@ -1439,7 +1439,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                   </div>
                                 )}
                                 {canEdit && (
-                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { setEventsDialog({ tripId: trip.id, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setEventSearchQuery(''); }} data-testid={`button-add-event-${index}`}>
+                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { setEventsDialog({ tripId: trip.id, cityId: trip.cityId, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setEventSearchQuery(''); }} data-testid={`button-add-event-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Event / Milonga
                                   </Button>
                                 )}
