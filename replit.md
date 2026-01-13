@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security, integrating various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts. Its extensive AI ecosystem provides strategic oversight and execution capabilities, positioning Mundo Tango as a comprehensive solution for the global tango market. The platform's business vision includes capturing market potential through advanced AI, robust social features, and a scalable architecture.
+Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts. Its extensive AI ecosystem provides strategic oversight and execution capabilities, positioning Mundo Tango as a comprehensive solution for the global tango market.
 
 ## User Preferences
 - Work Simultaneously - Run operations in parallel (use Promise.all, parallel tool calls)
@@ -30,133 +30,40 @@ The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon
 ### AI Systems
 Mundo Tango integrates a comprehensive AI ecosystem with over 140 specialized agents, including self-healing infrastructure, a production-ready validation loop, and a Visual Validation Framework. A Bifrost AI Gateway facilitates multi-provider AI interactions. A RecursiveContextService manages hierarchical code summarization. The core AI brain in `/mr-blue-brain/` is modular, encompassing Identity, Cognition (e.g., ReAct Protocol, Chain-of-Thought), Operations, Orchestration (e.g., Mixture of Experts Router), Patterns, and specialized Agents. This includes a Multi-Agent Orchestration System, a Leadership Agent System with "God Commands," and the Mr. Blue AI Assistant providing real-time data access and intelligent task routing via a Multi-AI Orchestrator.
 
-### Mr. Blue Diagnostic System (MB.MD Pattern 67 + Pattern 99 - Updated Jan 12, 2026)
+### Mr. Blue Diagnostic System
 This system enables autonomous actions via OpenAI function calling for god-level users (tier 8+). It provides comprehensive diagnostic and self-healing tools:
+- **Diagnostic Tools**: `getProjectContext()`, `getUserStats()`, `getUsersNeedingOnboarding()`, `queryDatabase()`, `readFile()`, `writeFile()`, `grepFiles()`, `getProjectStructure()`, `getSecurityAuditLogs()`.
+- **Self-Healing Tools**: `getRecentErrors()`, `triggerAutoFix()`, `recordLearning()`.
+- **Action Tools**: `sendOnboardingReminder(userId)`, `markUserOnboarded(userId)`, `bulkSendOnboardingReminders(limit)`.
 
-**Diagnostic Tools**:
-- `getProjectContext()` - Get replit.md docs and database schema for full codebase understanding
-- `getUserStats()`, `getUsersNeedingOnboarding()` - User statistics and onboarding status
-- `queryDatabase()` - Safe SELECT-only database queries
-- `readFile()`, `writeFile()`, `grepFiles()` - File system operations
-- `getProjectStructure()`, `getSecurityAuditLogs()` - Project overview and audit trails
+Multi-AI Orchestration routes chat via Groq→Gemini→Claude for speed/cost optimization in regular mode, and uses OpenAI GPT-4o for VibeCoding mode (required for function calling). Direct API endpoints are available for god-level access.
 
-**Self-Healing Tools (Pattern 99)**:
-- `getRecentErrors()` - Retrieve errors from `error_patterns` table for auto-fix
-- `triggerAutoFix()` - Trigger AutoFixEngine (>95% confidence = auto-apply, 80-95% = stage, <80% = escalate)
-- `recordLearning()` - Record success patterns via LearningRetentionService
+### Registration Invite Codes
+Special invite codes (`nomad`, `tango`) allow users to bypass email verification, onboarding, and waitlists for new registrations, immediately issuing JWT tokens. For unverified users logging in with an invite code, it triggers a verification email and redirects to the verification page.
 
-**Action Tools (Pattern 67 - Jan 12, 2026)**:
-- `sendOnboardingReminder(userId)` - Send onboarding reminder email to specific user via EmailService
-- `markUserOnboarded(userId)` - Update database to mark user as onboarding complete
-- `bulkSendOnboardingReminders(limit)` - Send reminders to multiple users (max 10 per call)
-- Note: Uses `storage.getUserById()` (not getUser) for database lookups
+### Password Management System
+Users can change passwords when logged in (`POST /api/auth/change-password`) and utilize a forgot password flow (`POST /api/auth/forgot-password` and `POST /api/auth/reset-password`).
 
-**Multi-AI Orchestration**:
-- Regular chat mode: Routes via Groq→Gemini→Claude for speed/cost optimization
-- VibeCoding mode: Uses OpenAI GPT-4o (required for function calling/tools API)
-- Platforms: Groq (fastest, FREE), OpenAI (reliable, function calling), Claude (best reasoning), Gemini (cheapest), OpenRouter (fallback)
+### Trip Participant Management System
+Manages trip travelers with owner/participant roles. Owners can invite/remove participants and edit trip details. Participants can view shared details, leave trips, and see trips in their "Trips I'm Joining" section. Access control ensures only owners or active participants can view trip details. A notification system sends `trip_invite` notifications.
 
-**Direct API Endpoints** (god-level access required):
-- `GET /api/mrblue/diagnostics/user-stats` - Returns user counts (total, onboarded, not onboarded)
-- `GET /api/mrblue/diagnostics/users-needing-onboarding?limit=20` - Returns users with incomplete onboarding
-
-**Performance**: Max 3 tool iterations, max_tokens=2000 to prevent timeouts. E2E tested via Playwright.
-
-**Security (Updated Jan 12, 2026)**:
-- VibeCoding mode: Only accessible to god-level users (roleLevel >= 8)
-- Debug mode URL param (`?mrblue=debug`): Guarded by isGodLevel check in useEffect
-- VibeCoding tab: Hidden for non-god users via conditional render
-
-**VibeCoding E2E Testing (Updated Jan 12, 2026)**:
-- UI Selectors: `data-testid="toggle-vibecoding-mode"` (tab), `data-testid="input-mrblue-chat"` (input), `data-testid="button-mrblue-send"` (send)
-- Test Flow: Login → Open Mr. Blue → Click VibeCoding tab → Send diagnostic prompts → Verify tool execution
-- Verified Working: getUserStats (returns 81 real users), getUsersNeedingOnboarding (returns user list)
-
-### Registration Invite Codes (MB.MD Pattern 67 - Updated Jan 12, 2026)
-Special invite codes for user recovery and new registrations:
-
-**Valid Invite Codes**: `nomad`, `tango`
-
-**Behavior during NEW REGISTRATION with invite code**:
-- `emailVerified: true` - Skips email verification step
-- `isOnboardingComplete: true` - Skips onboarding wizard
-- `formStatus: 100` - Full profile completion
-- `waitlist: false` - Bypasses waitlist
-- Issues JWT tokens immediately on registration
-
-**Behavior during LOGIN with invite code (for unverified users)**:
-- Generates new 6-digit verification code
-- Sends verification email immediately via Resend
-- Redirects to email verification page with `emailSent: true`
-- User must complete verification + onboarding flow
-- Use case: Users who had registration issues and never received initial verification email
-
-**Implementation**: `server/routes/auth.ts` - VALID_INVITE_CODES array, login route handles unverified users with invite codes
-
-### Password Management System (Jan 12, 2026)
-All users can manage their passwords:
-
-**Change Password (Logged In)**:
-- Endpoint: `POST /api/auth/change-password`
-- Body: `{ currentPassword, newPassword }`
-- UI: Settings → Security → Change Password dialog
-- Selectors: `data-testid="button-change-password"`, `data-testid="input-current-password"`, `data-testid="input-new-password"`
-
-**Forgot Password Flow**:
-- Request: `POST /api/auth/forgot-password` with `{ email }`
-- Reset: `POST /api/auth/reset-password` with `{ token, newPassword }`
-- UI: `/password-reset` page sends reset email, `/new-password?token=xxx` page to set new password
-
-### Trip Participant Management System (Jan 13, 2026)
-Full lifecycle management for trip travelers with owner/participant role separation:
-
-**Owner Capabilities**:
-- Invite users to trips via AddTravelerDialog (data-testid="button-invite-traveler-{index}")
-- Remove participants from trips
-- Edit all trip details (itinerary, accommodations, etc.)
-
-**Participant Capabilities**:
-- View shared trip details in read-only mode
-- Leave trips they've been invited to
-- See trip in "Trips I'm Joining" section on Travel tab
-
-**Access Control Pattern**:
-- Entity ownership check: `trip.userId === currentUser?.id` for per-item permissions
-- Backend: GET /api/travel/plans/:id checks `isOwner OR isActiveParticipant` before allowing access
-- UI: TravelItineraryPage shows owner controls only when `isOwner===true`
-
-**Notification System**:
-- Type: `trip_invite` sent when participant added
-- Data includes: tripId, tripCity, ownerId, ownerName, actionUrl
-- Created via `storage.createNotification()` in POST /api/travel/trips/:tripId/participants
-
-**UI Test Selectors**:
-- `card-travel-plan-${index}` - Trip card
-- `section-participants-${index}` - Travelers section
-- `button-invite-traveler-${index}` - Opens AddTravelerDialog
-- `input-search-travelers` - Search input
-- `user-search-result-${userId}` - Search result
-- `button-add-traveler-${userId}` - Add button
-
-**Test Credentials**: admin@mundotango.life / admin123
+### Profile System
+Comprehensive user profiles feature 8 main tabs (About, Posts, Events, Groups, Media, Friends, Places, Travel) and 5 sub-tabs for "About" (Bio, Identity, Education/Work, Preferences, Settings). A permission matrix defines access based on owner, friend, or standard user roles. Privacy controls allow users to manage profile visibility, discoverability, online status, and messaging permissions. GDPR tools enable data export and account deletion.
 
 ### Event Scraping System
-A multi-stage scraping architecture coordinated by a Master Orchestrator, utilizes Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation. Scraped events are stored in a `scraped_events` table and ingested into the main events table, with an Admin UI for real-time status and moderation.
+A multi-stage scraping architecture coordinated by a Master Orchestrator utilizes Priority Scrapers and an AI-powered UnifiedEventScraper. It features AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation. Scraped events are stored in a `scraped_events` table and ingested into the main events table, with an Admin UI for real-time status and moderation.
 
 ### Platform Features
 Core functionalities include social features (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and an International Payment System supporting 30 currencies.
 
 ### Messaging System
-The system uses a `directMessages` table for all conversations. It supports PRO contact forms routing to the inbox and new conversation creation via user search. Real-time updates are currently via polling, with WebSockets planned. Group chat uses a `group_messages` table.
+The system uses a `directMessages` table for all conversations, routing PRO contact forms to the inbox and enabling new conversation creation via user search. Group chat uses a `group_messages` table.
 
 ### PRO Pages (/p/:slug)
 Public profiles feature a glassmorphic design with bio, gallery, and testimonials. A contact form submits to the PRO's inbox via direct messages. Vanity URLs allow access to PRO pages or user profiles.
 
 ### Admin Feedback & QA System
-A unified admin queue at `/admin/feedback-queue` consolidates user feedback (bug reports, feature requests, help) and founder feature approvals. It integrates with Mr. Blue for chat modes and includes journey replay, automatic screenshot capture, and enhanced error reporting. Access is restricted to god-level users.
-
-### Navigation & Attention Hub
-This system includes a filter to exclude fake users from friend suggestions, and a refined navigation experience with consolidated help and language selection.
+A unified admin queue at `/admin/feedback-queue` consolidates user feedback and founder feature approvals. It integrates with Mr. Blue for chat modes and includes journey replay, automatic screenshot capture, and enhanced error reporting. Access is restricted to god-level users.
 
 ### CI/CD & Contributor Workflow
 The project uses GitHub Actions for CI/CD, running type checking, linting, commit linting, unit tests, build verification, and security audits on PRs and pushes to main. E2E tests run on the main branch. Husky pre-commit hooks enforce type-check and lint-staged. Conventional Commits are required.

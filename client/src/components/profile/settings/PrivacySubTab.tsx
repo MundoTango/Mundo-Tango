@@ -134,6 +134,10 @@ export default function PrivacySubTab() {
   const requestExportMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest("POST", "/api/gdpr/export");
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: "Failed to request data export" }));
+        throw new Error(error.message || "Failed to request data export");
+      }
       return response.json();
     },
     onSuccess: () => {
