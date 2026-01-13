@@ -167,9 +167,36 @@ function UnifiedTopBar({
   const handleNotificationClick = async (notif: any) => {
     let url = notif.actionUrl || notif.link;
     
+    // If no explicit URL, try to build one based on type and metadata
+    if (!url) {
+      const metadata = typeof notif.metadata === 'string' ? JSON.parse(notif.metadata) : notif.metadata;
+      
+      switch (notif.type) {
+        case 'like':
+        case 'favorite':
+        case 'comment':
+        case 'reaction':
+          if (metadata?.postId) url = `/posts/${metadata.postId}`;
+          else if (metadata?.eventId) url = `/events/${metadata.eventId}`;
+          break;
+        case 'event_invite':
+        case 'event_update':
+        case 'event_rsvp':
+          if (metadata?.eventId) url = `/events/${metadata.eventId}`;
+          break;
+        case 'friend_request':
+          if (metadata?.fromUserId) url = `/profile/${metadata.fromUserId}?reviewRequest=true`;
+          break;
+        case 'group_join':
+        case 'group_leave':
+          if (metadata?.groupId) url = `/groups/${metadata.groupId}`;
+          break;
+      }
+    }
+    
     if (url) {
       // For friend request notifications, add the reviewRequest param to auto-open the modal
-      if (notif.type === 'friend_request' && url.includes('/profile/')) {
+      if (notif.type === 'friend_request' && url.includes('/profile/') && !url.includes('reviewRequest=true')) {
         url = url + (url.includes('?') ? '&' : '?') + 'reviewRequest=true';
       }
       
