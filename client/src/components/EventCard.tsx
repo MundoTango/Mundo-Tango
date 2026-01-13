@@ -59,11 +59,11 @@ export function EventCard({ event, userRSVPStatus }: EventCardProps) {
             {event.isPlaceholder && (
               <Badge 
                 variant="outline" 
-                className="bg-amber-100 dark:bg-amber-900 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200"
+                className="bg-amber-100 dark:bg-amber-900 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 text-xs"
                 data-testid={`badge-placeholder-${event.id}`}
               >
                 <AlertCircle className="h-3 w-3 mr-1" />
-                {t('placeholderBadge', 'Recurring Pattern')}
+                {t('placeholderBadge', 'Tentative')}
               </Badge>
             )}
           </div>

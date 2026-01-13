@@ -226,8 +226,47 @@ export class Deduplicator {
           .set({ status: 'matched', updatedAt: new Date() })
           .where(eq(scrapedEvents.id, scraped.id));
       } else {
-        result.newEvents++;
-        console.log(`[Agent #119] ➕ New event (no match): ${scraped.title}`);
+        try {
+          const slug = `${scraped.title}-${scraped.city || 'event'}-${scraped.startDate.toISOString().split('T')[0]}`
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .substring(0, 200);
+
+          await db.insert(events).values({
+            title: scraped.title,
+            slug,
+            description: scraped.description || `${scraped.title} - Tango event`,
+            eventType: scraped.eventType || 'milonga',
+            userId: 1,
+            startDate: scraped.startDate,
+            endDate: scraped.endDate || undefined,
+            venue: scraped.venue || undefined,
+            address: scraped.address || undefined,
+            location: scraped.city ? `${scraped.city}, ${scraped.country || ''}` : 'TBD',
+            city: scraped.city || undefined,
+            country: scraped.country || undefined,
+            ticketUrl: scraped.ticketUrl || undefined,
+            sourceUrl: scraped.sourceUrl || undefined,
+            sourceName: scraped.sourceName || undefined,
+            coverImage: scraped.coverImage || undefined,
+            visibility: 'public',
+            status: 'approved',
+            isPlaceholder: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+
+          await db
+            .update(scrapedEvents)
+            .set({ status: 'imported', updatedAt: new Date() })
+            .where(eq(scrapedEvents.id, scraped.id));
+
+          result.newEvents++;
+          console.log(`[Agent #119] ➕ Created new event: ${scraped.title}`);
+        } catch (insertErr) {
+          console.error(`[Agent #119] Failed to insert new event ${scraped.title}:`, insertErr);
+        }
       }
     }
 

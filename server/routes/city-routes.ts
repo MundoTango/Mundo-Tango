@@ -99,15 +99,24 @@ const CITY_NAME_PATTERNS: Record<string, string[]> = {
   'trier': ['trier'],
 };
 
+function normalizeForComparison(str: string): string {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
 function detectCityMismatch(url: string, submittedCity: string): { mismatch: boolean; detectedCity: string | null; } {
-  const urlLower = url.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const submittedCityNormalized = submittedCity.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const urlNormalized = normalizeForComparison(url);
+  const submittedCityNormalized = normalizeForComparison(submittedCity);
   
   for (const [cityName, patterns] of Object.entries(CITY_NAME_PATTERNS)) {
-    const cityNormalized = cityName.replace(/[^a-z0-9]/g, '');
+    const cityNormalized = normalizeForComparison(cityName);
     for (const pattern of patterns) {
-      if (urlLower.includes(pattern)) {
-        if (cityNormalized !== submittedCityNormalized && !submittedCityNormalized.includes(pattern)) {
+      const patternNormalized = normalizeForComparison(pattern);
+      if (urlNormalized.includes(patternNormalized)) {
+        if (cityNormalized !== submittedCityNormalized && !submittedCityNormalized.includes(patternNormalized)) {
           return { mismatch: true, detectedCity: cityName };
         }
         return { mismatch: false, detectedCity: cityName };
@@ -1867,7 +1876,7 @@ router.patch("/admin/websites/:id/approve", authenticateToken, async (req: AuthR
     const existingSource = await db
       .select()
       .from(eventScrapingSources)
-      .where(eq(eventScrapingSources.baseUrl, website.websiteUrl))
+      .where(eq(eventScrapingSources.url, website.websiteUrl))
       .limit(1);
 
     let sourceId = null;
@@ -1876,8 +1885,9 @@ router.patch("/admin/websites/:id/approve", authenticateToken, async (req: AuthR
         .insert(eventScrapingSources)
         .values({
           name: `${website.city} Community Website`,
-          baseUrl: website.websiteUrl,
+          url: website.websiteUrl,
           scraperType: 'community',
+          platform: 'user_suggested',
           city: website.city,
           country: website.country || '',
           isActive: true,
@@ -1917,6 +1927,10 @@ router.patch("/admin/websites/:id/reject", authenticateToken, async (req: AuthRe
       return res.status(400).json({ error: "Invalid website ID" });
     }
 
+    const sanitizedReason = reason && typeof reason === 'string' 
+      ? reason.trim().substring(0, 500) 
+      : 'No reason provided';
+
     await db
       .update(cityWebsites)
       .set({ 
@@ -1925,7 +1939,7 @@ router.patch("/admin/websites/:id/reject", authenticateToken, async (req: AuthRe
       })
       .where(eq(cityWebsites.id, websiteId));
 
-    console.log(`[AdminReject] Rejected website ${websiteId}: ${reason || 'No reason provided'}`);
+    console.log(`[AdminReject] Rejected website ${websiteId}: ${sanitizedReason}`);
     res.json({ success: true, message: "Website rejected" });
   } catch (error) {
     console.error("[AdminReject] Error:", error);
@@ -1950,15 +1964,22 @@ router.patch("/admin/websites/:id/reassign", authenticateToken, async (req: Auth
       return res.status(400).json({ error: "Invalid website ID" });
     }
 
-    if (!city) {
-      return res.status(400).json({ error: "City is required" });
+    if (!city || typeof city !== 'string' || city.trim().length < 2) {
+      return res.status(400).json({ error: "Valid city name is required (min 2 characters)" });
     }
+
+    if (country && typeof country !== 'string') {
+      return res.status(400).json({ error: "Country must be a string" });
+    }
+
+    const sanitizedCity = city.trim().substring(0, 100);
+    const sanitizedCountry = country ? country.trim().substring(0, 100) : null;
 
     await db
       .update(cityWebsites)
       .set({ 
-        city,
-        country: country || null,
+        city: sanitizedCity,
+        country: sanitizedCountry,
         updatedAt: new Date()
       })
       .where(eq(cityWebsites.id, websiteId));

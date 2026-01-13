@@ -186,7 +186,7 @@ export class RecurringEventDetector {
       const endOfDay = new Date(occurrenceDate);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const existing = await db
+      const existingInSeries = await db
         .select({ id: events.id })
         .from(events)
         .where(
@@ -198,13 +198,46 @@ export class RecurringEventDetector {
         )
         .limit(1);
 
-      if (existing.length > 0) {
+      if (existingInSeries.length > 0) {
         result.skipped++;
         continue;
       }
 
+      if (seriesData.city) {
+        const existingRealEvent = await db
+          .select({ id: events.id })
+          .from(events)
+          .where(
+            and(
+              ilike(events.title, seriesData.name),
+              ilike(events.city, seriesData.city),
+              eq(events.isPlaceholder, false),
+              sql`${events.startDate} >= ${startOfDay}`,
+              sql`${events.startDate} <= ${endOfDay}`
+            )
+          )
+          .limit(1);
+
+        if (existingRealEvent.length > 0) {
+          result.skipped++;
+          continue;
+        }
+      }
+
       const placeholderTitle = seriesData.name;
       const placeholderDescription = `${seriesData.name} - This is a recurring event. Check back closer to the date for confirmed details and registration.`;
+
+      let venueInfo = null;
+      if (seriesData.venueId) {
+        const [venue] = await db
+          .select({ name: sql<string>`name`, address: sql<string>`address` })
+          .from(sql`venues`)
+          .where(sql`id = ${seriesData.venueId}`)
+          .limit(1);
+        if (venue) {
+          venueInfo = venue;
+        }
+      }
 
       try {
         await db.insert(events).values({
@@ -212,8 +245,10 @@ export class RecurringEventDetector {
           slug: `${seriesData.slug}-${occurrenceDate.toISOString().split('T')[0]}`,
           description: placeholderDescription,
           eventType: 'milonga',
-          userId: 1,
+          userId: seriesData.organizerId || 1,
           startDate: occurrenceDate,
+          venue: venueInfo?.name || undefined,
+          address: venueInfo?.address || undefined,
           location: seriesData.city ? `${seriesData.city}, ${seriesData.country || ''}` : 'TBD',
           city: seriesData.city || undefined,
           country: seriesData.country || undefined,
