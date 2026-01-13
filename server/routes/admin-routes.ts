@@ -9,7 +9,7 @@ import {
   users, posts, postReports, events, userReports, roleRequests, housingListings,
   moderationQueue, moderationActions, flaggedContent, postComments
 } from "@shared/schema";
-import { eq, desc, like, or, and, gte, count, sql, inArray } from "drizzle-orm";
+import { eq, desc, like, or, and, gte, count, sql, inArray, not } from "drizzle-orm";
 import { authenticateToken, authenticateInternalOrToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { storage } from "../storage";
@@ -381,7 +381,11 @@ router.get("/users", authenticateToken, requireAdmin, async (req, res: Response)
     if (tab === "active") {
       // Use admin-specific search for active tab to see discovered users
       const lowerQuery = `%${search.toLowerCase()}%`;
-      const activeBaseFilter = and(eq(users.isActive, true), eq(users.waitlist, false));
+      const activeBaseFilter = and(
+        eq(users.isActive, true), 
+        eq(users.waitlist, false),
+        not(like(users.email, "%@discovered.mundotango.app"))
+      );
       
       let finalFilter: any = activeBaseFilter;
       

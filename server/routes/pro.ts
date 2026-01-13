@@ -12,7 +12,7 @@ import {
   users,
   reviews
 } from "../../shared/schema";
-import { eq, and, desc, sql, gte, lt, or, inArray } from "drizzle-orm";
+import { eq, and, desc, sql, gte, lt, or, inArray, not, like } from "drizzle-orm";
 import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth";
 
 const router = Router();
@@ -460,7 +460,12 @@ router.get("/professionals/:role", async (req: Request, res: Response) => {
         tangoRoles: users.tangoRoles,
       })
       .from(users)
-      .where(and(...conditions))
+      .where(
+        and(
+          sql`${users.tangoRoles} @> ARRAY[${role}]::text[]`,
+          not(like(users.email, "%@discovered.mundotango.app"))
+        )
+      )
       .limit(limit);
 
     const enrichedProfessionals = await Promise.all(
