@@ -235,7 +235,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   const [accommodationDialog, setAccommodationDialog] = useState<{ tripId: number; city: string; startDate: string; endDate: string } | null>(null);
   const [accommodationTab, setAccommodationTab] = useState<'mthost' | 'manual'>('mthost');
   const [transportDialog, setTransportDialog] = useState<{ tripId: number; city: string } | null>(null);
-  const [eventsDialog, setEventsDialog] = useState<{ tripId: number; city: string; startDate: string; endDate: string } | null>(null);
+  const [eventsDialog, setEventsDialog] = useState<{ tripId: number; cityId?: number; city: string; startDate: string; endDate: string } | null>(null);
   const [selectedTransportType, setSelectedTransportType] = useState<string>('flight');
   const [scrapingUrl, setScrapingUrl] = useState('');
   const [isScrapingAccommodation, setIsScrapingAccommodation] = useState(false);
@@ -1964,9 +1964,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
           </DialogHeader>
 
           <Tabs defaultValue="search" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="search" data-testid="tab-search-events">Search Events</TabsTrigger>
-              <TabsTrigger value="manual" data-testid="tab-manual-event">Add Manually</TabsTrigger>
               <TabsTrigger value="create" data-testid="tab-create-event">Create New</TabsTrigger>
             </TabsList>
 
@@ -2050,10 +2049,36 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
               )}
             </TabsContent>
 
-            {/* Manual Entry Tab */}
-            <TabsContent value="manual">
+            {/* Create New Event Tab */}
+            <TabsContent value="create">
               <Form {...itemForm}>
-                <form onSubmit={itemForm.handleSubmit((data) => { if (eventsDialog) { addItemMutation.mutate({ tripId: eventsDialog.tripId, data }); setEventsDialog(null); } })} className="space-y-4">
+                <form onSubmit={itemForm.handleSubmit(async (data) => { 
+                  if (eventsDialog) { 
+                    try {
+                      // 1. Create the actual event in the database
+                      const eventResponse = await apiRequest("POST", "/api/events", {
+                        title: data.title,
+                        eventType: data.type || 'event',
+                        startDate: data.date,
+                        location: data.location,
+                        venue: data.location, // Simple mapping for inline form
+                        description: data.description,
+                        price: data.cost ? `$${data.cost}` : undefined,
+                        isPublic: true,
+                        cityId: eventsDialog.cityId // We need to ensure cityId is available
+                      });
+                      const newEvent = await eventResponse.json();
+                      
+                      // 2. Add it to the trip
+                      addEventToTrip(eventsDialog.tripId, newEvent);
+                      setEventsDialog(null);
+                      itemForm.reset();
+                      toast({ title: "Event created!", description: "The event has been created and added to your trip." });
+                    } catch (error) {
+                      toast({ title: "Error creating event", description: "Failed to create the new event.", variant: "destructive" });
+                    }
+                  } 
+                })} className="space-y-4">
                   <FormField control={itemForm.control} name="type" render={({ field }) => (
                     <FormItem><FormLabel>Event Type *</FormLabel>
                       <Select value={field.value} onValueChange={field.onChange}>
@@ -2092,27 +2117,10 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
 
                   <div className="flex gap-2 pt-2">
                     <Button type="button" variant="outline" onClick={() => { setEventsDialog(null); itemForm.reset(); }} className="flex-1">Cancel</Button>
-                    <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Adding..." : "Add Event"}</Button>
+                    <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Creating..." : "Create & Add"}</Button>
                   </div>
                 </form>
               </Form>
-            </TabsContent>
-
-            {/* Create New Event Tab */}
-            <TabsContent value="create" className="space-y-4">
-              <div className="text-center py-8">
-                <Sparkles className="h-12 w-12 mx-auto mb-4 text-primary opacity-50" />
-                <h3 className="font-semibold mb-2">Create a New Event</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Use our event creation platform to add a new milonga or tango event to the Mundo Tango community.
-                </p>
-                <Button asChild>
-                  <a href="/events/create" target="_blank" rel="noopener noreferrer" data-testid="link-create-event">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Open Event Creator
-                  </a>
-                </Button>
-              </div>
             </TabsContent>
           </Tabs>
         </DialogContent>
