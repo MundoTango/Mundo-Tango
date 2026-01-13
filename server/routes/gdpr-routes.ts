@@ -68,6 +68,49 @@ router.get('/api/gdpr/exports', authenticateToken, async (req: AuthRequest, res:
 });
 
 /**
+ * Download a completed data export (authenticated)
+ */
+router.get('/api/gdpr/export/:requestId/download', authenticateToken, async (req: AuthRequest, res: Response) => {
+  const requestId = parseInt(req.params.requestId);
+
+  try {
+    const exportRequest = await getDataExportStatus(requestId, req.userId!);
+
+    if (!exportRequest) {
+      return res.status(404).json({ message: 'Export request not found' });
+    }
+
+    if (exportRequest.status !== 'completed') {
+      return res.status(400).json({ message: 'Export is not ready for download' });
+    }
+
+    if (!exportRequest.fileUrl) {
+      return res.status(404).json({ message: 'Export data not found' });
+    }
+
+    // Parse the data URL (format: data:application/json;base64,<base64data>)
+    let exportData: string;
+    if (exportRequest.fileUrl.startsWith('data:application/json;base64,')) {
+      const base64Data = exportRequest.fileUrl.replace('data:application/json;base64,', '');
+      exportData = Buffer.from(base64Data, 'base64').toString('utf8');
+    } else {
+      // If it's a direct URL, the frontend would need to fetch it
+      return res.status(400).json({ message: 'External file URLs not supported for direct download' });
+    }
+
+    // Set headers for JSON file download
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="data-export-${requestId}.json"`);
+    
+    // Send the export data
+    res.send(exportData);
+  } catch (error: any) {
+    console.error('Download export error:', error);
+    res.status(500).json({ message: 'Failed to download export' });
+  }
+});
+
+/**
  * Get privacy settings
  */
 router.get('/api/gdpr/privacy-settings', authenticateToken, async (req: AuthRequest, res: Response) => {

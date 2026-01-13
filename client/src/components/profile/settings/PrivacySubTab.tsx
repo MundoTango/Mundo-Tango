@@ -160,6 +160,41 @@ export default function PrivacySubTab() {
     requestExportMutation.mutate();
   };
 
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadExport = async () => {
+    if (!latestExport?.id) return;
+    
+    setIsDownloading(true);
+    try {
+      const response = await apiRequest("GET", `/api/gdpr/export/${latestExport.id}/download`);
+      if (!response.ok) {
+        throw new Error("Failed to download export");
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `my-data-export-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast({
+        title: "Download complete",
+        description: "Your data export has been downloaded.",
+      });
+    } catch (error) {
+      toast({
+        title: "Download failed",
+        description: error instanceof Error ? error.message : "Failed to download export",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const latestExport = dataExports.length > 0 ? dataExports[0] : null;
   const hasCompletedExport = latestExport?.status === 'completed';
   const hasPendingExport = latestExport?.status === 'pending' || latestExport?.status === 'processing';
@@ -513,20 +548,25 @@ export default function PrivacySubTab() {
             </div>
             <div className="flex items-center gap-2">
               {hasCompletedExport && (
-                <a 
-                  href={latestExport.fileUrl}
-                  download="my-data-export.json"
-                  className="inline-flex"
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleDownloadExport}
+                  disabled={isDownloading}
+                  data-testid="button-download-data"
                 >
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    data-testid="button-download-data"
-                  >
-                    <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                    Download
-                  </Button>
-                </a>
+                  {isDownloading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Downloading...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                      Download
+                    </>
+                  )}
+                </Button>
               )}
               <Button 
                 variant={hasCompletedExport ? "ghost" : "outline"}
