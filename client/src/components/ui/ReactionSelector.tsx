@@ -91,15 +91,23 @@ export const ReactionSelector = ({
   }, []);
 
   const handleReactionClick = async (reactionId: string) => {
+    // If the user clicks the same reaction, it should toggle off (standard behavior)
+    // but the user wants it to "persist" and "change to the new icon" if they change their mind.
+    // The current logic already handles changing (previous reaction is decremented, new one incremented).
+    // Let's ensure the toggledReaction logic is solid for "changing mind".
     const toggledReaction = localReaction === reactionId ? '' : reactionId;
     const previousReaction = localReaction;
     const previousReactions = { ...localReactions };
     
     setLocalReaction(toggledReaction || undefined);
     const newReactions = { ...localReactions };
+    
+    // Decrement previous if it exists
     if (previousReaction && newReactions[previousReaction]) {
       newReactions[previousReaction] = Math.max(0, newReactions[previousReaction] - 1);
     }
+    
+    // Increment new one if it's not a toggle-off
     if (toggledReaction) {
       newReactions[toggledReaction] = (newReactions[toggledReaction] || 0) + 1;
     }
@@ -124,6 +132,7 @@ export const ReactionSelector = ({
           throw new Error(`Reaction failed: ${response.status}`);
         }
         
+        // Use more specific invalidation to ensure UI updates across components
         if (targetType === 'comment' && postId) {
           queryClient.invalidateQueries({ queryKey: ['/api/posts', postId, 'comments'] });
         } else if (targetType === 'post') {
