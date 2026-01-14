@@ -113,8 +113,14 @@ export default function FriendsListPage() {
         limit: "20",
         ...(discoverSearch && { search: discoverSearch }),
       });
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
       const response = await fetch(`/api/users/discover?${params}`, {
         credentials: "include",
+        headers,
       });
       if (!response.ok) throw new Error("Failed to fetch users");
       return response.json();
