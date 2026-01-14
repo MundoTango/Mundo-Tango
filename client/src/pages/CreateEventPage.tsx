@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
@@ -88,6 +88,8 @@ export default function CreateEventPage() {
   const [selectedLocation, setSelectedLocation] = useState({ city: "", country: "", address: "" });
 
   const [userTimezone, setUserTimezone] = useState("");
+  const [defaultCity, setDefaultCity] = useState("");
+  const hasInitializedLocationRef = useRef(false);
   
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -115,6 +117,20 @@ export default function CreateEventPage() {
       attendeeCloseness: "all" as ClosenessVisibility,
     },
   });
+
+  // Set default city from user's primary city - one-time initialization only
+  useEffect(() => {
+    if (user?.city && !hasInitializedLocationRef.current) {
+      hasInitializedLocationRef.current = true;
+      setDefaultCity(user.city);
+      // Pre-fill both city and location fields so form validation passes
+      form.setValue("city", user.city);
+      form.setValue("location", user.city); // Initialize location to satisfy required field
+      setSelectedLocation(prev => ({ ...prev, city: user.city || "" }));
+      const tz = getTimezoneFromCity(user.city);
+      if (tz) setUserTimezone(tz);
+    }
+  }, [user?.city, form]);
 
   const handleLocationChange = (location: string, coordinates: { lat: number; lng: number }, parsed?: any) => {
     const { city, country } = extractCityCountry(location);
@@ -391,6 +407,34 @@ export default function CreateEventPage() {
                       )}
                     />
 
+                    {/* Location using Unified Location Picker - Now before Date */}
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('pages:createEvent.venueLocation', 'Venue Location')} *</FormLabel>
+                          <FormControl>
+                            <UnifiedLocationPicker
+                              mode="address"
+                              value={field.value}
+                              onChange={handleLocationChange}
+                              placeholder={t('pages:createEvent.venueLocationPlaceholder', 'Search for venue, address, or city...')}
+                              userCity={defaultCity || user?.city || ""}
+                              data-testid="location-picker"
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            {defaultCity && (
+                              <span className="text-primary font-medium">{t('pages:createEvent.defaultCity', 'Default city')}: {defaultCity}. </span>
+                            )}
+                            {t('pages:createEvent.venueLocationDesc', 'Search for a venue name, street address, or city to auto-fill location details')}
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     {/* Date & Time */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
@@ -610,30 +654,6 @@ export default function CreateEventPage() {
                         )}
                       </div>
                     )}
-
-                    {/* Location using Unified Location Picker */}
-                    <FormField
-                      control={form.control}
-                      name="location"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t('pages:createEvent.venueLocation', 'Venue Location')} *</FormLabel>
-                          <FormControl>
-                            <UnifiedLocationPicker
-                              mode="address"
-                              value={field.value}
-                              onChange={handleLocationChange}
-                              placeholder={t('pages:createEvent.venueLocationPlaceholder', 'Search for venue, address, or city...')}
-                              data-testid="location-picker"
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            {t('pages:createEvent.venueLocationDesc', 'Search for a venue name, street address, or city to auto-fill location details')}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
 
                     {/* Pricing */}
                     <FormField
