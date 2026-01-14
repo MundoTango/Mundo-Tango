@@ -364,9 +364,10 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
 type EventTab = "my-events" | "upcoming" | "past" | "discover";
 
 export default function EventsPage() {
-  const { t } = useTranslation(['pages', 'common']);
-  const [, navigate] = useLocation();
   const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'superAdmin' || user?.role === 'super_admin';
+  const isPro = user?.role === 'pro';
+  const [, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<EventTab>("discover");
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
@@ -488,8 +489,6 @@ export default function EventsPage() {
   const activeFilterCount = Object.keys(filters).filter(
     k => k !== "q" && filters[k as keyof EventFilterValues] !== undefined && filters[k as keyof EventFilterValues] !== null
   ).length;
-
-  const isSuperAdmin = user?.role === 'super_admin';
 
   const triggerScrapingMutation = useMutation({
     mutationFn: async (scrapingType: string) => {
