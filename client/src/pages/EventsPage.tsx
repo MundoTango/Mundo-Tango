@@ -629,16 +629,18 @@ export default function EventsPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
-                <Button 
-                  size="lg" 
-                  className="gap-2" 
-                  data-testid="button-create-event"
-                  onClick={() => navigate("/events/create")}
-                >
-                  <Plus className="h-5 w-5" />
-                  {t('pages:events.createEvent', 'Create Event')}
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
+                {(isPro || isSuperAdmin) && (
+                  <Button 
+                    size="lg" 
+                    className="gap-2" 
+                    data-testid="button-create-event"
+                    onClick={() => navigate("/events/create")}
+                  >
+                    <Plus className="h-5 w-5" />
+                    {t('pages:events.createEvent', 'Create Event')}
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                )}
                 
                 {isSuperAdmin && (
                   <>
@@ -914,10 +916,12 @@ export default function EventsPage() {
                                   {t('pages:events.clearFilters', 'Clear Filters')}
                                 </Button>
                               )}
-                              <Button onClick={() => navigate("/events/create")} data-testid="button-create-event-empty">
-                                <Plus className="h-4 w-4 mr-2" />
-                                {t('pages:events.createEvent', 'Create Event')}
-                              </Button>
+                              {(isPro || isSuperAdmin) && (
+                                <Button onClick={() => navigate("/events/create")} data-testid="button-create-event-empty">
+                                  <Plus className="h-4 w-4 mr-2" />
+                                  {t('pages:events.createEvent', 'Create Event')}
+                                </Button>
+                              )}
                             </div>
                           </div>
                         </CardContent>
