@@ -308,6 +308,7 @@ export interface IStorage {
   getFriendRequests(userId: number): Promise<any[]>;
   getOutgoingFriendRequest(senderId: number, receiverId: number): Promise<any | null>;
   getFriendSuggestions(userId: number): Promise<any[]>;
+  discoverAllUsers(currentUserId: number, params: { limit: number; offset: number; search?: string }): Promise<{ users: any[]; total: number }>;
   sendFriendRequest(data: { senderId: number; receiverId: number; [key: string]: any }): Promise<any>;
   acceptFriendRequest(requestId: number, receiverData?: { receiverMessage?: string; receiverPrivateNote?: string }): Promise<void>;
   declineFriendRequest(requestId: number): Promise<void>;
@@ -2362,6 +2363,97 @@ export class DbStorage implements IStorage {
       bio: u.bio,
       city: u.city,
     }));
+  }
+
+  async discoverAllUsers(currentUserId: number, params: { limit: number; offset: number; search?: string }): Promise<{ users: any[]; total: number }> {
+    const { limit, offset, search } = params;
+    
+    // Build search condition
+    const searchCondition = search 
+      ? or(
+          ilike(users.name, `%${search}%`),
+          ilike(users.username, `%${search}%`),
+          ilike(users.city, `%${search}%`)
+        )
+      : undefined;
+    
+    // Base conditions: active users, not suspended, not discovered bots, not the current user
+    const baseConditions = and(
+      ne(users.id, currentUserId),
+      eq(users.isActive, true),
+      eq(users.suspended, false),
+      not(like(users.email, '%@discovered.mundotango.app')),
+      searchCondition
+    );
+    
+    // Get total count
+    const countResult = await db.select({ count: sql<number>`count(*)::int` })
+      .from(users)
+      .where(baseConditions);
+    const total = countResult[0]?.count || 0;
+    
+    // Get users with full profile details
+    const rawUsers = await db.select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      profileImage: users.profileImage,
+      bio: users.bio,
+      city: users.city,
+      country: users.country,
+      tangoRoles: users.tangoRoles,
+      danceExperienceLevel: users.danceExperienceLevel,
+      yearsOfDancing: users.yearsOfDancing,
+      createdAt: users.createdAt,
+    })
+    .from(users)
+    .where(baseConditions)
+    .orderBy(desc(users.createdAt))
+    .limit(limit)
+    .offset(offset);
+    
+    // Get friendship status for each user
+    const userIds = rawUsers.map(u => u.id);
+    
+    // Get existing friendships
+    const existingFriendships = userIds.length > 0 
+      ? await db.select({ friendId: friendships.friendId })
+          .from(friendships)
+          .where(and(
+            eq(friendships.userId, currentUserId),
+            inArray(friendships.friendId, userIds)
+          ))
+      : [];
+    const friendIds = new Set(existingFriendships.map(f => f.friendId));
+    
+    // Get pending requests (both sent and received)
+    const pendingRequests = userIds.length > 0
+      ? await db.select({ 
+          senderId: friendRequests.senderId, 
+          receiverId: friendRequests.receiverId 
+        })
+          .from(friendRequests)
+          .where(and(
+            eq(friendRequests.status, 'pending'),
+            or(
+              and(eq(friendRequests.senderId, currentUserId), inArray(friendRequests.receiverId, userIds)),
+              and(eq(friendRequests.receiverId, currentUserId), inArray(friendRequests.senderId, userIds))
+            )
+          ))
+      : [];
+    
+    const sentRequestIds = new Set(pendingRequests.filter(r => r.senderId === currentUserId).map(r => r.receiverId));
+    const receivedRequestIds = new Set(pendingRequests.filter(r => r.receiverId === currentUserId).map(r => r.senderId));
+    
+    // Enrich users with connection status
+    const enrichedUsers = rawUsers.map(u => ({
+      ...u,
+      isFriend: friendIds.has(u.id),
+      hasSentRequest: sentRequestIds.has(u.id),
+      hasReceivedRequest: receivedRequestIds.has(u.id),
+    }));
+    
+    return { users: enrichedUsers, total };
   }
 
   async sendFriendRequest(data: any): Promise<any> {
