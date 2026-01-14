@@ -28,6 +28,7 @@ import { getTimezoneFromCity } from "@/lib/timezoneUtils";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
 import type { ClosenessVisibility } from "@shared/client-types";
 import { TANGO_ROLES, getBookableRoles } from "@/lib/tangoRoles";
+import { EventPhotoUploader, UploadedPhoto } from "@/components/events/EventPhotoUploader";
 
 const FORM_SECTION_IDS = [
   { id: "basics", labelKey: "formSections.basics", icon: Sparkles },
@@ -102,11 +103,8 @@ export default function EventCreationPage() {
     }
   }, []);
 
-  const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
-  const [coverPhotoPreview, setCoverPhotoPreview] = useState<string>("");
-  const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
-  const [additionalPhotoPreviews, setAdditionalPhotoPreviews] = useState<string[]>([]);
-  const [uploadingPhotos, setUploadingPhotos] = useState(false);
+  const [coverPhoto, setCoverPhoto] = useState<UploadedPhoto | null>(null);
+  const [galleryPhotos, setGalleryPhotos] = useState<UploadedPhoto[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -191,31 +189,16 @@ export default function EventCreationPage() {
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      setUploadingPhotos(true);
-      try {
-        const uploadedPhotos: any[] = [];
-        if (coverPhoto) {
-          const result = await uploadMediaFile(coverPhoto);
-          uploadedPhotos.push({ ...result, isCover: true });
-        }
-        for (const photo of additionalPhotos) {
-          const result = await uploadMediaFile(photo);
-          uploadedPhotos.push({ ...result, isCover: false });
-        }
-        
-        const formattedPrice = data.isFree ? null : `${getCurrencySymbol(data.currency)}${data.price}`;
-        
-        const response = await apiRequest("POST", "/api/events", {
-          ...data,
-          price: formattedPrice,
-          coverImageUrl: uploadedPhotos.find(p => p.isCover)?.url,
-          photos: uploadedPhotos.filter(p => !p.isCover),
-          proTeam: data.proTeam || [],
-        });
-        return response.json();
-      } finally {
-        setUploadingPhotos(false);
-      }
+      const formattedPrice = data.isFree ? null : `${getCurrencySymbol(data.currency)}${data.price}`;
+      
+      const response = await apiRequest("POST", "/api/events", {
+        ...data,
+        price: formattedPrice,
+        coverImageUrl: coverPhoto?.url || null,
+        photos: galleryPhotos.map(p => ({ url: p.url })),
+        proTeam: data.proTeam || [],
+      });
+      return response.json();
     },
     onSuccess: (event) => {
       toast({ title: t('pages:eventCreation.success', 'Event created successfully!') });
@@ -248,59 +231,6 @@ export default function EventCreationPage() {
     const cityName = parsed?.city || location;
     const tz = getTimezoneFromCity(cityName);
     setTimezone(tz);
-  };
-
-  const handleCoverPhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    const validation = validateMediaFile(file, 10);
-    if (!validation.valid) {
-      toast({ title: validation.error || t('pages:eventCreation.invalidFile', 'Invalid file'), variant: "destructive" });
-      return;
-    }
-
-    setCoverPhoto(file);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCoverPhotoPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleAdditionalPhotosSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (additionalPhotos.length + files.length > 6) {
-      toast({ 
-        title: t('pages:eventCreation.tooManyPhotos', 'Too many photos'), 
-        description: t('pages:eventCreation.maxPhotos', 'Maximum 6 additional photos allowed'),
-        variant: "destructive" 
-      });
-      return;
-    }
-
-    const validFiles = files.filter(file => {
-      const validation = validateMediaFile(file, 10);
-      if (!validation.valid) {
-        toast({ title: validation.error || t('pages:eventCreation.invalidFile', 'Invalid file'), variant: "destructive" });
-        return false;
-      }
-      return true;
-    });
-
-    setAdditionalPhotos([...additionalPhotos, ...validFiles]);
-    validFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setAdditionalPhotoPreviews(prev => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const removeAdditionalPhoto = (index: number) => {
-    setAdditionalPhotos(prev => prev.filter((_, i) => i !== index));
-    setAdditionalPhotoPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = () => {
