@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -32,8 +32,8 @@ import { EventPhotoUploader, UploadedPhoto } from "@/components/events/EventPhot
 
 const FORM_SECTION_IDS = [
   { id: "basics", labelKey: "formSections.basics", icon: Sparkles },
-  { id: "datetime", labelKey: "formSections.dateTime", icon: CalendarIcon },
   { id: "location", labelKey: "formSections.location", icon: MapPin },
+  { id: "datetime", labelKey: "formSections.dateTime", icon: CalendarIcon },
   { id: "details", labelKey: "formSections.details", icon: Star },
   { id: "visibility", labelKey: "formSections.visibility", icon: Eye },
   { id: "photos", labelKey: "formSections.photos", icon: Camera },
@@ -44,12 +44,10 @@ export default function EventCreationPage() {
   const { t } = useTranslation(['pages', 'common']);
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
   const [startTime, setStartTime] = useState("20:00");
   const [endTime, setEndTime] = useState("23:00");
   const [timezone, setTimezone] = useState("UTC");
-  const [userPrimaryLocation, setUserPrimaryLocation] = useState("");
   const [activeSection, setActiveSection] = useState("basics");
 
   const { data: currentUser } = useQuery({
@@ -374,6 +372,50 @@ export default function EventCreationPage() {
             </CardContent>
           </Card>
 
+          <Card id="location" className="border-border/50 bg-card/80 backdrop-blur-sm relative z-[50]">
+            <CardContent className="p-4">
+              <SectionHeader icon={MapPin} title={t('pages:eventCreation.location', 'Location')} />
+              
+              <div className="grid md:grid-cols-2 gap-4 relative z-[60]">
+                <div className="space-y-2">
+                  <Label className="text-xs">{t('pages:eventCreation.cityRegion', 'City / Region')} *</Label>
+                  <UnifiedLocationPicker
+                    value={formData.location}
+                    coordinates={formData.coordinates}
+                    onChange={handleLocationChange}
+                    mode="city"
+                    placeholder={t('pages:eventCreation.cityPlaceholder', 'e.g., Buenos Aires')}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs">{t('pages:eventCreation.venueName', 'Venue Name')}</Label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
+                    <Input
+                      placeholder={t('pages:eventCreation.venuePlaceholder', 'e.g., La Confiteria Ideal')}
+                      value={formData.venue}
+                      onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+                      className="pl-9 h-10 bg-background/50"
+                      data-testid="input-venue"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-4 space-y-2 relative z-[40]">
+                <Label className="text-xs">{t('pages:eventCreation.streetAddress', 'Street Address')}</Label>
+                <UnifiedLocationPicker
+                  value={formData.address}
+                  onChange={(address) => setFormData({ ...formData, address })}
+                  mode="address"
+                  placeholder={t('pages:eventCreation.addressPlaceholder', 'Search for the venue address')}
+                  userCity={formData.city}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           <Card id="datetime" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
             <CardContent className="p-4">
               <SectionHeader icon={CalendarIcon} title={t('pages:eventCreation.dateTime', 'Date & Time')} />
@@ -443,8 +485,8 @@ export default function EventCreationPage() {
               <div className="mt-4 space-y-2">
                 <div className="flex items-center gap-2">
                   <Label className="text-xs">{t('pages:eventCreation.timezone', 'Timezone')}</Label>
-                  {userPrimaryLocation && (
-                    <span className="text-xs text-muted-foreground">({t('pages:eventCreation.inferredFrom', 'From')}: {userPrimaryLocation})</span>
+                  {formData.city && (
+                    <span className="text-xs text-muted-foreground">({t('pages:eventCreation.inferredFrom', 'From')}: {formData.city})</span>
                   )}
                 </div>
                 <Select value={timezone} onValueChange={setTimezone}>
@@ -473,50 +515,6 @@ export default function EventCreationPage() {
                     <SelectItem value="UTC">UTC</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card id="location" className="border-border/50 bg-card/80 backdrop-blur-sm relative z-[50]">
-            <CardContent className="p-4">
-              <SectionHeader icon={MapPin} title={t('pages:eventCreation.location', 'Location')} />
-              
-              <div className="grid md:grid-cols-2 gap-4 relative z-[60]">
-                <div className="space-y-2">
-                  <Label className="text-xs">{t('pages:eventCreation.cityRegion', 'City / Region')} *</Label>
-                  <UnifiedLocationPicker
-                    value={formData.location}
-                    coordinates={formData.coordinates}
-                    onChange={handleLocationChange}
-                    mode="city"
-                    placeholder={t('pages:eventCreation.cityPlaceholder', 'e.g., Buenos Aires')}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-xs">{t('pages:eventCreation.venueName', 'Venue Name')}</Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
-                    <Input
-                      placeholder={t('pages:eventCreation.venuePlaceholder', 'e.g., La Confiteria Ideal')}
-                      value={formData.venue}
-                      onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-                      className="pl-9 h-10 bg-background/50"
-                      data-testid="input-venue"
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-4 space-y-2 relative z-[40]">
-                <Label className="text-xs">{t('pages:eventCreation.streetAddress', 'Street Address')}</Label>
-                <UnifiedLocationPicker
-                  value={formData.address}
-                  onChange={(address) => setFormData({ ...formData, address })}
-                  mode="address"
-                  placeholder={t('pages:eventCreation.addressPlaceholder', 'Search for the venue address')}
-                  userCity={formData.city}
-                />
               </div>
             </CardContent>
           </Card>
@@ -659,79 +657,13 @@ export default function EventCreationPage() {
           <Card id="photos" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
             <CardContent className="p-4">
               <SectionHeader icon={Camera} title={t('pages:eventCreation.photos', 'Photos')} />
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-xs">{t('pages:eventCreation.coverPhoto', 'Cover Photo')}</Label>
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className={`relative border-2 border-dashed rounded-xl overflow-hidden cursor-pointer hover-elevate transition-all h-32 ${
-                      coverPhotoPreview ? 'border-primary/50' : 'border-border hover:border-primary/50'
-                    }`}
-                    data-testid="button-upload-cover"
-                  >
-                    {coverPhotoPreview ? (
-                      <div className="relative h-full">
-                        <img src={coverPhotoPreview} alt="Cover" className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2">
-                          <Badge variant="secondary" className="gap-1 text-xs">
-                            <Camera className="h-3 w-3" />
-                            {t('pages:eventCreation.changePhoto', 'Change')}
-                          </Badge>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="p-4 text-center flex flex-col items-center justify-center h-full">
-                        <Upload className="h-6 w-6 text-primary mb-2" />
-                        <p className="text-xs font-medium">{t('pages:eventCreation.uploadCover', 'Upload cover')}</p>
-                        <p className="text-xs text-muted-foreground">{t('pages:eventCreation.photoFormat', 'PNG, JPG up to 10MB')}</p>
-                      </div>
-                    )}
-                  </div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleCoverPhotoSelect}
-                    className="hidden"
-                    data-testid="input-cover-photo"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-xs">{t('pages:eventCreation.additionalPhotos', 'Gallery')} ({additionalPhotos.length}/6)</Label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {additionalPhotoPreviews.map((preview, index) => (
-                      <div key={index} className="relative group rounded-lg overflow-hidden h-[calc(4rem-4px)]">
-                        <img src={preview} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
-                        <button
-                          onClick={() => removeAdditionalPhoto(index)}
-                          className="absolute top-1 right-1 bg-destructive/80 rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                          data-testid={`button-remove-photo-${index}`}
-                        >
-                          <X className="h-3 w-3 text-white" />
-                        </button>
-                      </div>
-                    ))}
-                    {additionalPhotos.length < 6 && (
-                      <label
-                        className="border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover-elevate hover:border-primary/50 h-[calc(4rem-4px)]"
-                        data-testid="button-upload-additional"
-                      >
-                        <Plus className="h-4 w-4 text-muted-foreground" />
-                        <input
-                          type="file"
-                          multiple
-                          accept="image/*"
-                          onChange={handleAdditionalPhotosSelect}
-                          className="hidden"
-                          data-testid="input-additional-photos"
-                        />
-                      </label>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <EventPhotoUploader
+                coverPhoto={coverPhoto}
+                galleryPhotos={galleryPhotos}
+                onCoverPhotoChange={setCoverPhoto}
+                onGalleryPhotosChange={setGalleryPhotos}
+                maxGalleryPhotos={6}
+              />
             </CardContent>
           </Card>
 
