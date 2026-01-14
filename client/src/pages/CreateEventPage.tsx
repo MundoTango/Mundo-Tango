@@ -277,20 +277,35 @@ export default function CreateEventPage() {
     }
   };
 
+  const getOrdinalSuffix = (num: number): string => {
+    const suffixes: Record<string, string> = {
+      '1': t('common:ordinal.st', 'st'),
+      '2': t('common:ordinal.nd', 'nd'),
+      '3': t('common:ordinal.rd', 'rd'),
+    };
+    if (num >= 11 && num <= 13) {
+      return t('common:ordinal.th', 'th');
+    }
+    const lastDigit = String(num % 10);
+    return suffixes[lastDigit] || t('common:ordinal.th', 'th');
+  };
+
   const getRecurrenceLabel = (): string => {
     if (!recurrenceType) return "";
     const day = form.watch("recurrenceDay");
     
     if (recurrenceType === "weekly") {
-      const dayName = DAYS_OF_WEEK.find(d => d.value === String(day))?.label || "";
-      return `Every ${dayName}`;
+      const dayKey = DAYS_OF_WEEK_KEYS.find(d => d.value === String(day))?.key || "sunday";
+      const dayName = t(`common:days.${dayKey}`, dayKey.charAt(0).toUpperCase() + dayKey.slice(1));
+      return t('pages:createEvent.everyDay', 'Every {{day}}', { day: dayName });
     } else if (recurrenceType === "monthly") {
-      const suffix = day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th";
-      return `Every ${day}${suffix} day of the month`;
+      const suffix = getOrdinalSuffix(day as number);
+      return t('pages:createEvent.everyDayOfMonth', 'Every {{day}}{{suffix}} day of the month', { day, suffix });
     } else if (recurrenceType === "yearly") {
-      const monthName = MONTHS.find(m => m.value === String(day))?.label || "";
+      const monthKey = MONTHS_KEYS.find(m => m.value === String(day))?.key || "january";
+      const monthName = t(`common:months.${monthKey}`, monthKey.charAt(0).toUpperCase() + monthKey.slice(1));
       const dateDay = startDate ? getDayOfMonthFromDate(startDate) : 1;
-      return `Every ${monthName} ${dateDay}`;
+      return t('pages:createEvent.everyMonthDay', 'Every {{month}} {{day}}', { month: monthName, day: dateDay });
     }
     return "";
   };
@@ -606,7 +621,7 @@ export default function CreateEventPage() {
                                   <SelectContent>
                                     {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                                       <SelectItem key={day} value={String(day)}>
-                                        {day}{day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th"}
+                                        {day}{getOrdinalSuffix(day)}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
