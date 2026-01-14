@@ -778,11 +778,11 @@ export default function EventCreationPage() {
             <Button
               type="button"
               onClick={handleSubmit}
-              disabled={createMutation.isPending || uploadingPhotos}
+              disabled={createMutation.isPending}
               className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               data-testid="button-publish"
             >
-              {createMutation.isPending || uploadingPhotos ? t('pages:eventCreation.publishing', 'Publishing...') : t('pages:eventCreation.publish', 'Publish Event')}
+              {createMutation.isPending ? t('pages:eventCreation.publishing', 'Publishing...') : t('pages:eventCreation.publish', 'Publish Event')}
               <Sparkles className="h-4 w-4" />
             </Button>
           </div>
