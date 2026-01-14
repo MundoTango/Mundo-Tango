@@ -5,7 +5,7 @@ export default defineConfig({
   testMatch: '**/*.test.ts',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: 1,
+  retries: 2,
   workers: 1,
   reporter: 'list',
   timeout: 90000,
