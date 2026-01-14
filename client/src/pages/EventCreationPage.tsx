@@ -859,7 +859,7 @@ export default function EventCreationPage() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-between gap-4 p-4 rounded-xl bg-card/80 backdrop-blur-sm border border-border/50 sticky bottom-4">
+          <div className="flex justify-between gap-4 p-4 rounded-xl bg-card/80 backdrop-blur-sm border border-border/50 sticky bottom-4 z-40">
             <Button
               type="button"
               variant="outline"
