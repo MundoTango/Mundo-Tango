@@ -117,7 +117,6 @@ export default function EventCreationPage() {
     setSearchingPros(true);
     try {
       const params = new URLSearchParams({ role: selectedProRole });
-      if (formData.city) params.append('city', formData.city);
       if (proSearchQuery) params.append('q', proSearchQuery);
       
       const response = await apiRequest("GET", `/api/events/search-pros-by-role?${params.toString()}`);
@@ -136,7 +135,7 @@ export default function EventCreationPage() {
     } else {
       setProSearchResults([]);
     }
-  }, [selectedProRole, proSearchQuery, formData.city]);
+  }, [selectedProRole, proSearchQuery]);
 
   const addProToTeam = (user: any) => {
     if (proTeam.find(p => p.id === user.id && p.role === selectedProRole)) {
