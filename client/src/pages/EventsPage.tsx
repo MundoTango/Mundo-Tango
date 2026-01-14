@@ -364,6 +364,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
 type EventTab = "my-events" | "upcoming" | "past" | "discover";
 
 export default function EventsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
   const isSuperAdmin = user?.role === 'superAdmin' || user?.role === 'super_admin';
   const isPro = user?.role === 'pro';
