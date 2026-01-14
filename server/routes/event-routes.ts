@@ -1324,11 +1324,22 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     }
 
     res.status(201).json(event);
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
       console.error("[Events] Validation error:", error.errors);
       return res.status(400).json({ message: "Validation error", errors: error.errors });
     }
+    
+    // Handle duplicate key constraint (PostgreSQL error code 23505)
+    if (error?.cause?.code === '23505' || error?.code === '23505' || 
+        String(error).includes('duplicate key') || String(error).includes('idx_events_unique_title_city_date')) {
+      console.log("[Events] Duplicate event detected:", error?.cause?.detail || error?.detail);
+      return res.status(409).json({ 
+        message: "An event with this title already exists in this city on this date. Please choose a different title or date.",
+        code: "DUPLICATE_EVENT"
+      });
+    }
+    
     console.error("[Events] Error creating event:", error);
     res.status(500).json({ message: "Failed to create event", error: String(error).substring(0, 200) });
   }

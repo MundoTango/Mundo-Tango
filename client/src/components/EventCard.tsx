@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Clock, Users, Music, ExternalLink, AlertCircle } from "lucide-react";
+import { MapPin, Calendar, Clock, Users, Music, ExternalLink, AlertCircle, Globe, Heart, User, UserCheck } from "lucide-react";
 import { Link } from "wouter";
 import { SelectEvent } from "@shared/client-types";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -17,6 +17,19 @@ interface EventCardProps {
 export function EventCard({ event, userRSVPStatus }: EventCardProps) {
   const { t } = useTranslation('events');
   
+  // Visibility badge helper - only show for non-public events
+  const getVisibilityBadge = (closeness: string | null | undefined) => {
+    if (!closeness || closeness === 'all') return null; // Don't show badge for public events
+    
+    const badges: Record<string, { label: string; icon: typeof Globe; className: string }> = {
+      close_friend: { label: "Close Friends", icon: Heart, className: "bg-pink-100 dark:bg-pink-900 border-pink-300 dark:border-pink-700 text-pink-800 dark:text-pink-200" },
+      friends_1st: { label: "Friends", icon: User, className: "bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-200" },
+      friends_2nd: { label: "Friends of Friends", icon: Users, className: "bg-indigo-100 dark:bg-indigo-900 border-indigo-300 dark:border-indigo-700 text-indigo-800 dark:text-indigo-200" },
+      friends_3rd: { label: "Extended Network", icon: UserCheck, className: "bg-purple-100 dark:bg-purple-900 border-purple-300 dark:border-purple-700 text-purple-800 dark:text-purple-200" },
+    };
+    return badges[closeness] || null;
+  };
+
   const getEventTypeBadge = (type: string) => {
     const badges: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
       milonga: { label: "Milonga", variant: "default" },
@@ -38,6 +51,7 @@ export function EventCard({ event, userRSVPStatus }: EventCardProps) {
   };
   
   const badge = getEventTypeBadge(event.eventType || 'event');
+  const visibilityBadge = getVisibilityBadge((event as any).attendeeCloseness);
   
   return (
     <Card className="hover-elevate" data-testid={`card-event-${event.id}`}>
@@ -56,6 +70,16 @@ export function EventCard({ event, userRSVPStatus }: EventCardProps) {
             <Badge variant={badge.variant} data-testid={`badge-event-type-${event.id}`}>
               {badge.label}
             </Badge>
+            {visibilityBadge && (
+              <Badge 
+                variant="outline" 
+                className={`${visibilityBadge.className} text-xs`}
+                data-testid={`badge-visibility-${event.id}`}
+              >
+                <visibilityBadge.icon className="h-3 w-3 mr-1" />
+                {visibilityBadge.label}
+              </Badge>
+            )}
             {event.isPlaceholder && (
               <Badge 
                 variant="outline" 

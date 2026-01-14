@@ -189,9 +189,19 @@ export default function EventCreationPage() {
       toast({ title: t('pages:eventCreation.success', 'Event created successfully!') });
       navigate(`/events/${event.id}`);
     },
-    onError: (error: any) => {
+    onError: async (error: any) => {
       console.error('Event creation error:', error);
-      toast({ title: t('pages:eventCreation.error', 'Failed to create event'), variant: "destructive" });
+      
+      // Try to extract meaningful error message from API response
+      let errorMessage = t('pages:eventCreation.error', 'Failed to create event');
+      try {
+        const errorText = error?.message || String(error);
+        if (errorText.includes('already exists') || errorText.includes('DUPLICATE_EVENT') || errorText.includes('409')) {
+          errorMessage = t('pages:eventCreation.duplicateEvent', 'An event with this title already exists in this city on this date. Please choose a different title or date.');
+        }
+      } catch {}
+      
+      toast({ title: errorMessage, variant: "destructive" });
     },
   });
 
