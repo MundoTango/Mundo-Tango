@@ -24,6 +24,7 @@ import { eq, and, desc, sql } from "drizzle-orm";
 import { authenticateToken } from "../middleware/auth";
 import { randomBytes } from "crypto";
 import { notificationService } from "../services/notification-service";
+import { broadcastToUser, broadcastToEvent } from "../services/websocket";
 
 const router = Router();
 
@@ -234,23 +235,17 @@ router.post("/events/:id/participants", authenticateToken, async (req, res) => {
 
     // ========== DOWNSTREAM EFFECT 3: WebSocket real-time update ==========
     try {
-      // Emit to all users watching this event
-      const eventUpdateMessage = {
-        type: "participant_added",
-        eventId: eventId,
-        participant: {
-          id: newParticipant.id,
-          userId: newParticipant.userId,
-          userName: addedUser?.name,
-          role: newParticipant.role,
-          status: newParticipant.status
-        },
-        timestamp: new Date().toISOString()
+      const participantData = {
+        id: newParticipant.id,
+        userId: newParticipant.userId,
+        userName: addedUser?.name,
+        role: newParticipant.role,
+        status: newParticipant.status
       };
       
-      // TODO: Broadcast via WebSocket/Socket.io to event viewers
-      // io.to(`event-${eventId}`).emit('participant_added', eventUpdateMessage);
-      console.log("[WebSocket] Participant added event:", eventUpdateMessage);
+      broadcastToUser(newParticipant.userId, 'participant_added', { eventId, participant: participantData });
+      broadcastToEvent(eventId, 'participant_added', { participant: participantData });
+      console.log("[WebSocket] Participant added broadcast sent to user and event subscribers");
     } catch (error) {
       console.error("[WebSocket] Failed to broadcast participant update:", error);
     }
@@ -349,6 +344,22 @@ router.patch("/events/:id/participants/:targetUserId", authenticateToken, async 
       return res.status(404).json({ error: "Participant not found" });
     }
 
+    // WebSocket broadcast for participant update
+    try {
+      const participantData = {
+        id: updated.id,
+        userId: updated.userId,
+        role: updated.role,
+        status: updated.status
+      };
+      
+      broadcastToUser(targetUserId, 'participant_updated', { eventId, participant: participantData });
+      broadcastToEvent(eventId, 'participant_updated', { participant: participantData });
+      console.log("[WebSocket] Participant updated broadcast sent to user and event subscribers");
+    } catch (error) {
+      console.error("[WebSocket] Failed to broadcast participant update:", error);
+    }
+
     res.json({ participant: updated });
   } catch (error: any) {
     console.error("Error updating participant:", error);
@@ -429,6 +440,20 @@ router.delete("/events/:id/participants/:targetUserId", authenticateToken, async
           eq(eventParticipants.userId, targetUserId)
         )
       );
+
+    // WebSocket broadcast for participant removal
+    try {
+      const removalData = {
+        userId: targetUserId,
+        role: target[0].role
+      };
+      
+      broadcastToUser(targetUserId, 'participant_removed', { eventId, ...removalData });
+      broadcastToEvent(eventId, 'participant_removed', removalData);
+      console.log("[WebSocket] Participant removed broadcast sent to user and event subscribers");
+    } catch (error) {
+      console.error("[WebSocket] Failed to broadcast participant removal:", error);
+    }
 
     res.json({ message: "Participant removed successfully" });
   } catch (error: any) {

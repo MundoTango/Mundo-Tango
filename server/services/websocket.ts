@@ -15,10 +15,12 @@ interface ConnectedClient {
   userId: number;
   ws: WebSocket;
   lastPing: number;
+  subscribedEvents: Set<number>;
 }
 
 class WebSocketService {
   private clients: Map<number, ConnectedClient[]> = new Map();
+  private eventSubscribers: Map<number, Set<number>> = new Map(); // eventId -> Set of userIds
   private wss: WebSocketServer | null = null;
 
   /**
@@ -43,6 +45,12 @@ class WebSocketService {
           if (message.type === "ping") {
             this.updatePing(userId, ws);
             ws.send(JSON.stringify({ type: "pong" }));
+          } else if (message.type === "subscribe_event" && message.eventId) {
+            this.subscribeToEvent(userId, message.eventId, ws);
+            ws.send(JSON.stringify({ type: "subscribed", eventId: message.eventId }));
+          } else if (message.type === "unsubscribe_event" && message.eventId) {
+            this.unsubscribeFromEvent(userId, message.eventId, ws);
+            ws.send(JSON.stringify({ type: "unsubscribed", eventId: message.eventId }));
           }
         } catch (error) {
           console.error("[WS Autonomous] Error parsing message:", error);
@@ -82,10 +90,66 @@ class WebSocketService {
       userId,
       ws,
       lastPing: Date.now(),
+      subscribedEvents: new Set(),
     });
   }
 
+  private subscribeToEvent(userId: number, eventId: number, ws?: WebSocket) {
+    if (!this.eventSubscribers.has(eventId)) {
+      this.eventSubscribers.set(eventId, new Set());
+    }
+    this.eventSubscribers.get(eventId)!.add(userId);
+    
+    const userClients = this.clients.get(userId);
+    if (userClients && ws) {
+      const client = userClients.find(c => c.ws === ws);
+      if (client) {
+        client.subscribedEvents.add(eventId);
+      }
+    }
+    
+    console.log(`[WS] User ${userId} subscribed to event ${eventId}`);
+  }
+
+  private unsubscribeFromEvent(userId: number, eventId: number, ws?: WebSocket) {
+    const userClients = this.clients.get(userId);
+    
+    if (userClients && ws) {
+      const client = userClients.find(c => c.ws === ws);
+      if (client) {
+        client.subscribedEvents.delete(eventId);
+      }
+    }
+    
+    const userStillSubscribed = userClients?.some(c => c.subscribedEvents.has(eventId)) ?? false;
+    
+    if (!userStillSubscribed) {
+      const subscribers = this.eventSubscribers.get(eventId);
+      if (subscribers) {
+        subscribers.delete(userId);
+        if (subscribers.size === 0) {
+          this.eventSubscribers.delete(eventId);
+        }
+      }
+    }
+    
+    console.log(`[WS] User ${userId} unsubscribed from event ${eventId}`);
+  }
+
+  private unsubscribeClientFromAllEvents(userId: number, ws: WebSocket) {
+    const userClients = this.clients.get(userId);
+    const client = userClients?.find(c => c.ws === ws);
+    
+    if (client) {
+      for (const eventId of client.subscribedEvents) {
+        this.unsubscribeFromEvent(userId, eventId, ws);
+      }
+    }
+  }
+
   private removeClient(userId: number, ws: WebSocket) {
+    this.unsubscribeClientFromAllEvents(userId, ws);
+    
     const userClients = this.clients.get(userId);
     if (userClients) {
       const filtered = userClients.filter(c => c.ws !== ws);
@@ -170,8 +234,44 @@ class WebSocketService {
   getOnlineUserCount(): number {
     return this.clients.size;
   }
+
+  /**
+   * Broadcast event to all users subscribed to a specific event
+   */
+  broadcastToEvent(eventId: number, event: string, data: any) {
+    const subscribers = this.eventSubscribers.get(eventId);
+    
+    if (!subscribers || subscribers.size === 0) {
+      console.log(`[WS] No subscribers for event ${eventId}`);
+      return 0;
+    }
+
+    const message = JSON.stringify({
+      type: event,
+      data: { ...data, eventId },
+      timestamp: new Date().toISOString()
+    });
+
+    let totalSent = 0;
+    for (const userId of subscribers) {
+      const userClients = this.clients.get(userId);
+      if (userClients) {
+        for (const client of userClients) {
+          if (client.ws.readyState === WebSocket.OPEN) {
+            client.ws.send(message);
+            totalSent++;
+          }
+        }
+      }
+    }
+
+    console.log(`[WS] Broadcast ${event} to ${totalSent} client(s) for event ${eventId}`);
+    return totalSent;
+  }
 }
 
 export const wsService = new WebSocketService();
 export const broadcastToUser = (userId: number, event: string, data: any) => 
   wsService.broadcastToUser(userId, event, data);
+export const broadcastToEvent = (eventId: number, event: string, data: any) =>
+  wsService.broadcastToEvent(eventId, event, data);
