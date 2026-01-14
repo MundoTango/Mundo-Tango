@@ -21,10 +21,6 @@ import { supabase } from "@/lib/supabase";
 import type { RSVP, EventWithProfile } from "@shared/supabase-types";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
-import { enUS } from 'date-fns/locale';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -41,15 +37,6 @@ import { optimizeCover } from "@/lib/imageOptimizer";
 import { getCityCoordinates, getCityCoordinatesWithOffset, hasCityCoordinates, BUENOS_AIRES_DEFAULT } from "@/lib/cityCoordinates";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
-const locales = { 'en-US': enUS };
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
 
 const CATEGORIES = ["All", "Milonga", "Practica", "Class", "Workshop", "Festival", "Marathon", "Encuentro", "Performance", "Social", "Online"];
 
@@ -535,22 +522,6 @@ export default function EventsPage() {
       });
     }
   });
-
-  // Convert events to calendar format
-  const calendarEvents = useMemo(() => {
-    if (!events) return [];
-    return events.map((event: any) => {
-      const eventData = event.event || event;
-      const eventDate = getEventDate(event);
-      return {
-        id: eventData.id,
-        title: eventData.title,
-        start: eventDate,
-        end: new Date(eventDate.getTime() + 2 * 60 * 60 * 1000),
-        resource: eventData,
-      };
-    });
-  }, [events]);
 
   // Use real event coordinates when available, fallback to centralized city coordinates
   const eventsWithCoordinates = useMemo(() => {
