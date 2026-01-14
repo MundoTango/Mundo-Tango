@@ -1143,6 +1143,15 @@
     "title": "Create Event",
     "subtitle": "Fill in the details below to create your event",
     "progress": "Progress",
+    "formSections": {
+      "basics": "Event Basics",
+      "dateTime": "Date & Time",
+      "location": "Location",
+      "details": "Details",
+      "visibility": "Visibility",
+      "photos": "Photos",
+      "proTeam": "Pro Team"
+    },
     "eventBasics": "Event Basics",
     "eventTitle": "Event Title",
     "titlePlaceholder": "e.g., Friday Milonga at La Confiteria",

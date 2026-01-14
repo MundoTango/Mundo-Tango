@@ -29,14 +29,14 @@ import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosen
 import type { ClosenessVisibility } from "@shared/client-types";
 import { TANGO_ROLES, getBookableRoles } from "@/lib/tangoRoles";
 
-const FORM_SECTIONS = [
-  { id: "basics", label: "Event Basics", icon: Sparkles },
-  { id: "datetime", label: "Date & Time", icon: CalendarIcon },
-  { id: "location", label: "Location", icon: MapPin },
-  { id: "details", label: "Details", icon: Star },
-  { id: "visibility", label: "Visibility", icon: Eye },
-  { id: "photos", label: "Photos", icon: Camera },
-  { id: "team", label: "Pro Team", icon: UserPlus },
+const FORM_SECTION_IDS = [
+  { id: "basics", labelKey: "formSections.basics", icon: Sparkles },
+  { id: "datetime", labelKey: "formSections.dateTime", icon: CalendarIcon },
+  { id: "location", labelKey: "formSections.location", icon: MapPin },
+  { id: "details", labelKey: "formSections.details", icon: Star },
+  { id: "visibility", labelKey: "formSections.visibility", icon: Eye },
+  { id: "photos", labelKey: "formSections.photos", icon: Camera },
+  { id: "team", labelKey: "formSections.proTeam", icon: UserPlus },
 ];
 
 export default function EventCreationPage() {
@@ -322,7 +322,7 @@ export default function EventCreationPage() {
             </div>
             <Progress value={calculateProgress()} className="h-2" />
             <div className="flex flex-wrap gap-2 mt-4">
-              {FORM_SECTIONS.map((section) => {
+              {FORM_SECTION_IDS.map((section) => {
                 const Icon = section.icon;
                 const isComplete = section.id === "basics" ? !!formData.title : 
                                    section.id === "datetime" ? !!dateRange.from :
@@ -332,11 +332,11 @@ export default function EventCreationPage() {
                   <Badge 
                     key={section.id}
                     variant={isComplete ? "default" : "outline"}
-                    className={`gap-1 cursor-pointer transition-all ${isComplete ? 'bg-primary/90' : 'hover:bg-primary/10'}`}
+                    className={`gap-1 cursor-pointer ${isComplete ? 'bg-primary/90' : ''}`}
                     onClick={() => document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth' })}
                   >
                     {isComplete ? <CheckCircle2 className="h-3 w-3" /> : <Icon className="h-3 w-3" />}
-                    {section.label}
+                    {t(`pages:eventCreation.${section.labelKey}`)}
                   </Badge>
                 );
               })}
