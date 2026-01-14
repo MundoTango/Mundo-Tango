@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages, Clock, ExternalLink } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages, Clock, ExternalLink, Heart, User, UserCheck, Globe } from "lucide-react";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
@@ -188,6 +188,21 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
     const tz = getTimezoneFromCity(eventData.city);
     return safeDateFormat(dateString, "h:mm a", "Time TBD", tz);
   };
+
+  // Visibility badge helper - only show for non-public events
+  const getVisibilityBadge = (closeness: string | null | undefined) => {
+    if (!closeness || closeness === 'all') return null; // Don't show badge for public events
+    
+    const badges: Record<string, { label: string; icon: typeof Globe; className: string }> = {
+      close_friend: { label: "Close Friends", icon: Heart, className: "bg-pink-500/90 text-white border-pink-400 backdrop-blur-sm" },
+      friends_1st: { label: "Friends", icon: User, className: "bg-blue-500/90 text-white border-blue-400 backdrop-blur-sm" },
+      friends_2nd: { label: "Friends of Friends", icon: Users, className: "bg-indigo-500/90 text-white border-indigo-400 backdrop-blur-sm" },
+      friends_3rd: { label: "Extended Network", icon: UserCheck, className: "bg-purple-500/90 text-white border-purple-400 backdrop-blur-sm" },
+    };
+    return badges[closeness] || null;
+  };
+
+  const visibilityBadge = getVisibilityBadge(eventData.attendeeCloseness);
   
   // Determine image URL with city imagery fallback (MB.MD v9.8 auto-fix pattern)
   const rawImageUrl = eventData.imageUrl || eventData.image_url;
@@ -229,10 +244,20 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-          <div className="absolute top-4 right-4 flex gap-2">
+          <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
             {eventData.category && (
               <Badge className="bg-white/10 text-white border-white/30 backdrop-blur-sm" data-testid={`badge-category-${eventData.id}`}>
                 {eventData.category}
+              </Badge>
+            )}
+            {visibilityBadge && (
+              <Badge 
+                variant="outline" 
+                className={`${visibilityBadge.className} text-xs`}
+                data-testid={`badge-visibility-${eventData.id}`}
+              >
+                <visibilityBadge.icon className="h-3 w-3 mr-1" />
+                {visibilityBadge.label}
               </Badge>
             )}
             {isFull && (
