@@ -11,8 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, Music, Clock, Sparkles, X, Upload, UserPlus, Search } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, Music, Clock, Sparkles, X, Upload, UserPlus, Search, CheckCircle2, Camera, Star, Eye } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +29,16 @@ import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosen
 import type { ClosenessVisibility } from "@shared/client-types";
 import { TANGO_ROLES, getBookableRoles } from "@/lib/tangoRoles";
 
+const FORM_SECTIONS = [
+  { id: "basics", label: "Event Basics", icon: Sparkles },
+  { id: "datetime", label: "Date & Time", icon: CalendarIcon },
+  { id: "location", label: "Location", icon: MapPin },
+  { id: "details", label: "Details", icon: Star },
+  { id: "visibility", label: "Visibility", icon: Eye },
+  { id: "photos", label: "Photos", icon: Camera },
+  { id: "team", label: "Pro Team", icon: UserPlus },
+];
+
 export default function EventCreationPage() {
   const { t } = useTranslation(['pages', 'common']);
   const [, navigate] = useLocation();
@@ -39,8 +49,8 @@ export default function EventCreationPage() {
   const [endTime, setEndTime] = useState("23:00");
   const [timezone, setTimezone] = useState("UTC");
   const [userPrimaryLocation, setUserPrimaryLocation] = useState("");
+  const [activeSection, setActiveSection] = useState("basics");
 
-  // Fetch current user profile
   const { data: currentUser } = useQuery({
     queryKey: ['/api/auth/me'],
     queryFn: async () => {
@@ -52,7 +62,6 @@ export default function EventCreationPage() {
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  // Initialize timezone from user's primary location
   useEffect(() => {
     if (currentUser?.city) {
       const inferredTz = getTimezoneFromCity(currentUser.city);
@@ -85,7 +94,6 @@ export default function EventCreationPage() {
     attendeeCloseness: "all" as ClosenessVisibility,
   });
 
-  // Pro Team state
   const [proTeam, setProTeam] = useState<Array<{ id: number; name: string; username: string; role: string; profileImage?: string }>>([]);
   const [proDialogOpen, setProDialogOpen] = useState(false);
   const [selectedProRole, setSelectedProRole] = useState("");
@@ -93,7 +101,15 @@ export default function EventCreationPage() {
   const [proSearchResults, setProSearchResults] = useState<any[]>([]);
   const [searchingPros, setSearchingPros] = useState(false);
 
-  // Search for professionals by role
+  const calculateProgress = () => {
+    let completed = 0;
+    if (formData.title) completed++;
+    if (formData.eventType) completed++;
+    if (dateRange.from) completed++;
+    if (formData.location) completed++;
+    return Math.round((completed / 4) * 100);
+  };
+
   const searchPros = async () => {
     if (!selectedProRole) return;
     setSearchingPros(true);
@@ -105,14 +121,13 @@ export default function EventCreationPage() {
       const response = await apiRequest("GET", `/api/events/search-pros-by-role?${params.toString()}`);
       setProSearchResults(response || []);
     } catch (error) {
-      toast({ title: "Failed to search. Please try again.", variant: "destructive" });
+      toast({ title: t('pages:eventCreation.searchFailed', 'Failed to search. Please try again.'), variant: "destructive" });
       setProSearchResults([]);
     } finally {
       setSearchingPros(false);
     }
   };
 
-  // Effect to search when role changes
   useEffect(() => {
     if (selectedProRole) {
       searchPros();
@@ -121,7 +136,7 @@ export default function EventCreationPage() {
 
   const addProToTeam = (user: any) => {
     if (proTeam.find(p => p.id === user.id && p.role === selectedProRole)) {
-      toast({ title: "This person is already added for this role", variant: "destructive" });
+      toast({ title: t('pages:eventCreation.alreadyAdded', 'This person is already added for this role'), variant: "destructive" });
       return;
     }
     setProTeam([...proTeam, { 
@@ -155,7 +170,6 @@ export default function EventCreationPage() {
           uploadedPhotos.push({ ...result, isCover: false });
         }
         
-        // Format price with currency symbol for storage
         const formattedPrice = data.isFree ? null : `${getCurrencySymbol(data.currency)}${data.price}`;
         
         return apiRequest("POST", "/api/events", {
@@ -170,12 +184,12 @@ export default function EventCreationPage() {
       }
     },
     onSuccess: (event) => {
-      toast({ title: "Event created successfully!" });
+      toast({ title: t('pages:eventCreation.success', 'Event created successfully!') });
       navigate(`/events/${event.id}`);
     },
     onError: (error: any) => {
       console.error('Event creation error:', error);
-      toast({ title: "Failed to create event", variant: "destructive" });
+      toast({ title: t('pages:eventCreation.error', 'Failed to create event'), variant: "destructive" });
     },
   });
 
@@ -198,7 +212,7 @@ export default function EventCreationPage() {
     
     const validation = validateMediaFile(file, 10);
     if (!validation.valid) {
-      toast({ title: validation.error || "Invalid file", variant: "destructive" });
+      toast({ title: validation.error || t('pages:eventCreation.invalidFile', 'Invalid file'), variant: "destructive" });
       return;
     }
 
@@ -214,8 +228,8 @@ export default function EventCreationPage() {
     const files = Array.from(e.target.files || []);
     if (additionalPhotos.length + files.length > 6) {
       toast({ 
-        title: "Too many photos", 
-        description: "Maximum 6 additional photos allowed",
+        title: t('pages:eventCreation.tooManyPhotos', 'Too many photos'), 
+        description: t('pages:eventCreation.maxPhotos', 'Maximum 6 additional photos allowed'),
         variant: "destructive" 
       });
       return;
@@ -224,7 +238,7 @@ export default function EventCreationPage() {
     const validFiles = files.filter(file => {
       const validation = validateMediaFile(file, 10);
       if (!validation.valid) {
-        toast({ title: validation.error || "Invalid file", variant: "destructive" });
+        toast({ title: validation.error || t('pages:eventCreation.invalidFile', 'Invalid file'), variant: "destructive" });
         return false;
       }
       return true;
@@ -247,28 +261,16 @@ export default function EventCreationPage() {
 
   const handleSubmit = () => {
     if (!formData.title || !dateRange.from || !formData.location) {
-      toast({ title: "Please fill in all required fields", variant: "destructive" });
+      toast({ title: t('pages:eventCreation.requiredFields', 'Please fill in all required fields'), variant: "destructive" });
       return;
     }
 
-    // Ensure description has a value (required by database)
     const description = formData.description?.trim() || `${formData.eventType} event`;
-
     const { city, country } = extractCityCountry(formData.location);
-
-    console.log("[EventCreation] Submitting:", {
-      title: formData.title,
-      descriptionLength: description.length,
-      location: formData.location,
-      city,
-      country,
-      hasPhotos: additionalPhotos.length > 0,
-      hasCover: !!coverPhoto
-    });
 
     createMutation.mutate({
       ...formData,
-      description, // Override with generated description if empty
+      description,
       city,
       country,
       startDate: dateRange.from.toISOString(),
@@ -285,434 +287,506 @@ export default function EventCreationPage() {
     });
   };
 
+  const SectionHeader = ({ icon: Icon, title, description }: { icon: any; title: string; description?: string }) => (
+    <div className="flex items-center gap-3 mb-6">
+      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+        <Icon className="h-5 w-5 text-primary" />
+      </div>
+      <div>
+        <h3 className="text-lg font-semibold">{title}</h3>
+        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto max-w-3xl p-4 py-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-3xl" data-testid="heading-create-event">
-              {t('pages:eventCreation.title', 'Create Event')}
-            </CardTitle>
-            <CardDescription>
-              {t('pages:eventCreation.subtitle', 'Fill in the details below to create your event')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-8">
-            {/* Event Basics */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">{t('pages:eventCreation.eventBasics', 'Event Basics')}</h3>
-              
-              <div className="space-y-2">
-                <Label htmlFor="title">{t('pages:eventCreation.eventTitle', 'Event Title')} *</Label>
-                <Input
-                  id="title"
-                  placeholder="e.g., Friday Milonga at La Confiteria"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="text-lg h-12"
-                  data-testid="input-title"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>{t('pages:eventCreation.eventType', 'Event Type')} *</Label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {EVENT_TYPES.map((type) => (
-                    <button
-                      key={type.value}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, eventType: type.value })}
-                      className={`p-3 rounded-xl border-2 transition-all hover-elevate text-sm ${
-                        formData.eventType === type.value
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/50'
-                      }`}
-                      data-testid={`button-type-${type.value}`}
-                    >
-                      <div className="text-xl mb-1">{type.icon}</div>
-                      <div className="font-medium text-xs">{type.label}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">{t('pages:eventCreation.description', 'Description')}</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe your event, what attendees can expect..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={4}
-                  data-testid="input-description"
-                />
-              </div>
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
+      <div className="container mx-auto max-w-4xl p-4 py-8">
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/events/calendar")} data-testid="button-back">
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent" data-testid="heading-create-event">
+                {t('pages:eventCreation.title', 'Create Event')}
+              </h1>
+              <p className="text-muted-foreground">{t('pages:eventCreation.subtitle', 'Fill in the details below to create your event')}</p>
             </div>
-
-            <Separator />
-
-            {/* Date & Time */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">{t('pages:eventCreation.dateTime', 'Date & Time')}</h3>
-              
-              <div className="space-y-2">
-                <Label>{t('pages:eventCreation.eventDateRange', 'Event Date Range')} *</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left h-12"
-                      data-testid="button-date-range"
-                    >
-                      <CalendarIcon className="mr-2 h-5 w-5" />
-                      {dateRange.from ? (
-                        dateRange.to ? (
-                          `${format(dateRange.from, "MMM d")} - ${format(dateRange.to, "MMM d, yyyy")}`
-                        ) : (
-                          format(dateRange.from, "MMM d, yyyy")
-                        )
-                      ) : (
-                        "Select date range"
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="range"
-                      selected={dateRange}
-                      onSelect={setDateRange}
-                      disabled={(date) => date < new Date()}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label>{t('pages:eventCreation.startTime', 'Start Time')}</Label>
-                  <div className="relative">
-                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      type="time"
-                      value={startTime}
-                      onChange={(e) => setStartTime(e.target.value)}
-                      className="pl-10 h-12"
-                      data-testid="input-start-time"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{t('pages:eventCreation.endTime', 'End Time')}</Label>
-                  <div className="relative">
-                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      type="time"
-                      value={endTime}
-                      onChange={(e) => setEndTime(e.target.value)}
-                      className="pl-10 h-12"
-                      data-testid="input-end-time"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>{t('pages:eventCreation.timezone', 'Timezone')}</Label>
-                {userPrimaryLocation && (
-                  <p className="text-xs text-muted-foreground">{t('pages:eventCreation.primaryLocation', 'Your primary location')}: {userPrimaryLocation}</p>
-                )}
-                <Select
-                  value={timezone}
-                  onValueChange={(value) => setTimezone(value)}
-                >
-                  <SelectTrigger className="h-12" data-testid="select-timezone">
-                    <SelectValue placeholder="Select timezone" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="America/Argentina/Buenos_Aires">Buenos Aires (ART)</SelectItem>
-                    <SelectItem value="America/New_York">New York (EST/EDT)</SelectItem>
-                    <SelectItem value="America/Los_Angeles">Los Angeles (PST/PDT)</SelectItem>
-                    <SelectItem value="America/Toronto">Toronto (EST/EDT)</SelectItem>
-                    <SelectItem value="America/Mexico_City">Mexico City (CST/CDT)</SelectItem>
-                    <SelectItem value="America/Sao_Paulo">São Paulo (BRT)</SelectItem>
-                    <SelectItem value="Europe/London">London (GMT/BST)</SelectItem>
-                    <SelectItem value="Europe/Paris">Paris (CET/CEST)</SelectItem>
-                    <SelectItem value="Europe/Berlin">Berlin (CET/CEST)</SelectItem>
-                    <SelectItem value="Europe/Madrid">Madrid (CET/CEST)</SelectItem>
-                    <SelectItem value="Europe/Moscow">Moscow (MSK)</SelectItem>
-                    <SelectItem value="Asia/Dubai">Dubai (GST)</SelectItem>
-                    <SelectItem value="Asia/Bangkok">Bangkok (ICT)</SelectItem>
-                    <SelectItem value="Asia/Singapore">Singapore (SGT)</SelectItem>
-                    <SelectItem value="Asia/Hong_Kong">Hong Kong (HKT)</SelectItem>
-                    <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
-                    <SelectItem value="Asia/Seoul">Seoul (KST)</SelectItem>
-                    <SelectItem value="Australia/Sydney">Sydney (AEST/AEDT)</SelectItem>
-                    <SelectItem value="UTC">UTC</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          </div>
+          
+          <div className="mt-6 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">{t('pages:eventCreation.progress', 'Progress')}</span>
+              <span className="text-sm text-primary font-semibold">{calculateProgress()}%</span>
             </div>
+            <Progress value={calculateProgress()} className="h-2" />
+            <div className="flex flex-wrap gap-2 mt-4">
+              {FORM_SECTIONS.map((section) => {
+                const Icon = section.icon;
+                const isComplete = section.id === "basics" ? !!formData.title : 
+                                   section.id === "datetime" ? !!dateRange.from :
+                                   section.id === "location" ? !!formData.location :
+                                   section.id === "photos" ? !!coverPhoto : false;
+                return (
+                  <Badge 
+                    key={section.id}
+                    variant={isComplete ? "default" : "outline"}
+                    className={`gap-1 cursor-pointer transition-all ${isComplete ? 'bg-primary/90' : 'hover:bg-primary/10'}`}
+                    onClick={() => document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    {isComplete ? <CheckCircle2 className="h-3 w-3" /> : <Icon className="h-3 w-3" />}
+                    {section.label}
+                  </Badge>
+                );
+              })}
+            </div>
+          </div>
+        </div>
 
-            <Separator />
-
-            {/* Location */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">{t('pages:eventCreation.location', 'Location')}</h3>
+        <div className="space-y-6">
+          <Card id="basics" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <SectionHeader icon={Sparkles} title={t('pages:eventCreation.eventBasics', 'Event Basics')} />
               
-              <div className="space-y-2">
-                <Label>{t('pages:eventCreation.cityRegion', 'City / Region')} *</Label>
-                <UnifiedLocationPicker
-                  value={formData.location}
-                  coordinates={formData.coordinates}
-                  onChange={handleLocationChange}
-                  mode="city"
-                  placeholder="Search for a city (e.g., Buenos Aires, Argentina)"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>{t('pages:eventCreation.venueName', 'Venue Name')}</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="title">{t('pages:eventCreation.eventTitle', 'Event Title')} *</Label>
                   <Input
-                    placeholder="e.g., La Confiteria Ideal"
-                    value={formData.venue}
-                    onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-                    className="pl-10 h-12"
-                    data-testid="input-venue"
+                    id="title"
+                    placeholder={t('pages:eventCreation.titlePlaceholder', 'e.g., Friday Milonga at La Confiteria')}
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="text-lg h-12 bg-background/50"
+                    data-testid="input-title"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('pages:eventCreation.eventType', 'Event Type')} *</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {EVENT_TYPES.map((type) => (
+                      <button
+                        key={type.value}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, eventType: type.value })}
+                        className={`p-4 rounded-xl border-2 transition-all hover-elevate ${
+                          formData.eventType === type.value
+                            ? 'border-primary bg-primary/10 shadow-lg shadow-primary/10'
+                            : 'border-border bg-background/50 hover:border-primary/50'
+                        }`}
+                        data-testid={`button-type-${type.value}`}
+                      >
+                        <div className="text-2xl mb-2">{type.icon}</div>
+                        <div className="font-medium text-sm">{type.label}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">{t('pages:eventCreation.description', 'Description')}</Label>
+                  <Textarea
+                    id="description"
+                    placeholder={t('pages:eventCreation.descriptionPlaceholder', 'Describe your event, what attendees can expect...')}
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={4}
+                    className="bg-background/50"
+                    data-testid="input-description"
                   />
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="space-y-2">
-                <Label>{t('pages:eventCreation.streetAddress', 'Street Address')}</Label>
-                <UnifiedLocationPicker
-                  value={formData.address}
-                  onChange={(address) => {
-                    setFormData({ ...formData, address });
-                  }}
-                  mode="address"
-                  placeholder="Search for the venue address"
-                  userCity={formData.city}
-                />
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Pricing & Details */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">{t('pages:eventCreation.pricingDetails', 'Pricing & Details')}</h3>
+          <Card id="datetime" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <SectionHeader icon={CalendarIcon} title={t('pages:eventCreation.dateTime', 'Date & Time')} />
               
-              <div className="flex items-center justify-between p-4 rounded-xl border">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                    <DollarSign className="h-5 w-5 text-green-600" />
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label>{t('pages:eventCreation.eventDateRange', 'Event Date Range')} *</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left h-12 bg-background/50"
+                        data-testid="button-date-range"
+                      >
+                        <CalendarIcon className="mr-2 h-5 w-5 text-primary" />
+                        {dateRange.from ? (
+                          dateRange.to ? (
+                            `${format(dateRange.from, "MMM d")} - ${format(dateRange.to, "MMM d, yyyy")}`
+                          ) : (
+                            format(dateRange.from, "MMM d, yyyy")
+                          )
+                        ) : (
+                          t('pages:eventCreation.selectDateRange', 'Select date range')
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="range"
+                        selected={dateRange}
+                        onSelect={setDateRange}
+                        disabled={(date) => date < new Date()}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>{t('pages:eventCreation.startTime', 'Start Time')}</Label>
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+                      <Input
+                        type="time"
+                        value={startTime}
+                        onChange={(e) => setStartTime(e.target.value)}
+                        className="pl-10 h-12 bg-background/50"
+                        data-testid="input-start-time"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="isFree" className="text-base font-medium">{t('pages:eventCreation.freeEvent', 'Free Event')}</Label>
-                    <p className="text-sm text-muted-foreground">{t('pages:eventCreation.freeEventDescription', 'Toggle off to set a ticket price')}</p>
+
+                  <div className="space-y-2">
+                    <Label>{t('pages:eventCreation.endTime', 'End Time')}</Label>
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+                      <Input
+                        type="time"
+                        value={endTime}
+                        onChange={(e) => setEndTime(e.target.value)}
+                        className="pl-10 h-12 bg-background/50"
+                        data-testid="input-end-time"
+                      />
+                    </div>
                   </div>
                 </div>
-                <Switch
-                  id="isFree"
-                  checked={formData.isFree}
-                  onCheckedChange={(checked) => setFormData({ ...formData, isFree: checked })}
-                  data-testid="switch-is-free"
-                />
-              </div>
 
-              {!formData.isFree && (
+                <div className="space-y-2">
+                  <Label>{t('pages:eventCreation.timezone', 'Timezone')}</Label>
+                  {userPrimaryLocation && (
+                    <p className="text-xs text-muted-foreground">{t('pages:eventCreation.primaryLocation', 'Your primary location')}: {userPrimaryLocation}</p>
+                  )}
+                  <Select
+                    value={timezone}
+                    onValueChange={(value) => setTimezone(value)}
+                  >
+                    <SelectTrigger className="h-12 bg-background/50" data-testid="select-timezone">
+                      <SelectValue placeholder={t('pages:eventCreation.selectTimezone', 'Select timezone')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="America/Argentina/Buenos_Aires">Buenos Aires (ART)</SelectItem>
+                      <SelectItem value="America/New_York">New York (EST/EDT)</SelectItem>
+                      <SelectItem value="America/Los_Angeles">Los Angeles (PST/PDT)</SelectItem>
+                      <SelectItem value="America/Toronto">Toronto (EST/EDT)</SelectItem>
+                      <SelectItem value="America/Mexico_City">Mexico City (CST/CDT)</SelectItem>
+                      <SelectItem value="America/Sao_Paulo">São Paulo (BRT)</SelectItem>
+                      <SelectItem value="Europe/London">London (GMT/BST)</SelectItem>
+                      <SelectItem value="Europe/Paris">Paris (CET/CEST)</SelectItem>
+                      <SelectItem value="Europe/Berlin">Berlin (CET/CEST)</SelectItem>
+                      <SelectItem value="Europe/Madrid">Madrid (CET/CEST)</SelectItem>
+                      <SelectItem value="Europe/Moscow">Moscow (MSK)</SelectItem>
+                      <SelectItem value="Asia/Dubai">Dubai (GST)</SelectItem>
+                      <SelectItem value="Asia/Bangkok">Bangkok (ICT)</SelectItem>
+                      <SelectItem value="Asia/Singapore">Singapore (SGT)</SelectItem>
+                      <SelectItem value="Asia/Hong_Kong">Hong Kong (HKT)</SelectItem>
+                      <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
+                      <SelectItem value="Asia/Seoul">Seoul (KST)</SelectItem>
+                      <SelectItem value="Australia/Sydney">Sydney (AEST/AEDT)</SelectItem>
+                      <SelectItem value="UTC">UTC</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card id="location" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <SectionHeader icon={MapPin} title={t('pages:eventCreation.location', 'Location')} />
+              
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label>{t('pages:eventCreation.cityRegion', 'City / Region')} *</Label>
+                  <UnifiedLocationPicker
+                    value={formData.location}
+                    coordinates={formData.coordinates}
+                    onChange={handleLocationChange}
+                    mode="city"
+                    placeholder={t('pages:eventCreation.cityPlaceholder', 'Search for a city (e.g., Buenos Aires, Argentina)')}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('pages:eventCreation.venueName', 'Venue Name')}</Label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+                    <Input
+                      placeholder={t('pages:eventCreation.venuePlaceholder', 'e.g., La Confiteria Ideal')}
+                      value={formData.venue}
+                      onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+                      className="pl-10 h-12 bg-background/50"
+                      data-testid="input-venue"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('pages:eventCreation.streetAddress', 'Street Address')}</Label>
+                  <UnifiedLocationPicker
+                    value={formData.address}
+                    onChange={(address) => {
+                      setFormData({ ...formData, address });
+                    }}
+                    mode="address"
+                    placeholder={t('pages:eventCreation.addressPlaceholder', 'Search for the venue address')}
+                    userCity={formData.city}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card id="details" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <SectionHeader icon={Star} title={t('pages:eventCreation.pricingDetails', 'Pricing & Details')} />
+              
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-background/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                      <DollarSign className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <Label htmlFor="isFree" className="text-base font-medium">{t('pages:eventCreation.freeEvent', 'Free Event')}</Label>
+                      <p className="text-sm text-muted-foreground">{t('pages:eventCreation.freeEventDescription', 'Toggle off to set a ticket price')}</p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="isFree"
+                    checked={formData.isFree}
+                    onCheckedChange={(checked) => setFormData({ ...formData, isFree: checked })}
+                    data-testid="switch-is-free"
+                  />
+                </div>
+
+                {!formData.isFree && (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="price">{t('pages:eventCreation.ticketPrice', 'Ticket Price')} *</Label>
+                      <Input
+                        id="price"
+                        type="number"
+                        placeholder="25.00"
+                        min="0"
+                        step="0.01"
+                        className="h-12 bg-background/50"
+                        value={formData.price || ''}
+                        onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                        data-testid="input-price"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t('pages:eventCreation.currency', 'Currency')}</Label>
+                      <CurrencyPicker 
+                        value={formData.currency}
+                        onChange={(value) => setFormData({ ...formData, currency: value })}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="maxCapacity">{t('pages:eventCreation.maximumAttendees', 'Maximum Attendees')}</Label>
+                  <div className="relative">
+                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+                    <Input
+                      id="maxCapacity"
+                      type="number"
+                      placeholder="100"
+                      min="0"
+                      className="pl-10 h-12 bg-background/50"
+                      value={formData.maxCapacity || ''}
+                      onChange={(e) => setFormData({ ...formData, maxCapacity: parseInt(e.target.value) || 0 })}
+                      data-testid="input-capacity"
+                    />
+                  </div>
+                </div>
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="price">{t('pages:eventCreation.ticketPrice', 'Ticket Price')} *</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      placeholder="25.00"
-                      min="0"
-                      step="0.01"
-                      className="h-12"
-                      value={formData.price || ''}
-                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                      data-testid="input-price"
-                    />
+                    <Label>{t('pages:eventCreation.musicStyle', 'Music Style')}</Label>
+                    <Select
+                      value={formData.musicStyle}
+                      onValueChange={(value) => setFormData({ ...formData, musicStyle: value })}
+                    >
+                      <SelectTrigger className="h-12 bg-background/50" data-testid="select-music">
+                        <Music className="mr-2 h-4 w-4 text-primary" />
+                        <SelectValue placeholder={t('pages:eventCreation.selectStyle', 'Select style')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="traditional">{t('pages:eventCreation.musicTraditional', 'Traditional')}</SelectItem>
+                        <SelectItem value="nuevo">{t('pages:eventCreation.musicNuevo', 'Nuevo')}</SelectItem>
+                        <SelectItem value="alternative">{t('pages:eventCreation.musicAlternative', 'Alternative')}</SelectItem>
+                        <SelectItem value="mixed">{t('pages:eventCreation.musicMixed', 'Mixed')}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
+
                   <div className="space-y-2">
-                    <Label>{t('pages:eventCreation.currency', 'Currency')}</Label>
-                    <CurrencyPicker 
-                      value={formData.currency}
-                      onChange={(value) => setFormData({ ...formData, currency: value })}
-                    />
+                    <Label>{t('pages:eventCreation.experienceLevel', 'Experience Level')}</Label>
+                    <Select
+                      value={formData.level}
+                      onValueChange={(value) => setFormData({ ...formData, level: value })}
+                    >
+                      <SelectTrigger className="h-12 bg-background/50" data-testid="select-level">
+                        <Star className="mr-2 h-4 w-4 text-primary" />
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t('pages:eventCreation.levelAll', 'All Levels')}</SelectItem>
+                        <SelectItem value="beginner">{t('pages:eventCreation.levelBeginner', 'Beginner Friendly')}</SelectItem>
+                        <SelectItem value="intermediate">{t('pages:eventCreation.levelIntermediate', 'Intermediate')}</SelectItem>
+                        <SelectItem value="advanced">{t('pages:eventCreation.levelAdvanced', 'Advanced')}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="maxCapacity">{t('pages:eventCreation.maximumAttendees', 'Maximum Attendees')}</Label>
-                <div className="relative">
-                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    id="maxCapacity"
-                    type="number"
-                    placeholder="100"
-                    min="0"
-                    className="pl-10 h-12"
-                    value={formData.maxCapacity || ''}
-                    onChange={(e) => setFormData({ ...formData, maxCapacity: parseInt(e.target.value) || 0 })}
-                    data-testid="input-capacity"
-                  />
-                </div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>{t('pages:eventCreation.musicStyle', 'Music Style')}</Label>
-                  <Select
-                    value={formData.musicStyle}
-                    onValueChange={(value) => setFormData({ ...formData, musicStyle: value })}
-                  >
-                    <SelectTrigger className="h-12" data-testid="select-music">
-                      <SelectValue placeholder="Select style" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="traditional">Traditional</SelectItem>
-                      <SelectItem value="nuevo">Nuevo</SelectItem>
-                      <SelectItem value="alternative">Alternative</SelectItem>
-                      <SelectItem value="mixed">Mixed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{t('pages:eventCreation.experienceLevel', 'Experience Level')}</Label>
-                  <Select
-                    value={formData.level}
-                    onValueChange={(value) => setFormData({ ...formData, level: value })}
-                  >
-                    <SelectTrigger className="h-12" data-testid="select-level">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Levels</SelectItem>
-                      <SelectItem value="beginner">Beginner Friendly</SelectItem>
-                      <SelectItem value="intermediate">Intermediate</SelectItem>
-                      <SelectItem value="advanced">Advanced</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Attendee Visibility */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Who Can Attend</h3>
+          <Card id="visibility" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <SectionHeader 
+                icon={Eye} 
+                title={t('pages:eventCreation.whoCanAttend', 'Who Can Attend')} 
+                description={t('pages:eventCreation.visibilityDescription', 'Control who can see and register for this event')}
+              />
               <FriendshipClosenessFilter
                 value={formData.attendeeCloseness}
                 onChange={(value) => setFormData({ ...formData, attendeeCloseness: value })}
-                label="Attendee Visibility"
-                description="Control who can see and register for this event based on your network"
+                label={t('pages:eventCreation.attendeeVisibility', 'Attendee Visibility')}
+                description={t('pages:eventCreation.attendeeVisibilityDesc', 'Control who can see and register for this event based on your network')}
                 testIdPrefix="event-attendee-closeness"
               />
-            </div>
+            </CardContent>
+          </Card>
 
-            <Separator />
-
-            {/* Photos */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Photos</h3>
+          <Card id="photos" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <SectionHeader icon={Camera} title={t('pages:eventCreation.photos', 'Photos')} />
               
-              <div className="space-y-2">
-                <Label>Cover Photo</Label>
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover-elevate transition-all"
-                  data-testid="button-upload-cover"
-                >
-                  {coverPhotoPreview ? (
-                    <img src={coverPhotoPreview} alt="Cover" className="w-full h-48 object-cover rounded-lg" />
-                  ) : (
-                    <div className="space-y-2">
-                      <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground" />
-                      <p className="text-sm font-medium">Click to upload cover photo</p>
-                      <p className="text-xs text-muted-foreground">PNG, JPG up to 10MB</p>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label>{t('pages:eventCreation.coverPhoto', 'Cover Photo')}</Label>
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`relative border-2 border-dashed rounded-2xl overflow-hidden cursor-pointer hover-elevate transition-all ${
+                      coverPhotoPreview ? 'border-primary/50' : 'border-border hover:border-primary/50'
+                    }`}
+                    data-testid="button-upload-cover"
+                  >
+                    {coverPhotoPreview ? (
+                      <div className="relative">
+                        <img src={coverPhotoPreview} alt="Cover" className="w-full h-56 object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                          <Badge variant="secondary" className="gap-1">
+                            <Camera className="h-3 w-3" />
+                            {t('pages:eventCreation.changePhoto', 'Change photo')}
+                          </Badge>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-12 text-center">
+                        <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                          <ImageIcon className="h-8 w-8 text-primary" />
+                        </div>
+                        <p className="text-base font-medium mb-1">{t('pages:eventCreation.uploadCover', 'Click to upload cover photo')}</p>
+                        <p className="text-sm text-muted-foreground">{t('pages:eventCreation.photoFormat', 'PNG, JPG up to 10MB')}</p>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCoverPhotoSelect}
+                    className="hidden"
+                    data-testid="input-cover-photo"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('pages:eventCreation.additionalPhotos', 'Additional Photos')} ({additionalPhotos.length}/6)</Label>
+                  {additionalPhotoPreviews.length > 0 && (
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      {additionalPhotoPreviews.map((preview, index) => (
+                        <div key={index} className="relative group rounded-xl overflow-hidden">
+                          <img src={preview} alt={`Photo ${index + 1}`} className="w-full h-28 object-cover" />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button
+                              onClick={() => removeAdditionalPhoto(index)}
+                              className="bg-destructive rounded-full p-2"
+                              data-testid={`button-remove-photo-${index}`}
+                            >
+                              <X className="h-4 w-4 text-white" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
+                  {additionalPhotos.length < 6 && (
+                    <label
+                      className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover-elevate transition-all block hover:border-primary/50"
+                      data-testid="button-upload-additional"
+                    >
+                      <Upload className="mx-auto h-8 w-8 text-primary mb-3" />
+                      <p className="text-sm font-medium mb-1">{t('pages:eventCreation.addPhotos', 'Click to add up to 6 photos')}</p>
+                      <p className="text-xs text-muted-foreground">{t('pages:eventCreation.photoFormat', 'PNG, JPG up to 10MB each')}</p>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleAdditionalPhotosSelect}
+                        className="hidden"
+                        data-testid="input-additional-photos"
+                      />
+                    </label>
+                  )}
                 </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleCoverPhotoSelect}
-                  className="hidden"
-                  data-testid="input-cover-photo"
-                />
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="space-y-2">
-                <Label>Additional Photos ({additionalPhotos.length}/6)</Label>
-                {additionalPhotoPreviews.length > 0 && (
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    {additionalPhotoPreviews.map((preview, index) => (
-                      <div key={index} className="relative group">
-                        <img src={preview} alt={`Photo ${index + 1}`} className="w-full h-24 object-cover rounded-lg" />
-                        <button
-                          onClick={() => removeAdditionalPhoto(index)}
-                          className="absolute top-1 right-1 bg-destructive rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          data-testid={`button-remove-photo-${index}`}
-                        >
-                          <X className="h-3 w-3 text-white" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {additionalPhotos.length < 6 && (
-                  <label
-                    className="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer hover-elevate transition-all block"
-                    data-testid="button-upload-additional"
-                  >
-                    <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                    <p className="text-sm font-medium">Click to add up to 6 photos</p>
-                    <p className="text-xs text-muted-foreground">PNG, JPG up to 10MB each</p>
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={handleAdditionalPhotosSelect}
-                      className="hidden"
-                      data-testid="input-additional-photos"
-                    />
-                  </label>
-                )}
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Pro Team */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Pro Team</h3>
-              <p className="text-sm text-muted-foreground">Add DJ, photographer, or other professionals to your event</p>
+          <Card id="team" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <SectionHeader 
+                icon={UserPlus} 
+                title={t('pages:eventCreation.proTeam', 'Pro Team')} 
+                description={t('pages:eventCreation.proTeamDesc', 'Add DJ, photographer, or other professionals to your event')}
+              />
               
-              {/* Display selected pro team members */}
               {proTeam.length > 0 && (
-                <div className="space-y-2">
+                <div className="space-y-3 mb-6">
                   {proTeam.map((pro) => (
-                    <div key={`${pro.id}-${pro.role}`} className="flex items-center justify-between p-3 rounded-lg border">
+                    <div key={`${pro.id}-${pro.role}`} className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-background/50">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
+                        <Avatar className="h-10 w-10 border-2 border-primary/20">
                           <AvatarImage src={pro.profileImage} />
-                          <AvatarFallback>{pro.name?.charAt(0) || 'U'}</AvatarFallback>
+                          <AvatarFallback className="bg-primary/10 text-primary">{pro.name?.charAt(0) || 'U'}</AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium">{pro.name}</p>
                           <p className="text-sm text-muted-foreground">@{pro.username}</p>
                         </div>
-                        <Badge variant="secondary">{pro.role}</Badge>
+                        <Badge variant="secondary" className="bg-primary/10 text-primary border-0">{pro.role}</Badge>
                       </div>
                       <Button
                         variant="ghost"
@@ -729,21 +803,21 @@ export default function EventCreationPage() {
 
               <Dialog open={proDialogOpen} onOpenChange={setProDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="gap-2" data-testid="button-add-pro-team">
+                  <Button variant="outline" className="gap-2 border-primary/30 hover:bg-primary/5" data-testid="button-add-pro-team">
                     <UserPlus className="h-4 w-4" />
-                    Add Team Member
+                    {t('pages:eventCreation.addTeamMember', 'Add Team Member')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-md">
                   <DialogHeader>
-                    <DialogTitle>Add Pro Team Member</DialogTitle>
+                    <DialogTitle>{t('pages:eventCreation.addProTeamMember', 'Add Pro Team Member')}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 pt-4">
                     <div className="space-y-2">
-                      <Label>Role</Label>
+                      <Label>{t('pages:eventCreation.role', 'Role')}</Label>
                       <Select value={selectedProRole} onValueChange={setSelectedProRole}>
                         <SelectTrigger data-testid="select-pro-role">
-                          <SelectValue placeholder="Select a role" />
+                          <SelectValue placeholder={t('pages:eventCreation.selectRole', 'Select a role')} />
                         </SelectTrigger>
                         <SelectContent>
                           {getBookableRoles().map((role) => (
@@ -758,10 +832,10 @@ export default function EventCreationPage() {
                     {selectedProRole && (
                       <>
                         <div className="space-y-2">
-                          <Label>Search</Label>
+                          <Label>{t('pages:eventCreation.search', 'Search')}</Label>
                           <div className="flex gap-2">
                             <Input
-                              placeholder="Search by name..."
+                              placeholder={t('pages:eventCreation.searchByName', 'Search by name...')}
                               value={proSearchQuery}
                               onChange={(e) => setProSearchQuery(e.target.value)}
                               onKeyDown={(e) => e.key === 'Enter' && searchPros()}
@@ -775,7 +849,7 @@ export default function EventCreationPage() {
 
                         <div className="max-h-60 overflow-y-auto space-y-2">
                           {searchingPros ? (
-                            <p className="text-sm text-muted-foreground text-center py-4">Searching...</p>
+                            <p className="text-sm text-muted-foreground text-center py-4">{t('pages:eventCreation.searching', 'Searching...')}</p>
                           ) : proSearchResults.length > 0 ? (
                             proSearchResults.map((user) => (
                               <div
@@ -794,12 +868,12 @@ export default function EventCreationPage() {
                                     <p className="text-xs text-muted-foreground">@{user.username}</p>
                                   </div>
                                 </div>
-                                <Button variant="ghost" size="sm">Add</Button>
+                                <Button variant="ghost" size="sm">{t('common:add', 'Add')}</Button>
                               </div>
                             ))
                           ) : (
                             <p className="text-sm text-muted-foreground text-center py-4">
-                              {selectedProRole ? "No professionals found. Try a different search." : "Select a role to search"}
+                              {selectedProRole ? t('pages:eventCreation.noProFound', 'No professionals found. Try a different search.') : t('pages:eventCreation.selectRoleToSearch', 'Select a role to search')}
                             </p>
                           )}
                         </div>
@@ -808,36 +882,33 @@ export default function EventCreationPage() {
                   </div>
                 </DialogContent>
               </Dialog>
-            </div>
+            </CardContent>
+          </Card>
 
-            <Separator />
+          <div className="flex justify-between gap-4 p-4 rounded-xl bg-card/80 backdrop-blur-sm border border-border/50 sticky bottom-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate("/events/calendar")}
+              className="gap-2"
+              data-testid="button-cancel"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              {t('common:cancel', 'Cancel')}
+            </Button>
 
-            {/* Actions */}
-            <div className="flex justify-between gap-4 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate("/events/calendar")}
-                className="gap-2"
-                data-testid="button-cancel"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Cancel
-              </Button>
-
-              <Button
-                type="button"
-                onClick={handleSubmit}
-                disabled={createMutation.isPending || uploadingPhotos}
-                className="gap-2"
-                data-testid="button-publish"
-              >
-                {createMutation.isPending || uploadingPhotos ? "Publishing..." : "Publish Event"}
-                <Sparkles className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            <Button
+              type="button"
+              onClick={handleSubmit}
+              disabled={createMutation.isPending || uploadingPhotos}
+              className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+              data-testid="button-publish"
+            >
+              {createMutation.isPending || uploadingPhotos ? t('pages:eventCreation.publishing', 'Publishing...') : t('pages:eventCreation.publish', 'Publish Event')}
+              <Sparkles className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
