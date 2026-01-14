@@ -19,7 +19,8 @@ import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
-import { Calendar, MapPin, DollarSign, Users, Plus, Clock, Repeat } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Users, Plus, Clock, Repeat, ImageIcon } from "lucide-react";
+import { EventPhotoUploader } from "@/components/events/EventPhotoUploader";
 import { EVENT_TYPES, EVENT_TYPE_VALUES } from "@/lib/eventTypes";
 import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
 import { getCurrencyFromCountry, getCurrencySymbol } from "@/lib/currencyUtils";
@@ -52,6 +53,13 @@ const MONTHS_KEYS = [
   { value: "12", key: "december" },
 ];
 
+interface UploadedPhoto {
+  id: string;
+  url: string;
+  isCover: boolean;
+  order: number;
+}
+
 const eventFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
@@ -64,7 +72,8 @@ const eventFormSchema = z.object({
   address: z.string().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
-  imageUrl: z.string().url().optional().or(z.literal("")),
+  coverImageUrl: z.string().url().optional().or(z.literal("")),
+  mediaUrls: z.array(z.string()).default([]),
   isPaid: z.boolean().default(false),
   price: z.number().min(0).optional(),
   currency: z.string().default("USD"),
@@ -90,6 +99,8 @@ export default function CreateEventPage() {
   const [userTimezone, setUserTimezone] = useState("");
   const [defaultCity, setDefaultCity] = useState("");
   const hasInitializedLocationRef = useRef(false);
+  const [coverPhoto, setCoverPhoto] = useState<UploadedPhoto | null>(null);
+  const [galleryPhotos, setGalleryPhotos] = useState<UploadedPhoto[]>([]);
   
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -103,7 +114,8 @@ export default function CreateEventPage() {
       city: "",
       country: "",
       address: "",
-      imageUrl: "",
+      coverImageUrl: "",
+      mediaUrls: [],
       isPaid: false,
       price: 0,
       currency: "USD",
@@ -148,6 +160,16 @@ export default function CreateEventPage() {
     setUserTimezone(tz);
     const currency = getCurrencyFromCountry(country);
     form.setValue("currency", currency);
+  };
+
+  const handleCoverPhotoChange = (photo: UploadedPhoto | null) => {
+    setCoverPhoto(photo);
+    form.setValue("coverImageUrl", photo?.url || "");
+  };
+
+  const handleGalleryPhotosChange = (photos: UploadedPhoto[]) => {
+    setGalleryPhotos(photos);
+    form.setValue("mediaUrls", photos.map(p => p.url));
   };
 
   const createSeriesMutation = useMutation({
@@ -790,25 +812,23 @@ export default function CreateEventPage() {
                       )}
                     />
 
-                    {/* Image URL */}
-                    <FormField
-                      control={form.control}
-                      name="imageUrl"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t('pages:createEvent.eventImageUrl', 'Event Image URL (optional)')}</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="url"
-                              placeholder={t('pages:createEvent.eventImageUrlPlaceholder', 'https://example.com/event-image.jpg')}
-                              {...field} 
-                              data-testid="input-image-url"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {/* Event Photos */}
+                    <div className="space-y-2">
+                      <FormLabel className="flex items-center gap-2">
+                        <ImageIcon className="h-4 w-4" />
+                        {t('pages:createEvent.eventPhotos', 'Event Photos')}
+                      </FormLabel>
+                      <FormDescription>
+                        {t('pages:createEvent.eventPhotosDesc', 'Add a cover photo and up to 6 additional photos for your event')}
+                      </FormDescription>
+                      <EventPhotoUploader
+                        coverPhoto={coverPhoto}
+                        galleryPhotos={galleryPhotos}
+                        onCoverPhotoChange={handleCoverPhotoChange}
+                        onGalleryPhotosChange={handleGalleryPhotosChange}
+                        maxGalleryPhotos={6}
+                      />
+                    </div>
 
                     {/* Submit Button */}
                     <div className="flex gap-4 pt-4">
