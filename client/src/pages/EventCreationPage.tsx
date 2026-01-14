@@ -163,6 +163,7 @@ export default function EventCreationPage() {
           price: formattedPrice,
           coverImageUrl: uploadedPhotos.find(p => p.isCover)?.url,
           photos: uploadedPhotos.filter(p => !p.isCover),
+          proTeam: data.proTeam || [],
         });
       } finally {
         setUploadingPhotos(false);
@@ -280,6 +281,7 @@ export default function EventCreationPage() {
       latitude: formData.coordinates.lat || null,
       longitude: formData.coordinates.lng || null,
       attendeeCloseness: formData.attendeeCloseness,
+      proTeam: proTeam.map(p => ({ userId: p.id, role: p.role, displayName: p.name })),
     });
   };
 

@@ -903,6 +903,7 @@ export const events = pgTable(
     musicStyle: varchar("music_style", { length: 100 }),
     danceStyles: text("dance_styles").array(),
     djName: varchar("dj_name", { length: 255 }),
+    experienceLevel: varchar("experience_level", { length: 20 }).default("all"), // all, beginner, intermediate, advanced
 
     // Additional Info
     tags: text("tags").array(),

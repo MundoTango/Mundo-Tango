@@ -1244,6 +1244,8 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
       maxAttendees: maxCapacity || null,
       musicStyle: rest.musicStyle || null,
       danceStyles: rest.danceStyles || null,
+      experienceLevel: rest.level || "all",
+      attendeeCloseness: rest.attendeeCloseness || "all",
       price: rest.price || null,
       currency: rest.currency || "USD",
       isFree: rest.isFree !== false,
@@ -1279,6 +1281,26 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
     } catch (rsvpError) {
       // Non-blocking - event creation still succeeds
       console.error("[Events] Auto-RSVP failed (non-blocking):", rsvpError);
+    }
+
+    // PRO TEAM: Save team members (DJs, photographers, teachers, etc.)
+    if (rest.proTeam && Array.isArray(rest.proTeam) && rest.proTeam.length > 0) {
+      try {
+        const teamRecords = rest.proTeam.map((member: { userId: number; role: string; displayName: string }) => ({
+          eventId: event.id,
+          userId: member.userId,
+          role: member.role as any,
+          displayName: member.displayName,
+          source: "user_submitted",
+          confidence: 1.0,
+        }));
+        
+        await db.insert(eventTeamMembers).values(teamRecords).onConflictDoNothing();
+        console.log(`[Events] Added ${rest.proTeam.length} pro team members to event:`, event.id);
+      } catch (teamError) {
+        // Non-blocking - event creation still succeeds
+        console.error("[Events] Pro team creation failed (non-blocking):", teamError);
+      }
     }
 
     // CASCADE: Auto-create city group if new location (Pattern 8: Cascade Detection)
