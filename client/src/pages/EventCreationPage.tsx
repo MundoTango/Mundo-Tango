@@ -61,6 +61,21 @@ export default function EventCreationPage() {
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
+  // Check PRO status
+  const isPro = currentUser?.role === 'pro';
+  const isSuperAdmin = currentUser?.role === 'superAdmin';
+
+  useEffect(() => {
+    if (currentUser && !isPro && !isSuperAdmin) {
+      toast({
+        title: t('common:error', 'Error'),
+        description: t('pages:eventCreation.proOnly', 'Event creation is only available for PRO users.'),
+        variant: "destructive",
+      });
+      navigate("/events");
+    }
+  }, [currentUser, isPro, isSuperAdmin, navigate, toast, t]);
+
   useEffect(() => {
     if (currentUser?.city) {
       const inferredTz = getTimezoneFromCity(currentUser.city);
@@ -124,6 +139,11 @@ export default function EventCreationPage() {
 
   const [proTeam, setProTeam] = useState<Array<{ id: number; name: string; username: string; role: string; profileImage?: string }>>([]);
   const [selectedProRole, setSelectedProRole] = useState("");
+
+  if (!currentUser || (!isPro && !isSuperAdmin)) {
+    return null;
+  }
+
   const [proSearchQuery, setProSearchQuery] = useState("");
   const [proSearchResults, setProSearchResults] = useState<any[]>([]);
   const [searchingPros, setSearchingPros] = useState(false);
