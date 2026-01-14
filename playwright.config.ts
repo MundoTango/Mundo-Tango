@@ -52,14 +52,6 @@ export default defineConfig({
         },
       },
     },
-    {
-      name: 'firefox',
-      use: {
-        launchOptions: {
-          executablePath: '/home/runner/workspace/.cache/ms-playwright/firefox-1497/firefox/firefox',
-        },
-      },
-    },
   ],
   webServer: undefined,
 });
