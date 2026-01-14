@@ -70,25 +70,35 @@ export default function EventCreationPage() {
     }
   }, [currentUser]);
 
-  // Pre-fill form when duplicating an event from URL params
+  // Pre-fill form when duplicating an event from localStorage
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const isDuplicate = urlParams.get('duplicate');
     if (isDuplicate) {
-      setFormData(prev => ({
-        ...prev,
-        title: urlParams.get('title') || prev.title,
-        eventType: urlParams.get('eventType') || prev.eventType,
-        city: urlParams.get('city') || prev.city,
-        venue: urlParams.get('venue') || prev.venue,
-        location: urlParams.get('location') || prev.location,
-        description: urlParams.get('description') || prev.description,
-        price: parseFloat(urlParams.get('price') || '0') || prev.price,
-        currency: urlParams.get('currency') || prev.currency,
-        musicStyle: urlParams.get('musicStyle') || prev.musicStyle,
-        attendeeCloseness: (urlParams.get('attendeeCloseness') as ClosenessVisibility) || prev.attendeeCloseness,
-      }));
-      toast({ title: t('pages:eventCreation.duplicating', 'Duplicating event - update date and time') });
+      try {
+        const storedData = localStorage.getItem('duplicateEventData');
+        if (storedData) {
+          const data = JSON.parse(storedData);
+          setFormData(prev => ({
+            ...prev,
+            title: data.title || prev.title,
+            eventType: data.eventType || prev.eventType,
+            city: data.city || prev.city,
+            venue: data.venue || prev.venue,
+            location: data.location || prev.location,
+            description: data.description || prev.description,
+            price: data.price || prev.price,
+            currency: data.currency || prev.currency,
+            musicStyle: data.musicStyle || prev.musicStyle,
+            attendeeCloseness: (data.attendeeCloseness as ClosenessVisibility) || prev.attendeeCloseness,
+          }));
+          // Clean up localStorage after reading
+          localStorage.removeItem('duplicateEventData');
+          toast({ title: t('pages:eventCreation.duplicating', 'Duplicating event - update date and time') });
+        }
+      } catch (e) {
+        console.error('Failed to parse duplicate event data:', e);
+      }
     }
   }, []);
 

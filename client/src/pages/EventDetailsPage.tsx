@@ -617,22 +617,23 @@ export default function EventDetailsPage() {
                           variant="outline" 
                           className="gap-2"
                           onClick={() => {
-                            // Navigate to create event page with pre-filled data for duplication
-                            const duplicateParams = new URLSearchParams({
-                              duplicate: event.id?.toString() || '',
+                            // Store event data in localStorage for duplication (avoids URL length limits)
+                            const duplicateData = {
+                              sourceEventId: event.id,
                               title: event.title || '',
                               eventType: event.eventType || '',
                               city: event.city || '',
                               venue: event.venue || '',
                               location: event.location || '',
                               description: event.description || '',
-                              price: event.price?.toString() || '0',
+                              price: event.price || 0,
                               currency: event.currency || 'USD',
                               musicStyle: event.musicStyle || '',
                               dressCode: event.dressCode || '',
                               attendeeCloseness: (event as any).attendeeCloseness || 'all',
-                            });
-                            setLocation(`/events/create?${duplicateParams.toString()}`);
+                            };
+                            localStorage.setItem('duplicateEventData', JSON.stringify(duplicateData));
+                            setLocation('/events/create?duplicate=true');
                           }}
                           data-testid="button-duplicate-event"
                         >
