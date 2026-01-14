@@ -70,6 +70,28 @@ export default function EventCreationPage() {
     }
   }, [currentUser]);
 
+  // Pre-fill form when duplicating an event from URL params
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDuplicate = urlParams.get('duplicate');
+    if (isDuplicate) {
+      setFormData(prev => ({
+        ...prev,
+        title: urlParams.get('title') || prev.title,
+        eventType: urlParams.get('eventType') || prev.eventType,
+        city: urlParams.get('city') || prev.city,
+        venue: urlParams.get('venue') || prev.venue,
+        location: urlParams.get('location') || prev.location,
+        description: urlParams.get('description') || prev.description,
+        price: parseFloat(urlParams.get('price') || '0') || prev.price,
+        currency: urlParams.get('currency') || prev.currency,
+        musicStyle: urlParams.get('musicStyle') || prev.musicStyle,
+        attendeeCloseness: (urlParams.get('attendeeCloseness') as ClosenessVisibility) || prev.attendeeCloseness,
+      }));
+      toast({ title: t('pages:eventCreation.duplicating', 'Duplicating event - update date and time') });
+    }
+  }, []);
+
   const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
   const [coverPhotoPreview, setCoverPhotoPreview] = useState<string>("");
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
