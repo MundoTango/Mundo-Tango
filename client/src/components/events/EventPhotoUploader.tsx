@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Loader2, Upload, X, Star, CheckCircle2, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface UploadedPhoto {
+export interface UploadedPhoto {
   id: string;
   url: string;
   isCover: boolean;

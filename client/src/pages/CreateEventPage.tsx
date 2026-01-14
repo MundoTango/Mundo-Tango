@@ -20,7 +20,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { Calendar, MapPin, DollarSign, Users, Plus, Clock, Repeat, ImageIcon } from "lucide-react";
-import { EventPhotoUploader } from "@/components/events/EventPhotoUploader";
+import { EventPhotoUploader, UploadedPhoto } from "@/components/events/EventPhotoUploader";
 import { EVENT_TYPES, EVENT_TYPE_VALUES } from "@/lib/eventTypes";
 import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
 import { getCurrencyFromCountry, getCurrencySymbol } from "@/lib/currencyUtils";
@@ -52,13 +52,6 @@ const MONTHS_KEYS = [
   { value: "11", key: "november" },
   { value: "12", key: "december" },
 ];
-
-interface UploadedPhoto {
-  id: string;
-  url: string;
-  isCover: boolean;
-  order: number;
-}
 
 const eventFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
