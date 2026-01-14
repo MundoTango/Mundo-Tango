@@ -173,13 +173,14 @@ export default function EventCreationPage() {
         
         const formattedPrice = data.isFree ? null : `${getCurrencySymbol(data.currency)}${data.price}`;
         
-        return apiRequest("POST", "/api/events", {
+        const response = await apiRequest("POST", "/api/events", {
           ...data,
           price: formattedPrice,
           coverImageUrl: uploadedPhotos.find(p => p.isCover)?.url,
           photos: uploadedPhotos.filter(p => !p.isCover),
           proTeam: data.proTeam || [],
         });
+        return response.json();
       } finally {
         setUploadingPhotos(false);
       }
@@ -762,7 +763,7 @@ export default function EventCreationPage() {
             </CardContent>
           </Card>
 
-          <Card id="team" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+          <Card id="team" className="overflow-visible border-border/50 bg-card/80 backdrop-blur-sm">
             <CardContent className="p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
@@ -794,35 +795,36 @@ export default function EventCreationPage() {
                 </div>
               )}
               
-              <div className="flex gap-2">
-                <Select value={selectedProRole} onValueChange={setSelectedProRole}>
-                  <SelectTrigger className="h-10 flex-1" data-testid="select-pro-role">
-                    <SelectValue placeholder={t('pages:eventCreation.selectRole', 'Select role')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getBookableRoles().map((role) => (
-                      <SelectItem key={role.value} value={role.value}>{role.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder={t('pages:eventCreation.searchByName', 'Search name...')}
-                    value={proSearchQuery}
-                    onChange={(e) => setProSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && searchPros()}
-                    className="pl-9 h-10"
-                    data-testid="input-search-pro"
-                  />
+              <div className="relative">
+                <div className="flex gap-2">
+                  <Select value={selectedProRole} onValueChange={setSelectedProRole}>
+                    <SelectTrigger className="h-10 flex-1" data-testid="select-pro-role">
+                      <SelectValue placeholder={t('pages:eventCreation.selectRole', 'Select role')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getBookableRoles().map((role) => (
+                        <SelectItem key={role.value} value={role.value}>{role.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder={t('pages:eventCreation.searchByName', 'Search name...')}
+                      value={proSearchQuery}
+                      onChange={(e) => setProSearchQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && searchPros()}
+                      className="pl-9 h-10"
+                      data-testid="input-search-pro"
+                    />
+                  </div>
+                  <Button variant="outline" size="icon" onClick={searchPros} disabled={searchingPros || !selectedProRole} className="h-10 w-10">
+                    <Search className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Button variant="outline" size="icon" onClick={searchPros} disabled={searchingPros || !selectedProRole} className="h-10 w-10">
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
 
-              {selectedProRole && (
-                <div className="max-h-40 overflow-y-auto space-y-1 rounded-lg border border-border/50 p-2 bg-background/30">
+                {selectedProRole && (
+                  <div className="absolute left-0 right-0 top-full mt-2 z-50 max-h-60 overflow-y-auto space-y-1 rounded-lg border border-border p-2 bg-background shadow-lg">
                   {searchingPros ? (
                     <p className="text-xs text-muted-foreground text-center py-3">{t('pages:eventCreation.searching', 'Searching...')}</p>
                   ) : proSearchResults.length > 0 ? (
@@ -851,8 +853,9 @@ export default function EventCreationPage() {
                       {t('pages:eventCreation.noProFound', 'No professionals found with this role. Try searching by name or select a different role.')}
                     </p>
                   )}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
