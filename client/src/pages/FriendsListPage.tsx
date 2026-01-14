@@ -366,12 +366,16 @@ export default function FriendsListPage() {
   );
 
   // Enhanced card for discover users with richer profile details
-  const getTangoRoleIcon = (role: string) => {
+  const TangoRoleIcon = ({ role }: { role: string }) => {
     switch (role?.toLowerCase()) {
-      case 'leader': return '🎩';
-      case 'follower': return '👠';
-      case 'both': return '💃';
-      default: return '🎭';
+      case 'leader': 
+        return <Badge variant="outline" className="text-xs px-1.5 py-0 bg-blue-50 dark:bg-blue-950/50 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">{t('pages:friendsList.leader', 'Leader')}</Badge>;
+      case 'follower': 
+        return <Badge variant="outline" className="text-xs px-1.5 py-0 bg-pink-50 dark:bg-pink-950/50 border-pink-200 dark:border-pink-800 text-pink-700 dark:text-pink-300">{t('pages:friendsList.follower', 'Follower')}</Badge>;
+      case 'both': 
+        return <Badge variant="outline" className="text-xs px-1.5 py-0 bg-purple-50 dark:bg-purple-950/50 border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300">{t('pages:friendsList.both', 'Both')}</Badge>;
+      default: 
+        return <Badge variant="outline" className="text-xs px-1.5 py-0">{role}</Badge>;
     }
   };
 
@@ -395,9 +399,7 @@ export default function FriendsListPage() {
             {user.tangoRoles && user.tangoRoles.length > 0 && (
               <div className="flex items-center gap-1">
                 {user.tangoRoles.slice(0, 2).map((role, idx) => (
-                  <span key={idx} className="text-sm" title={role}>
-                    {getTangoRoleIcon(role)}
-                  </span>
+                  <TangoRoleIcon key={idx} role={role} />
                 ))}
               </div>
             )}
