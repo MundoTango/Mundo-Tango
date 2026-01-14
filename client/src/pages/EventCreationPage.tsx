@@ -120,7 +120,8 @@ export default function EventCreationPage() {
       if (proSearchQuery) params.append('q', proSearchQuery);
       
       const response = await apiRequest("GET", `/api/events/search-pros-by-role?${params.toString()}`);
-      setProSearchResults(response || []);
+      const data = await response.json();
+      setProSearchResults(data || []);
     } catch (error) {
       toast({ title: t('pages:eventCreation.searchFailed', 'Failed to search. Please try again.'), variant: "destructive" });
       setProSearchResults([]);
