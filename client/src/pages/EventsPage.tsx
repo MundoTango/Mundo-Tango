@@ -371,7 +371,7 @@ export default function EventsPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<EventTab>("discover");
-  const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [filters, setFilters] = useState<EventFilterValues>({});
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<"relevance" | "date" | "price">("date");
@@ -786,10 +786,6 @@ export default function EventsPage() {
                     <List className="h-4 w-4 mr-2" />
                     {t('pages:events.views.list', 'List')}
                   </TabsTrigger>
-                  <TabsTrigger value="calendar" data-testid="tab-calendar-view">
-                    <CalendarIcon className="h-4 w-4 mr-2" />
-                    {t('pages:events.views.calendar', 'Calendar')}
-                  </TabsTrigger>
                   <TabsTrigger value="map" data-testid="tab-map-view">
                     <MapIconLucide className="h-4 w-4 mr-2" />
                     {t('pages:events.views.map', 'Map')}
@@ -928,35 +924,6 @@ export default function EventsPage() {
                       </Card>
                     )}
                   </>
-                )}
-
-                {/* Calendar View */}
-                {viewMode === "calendar" && (
-                  <Card className="p-6">
-                    <div style={{ height: '600px' }}>
-                      <Calendar
-                        localizer={localizer}
-                        events={calendarEvents}
-                        startAccessor="start"
-                        endAccessor="end"
-                        style={{ height: '100%' }}
-                        views={[Views.MONTH, Views.WEEK, Views.DAY]}
-                        onSelectEvent={(event: any) => {
-                          window.location.href = `/events/${event.id}`;
-                        }}
-                        eventPropGetter={(event) => ({
-                          style: {
-                            backgroundColor: 'hsl(var(--primary))',
-                            borderRadius: '4px',
-                            opacity: 0.8,
-                            color: 'white',
-                            border: 'none',
-                            display: 'block'
-                          }
-                        })}
-                      />
-                    </div>
-                  </Card>
                 )}
 
                 {/* Map View */}
