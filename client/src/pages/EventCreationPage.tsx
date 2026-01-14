@@ -133,8 +133,10 @@ export default function EventCreationPage() {
   useEffect(() => {
     if (selectedProRole) {
       searchPros();
+    } else {
+      setProSearchResults([]);
     }
-  }, [selectedProRole]);
+  }, [selectedProRole, proSearchQuery, formData.city]);
 
   const addProToTeam = (user: any) => {
     if (proTeam.find(p => p.id === user.id && p.role === selectedProRole)) {

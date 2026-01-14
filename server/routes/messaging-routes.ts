@@ -593,12 +593,12 @@ export function registerMessagingRoutes(app: Express) {
       const [chatCount] = await db.select({
         count: sql<number>`count(*)::int`
       })
-      .from(chatMessages)
-      .innerJoin(groupMembers, eq(chatMessages.chatRoomId, groupMembers.groupId))
+      .from(groupMessages)
+      .innerJoin(groupMembers, eq(groupMessages.chatRoomId, groupMembers.groupId))
       .where(
         and(
           eq(groupMembers.userId, userId),
-          sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
+          sql`(${groupMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${groupMessages.readBy})))`
         )
       );
       

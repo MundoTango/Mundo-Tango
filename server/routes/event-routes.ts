@@ -168,10 +168,10 @@ router.get("/search-pros-by-role", authenticateToken, async (req: AuthRequest, r
     const conditions: any[] = [];
     
     // Search by role in tangoRoles array (case-insensitive, coalesce null to empty array)
-    conditions.push(sql`LOWER(${mappedRole}) = ANY(SELECT LOWER(unnest(COALESCE(${users.tangoRoles}, ARRAY[]::text[]))))`);
+    conditions.push(sql`EXISTS (SELECT 1 FROM unnest(COALESCE(${users.tangoRoles}, ARRAY[]::text[])) r WHERE LOWER(r) = LOWER(${mappedRole}))`);
     
-    // Filter by city if provided
-    if (city && typeof city === 'string') {
+    // Filter by city if provided (only if explicitly requested)
+    if (city && typeof city === 'string' && city.trim()) {
       conditions.push(sql`${users.city} ILIKE ${'%' + city + '%'}`);
     }
     
