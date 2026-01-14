@@ -118,11 +118,7 @@ export default function EventDetailPage() {
   }
 
   if (!eventData) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Event not found</p>
-      </div>
-    );
+    return null;
   }
 
   const event = eventData.event;

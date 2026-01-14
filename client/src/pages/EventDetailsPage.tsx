@@ -492,23 +492,7 @@ export default function EventDetailsPage() {
   }
 
   if (!event) {
-    return (
-      <SelfHealingErrorBoundary pageName="Event Details" fallbackRoute="/events">
-        <>
-          <SEO 
-            title="Event Details"
-            description="View event details, RSVP, and connect with attendees for this tango event."
-          />
-          <div className="max-w-5xl mx-auto px-6 py-12">
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground">Event not found</p>
-              </CardContent>
-            </Card>
-          </div>
-        </>
-      </SelfHealingErrorBoundary>
-    );
+    return null;
   }
 
   return (

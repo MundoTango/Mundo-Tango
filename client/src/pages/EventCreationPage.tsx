@@ -761,120 +761,99 @@ export default function EventCreationPage() {
             </CardContent>
           </Card>
 
-          <Collapsible open={proTeamOpen} onOpenChange={setProTeamOpen}>
-            <Card id="team" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
-              <CollapsibleTrigger asChild>
-                <div className="p-4 cursor-pointer hover-elevate flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
-                      <UserPlus className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm">{t('pages:eventCreation.proTeam', 'Pro Team')}</h3>
-                      <p className="text-xs text-muted-foreground">
-                        {proTeam.length > 0 ? `${proTeam.length} ${t('pages:eventCreation.membersAdded', 'member(s)')}` : t('pages:eventCreation.proTeamDesc', 'Add DJ, teachers, performers')}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {proTeam.length > 0 && (
-                      <div className="flex -space-x-2">
-                        {proTeam.slice(0, 3).map((pro) => (
-                          <Avatar key={`${pro.id}-${pro.role}`} className="h-6 w-6 border-2 border-background">
-                            <AvatarImage src={pro.profileImage} />
-                            <AvatarFallback className="text-xs bg-primary/10 text-primary">{pro.name?.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                        ))}
-                        {proTeam.length > 3 && <span className="text-xs text-muted-foreground ml-2">+{proTeam.length - 3}</span>}
-                      </div>
-                    )}
-                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${proTeamOpen ? 'rotate-180' : ''}`} />
-                  </div>
+          <Card id="team" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-4 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+                  <UserPlus className="h-4 w-4 text-primary" />
                 </div>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <CardContent className="p-4 pt-0 space-y-4">
-                  {proTeam.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {proTeam.map((pro) => (
-                        <div key={`${pro.id}-${pro.role}`} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-background/50">
-                          <Avatar className="h-5 w-5">
-                            <AvatarImage src={pro.profileImage} />
-                            <AvatarFallback className="text-xs bg-primary/10 text-primary">{pro.name?.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <span className="text-xs font-medium">{pro.name}</span>
-                          <Badge variant="secondary" className="text-xs px-1.5 py-0">{pro.role}</Badge>
-                          <button onClick={() => removeProFromTeam(pro.id, pro.role)} className="text-muted-foreground hover:text-destructive" data-testid={`button-remove-pro-${pro.id}`}>
-                            <X className="h-3 w-3" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
-                  <div className="flex gap-2">
-                    <Select value={selectedProRole} onValueChange={setSelectedProRole}>
-                      <SelectTrigger className="h-10 flex-1" data-testid="select-pro-role">
-                        <SelectValue placeholder={t('pages:eventCreation.selectRole', 'Select role')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {getBookableRoles().map((role) => (
-                          <SelectItem key={role.value} value={role.value}>{role.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder={t('pages:eventCreation.searchByName', 'Search name...')}
-                        value={proSearchQuery}
-                        onChange={(e) => setProSearchQuery(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && searchPros()}
-                        className="pl-9 h-10"
-                        data-testid="input-search-pro"
-                      />
-                    </div>
-                    <Button variant="outline" size="icon" onClick={searchPros} disabled={searchingPros || !selectedProRole} className="h-10 w-10">
-                      <Search className="h-4 w-4" />
-                    </Button>
-                  </div>
+                <div>
+                  <h3 className="font-semibold text-sm">{t('pages:eventCreation.proTeam', 'Pro Team')}</h3>
+                  <p className="text-xs text-muted-foreground">
+                    {t('pages:eventCreation.proTeamDesc', 'Add DJ, teachers, performers')}
+                  </p>
+                </div>
+              </div>
 
-                  {selectedProRole && (
-                    <div className="max-h-40 overflow-y-auto space-y-1 rounded-lg border border-border/50 p-2 bg-background/30">
-                      {searchingPros ? (
-                        <p className="text-xs text-muted-foreground text-center py-3">{t('pages:eventCreation.searching', 'Searching...')}</p>
-                      ) : proSearchResults.length > 0 ? (
-                        proSearchResults.map((user) => (
-                          <div
-                            key={user.id}
-                            className="flex items-center justify-between p-2 rounded-lg hover-elevate cursor-pointer"
-                            onClick={() => addProToTeam(user)}
-                            data-testid={`pro-result-${user.id}`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <Avatar className="h-7 w-7">
-                                <AvatarImage src={user.profileImage} />
-                                <AvatarFallback className="text-xs">{user.name?.charAt(0)}</AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <p className="font-medium text-xs">{user.name}</p>
-                                <p className="text-xs text-muted-foreground">@{user.username}</p>
-                              </div>
-                            </div>
-                            <Button variant="ghost" size="sm" className="h-7 text-xs">{t('common:add', 'Add')}</Button>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-xs text-muted-foreground text-center py-3">
-                          {t('pages:eventCreation.noProFound', 'No professionals found with this role. Try searching by name or select a different role.')}
-                        </p>
-                      )}
+              {proTeam.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {proTeam.map((pro) => (
+                    <div key={`${pro.id}-${pro.role}`} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-background/50">
+                      <Avatar className="h-5 w-5">
+                        <AvatarImage src={pro.profileImage} />
+                        <AvatarFallback className="text-xs bg-primary/10 text-primary">{pro.name?.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-xs font-medium">{pro.name}</span>
+                      <Badge variant="secondary" className="text-xs px-1.5 py-0">{pro.role}</Badge>
+                      <button onClick={() => removeProFromTeam(pro.id, pro.role)} className="text-muted-foreground hover:text-destructive" data-testid={`button-remove-pro-${pro.id}`}>
+                        <X className="h-3 w-3" />
+                      </button>
                     </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="flex gap-2">
+                <Select value={selectedProRole} onValueChange={setSelectedProRole}>
+                  <SelectTrigger className="h-10 flex-1" data-testid="select-pro-role">
+                    <SelectValue placeholder={t('pages:eventCreation.selectRole', 'Select role')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getBookableRoles().map((role) => (
+                      <SelectItem key={role.value} value={role.value}>{role.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={t('pages:eventCreation.searchByName', 'Search name...')}
+                    value={proSearchQuery}
+                    onChange={(e) => setProSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && searchPros()}
+                    className="pl-9 h-10"
+                    data-testid="input-search-pro"
+                  />
+                </div>
+                <Button variant="outline" size="icon" onClick={searchPros} disabled={searchingPros || !selectedProRole} className="h-10 w-10">
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {selectedProRole && (
+                <div className="max-h-40 overflow-y-auto space-y-1 rounded-lg border border-border/50 p-2 bg-background/30">
+                  {searchingPros ? (
+                    <p className="text-xs text-muted-foreground text-center py-3">{t('pages:eventCreation.searching', 'Searching...')}</p>
+                  ) : proSearchResults.length > 0 ? (
+                    proSearchResults.map((user) => (
+                      <div
+                        key={user.id}
+                        className="flex items-center justify-between p-2 rounded-lg hover-elevate cursor-pointer"
+                        onClick={() => addProToTeam(user)}
+                        data-testid={`pro-result-${user.id}`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-7 w-7">
+                            <AvatarImage src={user.profileImage} />
+                            <AvatarFallback className="text-xs">{user.name?.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-xs">{user.name}</p>
+                            <p className="text-xs text-muted-foreground">@{user.username}</p>
+                          </div>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-7 text-xs">{t('common:add', 'Add')}</Button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-xs text-muted-foreground text-center py-3">
+                      {t('pages:eventCreation.noProFound', 'No professionals found with this role. Try searching by name or select a different role.')}
+                    </p>
                   )}
-                </CardContent>
-              </CollapsibleContent>
-            </Card>
-          </Collapsible>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           <div className="flex justify-between gap-4 p-4 rounded-xl bg-card/80 backdrop-blur-sm border border-border/50 sticky bottom-4">
             <Button
