@@ -503,11 +503,11 @@ export default function EventCreationPage() {
             </CardContent>
           </Card>
 
-          <Card id="location" className="overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
+          <Card id="location" className="border-border/50 bg-card/80 backdrop-blur-sm relative z-[50]">
             <CardContent className="p-4">
               <SectionHeader icon={MapPin} title={t('pages:eventCreation.location', 'Location')} />
               
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-4 relative z-[60]">
                 <div className="space-y-2">
                   <Label className="text-xs">{t('pages:eventCreation.cityRegion', 'City / Region')} *</Label>
                   <UnifiedLocationPicker
@@ -534,7 +534,7 @@ export default function EventCreationPage() {
                 </div>
               </div>
               
-              <div className="mt-4 space-y-2">
+              <div className="mt-4 space-y-2 relative z-[40]">
                 <Label className="text-xs">{t('pages:eventCreation.streetAddress', 'Street Address')}</Label>
                 <UnifiedLocationPicker
                   value={formData.address}

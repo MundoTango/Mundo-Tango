@@ -1197,10 +1197,9 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // POST /api/events - Create new event
-// TIER ENFORCEMENT: Requires Community Leader (level 3) or higher
-// Level 3 = Community Leader, Level 4 = Admin, Level 5+ = Higher tiers
+// All authenticated users can create events (previously required level 3+)
 // AUTO-CREATES: City if not found, based on event city field
-router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthRequest, res: Response) => {
+router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { startTime, endTime, timezone, maxCapacity, ...rest } = req.body;
