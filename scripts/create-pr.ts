@@ -5,7 +5,7 @@ import { getUncachableGitHubClient } from '../server/lib/github-client';
 
 const OWNER = 'MundoTango';
 const REPO = 'Mundo-Tango';
-const HEAD_BRANCH = 'feat/admin-password-reset';
+const HEAD_BRANCH = 'marta-bugs';
 const BASE_BRANCH = 'main';
 
 async function listBranches() {
