@@ -23,12 +23,26 @@
  * REASON: User-reported issue - Mr. Blue accepted broken "transparent background" change
  */
 
-import { chromium, Browser, Page } from 'playwright';
 import { computerUseService } from './ComputerUseService';
 import { escalationService } from './EscalationService';
 import { evidenceCollector } from './EvidenceCollector';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+
+type Browser = import('playwright').Browser;
+type Page = import('playwright').Page;
+
+let playwrightChromium: typeof import('playwright').chromium | null = null;
+async function getChromium() {
+  if (playwrightChromium) return playwrightChromium;
+  try {
+    const pw = await import('playwright');
+    playwrightChromium = pw.chromium;
+    return playwrightChromium;
+  } catch {
+    throw new Error('Playwright not available in this environment');
+  }
+}
 
 export interface VisualValidationRequest {
   sessionId: string;
@@ -199,6 +213,7 @@ export class VisualValidationService {
    * Launch Playwright browser
    */
   private async launchBrowser(): Promise<Browser> {
+    const chromium = await getChromium();
     return await chromium.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox']

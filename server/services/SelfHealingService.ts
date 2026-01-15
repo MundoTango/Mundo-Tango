@@ -1,7 +1,21 @@
 import { db } from '@shared/db';
 import { eq, desc, and } from 'drizzle-orm';
-import { chromium, Page, Browser } from 'playwright';
 import { getAppUrl } from '../utils/getAppUrl';
+
+type Browser = import('playwright').Browser;
+type Page = import('playwright').Page;
+
+let playwrightChromium: typeof import('playwright').chromium | null = null;
+async function getChromium() {
+  if (playwrightChromium) return playwrightChromium;
+  try {
+    const pw = await import('playwright');
+    playwrightChromium = pw.chromium;
+    return playwrightChromium;
+  } catch {
+    throw new Error('Playwright not available in this environment');
+  }
+}
 
 /**
  * BLOCKER 5: Self-Healing System Service
@@ -21,6 +35,7 @@ export class SelfHealingService {
    */
   static async getBrowser(): Promise<Browser> {
     if (!this.browser) {
+      const chromium = await getChromium();
       this.browser = await chromium.launch({ headless: true });
     }
     return this.browser;

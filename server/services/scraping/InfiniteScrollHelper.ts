@@ -4,7 +4,7 @@
  * MB.MD Pattern: Load all dynamic content from SPAs and infinite scroll sites
  */
 
-import { Page } from 'playwright';
+type Page = import('playwright').Page;
 
 export interface ScrollOptions {
   maxScrolls?: number;

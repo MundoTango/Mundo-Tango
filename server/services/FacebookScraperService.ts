@@ -12,10 +12,25 @@
  * - Error handling for login failures, CAPTCHA, account bans
  */
 
-import { chromium, Browser, Page, BrowserContext } from 'playwright';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import axios from 'axios';
+
+type Browser = import('playwright').Browser;
+type Page = import('playwright').Page;
+type BrowserContext = import('playwright').BrowserContext;
+
+let playwrightChromium: typeof import('playwright').chromium | null = null;
+async function getChromium() {
+  if (playwrightChromium) return playwrightChromium;
+  try {
+    const pw = await import('playwright');
+    playwrightChromium = pw.chromium;
+    return playwrightChromium;
+  } catch {
+    throw new Error('Playwright not available in this environment');
+  }
+}
 
 // ===========================
 // TYPE DEFINITIONS
@@ -153,6 +168,7 @@ export class FacebookScraperService {
   private async initBrowser(headless: boolean = false): Promise<void> {
     console.log('[Facebook Scraper] Launching browser...');
     
+    const chromium = await getChromium();
     this.browser = await chromium.launch({
       headless: headless, // Set to false to avoid bot detection
       slowMo: 50, // Slow down actions to appear more human

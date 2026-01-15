@@ -1,7 +1,21 @@
-import { chromium, Browser, Page } from 'playwright';
 import { llmVisionPlanner } from './LLMVisionPlanner';
 import { db } from '../../db';
 import { sql } from 'drizzle-orm';
+
+type Browser = import('playwright').Browser;
+type Page = import('playwright').Page;
+
+let playwrightChromium: typeof import('playwright').chromium | null = null;
+async function getChromium() {
+  if (playwrightChromium) return playwrightChromium;
+  try {
+    const pw = await import('playwright');
+    playwrightChromium = pw.chromium;
+    return playwrightChromium;
+  } catch {
+    throw new Error('Playwright not available in this environment');
+  }
+}
 
 interface FacebookAutomationResult {
   success: boolean;
@@ -26,6 +40,7 @@ export class FacebookMessengerService {
 
   async initialize(): Promise<void> {
     if (!this.browser) {
+      const chromium = await getChromium();
       this.browser = await chromium.launch({
         headless: true,
         args: [

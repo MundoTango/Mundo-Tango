@@ -9,13 +9,23 @@
  * Enhanced with comprehensive selector strategies and error recovery
  */
 
-import { chromium as playwrightChromium } from 'playwright-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import type { Browser, Page, BrowserContext } from 'playwright';
 import * as fs from 'fs';
 import * as path from 'path';
 
-playwrightChromium.use(StealthPlugin());
+let stealthChromium: any = null;
+async function getStealthChromium() {
+  if (stealthChromium) return stealthChromium;
+  try {
+    const { chromium } = await import('playwright-extra');
+    const StealthPlugin = (await import('puppeteer-extra-plugin-stealth')).default;
+    chromium.use(StealthPlugin());
+    stealthChromium = chromium;
+    return stealthChromium;
+  } catch {
+    throw new Error('Playwright-extra not available in this environment');
+  }
+}
 
 interface TokenResult {
   success: boolean;
@@ -108,6 +118,7 @@ export class FacebookTokenGeneratorV2 {
    * Initialize browser with stealth configuration
    */
   private async initBrowser(visible: boolean): Promise<void> {
+    const playwrightChromium = await getStealthChromium();
     this.browser = await playwrightChromium.launch({
       headless: !visible,
       args: [

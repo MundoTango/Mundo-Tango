@@ -11,11 +11,25 @@
  * - Extract community metadata from dynamic About pages
  */
 
-import { chromium, Browser, Page } from 'playwright';
 import { db } from '@shared/db';
 import { scrapedEvents, scrapedCommunityData } from '@shared/schema';
 import { languageAwareFieldMapper, SupportedLanguage } from '../../services/scraping/LanguageAwareFieldMapper';
 import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
+
+type Browser = import('playwright').Browser;
+type Page = import('playwright').Page;
+
+let playwrightChromium: typeof import('playwright').chromium | null = null;
+async function getChromium() {
+  if (playwrightChromium) return playwrightChromium;
+  try {
+    const pw = await import('playwright');
+    playwrightChromium = pw.chromium;
+    return playwrightChromium;
+  } catch {
+    throw new Error('Playwright not available in this environment');
+  }
+}
 
 interface DynamicEventData {
   title: string;
@@ -53,6 +67,7 @@ export class JSScraper {
    */
   async initialize(): Promise<void> {
     if (!this.browser) {
+      const chromium = await getChromium();
       this.browser = await chromium.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']

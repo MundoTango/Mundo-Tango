@@ -1,6 +1,20 @@
 import { Router, Request, Response } from 'express';
-import { chromium, Browser, Page } from 'playwright';
 import path from 'path';
+
+type Browser = import('playwright').Browser;
+type Page = import('playwright').Page;
+
+let playwrightChromium: typeof import('playwright').chromium | null = null;
+async function getChromium() {
+  if (playwrightChromium) return playwrightChromium;
+  try {
+    const pw = await import('playwright');
+    playwrightChromium = pw.chromium;
+    return playwrightChromium;
+  } catch {
+    throw new Error('Playwright not available in this environment');
+  }
+}
 import fs from 'fs';
 import { selfHealingService, MBMD_PATTERNS as SH_PATTERNS } from '../services/mrBlue/SelfHealingService';
 
@@ -218,6 +232,7 @@ router.get('/run', async (req: Request, res: Response) => {
 
     if (useRealPlaywright) {
       // Launch real Playwright browser
+      const chromium = await getChromium();
       browser = await chromium.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']

@@ -15,12 +15,21 @@
  * Token Persistence: Auto-saves to environment variables
  */
 
-import { chromium as playwrightChromium } from 'playwright-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import type { Browser, Page, BrowserContext } from 'playwright';
 
-// Add stealth plugin to bypass Facebook detection
-playwrightChromium.use(StealthPlugin());
+let stealthChromium: any = null;
+async function getStealthChromium() {
+  if (stealthChromium) return stealthChromium;
+  try {
+    const { chromium } = await import('playwright-extra');
+    const StealthPlugin = (await import('puppeteer-extra-plugin-stealth')).default;
+    chromium.use(StealthPlugin());
+    stealthChromium = chromium;
+    return stealthChromium;
+  } catch {
+    throw new Error('Playwright-extra not available in this environment');
+  }
+}
 
 interface TokenGenerationResult {
   success: boolean;
@@ -86,6 +95,7 @@ export class FacebookTokenGenerator {
     this.log('Initializing browser with stealth mode...');
     
     // Launch with stealth plugin + anti-detection args
+    const playwrightChromium = await getStealthChromium();
     this.browser = await playwrightChromium.launch({
       headless,
       args: [

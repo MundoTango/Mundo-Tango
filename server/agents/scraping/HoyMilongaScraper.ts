@@ -9,7 +9,6 @@
  * MB.MD v9.9.3 Enhancement: Team extraction from event cards and detail pages
  */
 
-import { chromium, Browser, Page } from 'playwright';
 import { db } from '@shared/db';
 import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
@@ -18,6 +17,21 @@ import { languageAwareFieldMapper } from '../../services/scraping/LanguageAwareF
 import { attachParticipantProfiles } from '../../services/scraping/ParticipantProfileHelper';
 import { RecurringEventDetector } from '../../services/scraping/RecurringEventDetector';
 import { InfiniteScrollHelper } from '../../services/scraping/InfiniteScrollHelper';
+
+type Browser = import('playwright').Browser;
+type Page = import('playwright').Page;
+
+let playwrightChromium: typeof import('playwright').chromium | null = null;
+async function getChromium() {
+  if (playwrightChromium) return playwrightChromium;
+  try {
+    const pw = await import('playwright');
+    playwrightChromium = pw.chromium;
+    return playwrightChromium;
+  } catch {
+    throw new Error('Playwright not available in this environment');
+  }
+}
 
 interface HoyMilongaTeamData {
   djs: string[];
@@ -128,10 +142,10 @@ export class HoyMilongaScraper {
     let totalEvents = 0;
 
     try {
-      // Launch browser once for all cities - use system chromium
+      // Launch browser once for all cities - use dynamic import
+      const chromium = await getChromium();
       this.browser = await chromium.launch({ 
         headless: true,
-        executablePath: process.env.CHROMIUM_PATH || '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
       });
 
@@ -166,9 +180,9 @@ export class HoyMilongaScraper {
     }
 
     try {
+      const chromium = await getChromium();
       this.browser = await chromium.launch({ 
         headless: true,
-        executablePath: process.env.CHROMIUM_PATH || '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
       });
       return await this.scrapeCity(cityName, cityCode, sourceId);
