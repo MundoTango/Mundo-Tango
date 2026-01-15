@@ -71,9 +71,14 @@ export default function LoginPage() {
         window.location.href = finalRedirect;
       }, 100);
     } catch (error: any) {
+      console.error("[Login] Error:", error);
+      const errorMessage = error.message === "Invalid credentials" 
+        ? t('login.toast.errorDescription', 'Invalid email or password. Please try again.')
+        : error.message;
+        
       toast({
         title: t('login.toast.errorTitle', 'Login failed'),
-        description: error.message || t('login.toast.errorDescription', 'Invalid credentials'),
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

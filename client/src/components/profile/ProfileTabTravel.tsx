@@ -17,6 +17,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send, Globe, Lock, Eye, MessageCircle } from "lucide-react";
 import { RequestToBookModal } from "./RequestToBookModal";
 import { TravelCalendar } from "@/components/unified/TravelCalendar";
+import { AddTravelerDialog } from "@/components/travel/AddTravelerDialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useAuth } from "@/hooks/use-auth";
+import { UserIdentityHeader } from "@/components/UserIdentityHeader";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -44,6 +48,10 @@ interface TravelPlan {
   visibility?: 'public' | 'friends' | 'private';
   notes?: string;
   items?: TravelPlanItem[];
+  userId?: number;
+  isOwner?: boolean;
+  ownerName?: string | null;
+  ownerProfileImage?: string | null;
 }
 
 interface TravelPlanItem {
@@ -87,6 +95,16 @@ interface CityEvent {
   imageUrl?: string;
   ticketUrl?: string;
   numericPrice: number;
+}
+
+interface TripParticipant {
+  id: number;
+  tripId: number;
+  userId: number;
+  status: string;
+  joinedAt: string;
+  userName: string;
+  userProfileImage: string | null;
 }
 
 // MT Host housing listing from City Groups
@@ -201,6 +219,8 @@ const transportTypes = [
 ];
 
 export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPublicView = false }: ProfileTabTravelProps) {
+  // Get current user for trip ownership checks
+  const { user: currentUser } = useAuth();
   // Privacy check: Only show public trips in public view (filter applied in render)
   const canEdit = isOwnProfile && !isPublicView;
   const [expandedTrips, setExpandedTrips] = useState<Set<number>>(new Set([0]));
@@ -215,7 +235,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   const [accommodationDialog, setAccommodationDialog] = useState<{ tripId: number; city: string; startDate: string; endDate: string } | null>(null);
   const [accommodationTab, setAccommodationTab] = useState<'mthost' | 'manual'>('mthost');
   const [transportDialog, setTransportDialog] = useState<{ tripId: number; city: string } | null>(null);
-  const [eventsDialog, setEventsDialog] = useState<{ tripId: number; city: string; startDate: string; endDate: string } | null>(null);
+  const [eventsDialog, setEventsDialog] = useState<{ tripId: number; cityId?: number; city: string; startDate: string; endDate: string } | null>(null);
   const [selectedTransportType, setSelectedTransportType] = useState<string>('flight');
   const [scrapingUrl, setScrapingUrl] = useState('');
   const [isScrapingAccommodation, setIsScrapingAccommodation] = useState(false);
@@ -233,32 +253,14 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   const [updatingTripId, setUpdatingTripId] = useState<number | null>(null);
   const [completionDialogTrip, setCompletionDialogTrip] = useState<TravelPlan | null>(null);
   
-  // Travel Companions dialogs
-  const [findCompanionsDialog, setFindCompanionsDialog] = useState<{ tripId: number; city: string } | null>(null);
-  const [inviteFriendsDialog, setInviteFriendsDialog] = useState<{ tripId: number; city: string } | null>(null);
-  const [groupChatDialog, setGroupChatDialog] = useState<{ tripId: number; city: string; companions: TravelCompanion[] } | null>(null);
-  
   // Request to Book modal state
   const [requestToBookTrip, setRequestToBookTrip] = useState<TravelPlan | null>(null);
   
-  // Travel Companion types and state management
-  type TravelCompanion = {
-    id: string;
-    requesterId?: number; // Actual user ID of the requester
-    name: string;
-    avatar: string;
-    initials: string;
-    matchScore: number;
-    details: string;
-    status: 'pending_incoming' | 'pending_outgoing' | 'confirmed';
-    requestId?: number; // Links to database tripJoinRequests.id
-    message?: string;
-  };
-  
-  // State for join requests from database
-  const [joinRequests, setJoinRequests] = useState<Record<number, any[]>>({});
-  
-  // Fetch travel plans FIRST (before allJoinRequests which depends on it)
+  // Participant management state
+  const [addTravelerDialog, setAddTravelerDialog] = useState<{ tripId: number; tripCity: string } | null>(null);
+  const [participantsCache, setParticipantsCache] = useState<Record<number, TripParticipant[]>>({});
+  const [removingParticipantId, setRemovingParticipantId] = useState<number | null>(null);
+
   const { data: travelPlans, isLoading } = useQuery({
     queryKey: ['/api/travel/plans', profileId],
     queryFn: async () => {
@@ -267,119 +269,22 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
       return response.json() as Promise<TravelPlan[]>;
     }
   });
-  
-  // Fetch join requests for all trips the user owns
-  const { data: allJoinRequests, refetch: refetchJoinRequests } = useQuery({
-    queryKey: ['/api/travel/join-requests', profileId],
+
+  // Fetch trips the current user is participating in (only for own profile)
+  const { data: participatingTrips } = useQuery({
+    queryKey: ['/api/travel/my-trips'],
     queryFn: async () => {
-      // Only fetch if viewing own profile
-      if (!isOwnProfile) return {};
-      
-      const tripRequestsMap: Record<number, any[]> = {};
-      const plans = travelPlans || [];
-      
-      await Promise.all(plans.map(async (trip) => {
-        try {
-          const response = await fetch(`/api/travel/trips/${trip.id}/requests`, {
-            credentials: 'include',
-          });
-          if (response.ok) {
-            const requests = await response.json();
-            tripRequestsMap[trip.id] = requests;
-          }
-        } catch (e) {
-          console.error(`Failed to fetch join requests for trip ${trip.id}:`, e);
-        }
-      }));
-      
-      return tripRequestsMap;
+      const response = await fetch('/api/travel/my-trips');
+      if (!response.ok) throw new Error('Failed to fetch participating trips');
+      const allTrips = await response.json() as TravelPlan[];
+      // Only return trips where user is NOT the owner (participating)
+      return allTrips.filter(trip => trip.isOwner === false);
     },
-    enabled: isOwnProfile && !isPublicView && !!travelPlans,
+    enabled: isOwnProfile && !isPublicView, // Only fetch for own profile
   });
-  
-  // Get companions for a specific trip - combines real join requests with mock data
-  const getCompanionsForTrip = (tripId: number): TravelCompanion[] => {
-    const requests = allJoinRequests?.[tripId] || [];
-    
-    // Map real join requests to TravelCompanion format
-    const realCompanions: TravelCompanion[] = requests.map((req: any) => ({
-      id: `request-${req.id}`,
-      requestId: req.id,
-      requesterId: req.requesterId, // Actual user ID for DM/profile links
-      name: req.requesterName || 'Unknown User',
-      avatar: req.requesterProfileImage || '',
-      initials: (req.requesterName || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
-      matchScore: 85, // Default score for now
-      details: req.message || 'Wants to join your trip',
-      status: req.status === 'pending' ? 'pending_incoming' as const : 
-              req.status === 'accepted' ? 'confirmed' as const : 
-              'pending_incoming' as const,
-      message: req.message,
-    }));
-    
-    return realCompanions;
-  };
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
-  // Accept a companion request - calls API
-  const acceptCompanionRequest = async (tripId: number, companionId: string) => {
-    const requestId = parseInt(companionId.replace('request-', ''));
-    if (isNaN(requestId)) {
-      toast({ title: "Error", description: "Invalid request ID", variant: "destructive" });
-      return;
-    }
-    
-    try {
-      const response = await fetch(`/api/travel/join-requests/${requestId}/respond`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ status: 'accepted' }),
-      });
-      
-      if (response.ok) {
-        toast({ title: "Request Accepted!", description: "Companion has been added to your trip." });
-        refetchJoinRequests();
-        queryClient.invalidateQueries({ queryKey: ['/api/travel/join-requests', profileId] });
-      } else {
-        const error = await response.json();
-        toast({ title: "Error", description: error.message || "Failed to accept request", variant: "destructive" });
-      }
-    } catch (e) {
-      toast({ title: "Error", description: "Failed to accept request", variant: "destructive" });
-    }
-  };
-  
-  // Decline a companion request - calls API
-  const declineCompanionRequest = async (tripId: number, companionId: string) => {
-    const requestId = parseInt(companionId.replace('request-', ''));
-    if (isNaN(requestId)) {
-      toast({ title: "Error", description: "Invalid request ID", variant: "destructive" });
-      return;
-    }
-    
-    try {
-      const response = await fetch(`/api/travel/join-requests/${requestId}/respond`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ status: 'rejected' }),
-      });
-      
-      if (response.ok) {
-        toast({ title: "Request Declined", description: "Request has been declined." });
-        refetchJoinRequests();
-        queryClient.invalidateQueries({ queryKey: ['/api/travel/join-requests', profileId] });
-      } else {
-        const error = await response.json();
-        toast({ title: "Error", description: error.message || "Failed to decline request", variant: "destructive" });
-      }
-    } catch (e) {
-      toast({ title: "Error", description: "Failed to decline request", variant: "destructive" });
-    }
-  };
 
   const [pickerKey, setPickerKey] = useState(0);
   
@@ -630,6 +535,49 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
     },
   });
 
+  // Fetch participants for a trip
+  const fetchParticipants = async (tripId: number): Promise<TripParticipant[]> => {
+    const token = localStorage.getItem('accessToken');
+    const res = await fetch(`/api/travel/trips/${tripId}/participants`, {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) return [];
+    return res.json();
+  };
+
+  // Load participants when trip expands
+  const loadParticipantsForTrip = async (tripId: number) => {
+    if (!participantsCache[tripId]) {
+      const participants = await fetchParticipants(tripId);
+      setParticipantsCache(prev => ({ ...prev, [tripId]: participants }));
+    }
+  };
+
+  // Remove participant mutation
+  const removeParticipantMutation = useMutation({
+    mutationFn: async ({ tripId, participantId }: { tripId: number; participantId: number }) => {
+      setRemovingParticipantId(participantId);
+      const res = await apiRequest("DELETE", `/api/travel/trips/${tripId}/participants/${participantId}`);
+      return res.json();
+    },
+    onSuccess: (_, { tripId }) => {
+      // Refresh participants cache
+      setParticipantsCache(prev => {
+        const updated = { ...prev };
+        delete updated[tripId];
+        return updated;
+      });
+      loadParticipantsForTrip(tripId);
+      setRemovingParticipantId(null);
+      toast({ title: "Traveler removed", description: "The participant has been removed from this trip." });
+    },
+    onError: () => {
+      setRemovingParticipantId(null);
+      toast({ title: "Failed to remove traveler", description: "Please try again.", variant: "destructive" });
+    },
+  });
+
   // Open edit dialog with item data pre-filled
   const openEditDialog = (tripId: number, item: TravelPlanItem, itemType: 'accommodation' | 'transport' | 'event') => {
     itemForm.reset({
@@ -765,11 +713,18 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
     setSelectedEvent(null);
   };
 
-  const toggleTrip = (index: number) => {
+  const toggleTrip = (index: number, tripId?: number) => {
     setExpandedTrips(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(index)) newSet.delete(index);
-      else newSet.add(index);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+        // Load participants when trip is expanded
+        if (tripId && canEdit) {
+          loadParticipantsForTrip(tripId);
+        }
+      }
       return newSet;
     });
   };
@@ -1067,7 +1022,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
             if (shouldHide) return null;
 
             return (
-              <Collapsible key={trip.id || index} open={isExpanded} onOpenChange={() => toggleTrip(index)} className={cn(isExpanded && "lg:col-span-2")}>
+              <Collapsible key={trip.id || index} open={isExpanded} onOpenChange={() => toggleTrip(index, trip.id)} className={cn(isExpanded && "lg:col-span-2")}>
                 <Card data-testid={`card-travel-plan-${index}`} className="overflow-hidden flex flex-col">
                   {/* Hero Header - Aspect ratio changes when expanded */}
                   <div className={cn("relative bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20", isExpanded ? "aspect-[3/1]" : "aspect-square")} style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
@@ -1484,182 +1439,101 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                   </div>
                                 )}
                                 {canEdit && (
-                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { setEventsDialog({ tripId: trip.id, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setEventSearchQuery(''); }} data-testid={`button-add-event-${index}`}>
+                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { setEventsDialog({ tripId: trip.id, cityId: trip.cityId, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setEventSearchQuery(''); }} data-testid={`button-add-event-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Event / Milonga
                                   </Button>
                                 )}
                               </CardContent>
                             </Card>
 
-                            {!isPublicView && (
-                              <>
-                                {/* Travel Companions Section */}
-                                <Card className="border-cyan-500/20" data-testid={`section-travel-companions-${index}`}>
-                                  <CardHeader className="pb-3">
-                                    <div className="flex items-center justify-between gap-2">
-                                      <CardTitle className="flex items-center gap-2 text-lg"><Users className="h-5 w-5 text-cyan-600" />Travel Companions</CardTitle>
-                                    </div>
-                                  </CardHeader>
-                                  <CardContent className="space-y-4">
-                                    {/* Pending Invitations Received - Dynamic */}
-                                    {(() => {
-                                      const companions = getCompanionsForTrip(trip.id);
-                                      const pendingIncoming = companions.filter(c => c.status === 'pending_incoming');
-                                      const pendingOutgoing = companions.filter(c => c.status === 'pending_outgoing');
-                                      const confirmed = companions.filter(c => c.status === 'confirmed');
-                                      
-                                      return (
-                                        <>
-                                          <div className="space-y-2">
-                                            <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                              <Heart className="h-4 w-4 text-pink-500" />
-                                              Requests to Join Your Trip
-                                              {pendingIncoming.length > 0 && <Badge variant="outline" className="bg-pink-500/10 text-pink-600 border-pink-500/30 text-xs">{pendingIncoming.length}</Badge>}
-                                            </h5>
-                                            {canEdit && pendingIncoming.length > 0 ? (
-                                              <div className="space-y-3">
-                                                {pendingIncoming.map((companion, idx) => (
-                                                  <div key={companion.id} className="p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg space-y-3">
-                                                    <div className="flex items-center justify-between">
-                                                      <div className="flex items-center gap-3">
-                                                        <Avatar className="h-10 w-10 border-2 border-pink-500/30">
-                                                          <AvatarImage src={companion.avatar} />
-                                                          <AvatarFallback>{companion.initials}</AvatarFallback>
-                                                        </Avatar>
-                                                        <div>
-                                                          <p className="font-medium text-sm">{companion.name}</p>
-                                                          <p className="text-xs text-muted-foreground">{companion.matchScore}% match</p>
-                                                        </div>
-                                                      </div>
-                                                      <div className="flex gap-1">
-                                                        <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-${idx}`} onClick={() => acceptCompanionRequest(trip.id, companion.id)}>
-                                                          <Check className="h-3 w-3 mr-1" />Accept
-                                                        </Button>
-                                                        <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-${idx}`} onClick={() => declineCompanionRequest(trip.id, companion.id)}>
-                                                          <X className="h-3 w-3" />
-                                                        </Button>
-                                                      </div>
-                                                    </div>
-                                                    {companion.message && (
-                                                      <div className="bg-muted/50 rounded p-2 text-sm text-muted-foreground italic">
-                                                        "{companion.message}"
-                                                      </div>
-                                                    )}
-                                                    <div className="flex gap-2">
-                                                      <Button size="sm" variant="ghost" className="h-7 text-xs text-cyan-600" data-testid={`button-dm-requester-${idx}`} onClick={() => window.location.href = `/messages?userId=${companion.requesterId}`}>
-                                                        <MessageCircle className="h-3 w-3 mr-1" />Direct Message
-                                                      </Button>
-                                                      <Button size="sm" variant="ghost" className="h-7 text-xs" data-testid={`button-view-profile-${idx}`} onClick={() => window.location.href = `/profile/${companion.requesterId}`}>
-                                                        <Eye className="h-3 w-3 mr-1" />View Profile
-                                                      </Button>
-                                                    </div>
-                                                  </div>
-                                                ))}
-                                              </div>
-                                            ) : (
-                                              <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                                <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                                <p className="text-xs">No pending requests</p>
-                                              </div>
-                                            )}
-                                          </div>
-
-                                          {/* Your Pending Requests - Dynamic */}
-                                          <div className="space-y-2">
-                                            <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                              <Sparkles className="h-4 w-4 text-amber-500" />
-                                              Your Requests to Join Others
-                                              {pendingOutgoing.length > 0 && <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-xs">{pendingOutgoing.length}</Badge>}
-                                            </h5>
-                                            {canEdit && pendingOutgoing.length > 0 ? (
-                                              <div className="space-y-2">
-                                                {pendingOutgoing.map((companion) => (
-                                                  <div key={companion.id} className="flex items-center justify-between p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
-                                                    <div className="flex items-center gap-3">
-                                                      <Avatar className="h-10 w-10 border-2 border-amber-500/30">
-                                                        <AvatarImage src={companion.avatar} />
-                                                        <AvatarFallback>{companion.initials}</AvatarFallback>
-                                                      </Avatar>
-                                                      <div>
-                                                        <p className="font-medium text-sm">{companion.name}'s Trip</p>
-                                                        <p className="text-xs text-muted-foreground">Waiting for response...</p>
-                                                      </div>
-                                                    </div>
-                                                    <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">Pending</Badge>
-                                                  </div>
-                                                ))}
-                                              </div>
-                                            ) : (
-                                              <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                                <Clock className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                                <p className="text-xs">No pending requests</p>
-                                              </div>
-                                            )}
-                                          </div>
-
-                                          {/* Confirmed Companions - Dynamic */}
-                                          <div className="space-y-2">
-                                            <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                              <Check className="h-4 w-4 text-green-500" />
-                                              Confirmed Companions
-                                              {confirmed.length > 0 && <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 text-xs">{confirmed.length}</Badge>}
-                                            </h5>
-                                            {confirmed.length > 0 ? (
-                                              <div className="space-y-2">
-                                                {confirmed.map((companion) => (
-                                                  <div key={companion.id} className="flex items-center justify-between p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
-                                                    <div className="flex items-center gap-3">
-                                                      <Avatar className="h-10 w-10 border-2 border-green-500/30">
-                                                        <AvatarImage src={companion.avatar} />
-                                                        <AvatarFallback>{companion.initials}</AvatarFallback>
-                                                      </Avatar>
-                                                      <div>
-                                                        <p className="font-medium text-sm">{companion.name}</p>
-                                                        <p className="text-xs text-muted-foreground">{companion.details}</p>
-                                                      </div>
-                                                    </div>
-                                                    <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
-                                                      <Check className="h-3 w-3 mr-1" />Confirmed
-                                                    </Badge>
-                                                  </div>
-                                                ))}
-                                              </div>
-                                            ) : (
-                                              <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                                <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                                <p className="text-xs">No companions yet</p>
-                                                <p className="text-xs mt-1">Find compatible travel buddies!</p>
-                                              </div>
-                                            )}
-                                            {/* Message Group Button - only show when there are confirmed companions */}
-                                            {confirmed.length > 0 && (
-                                              <Button variant="outline" size="sm" className="w-full mt-2 border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10" data-testid={`button-message-group-${index}`} onClick={() => setGroupChatDialog({ tripId: trip.id, city: trip.city, companions: confirmed })}>
-                                                <Users className="h-4 w-4 mr-2" />View Group Chat ({confirmed.length + 1} participants)
-                                              </Button>
-                                            )}
-                                          </div>
-                                        </>
-                                      );
-                                    })()}
-
-                                    {/* Action Buttons */}
-                                    {canEdit && (
-                                      <div className="flex gap-2 pt-2">
-                                        <Button variant="outline" size="sm" className="flex-1" data-testid={`button-find-companions-${index}`} onClick={() => setFindCompanionsDialog({ tripId: trip.id, city: trip.city })}>
-                                          <Search className="h-4 w-4 mr-2" />Find Compatible Travelers
-                                        </Button>
-                                        <Button variant="outline" size="sm" className="flex-1" data-testid={`button-invite-friends-${index}`} onClick={() => setInviteFriendsDialog({ tripId: trip.id, city: trip.city })}>
-                                          <Plus className="h-4 w-4 mr-2" />Invite Friends
-                                        </Button>
+                            {/* Participants Section - Trip owner can invite travelers */}
+                            {(trip.userId === currentUser?.id || canEdit) && !isPublicView && (
+                              <Card data-testid={`section-participants-${index}`}>
+                                <CardHeader className="pb-3">
+                                  <div className="flex items-center justify-between">
+                                    <CardTitle className="flex items-center gap-2 text-lg">
+                                      <Users className="h-5 w-5 text-indigo-600" />
+                                      Travelers
+                                    </CardTitle>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        setAddTravelerDialog({ tripId: trip.id, tripCity: trip.city });
+                                        loadParticipantsForTrip(trip.id);
+                                      }}
+                                      data-testid={`button-invite-traveler-${index}`}
+                                    >
+                                      <Plus className="h-4 w-4 mr-1" />
+                                      Invite
+                                    </Button>
+                                  </div>
+                                </CardHeader>
+                                <CardContent className="space-y-3">
+                                  {participantsCache[trip.id]?.length ? (
+                                    participantsCache[trip.id].map((participant, pIdx) => (
+                                      <div key={participant.id} className="flex items-center justify-between p-2 rounded-lg border bg-card hover-elevate group" data-testid={`participant-item-${pIdx}`}>
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                          <UserIdentityHeader
+                                            user={{
+                                              id: participant.userId,
+                                              name: participant.userName,
+                                              profileImage: participant.userProfileImage || undefined,
+                                            }}
+                                            size="sm"
+                                            showRoles={false}
+                                            showTimestamp={false}
+                                            testIdPrefix={`participant-${pIdx}`}
+                                          />
+                                          <Badge variant="secondary" className="text-xs capitalize ml-auto" data-testid={`participant-status-${pIdx}`}>
+                                            {participant.status}
+                                          </Badge>
+                                        </div>
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                                              disabled={removingParticipantId === participant.id}
+                                              data-testid={`button-remove-participant-${pIdx}`}
+                                            >
+                                              {removingParticipantId === participant.id ? (
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                              ) : (
+                                                <X className="h-3 w-3" />
+                                              )}
+                                            </Button>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>Remove Traveler</AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                Are you sure you want to remove {participant.userName} from this trip? They will need to be re-invited to rejoin.
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                              <AlertDialogAction
+                                                onClick={() => removeParticipantMutation.mutate({ tripId: trip.id, participantId: participant.id })}
+                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                              >
+                                                Remove
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
                                       </div>
-                                    )}
-
-                                    <p className="text-xs text-center text-muted-foreground pt-2">
-                                      AI-powered travel matching uses your preferences, schedule, and interests to find compatible companions
-                                    </p>
-                                  </CardContent>
-                                </Card>
-                              </>
+                                    ))
+                                  ) : (
+                                    <div className="text-center py-4 text-muted-foreground">
+                                      <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                                      <p className="text-sm">No travelers added yet</p>
+                                      <p className="text-xs mt-1">Invite friends to join this trip</p>
+                                    </div>
+                                  )}
+                                </CardContent>
+                              </Card>
                             )}
 
                             {/* Add Item Dialog */}
@@ -1753,6 +1627,64 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
         </div>
         );
       })()}
+
+      {/* Trips I'm Joining - Trips where current user is a participant (not owner) */}
+      {isOwnProfile && !isPublicView && participatingTrips && participatingTrips.length > 0 && (
+        <div className="space-y-4" data-testid="section-trips-joining">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                Trips I'm Joining
+              </h2>
+              <p className="text-sm text-muted-foreground">Trips you've been invited to by other travelers</p>
+            </div>
+            <Badge variant="secondary">{participatingTrips.length} trip{participatingTrips.length !== 1 ? 's' : ''}</Badge>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {participatingTrips.map((trip, index) => (
+              <Card key={trip.id} className="overflow-hidden hover-elevate" data-testid={`card-joining-trip-${index}`}>
+                <div 
+                  className="relative h-32 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20"
+                  style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <h3 className="text-lg font-semibold text-white">{trip.city}{trip.country && <span className="text-white/70 text-sm ml-1.5">• {trip.country}</span>}</h3>
+                    <div className="flex items-center gap-2 text-white/80 text-xs mt-1">
+                      <CalendarIcon className="w-3 h-3" />
+                      <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    </div>
+                  </div>
+                  <Badge className="absolute top-3 right-3 bg-primary/80 text-primary-foreground text-xs">Invited</Badge>
+                </div>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={trip.ownerProfileImage || undefined} />
+                      <AvatarFallback className="text-xs">{trip.ownerName?.charAt(0)?.toUpperCase() || '?'}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">Organized by {trip.ownerName || 'Unknown'}</p>
+                      <p className="text-xs text-muted-foreground">{trip.tripDuration} {trip.tripDuration === 1 ? 'day' : 'days'}</p>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => window.location.href = `/travel/trip/${trip.id}`}
+                      data-testid={`button-view-joining-trip-${index}`}
+                    >
+                      <Eye className="h-4 w-4 mr-1.5" />
+                      View
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Enhanced Accommodation Dialog with MT Host Integration */}
       <Dialog open={!!accommodationDialog} onOpenChange={(open) => { if (!open) { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); setAccommodationTab('mthost'); } }}>
@@ -2031,426 +1963,82 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
             </DialogTitle>
           </DialogHeader>
 
-          <Tabs defaultValue="search" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="search" data-testid="tab-search-events">Search Events</TabsTrigger>
-              <TabsTrigger value="manual" data-testid="tab-manual-event">Add Manually</TabsTrigger>
-              <TabsTrigger value="create" data-testid="tab-create-event">Create New</TabsTrigger>
-            </TabsList>
-
-            {/* Search MT Events Tab */}
-            <TabsContent value="search" className="space-y-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search milongas, events..." 
-                  value={eventSearchQuery}
-                  onChange={(e) => setEventSearchQuery(e.target.value)}
-                  className="pl-10"
-                  data-testid="input-event-search"
-                />
-              </div>
-
-              <ScrollArea className="h-[300px] pr-4">
-                {eventsLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                  </div>
-                ) : filteredEvents.length > 0 ? (
-                  <div className="space-y-2">
-                    {filteredEvents.map((event) => (
-                      <div 
-                        key={event.id}
-                        className={cn(
-                          "p-3 rounded-lg border cursor-pointer hover-elevate transition-all",
-                          selectedEvent?.id === event.id && "border-primary bg-primary/5"
-                        )}
-                        onClick={() => setSelectedEvent(event)}
-                        data-testid={`event-result-${event.id}`}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <h5 className="font-medium">{event.title}</h5>
-                              <Badge variant="outline" className={event.eventType === 'milonga' ? 'bg-red-500/10 text-red-600' : 'bg-pink-500/10 text-pink-600'}>
-                                {event.eventType}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                              <MapPin className="h-3 w-3" />{event.venue || event.location}
-                            </p>
-                            <p className="text-sm text-muted-foreground flex items-center gap-1">
-                              <CalendarIcon className="h-3 w-3" />
-                              {new Date(event.startDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            {event.isFree ? (
-                              <Badge variant="outline" className="bg-green-500/10 text-green-600">Free</Badge>
-                            ) : event.price ? (
-                              <p className="font-bold text-primary">{event.price}</p>
-                            ) : null}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Music className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                    <p className="text-sm">No events found in {eventsDialog?.city}</p>
-                    <p className="text-xs mt-1">Try the manual entry or create a new event</p>
-                  </div>
-                )}
-              </ScrollArea>
-
-              {selectedEvent && (
-                <div className="flex gap-2 pt-2 border-t">
-                  <Button type="button" variant="outline" onClick={() => setSelectedEvent(null)} className="flex-1">Cancel</Button>
-                  <Button 
-                    onClick={() => eventsDialog && addEventToTrip(eventsDialog.tripId, selectedEvent)} 
-                    className="flex-1"
-                    disabled={addItemMutation.isPending}
-                  >
-                    {addItemMutation.isPending ? "Adding..." : "Add to Trip"}
-                  </Button>
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Manual Entry Tab */}
-            <TabsContent value="manual">
-              <Form {...itemForm}>
-                <form onSubmit={itemForm.handleSubmit((data) => { if (eventsDialog) { addItemMutation.mutate({ tripId: eventsDialog.tripId, data }); setEventsDialog(null); } })} className="space-y-4">
-                  <FormField control={itemForm.control} name="type" render={({ field }) => (
-                    <FormItem><FormLabel>Event Type *</FormLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger></FormControl>
-                        <SelectContent>
-                          <SelectItem value="milonga">Milonga</SelectItem>
-                          <SelectItem value="event">Tango Event</SelectItem>
-                          <SelectItem value="activity">Activity</SelectItem>
-                          <SelectItem value="dining">Dining</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-
-                  <FormField control={itemForm.control} name="title" render={({ field }) => (
-                    <FormItem><FormLabel>Event Name *</FormLabel><FormControl><Input placeholder="e.g., La Catedral Milonga" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField control={itemForm.control} name="date" render={({ field }) => (
-                      <FormItem><FormLabel>Date/Time</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    <FormField control={itemForm.control} name="cost" render={({ field }) => (
-                      <FormItem><FormLabel>Entry Fee (USD)</FormLabel><FormControl><Input type="number" placeholder="15" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                  </div>
-
-                  <FormField control={itemForm.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel>Venue/Location</FormLabel><FormControl><UnifiedLocationPicker mode="address" value={field.value || ""} onChange={(location) => field.onChange(location)} placeholder="Search for venue or address..." data-testid="input-event-location" /></FormControl><FormMessage /></FormItem>
-                  )} />
-
-                  <FormField control={itemForm.control} name="description" render={({ field }) => (
-                    <FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Dress code, DJ, special notes..." {...field} rows={2} /></FormControl><FormMessage /></FormItem>
-                  )} />
-
-                  <div className="flex gap-2 pt-2">
-                    <Button type="button" variant="outline" onClick={() => { setEventsDialog(null); itemForm.reset(); }} className="flex-1">Cancel</Button>
-                    <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Adding..." : "Add Event"}</Button>
-                  </div>
-                </form>
-              </Form>
-            </TabsContent>
-
-            {/* Create New Event Tab */}
-            <TabsContent value="create" className="space-y-4">
-              <div className="text-center py-8">
-                <Sparkles className="h-12 w-12 mx-auto mb-4 text-primary opacity-50" />
-                <h3 className="font-semibold mb-2">Create a New Event</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Use our event creation platform to add a new milonga or tango event to the Mundo Tango community.
-                </p>
-                <Button asChild>
-                  <a href="/events/create" target="_blank" rel="noopener noreferrer" data-testid="link-create-event">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Open Event Creator
-                  </a>
-                </Button>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
-
-      {/* Find Compatible Travelers Dialog */}
-      <Dialog open={!!findCompanionsDialog} onOpenChange={(open) => { if (!open) setFindCompanionsDialog(null); }}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Search className="h-5 w-5 text-cyan-600" />
-              Find Compatible Travelers to {findCompanionsDialog?.city}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Our AI matches you with compatible travelers based on your dance level, travel style, schedule, and interests.
-            </p>
-            
-            {/* AI Match Results */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-medium">Top Matches</h4>
-              
-              <div className="p-4 border rounded-lg space-y-3 hover-elevate cursor-pointer" onClick={() => { toast({ title: "Request Sent!", description: "Your travel request has been sent to Isabella." }); setFindCompanionsDialog(null); }}>
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12 border-2 border-cyan-500/30">
-                    <AvatarImage src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" />
-                    <AvatarFallback>IM</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium">Isabella Martinez</p>
-                      <Badge className="bg-green-500/10 text-green-600 border-green-500/30">95% Match</Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">Advanced dancer • Same dates • Budget-friendly</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  <Badge variant="outline" className="text-xs">Milongas</Badge>
-                  <Badge variant="outline" className="text-xs">Traditional</Badge>
-                  <Badge variant="outline" className="text-xs">Sharing OK</Badge>
-                </div>
-              </div>
-
-              <div className="p-4 border rounded-lg space-y-3 hover-elevate cursor-pointer" onClick={() => { toast({ title: "Request Sent!", description: "Your travel request has been sent to David." }); setFindCompanionsDialog(null); }}>
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12 border-2 border-cyan-500/30">
-                    <AvatarImage src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" />
-                    <AvatarFallback>DK</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium">David Kim</p>
-                      <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/30">87% Match</Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">Intermediate dancer • Overlapping week • Similar budget</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  <Badge variant="outline" className="text-xs">Nuevo</Badge>
-                  <Badge variant="outline" className="text-xs">Workshops</Badge>
-                  <Badge variant="outline" className="text-xs">Photography</Badge>
-                </div>
-              </div>
-
-              <div className="p-4 border rounded-lg space-y-3 hover-elevate cursor-pointer" onClick={() => { toast({ title: "Request Sent!", description: "Your travel request has been sent to Maria." }); setFindCompanionsDialog(null); }}>
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12 border-2 border-cyan-500/30">
-                    <AvatarImage src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop" />
-                    <AvatarFallback>MG</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium">Maria Gonzalez</p>
-                      <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/30">78% Match</Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">Beginner dancer • Same flight • Looking for group</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  <Badge variant="outline" className="text-xs">Learning</Badge>
-                  <Badge variant="outline" className="text-xs">Group Travel</Badge>
-                  <Badge variant="outline" className="text-xs">Food Tours</Badge>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-xs text-center text-muted-foreground">
-              Click a profile to send a travel companion request
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Group Chat Dialog */}
-      <Dialog open={!!groupChatDialog} onOpenChange={(open) => { if (!open) setGroupChatDialog(null); }}>
-        <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-cyan-600" />
-              Trip to {groupChatDialog?.city} - Group Chat
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex-1 flex flex-col min-h-0">
-            {/* Participants Header */}
-            <div className="flex items-center gap-2 pb-3 border-b">
-              <div className="flex -space-x-2">
-                {groupChatDialog?.companions.slice(0, 4).map((c) => (
-                  <Avatar key={c.id} className="h-8 w-8 border-2 border-background">
-                    <AvatarImage src={c.avatar} />
-                    <AvatarFallback>{c.initials}</AvatarFallback>
-                  </Avatar>
-                ))}
-                <Avatar className="h-8 w-8 border-2 border-background bg-primary">
-                  <AvatarFallback className="text-primary-foreground text-xs">You</AvatarFallback>
-                </Avatar>
-              </div>
-              <span className="text-sm text-muted-foreground">
-                {(groupChatDialog?.companions.length || 0) + 1} participants
-              </span>
-            </div>
-            
-            {/* Chat Messages Area */}
-            <div className="flex-1 overflow-y-auto py-4 space-y-4 min-h-[250px]">
-              {/* Sample chat messages */}
-              <div className="flex gap-3">
-                <Avatar className="h-8 w-8 flex-shrink-0">
-                  <AvatarImage src={groupChatDialog?.companions[0]?.avatar} />
-                  <AvatarFallback>{groupChatDialog?.companions[0]?.initials}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-medium text-sm">{groupChatDialog?.companions[0]?.name}</span>
-                    <span className="text-xs text-muted-foreground">2 hours ago</span>
-                  </div>
-                  <p className="text-sm mt-1 bg-muted/50 rounded-lg p-3">
-                    Hey everyone! So excited for our trip to {groupChatDialog?.city}! Has anyone started looking at milongas yet?
-                  </p>
-                </div>
-              </div>
-              
-              {groupChatDialog?.companions[1] && (
-                <div className="flex gap-3">
-                  <Avatar className="h-8 w-8 flex-shrink-0">
-                    <AvatarImage src={groupChatDialog?.companions[1]?.avatar} />
-                    <AvatarFallback>{groupChatDialog?.companions[1]?.initials}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-medium text-sm">{groupChatDialog?.companions[1]?.name}</span>
-                      <span className="text-xs text-muted-foreground">1 hour ago</span>
-                    </div>
-                    <p className="text-sm mt-1 bg-muted/50 rounded-lg p-3">
-                      Yes! I found a few good ones. Should we meet at the hotel first or go straight there?
-                    </p>
-                  </div>
-                </div>
-              )}
-              
-              <div className="flex gap-3 justify-end">
-                <div className="flex-1 max-w-[80%]">
-                  <div className="flex items-baseline gap-2 justify-end">
-                    <span className="text-xs text-muted-foreground">30 min ago</span>
-                    <span className="font-medium text-sm">You</span>
-                  </div>
-                  <p className="text-sm mt-1 bg-primary/10 rounded-lg p-3 text-right">
-                    Let's meet at the hotel lobby at 9pm. I'll share my flight details soon!
-                  </p>
-                </div>
-                <Avatar className="h-8 w-8 flex-shrink-0 bg-primary">
-                  <AvatarFallback className="text-primary-foreground text-xs">You</AvatarFallback>
-                </Avatar>
-              </div>
-            </div>
-            
-            {/* Message Input */}
-            <div className="pt-3 border-t">
-              <div className="flex gap-2">
-                <Input 
-                  placeholder="Type a message..." 
-                  className="flex-1" 
-                  data-testid="input-group-chat-message"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim()) {
-                      toast({ title: "Message Sent", description: "Your message has been sent to the group." });
-                      (e.target as HTMLInputElement).value = '';
-                    }
-                  }}
-                />
-                <Button size="icon" onClick={() => toast({ title: "Message Sent", description: "Your message has been sent to the group." })} data-testid="button-send-message">
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Invite Friends Dialog */}
-      <Dialog open={!!inviteFriendsDialog} onOpenChange={(open) => { if (!open) setInviteFriendsDialog(null); }}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5 text-primary" />
-              Invite Friends to {inviteFriendsDialog?.city}
-            </DialogTitle>
-          </DialogHeader>
           <div className="space-y-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search by name or email..." className="pl-9" data-testid="input-search-friends" />
-            </div>
-            
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-muted-foreground">Your Connections</h4>
-              
-              <div className="flex items-center justify-between p-3 border rounded-lg hover-elevate">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" />
-                    <AvatarFallback>RJ</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium text-sm">Robert Johnson</p>
-                    <p className="text-xs text-muted-foreground">Friend • Last active 2h ago</p>
-                  </div>
-                </div>
-                <Button size="sm" variant="outline" onClick={() => { toast({ title: "Invitation Sent!", description: "Robert has been invited to your trip." }); }} data-testid="button-invite-friend-0">
-                  <Plus className="h-3 w-3 mr-1" />Invite
-                </Button>
-              </div>
-
-              <div className="flex items-center justify-between p-3 border rounded-lg hover-elevate">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop" />
-                    <AvatarFallback>LW</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium text-sm">Lisa Wang</p>
-                    <p className="text-xs text-muted-foreground">Friend • Online now</p>
-                  </div>
-                </div>
-                <Button size="sm" variant="outline" onClick={() => { toast({ title: "Invitation Sent!", description: "Lisa has been invited to your trip." }); }} data-testid="button-invite-friend-1">
-                  <Plus className="h-3 w-3 mr-1" />Invite
-                </Button>
-              </div>
-
-              <div className="flex items-center justify-between p-3 border rounded-lg hover-elevate">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" />
-                    <AvatarFallback>AS</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium text-sm">Alex Smith</p>
-                    <p className="text-xs text-muted-foreground">Dance Partner • Last active 1d ago</p>
-                  </div>
-                </div>
-                <Button size="sm" variant="outline" onClick={() => { toast({ title: "Invitation Sent!", description: "Alex has been invited to your trip." }); }} data-testid="button-invite-friend-2">
-                  <Plus className="h-3 w-3 mr-1" />Invite
-                </Button>
-              </div>
+              <Input 
+                placeholder="Search milongas, events..." 
+                value={eventSearchQuery}
+                onChange={(e) => setEventSearchQuery(e.target.value)}
+                className="pl-10"
+                data-testid="input-event-search"
+              />
             </div>
 
-            <div className="pt-2 border-t">
-              <Button variant="outline" className="w-full" onClick={() => { navigator.clipboard.writeText(`https://mundotango.app/trips/${inviteFriendsDialog?.tripId}`); toast({ title: "Link Copied!", description: "Share this link with anyone to invite them to your trip." }); }} data-testid="button-copy-invite-link">
-                <Link2 className="h-4 w-4 mr-2" />Copy Invite Link
-              </Button>
-            </div>
+            <ScrollArea className="h-[300px] pr-4">
+              {eventsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : filteredEvents.length > 0 ? (
+                <div className="space-y-2">
+                  {filteredEvents.map((event) => (
+                    <div 
+                      key={event.id}
+                      className={cn(
+                        "p-3 rounded-lg border cursor-pointer hover-elevate transition-all",
+                        selectedEvent?.id === event.id && "border-primary bg-primary/5"
+                      )}
+                      onClick={() => setSelectedEvent(event)}
+                      data-testid={`event-result-${event.id}`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h5 className="font-medium">{event.title}</h5>
+                            <Badge variant="outline" className={event.eventType === 'milonga' ? 'bg-red-500/10 text-red-600' : 'bg-pink-500/10 text-pink-600'}>
+                              {event.eventType}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                            <MapPin className="h-3 w-3" />{event.venue || event.location}
+                          </p>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <CalendarIcon className="h-3 w-3" />
+                            {new Date(event.startDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          {event.isFree ? (
+                            <Badge variant="outline" className="bg-green-500/10 text-green-600">Free</Badge>
+                          ) : event.price ? (
+                            <p className="font-bold text-primary">{event.price}</p>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Music className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">No events found in {eventsDialog?.city}</p>
+                </div>
+              )}
+            </ScrollArea>
+
+            {selectedEvent && (
+              <div className="flex gap-2 pt-2 border-t">
+                <Button type="button" variant="outline" onClick={() => setSelectedEvent(null)} className="flex-1">Cancel</Button>
+                <Button 
+                  onClick={() => eventsDialog && addEventToTrip(eventsDialog.tripId, selectedEvent)} 
+                  className="flex-1"
+                  disabled={addItemMutation.isPending}
+                >
+                  {addItemMutation.isPending ? "Adding..." : "Add to Trip"}
+                </Button>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
@@ -2564,6 +2152,24 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
             ownerName: profileOwner.name || profileOwner.username || 'Unknown',
             ownerUsername: profileOwner.username || '',
             ownerProfileImage: profileOwner.profileImage,
+          }}
+        />
+      )}
+
+      {/* Add Traveler Dialog */}
+      {addTravelerDialog && (
+        <AddTravelerDialog
+          open={!!addTravelerDialog}
+          onOpenChange={(open) => !open && setAddTravelerDialog(null)}
+          tripId={addTravelerDialog.tripId}
+          tripCity={addTravelerDialog.tripCity}
+          onTravelerAdded={() => {
+            setParticipantsCache(prev => {
+              const updated = { ...prev };
+              delete updated[addTravelerDialog.tripId];
+              return updated;
+            });
+            loadParticipantsForTrip(addTravelerDialog.tripId);
           }}
         />
       )}

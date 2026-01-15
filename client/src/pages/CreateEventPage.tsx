@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
@@ -19,7 +19,8 @@ import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
-import { Calendar, MapPin, DollarSign, Users, Plus, Clock, Repeat } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Users, Plus, Clock, Repeat, ImageIcon } from "lucide-react";
+import { EventPhotoUploader, UploadedPhoto } from "@/components/events/EventPhotoUploader";
 import { EVENT_TYPES, EVENT_TYPE_VALUES } from "@/lib/eventTypes";
 import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
 import { getCurrencyFromCountry, getCurrencySymbol } from "@/lib/currencyUtils";
@@ -64,7 +65,8 @@ const eventFormSchema = z.object({
   address: z.string().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
-  imageUrl: z.string().url().optional().or(z.literal("")),
+  coverImageUrl: z.string().url().optional().or(z.literal("")),
+  mediaUrls: z.array(z.string()).default([]),
   isPaid: z.boolean().default(false),
   price: z.number().min(0).optional(),
   currency: z.string().default("USD"),
@@ -88,6 +90,10 @@ export default function CreateEventPage() {
   const [selectedLocation, setSelectedLocation] = useState({ city: "", country: "", address: "" });
 
   const [userTimezone, setUserTimezone] = useState("");
+  const [defaultCity, setDefaultCity] = useState("");
+  const hasInitializedLocationRef = useRef(false);
+  const [coverPhoto, setCoverPhoto] = useState<UploadedPhoto | null>(null);
+  const [galleryPhotos, setGalleryPhotos] = useState<UploadedPhoto[]>([]);
   
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -101,7 +107,8 @@ export default function CreateEventPage() {
       city: "",
       country: "",
       address: "",
-      imageUrl: "",
+      coverImageUrl: "",
+      mediaUrls: [],
       isPaid: false,
       price: 0,
       currency: "USD",
@@ -115,6 +122,20 @@ export default function CreateEventPage() {
       attendeeCloseness: "all" as ClosenessVisibility,
     },
   });
+
+  // Set default city from user's primary city - one-time initialization only
+  useEffect(() => {
+    if (user?.city && !hasInitializedLocationRef.current) {
+      hasInitializedLocationRef.current = true;
+      setDefaultCity(user.city);
+      // Pre-fill both city and location fields so form validation passes
+      form.setValue("city", user.city);
+      form.setValue("location", user.city); // Initialize location to satisfy required field
+      setSelectedLocation(prev => ({ ...prev, city: user.city || "" }));
+      const tz = getTimezoneFromCity(user.city);
+      if (tz) setUserTimezone(tz);
+    }
+  }, [user?.city, form]);
 
   const handleLocationChange = (location: string, coordinates: { lat: number; lng: number }, parsed?: any) => {
     const { city, country } = extractCityCountry(location);
@@ -132,6 +153,16 @@ export default function CreateEventPage() {
     setUserTimezone(tz);
     const currency = getCurrencyFromCountry(country);
     form.setValue("currency", currency);
+  };
+
+  const handleCoverPhotoChange = (photo: UploadedPhoto | null) => {
+    setCoverPhoto(photo);
+    form.setValue("coverImageUrl", photo?.url || "");
+  };
+
+  const handleGalleryPhotosChange = (photos: UploadedPhoto[]) => {
+    setGalleryPhotos(photos);
+    form.setValue("mediaUrls", photos.map(p => p.url));
   };
 
   const createSeriesMutation = useMutation({
@@ -261,20 +292,35 @@ export default function CreateEventPage() {
     }
   };
 
+  const getOrdinalSuffix = (num: number): string => {
+    const suffixes: Record<string, string> = {
+      '1': t('common:ordinal.st', 'st'),
+      '2': t('common:ordinal.nd', 'nd'),
+      '3': t('common:ordinal.rd', 'rd'),
+    };
+    if (num >= 11 && num <= 13) {
+      return t('common:ordinal.th', 'th');
+    }
+    const lastDigit = String(num % 10);
+    return suffixes[lastDigit] || t('common:ordinal.th', 'th');
+  };
+
   const getRecurrenceLabel = (): string => {
     if (!recurrenceType) return "";
     const day = form.watch("recurrenceDay");
     
     if (recurrenceType === "weekly") {
-      const dayName = DAYS_OF_WEEK.find(d => d.value === String(day))?.label || "";
-      return `Every ${dayName}`;
+      const dayKey = DAYS_OF_WEEK_KEYS.find(d => d.value === String(day))?.key || "sunday";
+      const dayName = t(`common:days.${dayKey}`, dayKey.charAt(0).toUpperCase() + dayKey.slice(1));
+      return t('pages:createEvent.everyDay', 'Every {{day}}', { day: dayName });
     } else if (recurrenceType === "monthly") {
-      const suffix = day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th";
-      return `Every ${day}${suffix} day of the month`;
+      const suffix = getOrdinalSuffix(day as number);
+      return t('pages:createEvent.everyDayOfMonth', 'Every {{day}}{{suffix}} day of the month', { day, suffix });
     } else if (recurrenceType === "yearly") {
-      const monthName = MONTHS.find(m => m.value === String(day))?.label || "";
+      const monthKey = MONTHS_KEYS.find(m => m.value === String(day))?.key || "january";
+      const monthName = t(`common:months.${monthKey}`, monthKey.charAt(0).toUpperCase() + monthKey.slice(1));
       const dateDay = startDate ? getDayOfMonthFromDate(startDate) : 1;
-      return `Every ${monthName} ${dateDay}`;
+      return t('pages:createEvent.everyMonthDay', 'Every {{month}} {{day}}', { month: monthName, day: dateDay });
     }
     return "";
   };
@@ -449,6 +495,34 @@ export default function CreateEventPage() {
                       />
                     </div>
 
+                    {/* Location using Unified Location Picker */}
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('pages:createEvent.venueLocation', 'Venue Location')} *</FormLabel>
+                          <FormControl>
+                            <UnifiedLocationPicker
+                              mode="address"
+                              value={field.value}
+                              onChange={handleLocationChange}
+                              placeholder={t('pages:createEvent.venueLocationPlaceholder', 'Search for venue, address, or city...')}
+                              userCity={defaultCity || user?.city || ""}
+                              data-testid="location-picker"
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            {defaultCity && (
+                              <span className="text-primary font-medium">{t('pages:createEvent.defaultCity', 'Default city')}: {defaultCity}. </span>
+                            )}
+                            {t('pages:createEvent.venueLocationDesc', 'Search for a venue name, street address, or city to auto-fill location details')}
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     {/* Recurring Series Toggle */}
                     <FormField
                       control={form.control}
@@ -562,7 +636,7 @@ export default function CreateEventPage() {
                                   <SelectContent>
                                     {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                                       <SelectItem key={day} value={String(day)}>
-                                        {day}{day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th"}
+                                        {day}{getOrdinalSuffix(day)}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
@@ -610,30 +684,6 @@ export default function CreateEventPage() {
                         )}
                       </div>
                     )}
-
-                    {/* Location using Unified Location Picker */}
-                    <FormField
-                      control={form.control}
-                      name="location"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t('pages:createEvent.venueLocation', 'Venue Location')} *</FormLabel>
-                          <FormControl>
-                            <UnifiedLocationPicker
-                              mode="address"
-                              value={field.value}
-                              onChange={handleLocationChange}
-                              placeholder={t('pages:createEvent.venueLocationPlaceholder', 'Search for venue, address, or city...')}
-                              data-testid="location-picker"
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            {t('pages:createEvent.venueLocationDesc', 'Search for a venue name, street address, or city to auto-fill location details')}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
 
                     {/* Pricing */}
                     <FormField
@@ -755,25 +805,23 @@ export default function CreateEventPage() {
                       )}
                     />
 
-                    {/* Image URL */}
-                    <FormField
-                      control={form.control}
-                      name="imageUrl"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t('pages:createEvent.eventImageUrl', 'Event Image URL (optional)')}</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="url"
-                              placeholder={t('pages:createEvent.eventImageUrlPlaceholder', 'https://example.com/event-image.jpg')}
-                              {...field} 
-                              data-testid="input-image-url"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {/* Event Photos */}
+                    <div className="space-y-2">
+                      <FormLabel className="flex items-center gap-2">
+                        <ImageIcon className="h-4 w-4" />
+                        {t('pages:createEvent.eventPhotos', 'Event Photos')}
+                      </FormLabel>
+                      <FormDescription>
+                        {t('pages:createEvent.eventPhotosDesc', 'Add a cover photo and up to 6 additional photos for your event')}
+                      </FormDescription>
+                      <EventPhotoUploader
+                        coverPhoto={coverPhoto}
+                        galleryPhotos={galleryPhotos}
+                        onCoverPhotoChange={handleCoverPhotoChange}
+                        onGalleryPhotosChange={handleGalleryPhotosChange}
+                        maxGalleryPhotos={6}
+                      />
+                    </div>
 
                     {/* Submit Button */}
                     <div className="flex gap-4 pt-4">

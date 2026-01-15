@@ -712,3 +712,29 @@ h2.text-4xl {
 .event-map-popup .leaflet-popup {
   z-index: 1000 !important;
 }
+
+/* ========== MAP MARKER CLUSTERING STYLES ========== */
+.custom-cluster-icon {
+  background: transparent !important;
+}
+
+.cluster-marker {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(180 70% 35%) 100%);
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cluster-marker:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), 0 0 0 4px rgba(255, 255, 255, 0.3);
+}

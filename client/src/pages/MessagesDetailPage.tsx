@@ -28,6 +28,7 @@ interface Conversation {
   userId: number;
   userName: string;
   avatarUrl?: string;
+  userImage?: string; // API returns userImage
   lastMessage?: string;
   lastMessageAt?: string;
 }
@@ -39,20 +40,27 @@ export default function MessagesDetailPage() {
   const [newMessage, setNewMessage] = useState("");
 
   const { data: conversation } = useQuery<Conversation>({
-    queryKey: ['/api/messages/conversations', conversationId],
+    queryKey: ['/api/messages/conversation-detail', conversationId],
+    queryFn: async () => {
+      const res = await apiRequest("GET", `/api/messages/conversations/${conversationId}`);
+      return res.json();
+    },
+    enabled: !!conversationId,
   });
 
   const { data: messages = [], isLoading } = useQuery<Message[]>({
-    queryKey: ['/api/messages', conversationId],
+    queryKey: ['/api/messages/direct', conversationId],
+    enabled: !!conversationId,
   });
 
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
-      return await apiRequest("POST", `/api/messages/${conversationId}`, { content });
+      return await apiRequest("POST", `/api/messages/send-direct`, { recipientId: parseInt(conversationId || '0'), content });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/messages', conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['/api/messages/direct', conversationId] });
       queryClient.invalidateQueries({ queryKey: ['/api/messages/conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/messages/conversation-detail', conversationId] });
       setNewMessage("");
     },
     onError: () => {
@@ -104,8 +112,8 @@ export default function MessagesDetailPage() {
                     </Button>
                   </Link>
                   <Avatar className="h-12 w-12">
-                    <AvatarImage src={conversation.avatarUrl} alt={conversation.userName} />
-                    <AvatarFallback>{conversation.userName.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={conversation.avatarUrl || conversation.userImage} alt={conversation.userName} />
+                    <AvatarFallback>{conversation.userName?.charAt(0) || "?"}</AvatarFallback>
                   </Avatar>
                   <div>
                     <h2 className="text-xl font-serif font-bold text-foreground" data-testid="text-conversation-name">

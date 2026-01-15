@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon, Loader2, MapPin, ChevronLeft, ChevronRight, UserCheck, Send } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
@@ -29,6 +29,34 @@ interface Friend {
   closenessScore?: number;
   connectionDegree?: number;
   lastInteractionAt?: string;
+}
+
+interface DiscoverUser {
+  id: number;
+  name: string;
+  username: string;
+  profileImage?: string;
+  bio?: string;
+  city?: string;
+  country?: string;
+  tangoRoles?: string[];
+  danceExperienceLevel?: string;
+  yearsOfDancing?: number;
+  isFriend: boolean;
+  hasSentRequest: boolean;
+  hasReceivedRequest: boolean;
+  createdAt?: string;
+}
+
+interface DiscoverResponse {
+  users: DiscoverUser[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasMore: boolean;
+  };
 }
 
 interface FriendRequest {
@@ -74,19 +102,40 @@ export default function FriendsListPage() {
     queryKey: ["/api/friends/requests"],
   });
 
-  const { data: suggestions = [], isLoading: loadingSuggestions } = useQuery<Friend[]>({
-    queryKey: ["/api/friends/suggestions"],
+  const [discoverPage, setDiscoverPage] = useState(1);
+  const [discoverSearch, setDiscoverSearch] = useState("");
+  
+  const { data: discoverData, isLoading: loadingDiscover, isFetching: fetchingDiscover } = useQuery<DiscoverResponse>({
+    queryKey: ["/api/users/discover", discoverPage, discoverSearch],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: discoverPage.toString(),
+        limit: "20",
+        ...(discoverSearch && { search: discoverSearch }),
+      });
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const response = await fetch(`/api/users/discover?${params}`, {
+        credentials: "include",
+        headers,
+      });
+      if (!response.ok) throw new Error("Failed to fetch users");
+      return response.json();
+    },
   });
 
   const sendRequestMutation = useMutation({
     mutationFn: (data: any) => apiRequest("POST", `/api/friends/request/${data.receiverId}`, data),
     onSuccess: () => {
-      toast({ title: "✨ Friend request sent!" });
+      toast({ title: "Friend request sent!" });
       setShowRequestDialog(false);
       setRequestData({ message: "", didWeDance: false, danceLocation: "", danceStory: "", meetingDate: "" });
       setUploadedFiles([]);
       setFilePreviews([]);
-      queryClient.invalidateQueries({ queryKey: ["/api/friends/suggestions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/discover"] });
     },
     onError: () => {
       toast({ title: "Failed to send request", variant: "destructive" });
@@ -232,8 +281,8 @@ export default function FriendsListPage() {
 
   const filteredFriends = friends.filter(
     (friend) =>
-      friend.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      friend.username.toLowerCase().includes(searchQuery.toLowerCase())
+      (friend.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (friend.username || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const getConnectionBadge = (degree?: number) => {
@@ -318,6 +367,118 @@ export default function FriendsListPage() {
             Remove
           </Button>
         )}
+      </div>
+    </Card>
+  );
+
+  // Enhanced card for discover users with richer profile details
+  const TangoRoleIcon = ({ role }: { role: string }) => {
+    switch (role?.toLowerCase()) {
+      case 'leader': 
+        return <Badge variant="outline" className="text-xs px-1.5 py-0 bg-blue-50 dark:bg-blue-950/50 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">{t('pages:friendsList.leader', 'Leader')}</Badge>;
+      case 'follower': 
+        return <Badge variant="outline" className="text-xs px-1.5 py-0 bg-pink-50 dark:bg-pink-950/50 border-pink-200 dark:border-pink-800 text-pink-700 dark:text-pink-300">{t('pages:friendsList.follower', 'Follower')}</Badge>;
+      case 'both': 
+        return <Badge variant="outline" className="text-xs px-1.5 py-0 bg-purple-50 dark:bg-purple-950/50 border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300">{t('pages:friendsList.both', 'Both')}</Badge>;
+      default: 
+        return <Badge variant="outline" className="text-xs px-1.5 py-0">{role}</Badge>;
+    }
+  };
+
+  const SuggestionCard = ({ user }: { user: DiscoverUser }) => (
+    <Card className="group relative overflow-visible backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 border-white/50 dark:border-cyan-500/30 p-4 hover-elevate active-elevate-2" data-testid={`card-suggestion-${user.id}`}>
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-teal-400 via-cyan-500 to-blue-400 opacity-60 rounded-t-md" />
+      
+      <div className="flex items-start gap-4">
+        <Avatar className="h-14 w-14 ring-2 ring-teal-400/50 flex-shrink-0">
+          <AvatarImage src={user.profileImage} />
+          <AvatarFallback className="bg-gradient-to-br from-teal-400 to-cyan-500 text-white text-lg">
+            {(user.name || 'U').charAt(0)}
+          </AvatarFallback>
+        </Avatar>
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-semibold text-base truncate" data-testid={`text-suggestion-name-${user.id}`}>
+              {user.name || user.username}
+            </h3>
+            {user.tangoRoles && user.tangoRoles.length > 0 && (
+              <div className="flex items-center gap-1">
+                {user.tangoRoles.slice(0, 2).map((role, idx) => (
+                  <TangoRoleIcon key={idx} role={role} />
+                ))}
+              </div>
+            )}
+          </div>
+          
+          <p className="text-sm text-muted-foreground">@{user.username}</p>
+          
+          {/* Location */}
+          {(user.city || user.country) && (
+            <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+              <MapPin className="h-3 w-3" />
+              <span>{[user.city, user.country].filter(Boolean).join(', ')}</span>
+            </div>
+          )}
+          
+          {/* Bio snippet */}
+          {user.bio && (
+            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+              {user.bio}
+            </p>
+          )}
+          
+          {/* Dance experience */}
+          <div className="flex items-center gap-3 mt-2 flex-wrap">
+            {user.danceExperienceLevel && (
+              <Badge variant="secondary" className="text-xs">
+                {user.danceExperienceLevel}
+              </Badge>
+            )}
+            {user.yearsOfDancing && user.yearsOfDancing > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {user.yearsOfDancing} {user.yearsOfDancing === 1 ? 'year' : 'years'} dancing
+              </span>
+            )}
+          </div>
+        </div>
+        
+        {/* Action buttons */}
+        <div className="flex-shrink-0">
+          {user.isFriend ? (
+            <Badge className="bg-green-500/20 text-green-700 dark:text-green-300 border-green-500/30">
+              <UserCheck className="h-3 w-3 mr-1" />
+              Friends
+            </Badge>
+          ) : user.hasSentRequest ? (
+            <Badge variant="secondary" className="text-xs">
+              <Send className="h-3 w-3 mr-1" />
+              Pending
+            </Badge>
+          ) : user.hasReceivedRequest ? (
+            <Badge className="bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/30">
+              <Clock className="h-3 w-3 mr-1" />
+              Respond
+            </Badge>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => handleSendRequest({ 
+                id: user.id, 
+                name: user.name || user.username, 
+                username: user.username,
+                profileImage: user.profileImage,
+                bio: user.bio
+              })}
+              disabled={sendRequestMutation.isPending}
+              data-testid={`button-add-suggestion-${user.id}`}
+              className="bg-gradient-to-r from-teal-500 to-cyan-600"
+            >
+              <UserPlus className="h-4 w-4 mr-1" />
+              Connect
+            </Button>
+          )}
+        </div>
       </div>
     </Card>
   );
@@ -631,17 +792,87 @@ export default function FriendsListPage() {
             )}
           </TabsContent>
 
-          <TabsContent value="suggestions" className="space-y-3 mt-6">
-            {loadingSuggestions ? (
-              <div className="text-center py-12 text-muted-foreground">{t('pages:friendsList.loadingSuggestions', 'Loading suggestions...')}</div>
-            ) : suggestions.length === 0 ? (
+          <TabsContent value="suggestions" className="space-y-4 mt-6">
+            {/* Search for discovering users */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t('pages:friendsList.searchPeople', 'Search people by name, username, or city...')}
+                value={discoverSearch}
+                onChange={(e) => {
+                  setDiscoverSearch(e.target.value);
+                  setDiscoverPage(1);
+                }}
+                className="pl-10 backdrop-blur-sm bg-white/80 dark:bg-slate-900/80"
+                data-testid="input-search-discover"
+              />
+            </div>
+            
+            {/* Results count */}
+            {discoverData?.pagination && (
+              <div className="text-sm text-muted-foreground">
+                {t('pages:friendsList.showingUsers', {
+                  shown: discoverData.users.length,
+                  total: discoverData.pagination.total,
+                  defaultValue: `Showing ${discoverData.users.length} of ${discoverData.pagination.total} dancers`
+                })}
+              </div>
+            )}
+            
+            {loadingDiscover ? (
               <div className="text-center py-12 text-muted-foreground">
-                {t('pages:friendsList.noSuggestionsAvailable', 'No suggestions available')}
+                <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
+                {t('pages:friendsList.loadingSuggestions', 'Loading suggestions...')}
+              </div>
+            ) : !discoverData?.users?.length ? (
+              <div className="text-center py-12 text-muted-foreground">
+                {discoverSearch 
+                  ? t('pages:friendsList.noUsersFound', 'No dancers found matching your search')
+                  : t('pages:friendsList.noSuggestionsAvailable', 'No suggestions available')}
               </div>
             ) : (
-              suggestions.map((friend) => (
-                <FriendCard key={friend.id} friend={friend} showAddButton />
-              ))
+              <>
+                <div className="space-y-3">
+                  {discoverData.users.map((user) => (
+                    <SuggestionCard key={user.id} user={user} />
+                  ))}
+                </div>
+                
+                {/* Pagination controls */}
+                {discoverData.pagination.totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-4 pt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDiscoverPage(p => Math.max(1, p - 1))}
+                      disabled={discoverPage === 1 || fetchingDiscover}
+                      data-testid="button-prev-page"
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1" />
+                      {t('common:previous', 'Previous')}
+                    </Button>
+                    
+                    <span className="text-sm text-muted-foreground">
+                      {t('common:pageOf', {
+                        page: discoverPage,
+                        total: discoverData.pagination.totalPages,
+                        defaultValue: `Page ${discoverPage} of ${discoverData.pagination.totalPages}`
+                      })}
+                    </span>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDiscoverPage(p => p + 1)}
+                      disabled={!discoverData.pagination.hasMore || fetchingDiscover}
+                      data-testid="button-next-page"
+                    >
+                      {t('common:next', 'Next')}
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </TabsContent>
         </Tabs>

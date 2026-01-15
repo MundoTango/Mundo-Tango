@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "wouter";
 import { useEvents, useEventAttendance, useEventRSVPs, useMyEvents, useUpcomingEvents } from "@/hooks/useEvents";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages, Clock, ExternalLink } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages, Clock, ExternalLink, Heart, User, UserCheck, Globe } from "lucide-react";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
@@ -21,13 +21,12 @@ import { supabase } from "@/lib/supabase";
 import type { RSVP, EventWithProfile } from "@shared/supabase-types";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
-import { enUS } from 'date-fns/locale';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import L from 'leaflet';
+import 'leaflet.markercluster';
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -35,17 +34,9 @@ import { BannerAd } from "@/components/ads/BannerAd";
 import { EventFiltersCompact, type EventFilterValues } from "@/components/events/EventFiltersCompact";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { optimizeCover } from "@/lib/imageOptimizer";
+import { getCityCoordinates, getCityCoordinatesWithOffset, hasCityCoordinates, BUENOS_AIRES_DEFAULT } from "@/lib/cityCoordinates";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
-const locales = { 'en-US': enUS };
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
 
 const CATEGORIES = ["All", "Milonga", "Practica", "Class", "Workshop", "Festival", "Marathon", "Encuentro", "Performance", "Social", "Online"];
 
@@ -79,6 +70,83 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
+// Component to auto-fit map bounds to visible events
+function FitBoundsToEvents({ events }: { events: Array<{ lat: number; lng: number }> }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (events.length === 0) return;
+    
+    const bounds = L.latLngBounds(events.map(e => [e.lat, e.lng]));
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+  }, [events, map]);
+  
+  return null;
+}
+
+// Native Leaflet MarkerCluster implementation - bypasses react-leaflet-cluster context issues
+function MapMarkersWithClusters({ events }: { events: Array<{ lat: number; lng: number; event?: any }> }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (!map || events.length === 0) return;
+    
+    // Create cluster group with custom styling
+    const clusterGroup = (L as any).markerClusterGroup({
+      chunkedLoading: true,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true,
+      maxClusterRadius: 50,
+      iconCreateFunction: (cluster: any) => {
+        const count = cluster.getChildCount();
+        return L.divIcon({
+          html: `<div class="cluster-marker">${count}</div>`,
+          className: 'custom-cluster-icon',
+          iconSize: L.point(40, 40, true),
+        });
+      }
+    });
+    
+    // Add markers to cluster group
+    events.forEach((event: any, index: number) => {
+      const eventData = event.event || event;
+      const eventId = eventData.id;
+      
+      const marker = L.marker([event.lat, event.lng]);
+      
+      // Create popup content
+      const popupContent = `
+        <div style="padding: 8px; min-width: 200px;">
+          <h3 style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">${eventData.title || "Event"}</h3>
+          <p style="font-size: 12px; color: #666; margin-bottom: 4px;">
+            ${eventData.venue || eventData.location || eventData.city || ''}
+          </p>
+          <p style="font-size: 12px; color: #888; margin-bottom: 12px;">
+            ${safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
+          </p>
+          <a href="/events/${eventId}" style="display: block; text-align: center; background: hsl(var(--primary)); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px;">
+            View Details
+          </a>
+        </div>
+      `;
+      
+      marker.bindPopup(popupContent);
+      clusterGroup.addLayer(marker);
+    });
+    
+    // Add cluster group to map
+    map.addLayer(clusterGroup);
+    
+    // Cleanup on unmount or when events change
+    return () => {
+      map.removeLayer(clusterGroup);
+    };
+  }, [map, events]);
+  
+  return null;
+}
+
 function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
@@ -107,6 +175,21 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
     const tz = getTimezoneFromCity(eventData.city);
     return safeDateFormat(dateString, "h:mm a", "Time TBD", tz);
   };
+
+  // Visibility badge helper - only show for non-public events
+  const getVisibilityBadge = (closeness: string | null | undefined) => {
+    if (!closeness || closeness === 'all') return null; // Don't show badge for public events
+    
+    const badges: Record<string, { label: string; icon: typeof Globe; className: string }> = {
+      close_friend: { label: "Close Friends", icon: Heart, className: "bg-pink-500/90 text-white border-pink-400 backdrop-blur-sm" },
+      friends_1st: { label: "Friends", icon: User, className: "bg-blue-500/90 text-white border-blue-400 backdrop-blur-sm" },
+      friends_2nd: { label: "Friends of Friends", icon: Users, className: "bg-indigo-500/90 text-white border-indigo-400 backdrop-blur-sm" },
+      friends_3rd: { label: "Extended Network", icon: UserCheck, className: "bg-purple-500/90 text-white border-purple-400 backdrop-blur-sm" },
+    };
+    return badges[closeness] || null;
+  };
+
+  const visibilityBadge = getVisibilityBadge(eventData.attendeeCloseness);
   
   // Determine image URL with city imagery fallback (MB.MD v9.8 auto-fix pattern)
   const rawImageUrl = eventData.imageUrl || eventData.image_url;
@@ -148,10 +231,20 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-          <div className="absolute top-4 right-4 flex gap-2">
+          <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
             {eventData.category && (
               <Badge className="bg-white/10 text-white border-white/30 backdrop-blur-sm" data-testid={`badge-category-${eventData.id}`}>
                 {eventData.category}
+              </Badge>
+            )}
+            {visibilityBadge && (
+              <Badge 
+                variant="outline" 
+                className={`${visibilityBadge.className} text-xs`}
+                data-testid={`badge-visibility-${eventData.id}`}
+              >
+                <visibilityBadge.icon className="h-3 w-3 mr-1" />
+                {visibilityBadge.label}
               </Badge>
             )}
             {isFull && (
@@ -259,17 +352,19 @@ type EventTab = "my-events" | "upcoming" | "past" | "discover";
 
 export default function EventsPage() {
   const { t } = useTranslation(['pages', 'common']);
-  const [, navigate] = useLocation();
   const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'superAdmin' || user?.role === 'super_admin';
+  const isPro = user?.role === 'pro';
+  const [, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<EventTab>("discover");
-  const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [filters, setFilters] = useState<EventFilterValues>({});
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<"relevance" | "date" | "price">("date");
 
   // Build query params for search
-  const buildSearchParams = () => {
+  const buildSearchParams = (forMapView: boolean = false) => {
     const params = new URLSearchParams();
     if (filters.q) params.append("q", filters.q);
     if (filters.city) params.append("city", filters.city);
@@ -292,8 +387,14 @@ export default function EventsPage() {
     if (filters.languages && filters.languages.length > 0) params.append("languages", filters.languages.join(","));
     if (filters.languageMatchOnly) params.append("languageMatchOnly", "true");
     params.append("sortBy", sortBy);
-    params.append("page", String(page));
-    params.append("limit", "20");
+    
+    // Map view shows ALL events (no pagination), list view uses pagination
+    if (forMapView) {
+      params.append("limit", "500"); // Show up to 500 events on map
+    } else {
+      params.append("page", String(page));
+      params.append("limit", "20");
+    }
     return params.toString();
   };
 
@@ -322,19 +423,31 @@ export default function EventsPage() {
     enabled: activeTab === "past",
   });
 
-  // TAB 4: Discover - Global search
+  // TAB 4: Discover - Global search (paginated for list view)
   const { data: searchResults, isLoading: isLoadingDiscover } = useQuery({
     queryKey: ["/api/events/search", filters, page, sortBy],
     queryFn: async () => {
-      const params = buildSearchParams();
+      const params = buildSearchParams(false);
       const response = await fetch(`/api/events/search?${params}`);
       if (!response.ok) throw new Error("Failed to fetch events");
       return response.json();
     },
-    enabled: activeTab === "discover",
+    enabled: activeTab === "discover" && viewMode !== "map",
   });
 
-  // Select events based on active tab
+  // MAP VIEW: Fetch ALL events (up to 500) without pagination
+  const { data: mapSearchResults, isLoading: isLoadingMapEvents } = useQuery({
+    queryKey: ["/api/events/search", "map", filters, sortBy],
+    queryFn: async () => {
+      const params = buildSearchParams(true);
+      const response = await fetch(`/api/events/search?${params}`);
+      if (!response.ok) throw new Error("Failed to fetch events for map");
+      return response.json();
+    },
+    enabled: activeTab === "discover" && viewMode === "map",
+  });
+
+  // Select events based on active tab and view mode
   const events = useMemo(() => {
     switch (activeTab) {
       case "my-events":
@@ -345,22 +458,25 @@ export default function EventsPage() {
         return pastEventsData?.events || [];
       case "discover":
       default:
+        // Use map results when in map view (no pagination, up to 500 events)
+        if (viewMode === "map") {
+          return mapSearchResults?.events || [];
+        }
         return searchResults?.events || [];
     }
-  }, [activeTab, myEventsData, upcomingData, pastEventsData, searchResults]);
+  }, [activeTab, myEventsData, upcomingData, pastEventsData, searchResults, mapSearchResults, viewMode]);
 
   const pagination = activeTab === "discover" ? searchResults?.pagination : 
                      activeTab === "past" ? pastEventsData?.pagination : null;
   const isLoading = activeTab === "my-events" ? isLoadingMyEvents : 
                     activeTab === "upcoming" ? isLoadingUpcoming : 
-                    activeTab === "past" ? isLoadingPast : isLoadingDiscover;
+                    activeTab === "past" ? isLoadingPast : 
+                    viewMode === "map" ? isLoadingMapEvents : isLoadingDiscover;
   
   // Active filter count
   const activeFilterCount = Object.keys(filters).filter(
     k => k !== "q" && filters[k as keyof EventFilterValues] !== undefined && filters[k as keyof EventFilterValues] !== null
   ).length;
-
-  const isSuperAdmin = user?.role === 'super_admin';
 
   const triggerScrapingMutation = useMutation({
     mutationFn: async (scrapingType: string) => {
@@ -407,57 +523,47 @@ export default function EventsPage() {
     }
   });
 
-  // Convert events to calendar format
-  const calendarEvents = useMemo(() => {
-    if (!events) return [];
-    return events.map((event: any) => {
-      const eventData = event.event || event;
-      const eventDate = getEventDate(event);
-      return {
-        id: eventData.id,
-        title: eventData.title,
-        start: eventDate,
-        end: new Date(eventDate.getTime() + 2 * 60 * 60 * 1000),
-        resource: eventData,
-      };
-    });
-  }, [events]);
-
-  // Use real event coordinates when available, fallback to city-based defaults
+  // Use real event coordinates when available, fallback to centralized city coordinates
   const eventsWithCoordinates = useMemo(() => {
     if (!events) return [];
-    
-    // City coordinate defaults
-    const cityCoords: Record<string, [number, number]> = {
-      'Buenos Aires': [-34.6037, -58.3816],
-      'New York': [40.7128, -74.0060],
-      'San Francisco': [37.7749, -122.4194],
-      'Los Angeles': [34.0522, -118.2437],
-      'London': [51.5074, -0.1278],
-      'Paris': [48.8566, 2.3522],
-      'Berlin': [52.5200, 13.4050],
-      'Melbourne': [-37.8136, 144.9631],
-      'Sydney': [-33.8688, 151.2093],
-      'Tokyo': [35.6762, 139.6503],
-      'Dubai': [25.2048, 55.2708],
-    };
     
     return events.map((event: any, index: number) => {
       const eventData = event.event || event;
       const city = eventData.city || 'Buenos Aires';
-      const defaultCoords = cityCoords[city] || [-34.6037, -58.3816];
       
-      // Use real coordinates if available, otherwise use city default with slight offset
-      const lat = eventData.latitude ? parseFloat(eventData.latitude) : defaultCoords[0] + (Math.random() - 0.5) * 0.05;
-      const lng = eventData.longitude ? parseFloat(eventData.longitude) : defaultCoords[1] + (Math.random() - 0.5) * 0.05;
+      // Track if using real coordinates or city-level fallback
+      const hasRealCoords = Boolean(eventData.latitude && eventData.longitude);
+      
+      if (hasRealCoords) {
+        return {
+          ...event,
+          lat: parseFloat(eventData.latitude),
+          lng: parseFloat(eventData.longitude),
+          isApproximate: false,
+        };
+      }
+      
+      // Use centralized city coordinates with offset to prevent marker stacking
+      const [lat, lng] = getCityCoordinatesWithOffset(city, index);
+      
+      // Development warning for unmapped cities
+      if (process.env.NODE_ENV === 'development' && !hasCityCoordinates(city)) {
+        console.warn(`[EventsPage] Unmapped city "${city}" - event "${eventData.title}" using default Buenos Aires coordinates`);
+      }
       
       return {
         ...event,
         lat,
         lng,
+        isApproximate: true,
       };
     });
   }, [events]);
+  
+  // Count events with approximate locations for user information
+  const approximateLocationCount = useMemo(() => {
+    return eventsWithCoordinates.filter(e => e.isApproximate).length;
+  }, [eventsWithCoordinates]);
 
   return (
     <SelfHealingErrorBoundary pageName="Events" fallbackRoute="/feed">
@@ -494,16 +600,18 @@ export default function EventsPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
-                <Button 
-                  size="lg" 
-                  className="gap-2" 
-                  data-testid="button-create-event"
-                  onClick={() => navigate("/events/create")}
-                >
-                  <Plus className="h-5 w-5" />
-                  {t('pages:events.createEvent', 'Create Event')}
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
+                {(isPro || isSuperAdmin) && (
+                  <Button 
+                    size="lg" 
+                    className="gap-2" 
+                    data-testid="button-create-event"
+                    onClick={() => navigate("/events/create")}
+                  >
+                    <Plus className="h-5 w-5" />
+                    {t('pages:events.createEvent', 'Create Event')}
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                )}
                 
                 {isSuperAdmin && (
                   <>
@@ -649,10 +757,6 @@ export default function EventsPage() {
                     <List className="h-4 w-4 mr-2" />
                     {t('pages:events.views.list', 'List')}
                   </TabsTrigger>
-                  <TabsTrigger value="calendar" data-testid="tab-calendar-view">
-                    <CalendarIcon className="h-4 w-4 mr-2" />
-                    {t('pages:events.views.calendar', 'Calendar')}
-                  </TabsTrigger>
                   <TabsTrigger value="map" data-testid="tab-map-view">
                     <MapIconLucide className="h-4 w-4 mr-2" />
                     {t('pages:events.views.map', 'Map')}
@@ -660,23 +764,6 @@ export default function EventsPage() {
                 </TabsList>
               </Tabs>
 
-              <div className="flex items-center gap-4">
-                {activeTab === "my-events" && myEventsData && (
-                  <p className="text-sm text-muted-foreground" data-testid="text-my-events-count">
-                    {myEventsData.length} event{myEventsData.length !== 1 ? 's' : ''} you're attending
-                  </p>
-                )}
-                {activeTab === "upcoming" && upcomingData && (
-                  <p className="text-sm text-muted-foreground" data-testid="text-upcoming-count">
-                    {upcomingData.events?.length || 0} upcoming in your area
-                  </p>
-                )}
-                {pagination && activeTab === "discover" && (
-                  <p className="text-sm text-muted-foreground" data-testid="text-results-count">
-                    Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} events
-                  </p>
-                )}
-              </div>
             </div>
 
             {/* Content */}
@@ -796,10 +883,12 @@ export default function EventsPage() {
                                   {t('pages:events.clearFilters', 'Clear Filters')}
                                 </Button>
                               )}
-                              <Button onClick={() => navigate("/events/create")} data-testid="button-create-event-empty">
-                                <Plus className="h-4 w-4 mr-2" />
-                                {t('pages:events.createEvent', 'Create Event')}
-                              </Button>
+                              {(isPro || isSuperAdmin) && (
+                                <Button onClick={() => navigate("/events/create")} data-testid="button-create-event-empty">
+                                  <Plus className="h-4 w-4 mr-2" />
+                                  {t('pages:events.createEvent', 'Create Event')}
+                                </Button>
+                              )}
                             </div>
                           </div>
                         </CardContent>
@@ -808,67 +897,21 @@ export default function EventsPage() {
                   </>
                 )}
 
-                {/* Calendar View */}
-                {viewMode === "calendar" && (
-                  <Card className="p-6">
-                    <div style={{ height: '600px' }}>
-                      <Calendar
-                        localizer={localizer}
-                        events={calendarEvents}
-                        startAccessor="start"
-                        endAccessor="end"
-                        style={{ height: '100%' }}
-                        views={[Views.MONTH, Views.WEEK, Views.DAY]}
-                        onSelectEvent={(event: any) => {
-                          window.location.href = `/events/${event.id}`;
-                        }}
-                        eventPropGetter={(event) => ({
-                          style: {
-                            backgroundColor: 'hsl(var(--primary))',
-                            borderRadius: '4px',
-                            opacity: 0.8,
-                            color: 'white',
-                            border: 'none',
-                            display: 'block'
-                          }
-                        })}
-                      />
-                    </div>
-                  </Card>
-                )}
-
                 {/* Map View */}
                 {viewMode === "map" && (
                   <Card className="p-0 overflow-hidden">
                     <div style={{ height: '600px' }}>
                       <MapContainer
-                        center={[-34.6037, -58.3816]}
-                        zoom={12}
+                        center={[20, 0]}
+                        zoom={2}
                         style={{ height: '100%', width: '100%' }}
                       >
                         <TileLayer
                           attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
                           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                         />
-                        {eventsWithCoordinates.map((event: any, index: number) => {
-                          const eventData = event.event || event;
-                          const eventId = eventData.id;
-                          return (
-                            <Marker key={eventId || `map-event-${index}`} position={[event.lat, event.lng]}>
-                              <Popup>
-                                <div className="p-2">
-                                  <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: eventData.title || "Event" }} />
-                                  <p className="text-sm text-muted-foreground mb-2">
-                                    {safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
-                                  </p>
-                                  <Link href={`/events/${eventId}`}>
-                                    <Button size="sm" className="w-full">View Details</Button>
-                                  </Link>
-                                </div>
-                              </Popup>
-                            </Marker>
-                          );
-                        })}
+                        <FitBoundsToEvents events={eventsWithCoordinates} />
+                        <MapMarkersWithClusters events={eventsWithCoordinates} />
                       </MapContainer>
                     </div>
                   </Card>

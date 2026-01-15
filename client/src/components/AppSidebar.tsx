@@ -52,6 +52,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserTier } from "@/hooks/useUserTier";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -365,6 +366,7 @@ function AppSidebarComponent() {
   const { t } = useTranslation(['navigation', 'common']);
   const [location] = useLocation();
   const { user, profile, logout } = useAuth();
+  const { isGodLevel } = useUserTier();
 
   const displayName = profile?.name || user?.email?.split("@")[0] || "User";
   const username = profile?.username || user?.email?.split("@")[0] || "user";
@@ -666,14 +668,17 @@ function AppSidebarComponent() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
-            {t('navigation:sidebar.sections.services', 'Services')}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            {renderIconGrid(servicesItems)}
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Services section - Life CEO is god-level only */}
+        {isGodLevel && (
+          <SidebarGroup className="border-b border-white/10 pb-4">
+            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
+              {t('navigation:sidebar.sections.services', 'Services')}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              {renderIconGrid(servicesItems)}
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter

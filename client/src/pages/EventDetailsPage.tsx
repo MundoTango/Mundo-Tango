@@ -6,7 +6,7 @@ import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPB
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2, Edit, Share2, MoreVertical, Trash2, Flag, Upload, Crown, UserCheck } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2, Edit, Share2, MoreVertical, Trash2, Flag, Upload, Crown, UserCheck, Copy } from "lucide-react";
 import { EventEditForm } from "@/components/events/EventEditForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "wouter";
@@ -492,23 +492,7 @@ export default function EventDetailsPage() {
   }
 
   if (!event) {
-    return (
-      <SelfHealingErrorBoundary pageName="Event Details" fallbackRoute="/events">
-        <>
-          <SEO 
-            title="Event Details"
-            description="View event details, RSVP, and connect with attendees for this tango event."
-          />
-          <div className="max-w-5xl mx-auto px-6 py-12">
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground">Event not found</p>
-              </CardContent>
-            </Card>
-          </div>
-        </>
-      </SelfHealingErrorBoundary>
-    );
+    return null;
   }
 
   return (
@@ -629,6 +613,33 @@ export default function EventDetailsPage() {
                         transition={{ delay: 0.2 }}
                         className="flex justify-end gap-2"
                       >
+                        <Button 
+                          variant="outline" 
+                          className="gap-2"
+                          onClick={() => {
+                            // Store event data in localStorage for duplication (avoids URL length limits)
+                            const duplicateData = {
+                              sourceEventId: event.id,
+                              title: event.title || '',
+                              eventType: event.eventType || '',
+                              city: event.city || '',
+                              venue: event.venue || '',
+                              location: event.location || '',
+                              description: event.description || '',
+                              price: event.price || 0,
+                              currency: event.currency || 'USD',
+                              musicStyle: event.musicStyle || '',
+                              dressCode: event.dressCode || '',
+                              attendeeCloseness: (event as any).attendeeCloseness || 'all',
+                            };
+                            localStorage.setItem('duplicateEventData', JSON.stringify(duplicateData));
+                            setLocation('/events/create?duplicate=true');
+                          }}
+                          data-testid="button-duplicate-event"
+                        >
+                          <Copy className="h-4 w-4" />
+                          Duplicate Event
+                        </Button>
                         <Button 
                           variant="outline" 
                           className="gap-2"

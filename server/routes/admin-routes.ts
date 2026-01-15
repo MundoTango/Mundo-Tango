@@ -9,7 +9,7 @@ import {
   users, posts, postReports, events, userReports, roleRequests, housingListings,
   moderationQueue, moderationActions, flaggedContent, postComments
 } from "@shared/schema";
-import { eq, desc, like, or, and, gte, count, sql, inArray } from "drizzle-orm";
+import { eq, desc, like, or, and, gte, count, sql, inArray, not } from "drizzle-orm";
 import { authenticateToken, authenticateInternalOrToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { storage } from "../storage";
@@ -378,10 +378,12 @@ router.get("/users", authenticateToken, requireAdmin, async (req, res: Response)
       });
     }
 
-    if (tab === "active") {
-      // Use admin-specific search for active tab to see discovered users
-      const lowerQuery = `%${search.toLowerCase()}%`;
-      const activeBaseFilter = and(eq(users.isActive, true), eq(users.waitlist, false));
+    if (tab === "discovered") {
+      const activeBaseFilter = and(
+        eq(users.isActive, true),
+        eq(users.waitlist, false),
+        like(users.email, "%@discovered.mundotango.app")
+      );
       
       let finalFilter: any = activeBaseFilter;
       
@@ -396,10 +398,6 @@ router.get("/users", authenticateToken, requireAdmin, async (req, res: Response)
         );
       }
       
-      if (role && typeof role === "string") {
-        finalFilter = and(finalFilter, eq(users.role, role));
-      }
-
       const results = await db.select().from(users)
         .where(finalFilter as any)
         .orderBy(desc(users.createdAt))
@@ -429,11 +427,12 @@ router.get("/users/counts", authenticateToken, requireAdmin, async (req, res: Re
   try {
     const { scrapedProfiles, friendInvitations } = await import("@shared/schema");
     
-    const [activeCount, waitlistCount, scrapedCount, invitedCount] = await Promise.all([
-      db.select({ count: count() }).from(users).where(and(eq(users.isActive, true), eq(users.waitlist, false))),
+    const [activeCount, waitlistCount, scrapedCount, invitedCount, discoveredCount] = await Promise.all([
+      db.select({ count: count() }).from(users).where(and(eq(users.isActive, true), eq(users.waitlist, false), not(like(users.email, "%@discovered.mundotango.app")))),
       db.select({ count: count() }).from(users).where(eq(users.waitlist, true)),
       db.select({ count: count() }).from(scrapedProfiles).catch(() => [{ count: 0 }]),
       db.select({ count: count() }).from(friendInvitations).catch(() => [{ count: 0 }]),
+      db.select({ count: count() }).from(users).where(and(eq(users.isActive, true), eq(users.waitlist, false), like(users.email, "%@discovered.mundotango.app"))),
     ]);
     
     res.json({
@@ -441,6 +440,7 @@ router.get("/users/counts", authenticateToken, requireAdmin, async (req, res: Re
       waitlist: waitlistCount[0]?.count || 0,
       scraped: scrapedCount[0]?.count || 0,
       invited: invitedCount[0]?.count || 0,
+      discovered: discoveredCount[0]?.count || 0,
     });
   } catch (error: any) {
     console.error("Error fetching user counts:", error);
@@ -491,6 +491,74 @@ router.delete("/users/:userId", authenticateToken, requireAdmin, async (req, res
     res.json({ success: true, userId, action });
   } catch (error: any) {
     console.error("Error deleting user:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/users/:userId/reset-password
+ * Reset user's password to a temporary password and send email notification
+ * Requires Admin (level 4) or higher
+ */
+router.post("/users/:userId/reset-password", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const adminId = req.user?.id;
+    const bcrypt = await import("bcrypt");
+    const crypto = await import("crypto");
+    const { EmailService } = await import("../services/EmailService");
+    
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, parseInt(userId))
+    });
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Generate a cryptographically secure temporary password
+    const randomBytes = crypto.randomBytes(12).toString('base64').replace(/[+/=]/g, '');
+    const tempPassword = `Tango${randomBytes.slice(0, 8)}!`;
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    
+    // Update user's password
+    await db.update(users)
+      .set({ 
+        password: hashedPassword,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, parseInt(userId)));
+    
+    // Audit log the password reset action
+    console.log(`[Admin Audit] Password reset: adminId=${adminId}, targetUserId=${userId}, targetEmail=${user.email}, timestamp=${new Date().toISOString()}`);
+    
+    // Send email notification with temporary password
+    try {
+      await EmailService.sendPasswordResetByAdmin(user.email, user.name || user.username || "Tango Dancer", tempPassword);
+      console.log(`[Admin] Password reset for user ${userId} by admin ${adminId}, email sent to ${user.email}`);
+      
+      res.json({ 
+        success: true, 
+        userId: parseInt(userId), 
+        email: user.email,
+        emailSent: true,
+        message: `Password reset successfully. Temporary password sent to ${user.email}`
+      });
+    } catch (emailError) {
+      console.error(`[Admin] Failed to send password reset email to ${user.email}:`, emailError);
+      // Return temp password ONLY in response when email fails - admin needs to manually communicate it
+      // This is a tradeoff: security vs. usability when email service is down
+      res.json({ 
+        success: true, 
+        userId: parseInt(userId), 
+        email: user.email,
+        emailSent: false,
+        tempPassword, // Only exposed when email fails - admin must manually share
+        message: "Password reset but email failed. Please securely share the temporary password with the user."
+      });
+    }
+  } catch (error: any) {
+    console.error("Error resetting user password:", error);
     res.status(500).json({ error: error.message });
   }
 });

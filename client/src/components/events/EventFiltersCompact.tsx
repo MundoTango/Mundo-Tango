@@ -295,7 +295,7 @@ export function EventFiltersCompact({ onFilterChange, initialFilters = {} }: Eve
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-4" align="start">
+          <PopoverContent className="w-auto p-4 z-50" align="start">
             <div className="space-y-4">
               <div>
                 <p className="text-sm font-medium mb-3">Select Date Range</p>
@@ -361,7 +361,7 @@ export function EventFiltersCompact({ onFilterChange, initialFilters = {} }: Eve
               <ChevronDown className="h-3 w-3" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 p-4 max-h-[70vh] overflow-y-auto" align="end">
+          <PopoverContent className="w-80 p-4 max-h-[70vh] overflow-y-auto z-50" align="end">
             <div className="space-y-5">
               <div>
                 <p className="text-sm font-medium mb-2 flex items-center gap-2">

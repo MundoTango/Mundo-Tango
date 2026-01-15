@@ -903,6 +903,7 @@ export const events = pgTable(
     musicStyle: varchar("music_style", { length: 100 }),
     danceStyles: text("dance_styles").array(),
     djName: varchar("dj_name", { length: 255 }),
+    experienceLevel: varchar("experience_level", { length: 20 }).default("all"), // all, beginner, intermediate, advanced
 
     // Additional Info
     tags: text("tags").array(),
@@ -947,6 +948,7 @@ export const events = pgTable(
 
     // Event Series (for grouping recurring events)
     seriesId: integer("series_id").references(() => eventSeries.id),
+    isPlaceholder: boolean("is_placeholder").default(false),
 
     // Timestamps
     createdAt: timestamp("created_at").defaultNow(),
@@ -7256,6 +7258,47 @@ export const insertTripJoinRequestSchema = createInsertSchema(
 
 export type InsertTripJoinRequest = z.infer<typeof insertTripJoinRequestSchema>;
 export type SelectTripJoinRequest = typeof tripJoinRequests.$inferSelect;
+
+// ============================================================================
+// TRIP PARTICIPANTS - Travel Companions Added by Trip Owner
+// ============================================================================
+
+export const tripParticipants = pgTable(
+  "trip_participants",
+  {
+    id: serial("id").primaryKey(),
+    tripId: integer("trip_id")
+      .references(() => travelPlans.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: integer("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    addedById: integer("added_by_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    role: varchar("role", { length: 50 }).default("traveler").notNull(),
+    status: varchar("status", { length: 20 }).default("active").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    tripIdx: index("idx_trip_participants_trip").on(table.tripId),
+    userIdx: index("idx_trip_participants_user").on(table.userId),
+    uniqueParticipant: uniqueIndex("idx_trip_participant_unique").on(
+      table.tripId,
+      table.userId,
+    ),
+  }),
+);
+
+export const insertTripParticipantSchema = createInsertSchema(
+  tripParticipants,
+).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertTripParticipant = z.infer<typeof insertTripParticipantSchema>;
+export type SelectTripParticipant = typeof tripParticipants.$inferSelect;
 
 // Venue Recommendations System (PART 1-14)
 export const venueRecommendations = pgTable(
@@ -20098,6 +20141,37 @@ export const insertAdminApprovalSchema = createInsertSchema(adminApprovals).omit
 });
 export type InsertAdminApproval = z.infer<typeof insertAdminApprovalSchema>;
 export type SelectAdminApproval = typeof adminApprovals.$inferSelect;
+
+// ============================================================================
+// FEEDBACK MESSAGES - MB.MD Pattern 67 Bug Conversation History
+// ============================================================================
+
+export const feedbackMessageRoleEnum = pgEnum("feedback_message_role", [
+  "user",
+  "admin",
+  "mr_blue",
+  "system"
+]);
+
+export const feedbackMessages = pgTable("feedback_messages", {
+  id: serial("id").primaryKey(),
+  feedbackId: integer("feedback_id").references(() => userFeedback.id, { onDelete: "cascade" }).notNull(),
+  senderId: integer("sender_id").references(() => users.id),
+  role: feedbackMessageRoleEnum("role").notNull(),
+  content: text("content").notNull(),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  feedbackIdx: index("feedback_messages_feedback_idx").on(table.feedbackId),
+  senderIdx: index("feedback_messages_sender_idx").on(table.senderId),
+}));
+
+export const insertFeedbackMessageSchema = createInsertSchema(feedbackMessages).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertFeedbackMessage = z.infer<typeof insertFeedbackMessageSchema>;
+export type SelectFeedbackMessage = typeof feedbackMessages.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

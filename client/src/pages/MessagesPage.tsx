@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { MessageCircle, Send, Plus, CheckCircle, Loader2, Users, Search, X, Mail, Phone, User } from "lucide-react";
+import { MessageCircle, Send, Plus, CheckCircle, Loader2, Users, Search, X, Mail, Phone, User, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -125,8 +125,10 @@ export default function MessagesPage() {
     c.lastMessage?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
 
+  // Auto-select first conversation only on desktop (md breakpoint = 768px)
   useEffect(() => {
-    if (!selectedConversationId && filteredConversations.length > 0 && !isLoading) {
+    const isDesktop = window.innerWidth >= 768;
+    if (isDesktop && !selectedConversationId && filteredConversations.length > 0 && !isLoading) {
       setSelectedConversationId(filteredConversations[0].id);
     }
   }, [filteredConversations, selectedConversationId, isLoading]);
@@ -152,8 +154,8 @@ export default function MessagesPage() {
               className="h-[calc(100vh-12rem)] md:h-[700px]"
             >
               <div className="h-full flex rounded-3xl overflow-hidden border border-white/10 shadow-2xl backdrop-blur-3xl bg-card/30">
-                {/* Sidebar */}
-                <div className="flex-1 border-r border-white/5 flex flex-col max-w-[300px] md:max-w-[35%] bg-card/40">
+                {/* Sidebar - hidden on mobile when conversation is selected */}
+                <div className={`flex-1 border-r border-white/5 flex flex-col w-full md:max-w-[35%] bg-card/40 ${selectedConversationId ? 'hidden md:flex' : 'flex'}`}>
                   {/* Header with New Chat button */}
                   <div className="p-4 border-b border-white/5 flex items-center justify-between gap-2">
                     <h2 className="font-serif text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
@@ -294,10 +296,10 @@ export default function MessagesPage() {
                   </ScrollArea>
                 </div>
 
-                {/* Main Chat Area */}
-                <div className="flex-1 flex flex-col min-w-0 relative">
+                {/* Main Chat Area - hidden on mobile when no conversation selected */}
+                <div className={`flex-1 flex flex-col min-w-0 relative ${selectedConversationId ? 'flex' : 'hidden md:flex'}`}>
                   {selectedConversationId ? (
-                    <ConversationView conversationId={selectedConversationId} />
+                    <ConversationView conversationId={selectedConversationId} onBack={() => setSelectedConversationId(null)} />
                   ) : (
                     <motion.div 
                       className="h-full flex flex-col items-center justify-center text-center p-12 space-y-6" 
@@ -436,7 +438,7 @@ function NewChatSearch({ onSelect, onClose }: { onSelect: (id: string) => void; 
   );
 }
 
-function ConversationView({ conversationId }: { conversationId: string }) {
+function ConversationView({ conversationId, onBack }: { conversationId: string; onBack: () => void }) {
   const { t } = useTranslation(["pages", "common"]);
   const [message, setMessage] = useState("");
   const { user } = useAuth();
@@ -446,6 +448,31 @@ function ConversationView({ conversationId }: { conversationId: string }) {
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { typingUsers, broadcastTyping } = useMessagesRealtime(conversationId);
   const markAsRead = useMarkMessagesAsRead(conversationId);
+  
+  // Parse conversation ID to get recipient info
+  const recipientId = useMemo(() => {
+    if (conversationId.startsWith('direct-')) {
+      return parseInt(conversationId.replace('direct-', ''));
+    }
+    return parseInt(conversationId);
+  }, [conversationId]);
+  
+  // Fetch recipient's profile
+  const { data: recipient } = useQuery({
+    queryKey: ["/api/users", recipientId, "profile"],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const response = await fetch(`/api/users/${recipientId}`, {
+        credentials: "include",
+        headers,
+      });
+      if (!response.ok) return null;
+      return response.json();
+    },
+    enabled: !!recipientId && !conversationId.startsWith('group-'),
+  });
 
   useEffect(() => {
     if (conversationId) {
@@ -494,15 +521,31 @@ function ConversationView({ conversationId }: { conversationId: string }) {
       {/* Conversation Header */}
       <div className="p-4 border-b flex items-center justify-between gap-2 bg-card/30">
         <div className="flex items-center gap-3">
+          {/* Back button - visible only on mobile */}
+          <Button 
+            size="icon" 
+            variant="ghost" 
+            className="md:hidden"
+            onClick={onBack}
+            data-testid="button-back-to-list"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
           <Avatar className="h-10 w-10 ring-2 ring-primary/10">
+            {recipient?.profileImageUrl ? (
+              <AvatarImage src={recipient.profileImageUrl} alt={recipient?.name || ''} />
+            ) : null}
             <AvatarFallback>
-              <Users className="w-5 h-5 text-muted-foreground" />
+              {recipient?.name?.charAt(0)?.toUpperCase() || <Users className="w-5 h-5 text-muted-foreground" />}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-sm leading-none mb-1">
-              {t('pages:messages.conversation', 'Conversation')}
+            <h3 className="font-semibold text-sm leading-none mb-1" data-testid="text-conversation-recipient">
+              {recipient?.name || t('pages:messages.conversation', 'Conversation')}
             </h3>
+            {recipient?.username && (
+              <p className="text-xs text-muted-foreground/60 mb-0.5">@{recipient.username}</p>
+            )}
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-green-500" />
               <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Online</span>

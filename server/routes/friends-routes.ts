@@ -37,6 +37,32 @@ export function createFriendsRoutes(storage: IStorage) {
     }
   });
 
+  // Discover all registered users with full profile details (paginated)
+  router.get("/users/discover", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = Math.min(parseInt(req.query.limit as string) || 20, 50);
+      const search = (req.query.search as string) || '';
+      const offset = (page - 1) * limit;
+
+      const result = await storage.discoverAllUsers(userId, { limit, offset, search });
+      res.json({
+        users: result.users,
+        pagination: {
+          page,
+          limit,
+          total: result.total,
+          totalPages: Math.ceil(result.total / limit),
+          hasMore: offset + result.users.length < result.total
+        }
+      });
+    } catch (error: any) {
+      console.error('[UsersDiscover] Error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Get friendship status with a specific user (for profile page buttons)
   router.get("/friends/status/:userId", authenticateToken, async (req: AuthRequest, res) => {
     try {

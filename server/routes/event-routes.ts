@@ -168,10 +168,10 @@ router.get("/search-pros-by-role", authenticateToken, async (req: AuthRequest, r
     const conditions: any[] = [];
     
     // Search by role in tangoRoles array (case-insensitive, coalesce null to empty array)
-    conditions.push(sql`LOWER(${mappedRole}) = ANY(SELECT LOWER(unnest(COALESCE(${users.tangoRoles}, ARRAY[]::text[]))))`);
+    conditions.push(sql`EXISTS (SELECT 1 FROM unnest(COALESCE(${users.tangoRoles}, ARRAY[]::text[])) r WHERE LOWER(r) = LOWER(${mappedRole}))`);
     
-    // Filter by city if provided
-    if (city && typeof city === 'string') {
+    // Filter by city if provided (only if explicitly requested)
+    if (city && typeof city === 'string' && city.trim()) {
       conditions.push(sql`${users.city} ILIKE ${'%' + city + '%'}`);
     }
     
@@ -1197,10 +1197,9 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // POST /api/events - Create new event
-// TIER ENFORCEMENT: Requires Community Leader (level 3) or higher
-// Level 3 = Community Leader, Level 4 = Admin, Level 5+ = Higher tiers
+// All authenticated users can create events (previously required level 3+)
 // AUTO-CREATES: City if not found, based on event city field
-router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthRequest, res: Response) => {
+router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { startTime, endTime, timezone, maxCapacity, ...rest } = req.body;
@@ -1244,6 +1243,8 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
       maxAttendees: maxCapacity || null,
       musicStyle: rest.musicStyle || null,
       danceStyles: rest.danceStyles || null,
+      experienceLevel: rest.level || "all",
+      attendeeCloseness: rest.attendeeCloseness || "all",
       price: rest.price || null,
       currency: rest.currency || "USD",
       isFree: rest.isFree !== false,
@@ -1281,6 +1282,26 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
       console.error("[Events] Auto-RSVP failed (non-blocking):", rsvpError);
     }
 
+    // PRO TEAM: Save team members (DJs, photographers, teachers, etc.)
+    if (rest.proTeam && Array.isArray(rest.proTeam) && rest.proTeam.length > 0) {
+      try {
+        const teamRecords = rest.proTeam.map((member: { userId: number; role: string; displayName: string }) => ({
+          eventId: event.id,
+          userId: member.userId,
+          role: member.role as any,
+          displayName: member.displayName,
+          source: "user_submitted",
+          confidence: 1.0,
+        }));
+        
+        await db.insert(eventTeamMembers).values(teamRecords).onConflictDoNothing();
+        console.log(`[Events] Added ${rest.proTeam.length} pro team members to event:`, event.id);
+      } catch (teamError) {
+        // Non-blocking - event creation still succeeds
+        console.error("[Events] Pro team creation failed (non-blocking):", teamError);
+      }
+    }
+
     // CASCADE: Auto-create city group if new location (Pattern 8: Cascade Detection)
     if (cleanData.city && cleanData.country) {
       try {
@@ -1303,11 +1324,22 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
     }
 
     res.status(201).json(event);
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
       console.error("[Events] Validation error:", error.errors);
       return res.status(400).json({ message: "Validation error", errors: error.errors });
     }
+    
+    // Handle duplicate key constraint (PostgreSQL error code 23505)
+    if (error?.cause?.code === '23505' || error?.code === '23505' || 
+        String(error).includes('duplicate key') || String(error).includes('idx_events_unique_title_city_date')) {
+      console.log("[Events] Duplicate event detected:", error?.cause?.detail || error?.detail);
+      return res.status(409).json({ 
+        message: "An event with this title already exists in this city on this date. Please choose a different title or date.",
+        code: "DUPLICATE_EVENT"
+      });
+    }
+    
     console.error("[Events] Error creating event:", error);
     res.status(500).json({ message: "Failed to create event", error: String(error).substring(0, 200) });
   }

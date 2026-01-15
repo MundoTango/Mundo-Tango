@@ -4,11 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Users, UserPlus, UserCheck } from "lucide-react";
+import { Users, UserPlus, UserCheck, MessageSquare } from "lucide-react";
 import { Link } from "wouter";
 import { MutualFriends } from "@/components/MutualFriends";
+import { UserIdentityHeader } from "@/components/UserIdentityHeader";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -144,34 +144,32 @@ export default function FriendsPage() {
                 {friends.map((friend: any) => (
                   <Card key={friend.id} className="hover-elevate" data-testid={`friend-card-${friend.id}`}>
                     <CardContent className="flex items-center gap-4 pt-6">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={friend.profileImage} />
-                        <AvatarFallback>{friend.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Link href={`/profile/${friend.username}`}>
-                            <h3 className="font-semibold hover:underline">{friend.name}</h3>
+                      <UserIdentityHeader
+                        user={{
+                          id: friend.id,
+                          name: friend.name,
+                          username: friend.username,
+                          profileImage: friend.profileImage,
+                          tangoRoles: friend.tangoRoles,
+                        }}
+                        connectionDegree={friend.connectionDegree}
+                        closenessScore={friend.closenessScore}
+                        showSeeFriendship={true}
+                        isFriend={true}
+                        currentUserId={user?.id}
+                        showTimestamp={false}
+                        size="lg"
+                        testIdPrefix={`friend-${friend.id}`}
+                      />
+                      <div className="flex flex-col gap-2 items-end">
+                        {user && <MutualFriends userId={friend.id} currentUserId={user.id} />}
+                        <Button variant="outline" size="sm" asChild data-testid={`button-message-${friend.id}`}>
+                          <Link href={`/messages?userId=${friend.id}`}>
+                            <MessageSquare className="w-4 h-4 mr-1" />
+                            {t('common:message', 'Message')}
                           </Link>
-                          {friend.connectionDegree !== undefined && friend.connectionDegree !== null && (
-                            <Badge variant="secondary" className="text-xs" data-testid={`badge-degree-${friend.id}`}>
-                              {friend.connectionDegree === 1 ? '1st' : friend.connectionDegree === 2 ? '2nd' : '3rd'}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">@{friend.username}</p>
-                        <div className="flex items-center gap-3 mt-2">
-                          {user && <MutualFriends userId={friend.id} currentUserId={user.id} />}
-                          {friend.closenessScore !== undefined && friend.closenessScore !== null && (
-                            <Badge variant="outline" className="text-xs" data-testid={`badge-closeness-${friend.id}`}>
-                              {t('pages:friends.closeness', 'Closeness')}: {friend.closenessScore}
-                            </Badge>
-                          )}
-                        </div>
+                        </Button>
                       </div>
-                      <Button variant="outline" size="sm" data-testid={`button-message-${friend.id}`}>
-                        {t('common:message', 'Message')}
-                      </Button>
                     </CardContent>
                   </Card>
                 ))}
@@ -195,14 +193,19 @@ export default function FriendsPage() {
                 {requests.map((request: any) => (
                   <Card key={request.id} data-testid={`request-card-${request.id}`}>
                     <CardContent className="flex items-center gap-4 pt-6">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={request.profileImage} />
-                        <AvatarFallback>{request.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h3 className="font-semibold">{request.name}</h3>
-                        <p className="text-sm text-muted-foreground">@{request.username}</p>
-                      </div>
+                      <UserIdentityHeader
+                        user={{
+                          id: request.senderId || request.id,
+                          name: request.name,
+                          username: request.username,
+                          profileImage: request.profileImage,
+                          tangoRoles: request.tangoRoles,
+                        }}
+                        timestamp={request.createdAt}
+                        showTimestamp={true}
+                        size="lg"
+                        testIdPrefix={`request-${request.id}`}
+                      />
                       <div className="flex gap-2">
                         <Button 
                           size="sm" 
@@ -244,28 +247,35 @@ export default function FriendsPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 {suggestions.map((suggestion: any) => (
                   <Card key={suggestion.id} className="hover-elevate" data-testid={`suggestion-card-${suggestion.id}`}>
-                    <CardContent className="flex items-center gap-4 pt-6">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={suggestion.profileImage} />
-                        <AvatarFallback>{suggestion.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h3 className="font-semibold">{suggestion.name}</h3>
-                        <p className="text-sm text-muted-foreground">@{suggestion.username}</p>
-                        {suggestion.reason && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {suggestion.reason}
-                          </p>
-                        )}
+                    <CardContent className="flex flex-col gap-4 pt-6">
+                      <UserIdentityHeader
+                        user={{
+                          id: suggestion.id,
+                          name: suggestion.name,
+                          username: suggestion.username,
+                          profileImage: suggestion.profileImage,
+                          tangoRoles: suggestion.tangoRoles,
+                        }}
+                        showTimestamp={false}
+                        size="lg"
+                        testIdPrefix={`suggestion-${suggestion.id}`}
+                      />
+                      {suggestion.reason && (
+                        <p className="text-xs text-muted-foreground pl-14">
+                          {suggestion.reason}
+                        </p>
+                      )}
+                      <div className="flex justify-end">
+                        <Button 
+                          size="sm" 
+                          data-testid={`button-add-${suggestion.id}`}
+                          onClick={() => sendRequest.mutate(suggestion.id)}
+                          disabled={sendRequest.isPending}
+                        >
+                          <UserPlus className="w-4 h-4 mr-1" />
+                          {t('pages:friends.addFriend', 'Add Friend')}
+                        </Button>
                       </div>
-                      <Button 
-                        size="sm" 
-                        data-testid={`button-add-${suggestion.id}`}
-                        onClick={() => sendRequest.mutate(suggestion.id)}
-                        disabled={sendRequest.isPending}
-                      >
-                        {t('pages:friends.addFriend', 'Add Friend')}
-                      </Button>
                     </CardContent>
                   </Card>
                 ))}

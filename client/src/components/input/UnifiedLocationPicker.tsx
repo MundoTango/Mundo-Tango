@@ -750,7 +750,7 @@ export function UnifiedLocationPicker({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute z-[9999] left-0 right-0 top-full mt-2"
+              className="absolute z-[10001] left-0 right-0 top-full mt-2"
               onMouseDown={(e) => e.stopPropagation()}
             >
               <Card
@@ -826,7 +826,7 @@ export function UnifiedLocationPicker({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute z-[9999] left-0 right-0 top-full mt-2"
+              className="absolute z-[10001] left-0 right-0 top-full mt-2"
               onMouseDown={(e) => e.stopPropagation()}
             >
               <Card

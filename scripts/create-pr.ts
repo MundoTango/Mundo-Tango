@@ -1,11 +1,11 @@
-// Create GitHub PR for Bug Reports Feature
+// Create GitHub PR for Admin Password Reset Feature
 // Uses Replit GitHub Integration
 
 import { getUncachableGitHubClient } from '../server/lib/github-client';
 
 const OWNER = 'MundoTango';
 const REPO = 'Mundo-Tango';
-const HEAD_BRANCH = 'feature/bug-reports';
+const HEAD_BRANCH = 'feat/admin-password-reset';
 const BASE_BRANCH = 'main';
 
 async function listBranches() {
@@ -73,67 +73,43 @@ async function createPullRequest(headBranch: string) {
   try {
     const octokit = await getUncachableGitHubClient();
     
-    const prTitle = 'feat: Universal Bug Diagnostic System (MB.MD Pattern 67)';
+    const prTitle = 'feat(admin): add password reset functionality for admins';
     const prBody = `## Summary
-Implements a comprehensive Universal Bug Diagnostic System enabling users to report bugs conversationally through Mr. Blue with interactive element targeting and journey replay.
+Add admin password reset feature to help resolve user login issues from the Admin Users Management page.
 
-## Features Added
+## Changes
 
-### User Bug Reporting Flow
-- Mr. Blue chat integration for bug reporting mode
-- ElementSelector component for targeting specific DOM elements
-- JourneyReplay for interactive playback of user journey
-- Comprehensive diagnostic context capture (API calls, console errors, rage clicks)
+### API Endpoint
+- \`POST /api/admin/users/:userId/reset-password\`
+- Protected by RBAC (admin tier 4+ required)
+- Cryptographically secure temp passwords using crypto.randomBytes
+- Email notification with temporary password to user
+- Fallback: displays temp password in UI if email fails
 
-### Admin Fix Flow
-- Admin feedback queue at \`/admin/feedback-queue\`
-- "Try Auto-Fix" button with BugFixStream SSE streaming
-- ReAct protocol visualization (Analyzing → Planning → Executing → Validating)
-- "Let's Fix It" VibeCoding mode with \`?mrblue=debug\` parameter
-- God-level gating (tier 8+) for auto-fix capabilities
+### Admin UI
+- New reset button (key icon) on Admin Users page (/admin/users)
+- Confirmation dialog before reset action
+- Toast notification shows result (email sent or manual action needed)
+- Persistent toast (60s) when email fails to ensure admin can share password
 
-### Travel Section Integration
-- New \`/api/travel/packages\` endpoint connecting events database
-- New \`/api/travel/destinations\` endpoint with popular tango cities
-- New \`/api/travel/trips\` endpoint for user travel plans
-
-### Database Schema Updates
-- Added \`playwright_video_url\` column to user_feedback table
-- Added \`related_message_id\` column to user_feedback table
-- Added \`selected_element\` column to user_feedback table
-
-## Technical Details
-
-### SSE Streaming Architecture
-- Endpoint: \`/api/qa-platform/fix-stream/start\`
-- BugDiagnosticAgent executes ReAct protocol phases
-- Real-time streaming of Thought/Action/Observation markers
-- BugFixStream.tsx displays agent reasoning with progress tracking
-
-### Key Components
-- \`useJourneyTracker\` hook for session activity capture
-- \`DiagnosisSummary\` for AI analysis display
-- \`ContextCards\` for user context and API calls
-- \`JourneyTimeline\` for navigation history
-- \`BugFixStream\` for real-time agent work visualization
-
-## Testing
-- E2E Playwright tests verified:
-  - Admin login and navigation
-  - Travel section with destinations display
-  - Feedback queue with 8 pending items
-  - Auto-fix dialog with "Try Auto-Fix" and "Let's Fix It" buttons
+### Security
+- Uses crypto.randomBytes for cryptographically secure password generation
+- Audit logging for all reset actions (adminId, targetUserId, timestamp)
+- Temp password only exposed in response when email delivery fails
 
 ## Files Changed
-- \`server/routes/travel-routes.ts\` - Added travel API endpoints
-- \`server/routes/qa-platform-routes.ts\` - Bug diagnostic endpoints
-- \`client/src/components/mrBlue/advanced/BugFixStream.tsx\` - SSE streaming UI
-- \`client/src/pages/admin/FeedbackQueuePage.tsx\` - Admin queue with auto-fix
-- \`shared/schema.ts\` - Database schema updates
+- \`server/routes/admin-routes.ts\` - Added reset-password endpoint
+- \`server/services/EmailService.ts\` - Added sendPasswordResetByAdmin method
+- \`client/src/pages/AdminUsersManagementPage.tsx\` - Added reset button and dialog
+- \`replit.md\` - Updated documentation with new feature
 
-## Related
-- MB.MD Pattern 67: Universal Bug Diagnostic System
-- Closes issues related to bug reporting and admin auto-fix capabilities
+## Testing
+- Endpoint responds correctly with CSRF protection
+- UI confirmation dialog prevents accidental resets
+- Email notification with fallback for manual sharing
+
+## Documentation
+- Updated replit.md with admin password reset feature details
 `;
 
     const { data: pr } = await octokit.pulls.create({
@@ -233,7 +209,7 @@ async function analyzeIssues() {
 async function main() {
   console.log('='.repeat(60));
   console.log('  GitHub PR & Issue Analysis');
-  console.log('  Universal Bug Diagnostic System (MB.MD Pattern 67)');
+  console.log('  Admin Password Reset Feature');
   console.log('='.repeat(60) + '\n');
 
   try {

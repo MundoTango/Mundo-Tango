@@ -225,7 +225,13 @@ router.post("/login", async (req: Request, res: Response) => {
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      console.log(`[Auth] Login failed for ${email}: Invalid password`);
+      // If user provided a valid invite code but wrong password, we should still fail
+      // but maybe they just need to know it's a password issue
+      return res.status(401).json({ 
+        message: "Invalid email or password. Please try again.",
+        isPasswordError: true 
+      });
     }
 
     if (!user.isActive) {
@@ -239,6 +245,19 @@ router.post("/login", async (req: Request, res: Response) => {
     // Check for valid invite code
     const trimmedCode = inviteCode?.toLowerCase().trim();
     const isValidInviteCode = trimmedCode && VALID_INVITE_CODES.includes(trimmedCode);
+
+    console.log(`[Auth] Login attempt for ${email} with invite code: ${trimmedCode || 'none'}`);
+
+    // MB.MD Pattern 67: If user provides valid invite code, bypass waitlist immediately
+    if (isValidInviteCode && user.waitlist) {
+      await storage.updateUser(user.id, { 
+        waitlist: false,
+        // If they use nomad/tango, we also consider them "verified" for the purpose of bypass
+        // but the flow below will still trigger verification if isVerified is false
+      });
+      console.log(`[Auth] User ${user.id} bypassed waitlist with invite code '${trimmedCode}'`);
+      user.waitlist = false;
+    }
 
     // Check if user has verified their email
     if (!user.isVerified) {
@@ -286,11 +305,12 @@ router.post("/login", async (req: Request, res: Response) => {
       });
     }
 
-    // Check if user is on waitlist and provided valid invite code to upgrade
-    if (user.waitlist && isValidInviteCode) {
-      // Upgrade user from waitlist to full access
-      await storage.updateUser(user.id, { waitlist: false });
-      console.log(`[Auth] User ${user.id} upgraded from waitlist with invite code`);
+    // Check if user is on waitlist (if no invite code was used or it was invalid)
+    if (user.waitlist) {
+      return res.status(403).json({ 
+        message: "You are currently on the waitlist. Use an invite code like 'nomad' to get instant access!",
+        onWaitlist: true 
+      });
     }
 
     if (user.twoFactorEnabled) {

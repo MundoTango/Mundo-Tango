@@ -167,9 +167,36 @@ function UnifiedTopBar({
   const handleNotificationClick = async (notif: any) => {
     let url = notif.actionUrl || notif.link;
     
+    // If no explicit URL, try to build one based on type and metadata
+    if (!url) {
+      const metadata = typeof notif.metadata === 'string' ? JSON.parse(notif.metadata) : notif.metadata;
+      
+      switch (notif.type) {
+        case 'like':
+        case 'favorite':
+        case 'comment':
+        case 'reaction':
+          if (metadata?.postId) url = `/posts/${metadata.postId}`;
+          else if (metadata?.eventId) url = `/events/${metadata.eventId}`;
+          break;
+        case 'event_invite':
+        case 'event_update':
+        case 'event_rsvp':
+          if (metadata?.eventId) url = `/events/${metadata.eventId}`;
+          break;
+        case 'friend_request':
+          if (metadata?.fromUserId) url = `/profile/${metadata.fromUserId}?reviewRequest=true`;
+          break;
+        case 'group_join':
+        case 'group_leave':
+          if (metadata?.groupId) url = `/groups/${metadata.groupId}`;
+          break;
+      }
+    }
+    
     if (url) {
       // For friend request notifications, add the reviewRequest param to auto-open the modal
-      if (notif.type === 'friend_request' && url.includes('/profile/')) {
+      if (notif.type === 'friend_request' && url.includes('/profile/') && !url.includes('reviewRequest=true')) {
         url = url + (url.includes('?') ? '&' : '?') + 'reviewRequest=true';
       }
       
@@ -379,10 +406,10 @@ function UnifiedTopBar({
               <MessageSquare className="h-5 w-5 transition-colors duration-200" style={{ color: messageCount > 0 ? '#40E0D0' : 'currentColor' }} />
               {messageCount > 0 && (
                 <span 
-                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg animate-pulse pointer-events-none"
+                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg animate-pulse pointer-events-none z-10"
                   style={{
-                    background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
-                    boxShadow: '0 2px 8px rgba(64, 224, 208, 0.4)',
+                    background: 'linear-gradient(135deg, #FF4500 0%, #FF8C00 100%)',
+                    boxShadow: '0 2px 8px rgba(255, 69, 0, 0.4)',
                   }}
                 >
                   {messageCount > 9 ? '9+' : messageCount}

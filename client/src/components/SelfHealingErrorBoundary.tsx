@@ -484,6 +484,22 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
       url: window.location.href,
     };
     
+    // Format for the API schema - expects errorMessage (required), errorStack, errorType, metadata
+    const apiPayload = {
+      errors: [{
+        errorMessage: error?.toString() || 'Unknown error',
+        errorStack: error?.stack,
+        errorType: 'frontend',
+        metadata: {
+          page: pageName,
+          componentStack: errorInfo?.componentStack,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+        },
+      }],
+    };
+    
     console.log('[Self-Healing] Sending bug report to Mr Blue AI...', errorReport);
     
     try {
@@ -491,7 +507,7 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
       const response = await fetch('/api/mrblue/analyze-error', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ errors: [errorReport] }),
+        body: JSON.stringify(apiPayload),
       });
 
       if (!response.ok) {

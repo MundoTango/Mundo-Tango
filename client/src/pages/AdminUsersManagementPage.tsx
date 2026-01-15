@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, UserCog, Trash2, Ban } from "lucide-react";
+import { Search, UserCog, Trash2, Ban, KeyRound } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -48,6 +48,7 @@ export default function AdminUsersManagementPage() {
   const [page, setPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [deleteAction, setDeleteAction] = useState<"delete" | "ban" | null>(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState<User | null>(null);
   const { toast } = useToast();
 
   const { data: usersData, isLoading } = useQuery<UsersResponse>({
@@ -82,6 +83,31 @@ export default function AdminUsersManagementPage() {
     },
     onError: () => {
       toast({ title: "Action failed", variant: "destructive" });
+    },
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: async ({ userId }: { userId: number }) => {
+      return await apiRequest("POST", `/api/admin/users/${userId}/reset-password`);
+    },
+    onSuccess: (data: any) => {
+      if (data.emailSent) {
+        toast({ 
+          title: "Password Reset Successful",
+          description: `Temporary password has been sent to ${data.email}`
+        });
+      } else {
+        toast({ 
+          title: "Password Reset - Manual Action Required",
+          description: `Email failed. Temporary password: ${data.tempPassword} - Please securely share this with the user.`,
+          duration: 60000,
+          variant: "destructive"
+        });
+      }
+      setResetPasswordUser(null);
+    },
+    onError: () => {
+      toast({ title: "Password reset failed", variant: "destructive" });
     },
   });
 
@@ -237,6 +263,15 @@ export default function AdminUsersManagementPage() {
                         <Button
                           variant="outline"
                           size="sm"
+                          onClick={() => setResetPasswordUser(user)}
+                          title="Reset Password"
+                          data-testid={`button-reset-password-${user.id}`}
+                        >
+                          <KeyRound className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => {
                             setSelectedUser(user);
                             setDeleteAction("ban");
@@ -313,6 +348,32 @@ export default function AdminUsersManagementPage() {
                   className={deleteAction === "delete" ? "bg-destructive text-destructive-foreground" : ""}
                 >
                   {deleteAction === "ban" ? "Ban User" : "Delete User"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog open={!!resetPasswordUser} onOpenChange={() => setResetPasswordUser(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset User Password</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to reset the password for {resetPasswordUser?.name} ({resetPasswordUser?.email})?
+                  A temporary password will be generated and sent to their email address.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    if (resetPasswordUser) {
+                      resetPasswordMutation.mutate({ userId: resetPasswordUser.id });
+                    }
+                  }}
+                  disabled={resetPasswordMutation.isPending}
+                  data-testid="button-confirm-reset-password"
+                >
+                  {resetPasswordMutation.isPending ? "Resetting..." : "Reset Password"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

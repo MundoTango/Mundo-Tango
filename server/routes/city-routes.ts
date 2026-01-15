@@ -58,10 +58,80 @@ router.get("/:city/scrapers", async (req: Request, res: Response) => {
  * Auto-verification helper: Analyzes a submitted URL against approved sources
  * Returns a confidence score (0-100) and reason
  */
-async function autoVerifyWebsite(websiteUrl: string): Promise<{ 
+const CITY_NAME_PATTERNS: Record<string, string[]> = {
+  'paris': ['paris', 'parisien', 'parisian'],
+  'london': ['london', 'londres'],
+  'berlin': ['berlin', 'berliner'],
+  'rome': ['roma', 'rome', 'romano'],
+  'madrid': ['madrid', 'madrileño'],
+  'barcelona': ['barcelona', 'bcn'],
+  'buenos aires': ['buenosaires', 'bsas', 'buenos-aires', 'porteno', 'porteño'],
+  'new york': ['newyork', 'nyc', 'ny'],
+  'los angeles': ['losangeles', 'la'],
+  'san francisco': ['sanfrancisco', 'sf'],
+  'tokyo': ['tokyo', 'tokio'],
+  'sydney': ['sydney'],
+  'melbourne': ['melbourne'],
+  'amsterdam': ['amsterdam'],
+  'vienna': ['vienna', 'wien'],
+  'prague': ['prague', 'praha'],
+  'lisbon': ['lisbon', 'lisboa'],
+  'milan': ['milan', 'milano'],
+  'munich': ['munich', 'munchen', 'münchen'],
+  'hamburg': ['hamburg'],
+  'frankfurt': ['frankfurt'],
+  'zurich': ['zurich', 'zürich'],
+  'stockholm': ['stockholm'],
+  'copenhagen': ['copenhagen', 'kobenhavn'],
+  'budapest': ['budapest'],
+  'warsaw': ['warsaw', 'warszawa'],
+  'riga': ['riga'],
+  'vilnius': ['vilnius'],
+  'seattle': ['seattle'],
+  'portland': ['portland'],
+  'chicago': ['chicago'],
+  'austin': ['austin'],
+  'minneapolis': ['minneapolis'],
+  'victoria': ['victoria'],
+  'mannheim': ['mannheim'],
+  'luxembourg': ['luxembourg', 'luxemburg'],
+  'brugge': ['brugge', 'bruges'],
+  'trier': ['trier'],
+};
+
+function normalizeForComparison(str: string): string {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function detectCityMismatch(url: string, submittedCity: string): { mismatch: boolean; detectedCity: string | null; } {
+  const urlNormalized = normalizeForComparison(url);
+  const submittedCityNormalized = normalizeForComparison(submittedCity);
+  
+  for (const [cityName, patterns] of Object.entries(CITY_NAME_PATTERNS)) {
+    const cityNormalized = normalizeForComparison(cityName);
+    for (const pattern of patterns) {
+      const patternNormalized = normalizeForComparison(pattern);
+      if (urlNormalized.includes(patternNormalized)) {
+        if (cityNormalized !== submittedCityNormalized && !submittedCityNormalized.includes(patternNormalized)) {
+          return { mismatch: true, detectedCity: cityName };
+        }
+        return { mismatch: false, detectedCity: cityName };
+      }
+    }
+  }
+  
+  return { mismatch: false, detectedCity: null };
+}
+
+async function autoVerifyWebsite(websiteUrl: string, submittedCity?: string): Promise<{ 
   autoApproved: boolean; 
   confidence: number; 
   reason: string;
+  cityMismatch?: { detected: string; submitted: string };
 }> {
   try {
     const url = new URL(websiteUrl);
@@ -107,6 +177,19 @@ async function autoVerifyWebsite(websiteUrl: string): Promise<{
     
     if (isSuspicious) {
       return { autoApproved: false, confidence: 10, reason: 'Domain contains suspicious patterns' };
+    }
+    
+    // Check for city mismatch (e.g., paris URL submitted for Buenos Aires)
+    if (submittedCity) {
+      const cityCheck = detectCityMismatch(websiteUrl, submittedCity);
+      if (cityCheck.mismatch && cityCheck.detectedCity) {
+        return { 
+          autoApproved: false, 
+          confidence: 20, 
+          reason: `City mismatch detected: URL appears to be for ${cityCheck.detectedCity}, not ${submittedCity}`,
+          cityMismatch: { detected: cityCheck.detectedCity, submitted: submittedCity }
+        };
+      }
     }
     
     if (isTrustedPlatform) {
@@ -198,8 +281,8 @@ router.post("/suggest-source", authenticateToken, async (req: AuthRequest, res: 
       }
     }
 
-    // Auto-verify the website
-    const verification = await autoVerifyWebsite(websiteUrl);
+    // Auto-verify the website with city validation
+    const verification = await autoVerifyWebsite(websiteUrl, city);
     const submissionStatus = verification.autoApproved ? 'approved' : 'pending_review';
     
     console.log(`[SuggestSource] Auto-verification for ${websiteUrl}: ${JSON.stringify(verification)}`);
@@ -1731,6 +1814,181 @@ router.get("/:id/tips", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("[CityTips] Error:", error);
     res.status(500).json({ error: "Failed to fetch tips" });
+  }
+});
+
+/**
+ * GET /api/cities/admin/pending-websites
+ * Get all pending city_websites submissions for admin review
+ */
+router.get("/admin/pending-websites", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.tier < 8) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const pending = await db
+      .select()
+      .from(cityWebsites)
+      .where(eq(cityWebsites.submissionStatus, 'pending_review'))
+      .orderBy(desc(cityWebsites.createdAt));
+
+    res.json({ pending, count: pending.length });
+  } catch (error) {
+    console.error("[AdminPendingWebsites] Error:", error);
+    res.status(500).json({ error: "Failed to fetch pending websites" });
+  }
+});
+
+/**
+ * PATCH /api/cities/admin/websites/:id/approve
+ * Approve a pending city_website and add to event_scraping_sources
+ */
+router.patch("/admin/websites/:id/approve", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.tier < 8) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const websiteId = parseInt(req.params.id);
+    if (isNaN(websiteId)) {
+      return res.status(400).json({ error: "Invalid website ID" });
+    }
+
+    const [website] = await db
+      .select()
+      .from(cityWebsites)
+      .where(eq(cityWebsites.id, websiteId))
+      .limit(1);
+
+    if (!website) {
+      return res.status(404).json({ error: "Website not found" });
+    }
+
+    await db
+      .update(cityWebsites)
+      .set({ 
+        submissionStatus: 'approved', 
+        updatedAt: new Date() 
+      })
+      .where(eq(cityWebsites.id, websiteId));
+
+    const existingSource = await db
+      .select()
+      .from(eventScrapingSources)
+      .where(eq(eventScrapingSources.url, website.websiteUrl))
+      .limit(1);
+
+    let sourceId = null;
+    if (existingSource.length === 0) {
+      const [newSource] = await db
+        .insert(eventScrapingSources)
+        .values({
+          name: `${website.city} Community Website`,
+          url: website.websiteUrl,
+          scraperType: 'community',
+          platform: 'user_suggested',
+          city: website.city,
+          country: website.country || '',
+          isActive: true,
+          priority: 5,
+        })
+        .returning();
+      sourceId = newSource.id;
+      console.log(`[AdminApprove] Added new scraping source: ${website.websiteUrl}`);
+    }
+
+    console.log(`[AdminApprove] Approved website ${websiteId}: ${website.websiteUrl} for ${website.city}`);
+    res.json({ 
+      success: true, 
+      message: `Approved ${website.websiteUrl}`,
+      sourceId 
+    });
+  } catch (error) {
+    console.error("[AdminApprove] Error:", error);
+    res.status(500).json({ error: "Failed to approve website" });
+  }
+});
+
+/**
+ * PATCH /api/cities/admin/websites/:id/reject
+ * Reject a pending city_website
+ */
+router.patch("/admin/websites/:id/reject", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.tier < 8) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const websiteId = parseInt(req.params.id);
+    const { reason } = req.body;
+
+    if (isNaN(websiteId)) {
+      return res.status(400).json({ error: "Invalid website ID" });
+    }
+
+    const sanitizedReason = reason && typeof reason === 'string' 
+      ? reason.trim().substring(0, 500) 
+      : 'No reason provided';
+
+    await db
+      .update(cityWebsites)
+      .set({ 
+        submissionStatus: 'rejected',
+        updatedAt: new Date()
+      })
+      .where(eq(cityWebsites.id, websiteId));
+
+    console.log(`[AdminReject] Rejected website ${websiteId}: ${sanitizedReason}`);
+    res.json({ success: true, message: "Website rejected" });
+  } catch (error) {
+    console.error("[AdminReject] Error:", error);
+    res.status(500).json({ error: "Failed to reject website" });
+  }
+});
+
+/**
+ * PATCH /api/cities/admin/websites/:id/reassign
+ * Reassign a pending city_website to the correct city
+ */
+router.patch("/admin/websites/:id/reassign", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.tier < 8) {
+      return res.status(403).json({ error: "God-level access required" });
+    }
+
+    const websiteId = parseInt(req.params.id);
+    const { city, country } = req.body;
+
+    if (isNaN(websiteId)) {
+      return res.status(400).json({ error: "Invalid website ID" });
+    }
+
+    if (!city || typeof city !== 'string' || city.trim().length < 2) {
+      return res.status(400).json({ error: "Valid city name is required (min 2 characters)" });
+    }
+
+    if (country && typeof country !== 'string') {
+      return res.status(400).json({ error: "Country must be a string" });
+    }
+
+    const sanitizedCity = city.trim().substring(0, 100);
+    const sanitizedCountry = country ? country.trim().substring(0, 100) : null;
+
+    await db
+      .update(cityWebsites)
+      .set({ 
+        city: sanitizedCity,
+        country: sanitizedCountry,
+        updatedAt: new Date()
+      })
+      .where(eq(cityWebsites.id, websiteId));
+
+    console.log(`[AdminReassign] Reassigned website ${websiteId} to ${city}, ${country}`);
+    res.json({ success: true, message: `Reassigned to ${city}` });
+  } catch (error) {
+    console.error("[AdminReassign] Error:", error);
+    res.status(500).json({ error: "Failed to reassign website" });
   }
 });
 

@@ -13,6 +13,27 @@ const sendMessageSchema = z.object({
 });
 
 export function registerMessagingRoutes(app: Express) {
+  // Channels endpoint - returns connected messaging channels (MT always active)
+  app.get("/api/messages/channels", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+
+    try {
+      // Return available channels - format matches UnifiedInbox expectations
+      const channels = [
+        { id: "mt", name: "Mundo Tango", icon: "mt", isActive: true },
+        { id: "gmail", name: "Gmail", icon: "gmail", isActive: false },
+        { id: "facebook", name: "Facebook", icon: "facebook", isActive: false },
+        { id: "instagram", name: "Instagram", icon: "instagram", isActive: false },
+        { id: "whatsapp", name: "WhatsApp", icon: "whatsapp", isActive: false },
+      ];
+
+      res.json(channels);
+    } catch (error: any) {
+      console.error("Error fetching channels:", error);
+      res.status(500).send("Failed to fetch channels");
+    }
+  });
+
   app.get("/api/messages/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
@@ -98,6 +119,139 @@ export function registerMessagingRoutes(app: Express) {
     } catch (error: any) {
       console.error("Error fetching conversations:", error);
       res.status(500).send("Failed to fetch conversations");
+    }
+  });
+
+  // Single conversation endpoint - returns conversation details for a specific user
+  app.get("/api/messages/conversations/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+
+    const userId = parseInt(req.params.userId);
+    if (isNaN(userId)) return res.status(400).send("Invalid user ID");
+
+    try {
+      // Get user info
+      const [partner] = await db
+        .select({ id: users.id, name: users.name, profileImage: users.profileImage })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      if (!partner) {
+        return res.status(404).send("User not found");
+      }
+
+      // Get last message between users
+      const [lastMsg] = await db
+        .select({
+          id: directMessages.id,
+          content: directMessages.content,
+          createdAt: directMessages.createdAt,
+        })
+        .from(directMessages)
+        .where(
+          or(
+            and(
+              eq(directMessages.senderId, req.user.id),
+              eq(directMessages.recipientId, userId)
+            ),
+            and(
+              eq(directMessages.senderId, userId),
+              eq(directMessages.recipientId, req.user.id)
+            )
+          )
+        )
+        .orderBy(desc(directMessages.createdAt))
+        .limit(1);
+
+      res.json({
+        userId: partner.id,
+        userName: partner.name,
+        userImage: partner.profileImage,
+        avatarUrl: partner.profileImage, // Alias for compatibility
+        lastMessage: lastMsg?.content || '',
+        lastMessageAt: lastMsg?.createdAt || null,
+        type: 'direct',
+      });
+    } catch (error: any) {
+      console.error("Error fetching conversation:", error);
+      res.status(500).send("Failed to fetch conversation");
+    }
+  });
+
+  // Unified messages endpoint - returns all messages in format expected by UnifiedInbox
+  app.get("/api/messages/unified", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+
+    try {
+      // Get all direct messages for this user
+      const dms = await db
+        .select({
+          id: directMessages.id,
+          senderId: directMessages.senderId,
+          recipientId: directMessages.recipientId,
+          content: directMessages.content,
+          isRead: directMessages.isRead,
+          createdAt: directMessages.createdAt,
+        })
+        .from(directMessages)
+        .where(
+          or(
+            eq(directMessages.senderId, req.user.id),
+            eq(directMessages.recipientId, req.user.id)
+          )
+        )
+        .orderBy(desc(directMessages.createdAt))
+        .limit(200);
+
+      // Get user info for all participants
+      const userIds = new Set<number>();
+      for (const msg of dms) {
+        userIds.add(msg.senderId);
+        userIds.add(msg.recipientId);
+      }
+
+      const userMap = new Map<number, any>();
+      if (userIds.size > 0) {
+        const usersList = await db
+          .select({ id: users.id, name: users.name, profileImage: users.profileImage })
+          .from(users)
+          .where(sql`${users.id} IN (${sql.join(Array.from(userIds).map(id => sql`${id}`), sql`, `)})`);
+
+        for (const u of usersList) {
+          userMap.set(u.id, u);
+        }
+      }
+
+      // Transform to format expected by UnifiedInbox
+      const messages = dms.map(msg => {
+        const isOutgoing = msg.senderId === req.user!.id;
+        const counterpartyId = isOutgoing ? msg.recipientId : msg.senderId;
+        const counterparty = userMap.get(counterpartyId);
+
+        return {
+          id: msg.id,
+          senderId: msg.senderId,
+          from: userMap.get(msg.senderId)?.name || 'Unknown',
+          senderAvatar: userMap.get(msg.senderId)?.profileImage,
+          counterpartyId,
+          counterpartyName: counterparty?.name || 'Unknown',
+          counterpartyAvatar: counterparty?.profileImage,
+          body: msg.content,
+          content: msg.content,
+          receivedAt: msg.createdAt,
+          createdAt: msg.createdAt,
+          isRead: msg.isRead,
+          isOutgoing,
+          channel: 'mt',
+          isStarred: false,
+        };
+      });
+
+      res.json({ messages });
+    } catch (error: any) {
+      console.error("Error fetching unified messages:", error);
+      res.status(500).send("Failed to fetch messages");
     }
   });
 
@@ -380,6 +534,79 @@ export function registerMessagingRoutes(app: Express) {
     } catch (error: any) {
       console.error("Error marking message as read:", error);
       res.status(500).send("Failed to mark message as read");
+    }
+  });
+
+  app.post("/api/messages/mark-read", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+
+    const { conversationId } = req.body;
+    if (!conversationId) return res.status(400).send("Conversation ID is required");
+
+    try {
+      if (conversationId.startsWith('direct-')) {
+        const targetUserId = parseInt(conversationId.replace('direct-', ''));
+        await db
+          .update(directMessages)
+          .set({ isRead: true })
+          .where(
+            and(
+              eq(directMessages.recipientId, req.user.id),
+              eq(directMessages.senderId, targetUserId),
+              eq(directMessages.isRead, false)
+            )
+          );
+      } else if (conversationId.startsWith('group-')) {
+        const groupId = parseInt(conversationId.replace('group-', ''));
+        // For groups, we append the user ID to the readBy array
+        await db.execute(sql`
+          UPDATE chat_messages 
+          SET read_by = array_append(COALESCE(read_by, ARRAY[]::text[]), ${String(req.user.id)})
+          WHERE chat_room_id = ${groupId} 
+          AND NOT (${String(req.user.id)} = ANY(COALESCE(read_by, ARRAY[]::text[])))
+        `);
+      }
+
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error marking messages as read:", error);
+      res.status(500).send("Failed to mark messages as read");
+    }
+  });
+
+  app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      
+      const [dmCount] = await db.select({
+        count: sql<number>`count(*)::int`
+      })
+      .from(directMessages)
+      .where(
+        and(
+          eq(directMessages.recipientId, userId),
+          eq(directMessages.isRead, false)
+        )
+      );
+
+      const userIdStr = String(userId);
+      const [chatCount] = await db.select({
+        count: sql<number>`count(*)::int`
+      })
+      .from(groupMessages)
+      .innerJoin(groupMembers, eq(groupMessages.chatRoomId, groupMembers.groupId))
+      .where(
+        and(
+          eq(groupMembers.userId, userId),
+          sql`(${groupMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${groupMessages.readBy})))`
+        )
+      );
+      
+      const totalUnread = (dmCount?.count || 0) + (chatCount?.count || 0);
+      res.json({ count: totalUnread });
+    } catch (error) {
+      console.error("Get unread message count error:", error);
+      res.json({ count: 0 });
     }
   });
 
