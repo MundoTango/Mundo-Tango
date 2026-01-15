@@ -1,7 +1,9 @@
-import { chromium, Browser, Page } from 'playwright';
 import { db } from '../../db';
 import { browserAutomationRecordings, browserAutomationExecutions } from '@shared/schema';
 import { eq, and, desc } from 'drizzle-orm';
+
+type Browser = import('playwright').Browser;
+type Page = import('playwright').Page;
 
 interface BrowserAutomationResult {
   success: boolean;
@@ -31,12 +33,32 @@ interface Recording {
   metadata?: any;
 }
 
+let playwrightAvailable: boolean | null = null;
+let chromiumLauncher: typeof import('playwright').chromium | null = null;
+
+async function getChromium(): Promise<typeof import('playwright').chromium> {
+  if (chromiumLauncher) return chromiumLauncher;
+  
+  try {
+    const playwright = await import('playwright');
+    chromiumLauncher = playwright.chromium;
+    playwrightAvailable = true;
+    console.log('[BrowserAutomation] Playwright loaded successfully');
+    return chromiumLauncher;
+  } catch (error) {
+    playwrightAvailable = false;
+    console.warn('[BrowserAutomation] Playwright not available - browser automation disabled');
+    throw new Error('Playwright/Chromium not available in this environment');
+  }
+}
+
 export class BrowserAutomationService {
   private browser: Browser | null = null;
   private page: Page | null = null;
 
   async initialize(): Promise<void> {
     if (!this.browser) {
+      const chromium = await getChromium();
       this.browser = await chromium.launch({
         headless: true,
         args: [

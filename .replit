@@ -71,7 +71,6 @@ RESEND_DOMAIN_VERIFIED = "true"
 MAINTENANCE_TOKEN = "mt-cleanup-2024-secure"
 MAINTENANCE_ALLOWED_PATTERNS = "scott%@boddye.com,test%@test.com"
 INTERNAL_ADMIN_KEY = "mt-internal-56c3f94e00af3667f9c56aedbb4d2ad5"
-PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH = "/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium"
 
 [userenv.production]
 SUPABASE_DATABASE_URL = "postgresql://postgres:Lij558X%tDy#fFN@db.iuvbqahpvpdojiwdpteo.supabase.co:5432/postgres"
