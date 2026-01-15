@@ -44,6 +44,13 @@ Special invite codes (`nomad`, `tango`) allow users to bypass email verification
 ### Password Management System
 Users can change passwords when logged in (`POST /api/auth/change-password`) and utilize a forgot password flow (`POST /api/auth/forgot-password` and `POST /api/auth/reset-password`).
 
+**Admin Password Reset (Added 2026-01-15):**
+- Endpoint: `POST /api/admin/users/:userId/reset-password`
+- Access: Admin (tier 4+) via Admin Users Management page (`/admin/users`)
+- Security: Uses crypto.randomBytes for cryptographically secure temp passwords
+- Email: Sends temp password to user; if email fails, displays in UI for manual sharing
+- Audit: All reset actions logged with adminId, targetUserId, timestamp
+
 ### Trip Participant Management System
 Manages trip travelers with owner/participant roles. Owners can invite/remove participants and edit trip details. Participants can view shared details, leave trips, and see trips in their "Trips I'm Joining" section. Access control ensures only owners or active participants can view trip details. A notification system sends `trip_invite` notifications.
 
