@@ -600,7 +600,7 @@ export default function EventsPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
-                {(isPro || isSuperAdmin) && (
+                {user && (
                   <Button 
                     size="lg" 
                     className="gap-2" 
@@ -883,7 +883,7 @@ export default function EventsPage() {
                                   {t('pages:events.clearFilters', 'Clear Filters')}
                                 </Button>
                               )}
-                              {(isPro || isSuperAdmin) && (
+                              {user && (
                                 <Button onClick={() => navigate("/events/create")} data-testid="button-create-event-empty">
                                   <Plus className="h-4 w-4 mr-2" />
                                   {t('pages:events.createEvent', 'Create Event')}
