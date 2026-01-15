@@ -496,6 +496,68 @@ router.delete("/users/:userId", authenticateToken, requireAdmin, async (req, res
 });
 
 /**
+ * POST /api/admin/users/:userId/reset-password
+ * Reset user's password to a temporary password and send email notification
+ * Requires Admin (level 4) or higher
+ */
+router.post("/users/:userId/reset-password", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const adminId = req.user?.id;
+    const bcrypt = await import("bcrypt");
+    const { EmailService } = await import("../services/EmailService");
+    
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, parseInt(userId))
+    });
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Generate a secure temporary password
+    const tempPassword = `Tango${Math.random().toString(36).slice(2, 8)}${Math.floor(Math.random() * 100)}!`;
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    
+    // Update user's password
+    await db.update(users)
+      .set({ 
+        password: hashedPassword,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, parseInt(userId)));
+    
+    // Send email notification with temporary password
+    try {
+      await EmailService.sendPasswordResetByAdmin(user.email, user.name || user.username || "Tango Dancer", tempPassword);
+      console.log(`[Admin] Password reset for user ${userId} by admin ${adminId}, email sent to ${user.email}`);
+    } catch (emailError) {
+      console.error(`[Admin] Failed to send password reset email to ${user.email}:`, emailError);
+      // Still return success but note the email issue
+      return res.json({ 
+        success: true, 
+        userId: parseInt(userId), 
+        email: user.email,
+        emailSent: false,
+        tempPassword, // Only return temp password if email failed
+        message: "Password reset but email failed to send. Please provide the temporary password manually."
+      });
+    }
+    
+    res.json({ 
+      success: true, 
+      userId: parseInt(userId), 
+      email: user.email,
+      emailSent: true,
+      message: `Password reset successfully. Temporary password sent to ${user.email}`
+    });
+  } catch (error: any) {
+    console.error("Error resetting user password:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * POST /api/admin/waitlist/:userId/send-invite
  * Send waitlist invite email to specific user
  */

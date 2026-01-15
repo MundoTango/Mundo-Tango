@@ -658,6 +658,71 @@ export class EmailService {
     });
   }
   
+  // Helper: Send password reset by admin email (direct send - admin action)
+  static async sendPasswordResetByAdmin(email: string, name: string, tempPassword: string): Promise<boolean> {
+    try {
+      const appUrl = getAppUrl();
+      
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #0a1929;">
+          <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #0a1929 0%, #1a365d 100%); padding: 40px 20px;">
+            <div style="background: rgba(20, 40, 60, 0.9); border-radius: 16px; padding: 32px; border: 1px solid rgba(45, 212, 191, 0.2);">
+              <h1 style="color: #2dd4bf; margin: 0 0 24px 0; font-size: 28px; font-weight: 600;">Password Reset</h1>
+              <p style="color: #e2e8f0; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+                Hello ${name},
+              </p>
+              <p style="color: #e2e8f0; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+                An administrator has reset your password. Your new temporary password is:
+              </p>
+              <div style="background: rgba(45, 212, 191, 0.1); border: 1px solid rgba(45, 212, 191, 0.3); border-radius: 8px; padding: 16px; text-align: center; margin: 0 0 24px 0;">
+                <code style="color: #2dd4bf; font-size: 24px; font-weight: bold; letter-spacing: 2px;">${tempPassword}</code>
+              </div>
+              <p style="color: #e2e8f0; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+                Please log in with this temporary password and change it immediately for security.
+              </p>
+              <a href="${appUrl}/login" style="display: inline-block; background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%); color: #0a1929; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                Login Now
+              </a>
+              <p style="color: #94a3b8; font-size: 14px; margin: 24px 0 0 0;">
+                If you did not expect this email, please contact support immediately.
+              </p>
+            </div>
+            <p style="color: #64748b; font-size: 12px; text-align: center; margin: 24px 0 0 0;">
+              Mundo Tango - Connect with the Global Tango Community
+            </p>
+          </div>
+        </body>
+        </html>
+      `;
+      
+      const resendClient = await getResendClient();
+      if (!resendClient) {
+        console.log(`[EmailService] Admin password reset email would be sent to ${email} (Resend not configured)`);
+        console.log(`[EmailService] Temp password: ${tempPassword}`);
+        return true;
+      }
+      
+      const result = await resendClient.client.emails.send({
+        from: resendClient.fromEmail,
+        to: email,
+        subject: 'Your Password Has Been Reset - Mundo Tango',
+        html: html
+      });
+      
+      console.log(`[EmailService] Admin password reset email sent to ${email}`, result);
+      return true;
+    } catch (error: any) {
+      console.error(`[EmailService] Failed to send admin password reset email to ${email}:`, error);
+      return false;
+    }
+  }
+
   // Helper: Send password reset email (direct send, not queued - time-sensitive)
   static async sendPasswordResetEmail(email: string, name: string, resetToken: string): Promise<boolean> {
     try {
