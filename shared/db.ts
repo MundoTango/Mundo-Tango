@@ -9,12 +9,15 @@ import { drizzle, NeonHttpDatabase } from 'drizzle-orm/neon-http';
 import * as schema from './schema';
 import * as platformSchema from './platform-schema';
 
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is not set');
+// Support DATABASE_URL or SUPABASE_DATABASE_URL for production flexibility
+const databaseUrl = process.env.DATABASE_URL || process.env.SUPABASE_DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL or SUPABASE_DATABASE_URL environment variable is not set');
 }
 
 // Create Neon SQL function
-const sql: NeonQueryFunction<boolean, boolean> = neon(process.env.DATABASE_URL);
+const sql: NeonQueryFunction<boolean, boolean> = neon(databaseUrl);
 
 // Create Drizzle database instance with all schemas
 export const db: NeonHttpDatabase<typeof schema & typeof platformSchema> = drizzle(sql, {
@@ -73,9 +76,9 @@ export async function executeRawQuery<T = any>(query: string, params?: any[]): P
  */
 export function getDbWithUser(userId: number): NeonHttpDatabase<typeof schema & typeof platformSchema> {
   // Create a new SQL function with user context
-  const userSql: NeonQueryFunction<boolean, boolean> = neon(process.env.DATABASE_URL!, {
+  const userSql: NeonQueryFunction<boolean, boolean> = neon(databaseUrl!, {
     // Set the user context as a session variable for RLS policies
-    queryCallback: async (query, params) => {
+    queryCallback: async (query: string, params: any[]) => {
       // First set the user context
       await sql`SELECT set_config('app.user_id', ${userId.toString()}, true)`;
     },

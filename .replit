@@ -77,6 +77,7 @@ SUPABASE_DATABASE_URL = "postgresql://postgres:Lij558X%tDy#fFN@db.iuvbqahpvpdoji
 NODE_OPTIONS = "--max-old-space-size=8192"
 VITE_ENABLE_HEAVY_FEATURES = "false"
 APP_URL = "https://mundotango.life"
+AUTOSCALE_MODE = "true"
 
 [objectStorage]
 defaultBucketID = "replit-objstore-0ea7904b-a034-4a1a-ad8d-b74222395807"
