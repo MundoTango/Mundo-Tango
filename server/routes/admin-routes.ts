@@ -505,6 +505,7 @@ router.post("/users/:userId/reset-password", authenticateToken, requireAdmin, as
     const { userId } = req.params;
     const adminId = req.user?.id;
     const bcrypt = await import("bcrypt");
+    const crypto = await import("crypto");
     const { EmailService } = await import("../services/EmailService");
     
     const user = await db.query.users.findFirst({
@@ -515,8 +516,9 @@ router.post("/users/:userId/reset-password", authenticateToken, requireAdmin, as
       return res.status(404).json({ error: "User not found" });
     }
     
-    // Generate a secure temporary password
-    const tempPassword = `Tango${Math.random().toString(36).slice(2, 8)}${Math.floor(Math.random() * 100)}!`;
+    // Generate a cryptographically secure temporary password
+    const randomBytes = crypto.randomBytes(12).toString('base64').replace(/[+/=]/g, '');
+    const tempPassword = `Tango${randomBytes.slice(0, 8)}!`;
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
     
     // Update user's password
@@ -527,30 +529,34 @@ router.post("/users/:userId/reset-password", authenticateToken, requireAdmin, as
       })
       .where(eq(users.id, parseInt(userId)));
     
+    // Audit log the password reset action
+    console.log(`[Admin Audit] Password reset: adminId=${adminId}, targetUserId=${userId}, targetEmail=${user.email}, timestamp=${new Date().toISOString()}`);
+    
     // Send email notification with temporary password
     try {
       await EmailService.sendPasswordResetByAdmin(user.email, user.name || user.username || "Tango Dancer", tempPassword);
       console.log(`[Admin] Password reset for user ${userId} by admin ${adminId}, email sent to ${user.email}`);
+      
+      res.json({ 
+        success: true, 
+        userId: parseInt(userId), 
+        email: user.email,
+        emailSent: true,
+        message: `Password reset successfully. Temporary password sent to ${user.email}`
+      });
     } catch (emailError) {
       console.error(`[Admin] Failed to send password reset email to ${user.email}:`, emailError);
-      // Still return success but note the email issue
-      return res.json({ 
+      // Return temp password ONLY in response when email fails - admin needs to manually communicate it
+      // This is a tradeoff: security vs. usability when email service is down
+      res.json({ 
         success: true, 
         userId: parseInt(userId), 
         email: user.email,
         emailSent: false,
-        tempPassword, // Only return temp password if email failed
-        message: "Password reset but email failed to send. Please provide the temporary password manually."
+        tempPassword, // Only exposed when email fails - admin must manually share
+        message: "Password reset but email failed. Please securely share the temporary password with the user."
       });
     }
-    
-    res.json({ 
-      success: true, 
-      userId: parseInt(userId), 
-      email: user.email,
-      emailSent: true,
-      message: `Password reset successfully. Temporary password sent to ${user.email}`
-    });
   } catch (error: any) {
     console.error("Error resetting user password:", error);
     res.status(500).json({ error: error.message });

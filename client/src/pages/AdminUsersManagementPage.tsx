@@ -93,14 +93,15 @@ export default function AdminUsersManagementPage() {
     onSuccess: (data: any) => {
       if (data.emailSent) {
         toast({ 
-          title: "Password Reset",
-          description: `Temporary password sent to ${data.email}`
+          title: "Password Reset Successful",
+          description: `Temporary password has been sent to ${data.email}`
         });
       } else {
         toast({ 
-          title: "Password Reset (Email Failed)",
-          description: `Temporary password: ${data.tempPassword}`,
-          duration: 30000
+          title: "Password Reset - Manual Action Required",
+          description: `Email failed. Temporary password: ${data.tempPassword} - Please securely share this with the user.`,
+          duration: 60000,
+          variant: "destructive"
         });
       }
       setResetPasswordUser(null);
