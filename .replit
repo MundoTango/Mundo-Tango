@@ -108,7 +108,7 @@ MAINTENANCE_ALLOWED_PATTERNS = "scott%@boddye.com,test%@test.com"
 INTERNAL_ADMIN_KEY = "mt-internal-56c3f94e00af3667f9c56aedbb4d2ad5"
 
 [userenv.production]
-SUPABASE_DATABASE_URL = "postgresql://postgres:Lij558X%tDy#fFN@db.iuvbqahpvpdojiwdpteo.supabase.co:5432/postgres"
+SUPABASE_DATABASE_URL = "postgresql://postgres:Lij558X%25tDy%23fFN@db.iuvbqahpvpdojiwdpteo.supabase.co:5432/postgres"
 NODE_OPTIONS = "--max-old-space-size=8192"
 VITE_ENABLE_HEAVY_FEATURES = "false"
 APP_URL = "https://mundotango.life"
