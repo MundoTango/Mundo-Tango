@@ -5,17 +5,46 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../storage";
 import Stripe from "stripe";
+import crypto from "crypto";
+
+// Verify Vercel webhook signature using HMAC-SHA1
+function verifyVercelSignature(payload: string, signature: string, secret: string): boolean {
+  const expectedSignature = crypto
+    .createHmac('sha1', secret)
+    .update(payload)
+    .digest('hex');
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+
+// Verify Railway webhook signature using HMAC-SHA256
+function verifyRailwaySignature(payload: string, signature: string, secret: string): boolean {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(`sha256=${expectedSignature}`)
+  );
+}
 
 const router = Router();
 
-// Initialize Stripe with secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-10-29.clover",
-});
+// Initialize Stripe (optional for development)
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2025-10-29.clover" })
+  : null;
+
+if (!stripe) console.warn('[Stripe] Not configured - webhooks disabled');
 
 // Stripe Webhook Handler - PRODUCTION CRITICAL
 // Handles payment events from Stripe to activate subscriptions
 router.post("/stripe", async (req: Request, res: Response) => {
+  if (!stripe) return res.status(200).send('Stripe not configured');
+
   const sig = req.headers['stripe-signature'];
 
   if (!sig) {
@@ -169,9 +198,24 @@ router.post("/vercel", async (req: Request, res: Response) => {
   try {
     const { type, payload } = req.body;
 
-    // Verify webhook signature (if configured)
+    // Verify webhook signature
     const signature = req.headers['x-vercel-signature'] as string;
-    // TODO: Verify signature using VERCEL_WEBHOOK_SECRET
+    const webhookSecret = process.env.VERCEL_WEBHOOK_SECRET;
+
+    if (webhookSecret) {
+      if (!signature) {
+        console.error('[Vercel Webhook] No signature header found');
+        return res.status(401).json({ error: 'Missing signature' });
+      }
+
+      const rawBody = JSON.stringify(req.body);
+      if (!verifyVercelSignature(rawBody, signature, webhookSecret)) {
+        console.error('[Vercel Webhook] Signature verification failed');
+        return res.status(401).json({ error: 'Invalid signature' });
+      }
+    } else if (process.env.NODE_ENV === 'production') {
+      console.warn('[Vercel Webhook] VERCEL_WEBHOOK_SECRET not configured in production');
+    }
     
     if (type === 'deployment.created' || type === 'deployment.succeeded' || type === 'deployment.failed' || type === 'deployment.canceled') {
       const { id, url, state, meta } = payload;
@@ -239,9 +283,24 @@ router.post("/railway", async (req: Request, res: Response) => {
   try {
     const { type, data } = req.body;
 
-    // Verify webhook signature (if configured)
+    // Verify webhook signature
     const signature = req.headers['x-railway-signature'] as string;
-    // TODO: Verify signature using RAILWAY_WEBHOOK_SECRET
+    const webhookSecret = process.env.RAILWAY_WEBHOOK_SECRET;
+
+    if (webhookSecret) {
+      if (!signature) {
+        console.error('[Railway Webhook] No signature header found');
+        return res.status(401).json({ error: 'Missing signature' });
+      }
+
+      const rawBody = JSON.stringify(req.body);
+      if (!verifyRailwaySignature(rawBody, signature, webhookSecret)) {
+        console.error('[Railway Webhook] Signature verification failed');
+        return res.status(401).json({ error: 'Invalid signature' });
+      }
+    } else if (process.env.NODE_ENV === 'production') {
+      console.warn('[Railway Webhook] RAILWAY_WEBHOOK_SECRET not configured in production');
+    }
 
     if (type === 'DEPLOYMENT_STATUS_CHANGED') {
       const { id, status: railwayStatus, projectId, environmentId } = data;

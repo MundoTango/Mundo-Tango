@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useRoute } from "wouter";
+import DOMPurify from "dompurify";
 import { useEvent } from "@/hooks/useEvents";
 import { useQuery } from "@tanstack/react-query";
 import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
@@ -548,7 +549,7 @@ export default function EventDetailsPage() {
               
               <h1 
                 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6"
-                dangerouslySetInnerHTML={{ __html: event.title || "Event" }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.title || "Event") }}
               />
               
               <div className="flex flex-wrap items-center justify-center gap-6 text-white/90 mb-8">
@@ -978,7 +979,7 @@ export default function EventDetailsPage() {
                     <h3 className="text-2xl font-serif font-bold mb-6">About This Event</h3>
                     <div 
                       className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed prose prose-lg dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: event.description.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#8211;/g, '–').replace(/&#038;/g, '&').replace(/&#8217;/g, "'") }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.description.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#8211;/g, '–').replace(/&#038;/g, '&').replace(/&#8217;/g, "'")) }}
                     />
                   </motion.div>
                 )}

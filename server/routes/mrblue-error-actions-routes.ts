@@ -13,6 +13,7 @@ import { errorPatterns, agentEscalations } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { broadcastToUser } from "../services/websocket";
+import { authenticateToken, requireRoleLevel, type AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
@@ -68,7 +69,7 @@ const autoFixSchema = z.object({
  * - Requests approval for medium-confidence (80-95%)
  * - Returns manual review for low-confidence (<80%)
  */
-router.post("/auto-fix", async (req: Request, res: Response) => {
+router.post("/auto-fix", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
   try {
     console.log('[AutoFix] Request received:', req.body);
 
@@ -140,7 +141,7 @@ router.post("/auto-fix", async (req: Request, res: Response) => {
  * POST /api/mrblue/apply-fix
  * Apply AI-suggested fix to the codebase
  */
-router.post("/apply-fix", async (req: Request, res: Response) => {
+router.post("/apply-fix", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
   try {
     console.log('[Error Actions] Apply fix request:', req.body);
 
@@ -263,7 +264,7 @@ router.post("/apply-fix", async (req: Request, res: Response) => {
  * POST /api/mrblue/escalate-error
  * Escalate error to Intelligence Division Chief (Agent #4)
  */
-router.post("/escalate-error", async (req: Request, res: Response) => {
+router.post("/escalate-error", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
   try {
     console.log('[Error Actions] Escalate error request:', req.body);
 
@@ -373,7 +374,7 @@ router.post("/escalate-error", async (req: Request, res: Response) => {
  * POST /api/mrblue/fix-feedback
  * Submit feedback on fix effectiveness - PHASE 5: Learning Retention
  */
-router.post("/fix-feedback", async (req: Request, res: Response) => {
+router.post("/fix-feedback", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
   try {
     console.log('[Error Actions] Fix feedback received:', req.body);
 

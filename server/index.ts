@@ -18,6 +18,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { startPreviewExpirationChecker } from "./lib/preview-expiration";
 import { initStoryExpirationJob } from "./jobs/expireStories";
 import { initScrapingScheduler } from "./jobs/scraping-scheduler";
+import { initGdprDeletionJob } from "./jobs/gdprAccountDeletion";
 import { apiRateLimiter } from "./middleware/security";
 import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
 import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
@@ -219,7 +220,6 @@ app.use((req, res, next) => {
   server.listen({
     port,
     host: "0.0.0.0",
-    reusePort: true,
   }, async () => {
     // Server is listening - clear the startup keepalive
     clearStartupKeepalive();
@@ -250,6 +250,7 @@ app.use((req, res, next) => {
       startPreviewExpirationChecker();
       initStoryExpirationJob();
       initScrapingScheduler();
+      initGdprDeletionJob(); // GDPR Article 17 - Right to Erasure
       
       // MB.MD v9.9.3: Initialize Self-Healing and Content Services
       try {

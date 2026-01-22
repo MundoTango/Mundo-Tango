@@ -24,14 +24,16 @@ const KEY_VERSION = 1; // Current encryption key version (for rotation)
  */
 function getKey(): Buffer {
   const secret = process.env.SECRETS_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY || process.env.SESSION_SECRET;
-  
+
   if (!secret) {
-    console.warn('⚠️  WARNING: SECRETS_ENCRYPTION_KEY not set! Using fallback key.');
-    console.warn('⚠️  This is INSECURE for production. Set SECRETS_ENCRYPTION_KEY immediately.');
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('SECRETS_ENCRYPTION_KEY must be set in production');
+    }
+    console.warn('⚠️  WARNING: SECRETS_ENCRYPTION_KEY not set! Using fallback key for development only.');
   }
-  
+
   const finalSecret = secret || 'dev-key-insecure-replace-me-32chars!!';
-  
+
   // Use a fixed salt for key derivation to ensure consistency
   // In production, this should be stored securely
   return crypto.scryptSync(finalSecret, 'mundo-tango-salt-v1', KEY_LENGTH);
@@ -43,6 +45,11 @@ function getKey(): Buffer {
  */
 function deriveKeyWithSalt(salt: Buffer): Buffer {
   const secret = process.env.SECRETS_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY || process.env.SESSION_SECRET;
+
+  if (!secret && process.env.NODE_ENV === 'production') {
+    throw new Error('SECRETS_ENCRYPTION_KEY must be set in production');
+  }
+
   const finalSecret = secret || 'dev-key-insecure-replace-me-32chars!!';
   
   return crypto.pbkdf2Sync(

@@ -12,6 +12,7 @@ import {
   verifyRefreshToken,
   type AuthRequest,
 } from "../middleware/auth";
+import { authRateLimiter } from "../middleware/rateLimiter";
 // Note: insertUserSchema not imported - using direct z.object() for registerSchema to avoid Zod v4 .extend() issues
 import { ensureCityGroupExists } from "../utils/cityGroupAutomation";
 import { EmailService } from "../services/EmailService";
@@ -292,7 +293,7 @@ router.post("/login", async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
@@ -326,7 +327,7 @@ router.post("/logout", async (req: Request, res: Response) => {
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "strict",
       path: "/",
     });
 
@@ -427,7 +428,7 @@ router.post("/refresh", async (req: Request, res: Response) => {
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
@@ -546,7 +547,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     });
@@ -694,7 +695,7 @@ router.post("/resend-verification", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/forgot-password", async (req: Request, res: Response) => {
+router.post("/forgot-password", authRateLimiter, async (req: Request, res: Response) => {
   try {
     const { email } = forgotPasswordSchema.parse(req.body);
 
@@ -751,7 +752,7 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/reset-password", async (req: Request, res: Response) => {
+router.post("/reset-password", authRateLimiter, async (req: Request, res: Response) => {
   try {
     const { token, newPassword } = resetPasswordSchema.parse(req.body);
 

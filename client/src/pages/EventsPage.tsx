@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import DOMPurify from "dompurify";
 import { Link, useLocation } from "wouter";
 import { useEvents, useEventAttendance, useEventRSVPs, useMyEvents, useUpcomingEvents } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
@@ -164,7 +165,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             <h3 
               className="text-2xl font-serif font-bold line-clamp-2 mb-2" 
               data-testid={`text-event-title-${eventData.id}`}
-              dangerouslySetInnerHTML={{ __html: eventData.title || t('pages:events.untitledEvent', 'Untitled Event') }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(eventData.title || t('pages:events.untitledEvent', 'Untitled Event')) }}
             />
           </div>
         </div>
@@ -857,7 +858,7 @@ export default function EventsPage() {
                             <Marker key={eventId || `map-event-${index}`} position={[event.lat, event.lng]}>
                               <Popup>
                                 <div className="p-2">
-                                  <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: eventData.title || "Event" }} />
+                                  <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(eventData.title || "Event") }} />
                                   <p className="text-sm text-muted-foreground mb-2">
                                     {safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
                                   </p>

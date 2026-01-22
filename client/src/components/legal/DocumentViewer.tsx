@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ZoomIn, ZoomOut, Maximize, Download } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import DOMPurify from 'dompurify';
 
 interface DocumentViewerProps {
   content: string;
@@ -74,7 +75,7 @@ export function DocumentViewer({
             <div
               className="prose prose-sm max-w-none p-8"
               style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top left' }}
-              dangerouslySetInnerHTML={{ __html: content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
             />
           )}
         </ScrollArea>

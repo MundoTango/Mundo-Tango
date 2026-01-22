@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Response } from "express";
 import { z } from "zod";
 import {
   createEncryptedHealthGoal,
@@ -6,6 +6,7 @@ import {
   createEncryptedHealthMetric,
   getDecryptedHealthMetrics,
 } from "../db/encrypted";
+import { authenticateToken, type AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
@@ -14,12 +15,9 @@ const router = Router();
 // ============================================================================
 
 // Create a new health goal
-router.post("/api/health/goals", async (req, res) => {
+router.post("/api/health/goals", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const user = req.user;
-    if (!user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    const user = req.user!;
 
     const schema = z.object({
       goalType: z.string(),
@@ -57,12 +55,9 @@ router.post("/api/health/goals", async (req, res) => {
 });
 
 // Get all health goals for the authenticated user
-router.get("/api/health/goals", async (req, res) => {
+router.get("/api/health/goals", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const user = req.user;
-    if (!user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    const user = req.user!;
 
     const goals = await getDecryptedHealthGoals(user.id);
     res.json(goals);
@@ -77,12 +72,9 @@ router.get("/api/health/goals", async (req, res) => {
 // ============================================================================
 
 // Create a new health metric
-router.post("/api/health/metrics", async (req, res) => {
+router.post("/api/health/metrics", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const user = req.user;
-    if (!user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    const user = req.user!;
 
     const schema = z.object({
       date: z.string(),
@@ -112,12 +104,9 @@ router.post("/api/health/metrics", async (req, res) => {
 });
 
 // Get health metrics for the authenticated user
-router.get("/api/health/metrics", async (req, res) => {
+router.get("/api/health/metrics", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const user = req.user;
-    if (!user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    const user = req.user!;
 
     const { metricType, startDate, endDate } = req.query;
 

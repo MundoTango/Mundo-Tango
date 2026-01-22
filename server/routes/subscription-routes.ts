@@ -6,10 +6,10 @@ import Stripe from "stripe";
 
 const router = Router();
 
-// Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || process.env.TESTING_STRIPE_SECRET_KEY || "", {
-    apiVersion: "2025-10-29.clover",
-  });
+// Initialize Stripe (optional for development)
+const stripeKey = process.env.STRIPE_SECRET_KEY || process.env.TESTING_STRIPE_SECRET_KEY;
+const stripe = stripeKey ? new Stripe(stripeKey, { apiVersion: "2025-10-29.clover" }) : null;
+if (!stripe) console.warn('[Subscription] Stripe not configured');
 
 // ============================================================================
 // SUBSCRIPTION ROUTES
@@ -138,73 +138,77 @@ router.get("/tiers", async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/subscriptions/create-checkout-session - Create Stripe checkout session (auth required)
+router.post("/create-checkout-session", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!stripe) {
+      return res.status(503).json({ message: "Payment service not configured" });
+    }
+
+    const userId = req.userId!;
+    const { priceId, billingInterval } = req.body;
+
+    if (!priceId || !billingInterval) {
+      return res.status(400).json({ message: "Price ID and billing interval are required" });
+    }
+
+    // Get or create Stripe customer
+    const userResult = await db.execute(sql`
+      SELECT stripe_customer_id, email FROM profiles WHERE id = ${userId} LIMIT 1
+    `);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const user: any = userResult.rows[0];
+    let customerId = user.stripe_customer_id;
+
+    // Create Stripe customer if doesn't exist
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: { userId: userId.toString() },
+      });
+      customerId = customer.id;
+
+      // Save customer ID to database
+      await db.execute(sql`
+        UPDATE profiles SET stripe_customer_id = ${customerId} WHERE id = ${userId}
+      `);
+    }
+
+    // Create checkout session
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      line_items: [{
+        price: priceId,
+        quantity: 1,
+      }],
+      mode: "subscription",
+      success_url: `${process.env.CLIENT_URL || "http://localhost:5173"}/subscriptions/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CLIENT_URL || "http://localhost:5173"}/subscriptions`,
+      client_reference_id: userId.toString(),
+      metadata: {
+        userId: userId.toString(),
+        billingInterval,
+      },
+    });
+
+    res.json({
+      sessionId: session.id,
+      url: session.url,
+    });
+  } catch (error) {
+    console.error("[Subscription] Error creating checkout session:", error);
+    res.status(500).json({ message: "Failed to create checkout session" });
+  }
+});
+
 // POST /api/subscriptions - Create new subscription (auth required)
 router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-
-    // POST /api/subscriptions/create-checkout-session - Create Stripe checkout session (auth required)
-    router.post("/create-checkout-session", authenticateToken, async (req: AuthRequest, res: Response) => {
-        try {
-              const userId = req.userId!;
-              const { priceId, billingInterval } = req.body;
-
-              if (!priceId || !billingInterval) {
-                      return res.status(400).json({ message: "Price ID and billing interval are required" });
-                    }
-
-              // Get or create Stripe customer
-              const userResult = await db.execute(sql`
-                    SELECT stripe_customer_id, email FROM profiles WHERE id = ${userId} LIMIT 1
-                        `);
-
-              if (userResult.rows.length === 0) {
-                      return res.status(404).json({ message: "User not found" });
-                    }
-
-              const user: any = userResult.rows[0];
-              let customerId = user.stripe_customer_id;
-
-              // Create Stripe customer if doesn't exist
-              if (!customerId) {
-                      const customer = await stripe.customers.create({
-                                email: user.email,
-                                metadata: { userId: userId.toString() },
-                              });
-                      customerId = customer.id;
-
-                      // Save customer ID to database
-                      await db.execute(sql`
-                              UPDATE profiles SET stripe_customer_id = ${customerId} WHERE id = ${userId}
-                                    `);
-                    }
-
-              // Create checkout session
-              const session = await stripe.checkout.sessions.create({
-                      customer: customerId,
-                      line_items: [{
-                                price: priceId,
-                                quantity: 1,
-                              }],
-                      mode: "subscription",
-                      success_url: `${process.env.CLIENT_URL || "http://localhost:5173"}/subscriptions/success?session_id={CHECKOUT_SESSION_ID}`,
-                      cancel_url: `${process.env.CLIENT_URL || "http://localhost:5173"}/subscriptions`,
-                      client_reference_id: userId.toString(),
-                      metadata: {
-                                userId: userId.toString(),
-                                billingInterval,
-                              },
-                    });
-
-              res.json({
-                      sessionId: session.id,
-                      url: session.url,
-                    });
-            } catch (error) {
-              console.error("[Subscription] Error creating checkout session:", error);
-              res.status(500).json({ message: "Failed to create checkout session" });
-            }
-      });
     const {
       planId,
       billingInterval,

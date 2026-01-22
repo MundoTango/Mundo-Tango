@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import DOMPurify from "dompurify";
 import { useSearch } from "wouter";
 import { useConversations, useConversation, useSendMessage, useMessagesRealtime, useMarkMessagesAsRead, useCreateConversation } from "@/hooks/useMessages";
 import { Button } from "@/components/ui/button";
@@ -109,7 +110,7 @@ function RichTextMessage({ content, isOwn }: { content: string; isOwn: boolean }
   return (
     <p 
       className="text-sm leading-relaxed whitespace-pre-wrap"
-      dangerouslySetInnerHTML={{ __html: parsed.html }}
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(parsed.html) }}
     />
   );
 }

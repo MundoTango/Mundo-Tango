@@ -5,14 +5,13 @@ import { users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { getAppUrl } from "../utils/getAppUrl";
+import { paymentRateLimiter } from "../middleware/rateLimiter";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
-}
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-11-20.acacia",
-});
+// Stripe optional for development
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-11-20.acacia" })
+  : null;
+if (!stripe) console.warn('[Billing] Stripe not configured');
 
 const router = Router();
 
@@ -192,7 +191,7 @@ router.get("/subscription", authenticateToken, async (req: AuthRequest, res: Res
 });
 
 // POST /api/billing/create-subscription - Create new subscription
-router.post("/create-subscription", authenticateToken, async (req: AuthRequest, res: Response) => {
+router.post("/create-subscription", authenticateToken, paymentRateLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { planId, paymentMethodId } = req.body;
@@ -286,7 +285,7 @@ router.post("/create-subscription", authenticateToken, async (req: AuthRequest, 
 });
 
 // POST /api/billing/update-subscription - Update subscription (upgrade/downgrade)
-router.post("/update-subscription", authenticateToken, async (req: AuthRequest, res: Response) => {
+router.post("/update-subscription", authenticateToken, paymentRateLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { planId } = req.body;
@@ -356,7 +355,7 @@ router.post("/update-subscription", authenticateToken, async (req: AuthRequest, 
 });
 
 // POST /api/billing/cancel-subscription - Cancel subscription
-router.post("/cancel-subscription", authenticateToken, async (req: AuthRequest, res: Response) => {
+router.post("/cancel-subscription", authenticateToken, paymentRateLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { immediate } = req.body;

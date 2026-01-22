@@ -8,6 +8,8 @@ import { OpenAI } from "openai";
 import multer, { type FileFilterCallback } from "multer";
 import fs from "fs";
 import path from "path";
+import { authenticateToken, type AuthRequest } from "../middleware/auth";
+import { apiRateLimiter } from "../middleware/rateLimiter";
 
 const router = Router();
 
@@ -44,7 +46,7 @@ const openai = new OpenAI({
  * POST /api/whisper/transcribe
  * Transcribe audio to text using Whisper
  */
-router.post("/transcribe", upload.single('audio'), async (req: Request, res: Response) => {
+router.post("/transcribe", authenticateToken, apiRateLimiter, upload.single('audio'), async (req: AuthRequest, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -97,7 +99,7 @@ router.post("/transcribe", upload.single('audio'), async (req: Request, res: Res
  * POST /api/whisper/text-to-speech
  * Convert text to speech using OpenAI TTS
  */
-router.post("/text-to-speech", async (req: Request, res: Response) => {
+router.post("/text-to-speech", authenticateToken, apiRateLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const { text, voice = "alloy" } = req.body;
 

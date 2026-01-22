@@ -11,6 +11,7 @@
 
 import { Router, Request, Response } from "express";
 import { taskExecutorService, isGodLevelUser } from "../services/mrBlue/TaskExecutorService";
+import { authenticateToken, type AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
@@ -24,7 +25,7 @@ function isGodLevel(user: any): boolean {
 /**
  * GET /tasks - List all active tasks from memory
  */
-router.get("/tasks", async (req: Request, res: Response) => {
+router.get("/tasks", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const tasks = await taskExecutorService.getActiveTasks();
     
@@ -42,7 +43,7 @@ router.get("/tasks", async (req: Request, res: Response) => {
 /**
  * GET /tasks/:id - Get detailed task info with playbook phases
  */
-router.get("/tasks/:id", async (req: Request, res: Response) => {
+router.get("/tasks/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const task = await taskExecutorService.getTaskStatus(id);
@@ -73,7 +74,7 @@ router.get("/tasks/:id", async (req: Request, res: Response) => {
 /**
  * POST /preview - Preview execution without running
  */
-router.post("/preview", async (req: Request, res: Response) => {
+router.post("/preview", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { taskId, phase } = req.body;
     
@@ -121,9 +122,9 @@ router.post("/preview", async (req: Request, res: Response) => {
 /**
  * POST /execute - Execute a playbook phase (GOD-LEVEL ONLY)
  */
-router.post("/execute", async (req: Request, res: Response) => {
+router.post("/execute", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const user = (req as any).user;
+    const user = req.user;
     
     // Verify authentication
     if (!user) {
@@ -177,9 +178,9 @@ router.post("/execute", async (req: Request, res: Response) => {
 /**
  * GET /status - Get executor service status
  */
-router.get("/status", async (req: Request, res: Response) => {
+router.get("/status", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const user = (req as any).user;
+    const user = req.user;
     const tasks = await taskExecutorService.getActiveTasks();
     
     const pendingPhases = tasks.reduce((count, task) => {

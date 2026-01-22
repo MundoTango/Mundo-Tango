@@ -4,6 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
+import bcrypt from 'bcrypt';
 import { AuthRequest } from '../middleware/auth';
 import {
   requestDataExport,
@@ -11,8 +12,9 @@ import {
   getUserDataExports
 } from '../services/gdprExport';
 import { db } from '@shared/db';
-import { users, userPrivacySettings } from '@shared/schema';
+import { users, userPrivacySettings, accountDeletionRequests } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import { authRateLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
@@ -157,8 +159,9 @@ router.put('/api/gdpr/privacy-settings', async (req: AuthRequest, res: Response)
 
 /**
  * Request account deletion (30-day grace period)
+ * GDPR Article 17 - Right to Erasure
  */
-router.post('/api/gdpr/delete-account', async (req: AuthRequest, res: Response) => {
+router.post('/api/gdpr/delete-account', authRateLimiter, async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -170,12 +173,66 @@ router.post('/api/gdpr/delete-account', async (req: AuthRequest, res: Response) 
   }
 
   try {
-    // In production: verify password, schedule deletion for 30 days from now
-    // For now: immediate soft delete
+    // Get user with password for verification
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, req.user!.id),
+    });
+
+    if (!user || !user.password) {
+      return res.status(400).json({ message: 'Cannot verify account' });
+    }
+
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    // Schedule deletion for 30 days from now
+    const scheduledDate = new Date();
+    scheduledDate.setDate(scheduledDate.getDate() + 30);
+
+    // Check for existing deletion request
+    const existingRequest = await db.query.accountDeletionRequests?.findFirst({
+      where: eq(accountDeletionRequests.userId, req.user!.id),
+    });
+
+    if (existingRequest && existingRequest.status === 'scheduled') {
+      return res.json({
+        message: 'Account deletion already scheduled',
+        scheduledFor: existingRequest.scheduledFor,
+        gracePeriodDays: 30,
+      });
+    }
+
+    // Create deletion request record (if table exists)
+    try {
+      await db.insert(accountDeletionRequests).values({
+        userId: req.user!.id,
+        scheduledFor: scheduledDate,
+        status: 'scheduled',
+        ipAddress: req.ip || undefined,
+        userAgent: req.get('user-agent') || undefined,
+      }).onConflictDoUpdate({
+        target: accountDeletionRequests.userId,
+        set: {
+          scheduledFor: scheduledDate,
+          status: 'scheduled',
+          cancelledAt: null,
+          cancellationReason: null,
+        }
+      });
+    } catch (tableError) {
+      // Table might not exist yet, fall back to soft delete
+      console.warn('[GDPR] accountDeletionRequests table not available, using soft delete');
+    }
+
+    // Mark account as pending deletion (soft delete)
     await db.update(users)
-      .set({ 
+      .set({
         isActive: false,
-        suspended: true
+        suspended: true,
+        deletionScheduledAt: scheduledDate,
       })
       .where(eq(users.id, req.user!.id));
 
@@ -187,7 +244,10 @@ router.post('/api/gdpr/delete-account', async (req: AuthRequest, res: Response) 
     });
 
     res.json({
-      message: 'Account deletion scheduled. You have 30 days to cancel.'
+      message: 'Account deletion scheduled',
+      scheduledFor: scheduledDate.toISOString(),
+      gracePeriodDays: 30,
+      note: 'You have 30 days to cancel this request by logging in.',
     });
   } catch (error: any) {
     console.error('Account deletion error:', error);
