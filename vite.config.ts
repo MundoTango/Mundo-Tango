@@ -30,6 +30,41 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunk - core libraries
+          vendor: ['react', 'react-dom', 'wouter'],
+          // UI chunk - component libraries
+          ui: [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-toast',
+            'lucide-react',
+          ],
+          // Utils chunk - utility libraries
+          utils: [
+            'date-fns',
+            'clsx',
+            'tailwind-merge',
+            'zod',
+          ],
+          // Form chunk - form libraries
+          forms: [
+            'react-hook-form',
+            '@hookform/resolvers',
+          ],
+          // i18n chunk - internationalization
+          i18n: [
+            'i18next',
+            'react-i18next',
+            'i18next-browser-languagedetector',
+            'i18next-http-backend',
+          ],
+        },
+      },
+    },
   },
   server: {
     fs: {

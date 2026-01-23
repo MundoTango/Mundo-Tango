@@ -1,12 +1,6 @@
 {
   "*.{ts,tsx}": [
-    "tsc --noEmit",
-    "prettier --write"
-  ],
-  "*.{js,jsx,ts,tsx}": [
-    "eslint --fix"
-  ],
-  "*.{json,md,yml,yaml}": [
-    "prettier --write"
+    "eslint --fix",
+    "vitest related --run"
   ]
 }
