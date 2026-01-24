@@ -5,7 +5,7 @@
  */
 
 import { Job } from "bullmq";
-import { storage } from "../storage";
+import { storage, userRepository } from "../storage";
 import { createWorker } from "./redis-fallback";
 
 // A-HOUSING-01: Booking Confirmation
@@ -14,8 +14,8 @@ async function handleBookingConfirmation(job: Job) {
   
   console.log(`[A-HOUSING-01] Processing booking ${bookingId}`);
   
-  const host = await storage.getUserById(hostId);
-  const guest = await storage.getUserById(guestId);
+  const host = await userRepository.getUserById(hostId);
+  const guest = await userRepository.getUserById(guestId);
   
   if (!host || !guest) return;
   
@@ -63,7 +63,7 @@ async function handleReviewRequest(job: Job) {
   
   console.log(`[A-HOUSING-03] Review request for guest ${guestId}`);
   
-  const host = await storage.getUserById(hostId);
+  const host = await userRepository.getUserById(hostId);
   if (!host) return;
   
   await storage.createNotification({

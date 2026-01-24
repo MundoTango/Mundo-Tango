@@ -4,14 +4,14 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/AppLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
 
-const MarketplacePage = lazy(() => import("@/pages/MarketplacePage"));
-const MarketplaceItemPage = lazy(() => import("@/pages/MarketplaceItemPage"));
-const MarketplaceProductDetailPage = lazy(() => import("@/pages/MarketplaceProductDetailPage"));
-const MarketplaceCartPage = lazy(() => import("@/pages/MarketplaceCartPage"));
-const MarketplaceCheckoutPage = lazy(() => import("@/pages/MarketplaceCheckoutPage"));
-const MarketplaceSellerDashboardPage = lazy(() => import("@/pages/MarketplaceSellerDashboardPage"));
-const MarketplaceOrdersPage = lazy(() => import("@/pages/MarketplaceOrdersPage"));
-const MarketplaceItemDetailPage = lazy(() => import("@/pages/MarketplaceItemDetailPage"));
+const MarketplacePage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const MarketplaceItemPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const MarketplaceProductDetailPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const MarketplaceCartPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const MarketplaceCheckoutPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const MarketplaceSellerDashboardPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const MarketplaceOrdersPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const MarketplaceItemDetailPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const BillingPage = lazy(() => import("@/pages/BillingPage"));
 const PaymentSuccessPage = lazy(() => import("@/pages/PaymentSuccessPage"));
 const PaymentFailedPage = lazy(() => import("@/pages/PaymentFailedPage"));
@@ -24,15 +24,15 @@ const SubscriptionPlansPage = lazy(() => import("@/pages/SubscriptionPlans"));
 const PaymentIntegrationPage = lazy(() => import("@/pages/PaymentIntegration"));
 const BillingHistoryPage = lazy(() => import("@/pages/BillingHistory"));
 const InvoiceManagementPage = lazy(() => import("@/pages/InvoiceManagement"));
-const CrowdfundingDashboardPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingDashboardPage"));
-const CrowdfundingCampaignDetailPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingCampaignDetailPage"));
-const CrowdfundingCreatePage = lazy(() => import("@/pages/crowdfunding/CrowdfundingCreatePage"));
-const CrowdfundingMyPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingMyPage"));
-const FinancialDashboardPage = lazy(() => import("@/pages/FinancialDashboardPage"));
-const FinancialPortfoliosPage = lazy(() => import("@/pages/FinancialPortfoliosPage"));
-const FinancialAccountsPage = lazy(() => import("@/pages/FinancialAccountsPage"));
-const FinancialTradingPage = lazy(() => import("@/pages/FinancialTradingPage"));
-const FinancialInsightsPage = lazy(() => import("@/pages/FinancialInsightsPage"));
+const CrowdfundingDashboardPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const CrowdfundingCampaignDetailPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const CrowdfundingCreatePage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const CrowdfundingMyPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const FinancialDashboardPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const FinancialPortfoliosPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const FinancialAccountsPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const FinancialTradingPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const FinancialInsightsPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 
 export function CommerceRoutes() {
   return (

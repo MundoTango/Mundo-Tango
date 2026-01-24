@@ -2,13 +2,15 @@ import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect, useCallback, Fragment, useMemo, lazy, Suspense } from "react";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/theme-context";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -16,7 +18,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench, Video, MapPin, Clock, AlertCircle, RefreshCw } from "lucide-react";
+import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench, Video, MapPin, Clock, AlertCircle, RefreshCw, Sun, Moon, TrendingUp } from "lucide-react";
 import { PostActions } from "@/components/feed/PostActions";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -38,7 +40,7 @@ import { Link } from "wouter";
 import { FeedAd } from "@/components/ads/FeedAd";
 
 // Lazy load heavy sidebar components to improve initial page load
-const StoriesCarousel = lazy(() => import("@/components/feed/StoriesCarousel").then(m => ({ default: m.StoriesCarousel })));
+
 const UpcomingEventsSidebar = lazy(() => import("@/components/feed/UpcomingEventsSidebar").then(m => ({ default: m.UpcomingEventsSidebar })));
 
 type Post = {
@@ -93,13 +95,14 @@ const RECOMMENDATION_CATEGORIES_BASE = [
 
 export default function FeedPage() {
   const { t } = useTranslation(["pages", "common"]);
-  
+  const { darkMode, toggleDarkMode } = useTheme();
+
   // Translated recommendation categories (computed inside component)
   const RECOMMENDATION_CATEGORIES = RECOMMENDATION_CATEGORIES_BASE.map(cat => ({
     ...cat,
     label: t(`pages:feed.recommendations.${cat.labelKey}`, cat.fallback)
   }));
-  
+
   // Feed algorithm state (Features 12-13)
   const [feedType, setFeedType] = useState<"following" | "discover">("following");
   const [filter, setFilter] = useState<"all" | "friends" | "public" | "saved" | "my-posts" | "mentions">("all");
@@ -432,78 +435,129 @@ export default function FeedPage() {
         title="Memory Feed - Mundo Tango"
         description="Connect with the global tango community. Share memories, discover events, and engage with fellow dancers from around the world."
       />
-      
-      {/* Editorial Hero Section - Quote Carousel */}
-      <div className="relative h-[20vh] sm:h-[25vh] md:h-[30vh] w-full overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center" style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop')`
-        }}>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
-        </div>
-        
-        <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 sm:px-6 md:px-8 text-center">
-          <motion.div
-            key={currentQuoteIndex}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <p className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-serif text-white font-bold leading-tight mb-1 sm:mb-2 italic" data-testid="text-page-quote">
-              "{TANGO_QUOTES[currentQuoteIndex].quote}"
-            </p>
-            <p className="text-xs sm:text-sm md:text-base text-white/70">
-              — {TANGO_QUOTES[currentQuoteIndex].author}
-            </p>
-          </motion.div>
-        </div>
+
+      {/* Theme Toggle - Fixed Position */}
+      <div className="fixed top-6 right-6 z-50">
+        <Button
+          onClick={toggleDarkMode}
+          size="icon"
+          variant="outline"
+          className="rounded-full w-12 h-12 bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:scale-110 transition-transform"
+          data-testid="button-theme-toggle"
+        >
+          {darkMode === 'dark' ? (
+            <Sun className="w-5 h-5 text-amber-500" />
+          ) : (
+            <Moon className="w-5 h-5 text-blue-600" />
+          )}
+        </Button>
       </div>
 
-      {/* 2-Column Grid Layout */}
-      <div className="grid grid-cols-12 gap-4 md:gap-6 px-3 sm:px-4 md:px-6 py-6 md:py-12 max-w-7xl mx-auto">
-        {/* Main Feed Column */}
-        <main className="col-span-12 lg:col-span-9 space-y-4 md:space-y-6">
-          {/* Instagram-style Stories Carousel - Lazy loaded */}
-          <Suspense fallback={<Card className="p-4 h-24 bg-muted animate-pulse" />}>
-            <StoriesCarousel />
-          </Suspense>
+      {/* Daily Tango Inspiration Hero - Full Width (60vh like v1) */}
+      <div className="relative h-[60vh] w-full overflow-hidden">
+        {/* Background Image with Parallax Effect */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=2000&auto=format&fit=crop&q=80')`,
+          }}
+        >
+          {/* Gradient Overlay for Readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
 
-          {/* Feed Tabs - Following vs Discover (Feature 13) */}
-          <FeedTabs value={feedType} onChange={setFeedType} />
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="max-w-4xl"
+          >
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+              {t('pages:feed.dailyInspiration', 'Daily Tango Inspiration')}
+            </Badge>
 
-          {/* New Posts Banner (Feature 15) */}
-          <NewPostsBanner onLoadNewPosts={() => setRefreshKey(prev => prev + 1)} />
+            <AnimatePresence mode="wait">
+              <motion.blockquote
+                key={currentQuoteIndex}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.6 }}
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold text-white leading-tight mb-8"
+                data-testid="text-page-quote"
+              >
+                "{TANGO_QUOTES[currentQuoteIndex].quote}"
+              </motion.blockquote>
+            </AnimatePresence>
 
-          {/* Post Creator */}
-          <PostCreator
-            onPostCreated={() => {
-              queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
-              queryClient.invalidateQueries({ queryKey: ['/api/posts/stories'] });
-              queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
-              setRefreshKey(prev => prev + 1);
-              toast({
-                title: "🎉 Memory shared!",
-                description: "Your memory has been posted to the community.",
-              });
-            }}
-            context={{ type: 'feed' }}
-            showStoryToggle={true}
-          />
+            <motion.cite
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="text-xl text-white/80 font-light not-italic"
+            >
+              — {TANGO_QUOTES[currentQuoteIndex].author}
+            </motion.cite>
+          </motion.div>
+        </div>
 
-          {/* Infinite Scroll Feed (Feature 14) */}
-          <InfiniteScrollFeed 
-            feedType={feedType} 
-            filter={filter}
-            onRefresh={refreshKey > 0 ? () => {} : undefined}
-          />
-        </main>
+        {/* Scroll Indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full p-1">
+            <div className="w-1 h-3 bg-white/60 rounded-full mx-auto" />
+          </div>
+        </motion.div>
+      </div>
 
-        {/* Right Sidebar - Upcoming Events - Lazy loaded */}
-        <aside className="hidden lg:block lg:col-span-3 space-y-6">
-          <Suspense fallback={<Card className="p-4 h-32 bg-muted animate-pulse" />}>
-            <UpcomingEventsSidebar />
-          </Suspense>
-        </aside>
+      {/* Main Content - Magazine Layout (flex like v1) */}
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex gap-12">
+          {/* Main Feed Column - Editorial Style */}
+          <main className="flex-1 max-w-4xl space-y-12">
+
+            {/* Feed Tabs - Following vs Discover (Feature 13) */}
+            <FeedTabs value={feedType} onChange={setFeedType} />
+
+            {/* New Posts Banner (Feature 15) */}
+            <NewPostsBanner onLoadNewPosts={() => setRefreshKey(prev => prev + 1)} />
+
+            {/* Post Creator */}
+            <PostCreator
+              onPostCreated={() => {
+                queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+                queryClient.invalidateQueries({ queryKey: ['/api/posts/stories'] });
+                queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
+                setRefreshKey(prev => prev + 1);
+                toast({
+                  title: "Memory shared!",
+                  description: "Your memory has been posted to the community.",
+                });
+              }}
+              context={{ type: 'feed' }}
+              showStoryToggle={true}
+            />
+
+            {/* Infinite Scroll Feed (Feature 14) */}
+            <InfiniteScrollFeed
+              feedType={feedType}
+              filter={filter}
+              onRefresh={refreshKey > 0 ? () => {} : undefined}
+            />
+          </main>
+
+          {/* Sidebar - Elevated Design (w-96 like v1) */}
+          <aside className="hidden lg:block w-96 space-y-8 sticky top-8 self-start">
+            <Suspense fallback={<Card className="p-4 h-32 bg-muted animate-pulse" />}>
+              <UpcomingEventsSidebar />
+            </Suspense>
+            </aside>
+        </div>
       </div>
 
       {/* Recommendation Dialog */}
@@ -619,3 +673,4 @@ export default function FeedPage() {
     </SelfHealingErrorBoundary>
   );
 }
+

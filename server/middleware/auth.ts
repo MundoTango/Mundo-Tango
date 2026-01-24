@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { storage } from "../storage";
+import { userRepository } from "../storage";
 import { SelectUser } from "@shared/schema";
 import { RBACService } from "../services/RBACService";
 import { FeatureFlagService } from "../services/FeatureFlagService";
@@ -61,7 +61,7 @@ export const authenticateToken = async (
 
     const payload = jwt.verify(token, JWT_SECRET) as JWTPayload;
     
-    const user = await storage.getUserById(payload.userId);
+    const user = await userRepository.getUserById(payload.userId);
     
     if (!user) {
       return res.status(401).json({ message: "User not found" });
@@ -137,7 +137,7 @@ export const optionalAuth = async (
     }
 
     const payload = jwt.verify(token, JWT_SECRET) as JWTPayload;
-    const user = await storage.getUserById(payload.userId);
+    const user = await userRepository.getUserById(payload.userId);
     
     if (user && user.isActive && !user.suspended) {
       req.user = user;

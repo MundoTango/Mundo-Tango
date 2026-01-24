@@ -73,10 +73,10 @@ export class DIDService {
   private apiKey: string;
 
   constructor() {
-    if (!D_ID_API_KEY) {
-      throw new Error('D_ID_API_KEY environment variable is required');
+    this.apiKey = D_ID_API_KEY || '';
+    if (!this.apiKey) {
+      console.warn('[D_ID] Not configured - video generation disabled');
     }
-    this.apiKey = D_ID_API_KEY;
   }
 
   /**

@@ -6,18 +6,9 @@ import { LoadingFallback } from "@/components/LoadingFallback";
 
 const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
 const WelcomeTourPage = lazy(() => import("@/pages/WelcomeTourPage"));
-const WelcomePage = lazy(() => import("@/pages/onboarding/WelcomePage"));
-const CitySelectionPage = lazy(() => import("@/pages/onboarding/CitySelectionPage"));
-const SocialConnectPage = lazy(() => import("@/pages/onboarding/SocialConnectPage"));
-const PhotoUploadPage = lazy(() => import("@/pages/onboarding/PhotoUploadPage"));
-const TangoRolesPage = lazy(() => import("@/pages/onboarding/TangoRolesPage"));
-const LanguagesPage = lazy(() => import("@/pages/onboarding/LanguagesPage"));
-const DanceExperiencePage = lazy(() => import("@/pages/onboarding/DanceExperiencePage"));
-const GuidedTourPage = lazy(() => import("@/pages/onboarding/GuidedTourPage"));
-const LegalAcceptance = lazy(() => import("@/pages/onboarding/LegalAcceptance"));
-const SubscriptionOnboarding = lazy(() => import("@/pages/onboarding/SubscriptionOnboarding"));
-const WaitlistConfirmationPage = lazy(() => import("@/pages/onboarding/WaitlistConfirmationPage"));
-const VolunteerThankYouPage = lazy(() => import("@/pages/VolunteerThankYouPage"));
+// ARCHIVED: Onboarding flow pages - moved to _archived/
+const FeatureArchivedPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const VolunteerThankYouPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 
 export function OnboardingRoutes() {
   return (
@@ -41,77 +32,77 @@ export function OnboardingRoutes() {
       <Route path="/onboarding/welcome">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <WelcomePage />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/city">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <CitySelectionPage />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/social">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <SocialConnectPage />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/photo">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <PhotoUploadPage />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/roles">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <TangoRolesPage />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/languages">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <LanguagesPage />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/experience">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <DanceExperiencePage />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/tour">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <GuidedTourPage />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/legal">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <LegalAcceptance />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/subscription">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <SubscriptionOnboarding />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>
       <Route path="/onboarding/waitlist">
         <ProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
-            <WaitlistConfirmationPage />
+            <FeatureArchivedPage />
           </Suspense>
         </ProtectedRoute>
       </Route>

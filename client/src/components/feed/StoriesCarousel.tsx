@@ -106,8 +106,19 @@ export function StoriesCarousel() {
     setCurrentStoryIndex(0);
   };
 
-  if (isLoading || storyGroups.length === 0) {
-    return null;
+  if (isLoading) {
+    return (
+      <Card className="p-4 mb-6" data-testid="stories-carousel-loading">
+        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex flex-col items-center gap-2 min-w-[80px]">
+              <div className="h-16 w-16 rounded-full bg-muted animate-pulse" />
+              <div className="h-3 w-12 bg-muted animate-pulse rounded" />
+            </div>
+          ))}
+        </div>
+      </Card>
+    );
   }
 
   return (

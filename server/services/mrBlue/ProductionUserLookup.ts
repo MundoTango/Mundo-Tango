@@ -27,7 +27,7 @@ export async function isGodLevelUser(userId: number): Promise<boolean> {
   if (!userId || userId <= 0) return false;
   
   try {
-    const user = await storage.getUserById(userId);
+    const user = await userRepository.getUserById(userId);
     if (!user) return false;
     
     const godLevelRoles = ['super_admin', 'admin', 'god', 'founder'];

@@ -4,7 +4,7 @@
  * Channels: In-app (WebSocket), Push (PWA), Email digest
  */
 
-import { storage } from "../storage";
+import { storage, userRepository } from "../storage";
 
 export type NotificationType =
   | 'friend_request'
@@ -83,7 +83,7 @@ export class NotificationService {
    * Notification helpers for common scenarios
    */
   async notifyFriendRequest(senderId: number, receiverId: number) {
-    const sender = await storage.getUserById(senderId);
+    const sender = await userRepository.getUserById(senderId);
     if (!sender) return;
 
     return this.createNotification({
@@ -98,7 +98,7 @@ export class NotificationService {
   }
 
   async notifyPostLike(postId: number, postUserId: number, likerId: number) {
-    const liker = await storage.getUserById(likerId);
+    const liker = await userRepository.getUserById(likerId);
     if (!liker || postUserId === likerId) return;
 
     return this.createNotification({
@@ -114,7 +114,7 @@ export class NotificationService {
   }
 
   async notifyPostComment(postId: number, postUserId: number, commenterId: number) {
-    const commenter = await storage.getUserById(commenterId);
+    const commenter = await userRepository.getUserById(commenterId);
     if (!commenter || postUserId === commenterId) return;
 
     return this.createNotification({
@@ -130,7 +130,7 @@ export class NotificationService {
   }
 
   async notifyMention(mentionedUserId: number, postId: number, authorId: number) {
-    const author = await storage.getUserById(authorId);
+    const author = await userRepository.getUserById(authorId);
     if (!author || mentionedUserId === authorId) return;
 
     return this.createNotification({
@@ -173,7 +173,7 @@ export class NotificationService {
   }
 
   async notifyEventInvitation(inviteeId: number, eventId: number, eventTitle: string, inviterId: number) {
-    const inviter = await storage.getUserById(inviterId);
+    const inviter = await userRepository.getUserById(inviterId);
     if (!inviter) return;
 
     return this.createNotification({
@@ -189,7 +189,7 @@ export class NotificationService {
   }
 
   async notifyEventRsvp(organizerId: number, eventId: number, eventTitle: string, attendeeId: number, status: string) {
-    const attendee = await storage.getUserById(attendeeId);
+    const attendee = await userRepository.getUserById(attendeeId);
     if (!attendee || organizerId === attendeeId) return;
 
     const action = status === 'going' ? 'is going to' : status === 'interested' ? 'is interested in' : 'declined';
@@ -218,7 +218,7 @@ export class NotificationService {
   }
 
   async notifyEventPhotoUploaded(organizerId: number, eventId: number, eventTitle: string, uploaderId: number) {
-    const uploader = await storage.getUserById(uploaderId);
+    const uploader = await userRepository.getUserById(uploaderId);
     if (!uploader || organizerId === uploaderId) return;
 
     return this.createNotification({
@@ -234,7 +234,7 @@ export class NotificationService {
   }
 
   async notifyEventPost(organizerId: number, eventId: number, eventTitle: string, posterId: number) {
-    const poster = await storage.getUserById(posterId);
+    const poster = await userRepository.getUserById(posterId);
     if (!poster || organizerId === posterId) return;
 
     return this.createNotification({
@@ -250,7 +250,7 @@ export class NotificationService {
   }
 
   async notifyNewMessage(recipientId: number, senderId: number, messagePreview?: string) {
-    const sender = await storage.getUserById(senderId);
+    const sender = await userRepository.getUserById(senderId);
     if (!sender || recipientId === senderId) return;
 
     const preview = messagePreview 
@@ -270,7 +270,7 @@ export class NotificationService {
   }
 
   async notifyGroupMessage(recipientId: number, senderId: number, groupId: number, groupName: string, messagePreview?: string) {
-    const sender = await storage.getUserById(senderId);
+    const sender = await userRepository.getUserById(senderId);
     if (!sender || recipientId === senderId) return;
 
     const preview = messagePreview 

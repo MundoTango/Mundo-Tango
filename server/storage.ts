@@ -8777,11 +8777,8 @@ export class DbStorage implements IStorage {
     return result[0]?.count || 0;
   }
 
-  // Notification system
-  async createNotification(notification: any): Promise<any> {
-    const [newNotification] = await db.insert(notifications).values(notification).returning();
-    return newNotification;
-  }
+  // Notification system - implementation at line 3930
+  // Duplicate removed - using properly typed version above
 
   // ============================================================================
   // QA/CUSTOMER TEST PLATFORM (MB.MD Pattern 67)
@@ -8879,3 +8876,6 @@ export class DbStorage implements IStorage {
 }
 
 export const storage = new DbStorage();
+
+// Sprint 1.3: Re-export new repositories for import compatibility
+export { userRepository, eventRepository, postRepository, venueRepository } from './storage/index';

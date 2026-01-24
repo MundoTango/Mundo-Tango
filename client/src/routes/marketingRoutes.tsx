@@ -18,16 +18,16 @@ function RedirectWithQuery({ to }: { to: string }) {
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const DemosPage = lazy(() => import("@/pages/DemosPage"));
-const ForDancersPage = lazy(() => import("@/pages/marketing/ForDancersPage"));
-const ForTeachersPage = lazy(() => import("@/pages/marketing/ForTeachersPage"));
-const ForOrganizersPage = lazy(() => import("@/pages/marketing/ForOrganizersPage"));
-const MarketingTangoRolesPage = lazy(() => import("@/pages/marketing/TangoRolesPage"));
-const SupportPage = lazy(() => import("@/pages/marketing/SupportPage"));
+const ForDancersPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const ForTeachersPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const ForOrganizersPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const MarketingTangoRolesPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const SupportPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const DonatePage = lazy(() => import("@/pages/DonatePage"));
-const SupportersPage = lazy(() => import("@/pages/marketing/SupportersPage"));
-const VolunteerPage = lazy(() => import("@/pages/marketing/VolunteerPage"));
-const AmbassadorsPage = lazy(() => import("@/pages/marketing/AmbassadorsPage"));
-const OpenSourcePage = lazy(() => import("@/pages/marketing/OpenSourcePage"));
+const SupportersPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const VolunteerPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const AmbassadorsPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const OpenSourcePage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
 const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
 const PricingPage = lazy(() => import("@/pages/PricingPage"));
@@ -40,7 +40,7 @@ const HelpPage = lazy(() => import("@/pages/HelpPage"));
 const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const AboutTangoPage = lazy(() => import("@/pages/AboutTangoPage"));
-const H2ACDashboardPage = lazy(() => import("@/pages/H2ACDashboardPage"));
+const H2ACDashboardPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 
 export function MarketingRoutes() {
   const { user } = useAuth();

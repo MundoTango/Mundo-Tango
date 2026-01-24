@@ -5,7 +5,7 @@
  */
 
 import { Job } from "bullmq";
-import { storage } from "../storage";
+import { storage, userRepository } from "../storage";
 import { createWorker } from "./redis-fallback";
 
 // A-EVENT-01: Event Reminder (1 hour before)
@@ -41,7 +41,7 @@ async function handleEventRsvp(job: Job) {
   
   // 1. Notify event organizer
   if (status === "going" && userId !== event.userId) {
-    const user = await storage.getUserById(userId);
+    const user = await userRepository.getUserById(userId);
     if (user) {
       await storage.createNotification({
         userId: event.userId,
@@ -172,7 +172,7 @@ async function handleAttendeeNetworking(job: Job) {
   
   console.log(`[A-EVENT-07] Networking suggestion for event ${eventId}`);
   
-  const suggestedUser = await storage.getUserById(suggestedConnectionId);
+  const suggestedUser = await userRepository.getUserById(suggestedConnectionId);
   if (!suggestedUser) return;
   
   await storage.createNotification({

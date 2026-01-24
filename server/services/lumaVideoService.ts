@@ -40,7 +40,7 @@ export class LumaVideoService {
   constructor() {
     this.apiKey = process.env.LUMA_API_KEY || '';
     if (!this.apiKey) {
-      throw new Error('LUMA_API_KEY not configured');
+      console.warn('[Luma] Not configured - video generation disabled');
     }
   }
 

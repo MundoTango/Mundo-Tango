@@ -7,31 +7,31 @@ import { HEAVY_FEATURES_ENABLED } from "@/config/featureFlags";
 
 const FeatureDisabled = lazy(() => import("@/components/FeatureDisabled"));
 
-const TalentPipelinePage = lazy(() => import("@/pages/admin/TalentPipelinePage"));
-const VolunteerDetailsPage = lazy(() => import("@/pages/admin/VolunteerDetailsPage"));
-const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
-const SelfHealingPage = lazy(() => import("@/pages/admin/SelfHealingPage"));
-const ProjectTrackerPage = lazy(() => import("@/pages/admin/ProjectTrackerPage"));
+const TalentPipelinePage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const VolunteerDetailsPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const TaskBoardPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const SelfHealingPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const ProjectTrackerPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const UserReportsPage = lazy(() => import("@/pages/admin/UserReportsPage"));
-const RoleRequestsPage = lazy(() => import("@/pages/admin/RoleRequestsPage"));
+const RoleRequestsPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const EventApprovalsPage = lazy(() => import("@/pages/admin/EventApprovalsPage"));
 const AdminEventsPage = lazy(() => import("@/pages/admin/AdminEventsPage"));
 const HousingReviewsPage = lazy(() => import("@/pages/admin/HousingReviewsPage"));
-const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
+const AgentHealthDashboard = lazy(() => import("@/pages/FeatureArchivedPage"));
 const AdsManager = lazy(() => import("@/pages/admin/AdsManager"));
 const FeedbackQueuePage = lazy(() => import("@/pages/admin/FeedbackQueuePage"));
-const SafetyReviewPage = lazy(() => import("@/pages/admin/SafetyReviewPage"));
-const AISupportPage = lazy(() => import("@/pages/admin/AISupportPage"));
+const SafetyReviewPage = lazy(() => import("@/pages/FeatureArchivedPage"));
+const AISupportPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
-const AdminUsersManagementPage = lazy(() => import("@/pages/AdminUsersManagementPage"));
+const AdminUsersManagementPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const AdminModerationPage = lazy(() => import("@/pages/AdminModerationPage"));
 const ModerationDashboard = lazy(() => import("@/pages/admin/ModerationDashboard"));
 const AnalyticsDashboard = HEAVY_FEATURES_ENABLED
   ? lazy(() => import("@/pages/admin/AnalyticsDashboard"))
   : FeatureDisabled;
-const AdminFacebookImport = lazy(() => import("@/pages/admin/AdminFacebookImport"));
-const AdminProjectTrackerPage = lazy(() => import("@/pages/AdminProjectTrackerPage"));
+const AdminFacebookImport = lazy(() => import("@/pages/FeatureArchivedPage"));
+const AdminProjectTrackerPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const AdminCompliancePage = lazy(() => import("@/pages/AdminCompliancePage"));
 const AdminTranslationsPage = lazy(() => import("@/pages/AdminTranslationsPage"));
 const AdminScrapingPage = lazy(() => import("@/pages/AdminScrapingPage"));
@@ -40,15 +40,15 @@ const UserManagementPage = lazy(() => import("@/pages/admin/UserManagementPage")
 const PlatformSettingsPage = lazy(() => import("@/pages/admin/PlatformSettingsPage"));
 const RolesPermissionsPage = lazy(() => import("@/pages/admin/RolesPermissionsPage"));
 const ReportsLogsPage = lazy(() => import("@/pages/admin/ReportsLogsPage"));
-const IntegrationsPage = lazy(() => import("@/pages/admin/IntegrationsPage"));
+const IntegrationsPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const FeatureFlagsPage = lazy(() => import("@/pages/admin/FeatureFlagsPage"));
-const SystemHealthPage = lazy(() => import("@/pages/admin/SystemHealthPage"));
+const SystemHealthPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const AdminUserDetailPage = lazy(() => import("@/pages/admin/AdminUserDetailPage"));
-const AdminIntegrationsPage = lazy(() => import("@/pages/admin/integrations"));
+const AdminIntegrationsPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const AdminContentModerationDetailPage = lazy(() => import("@/pages/AdminContentModerationDetailPage"));
 const AdminSettingsPage = lazy(() => import("@/pages/AdminSettingsPage"));
 const AdminReportsPage = lazy(() => import("@/pages/AdminReportsPage"));
-const DataQualityPage = lazy(() => import("@/pages/admin/DataQualityPage"));
+const DataQualityPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 const FeedbackManagementPage = lazy(() => import("@/pages/admin/FeedbackManagementPage"));
 
 export function AdminRoutes() {

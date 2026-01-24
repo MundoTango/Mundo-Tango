@@ -5,7 +5,7 @@
  */
 
 import { Job } from "bullmq";
-import { storage } from "../storage";
+import { storage, userRepository } from "../storage";
 import { createWorker } from "./redis-fallback";
 
 // A-SOCIAL-01: Follow Notification
@@ -14,7 +14,7 @@ async function handleFollowNotification(job: Job) {
   
   console.log(`[A-SOCIAL-01] User ${followerId} followed user ${followingId}`);
   
-  const follower = await storage.getUserById(followerId);
+  const follower = await userRepository.getUserById(followerId);
   if (!follower) return;
   
   await storage.createNotification({
@@ -36,7 +36,7 @@ async function handleLikeNotification(job: Job) {
   
   console.log(`[A-SOCIAL-02] User ${userId} liked post ${postId}`);
   
-  const user = await storage.getUserById(userId);
+  const user = await userRepository.getUserById(userId);
   if (!user) return;
   
   await storage.createNotification({
@@ -58,7 +58,7 @@ async function handleCommentNotification(job: Job) {
   
   console.log(`[A-SOCIAL-03] User ${userId} commented on post ${postId}`);
   
-  const user = await storage.getUserById(userId);
+  const user = await userRepository.getUserById(userId);
   if (!user) return;
   
   await storage.createNotification({
@@ -78,7 +78,7 @@ async function handleFriendRequestNotification(job: Job) {
   
   console.log(`[A-SOCIAL-04] Friend request from ${senderId} to ${receiverId}`);
   
-  const sender = await storage.getUserById(senderId);
+  const sender = await userRepository.getUserById(senderId);
   if (!sender) return;
   
   // Navigate to sender's profile About tab so receiver can review their data
@@ -102,7 +102,7 @@ async function handleShareNotification(job: Job) {
   
   console.log(`[A-SOCIAL-05] User ${userId} shared post ${postId}`);
   
-  const user = await storage.getUserById(userId);
+  const user = await userRepository.getUserById(userId);
   if (!user) return;
   
   await storage.createNotification({
@@ -156,7 +156,7 @@ async function handleUserRecommendation(job: Job) {
   
   console.log(`[A-SOCIAL-08] Recommending user ${recommendedUserId} to ${userId}`);
   
-  const recommendedUser = await storage.getUserById(recommendedUserId);
+  const recommendedUser = await userRepository.getUserById(recommendedUserId);
   if (!recommendedUser) return;
   
   await storage.createNotification({
@@ -193,7 +193,7 @@ async function handleConnectionMilestone(job: Job) {
   
   console.log(`[A-SOCIAL-10] Connection milestone for user ${userId}`);
   
-  const friend = await storage.getUserById(friendId);
+  const friend = await userRepository.getUserById(friendId);
   if (!friend) return;
   
   await storage.createNotification({

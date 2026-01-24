@@ -8,7 +8,7 @@ import { Job } from "bullmq";
 import { createWorker } from "./redis-fallback";
 import { Agent105_MasterOrchestrator } from "../services/financial/AgentOrchestrator";
 import { RateLimitedAIOrchestrator } from "../services/ai/integration/rate-limited-orchestrator";
-import { storage } from "../storage";
+import { storage, userRepository } from "../storage";
 
 // Initialize the Master Orchestrator with AI integration
 const aiOrchestrator = new RateLimitedAIOrchestrator();

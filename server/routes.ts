@@ -1,7 +1,8 @@
 console.log("🔍 [DEBUG] Starting server/routes.ts module loading...");
+import crypto from "crypto";
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage, userRepository } from "./storage";
 import authRoutes from "./routes/auth";
 import facebookOAuthRoutes from "./routes/auth/facebook-oauth-routes";
 import storiesRoutes from "./routes/stories-routes";
@@ -547,11 +548,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Check if user already exists
-      const existingUser = await storage.getUserByEmail(email.toLowerCase());
+      const existingUser = await userRepository.getUserByEmail(email.toLowerCase());
 
       if (existingUser) {
         // Update existing user to waitlist
-        await storage.updateUser(existingUser.id, {
+        await userRepository.updateUser(existingUser.id, {
           waitlist: true,
           waitlistDate: new Date()
         });
@@ -560,11 +561,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create new waitlist user
       const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
-      await storage.createUser({
+      await userRepository.createUser({
         email: email.toLowerCase(),
         username: username,
         name: name || 'Waitlist User',
-        password: 'temp_waitlist_password', // Will be reset when they sign up
+        password: crypto.randomBytes(32).toString('hex'), // Cryptographically random, will be reset when they sign up
         waitlist: true,
         waitlistDate: new Date()
       });
@@ -3181,7 +3182,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Send mention notifications to users
-      const author = await storage.getUserById(req.user!.id);
+      const author = await userRepository.getUserById(req.user!.id);
       for (const mentionedUserId of mentionedUsers) {
         try {
           await storage.createNotification({
@@ -3209,7 +3210,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Auto-post to mentioned groups
       if (mentionedGroups.length > 0) {
-        const user = await storage.getUserById(req.user!.id);
+        const user = await userRepository.getUserById(req.user!.id);
         const userCity = user?.city || post.location;
         
         for (const group of mentionedGroups) {
@@ -3314,7 +3315,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { enrichPostContentWithGroupTypes } = await import("./utils/enrich-mentions");
       const enrichedStories = await Promise.all(
         stories.map(async (story: any) => {
-          const user = await storage.getUserById(story.userId);
+          const user = await userRepository.getUserById(story.userId);
           return {
             ...story,
             content: await enrichPostContentWithGroupTypes(story.content),
@@ -3847,7 +3848,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Group stories by user
       const storyGroups: any = {};
       for (const story of stories) {
-        const user = await storage.getUserById(story.userId);
+        const user = await userRepository.getUserById(story.userId);
         if (!user) continue;
         
         if (!storyGroups[story.userId]) {
@@ -4311,10 +4312,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if param is a number or a username
       if (/^\d+$/.test(param)) {
         // It's a numeric ID
-        user = await storage.getUserById(parseInt(param));
+        user = await userRepository.getUserById(parseInt(param));
       } else {
         // It's a username
-        user = await storage.getUserByUsername(param);
+        user = await userRepository.getUserByUsername(param);
       }
       
       if (!user) {
@@ -4684,7 +4685,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = parseInt(req.params.userId);
       
       // Get user basic info
-      const user = await storage.getUserById(userId);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -9050,7 +9051,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Check if profile exists
-      const user = await storage.getUserById(userId);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         return res.status(404).json({ message: "Profile not found" });
       }
@@ -9130,7 +9131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = trackProfileViewSchema.parse(req.body);
 
       // Check if profile exists
-      const user = await storage.getUserById(userId);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         return res.status(404).json({ message: "Profile not found" });
       }

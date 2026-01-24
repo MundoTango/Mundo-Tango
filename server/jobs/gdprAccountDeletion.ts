@@ -12,16 +12,16 @@ import { db } from '../db';
 import {
   users,
   posts,
-  comments,
-  eventAttendees,
+  // comments, // ARCHIVED
+  // eventAttendees, // ARCHIVED
   groupMembers,
-  messages,
+  // messages, // ARCHIVED
   notifications,
   userPrivacySettings,
   accountDeletionRequests,
   refreshTokens,
   passwordResetTokens,
-  verificationTokens,
+  // verificationTokens, // ARCHIVED
 } from '@shared/schema';
 import { and, eq, lt, inArray } from 'drizzle-orm';
 
@@ -47,21 +47,21 @@ async function hardDeleteUserData(userId: number, userEmail: string): Promise<De
     await db.delete(notifications).where(eq(notifications.userId, userId));
     tablesCleared.push('notifications');
 
-    // 2. Delete messages (both sent and received)
-    await db.delete(messages).where(eq(messages.senderId, userId));
-    tablesCleared.push('messages');
+    // 2. Delete messages (both sent and received) - ARCHIVED
+    // await db.delete(messages).where(eq(messages.senderId, userId));
+    // tablesCleared.push('messages');
 
-    // 3. Delete comments
-    await db.delete(comments).where(eq(comments.authorId, userId));
-    tablesCleared.push('comments');
+    // 3. Delete comments - ARCHIVED
+    // await db.delete(comments).where(eq(comments.authorId, userId));
+    // tablesCleared.push('comments');
 
     // 4. Delete posts
     await db.delete(posts).where(eq(posts.authorId, userId));
     tablesCleared.push('posts');
 
-    // 5. Delete event attendees
-    await db.delete(eventAttendees).where(eq(eventAttendees.userId, userId));
-    tablesCleared.push('event_attendees');
+    // 5. Delete event attendees - ARCHIVED
+    // await db.delete(eventAttendees).where(eq(eventAttendees.userId, userId));
+    // tablesCleared.push('event_attendees');
 
     // 6. Delete group memberships
     await db.delete(groupMembers).where(eq(groupMembers.userId, userId));
@@ -74,7 +74,7 @@ async function hardDeleteUserData(userId: number, userEmail: string): Promise<De
     // 8. Delete auth tokens
     await db.delete(refreshTokens).where(eq(refreshTokens.userId, userId));
     await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
-    await db.delete(verificationTokens).where(eq(verificationTokens.userId, userId));
+    // await db.delete(verificationTokens).where(eq(verificationTokens.userId, userId)); // ARCHIVED
     tablesCleared.push('auth_tokens');
 
     // 9. Update deletion request status

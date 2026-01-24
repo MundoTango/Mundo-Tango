@@ -1,10 +1,13 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'noreply@mundotango.com';
+
+if (!resend) console.warn('[Notification] Resend not configured - emails disabled');
 
 export class NotificationService {
   async sendApprovalRequest(adminEmail: string, userId: number, reason: string, username: string): Promise<void> {
+    if (!resend) return;
     try {
       await resend.emails.send({
         from: FROM_EMAIL,
@@ -25,6 +28,7 @@ export class NotificationService {
   }
 
   async sendApprovalConfirmation(userEmail: string, username: string): Promise<void> {
+    if (!resend) return;
     try {
       await resend.emails.send({
         from: FROM_EMAIL,
@@ -49,6 +53,7 @@ export class NotificationService {
   }
 
   async sendRejectionNotice(userEmail: string, username: string, reason: string): Promise<void> {
+    if (!resend) return;
     try {
       await resend.emails.send({
         from: FROM_EMAIL,
@@ -69,6 +74,7 @@ export class NotificationService {
   }
 
   async sendQuotaWarning(userEmail: string, username: string, quotaType: string, percentUsed: number): Promise<void> {
+    if (!resend) return;
     try {
       await resend.emails.send({
         from: FROM_EMAIL,
@@ -88,6 +94,7 @@ export class NotificationService {
   }
 
   async sendQuotaExceeded(userEmail: string, username: string, quotaType: string): Promise<void> {
+    if (!resend) return;
     try {
       await resend.emails.send({
         from: FROM_EMAIL,

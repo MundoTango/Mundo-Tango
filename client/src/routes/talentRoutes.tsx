@@ -8,16 +8,13 @@ const TalentMatchPage = lazy(() => import("@/pages/TalentMatchPage"));
 const TalentMatchEmbedPage = lazy(() => import("@/pages/TalentMatchEmbedPage"));
 const TalentMatchInterviewPage = lazy(() => import("@/pages/TalentMatchInterviewPage"));
 const EnhancedTalentMatch = lazy(() => import("@/pages/EnhancedTalentMatch"));
-const UserTestingPage = lazy(() => import("@/pages/UserTestingPage"));
-const VolunteerRecruitmentPage = lazy(() => import("@/pages/VolunteerRecruitmentPage"));
-const VolunteerTestingInterface = lazy(() => import("@/pages/VolunteerTestingInterface"));
-const ErrorDetectionTest = lazy(() => import("@/pages/ErrorDetectionTest"));
 const PremiumFeaturesPage = lazy(() => import("@/pages/PremiumFeaturesPage"));
 const AIBudgetBuilder = lazy(() => import("@/pages/AIBudgetBuilder"));
 const PrivacyHub = lazy(() => import("@/pages/PrivacyHub"));
 const GodLevelDashboard = lazy(() => import("@/pages/GodLevelDashboard"));
-const AutonomousPage = lazy(() => import("@/pages/AutonomousPage"));
 const MyTasksPage = lazy(() => import("@/pages/MyTasksPage"));
+// ARCHIVED: Using placeholder page for archived features
+const FeatureArchivedPage = lazy(() => import("@/pages/FeatureArchivedPage"));
 
 export function TalentRoutes() {
   return (
@@ -52,7 +49,7 @@ export function TalentRoutes() {
         <ProtectedRoute>
           <AppLayout>
             <Suspense fallback={<LoadingFallback />}>
-              <UserTestingPage />
+              <FeatureArchivedPage />
             </Suspense>
           </AppLayout>
         </ProtectedRoute>
@@ -61,7 +58,7 @@ export function TalentRoutes() {
         <ProtectedRoute>
           <AppLayout>
             <Suspense fallback={<LoadingFallback />}>
-              <VolunteerRecruitmentPage />
+              <FeatureArchivedPage />
             </Suspense>
           </AppLayout>
         </ProtectedRoute>
@@ -70,7 +67,7 @@ export function TalentRoutes() {
         <ProtectedRoute>
           <AppLayout>
             <Suspense fallback={<LoadingFallback />}>
-              <VolunteerTestingInterface />
+              <FeatureArchivedPage />
             </Suspense>
           </AppLayout>
         </ProtectedRoute>
@@ -79,7 +76,16 @@ export function TalentRoutes() {
         <ProtectedRoute>
           <AppLayout>
             <Suspense fallback={<LoadingFallback />}>
-              <ErrorDetectionTest />
+              <FeatureArchivedPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/autonomous">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <FeatureArchivedPage />
             </Suspense>
           </AppLayout>
         </ProtectedRoute>

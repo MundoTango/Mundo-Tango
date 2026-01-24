@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -493,10 +494,10 @@ export default function LandingPage() {
                   ))}
                 </div>
                 <p className="text-white/90 leading-relaxed text-sm mb-3 text-center">
-                  <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.qaDescription', 'Answering all your questions: <span className="font-semibold text-amber-200">What is Mundo Tango?</span> Who is it for and how could it impact <span className="font-semibold text-amber-200">YOU</span>? Why do we need it? And more!') }} />
+                  <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t('pages:landing.hero.qaDescription', 'Answering all your questions: <span className="font-semibold text-amber-200">What is Mundo Tango?</span> Who is it for and how could it impact <span className="font-semibold text-amber-200">YOU</span>? Why do we need it? And more!')) }} />
                 </p>
                 <p className="text-white/80 leading-relaxed text-sm mb-4 text-center">
-                  <span dangerouslySetInnerHTML={{ __html: t('pages:landing.hero.recurringNotice', 'We will be doing live sessions <span className="font-semibold text-amber-200">every Thursday</span> at the same time to hear what <span className="font-semibold text-amber-200">YOU</span> want out of this platform and to tell you what is happening!') }} />
+                  <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t('pages:landing.hero.recurringNotice', 'We will be doing live sessions <span className="font-semibold text-amber-200">every Thursday</span> at the same time to hear what <span className="font-semibold text-amber-200">YOU</span> want out of this platform and to tell you what is happening!')) }} />
                 </p>
                 <div className="text-center">
                   <a 

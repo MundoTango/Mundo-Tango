@@ -18,10 +18,10 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
 const SCREENSHOTS_DIR = path.join(__dirname, '../screenshots');
 const VIDEOS_DIR = path.join(__dirname, '../videos');
 
-// Test user credentials (create a test user or use existing)
+// Test user credentials
 const TEST_USER = {
-  email: process.env.TEST_EMAIL || 'test@mundotango.life',
-  password: process.env.TEST_PASSWORD || 'TestPassword123!',
+  email: 'admin@mundotango.life',
+  password: 'admin123',
 };
 
 // Ensure directories exist

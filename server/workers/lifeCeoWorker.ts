@@ -5,7 +5,7 @@
  */
 
 import { Job } from "bullmq";
-import { storage } from "../storage";
+import { storage, userRepository } from "../storage";
 import { createWorker } from "./redis-fallback";
 
 // A-CEO-01: Daily Goal Reminder

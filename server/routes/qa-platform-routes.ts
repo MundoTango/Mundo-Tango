@@ -8,6 +8,7 @@
 
 import { Router, Request, Response } from "express";
 import { storage } from "../storage";
+import { userRepository } from "../storage";
 import { z } from "zod";
 import { EmailService } from "../services/EmailService";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
@@ -239,7 +240,7 @@ router.post("/admin/approve/:id", authenticateToken, async (req: Request, res: R
 
     // Send email notification to user (if they have a userId)
     if (feedback.userId) {
-      const feedbackUser = await storage.getUserById(feedback.userId);
+      const feedbackUser = await userRepository.getUserById(feedback.userId);
       if (feedbackUser?.email) {
         const status = action === "reject" ? "rejected" : "approved";
         console.log(`[QA Platform] Sending ${status} email to ${feedbackUser.email} for feedback: ${feedback.title}`);
@@ -288,7 +289,7 @@ router.post("/admin/resolve/:id", authenticateToken, async (req: Request, res: R
 
     // Send email notification to user (if they have a userId)
     if (feedback.userId) {
-      const feedbackUser = await storage.getUserById(feedback.userId);
+      const feedbackUser = await userRepository.getUserById(feedback.userId);
       if (feedbackUser?.email) {
         console.log(`[QA Platform] Sending resolved email to ${feedbackUser.email} for feedback: ${feedback.title}`);
         

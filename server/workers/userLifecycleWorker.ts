@@ -5,7 +5,7 @@
  */
 
 import { Job } from "bullmq";
-import { storage } from "../storage";
+import { storage, userRepository } from "../storage";
 import { createWorker } from "./redis-fallback";
 
 // A-USER-01: New User Welcome
@@ -44,7 +44,7 @@ async function handleProfileCompletionReminder(job: Job) {
   
   console.log(`[A-USER-02] Checking profile completion for user ${userId}`);
   
-  const user = await storage.getUserById(userId);
+  const user = await userRepository.getUserById(userId);
   if (!user) return;
   
   const completionScore = calculateProfileCompletion(user);

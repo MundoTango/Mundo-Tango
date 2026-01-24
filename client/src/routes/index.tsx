@@ -8,12 +8,14 @@ const MarketingRoutes = lazy(() =>
 const AdminRoutes = lazy(() =>
   import("./adminRoutes").then((m) => ({ default: m.AdminRoutes }))
 );
-const LifeCeoRoutes = lazy(() =>
-  import("./lifeCeoRoutes").then((m) => ({ default: m.LifeCeoRoutes }))
-);
-const MrBlueRoutes = lazy(() =>
-  import("./mrBlueRoutes").then((m) => ({ default: m.MrBlueRoutes }))
-);
+// ARCHIVED: Life CEO routes - pages moved to _archived/experimental/
+// const LifeCeoRoutes = lazy(() =>
+//   import("./lifeCeoRoutes").then((m) => ({ default: m.LifeCeoRoutes }))
+// );
+// ARCHIVED: Mr. Blue routes - pages moved to _archived/experimental/
+// const MrBlueRoutes = lazy(() =>
+//   import("./mrBlueRoutes").then((m) => ({ default: m.MrBlueRoutes }))
+// );
 const SettingsRoutes = lazy(() =>
   import("./settingsRoutes").then((m) => ({ default: m.SettingsRoutes }))
 );
@@ -46,12 +48,14 @@ export function RouteLoader() {
     if (location.startsWith("/admin")) {
       return <AdminRoutes />;
     }
-    if (location.startsWith("/life-ceo")) {
-      return <LifeCeoRoutes />;
-    }
-    if (location.startsWith("/mrblue") || location.startsWith("/mr-blue") || location.startsWith("/video-studio") || location.startsWith("/avatar") || location.startsWith("/visual-editor")) {
-      return <MrBlueRoutes />;
-    }
+    // ARCHIVED: Life CEO routes removed
+    // if (location.startsWith("/life-ceo")) {
+    //   return <LifeCeoRoutes />;
+    // }
+    // ARCHIVED: Mr. Blue routes removed  
+    // if (location.startsWith("/mrblue") || location.startsWith("/mr-blue") || location.startsWith("/video-studio") || location.startsWith("/avatar") || location.startsWith("/visual-editor")) {
+    //   return <MrBlueRoutes />;
+    // }
     if (location.startsWith("/settings")) {
       return <SettingsRoutes />;
     }

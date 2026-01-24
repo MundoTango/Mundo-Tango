@@ -4,7 +4,7 @@ import crypto from "crypto";
 import speakeasy from "speakeasy";
 import QRCode from "qrcode";
 import { z } from "zod";
-import { storage } from "../storage";
+import { userRepository } from "../storage";
 import {
   authenticateToken,
   generateAccessToken,
@@ -68,7 +68,7 @@ const waitlistSchema = z.object({
 router.get("/check-username/:username", async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
-    const existingUser = await storage.getUserByUsername(username);
+    const existingUser = await userRepository.getUserByUsername(username);
     res.json({ available: !existingUser });
   } catch (error) {
     console.error("Username check error:", error);
@@ -79,7 +79,7 @@ router.get("/check-username/:username", async (req: Request, res: Response) => {
 router.get("/check-email/:email", async (req: Request, res: Response) => {
   try {
     const { email } = req.params;
-    const existingUser = await storage.getUserByEmail(decodeURIComponent(email));
+    const existingUser = await userRepository.getUserByEmail(decodeURIComponent(email));
     res.json({ available: !existingUser });
   } catch (error) {
     console.error("Email check error:", error);
@@ -94,12 +94,12 @@ router.post("/register", async (req: Request, res: Response) => {
     
     const validatedData = registerSchema.parse(req.body);
 
-    const existingEmail = await storage.getUserByEmail(validatedData.email as string);
+    const existingEmail = await userRepository.getUserByEmail(validatedData.email as string);
     if (existingEmail) {
       return res.status(409).json({ message: "Email already registered" });
     }
 
-    const existingUsername = await storage.getUserByUsername(validatedData.username as string);
+    const existingUsername = await userRepository.getUserByUsername(validatedData.username as string);
     if (existingUsername) {
       return res.status(409).json({ message: "Username already taken" });
     }
@@ -114,7 +114,7 @@ router.post("/register", async (req: Request, res: Response) => {
     // Remove inviteCode from user data before creating (it's not a user field)
     const { inviteCode: _inviteCode, ...userData } = validatedData as any;
 
-    const user = await storage.createUser({
+    const user = await userRepository.createUser({
       ...userData,
       password: hashedPassword,
       isOnboardingComplete: false,
@@ -184,7 +184,7 @@ router.post("/login", async (req: Request, res: Response) => {
   try {
     const { email, password, twoFactorCode, inviteCode } = loginSchema.parse(req.body);
 
-    const user = await storage.getUserByEmail(email);
+    const user = await userRepository.getUserByEmail(email);
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -217,7 +217,7 @@ router.post("/login", async (req: Request, res: Response) => {
     
     if (user.waitlist && isValidInviteCode) {
       // Upgrade user from waitlist to full access
-      await storage.updateUser(user.id, { waitlist: false });
+      await userRepository.updateUser(user.id, { waitlist: false });
       console.log(`[Auth] User ${user.id} upgraded from waitlist with invite code`);
     }
 
@@ -258,7 +258,7 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     const clientIp = req.ip || req.socket.remoteAddress || "unknown";
-    await storage.updateUser(user.id, {
+    await userRepository.updateUser(user.id, {
       lastLoginAt: new Date(),
       lastLoginIp: clientIp,
     });
@@ -342,7 +342,7 @@ router.post("/waitlist", async (req: Request, res: Response) => {
   try {
     const validatedData = waitlistSchema.parse(req.body);
 
-    const existingUser = await storage.getUserByEmail(validatedData.email);
+    const existingUser = await userRepository.getUserByEmail(validatedData.email);
     if (existingUser) {
       if (existingUser.waitlist) {
         return res.status(409).json({ message: "You're already on the waitlist!" });
@@ -353,7 +353,7 @@ router.post("/waitlist", async (req: Request, res: Response) => {
     // Use provided username or generate temp one
     let finalUsername = validatedData.username;
     if (finalUsername) {
-      const existingUsername = await storage.getUserByUsername(finalUsername);
+      const existingUsername = await userRepository.getUserByUsername(finalUsername);
       if (existingUsername) {
         return res.status(409).json({ message: "Username already taken. Please choose another." });
       }
@@ -366,7 +366,7 @@ router.post("/waitlist", async (req: Request, res: Response) => {
       ? await bcrypt.hash(validatedData.password, BCRYPT_ROUNDS)
       : await bcrypt.hash(crypto.randomBytes(32).toString("hex"), BCRYPT_ROUNDS);
 
-    await storage.createUser({
+    await userRepository.createUser({
       email: validatedData.email,
       name: validatedData.name || "Waitlist User",
       username: finalUsername,
@@ -405,7 +405,7 @@ router.post("/refresh", async (req: Request, res: Response) => {
     }
 
     const payload = verifyRefreshToken(refreshToken);
-    const user = await storage.getUserById(payload.userId);
+    const user = await userRepository.getUserById(payload.userId);
 
     if (!user || !user.isActive || user.suspended) {
       return res.status(401).json({ message: "Invalid user" });
@@ -487,7 +487,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
     step = "user_lookup";
     let user;
     try {
-      user = await storage.getUserById(verificationToken.userId);
+      user = await userRepository.getUserById(verificationToken.userId);
     } catch (userError) {
       console.error("[Auth] User lookup failed:", userError);
       return res.status(500).json({ 
@@ -507,7 +507,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
     // Update user verification status
     step = "update_user";
     try {
-      await storage.updateUser(verificationToken.userId, {
+      await userRepository.updateUser(verificationToken.userId, {
         isVerified: true,
       });
       console.log("[Auth] User verification status updated");
@@ -604,7 +604,7 @@ router.get("/verify-email/:token", async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Verification token has expired. Please request a new one." });
     }
 
-    await storage.updateUser(verificationToken.userId, {
+    await userRepository.updateUser(verificationToken.userId, {
       isVerified: true,
     });
 
@@ -652,7 +652,7 @@ router.post("/resend-verification", async (req: Request, res: Response) => {
       resendAttempts.set(email, { count: 1, firstAttempt: now });
     }
     
-    const user = await storage.getUserByEmail(email);
+    const user = await userRepository.getUserByEmail(email);
     
     // Don't reveal if email exists or not for security
     if (!user) {
@@ -699,7 +699,7 @@ router.post("/forgot-password", authRateLimiter, async (req: Request, res: Respo
   try {
     const { email } = forgotPasswordSchema.parse(req.body);
 
-    const user = await storage.getUserByEmail(email);
+    const user = await userRepository.getUserByEmail(email);
     if (!user) {
       // Security: Don't reveal if email exists
       return res.json({ 
@@ -762,7 +762,7 @@ router.post("/reset-password", authRateLimiter, async (req: Request, res: Respon
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
-    await storage.updateUserPassword(resetToken.userId, hashedPassword);
+    await userRepository.updateUserPassword(resetToken.userId, hashedPassword);
 
     await storage.deletePasswordResetToken(token);
     await storage.deleteUserRefreshTokens(resetToken.userId);
@@ -868,7 +868,7 @@ router.post("/2fa/verify", authenticateToken, async (req: AuthRequest, res: Resp
       return res.status(401).json({ message: "Invalid 2FA code" });
     }
 
-    await storage.updateUser(req.user.id, {
+    await userRepository.updateUser(req.user.id, {
       twoFactorEnabled: true,
     });
 
@@ -918,7 +918,7 @@ router.post("/2fa/disable", authenticateToken, async (req: AuthRequest, res: Res
       return res.status(401).json({ message: "Invalid 2FA code" });
     }
 
-    await storage.updateUser(req.user.id, {
+    await userRepository.updateUser(req.user.id, {
       twoFactorEnabled: false,
     });
 
@@ -947,7 +947,7 @@ if (process.env.NODE_ENV !== "production") {
         return res.status(400).json({ message: "Email is required" });
       }
 
-      const user = await storage.getUserByEmail(email);
+      const user = await userRepository.getUserByEmail(email);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }

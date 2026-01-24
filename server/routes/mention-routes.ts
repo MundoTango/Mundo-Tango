@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticateToken } from "../middleware/auth";
-import { storage } from "../storage";
+import { userRepository } from "../storage";
 import { db } from "@shared/db";
 import { eq, ilike, or, and, sql } from "drizzle-orm";
 import { users, events, groups, communities, posts } from "@shared/schema";
@@ -239,7 +239,7 @@ router.post("/resolve", authenticateToken, async (req, res) => {
       mentions.map(async (mention: any) => {
         switch (mention.type) {
           case "user":
-            const user = await storage.getUserById(mention.id);
+            const user = await userRepository.getUserById(mention.id);
             return user ? {
               type: "user",
               id: user.id,

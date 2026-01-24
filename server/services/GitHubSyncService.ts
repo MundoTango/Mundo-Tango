@@ -1,5 +1,5 @@
 import { db } from '@shared/db';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { getUncachableGitHubClient } from '../lib/github-client';
 
 /**
@@ -47,19 +47,14 @@ export class GitHubSyncService {
     if (existingMapping) {
       // Update existing task
       taskId = existingMapping.internal_id;
-      await db.execute(`
+      await db.execute(sql`
         UPDATE plan_tasks SET
-          title = $1,
-          description = $2,
-          status = $3,
+          title = ${issue.title},
+          description = ${issue.body || ''},
+          status = ${issue.state === 'closed' ? 'done' : 'in_progress'},
           updated_at = NOW()
-        WHERE id = $4
-      `, [
-        issue.title,
-        issue.body || '',
-        issue.state === 'closed' ? 'done' : 'in_progress',
-        taskId,
-      ]);
+        WHERE id = ${taskId}
+      `);
       action = 'updated';
     } else {
       // Create new task
