@@ -36,7 +36,7 @@ async function handleEventRsvp(job: Job) {
   
   console.log(`[A-EVENT-02] Processing RSVP: user ${userId} → ${status} for event ${eventId}`);
   
-  const event = await storage.getEventById(eventId);
+  const event = await eventRepository.getEventById(eventId);
   if (!event) return;
   
   // 1. Notify event organizer
@@ -78,7 +78,7 @@ async function handleNewEventNotification(job: Job) {
   
   console.log(`[A-EVENT-03] Notifying community ${communityId} about event ${eventId}`);
   
-  const event = await storage.getEventById(eventId);
+  const event = await eventRepository.getEventById(eventId);
   if (!event) return;
   
   // Get all community members (placeholder - would query group_members table)
@@ -108,7 +108,7 @@ async function handlePostEventFollowUp(job: Job) {
   
   console.log(`[A-EVENT-04] Post-event follow-up for event ${eventId}`);
   
-  const event = await storage.getEventById(eventId);
+  const event = await eventRepository.getEventById(eventId);
   if (!event) return;
   
   for (const attendeeId of attendeeIds) {
@@ -130,7 +130,7 @@ async function handleFeedbackCollection(job: Job) {
   
   console.log(`[A-EVENT-05] Requesting feedback for event ${eventId} from user ${attendeeId}`);
   
-  const event = await storage.getEventById(eventId);
+  const event = await eventRepository.getEventById(eventId);
   if (!event) return;
   
   await storage.createNotification({
@@ -150,7 +150,7 @@ async function handlePhotoSharing(job: Job) {
   
   console.log(`[A-EVENT-06] Photo sharing for event ${eventId}`);
   
-  const event = await storage.getEventById(eventId);
+  const event = await eventRepository.getEventById(eventId);
   if (!event) return;
   
   for (const attendeeId of attendeeIds) {
@@ -192,7 +192,7 @@ async function handleRecurringEventReminder(job: Job) {
   
   console.log(`[A-EVENT-08] Recurring event reminder for user ${userId}`);
   
-  const event = await storage.getEventById(eventId);
+  const event = await eventRepository.getEventById(eventId);
   if (!event) return;
   
   await storage.createNotification({

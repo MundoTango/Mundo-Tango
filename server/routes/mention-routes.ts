@@ -249,7 +249,7 @@ router.post("/resolve", authenticateToken, async (req, res) => {
             } : null;
 
           case "event":
-            const event = await storage.getEventById(mention.id);
+            const event = await eventRepository.getEventById(mention.id);
             return event ? {
               type: "event",
               id: event.id,

@@ -4,7 +4,7 @@
  * Channels: In-app (WebSocket), Push (PWA), Email digest
  */
 
-import { storage, userRepository } from "../storage";
+import { storage, userRepository, eventRepository } from "../storage";
 
 export type NotificationType =
   | 'friend_request'
@@ -146,7 +146,7 @@ export class NotificationService {
   }
 
   async notifyEventReminder(userId: number, eventId: number) {
-    const event = await storage.getEventById(eventId);
+    const event = await eventRepository.getEventById(eventId);
     if (!event) return;
 
     return this.createNotification({

@@ -168,7 +168,7 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
       memberCount: g.memberCount || 0,
     }));
 
-    const localEvents = await storage.getEvents({ city: newCity, limit: 5 });
+    const localEvents = await eventRepository.getEvents({ city: newCity, limit: 5 });
 
     const nearbyDancers = await storage.countUsersByCity(newCity);
 

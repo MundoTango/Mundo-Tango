@@ -2,7 +2,7 @@ console.log("🔍 [DEBUG] Starting server/routes.ts module loading...");
 import crypto from "crypto";
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import { storage, userRepository } from "./storage";
+import { storage, userRepository, eventRepository } from "./storage";
 import authRoutes from "./routes/auth";
 import facebookOAuthRoutes from "./routes/auth/facebook-oauth-routes";
 import storiesRoutes from "./routes/stories-routes";
@@ -4988,7 +4988,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/events", authenticateToken, validateRequest(insertEventSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
     try {
-      const event = await storage.createEvent({
+      const event = await eventRepository.createEvent({
         ...req.body,
         userId: req.user!.id
       });
@@ -5042,7 +5042,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.query;
 
       // Get main events from storage
-      const mainEvents = await storage.getEvents({
+      const mainEvents = await eventRepository.getEvents({
         search: search as string | undefined,
         eventType: eventType as string | undefined,
         city: city as string | undefined,
@@ -5136,7 +5136,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
-      const event = await storage.getEventById(id);
+      const event = await eventRepository.getEventById(id);
       
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
@@ -5151,7 +5151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/events/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const id = parseInt(req.params.id);
-      const event = await storage.getEventById(id);
+      const event = await eventRepository.getEventById(id);
       
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
@@ -5161,7 +5161,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized" });
       }
       
-      const updated = await storage.updateEvent(id, req.body);
+      const updated = await eventRepository.updateEvent(id, req.body);
       res.json(updated);
     } catch (error) {
       res.status(500).json({ message: "Failed to update event" });
@@ -5171,7 +5171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/events/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const id = parseInt(req.params.id);
-      const event = await storage.getEventById(id);
+      const event = await eventRepository.getEventById(id);
       
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
@@ -5181,7 +5181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized" });
       }
       
-      await storage.deleteEvent(id);
+      await eventRepository.deleteEvent(id);
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete event" });
@@ -5200,11 +5200,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const existing = await storage.getUserEventRsvp(eventId, req.user!.id);
       
       if (existing) {
-        const updated = await storage.updateEventRsvp(eventId, req.user!.id, status);
+        const updated = await eventRepository.updateEventRsvp(eventId, req.user!.id, status);
         return res.json(updated);
       }
       
-      const rsvp = await storage.createEventRsvp({
+      const rsvp = await eventRepository.createEventRsvp({
         eventId,
         userId: req.user!.id,
         status
@@ -5219,7 +5219,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events/:id/attendees", async (req: Request, res: Response) => {
     try {
       const eventId = parseInt(req.params.id);
-      const attendees = await storage.getEventRsvps(eventId);
+      const attendees = await eventRepository.getEventRsvps(eventId);
       res.json(attendees);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch attendees" });
@@ -6486,7 +6486,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Use existing recommendation algorithms based on type
       switch (type) {
         case "events":
-          const events = await storage.getEvents({ limit: limitNum, offset: 0 });
+          const events = await eventRepository.getEvents({ limit: limitNum, offset: 0 });
           recommendations = events.map(e => ({ ...e, recommendationType: "event" }));
           break;
         case "people":
@@ -6527,7 +6527,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Get active events per city
-      const events = await storage.getEvents({ limit: 100, offset: 0 });
+      const events = await eventRepository.getEvents({ limit: 100, offset: 0 });
       
       const communityData = communities.map(community => {
         const cityEvents = events.filter((e: any) => 
