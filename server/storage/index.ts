@@ -14,6 +14,12 @@ export { venueRepository } from "./repositories/venues";
 export { friendRepository } from "./repositories/friends";
 export { bookmarkRepository } from "./repositories/bookmarks";
 export { albumRepository } from "./repositories/albums";
+export { groupRepository } from "./repositories/groups";
+export { notificationRepository } from "./repositories/notifications";
+export { moderationRepository } from "./repositories/moderation";
+export { analyticsRepository } from "./repositories/analytics";
+export { mediaRepository } from "./repositories/media";
+export { chatRepository } from "./repositories/chat";
 
 
 // Export database connection
