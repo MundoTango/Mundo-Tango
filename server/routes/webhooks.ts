@@ -3,7 +3,7 @@
 // Updated: November 12, 2025 - Added Stripe webhook handler
 
 import { Router, Request, Response } from "express";
-import { storage } from "../storage";
+import { storage, userRepository } from "../storage";
 import Stripe from "stripe";
 import crypto from "crypto";
 
@@ -106,7 +106,7 @@ router.post("/stripe", async (req: Request, res: Response) => {
           if (user) {
             // Access current_period_end - using type assertion for SDK compatibility
             const periodEnd = (subscription as any).current_period_end || subscription.currentPeriodEnd;
-            await storage.updateUserSubscription(user.id, {
+            await userRepository.updateUserSubscription(user.id, {
               stripeSubscriptionId: subscriptionId,
               stripeCustomerId: customerId,
               plan: planTier,
@@ -131,7 +131,7 @@ router.post("/stripe", async (req: Request, res: Response) => {
         if (user) {
           // Access current_period_end - using type assertion for SDK compatibility
           const periodEnd = (subscription as any).current_period_end || subscription.currentPeriodEnd;
-          await storage.updateUserSubscription(user.id, {
+          await userRepository.updateUserSubscription(user.id, {
             status: subscription.status as 'active' | 'canceled' | 'past_due',
             currentPeriodEnd: new Date(periodEnd * 1000),
           });
@@ -148,7 +148,7 @@ router.post("/stripe", async (req: Request, res: Response) => {
         const user = await storage.getUserByStripeCustomerId(customerId);
         
         if (user) {
-          await storage.updateUserSubscription(user.id, {
+          await userRepository.updateUserSubscription(user.id, {
             status: 'canceled',
             plan: 'free',
           });
@@ -172,7 +172,7 @@ router.post("/stripe", async (req: Request, res: Response) => {
         const user = await storage.getUserByStripeCustomerId(customerId);
         
         if (user) {
-          await storage.updateUserSubscription(user.id, {
+          await userRepository.updateUserSubscription(user.id, {
             status: 'past_due',
           });
           console.log(`[Stripe] Marked subscription as past_due for user ${user.id}`);

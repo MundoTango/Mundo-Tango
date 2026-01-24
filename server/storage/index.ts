@@ -1,22 +1,21 @@
 /**
- * Storage Module - Barrel Export
- * Provides backward compatibility with legacy Storage class
- * while exposing new repository pattern
- * 
- * MB.MD Sprint 1.1: Repository Pattern Migration
+ * Storage Module Barrel Export
+ * Provides backward compatibility while supporting new repository pattern
  */
 
-// Export new repositories
-export { UserRepository, userRepository } from './repositories/users';
-export { EventRepository, eventRepository } from './repositories/events';
-export { PostRepository, postRepository } from './repositories/posts';
-export { VenueRepository, venueRepository } from './repositories/venues';
+// Re-export from legacy storage (singleton instance for backward compatibility)
+export { storage } from "../storage";
+
+// Named repository exports for new code
+export { userRepository } from "./repositories/users";
+export { eventRepository } from "./repositories/events";
+export { postRepository } from "./repositories/posts";
+export { venueRepository } from "./repositories/venues";
+export { friendRepository } from "./repositories/friends";
+export { bookmarkRepository } from "./repositories/bookmarks";
+export { albumRepository } from "./repositories/albums";
+
 
 // Export database connection
 export { db, sql } from './core/connection';
 
-// Legacy compatibility - will be removed in Sprint 1.3
-// For now, import the original Storage class
-import { Storage } from '../storage';
-export { Storage };
-export default Storage;

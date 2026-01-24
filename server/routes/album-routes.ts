@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from "express";
-import { storage } from "../storage";
+import { storage, albumRepository } from "../storage";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { insertMediaAlbumSchema, mediaAlbums, albumMedia, media } from "@shared/schema";
 import { z } from "zod";
@@ -49,7 +49,7 @@ export function registerAlbumRoutes(app: Express) {
           userId: req.user.id,
         };
 
-        const album = await storage.createAlbum(albumData);
+        const album = await albumRepository.createAlbum(albumData);
         res.status(201).json(album);
       } catch (error) {
         console.error("Error creating album:", error);
@@ -68,7 +68,7 @@ export function registerAlbumRoutes(app: Express) {
           return res.status(401).json({ message: "Unauthorized" });
         }
 
-        const albums = await storage.getUserAlbums(req.user.id);
+        const albums = await albumRepository.getUserAlbums(req.user.id);
         
         // Get cover images for each album
         const albumsWithCovers = await Promise.all(
@@ -161,7 +161,7 @@ export function registerAlbumRoutes(app: Express) {
           return res.status(403).json({ message: "Access denied" });
         }
 
-        const album = await storage.updateAlbum(albumId, req.body);
+        const album = await albumRepository.updateAlbum(albumId, req.body);
         if (!album) {
           return res.status(404).json({ message: "Album not found" });
         }
@@ -195,7 +195,7 @@ export function registerAlbumRoutes(app: Express) {
           return res.status(403).json({ message: "Access denied" });
         }
 
-        await storage.deleteAlbum(albumId);
+        await albumRepository.deleteAlbum(albumId);
         res.status(204).send();
       } catch (error) {
         console.error("Error deleting album:", error);

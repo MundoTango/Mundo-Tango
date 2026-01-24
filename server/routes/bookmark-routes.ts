@@ -28,7 +28,7 @@ export function createBookmarkRoutes(storage: IStorage) {
       // Validate query params
       const { collection } = getBookmarksSchema.parse(req.query);
       
-      const bookmarks = await storage.getUserBookmarks(userId, collection);
+      const bookmarks = await bookmarkRepository.getUserBookmarks(userId, collection);
       res.json(bookmarks);
     } catch (error: any) {
       // Zod validation error
@@ -95,7 +95,7 @@ export function createBookmarkRoutes(storage: IStorage) {
       // Validate request body
       const { collectionName, notes } = createBookmarkSchema.parse(req.body);
       
-      const bookmark = await storage.createBookmark({
+      const bookmark = await bookmarkRepository.createBookmark({
         userId,
         postId,
         collectionName: collectionName || "Saved Posts",
@@ -154,7 +154,7 @@ export function createBookmarkRoutes(storage: IStorage) {
       const { postId: postIdStr } = postIdParamSchema.parse(req.params);
       const postId = parseInt(postIdStr);
       
-      await storage.deleteBookmark(userId, postId);
+      await bookmarkRepository.deleteBookmark(userId, postId);
       res.json({ success: true });
     } catch (error: any) {
       // Zod validation error

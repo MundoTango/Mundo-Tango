@@ -8,7 +8,7 @@ export function createFriendsRoutes(storage: IStorage) {
   router.get("/friends", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.userId!;
-      const friends = await storage.getUserFriends(userId);
+      const friends = await friendRepository.getUserFriends(userId);
       res.json(friends);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -46,7 +46,7 @@ export function createFriendsRoutes(storage: IStorage) {
       console.log(`[FriendsAPI] Getting friendship status: currentUser=${currentUserId}, targetUser=${targetUserId}`);
       
       // Check if they're friends
-      const friends = await storage.getUserFriends(currentUserId);
+      const friends = await friendRepository.getUserFriends(currentUserId);
       const isFriend = friends.some((f: any) => f.id === targetUserId);
       
       // Check for incoming request (target sent to current user)
@@ -143,7 +143,7 @@ export function createFriendsRoutes(storage: IStorage) {
         receiverMessage: req.body.receiverMessage,
         receiverPrivateNote: req.body.receiverPrivateNote,
       } : undefined;
-      await storage.acceptFriendRequest(requestId, receiverData);
+      await friendRepository.acceptFriendRequest(requestId, receiverData);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -190,7 +190,7 @@ export function createFriendsRoutes(storage: IStorage) {
       const userId = req.userId!;
       const friendId = parseInt(req.params.friendId);
       
-      await storage.removeFriend(userId, friendId);
+      await friendRepository.removeFriend(userId, friendId);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });

@@ -8879,3 +8879,5 @@ export const storage = new DbStorage();
 
 // Sprint 1.3: Re-export new repositories for import compatibility
 export { userRepository, eventRepository, postRepository, venueRepository } from './storage/index';
+
+export { friendRepository, bookmarkRepository, albumRepository } from './storage/index';
