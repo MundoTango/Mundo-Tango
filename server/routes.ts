@@ -2,7 +2,7 @@ console.log("🔍 [DEBUG] Starting server/routes.ts module loading...");
 import crypto from "crypto";
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import { storage, userRepository, eventRepository } from "./storage";
+import { storage, userRepository, eventRepository, postRepository } from "./storage";
 import authRoutes from "./routes/auth";
 import facebookOAuthRoutes from "./routes/auth/facebook-oauth-routes";
 import storiesRoutes from "./routes/stories-routes";
@@ -3124,7 +3124,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         postData.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
       }
       
-      const post = await storage.createPost(postData);
+      const post = await postRepository.createPost(postData);
       
       // DEBUG: Verify stored result
       console.log('[POST /api/posts] Created post ID:', post.id);
@@ -3282,7 +3282,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Fetch the full post with user data populated (including role)
-      const fullPost = await storage.getPostById(post.id);
+      const fullPost = await postRepository.getPostById(post.id);
       res.status(201).json(fullPost);
     } catch (error) {
       console.error("[POST /api/posts] Error:", error);
@@ -3342,7 +3342,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const currentUserId = req.user?.id; // From auth middleware if authenticated (optional for public route)
       
       // Filter by type only if explicitly specified (no default - show all post types)
-      const posts = await storage.getPosts({
+      const posts = await postRepository.getPosts({
         userId: userId ? parseInt(userId as string) : undefined,
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),
@@ -3476,13 +3476,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/posts/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
-      const post = await storage.getPostById(id);
+      const post = await postRepository.getPostById(id);
       
       if (!post) {
         return res.status(404).json({ message: "Post not found" });
       }
       
-      const comments = await storage.getPostComments(id);
+      const comments = await postRepository.getPostComments(id);
       res.json({ ...post, comments });
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch post" });
@@ -3492,7 +3492,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/posts/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const id = parseInt(req.params.id);
-      const post = await storage.getPostById(id);
+      const post = await postRepository.getPostById(id);
       
       if (!post) {
         return res.status(404).json({ message: "Post not found" });
@@ -3502,7 +3502,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized" });
       }
       
-      const updated = await storage.updatePost(id, req.body);
+      const updated = await postRepository.updatePost(id, req.body);
       res.json(updated);
     } catch (error) {
       res.status(500).json({ message: "Failed to update post" });
@@ -3512,7 +3512,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/posts/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const id = parseInt(req.params.id);
-      const post = await storage.getPostById(id);
+      const post = await postRepository.getPostById(id);
       
       if (!post) {
         return res.status(404).json({ message: "Post not found" });
@@ -3522,7 +3522,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized" });
       }
       
-      const updated = await storage.updatePost(id, req.body);
+      const updated = await postRepository.updatePost(id, req.body);
       res.json(updated);
     } catch (error) {
       res.status(500).json({ message: "Failed to update post" });
@@ -3532,7 +3532,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/posts/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const id = parseInt(req.params.id);
-      const post = await storage.getPostById(id);
+      const post = await postRepository.getPostById(id);
       
       if (!post) {
         return res.status(404).json({ message: "Post not found" });
@@ -3542,7 +3542,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized" });
       }
       
-      await storage.deletePost(id);
+      await postRepository.deletePost(id);
       res.json({ message: "Post deleted successfully", postId: id });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete post" });
@@ -3608,7 +3608,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         // Send notification to post author
-        const post = await storage.getPostById(postId);
+        const post = await postRepository.getPostById(postId);
         if (post && post.userId !== req.user!.id) {
           await storage.createNotification({
             userId: post.userId,
@@ -3755,7 +3755,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         // Send notification to post author
-        const post = await storage.getPostById(postId);
+        const post = await postRepository.getPostById(postId);
         if (post && post.userId !== req.user!.id) {
           await storage.createNotification({
             userId: post.userId,
@@ -4139,7 +4139,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/posts/:id/comments", authenticateToken, validateRequest(insertPostCommentSchema.omit({ postId: true, userId: true })), async (req: AuthRequest, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
-      const comment = await storage.createPostComment({
+      const comment = await postRepository.createPostComment({
         ...req.body,
         postId,
         userId: req.user!.id
@@ -4158,7 +4158,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/posts/:id/comments", async (req: Request, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
-      const comments = await storage.getPostComments(postId);
+      const comments = await postRepository.getPostComments(postId);
       res.json(comments);
     } catch (error) {
       console.error("Error fetching comments:", error);
@@ -6239,7 +6239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      const postsToday = await storage.getPostsCount({ since: today });
+      const postsToday = await postRepository.getPostsCount({ since: today });
       const activeUsers = await storage.getActiveUsersCount();
       const upcomingEvents = await storage.getUpcomingEventsCount();
       
@@ -6391,7 +6391,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user!.id;
       
       // Get memories from posts table (postType = 'memory')
-      const memories = await storage.getPosts({
+      const memories = await postRepository.getPosts({
         userId,
         type: 'memory',
         limit: parseInt(limit as string),
@@ -6427,7 +6427,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user!.id;
       
       // Get all memory-type posts for this user
-      const allMemories = await storage.getPosts({
+      const allMemories = await postRepository.getPosts({
         userId,
         type: 'memory',
         limit: 1000,
@@ -6456,7 +6456,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/memories", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       // Create memory as a post with postType='memory'
-      const memory = await storage.createPost({
+      const memory = await postRepository.createPost({
         userId: req.user!.id,
         content: req.body.description || req.body.title || '',
         imageUrl: req.body.imageUrl,
@@ -6498,7 +6498,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           recommendations = venues.map(v => ({ ...v, recommendationType: "venue" }));
           break;
         case "content":
-          const posts = await storage.getPosts({ limit: limitNum, offset: 0 });
+          const posts = await postRepository.getPosts({ limit: limitNum, offset: 0 });
           recommendations = posts.map(p => ({ ...p, recommendationType: "content" }));
           break;
         default:

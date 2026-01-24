@@ -196,7 +196,7 @@ export function createBookmarkRoutes(storage: IStorage) {
       const { postId: postIdStr } = postIdParamSchema.parse(req.params);
       const postId = parseInt(postIdStr);
       
-      const edits = await storage.getPostEditHistory(postId);
+      const edits = await postRepository.getPostEditHistory(postId);
       res.json(edits);
     } catch (error: any) {
       // Zod validation error
