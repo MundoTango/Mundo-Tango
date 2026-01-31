@@ -220,10 +220,10 @@ export const CacheKeys = {
   housingList: (page: number) => `housing:list:${page}`,
   housingSearch: (query: string, page: number) => `housing:search:${query}:${page}`,
   
-  // Life CEO
-  lifeCeoAgents: () => `life-ceo:agents`,
-  lifeCeoInsights: (userId: number) => `life-ceo:insights:${userId}`,
-  lifeCeoMemories: (userId: number) => `life-ceo:memories:${userId}`,
+  // ARCHIVED: Life CEO
+  // lifeCeoAgents: () => `life-ceo:agents`,
+  // lifeCeoInsights: (userId: number) => `life-ceo:insights:${userId}`,
+  // lifeCeoMemories: (userId: number) => `life-ceo:memories:${userId}`,
   
   // Global stats
   stats: () => `stats:global`,

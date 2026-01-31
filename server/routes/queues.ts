@@ -5,7 +5,8 @@ import { createQueue } from "../workers/redis-fallback";
 const userLifecycleQueue = createQueue("user-lifecycle");
 const socialQueue = createQueue("social-automation");
 const eventQueue = createQueue("event-automation");
-const lifeCeoQueue = createQueue("life-ceo-automation");
+// ARCHIVED: Life CEO feature
+// const lifeCeoQueue = createQueue("life-ceo-automation");
 const housingQueue = createQueue("housing-automation");
 const adminQueue = createQueue("admin-automation");
 
@@ -76,16 +77,16 @@ router.post("/events/reminder", async (req, res) => {
   }
 });
 
-// Life CEO automation triggers
-router.post("/life-ceo/daily-goal", async (req, res) => {
-  try {
-    const { userId } = req.body;
-    await lifeCeoQueue.add("daily-goal-reminder", { userId });
-    res.json({ message: "Daily goal reminder queued" });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// ARCHIVED: Life CEO automation triggers
+// router.post("/life-ceo/daily-goal", async (req, res) => {
+//   try {
+//     const { userId } = req.body;
+//     await lifeCeoQueue.add("daily-goal-reminder", { userId });
+//     res.json({ message: "Daily goal reminder queued" });
+//   } catch (error: any) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 // Health check for all queues
 router.get("/health", async (req, res) => {
@@ -94,7 +95,7 @@ router.get("/health", async (req, res) => {
       userLifecycle: await userLifecycleQueue.getJobCounts(),
       social: await socialQueue.getJobCounts(),
       events: await eventQueue.getJobCounts(),
-      lifeCeo: await lifeCeoQueue.getJobCounts(),
+      // lifeCeo: await lifeCeoQueue.getJobCounts(), // ARCHIVED
       housing: await housingQueue.getJobCounts(),
       admin: await adminQueue.getJobCounts(),
     };

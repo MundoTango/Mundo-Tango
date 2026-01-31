@@ -72,20 +72,20 @@ export const ROUTES: Record<string, RouteConfig> = {
   talentProfile: { path: "/talent/profile", label: "My Profile", parent: "/talent", requiresAuth: true, category: "talent" },
   talentTasks: { path: "/talent/tasks", label: "Tasks", parent: "/talent", requiresAuth: true, category: "talent" },
 
-  // ===== LIFE CEO =====
-  lifeCeo: { path: "/life-ceo", label: "Life CEO", parent: "/", requiresAuth: true, category: "lifeCeo" },
-  lifeCeoGoals: { path: "/life-ceo/goals", label: "Goals", parent: "/life-ceo", requiresAuth: true, category: "lifeCeo" },
-  lifeCeoTasks: { path: "/life-ceo/tasks", label: "Tasks", parent: "/life-ceo", requiresAuth: true, category: "lifeCeo" },
-  lifeCeoCalendar: { path: "/life-ceo/calendar", label: "Calendar", parent: "/life-ceo", requiresAuth: true, category: "lifeCeo" },
+  // ===== LIFE CEO ===== (ARCHIVED)
+  // lifeCeo: { path: "/life-ceo", label: "Life CEO", parent: "/", requiresAuth: true, category: "lifeCeo" },
+  // lifeCeoGoals: { path: "/life-ceo/goals", label: "Goals", parent: "/life-ceo", requiresAuth: true, category: "lifeCeo" },
+  // lifeCeoTasks: { path: "/life-ceo/tasks", label: "Tasks", parent: "/life-ceo", requiresAuth: true, category: "lifeCeo" },
+  // lifeCeoCalendar: { path: "/life-ceo/calendar", label: "Calendar", parent: "/life-ceo", requiresAuth: true, category: "lifeCeo" },
 
   // ===== MR BLUE AI =====
   mrBlue: { path: "/mr-blue", label: "Mr Blue AI", parent: "/", requiresAuth: true, category: "ai" },
   mrBlueHistory: { path: "/mr-blue/history", label: "History", parent: "/mr-blue", requiresAuth: true, category: "ai" },
 
-  // ===== H2AC (Human-to-Agent Communication) =====
-  h2ac: { path: "/h2ac-dashboard", label: "H2AC Dashboard", parent: "/", requiresAuth: true, category: "ai" },
-  h2acAgents: { path: "/h2ac-dashboard/agents", label: "My Agents", parent: "/h2ac-dashboard", requiresAuth: true, category: "ai" },
-  h2acWork: { path: "/h2ac-dashboard/work", label: "My Work", parent: "/h2ac-dashboard", requiresAuth: true, category: "ai" },
+  // ===== H2AC (Human-to-Agent Communication) ===== (ARCHIVED)
+  // h2ac: { path: "/h2ac-dashboard", label: "H2AC Dashboard", parent: "/", requiresAuth: true, category: "ai" },
+  // h2acAgents: { path: "/h2ac-dashboard/agents", label: "My Agents", parent: "/h2ac-dashboard", requiresAuth: true, category: "ai" },
+  // h2acWork: { path: "/h2ac-dashboard/work", label: "My Work", parent: "/h2ac-dashboard", requiresAuth: true, category: "ai" },
 
   // ===== ADMIN =====
   admin: { path: "/admin", label: "Admin", parent: "/", requiresAuth: true, category: "admin" },

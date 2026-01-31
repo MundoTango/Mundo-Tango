@@ -304,16 +304,18 @@ const proDiscoveryItems = [
   },
 ];
 
-const servicesItems = [
-  {
-    titleKey: "sidebar.services.lifeCeo",
-    titleFallback: "Life CEO",
-    url: "/life-ceo",
-    icon: Brain,
-    tooltipKey: "sidebar.services.lifeCeoTooltip",
-    tooltipFallback: "AI-powered life management",
-  },
-];
+// ARCHIVED: Life CEO services - feature moved to experimental archive
+// const servicesItems = [
+//   {
+//     titleKey: "sidebar.services.lifeCeo",
+//     titleFallback: "Life CEO",
+//     url: "/life-ceo",
+//     icon: Brain,
+//     tooltipKey: "sidebar.services.lifeCeoTooltip",
+//     tooltipFallback: "AI-powered life management",
+//   },
+// ];
+const servicesItems: any[] = [];
 
 const roleToProDiscoveryMap: Record<string, string> = {
   teacher: "/pro/learning",
@@ -666,14 +668,15 @@ function AppSidebarComponent() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="border-b border-white/10 pb-4">
+        {/* ARCHIVED: Services section - empty after Life CEO removal */}
+        {/* <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
             {t('navigation:sidebar.sections.services', 'Services')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             {renderIconGrid(servicesItems)}
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
       </SidebarContent>
 
       <SidebarFooter
