@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Music, Play, Heart, Download, Search, Pause, SkipBack, SkipForward, Volume2, Music2 } from "lucide-react";
-import { AppLayout } from "@/components/AppLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { motion } from "framer-motion";
 
 export default function MusicLibraryPage() {

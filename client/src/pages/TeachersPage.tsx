@@ -11,7 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { GraduationCap, MapPin, Star, Search, CheckCircle2, Filter, X, Music, Award } from "lucide-react";
 import { Link } from "wouter";
-import { AppLayout } from "@/components/AppLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 

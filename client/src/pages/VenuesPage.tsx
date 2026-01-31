@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Star, Clock, Phone, Globe, Search, Music, Navigation } from "lucide-react";
 import { Link } from "wouter";
-import { AppLayout } from "@/components/AppLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { motion } from "framer-motion";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 

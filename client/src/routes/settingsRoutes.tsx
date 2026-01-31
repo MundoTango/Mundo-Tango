@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Route } from "wouter";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { AppLayout } from "@/components/AppLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
 
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));

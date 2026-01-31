@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Users, Clock, ChevronRight, Plus } from "lucide-react";
 import { Link } from "wouter";
-import { AppLayout } from "@/components/AppLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 

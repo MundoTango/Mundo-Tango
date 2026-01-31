@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Route } from "wouter";
-import { AppLayout } from "@/components/AppLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
 
 const LifeCEODashboardPage = lazy(() => import("@/pages/LifeCEODashboardPage"));
