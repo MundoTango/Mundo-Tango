@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Route } from "wouter";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { AdminLayout } from "@/components/AdminLayout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
 import { HEAVY_FEATURES_ENABLED } from "@/config/featureFlags";
 

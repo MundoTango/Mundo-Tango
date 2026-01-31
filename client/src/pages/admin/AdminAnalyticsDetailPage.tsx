@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { AdminLayout } from "@/components/AdminLayout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";

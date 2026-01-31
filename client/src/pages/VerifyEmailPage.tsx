@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
-import { PublicLayout } from "@/components/PublicLayout";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";

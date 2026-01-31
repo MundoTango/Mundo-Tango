@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Hand, Music, Users, Heart, AlertCircle } from "lucide-react";
-import { PublicLayout } from "@/components/PublicLayout";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";

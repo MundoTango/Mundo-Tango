@@ -16,7 +16,7 @@ import {
   Music,
   GraduationCap
 } from "lucide-react";
-import { PublicLayout } from "@/components/PublicLayout";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";

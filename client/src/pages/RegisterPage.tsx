@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, HandHeart, CreditCard, ArrowRight, KeyRound, PartyPopper, Mail, CheckCircle, RefreshCw } from "lucide-react";
-import { PublicLayout } from "@/components/PublicLayout";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.jpg";

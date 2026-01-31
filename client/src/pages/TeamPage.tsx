@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Linkedin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PublicLayout } from "@/components/PublicLayout";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";

@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { PublicLayout } from "@/components/PublicLayout";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";

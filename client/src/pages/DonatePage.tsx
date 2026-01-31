@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { Heart, ArrowLeft, ExternalLink, Users, Globe, Clock, DollarSign } from "lucide-react";
-import { PublicLayout } from "@/components/PublicLayout";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 import { GoFundMeEmbed } from "@/components/marketing/GoFundMeEmbed";
 import { useQuery } from "@tanstack/react-query";
 
