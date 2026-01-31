@@ -3,7 +3,7 @@
  * Run: tsx server/routes/lumaGenerationScript.ts
  */
 
-import { LumaAvatarService } from '../services/lumaAvatarService.js';
+import { LumaAvatarService } from '../services/ai/lumaAvatarService.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

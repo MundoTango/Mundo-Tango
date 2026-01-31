@@ -5,7 +5,7 @@
 
 import { Router } from 'express';
 import { WebSocketServer, WebSocket } from 'ws';
-import { realtimeVoiceService } from '../services/realtimeVoiceService';
+import { realtimeVoiceService } from '../services/ai/realtimeVoiceService';
 import type { Server } from 'http';
 
 const router = Router();

@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import { VoiceCloningService } from '../services/voiceCloningService';
+import { VoiceCloningService } from '../services/ai/voiceCloningService';
 import { db } from '../db';
 import { users } from '../../shared/schema';
 import { eq } from 'drizzle-orm';

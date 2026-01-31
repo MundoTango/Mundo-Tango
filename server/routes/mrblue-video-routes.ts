@@ -1,5 +1,5 @@
 import { Router, type Request } from 'express';
-import { lumaVideoService } from '../services/lumaVideoService';
+import { lumaVideoService } from '../services/ai/lumaVideoService';
 import { didService, DID_VOICE_PRESETS, MRBLUE_AVATAR_PRESETS } from '../services/didService';
 import { insertLumaVideoSchema } from '@shared/schema';
 import multer from 'multer';

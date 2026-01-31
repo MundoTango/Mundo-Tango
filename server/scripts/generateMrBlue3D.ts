@@ -4,7 +4,7 @@
  * Uses Luma AI to create professional 3D model from reference photos
  */
 
-import { LumaAvatarService } from '../services/lumaAvatarService.js';
+import { LumaAvatarService } from '../services/ai/lumaAvatarService.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

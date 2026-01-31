@@ -8321,7 +8321,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Import P0 workflow services
   const { FounderApprovalService } = await import("./services/founderApprovalService");
   const { SafetyReviewService } = await import("./services/safetyReviewService");
-  const { AISupportService } = await import("./services/aiSupportService");
+  const { AISupportService } = await import("./services/ai/aiSupportService");
 
   // ============================================================================
   // WORKFLOW #1: FOUNDER APPROVAL (8 endpoints)

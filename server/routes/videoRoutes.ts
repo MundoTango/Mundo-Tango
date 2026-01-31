@@ -1,5 +1,5 @@
 import express from 'express';
-import { lumaVideoService } from '../services/lumaVideoService';
+import { lumaVideoService } from '../services/ai/lumaVideoService';
 
 const router = express.Router();
 

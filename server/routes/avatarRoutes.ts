@@ -1,5 +1,5 @@
 import express from 'express';
-import { lumaService } from '../services/lumaAvatarService';
+import { lumaService } from '../services/ai/lumaAvatarService';
 import fs from 'fs';
 import path from 'path';
 
