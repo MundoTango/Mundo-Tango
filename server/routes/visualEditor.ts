@@ -5,7 +5,7 @@
 
 import { Router, type Request, Response } from "express";
 import { aiCodeGenerator } from "../services/ai/aiCodeGenerator";
-import { gitService } from "../services/gitService";
+import { gitService } from "../services/utils/gitService";
 import { traceRoute } from "../metrics/tracing";
 import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
 import * as path from "path";
