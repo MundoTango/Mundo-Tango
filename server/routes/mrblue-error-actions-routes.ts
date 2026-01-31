@@ -12,7 +12,7 @@ import { db } from "../db";
 import { errorPatterns, agentEscalations } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { broadcastToUser } from "../services/websocket";
+import { broadcastToUser } from "../services/core/websocket";
 import { authenticateToken, requireRoleLevel, type AuthRequest } from "../middleware/auth";
 
 const router = Router();

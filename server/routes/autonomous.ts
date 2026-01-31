@@ -22,7 +22,7 @@ import { autonomousAgent } from "../services/mrBlue/autonomousAgent";
 import { conversationContext } from "../services/mrBlue/conversationContext";
 import { styleGenerator } from "../services/mrBlue/styleGenerator";
 import { elementSelector } from "../services/mrBlue/elementSelector";
-import { broadcastToUser } from "../services/websocket";
+import { broadcastToUser } from "../services/core/websocket";
 import { db } from "../storage";
 import { auditLogs, autonomousTasks } from "../../shared/schema";
 import { eq, and, gte, count, desc } from "drizzle-orm";

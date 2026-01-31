@@ -4,7 +4,7 @@ import { directMessages, users, groups, groupMembers, groupMessages } from "@sha
 import { eq, and, or, desc, sql } from "drizzle-orm";
 import { z } from "zod";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
-import { notificationService } from "../services/notification-service";
+import { notificationService } from "../services/core/notification-service";
 
 const sendMessageSchema = z.object({
   recipientId: z.number().optional(),

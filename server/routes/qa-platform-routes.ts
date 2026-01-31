@@ -10,7 +10,7 @@ import { Router, Request, Response } from "express";
 import { storage } from "../storage";
 import { userRepository } from "../storage";
 import { z } from "zod";
-import { EmailService } from "../services/EmailService";
+import { EmailService } from "../services/core/EmailService";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 
 const router = Router();

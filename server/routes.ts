@@ -223,9 +223,9 @@ import contentRoutes from "./routes/content-routes";
 import { authenticateToken, optionalAuth, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
-import { wsNotificationService } from "./services/websocket-notification-service";
-import { wsEngagementService } from "./services/websocket-engagement-service";
-import { wsService as autonomousWsService } from "./services/websocket";
+import { wsNotificationService } from "./services/core/websocket-notification-service";
+import { wsEngagementService } from "./services/core/websocket-engagement-service";
+import { wsService as autonomousWsService } from "./services/core/websocket";
 import { 
   insertPostSchema, 
   insertPostCommentSchema,

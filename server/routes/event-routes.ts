@@ -15,7 +15,7 @@ import {
   insertEventCommentSchema,
   insertEventInvitationSchema
 } from "@shared/schema";
-import { notificationService } from "../services/notification-service";
+import { notificationService } from "../services/core/notification-service";
 import crypto from "crypto";
 import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";

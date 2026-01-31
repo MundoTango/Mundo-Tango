@@ -15,7 +15,7 @@ import {
 import { authRateLimiter } from "../middleware/rateLimiter";
 // Note: insertUserSchema not imported - using direct z.object() for registerSchema to avoid Zod v4 .extend() issues
 import { ensureCityGroupExists } from "../utils/cityGroupAutomation";
-import { EmailService } from "../services/EmailService";
+import { EmailService } from "../services/core/EmailService";
 
 const router = Router();
 
