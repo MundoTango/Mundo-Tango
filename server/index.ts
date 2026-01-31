@@ -270,7 +270,8 @@ app.use((req, res, next) => {
         
         await import('./workers/eventWorker');
         await import('./workers/housingWorker');
-        await import('./workers/lifeCeoWorker');
+        // ARCHIVED: Life CEO system (Jan 2026)
+        // await import('./workers/lifeCeoWorker');
         log('[BullMQ Workers] ✅ Initialized 3 core workers');
       } catch (error) {
         logger.error('❌ BullMQ Worker initialization failed:', error);

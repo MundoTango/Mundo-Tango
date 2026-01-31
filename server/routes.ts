@@ -18,7 +18,7 @@ import { createAIChatRoutes } from "./ai-chat-routes";
 import { profileEnrichmentService } from "./services/profile-enrichment";
 import queuesRoutes from "./routes/queues";
 import mentionRoutes from "./routes/mention-routes";
-import lifeCeoRoutes from "./routes/life-ceo-routes";
+
 import adminRoutes from "./routes/admin-routes";
 import { createFriendsRoutes } from "./routes/friends-routes";
 import { createAnalyticsRoutes } from "./routes/analytics-routes";
@@ -1143,7 +1143,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/v1", createAIChatRoutes());
   app.use("/api/queues", queuesRoutes);
   app.use("/api/mentions", mentionRoutes);
-  app.use("/api/life-ceo", lifeCeoRoutes);
+  // ARCHIVED: Life CEO system (Jan 2026)
+  // app.use("/api/life-ceo", lifeCeoRoutes);
   app.use("/api/admin", adminRoutes);
   app.use("/api", scrapingAdminRoutes);
   app.use("/api/scraper/facebook", facebookScraperRoutes);
