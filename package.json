@@ -216,7 +216,7 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.58.1",
     "@replit/vite-plugin-cartographer": "^0.4.4",
     "@replit/vite-plugin-dev-banner": "^0.1.1",
     "@replit/vite-plugin-runtime-error-modal": "^0.0.4",
@@ -232,7 +232,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/ws": "^8.5.13",
     "@vitejs/plugin-react": "^4.7.0",
-    "autoprefixer": "^10.4.23",
+    "autoprefixer": "^10.4.24",
     "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.8",
     "esbuild": "^0.27.2",
