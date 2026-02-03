@@ -3,109 +3,141 @@
  * MB.MD God Command #1: Tests written BEFORE implementation
  */
 
-import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { testEvents } from '../fixtures/events';
+import { describe, test, expect } from 'vitest';
+import { EventRepository, EventValidationError } from '../../storage/repositories/events';
 
-// TODO: Import EventRepository once created
-// import { EventRepository } from '../../storage/repositories/events';
+// Create repository instance for testing
+const eventRepository = new EventRepository();
 
 describe('EventRepository', () => {
-  beforeAll(async () => {
-    // TODO: Initialize test database
-  });
-
-  afterAll(async () => {
-    // TODO: Cleanup test database
-  });
-
-  beforeEach(async () => {
-    // TODO: Clear events table before each test
-  });
-
-  describe('create', () => {
-    test('should create a new event', async () => {
-      // TODO: Implement after EventRepository.create() exists
-      expect(true).toBe(true); // Placeholder
+  // ==============================
+  // ID Validation Tests
+  // ==============================
+  
+  describe('ID validation', () => {
+    test('should reject negative event ID', async () => {
+      await expect(eventRepository.getEventById(-1))
+        .rejects.toThrow(EventValidationError);
+      await expect(eventRepository.getEventById(-1))
+        .rejects.toThrow('Invalid ID: -1. Must be a positive integer.');
     });
 
-    test('should validate required fields', async () => {
-      // TODO: Test validation (God Command #4)
-      expect(true).toBe(true); // Placeholder
+    test('should reject zero as event ID', async () => {
+      await expect(eventRepository.getEventById(0))
+        .rejects.toThrow(EventValidationError);
+      await expect(eventRepository.getEventById(0))
+        .rejects.toThrow('Invalid ID: 0. Must be a positive integer.');
     });
 
-    test('should set default status to draft', async () => {
-      // TODO: Test defaults
-      expect(true).toBe(true); // Placeholder
-    });
-  });
-
-  describe('getEventById', () => {
-    test('should return event by ID', async () => {
-      // TODO: Implement
-      expect(true).toBe(true); // Placeholder
+    test('should reject non-integer event ID', async () => {
+      await expect(eventRepository.getEventById(1.5))
+        .rejects.toThrow(EventValidationError);
+      await expect(eventRepository.getEventById(1.5))
+        .rejects.toThrow('Invalid ID: 1.5. Must be a positive integer.');
     });
 
-    test('should return undefined for non-existent ID', async () => {
-      // TODO: Edge case (God Command #4)
-      expect(true).toBe(true); // Placeholder
+    test('should reject NaN as ID', async () => {
+      await expect(eventRepository.getEventById(NaN))
+        .rejects.toThrow(EventValidationError);
+    });
+
+    test('should reject Infinity as ID', async () => {
+      await expect(eventRepository.getEventById(Infinity))
+        .rejects.toThrow(EventValidationError);
     });
   });
 
-  describe('getEvents', () => {
-    test('should return events for a city', async () => {
-      // TODO: Implement
-      expect(true).toBe(true); // Placeholder
+  // ==============================
+  // createEvent Validation Tests
+  // ==============================
+  
+  describe('createEvent validation', () => {
+    test('should reject event without title', async () => {
+      await expect(eventRepository.createEvent({ userId: 1 } as any))
+        .rejects.toThrow(EventValidationError);
+      await expect(eventRepository.createEvent({ userId: 1 } as any))
+        .rejects.toThrow('Event title is required and must be a non-empty string.');
     });
 
-    test('should filter by event type', async () => {
-      // TODO: Implement filtering
-      expect(true).toBe(true); // Placeholder
+    test('should reject event with empty title', async () => {
+      await expect(eventRepository.createEvent({ title: '', userId: 1 } as any))
+        .rejects.toThrow(EventValidationError);
+      await expect(eventRepository.createEvent({ title: '   ', userId: 1 } as any))
+        .rejects.toThrow(EventValidationError);
     });
 
-    test('should exclude draft events for non-organizers', async () => {
-      // TODO: Test visibility logic
-      expect(true).toBe(true); // Placeholder
+    test('should reject event without userId', async () => {
+      await expect(eventRepository.createEvent({ title: 'Milonga' } as any))
+        .rejects.toThrow(EventValidationError);
+      await expect(eventRepository.createEvent({ title: 'Milonga' } as any))
+        .rejects.toThrow('userId is required and must be a positive integer.');
     });
 
-    test('should paginate results', async () => {
-      // TODO: Test limit/offset
-      expect(true).toBe(true); // Placeholder
+    test('should reject event with invalid userId (zero)', async () => {
+      await expect(eventRepository.createEvent({ title: 'Milonga', userId: 0 } as any))
+        .rejects.toThrow(EventValidationError);
+    });
+
+    test('should reject event with negative userId', async () => {
+      await expect(eventRepository.createEvent({ title: 'Milonga', userId: -5 } as any))
+        .rejects.toThrow(EventValidationError);
+    });
+
+    test('should reject event with invalid eventType', async () => {
+      await expect(eventRepository.createEvent({ 
+        title: 'Milonga', 
+        userId: 1, 
+        eventType: 'invalid_type' 
+      } as any))
+        .rejects.toThrow(EventValidationError);
+      await expect(eventRepository.createEvent({ 
+        title: 'Milonga', 
+        userId: 1, 
+        eventType: 'invalid_type' 
+      } as any))
+        .rejects.toThrow('Invalid eventType: invalid_type');
+    });
+
+    test('should accept valid eventTypes', async () => {
+      const validTypes = ['milonga', 'practica', 'class', 'workshop', 'festival', 'show', 'other'];
+      
+      for (const eventType of validTypes) {
+        // Should not throw validation error (may throw DB error since no real DB)
+        await expect(eventRepository.createEvent({
+          title: `Test ${eventType}`,
+          userId: 1,
+          eventType,
+          description: 'Test description',
+          startDate: new Date(),
+          location: 'Test location'
+        } as any)).rejects.not.toThrow(EventValidationError);
+      }
     });
   });
 
-  describe('updateEvent', () => {
-    test('should update event data', async () => {
-      // TODO: Implement
-      expect(true).toBe(true); // Placeholder
-    });
-
-    test('should not allow updating ID (God Command #6)', async () => {
-      // CRITICAL: Never change ID column types
-      expect(true).toBe(true); // Placeholder
-    });
+  // ==============================
+  // Database-dependent tests (TODO)
+  // ==============================
+  
+  describe('create (requires DB)', () => {
+    test.todo('should create a new event');
+    test.todo('should set default status to draft');
   });
 
-  describe('deleteEvent', () => {
-    test('should delete event', async () => {
-      // TODO: Implement
-      expect(true).toBe(true); // Placeholder
-    });
-
-    test('should cascade delete RSVPs', async () => {
-      // TODO: Test cascade behavior
-      expect(true).toBe(true); // Placeholder
-    });
+  describe('getEvents (requires DB)', () => {
+    test.todo('should return events for a city');
+    test.todo('should filter by event type');
+    test.todo('should exclude draft events for non-organizers');
+    test.todo('should paginate results');
   });
 
-  describe('getUpcomingEvents', () => {
-    test('should return future events only', async () => {
-      // TODO: Implement time-based filtering
-      expect(true).toBe(true); // Placeholder
-    });
+  describe('updateEvent (requires DB)', () => {
+    test.todo('should update event data');
+    test.todo('should not allow updating ID (God Command #6)');
+  });
 
-    test('should sort by date ascending', async () => {
-      // TODO: Test sorting
-      expect(true).toBe(true); // Placeholder
-    });
+  describe('deleteEvent (requires DB)', () => {
+    test.todo('should delete event');
+    test.todo('should cascade delete RSVPs');
   });
 });
