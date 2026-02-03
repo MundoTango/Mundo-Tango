@@ -8,7 +8,7 @@
  * Usage: tsx server/scripts/trainAgentsSME.ts
  */
 
-import { AgentSMETrainingService } from '../services/agent-sme/AgentSMETrainingService';
+import { AgentSMETrainingService } from '../services/AgentSMETrainingService';
 
 async function main() {
   console.log('\n🎓 MB.MD v9.0 AGENT SME TRAINING PROGRAM');

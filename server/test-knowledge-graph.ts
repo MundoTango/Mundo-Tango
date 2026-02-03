@@ -8,7 +8,7 @@
  * 4. Track transfer efficiency
  */
 
-import { knowledgeGraphService } from './services/knowledge/knowledgeGraphService';
+import { knowledgeGraphService } from './services/knowledgeGraphService';
 
 async function testKnowledgeGraph() {
   console.log('\n='.repeat(70));

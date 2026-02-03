@@ -9,7 +9,7 @@
  *   2. Run: tsx server/scripts/test-scott-voice.ts
  */
 
-import { VoiceCloningService } from '../services/mrBlue/VoiceCloningService';
+import { VoiceCloningService } from '../services/VoiceCloningService';
 import { promises as fs } from 'fs';
 import path from 'path';
 

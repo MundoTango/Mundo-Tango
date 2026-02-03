@@ -9,10 +9,10 @@
  */
 
 import { Router } from 'express';
-import { swarmChoreographyController } from '../services/orchestration/SwarmChoreographyController';
-import { validationRelayService } from '../services/orchestration/ValidationRelayService';
-import { strikeTracker } from '../services/orchestration/StrikeTracker';
-import { comprehensiveAuditRunner } from '../services/orchestration/ComprehensiveAuditRunner';
+import { swarmChoreographyController } from '../services/SwarmChoreographyController';
+import { validationRelayService } from '../services/ValidationRelayService';
+import { strikeTracker } from '../services/StrikeTracker';
+import { comprehensiveAuditRunner } from '../services/ComprehensiveAuditRunner';
 import { db } from '../storage';
 import { auditIssues } from '../../shared/schema';
 import { eq } from 'drizzle-orm';

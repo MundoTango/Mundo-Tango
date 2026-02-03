@@ -1,4 +1,4 @@
-import { MrBlueInternalExecutor } from '../services/mrBlue/MrBlueInternalExecutor';
+import { MrBlueInternalExecutor } from '../services/MrBlueInternalExecutor';
 
 async function triggerMrBlue() {
   const executor = new MrBlueInternalExecutor();

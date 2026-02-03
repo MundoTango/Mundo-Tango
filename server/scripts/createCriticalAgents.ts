@@ -10,7 +10,7 @@
 
 import { db } from '../../shared/db';
 import { agents, type InsertAgent } from '../../shared/schema';
-import { AgentSMETrainingService } from '../services/agent-sme/AgentSMETrainingService';
+import { AgentSMETrainingService } from '../services/AgentSMETrainingService';
 
 // ============================================================================
 // CRITICAL AGENTS TO CREATE

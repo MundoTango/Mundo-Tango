@@ -5,8 +5,8 @@
  * Run with: npx tsx server/tests/unified-mrblue-test.ts
  */
 
-import { MR_BLUE_TOOLS, getToolsForUser, type MrBlueToolName } from '../services/mrBlue/MrBlueToolSchemas';
-import { vibeCodingToolService } from '../services/mrBlue/VibeCodingToolService';
+import { MR_BLUE_TOOLS, getToolsForUser, type MrBlueToolName } from '../services/MrBlueToolSchemas';
+import { vibeCodingToolService } from '../services/VibeCodingToolService';
 
 async function runTests() {
   console.log('='.repeat(60));

@@ -8,8 +8,8 @@ import { Queue } from "bullmq";
 import IORedis from "ioredis";
 import { storage } from "../storage";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
-import { Agent105_MasterOrchestrator } from "../services/financial/AgentOrchestrator";
-import { RateLimitedAIOrchestrator } from "../services/ai/integration/rate-limited-orchestrator";
+// import { Agent105_MasterOrchestrator } from "../services/AgentOrchestrator";
+import { RateLimitedAIOrchestrator } from "../services/rate-limited-orchestrator";
 
 const router = Router();
 
@@ -33,7 +33,7 @@ const financialAgentQueue = connection ? new Queue("financial-agents", { connect
 
 // Initialize orchestrator for direct status queries
 const aiOrchestrator = new RateLimitedAIOrchestrator();
-const masterOrchestrator = new Agent105_MasterOrchestrator(aiOrchestrator);
+// const masterOrchestrator = new Agent105_MasterOrchestrator(aiOrchestrator);
 
 /**
  * POST /api/financial/agents/start

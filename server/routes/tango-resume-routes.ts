@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { Response } from "express";
-import { TangoResumeService } from '../services/reputation/TangoResumeService';
+import { TangoResumeService } from '../services/TangoResumeService';
 import { authenticateToken } from '../middleware/auth';
 import { z } from 'zod';
 

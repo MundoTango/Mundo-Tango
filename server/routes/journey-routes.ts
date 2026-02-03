@@ -17,8 +17,8 @@
  */
 
 import { Router, type Request, type Response } from 'express';
-import { journeyRecorder } from '../services/documentation/JourneyRecorder';
-import { bookChapterGenerator } from '../services/documentation/BookChapterGenerator';
+import { journeyRecorder } from '../services/JourneyRecorder';
+import { bookChapterGenerator } from '../services/BookChapterGenerator';
 import { z } from 'zod';
 
 const router = Router();

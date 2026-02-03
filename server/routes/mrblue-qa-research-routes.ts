@@ -7,11 +7,11 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { mrBlueQAResearch } from '../services/mrBlue/MrBlueQAResearch';
-import { agentRegistry } from '../services/mrBlue/AgentRegistry';
-import { agentTestOrchestrator } from '../services/mrBlue/AgentTestOrchestrator';
-import { BasePageAgent } from '../services/mrBlue/agents/BasePageAgent';
-import { BaseFeatureAgent } from '../services/mrBlue/agents/BaseFeatureAgent';
+import { mrBlueQAResearch } from '../services/MrBlueQAResearch';
+import { agentRegistry } from '../services/AgentRegistry';
+import { agentTestOrchestrator } from '../services/AgentTestOrchestrator';
+import { BasePageAgent } from '../services/BasePageAgent';
+import { BaseFeatureAgent } from '../services/BaseFeatureAgent';
 
 const router = Router();
 

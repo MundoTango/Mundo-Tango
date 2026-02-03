@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { AutonomousEngine, AutonomousRequest } from '../services/mrBlue/AutonomousEngine';
+import { AutonomousEngine, AutonomousRequest } from '../services/AutonomousEngine';
 
 const router = Router();
 

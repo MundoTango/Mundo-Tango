@@ -8,15 +8,15 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { PaymentOrchestrator, PaymentGateway, PaymentMethod, PaymentStatus } from '../services/payments/core/PaymentOrchestrator';
-import { currencyManager } from '../services/payments/core/CurrencyManager';
-import { webhookDispatcher } from '../services/payments/core/WebhookDispatcher';
-import { amlKycVerifier, VerificationLevel } from '../services/payments/compliance/AMLKYCVerifier';
-import { taxCalculator } from '../services/payments/compliance/TaxCalculator';
-import { sanctionsScreener } from '../services/payments/compliance/SanctionsScreener';
-import { adyenAdapter } from '../services/payments/gateways/AdyenAdapter';
-import { wiseAdapter } from '../services/payments/gateways/WiseAdapter';
-import { localPaymentMethods, LocalPaymentType } from '../services/payments/methods/LocalPaymentMethods';
+import { PaymentOrchestrator, PaymentGateway, PaymentMethod, PaymentStatus } from '../services/PaymentOrchestrator';
+import { currencyManager } from '../services/CurrencyManager';
+import { webhookDispatcher } from '../services/WebhookDispatcher';
+import { amlKycVerifier, VerificationLevel } from '../services/AMLKYCVerifier';
+import { taxCalculator } from '../services/TaxCalculator';
+import { sanctionsScreener } from '../services/SanctionsScreener';
+import { adyenAdapter } from '../services/AdyenAdapter';
+import { wiseAdapter } from '../services/WiseAdapter';
+import { localPaymentMethods, LocalPaymentType } from '../services/LocalPaymentMethods';
 
 const router = Router();
 const paymentOrchestrator = new PaymentOrchestrator();

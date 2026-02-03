@@ -10,9 +10,9 @@
  */
 
 import { Router } from 'express';
-import { backendOrchestrator } from '../../services/mrBlue/BackendOrchestrator';
-import { sessionTracker } from '../../services/mrBlue/SessionTracker';
-import type { BackendSaveProgress } from '../../services/mrBlue/BackendOrchestrator';
+import { backendOrchestrator } from '../../services/BackendOrchestrator';
+import { sessionTracker } from '../../services/SessionTracker';
+import type { BackendSaveProgress } from '../../services/BackendOrchestrator';
 
 const router = Router();
 

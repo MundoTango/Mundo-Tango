@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { agentEventBus } from '../services/mrBlue/AgentEventBus';
+import { agentEventBus } from '../services/AgentEventBus';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();

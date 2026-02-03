@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import express from "express";
-import { webhookDispatcher } from "../services/payments/core/WebhookDispatcher";
+import { webhookDispatcher } from "../services/WebhookDispatcher";
 
 const router = Router();
 

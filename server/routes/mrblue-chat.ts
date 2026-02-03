@@ -9,7 +9,7 @@
 
 import { Router, type Request, Response } from "express";
 import { authenticateToken } from "../middleware/auth";
-import { unifiedMrBlueChat } from "../services/mrBlue/UnifiedMrBlueChat";
+import { unifiedMrBlueChat } from "../services/UnifiedMrBlueChat";
 import OpenAI from "openai";
 
 const router = Router();

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { supabaseSyncService } from '../../services/auth/SupabaseSyncService';
-import { facebookOAuthService } from '../../services/facebook/FacebookOAuthService';
+import { supabaseSyncService } from '../../services/SupabaseSyncService';
+import { facebookOAuthService } from '../../services/FacebookOAuthService';
 
 const router = Router();
 

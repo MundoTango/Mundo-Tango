@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { PageAuditService } from '../services/self-healing/PageAuditService';
-import { SelfHealingService } from '../services/self-healing/SelfHealingService';
-import { AgentActivationService } from '../services/self-healing/AgentActivationService';
+import { PageAuditService } from '../services/PageAuditService';
+import { SelfHealingService } from '../services/SelfHealingService';
+import { AgentActivationService } from '../services/AgentActivationService';
 import { spawn } from 'child_process';
 
 const router = Router();

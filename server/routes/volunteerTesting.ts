@@ -4,11 +4,11 @@
  */
 
 import { Router, Response } from "express";
-import { testScenarioService } from "../services/volunteer/testScenarioService";
-import { testResultsService } from "../services/volunteer/testResultsService";
-import { volunteerService } from "../services/volunteer/volunteerService";
-import { issueRoutingService } from "../services/volunteer/issueRouting";
-import { gamificationRewardsService } from "../services/volunteer/gamificationRewards";
+import { testScenarioService } from "../services/testScenarioService";
+import { testResultsService } from "../services/testResultsService";
+import { volunteerService } from "../services/volunteerService";
+import { issueRoutingService } from "../services/issueRouting";
+import { gamificationRewardsService } from "../services/gamificationRewards";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { insertUiTestScenarioSchema, insertUiTestResultSchema } from "@shared/schema";

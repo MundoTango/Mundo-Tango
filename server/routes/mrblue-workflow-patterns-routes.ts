@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { workflowPatternTracker } from '../services/mrBlue/workflowPatternTracker';
+import { workflowPatternTracker } from '../services/workflowPatternTracker';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();

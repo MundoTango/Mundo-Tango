@@ -12,11 +12,11 @@
 import { db } from '@shared/db';
 import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
-import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
-import { languageAwareFieldMapper } from '../../services/scraping/LanguageAwareFieldMapper';
-import { attachParticipantProfiles } from '../../services/scraping/ParticipantProfileHelper';
-import { RecurringEventDetector } from '../../services/scraping/RecurringEventDetector';
-import { InfiniteScrollHelper } from '../../services/scraping/InfiniteScrollHelper';
+import { detailDiscoveryService } from '../../services/DetailDiscoveryService';
+import { languageAwareFieldMapper } from '../../services/LanguageAwareFieldMapper';
+import { attachParticipantProfiles } from '../../services/ParticipantProfileHelper';
+import { RecurringEventDetector } from '../../services/RecurringEventDetector';
+import { InfiniteScrollHelper } from '../../services/InfiniteScrollHelper';
 
 type Browser = import('playwright').Browser;
 type Page = import('playwright').Page;

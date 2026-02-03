@@ -4,7 +4,7 @@
  */
 
 import { Router } from 'express';
-import { pageAuditService } from '../services/page-audit/PageAuditService';
+import { pageAuditService } from '../services/PageAuditService';
 
 const router = Router();
 

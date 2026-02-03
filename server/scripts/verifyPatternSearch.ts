@@ -6,7 +6,7 @@
  * using the Pattern Recognition Engine.
  */
 
-import { PatternRecognitionEngine, type ProblemSignature } from "../services/intelligence/patternRecognition";
+import { PatternRecognitionEngine, type ProblemSignature } from "../services/patternRecognition";
 import { db } from "../../shared/db";
 import { learningPatterns } from "../../shared/schema";
 import { gte } from "drizzle-orm";

@@ -23,11 +23,11 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
-import { smartRoute, collaborativeAnalysis, getCostStats } from '../services/ai/UnifiedAIOrchestrator';
-import { SemanticCacheService } from '../services/ai/SemanticCacheService';
-import { rateLimiter } from '../services/ai/RateLimiterService';
-import { getCachedAIResponse, cacheAIResponse } from '../services/caching/RedisCache';
-import { getCacheStats as getBasicCacheStats, clearAllAICache } from '../services/caching/RedisCache';
+import { smartRoute, collaborativeAnalysis, getCostStats } from '../services/UnifiedAIOrchestrator';
+import { SemanticCacheService } from '../services/SemanticCacheService';
+import { rateLimiter } from '../services/RateLimiterService';
+import { getCachedAIResponse, cacheAIResponse } from '../services/RedisCache';
+import { getCacheStats as getBasicCacheStats, clearAllAICache } from '../services/RedisCache';
 
 console.log('[DEBUG] 🔄 multiAIRoutes.ts - Starting module load...');
 

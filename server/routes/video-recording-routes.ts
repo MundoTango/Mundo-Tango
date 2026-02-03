@@ -7,7 +7,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { videoRecordingService, JourneyType } from '../services/video/VideoRecordingService';
+import { videoRecordingService, JourneyType } from '../services/VideoRecordingService';
 
 const router = Router();
 

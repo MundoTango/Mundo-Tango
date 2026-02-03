@@ -20,7 +20,7 @@ import { authenticateToken, type AuthRequest } from '../middleware/auth';
 import { 
   workflowExecutionService, 
   type ExecuteWorkflowRequest 
-} from '../services/orchestration/WorkflowExecutionService';
+} from '../services/WorkflowExecutionService';
 import { z } from 'zod';
 
 const router = Router();

@@ -4,14 +4,14 @@ import { db } from '@shared/db';
 import { users, eventScrapingSources, scrapedEvents, scrapedCommunityData, events, groups } from '@shared/schema';
 import { eq, sql, desc, and, gte, isNull } from 'drizzle-orm';
 import { scrapingOrchestrator } from '../agents/scraping/masterOrchestrator.ts';
-import { cityGroupEnrichmentService } from '../services/scraping/CityGroupEnrichmentService.ts';
+import { cityGroupEnrichmentService } from '../services/CityGroupEnrichmentService';
 import { deduplicator } from '../agents/scraping/deduplicator.ts';
-import { rssFeedService } from '../services/scraping/RSSFeedService.ts';
-import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper.ts';
-import { unifiedEventScraper } from '../services/scraping/UnifiedEventScraper.ts';
-import { scrapedEventIngestionService } from '../services/ScrapedEventIngestionService.ts';
+import { rssFeedService } from '../services/RSSFeedService';
+import { hoyMilongaScraper } from '../services/HoyMilongaScraper';
+import { unifiedEventScraper } from '../services/UnifiedEventScraper';
+import { scrapedEventIngestionService } from '../services/ScrapedEventIngestionService';
 import { venueScraper } from '../agents/scraping/VenueScraper.ts';
-import { geocodingService } from '../services/GeocodingService.ts';
+import { geocodingService } from '../services/GeocodingService';
 
 const router = Router();
 

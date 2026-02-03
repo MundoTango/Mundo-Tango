@@ -23,9 +23,9 @@ import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
 import { eq } from 'drizzle-orm';
 import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from './subpageDiscovery';
-import { languageAwareFieldMapper, SupportedLanguage } from '../../services/scraping/LanguageAwareFieldMapper';
-import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
-import { attachParticipantProfiles } from '../../services/scraping/ParticipantProfileHelper';
+import { languageAwareFieldMapper, SupportedLanguage } from '../../services/LanguageAwareFieldMapper';
+import { detailDiscoveryService } from '../../services/DetailDiscoveryService';
+import { attachParticipantProfiles } from '../../services/ParticipantProfileHelper';
 
 interface TangoCatJSONEvent {
   id: number;

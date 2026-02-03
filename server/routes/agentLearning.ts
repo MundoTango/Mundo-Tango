@@ -6,9 +6,9 @@
  */
 
 import { Router } from 'express';
-import { agentKnowledgeLoader, LearningReport } from '../services/intelligence/AgentKnowledgeLoader';
-import { recursiveContextService } from '../services/intelligence/RecursiveContextService';
-import { AgentLearningService } from '../services/learning/AgentLearningService';
+import { agentKnowledgeLoader, LearningReport } from '../services/AgentKnowledgeLoader';
+import { recursiveContextService } from '../services/RecursiveContextService';
+import { AgentLearningService } from '../services/AgentLearningService';
 import { db } from '../db';
 import { agentExecutions, agents } from '@shared/schema';
 import { desc, count } from 'drizzle-orm';

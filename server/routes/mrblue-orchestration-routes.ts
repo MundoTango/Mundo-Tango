@@ -15,10 +15,10 @@
 
 import { Router, type Request, type Response } from 'express';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
-import { agentEventBus, type ErrorDetectedEvent } from '../services/mrBlue/AgentEventBus';
-import { progressTrackingAgent } from '../services/mrBlue/ProgressTrackingAgent';
-import { agentOrchestrator, type Agent } from '../services/mrBlue/AgentOrchestrator';
-import { commitChanges, type CommitRequest } from '../services/mrBlue/gitCommitGenerator';
+import { agentEventBus, type ErrorDetectedEvent } from '../services/AgentEventBus';
+import { progressTrackingAgent } from '../services/ProgressTrackingAgent';
+import { agentOrchestrator, type Agent } from '../services/AgentOrchestrator';
+import { commitChanges, type CommitRequest } from '../services/gitCommitGenerator';
 import { z } from 'zod';
 
 const router = Router();
@@ -460,9 +460,9 @@ router.get('/agents', authenticateToken, (req: Request, res: Response) => {
 
 // ==================== A2A PROTOCOL ENDPOINTS (NOV 20, 2025) ====================
 
-import { a2aProtocolService } from '../services/orchestration/A2AProtocolService';
-import { orchestratorAgent } from '../services/orchestration/OrchestratorAgent';
-import { agentCardRegistry } from '../services/orchestration/AgentCardRegistry';
+import { a2aProtocolService } from '../services/A2AProtocolService';
+import { orchestratorAgent } from '../services/OrchestratorAgent';
+import { agentCardRegistry } from '../services/AgentCardRegistry';
 import type { A2AMessage } from '../../shared/types/a2a';
 
 /**
@@ -578,7 +578,7 @@ router.get('/stats', authenticateToken, async (req: Request, res: Response) => {
 
 // ==================== BROWSER AUTOMATION (Agent #38) ====================
 
-import { browserAutomationService } from '../services/mrBlue/BrowserAutomationService';
+import { browserAutomationService } from '../services/BrowserAutomationService';
 
 /**
  * GET /api/v1/orchestration/browser-automation/recordings

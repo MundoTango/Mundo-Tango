@@ -1,6 +1,6 @@
 import { Worker, Job } from 'bullmq';
 import IORedis from 'ioredis';
-import { legalOrchestrator } from '../services/legal/LegalOrchestrator';
+import { legalOrchestrator } from '../services/LegalOrchestrator';
 
 // Only create Redis connection if REDIS_URL is configured
 const connection = process.env.REDIS_URL ? new IORedis(process.env.REDIS_URL, {

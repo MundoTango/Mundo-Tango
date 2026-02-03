@@ -18,7 +18,7 @@
  */
 
 import { Request, Response, NextFunction } from "express";
-import { aiGuardrails } from "../services/quality/aiGuardrails";
+import { aiGuardrails } from "../services/aiGuardrails";
 import { logInfo, logWarn, logError } from "./logger";
 import { z } from "zod";
 

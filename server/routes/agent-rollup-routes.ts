@@ -12,8 +12,8 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { agentKnowledgeSync } from '../services/intelligence/AgentKnowledgeSync';
-import { intelligenceBase } from '../services/intelligence/MBMDIntelligenceBase';
+import { agentKnowledgeSync } from '../services/AgentKnowledgeSync';
+import { intelligenceBase } from '../services/MBMDIntelligenceBase';
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import { Router, type Request, Response } from "express";
-import { planTrackerService } from "../services/mrBlue/PlanTrackerService";
+import { planTrackerService } from "../services/PlanTrackerService";
 import { insertPlanProgressSchema } from "../../shared/schema";
 import { z } from "zod";
 

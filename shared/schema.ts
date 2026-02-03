@@ -20097,6 +20097,13 @@ export const userFeedback = pgTable("user_feedback", {
   playwrightVideoUrl: text("playwright_video_url"),
   relatedMessageId: integer("related_message_id"),
   selectedElement: varchar("selected_element", { length: 500 }),
+  attachments: jsonb("attachments").$type<Array<{
+    name: string;
+    type: string;
+    data?: string;
+    url?: string;
+    isAutoCapture?: boolean;
+  }>>(),
   resolvedAt: timestamp("resolved_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

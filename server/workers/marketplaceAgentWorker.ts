@@ -1,6 +1,6 @@
 import { Worker, Job, Queue } from "bullmq";
 import Redis from "ioredis";
-import { MarketplaceOrchestrator } from "../services/marketplace/MarketplaceOrchestrator";
+import { MarketplaceOrchestrator } from "../services/MarketplaceOrchestrator";
 
 // Only create Redis connection if REDIS_URL is explicitly set
 const connection = process.env.REDIS_URL 

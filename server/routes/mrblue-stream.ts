@@ -11,13 +11,13 @@
  */
 
 import { Router, type Request, Response } from "express";
-import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
+import { GroqService, GROQ_MODELS } from "../services/GroqService";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
-import { vibeCodeApplier } from "../services/mrBlue/VibeCodeApplier";
-import { agentCommunication } from "../services/mrBlue/AgentCommunication";
-import type { StyleChange } from "../services/mrBlue/agents/BasePageAgent";
+import { vibeCodeApplier } from "../services/VibeCodeApplier";
+import { agentCommunication } from "../services/AgentCommunication";
+import type { StyleChange } from "../services/BasePageAgent";
 
 const router = Router();
 

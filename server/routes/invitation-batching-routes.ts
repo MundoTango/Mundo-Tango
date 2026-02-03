@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { InvitationBatchingService } from '../services/invitations/InvitationBatchingService';
+import { InvitationBatchingService } from '../services/InvitationBatchingService';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { z } from 'zod';
 import { Response } from 'express';

@@ -17,7 +17,7 @@ import * as cheerio from 'cheerio';
 import { db } from '@shared/db';
 import { users, venues } from '@shared/schema';
 import { eq, ilike, or } from 'drizzle-orm';
-import { languageAwareFieldMapper, SupportedLanguage } from '../../services/scraping/LanguageAwareFieldMapper';
+import { languageAwareFieldMapper, SupportedLanguage } from '../../services/LanguageAwareFieldMapper';
 
 interface VenueData {
   name: string;

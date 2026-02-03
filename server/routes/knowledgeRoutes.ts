@@ -10,8 +10,8 @@ import { Router, type Response } from "express";
 import { authenticateToken, type AuthRequest, requireRoleLevel } from "../middleware/auth";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
-import { knowledgeGraphService } from "../services/knowledge/knowledgeGraphService";
-import { LearningCoordinatorService } from "../services/learning/learningCoordinator";
+import { knowledgeGraphService } from "../services/knowledgeGraphService";
+import { LearningCoordinator } from "../services/learningCoordinator";
 import { db } from "../../shared/db";
 import { 
   knowledgeGraphNodes,
@@ -86,7 +86,7 @@ router.post("/search", authenticateToken, async (req: AuthRequest, res: Response
   try {
     const search = semanticSearchSchema.parse(req.body);
 
-    const results = await LearningCoordinatorService.searchKnowledge(
+    const results = await LearningCoordinator.searchKnowledge(
       search.query,
       search.limit
     );

@@ -11,6 +11,7 @@
 
 import { Router, Request, Response } from "express";
 import { taskExecutorService, isGodLevelUser } from "../services/mrBlue/TaskExecutorService";
+import { authenticateToken, type AuthRequest } from "../middleware/auth";
 
 const router = Router();
 

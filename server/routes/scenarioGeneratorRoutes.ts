@@ -4,7 +4,7 @@
  */
 
 import { Router, Response } from "express";
-import { scenarioGenerator } from "../services/volunteer/scenarioGenerator";
+import { scenarioGenerator } from "../services/scenarioGenerator";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 

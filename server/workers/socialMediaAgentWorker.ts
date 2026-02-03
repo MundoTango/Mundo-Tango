@@ -1,11 +1,11 @@
 import { Worker, Job } from 'bullmq';
 import { redisConnection } from '../config/redis';
-import { contentGenerator, ContentGenerationRequest } from '../services/social/ContentGenerator';
-import { postingTimeOptimizer, OptimalTimingRequest } from '../services/social/PostingTimeOptimizer';
-import { crossPlatformScheduler, SchedulePostRequest } from '../services/social/CrossPlatformScheduler';
-import { engagementAnalyzer } from '../services/social/EngagementAnalyzer';
-import { marketingAssistant } from '../services/social/MarketingAssistant';
-import { socialMediaOrchestrator, WorkflowRequest } from '../services/social/SocialMediaOrchestrator';
+import { contentGenerator, ContentGenerationRequest } from '../services/ContentGenerator';
+import { postingTimeOptimizer, OptimalTimingRequest } from '../services/PostingTimeOptimizer';
+import { crossPlatformScheduler, SchedulePostRequest } from '../services/CrossPlatformScheduler';
+import { engagementAnalyzer } from '../services/EngagementAnalyzer';
+import { marketingAssistant } from '../services/MarketingAssistant';
+import { socialMediaOrchestrator, WorkflowRequest } from '../services/SocialMediaOrchestrator';
 
 export type SocialMediaJobType =
   | 'generate-content'

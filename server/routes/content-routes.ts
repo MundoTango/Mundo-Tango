@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { facelessContentService, CONTENT_TEMPLATES } from '../services/content/FacelessContentService';
+import { facelessContentService, CONTENT_TEMPLATES } from '../services/FacelessContentService';
 
 const router = Router();
 

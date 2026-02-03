@@ -15,10 +15,10 @@
  * - Self-evaluation triggering learning when performance drops
  */
 
-import { AgentLearningService } from './services/learning/AgentLearningService';
-import { PatternRecognition } from './services/learning/PatternRecognition';
-import { LearningRetentionService } from './services/mrBlue/LearningRetentionService';
-import type { AgentExecutionResult } from './services/learning/AgentLearningService';
+import { AgentLearningService } from './services/AgentLearningService';
+import { PatternRecognition } from './services/PatternRecognition';
+import { LearningRetentionService } from './services/LearningRetentionService';
+import type { AgentExecutionResult } from './services/AgentLearningService';
 
 // ============================================================================
 // TEST CONFIGURATION

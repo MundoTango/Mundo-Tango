@@ -1,6 +1,6 @@
 import { Router } from "express";
 import type { IStorage } from "./storage";
-import { resumeParser } from "./services/resume-parser";
+import { parseResume } from "./services/resume-parser";
 import { detectSkillSignals, matchVolunteerToTasks, generateClarifierQuestions } from "./algorithms/signal-detection";
 import { profileEnrichmentService } from "./services/profile-enrichment";
 import Groq from "groq-sdk";

@@ -8,7 +8,7 @@ import {
   taskQueue,
   executeCommand,
   handleWebhook,
-} from "../services/mrBlue/TaskQueueService";
+} from "../services/TaskQueueService";
 import { authenticateToken } from "../middleware/auth";
 
 const router = Router();

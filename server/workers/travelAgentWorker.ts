@@ -1,10 +1,10 @@
 import { Worker, Job } from 'bullmq';
-import { itineraryOptimizer } from '../services/travel/ItineraryOptimizer';
-import { expenseOptimizer } from '../services/travel/ExpenseOptimizer';
-import { travelMatcher } from '../services/travel/TravelMatcher';
-import { accommodationFinder } from '../services/travel/AccommodationFinder';
-import { flightHunter } from '../services/travel/FlightHunter';
-import { localRecommendations } from '../services/travel/LocalRecommendations';
+import { itineraryOptimizer } from '../services/ItineraryOptimizer';
+import { expenseOptimizer } from '../services/ExpenseOptimizer';
+import { travelMatcher } from '../services/TravelMatcher';
+import { accommodationFinder } from '../services/AccommodationFinder';
+import { flightHunter } from '../services/FlightHunter';
+import { localRecommendations } from '../services/LocalRecommendations';
 
 const connection = {
   host: process.env.REDIS_HOST || 'localhost',

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticateToken, requireRoleLevel, AuthRequest } from '../middleware/auth';
 import { SelfHealingService } from '../services/SelfHealingService';
-import { AgentOrchestrationService } from '../services/self-healing';
+import { AgentOrchestrationService } from '../services/AgentOrchestrationService';
 import { storage } from '../storage';
 import { z } from 'zod';
 import { THE_PLAN_PAGES } from '@shared/thePlanPages';

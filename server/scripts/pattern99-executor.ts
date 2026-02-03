@@ -8,7 +8,7 @@
  * through the proper validation pipeline.
  */
 
-import { mrBlueInternalExecutor } from '../services/mrBlue/MrBlueInternalExecutor';
+import { mrBlueInternalExecutor } from '../services/MrBlueInternalExecutor';
 
 interface TamasBug {
   id: string;

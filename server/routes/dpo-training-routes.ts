@@ -21,10 +21,10 @@
 
 import type { Express, Request, Response } from 'express';
 import { z } from 'zod';
-import { DPOTrainer } from '../services/ai/DPOTrainer';
-import { CurriculumManager } from '../services/ai/CurriculumManager';
-import { GEPAEvolver } from '../services/ai/GEPAEvolver';
-import { LIMICurator } from '../services/ai/LIMICurator';
+import { DPOTrainer } from '../services/DPOTrainer';
+import { CurriculumManager } from '../services/CurriculumManager';
+import { GEPAEvolver } from '../services/GEPAEvolver';
+import { LIMICurator } from '../services/LIMICurator';
 import { db } from '../db';
 import { routingDecisions } from '@shared/schema';
 import { eq } from 'drizzle-orm';

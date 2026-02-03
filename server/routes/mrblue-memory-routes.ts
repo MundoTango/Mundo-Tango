@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { memoryService } from '../services/mrBlue/MemoryService';
+import { memoryService } from '../services/MemoryService';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 import { db } from '../db';
 import { userMemories, conversationSummaries, userPreferences } from '@shared/schema';

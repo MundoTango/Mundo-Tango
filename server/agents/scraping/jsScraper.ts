@@ -13,8 +13,8 @@
 
 import { db } from '@shared/db';
 import { scrapedEvents, scrapedCommunityData } from '@shared/schema';
-import { languageAwareFieldMapper, SupportedLanguage } from '../../services/scraping/LanguageAwareFieldMapper';
-import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
+import { languageAwareFieldMapper, SupportedLanguage } from '../../services/LanguageAwareFieldMapper';
+import { detailDiscoveryService } from '../../services/DetailDiscoveryService';
 
 type Browser = import('playwright').Browser;
 type Page = import('playwright').Page;

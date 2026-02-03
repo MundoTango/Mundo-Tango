@@ -250,7 +250,7 @@ const CURATED_CITIES: Array<{ city: string; country: string }> = [
 
 async function geocodeCity(city: string, country: string): Promise<{ lat: number; lng: number } | null> {
   try {
-    const { geocodingService } = await import('../services/GeocodingService');
+    const { geocodingService } = await import('../services/domains/location/GeocodingService');
     return await geocodingService.geocodeCity(city, country);
   } catch (error) {
     console.warn(`[Geocode] Failed for ${city}, ${country}:`, error);

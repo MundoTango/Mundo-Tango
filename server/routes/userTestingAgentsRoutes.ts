@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { SessionSchedulerAgent } from "../services/userTesting/sessionSchedulerAgent";
-import { LiveObserverAgent } from "../services/userTesting/liveObserverAgent";
-import { BugDetectorAgent } from "../services/userTesting/bugDetectorAgent";
-import { UxPatternAgent } from "../services/userTesting/uxPatternAgent";
+import { SessionSchedulerAgent } from "../services/sessionSchedulerAgent";
+import { LiveObserverAgent } from "../services/liveObserverAgent";
+import { BugDetectorAgent } from "../services/bugDetectorAgent";
+import { UxPatternAgent } from "../services/uxPatternAgent";
 
 const router = Router();
 

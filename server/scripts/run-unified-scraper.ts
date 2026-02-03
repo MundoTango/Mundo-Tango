@@ -3,7 +3,7 @@
  * MB.MD Pattern: AI-powered scraping from all configured sources
  */
 
-import { unifiedEventScraper } from '../services/scraping/UnifiedEventScraper';
+import { unifiedEventScraper } from '../services/UnifiedEventScraper';
 import { scrapedEventIngestionService } from '../services/ScrapedEventIngestionService';
 import { db } from '@shared/db';
 import { scrapedEvents, events, groups, eventScrapingSources } from '@shared/schema';

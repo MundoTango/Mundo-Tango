@@ -1,9 +1,9 @@
 import { Router, type Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth';
-import { didVideoService } from '../services/premium/didVideoService';
-import { elevenlabsVoiceService } from '../services/premium/elevenlabsVoiceService';
-import { openaiRealtimeService } from '../services/premium/openaiRealtimeService';
-import { costOptimizerService } from '../services/premium/costOptimizerService';
+import { didVideoService } from '../services/didVideoService';
+import { elevenlabsVoiceService } from '../services/elevenlabsVoiceService';
+import { openaiRealtimeService } from '../services/openaiRealtimeService';
+import { costOptimizerService } from '../services/costOptimizerService';
 
 const router = Router();
 

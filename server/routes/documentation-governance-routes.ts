@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { governanceService } from '../services/documentation/governanceService';
+import { governanceService } from '../services/governanceService';
 import { authenticateToken, AuthRequest, requireRoleLevel } from '../middleware/auth';
 import { z } from 'zod';
 

@@ -17,7 +17,7 @@ import crypto from 'crypto';
 import { db } from '../db';
 import { users } from '../../shared/schema';
 import { eq } from 'drizzle-orm';
-import { FacebookMessengerService } from '../services/facebook/FacebookMessengerService';
+import { FacebookMessengerService } from '../services/FacebookMessengerService';
 
 const router = Router();
 

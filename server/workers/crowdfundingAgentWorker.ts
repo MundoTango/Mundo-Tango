@@ -1,6 +1,6 @@
 import { Worker, Job } from 'bullmq';
 import IORedis from 'ioredis';
-import { crowdfundingOrchestrator } from '../services/crowdfunding/CrowdfundingOrchestrator';
+import { crowdfundingOrchestrator } from '../services/CrowdfundingOrchestrator';
 import { db } from '@shared/db';
 import { fundingCampaigns } from '@shared/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';

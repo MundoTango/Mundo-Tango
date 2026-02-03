@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
-import { n8nWebhookService, N8nWebhookPayload } from '../services/messaging/N8nWebhookService';
+import { n8nWebhookService, N8nWebhookPayload } from '../services/N8nWebhookService';
 import { db } from '@shared/db';
 import { socialMessages } from '@shared/schema';
 import { desc, eq, sql } from 'drizzle-orm';

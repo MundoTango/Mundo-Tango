@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
-import { legalOrchestrator } from '../services/legal/LegalOrchestrator';
+import { legalOrchestrator } from '../services/LegalOrchestrator';
 import type { LegalJobData } from '../workers/legalAgentWorker';
 import { z } from 'zod';
 

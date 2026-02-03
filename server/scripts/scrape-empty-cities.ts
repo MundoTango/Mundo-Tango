@@ -3,7 +3,7 @@
  * Uses UnifiedEventScraper with stored source URLs
  */
 
-import { unifiedEventScraper } from '../services/scraping/UnifiedEventScraper';
+import { unifiedEventScraper } from '../services/UnifiedEventScraper';
 import { db } from '@shared/db';
 import { sql } from 'drizzle-orm';
 

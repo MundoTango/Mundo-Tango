@@ -9,7 +9,7 @@ import {
   getCommitHistory, 
   hasUncommittedChanges,
   generateCommitMessage 
-} from '../services/mrBlue/gitCommitGenerator';
+} from '../services/gitCommitGenerator';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();

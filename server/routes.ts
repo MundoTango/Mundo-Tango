@@ -99,8 +99,8 @@ import agentLearningRoutes from "./routes/agentLearning";
 import orchestrationPhasesRoutes from "./routes/orchestrationPhases";
 import openSourceIntegrationsRoutes from "./routes/openSourceIntegrations";
 import aiEnhanceRoutes from "./routes/ai-enhance";
-import { DataCompletenessValidator } from "./services/validation/DataCompletenessValidator";
-import { ComponentPRDRegistry } from "./services/validation/ComponentPRDRegistry";
+import { DataCompletenessValidator } from "./services/DataCompletenessValidator";
+import { ComponentPRDRegistry } from "./services/ComponentPRDRegistry";
 import userSearchRoutes from "./routes/user-search";
 import locationRoutes from "./routes/locations";
 import locationsRoutes from "./routes/locations-routes";
@@ -172,6 +172,7 @@ import travelAgentsRoutes from "./routes/travelAgentsRoutes";
 import userTestingAgentsRoutes from "./routes/userTestingAgentsRoutes";
 import legalAgentsRoutes from "./routes/legalAgentsRoutes";
 import gdprRoutes from "./routes/gdpr";
+import hubspotRoutes from "./routes/hubspot-routes";
 import securityRoutes from "./routes/security-routes";
 import gdprComplianceRoutes from "./routes/gdpr-routes";
 import legalRoutes from "./routes/legal-routes";
@@ -1260,6 +1261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register GDPR routes (data export, account deletion, consent management)
   app.use(gdprRoutes);
+  app.use("/api/admin/hubspot", hubspotRoutes); // HubSpot CRM sync
   app.use(securityRoutes); // P0 #7: 2FA
   app.use(gdprComplianceRoutes); // P0 #5: Data Export
   app.use(legalRoutes); // P0 #9: Code of Conduct
@@ -10735,9 +10737,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   console.log('[Server] Loading AI Services Consolidation routes...');
   
-  const { MeshyService } = await import('./services/ai/MeshyService');
-  const { LumaService } = await import('./services/ai/LumaService');
-  const { HeyGenService } = await import('./services/ai/HeyGenService');
+  const { MeshyService } = await import('./services/MeshyService');
+  const { LumaService } = await import('./services/LumaService');
+  const { HeyGenService } = await import('./services/HeyGenService');
   const { PomodoroService } = await import('./services/PomodoroService');
   const { ProductivityAnalyticsService } = await import('./services/ProductivityAnalyticsService');
   const { AIBudgetBuilder } = await import('./services/AIBudgetBuilder');

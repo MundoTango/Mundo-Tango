@@ -1,13 +1,13 @@
 import { Router, type Request, type Response } from "express";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
-import { FraudDetectionAgent } from "../services/marketplace/FraudDetection";
-import { DynamicPricingAgent } from "../services/marketplace/DynamicPricing";
-import { RecommendationEngine } from "../services/marketplace/RecommendationEngine";
-import { ReviewAnalyzerAgent } from "../services/marketplace/ReviewAnalyzer";
-import { InventoryManagerAgent } from "../services/marketplace/InventoryManager";
-import { SellerSupportAgent } from "../services/marketplace/SellerSupport";
-import { TransactionMonitorAgent } from "../services/marketplace/TransactionMonitor";
-import { QualityAssuranceAgent } from "../services/marketplace/QualityAssurance";
+import { FraudDetectionAgent } from "../services/FraudDetection";
+import { DynamicPricingAgent } from "../services/DynamicPricing";
+import { RecommendationEngine } from "../services/RecommendationEngine";
+import { ReviewAnalyzerAgent } from "../services/ReviewAnalyzer";
+import { InventoryManagerAgent } from "../services/InventoryManager";
+import { SellerSupportAgent } from "../services/SellerSupport";
+import { TransactionMonitorAgent } from "../services/TransactionMonitor";
+import { QualityAssuranceAgent } from "../services/QualityAssurance";
 import {
   queueFraudCheck,
   queuePriceOptimization,

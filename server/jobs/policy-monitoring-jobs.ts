@@ -5,8 +5,8 @@
 
 import { Queue } from 'bullmq';
 import { redisConnection } from '../config/redis';
-import { SocialMediaPolicyMonitor } from '../services/monitoring/SocialMediaPolicyMonitor';
-import { RateLimitTracker, Platform } from '../services/monitoring/RateLimitTracker';
+import { SocialMediaPolicyMonitor } from '../services/SocialMediaPolicyMonitor';
+import { RateLimitTracker, Platform } from '../services/RateLimitTracker';
 import type { PolicyMonitorJobData } from '../workers/policy-monitor-worker';
 
 export class PolicyMonitoringJobs {

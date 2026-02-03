@@ -6,7 +6,7 @@
  * The agents/scraping version requires sourceId but services version doesn't
  */
 
-import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper';
+import { hoyMilongaScraper } from '../services/HoyMilongaScraper';
 import { TangoCatScraper } from '../agents/scraping/TangoCatScraper';
 import { TangoMangoScraper } from '../agents/scraping/TangoMangoScraper';
 import { TangoFestivalsScraper } from '../agents/scraping/TangoFestivalsScraper';

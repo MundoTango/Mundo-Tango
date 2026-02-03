@@ -9,7 +9,7 @@
  * - Action-Claim Mismatch is an anti-pattern
  */
 
-import { GlobalKnowledgeBase } from "../services/learning/GlobalKnowledgeBase";
+import { GlobalKnowledgeBase } from "../services/GlobalKnowledgeBase";
 
 async function broadcastLesson44() {
   console.log("\n=== Broadcasting Training Lesson #44 ===\n");

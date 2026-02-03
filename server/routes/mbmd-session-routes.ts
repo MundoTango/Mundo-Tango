@@ -6,10 +6,10 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { mbmdSessionService } from '../services/mrBlue/MBMDSessionService';
-import { gitHubPracticesAgent } from '../services/mrBlue/agents/leadership/GitHubPracticesAgent';
-import { planTrackerAgent } from '../services/mrBlue/agents/leadership/PlanTrackerAgent';
-import { mrBlueCommandExecutor } from '../services/mrBlue/MrBlueCommandExecutor';
+import { mbmdSessionService } from '../services/MBMDSessionService';
+import { gitHubPracticesAgent } from '../services/GitHubPracticesAgent';
+import { planTrackerAgent } from '../services/PlanTrackerAgent';
+import { mrBlueCommandExecutor } from '../services/MrBlueCommandExecutor';
 
 const router = Router();
 

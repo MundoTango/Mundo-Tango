@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { RoleConfirmationService } from '../services/reputation/RoleConfirmationService';
+import { RoleConfirmationService } from '../services/RoleConfirmationService';
 import { authenticateToken } from '../middleware/auth';
 import { z } from 'zod';
 

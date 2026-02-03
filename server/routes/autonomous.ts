@@ -14,8 +14,8 @@
 import { Router, type Request, Response } from "express";
 import { authenticateToken, requireRoleLevel, type AuthRequest } from "../middleware/auth";
 import { traceRoute } from "../metrics/tracing";
-import { mbmdEngine } from "../services/mrBlue/mbmdEngine";
-import { CodeGenerator } from "../services/mrBlue/CodeGenerator";
+import { mbmdEngine } from "../services/mbmdEngine";
+import { CodeGenerator } from "../services/CodeGenerator";
 const codeGenerator = new CodeGenerator();
 import { validator } from "../services/mrBlue/validator";
 import { autonomousAgent } from "../services/mrBlue/autonomousAgent";
@@ -26,9 +26,9 @@ import { broadcastToUser } from "../services/websocket";
 import { db } from "../storage";
 import { auditLogs, autonomousTasks } from "../../shared/schema";
 import { eq, and, gte, count, desc } from "drizzle-orm";
-import { commitChanges, hasUncommittedChanges, getCommitHistory } from "../services/mrBlue/gitCommitGenerator";
-import { changeGroupManager, AtomicChangeGroup } from "../services/mrBlue/atomicChanges";
-import { fileDependencyTracker } from "../services/mrBlue/fileDependencyTracker";
+import { commitChanges, hasUncommittedChanges, getCommitHistory } from "../services/gitCommitGenerator";
+import { changeGroupManager, AtomicChangeGroup } from "../services/atomicChanges";
+import { fileDependencyTracker } from "../services/fileDependencyTracker";
 
 const router = Router();
 

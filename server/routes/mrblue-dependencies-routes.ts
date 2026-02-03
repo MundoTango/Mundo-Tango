@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { fileDependencyTracker } from '../services/mrBlue/fileDependencyTracker';
+import { fileDependencyTracker } from '../services/fileDependencyTracker';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();

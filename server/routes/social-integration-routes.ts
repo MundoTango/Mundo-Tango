@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
-import { MultiPlatformScraper, validateFacebookDYIData } from '../services/facebook/MultiPlatformScraper';
-import { ClosenessCalculator } from '../services/facebook/ClosenessCalculator';
+import { MultiPlatformScraper, validateFacebookDYIData } from '../services/MultiPlatformScraper';
+import { ClosenessCalculator } from '../services/ClosenessCalculator';
 import multer from 'multer';
 
 const router = Router();

@@ -9,8 +9,8 @@
 
 import type { Express, Request, Response } from 'express';
 import { z } from 'zod';
-import { queryWithArbitrage } from '../services/ai/UnifiedAIOrchestrator';
-import { CostTracker } from '../services/ai/CostTracker';
+import { queryWithArbitrage } from '../services/UnifiedAIOrchestrator';
+import { CostTracker } from '../services/CostTracker';
 import { db } from '../db';
 import { routingDecisions } from '@shared/schema';
 import { eq } from 'drizzle-orm';

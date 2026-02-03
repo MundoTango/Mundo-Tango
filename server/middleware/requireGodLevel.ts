@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { approvalService } from '../services/godLevel/approvalService';
-import { quotaService, QuotaType } from '../services/godLevel/quotaService';
+import { approvalService } from '../services/approvalService';
+import { quotaService, QuotaType } from '../services/quotaService';
 
 export interface GodLevelRequest extends Request {
   user?: {

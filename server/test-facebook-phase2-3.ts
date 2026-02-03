@@ -5,8 +5,8 @@
  * Run with: npx tsx server/test-facebook-phase2-3.ts
  */
 
-import { FacebookMessengerService } from './services/facebook/FacebookMessengerService';
-import { AIInviteGenerator } from './services/facebook/AIInviteGenerator';
+import { FacebookMessengerService } from './services/FacebookMessengerService';
+import { AIInviteGenerator } from './services/AIInviteGenerator';
 import crypto from 'crypto';
 
 async function runPhase2And3Tests() {

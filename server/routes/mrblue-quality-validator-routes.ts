@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { qualityValidatorAgent } from '../services/mrBlue/qualityValidatorAgent';
+import { qualityValidatorAgent } from '../services/qualityValidatorAgent';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();

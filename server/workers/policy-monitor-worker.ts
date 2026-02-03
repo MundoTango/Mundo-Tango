@@ -6,9 +6,9 @@
 
 import { Worker, Job } from 'bullmq';
 import { redisConnection } from '../config/redis';
-import { SocialMediaPolicyMonitor } from '../services/monitoring/SocialMediaPolicyMonitor';
-import { RateLimitTracker, Platform } from '../services/monitoring/RateLimitTracker';
-import { PolicyComplianceChecker } from '../services/monitoring/PolicyComplianceChecker';
+import { SocialMediaPolicyMonitor } from '../services/SocialMediaPolicyMonitor';
+import { RateLimitTracker, Platform } from '../services/RateLimitTracker';
+import { PolicyComplianceChecker } from '../services/PolicyComplianceChecker';
 
 export type PolicyMonitorJobType =
   | 'rate_limit_check'

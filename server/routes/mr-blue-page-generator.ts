@@ -4,7 +4,7 @@
  */
 
 import { Router } from 'express';
-import { pageGeneratorService } from '../services/page-generator/PageGeneratorService';
+import { pageGeneratorService } from '../services/PageGeneratorService';
 
 const router = Router();
 

@@ -4,8 +4,8 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { computerUseService } from '../services/mrBlue/ComputerUseService';
-import { browserAutomationService } from '../services/mrBlue/BrowserAutomationService';
+import { computerUseService } from '../services/ComputerUseService';
+import { browserAutomationService } from '../services/BrowserAutomationService';
 import { authenticateToken, requireRoleLevel, type AuthRequest } from '../middleware/auth';
 import { db } from '@db';
 import { computerUseTasks, computerUseScreenshots } from '@shared/schema';

@@ -123,6 +123,13 @@ const feedbackSchema = z.object({
   currentPage: z.string().optional(),
   sessionSnapshot: z.any().optional(),
   priority: z.enum(["low", "medium", "high", "critical"]).optional(),
+  attachments: z.array(z.object({
+    name: z.string(),
+    type: z.string(),
+    data: z.string().optional(),
+    url: z.string().optional(),
+    isAutoCapture: z.boolean().optional(),
+  })).optional(),
 });
 
 router.post("/feedback", authenticateToken, async (req: Request, res: Response) => {

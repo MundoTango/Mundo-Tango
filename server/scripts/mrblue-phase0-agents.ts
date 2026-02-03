@@ -1,4 +1,4 @@
-import { MrBlueInternalExecutor } from '../services/mrBlue/MrBlueInternalExecutor';
+import { MrBlueInternalExecutor } from '../services/MrBlueInternalExecutor';
 
 async function verifyAgentOrchestration() {
   const executor = new MrBlueInternalExecutor();

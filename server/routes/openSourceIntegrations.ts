@@ -9,9 +9,9 @@
  */
 
 import { Router } from 'express';
-import { genAIAgentsService } from '../services/external/GenAIAgentsService';
-import { curriculumIngestionService } from '../services/external/CurriculumIngestionService';
-import { mediaWorkflowOrchestrator, ROLE_QUOTAS } from '../services/external/MediaWorkflowOrchestrator';
+import { genAIAgentsService } from '../services/GenAIAgentsService';
+import { curriculumIngestionService } from '../services/CurriculumIngestionService';
+import { mediaWorkflowOrchestrator, ROLE_QUOTAS } from '../services/MediaWorkflowOrchestrator';
 
 const router = Router();
 

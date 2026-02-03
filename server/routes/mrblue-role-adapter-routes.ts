@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { roleAdapterAgent } from '../services/mrBlue/roleAdapterAgent';
+import { roleAdapterAgent } from '../services/roleAdapterAgent';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();

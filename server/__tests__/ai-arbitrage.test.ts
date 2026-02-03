@@ -8,14 +8,14 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { TaskClassifier } from '../services/ai/TaskClassifier';
-import { ModelSelector } from '../services/ai/ModelSelector';
-import { CascadeExecutor } from '../services/ai/CascadeExecutor';
-import { CostTracker } from '../services/ai/CostTracker';
-import { DPOTrainer } from '../services/ai/DPOTrainer';
-import { CurriculumManager } from '../services/ai/CurriculumManager';
-import { GEPAEvolver } from '../services/ai/GEPAEvolver';
-import { LIMICurator } from '../services/ai/LIMICurator';
+import { TaskClassifier } from '../services/TaskClassifier';
+import { ModelSelector } from '../services/ModelSelector';
+import { CascadeExecutor } from '../services/CascadeExecutor';
+import { CostTracker } from '../services/CostTracker';
+import { DPOTrainer } from '../services/DPOTrainer';
+import { CurriculumManager } from '../services/CurriculumManager';
+import { GEPAEvolver } from '../services/GEPAEvolver';
+import { LIMICurator } from '../services/LIMICurator';
 
 // ============================================================================
 // TASK CLASSIFIER TESTS

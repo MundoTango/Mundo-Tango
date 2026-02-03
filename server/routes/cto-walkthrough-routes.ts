@@ -16,7 +16,7 @@ async function getChromium() {
   }
 }
 import fs from 'fs';
-import { selfHealingService, MBMD_PATTERNS as SH_PATTERNS } from '../services/mrBlue/SelfHealingService';
+import { selfHealingService, MBMD_PATTERNS as SH_PATTERNS } from '../services/SelfHealingService';
 
 const router = Router();
 

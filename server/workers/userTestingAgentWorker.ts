@@ -1,8 +1,8 @@
 import { Worker, Job } from 'bullmq';
-import { sessionOrchestrator } from '../services/userTesting/SessionOrchestrator';
-import { interactionAnalyzer } from '../services/userTesting/InteractionAnalyzer';
-import { insightExtractor } from '../services/userTesting/InsightExtractor';
-import { knowledgeBaseManager } from '../services/userTesting/KnowledgeBaseManager';
+import { sessionOrchestrator } from '../services/SessionOrchestrator';
+import { interactionAnalyzer } from '../services/InteractionAnalyzer';
+import { insightExtractor } from '../services/InsightExtractor';
+import { knowledgeBaseManager } from '../services/KnowledgeBaseManager';
 
 const connection = {
   host: process.env.REDIS_HOST || 'localhost',

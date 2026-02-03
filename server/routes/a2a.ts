@@ -9,9 +9,9 @@
 
 import { Router, type Request, type Response } from 'express';
 // MB.MD Pattern: Lazy-loaded to avoid circular dependencies
-// import { a2aProtocolService } from '../services/orchestration/A2AProtocolService';
-import { agentCardRegistry } from '../services/orchestration/AgentCardRegistry';
-import registerAllAgents from '../services/orchestration/registerAllAgents';
+// import { a2aProtocolService } from '../services/A2AProtocolService';
+import { agentCardRegistry } from '../services/AgentCardRegistry';
+import registerAllAgents from '../services/registerAllAgents';
 import type { A2AMessage } from '../../shared/types/a2a';
 import { v4 as uuidv4 } from 'uuid';
 

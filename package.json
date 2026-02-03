@@ -19,6 +19,7 @@
     "@daily-co/daily-js": "^0.85.0",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^5.2.2",
+    "@hubspot/api-client": "^13.4.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@lancedb/lancedb": "^0.23.0",
     "@langchain/core": "^1.1.12",

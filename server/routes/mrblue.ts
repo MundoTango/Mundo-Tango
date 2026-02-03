@@ -1,6 +1,6 @@
 import { Router, type Request, Response } from "express";
 import { authenticateToken } from "../middleware/auth";
-import { webProfileScraper } from "../services/mrBlue/WebsiteProfileScraper";
+import { webProfileScraper } from "../services/WebsiteProfileScraper";
 import rateLimit from "express-rate-limit";
 
 const router = Router();

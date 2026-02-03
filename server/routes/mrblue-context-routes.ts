@@ -6,7 +6,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { contextService } from '../services/mrBlue/ContextService';
+import { contextService } from '../services/ContextService';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { requireGodLevel } from '../middleware/requireGodLevel';
 

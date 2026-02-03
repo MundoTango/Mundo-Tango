@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { preferenceExtractor } from '../services/mrBlue/preferenceExtractor';
+import { preferenceExtractor } from '../services/preferenceExtractor';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();

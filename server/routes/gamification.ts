@@ -1,9 +1,9 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
-import * as pointsService from "../services/gamification/pointsService";
-import * as badgeService from "../services/gamification/badgeService";
-import * as leaderboardService from "../services/gamification/leaderboardService";
-import * as autonomyService from "../services/gamification/autonomyService";
+import * as pointsService from "../services/pointsService";
+import * as badgeService from "../services/badgeService";
+import * as leaderboardService from "../services/leaderboardService";
+import * as autonomyService from "../services/autonomyService";
 
 const router = Router();
 

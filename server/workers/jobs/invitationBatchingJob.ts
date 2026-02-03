@@ -1,5 +1,5 @@
 import { Job } from 'bullmq';
-import { InvitationBatchingService } from '../../services/invitations/InvitationBatchingService';
+import { InvitationBatchingService } from '../../services/InvitationBatchingService';
 import { db } from '../../db';
 import { invitationBatches } from '@shared/schema';
 import { eq } from 'drizzle-orm';

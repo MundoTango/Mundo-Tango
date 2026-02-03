@@ -6,7 +6,7 @@
  */
 
 import { Router, type Request, Response } from "express";
-import { vibeCodingMasterLoop } from "../services/mrBlue/VibeCodingMasterLoop";
+import { vibeCodingMasterLoop } from "../services/VibeCodingMasterLoop";
 import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
 import { agenticExecutor } from "../services/mrBlue/AgenticExecutor";
 import { optionalAuth, AuthRequest } from "../middleware/auth";

@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from 'express';
-import { LumaService } from '../../services/ai/LumaService';
+import { LumaService } from '../../services/LumaService';
 
 const lumaService = new LumaService();
 

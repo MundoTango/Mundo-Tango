@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
-import { reputationService } from "../services/reputation/ReputationService";
+import { reputationService } from "../services/ReputationService";
 import { insertProfessionalEndorsementSchema } from "../../shared/schema";
 import { z } from "zod";
 

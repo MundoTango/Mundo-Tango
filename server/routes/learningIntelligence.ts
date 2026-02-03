@@ -1,7 +1,7 @@
 import { Router, type Request, Response } from "express";
-import { learningCoordinator } from "../services/mrBlue/learningCoordinator";
-import { errorAnalysisAgent } from "../services/mrBlue/errorAnalysisAgent";
-import { solutionSuggesterAgent } from "../services/mrBlue/solutionSuggesterAgent";
+import { learningCoordinator } from "../services/learningCoordinator";
+import { errorAnalysisAgent } from "../services/errorAnalysisAgent";
+import { solutionSuggesterAgent } from "../services/solutionSuggesterAgent";
 import { db } from "@db";
 import { sessionBugsFound } from "@shared/schema";
 import { eq } from "drizzle-orm";

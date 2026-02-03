@@ -7,7 +7,7 @@ import { Router, type Request, Response } from "express";
 import { aiCodeGenerator } from "../services/aiCodeGenerator";
 import { gitService } from "../services/gitService";
 import { traceRoute } from "../metrics/tracing";
-import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
+import { GroqService, GROQ_MODELS } from "../services/GroqService";
 import * as path from "path";
 
 const router = Router();

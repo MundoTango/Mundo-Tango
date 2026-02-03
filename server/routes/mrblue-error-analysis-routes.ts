@@ -3,7 +3,7 @@ import { db } from "../db";
 import { errorPatterns, insertErrorPatternSchema } from "@shared/schema";
 import { eq, desc, sql } from "drizzle-orm";
 import { z } from "zod";
-import { contextService } from "../services/mrBlue/ContextService";
+import { contextService } from "../services/ContextService";
 
 const router = Router();
 

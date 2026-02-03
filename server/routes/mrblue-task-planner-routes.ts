@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { TaskPlanner } from '../services/mrBlue/TaskPlanner';
+import { TaskPlanner } from '../services/TaskPlanner';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();

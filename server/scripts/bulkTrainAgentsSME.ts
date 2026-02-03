@@ -7,7 +7,7 @@
  * Usage: tsx server/scripts/bulkTrainAgentsSME.ts
  */
 
-import { AgentSMETrainingService } from '../services/agent-sme/AgentSMETrainingService';
+import { AgentSMETrainingService } from '../services/AgentSMETrainingService';
 import { db } from '../../shared/db';
 import { agents } from '../../shared/schema';
 import { eq } from 'drizzle-orm';

@@ -20,7 +20,7 @@
  */
 
 import { Router, type Request, type Response } from "express";
-import { aiGuardrails } from "../services/quality/aiGuardrails";
+import { aiGuardrails } from "../services/aiGuardrails";
 import {
   preExecutionValidation,
   enforceCodeReview,

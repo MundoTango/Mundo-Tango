@@ -1,8 +1,8 @@
 import express from "express";
-import { approvalService } from "../services/godLevel/approvalService";
-import { quotaService } from "../services/godLevel/quotaService";
-import { costTrackerService } from "../services/godLevel/costTrackerService";
-import { notificationService } from "../services/godLevel/notificationService";
+import { approvalService } from "../services/approvalService";
+import { quotaService } from "../services/quotaService";
+import { costTrackerService } from "../services/costTrackerService";
+import { notificationService } from "../services/notificationService";
 import {
   requireGodLevel,
   requireAdmin,

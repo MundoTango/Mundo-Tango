@@ -23,9 +23,9 @@ import { apiRateLimiter } from "./middleware/security";
 import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
 import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
 import { PolicyMonitoringJobs } from "./jobs/policy-monitoring-jobs";
-import { recursiveContextService } from "./services/intelligence/RecursiveContextService";
-import { facelessContentService } from "./services/content/FacelessContentService";
-import { initCityCoordinateFix } from "./services/startup/cityCoordinateFix";
+import { recursiveContextService } from "./services/RecursiveContextService";
+import { facelessContentService } from "./services/FacelessContentService";
+import { initCityCoordinateFix } from "./services/cityCoordinateFix";
 // ============================================================================
 // SENTRY DISABLED: CSP VIOLATIONS FIX (MB.MD SUBAGENT 3)
 // Sentry was injecting 'unsafe-dynamic' and 'report-uri' causing 4891 CSP errors

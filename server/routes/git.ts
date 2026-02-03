@@ -4,7 +4,7 @@
  */
 
 import { Router } from 'express';
-import { AutonomousGitService } from '../services/git/AutonomousGitService';
+import { AutonomousGitService } from '../services/AutonomousGitService';
 import { authenticateToken } from '../middleware/auth';
 
 const router = Router();

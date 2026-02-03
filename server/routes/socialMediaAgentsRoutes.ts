@@ -2,11 +2,11 @@ import { Router } from 'express';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
-import { contentGenerator } from '../services/social/ContentGenerator';
-import { postingTimeOptimizer } from '../services/social/PostingTimeOptimizer';
-import { engagementAnalyzer } from '../services/social/EngagementAnalyzer';
-import { marketingAssistant } from '../services/social/MarketingAssistant';
-import { socialMediaOrchestrator } from '../services/social/SocialMediaOrchestrator';
+import { contentGenerator } from '../services/ContentGenerator';
+import { postingTimeOptimizer } from '../services/PostingTimeOptimizer';
+import { engagementAnalyzer } from '../services/EngagementAnalyzer';
+import { marketingAssistant } from '../services/MarketingAssistant';
+import { socialMediaOrchestrator } from '../services/SocialMediaOrchestrator';
 import type { SocialMediaJobData } from '../workers/socialMediaAgentWorker';
 
 const router = Router();

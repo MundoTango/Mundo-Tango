@@ -1,6 +1,8 @@
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
 import { eq, and, gt, desc, asc, or, ilike, inArray, sql, lt, gte, lte, ne, notInArray, not, like } from "drizzle-orm";
+import { ProfilesRepository } from './storage/repositories/profiles';
+import { SecurityRepository } from './storage/repositories/security';
 import {
   users,
   refreshTokens,
@@ -1663,6 +1665,10 @@ export interface IStorage {
 }
 
 export class DbStorage implements IStorage {
+  // Repository instances for delegation (MB.MD facade pattern)
+  private readonly profiles = new ProfilesRepository();
+  private readonly security = new SecurityRepository();
+
   async getUserById(id: number): Promise<SelectUser | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
     return result[0];
@@ -1723,51 +1729,28 @@ export class DbStorage implements IStorage {
   }
 
   async createRefreshToken(token: InsertRefreshToken): Promise<SelectRefreshToken> {
-    const result = await db.insert(refreshTokens).values(token).returning();
-    return result[0];
+    return this.security.createRefreshToken(token);
   }
-
   async getRefreshToken(token: string): Promise<SelectRefreshToken | undefined> {
-    const result = await db
-      .select()
-      .from(refreshTokens)
-      .where(and(
-        eq(refreshTokens.token, token),
-        gt(refreshTokens.expiresAt, new Date())
-      ))
-      .limit(1);
-    return result[0];
+    return this.security.getRefreshToken(token) ?? undefined;
   }
-
   async deleteRefreshToken(token: string): Promise<void> {
-    await db.delete(refreshTokens).where(eq(refreshTokens.token, token));
+    return this.security.deleteRefreshToken(token);
   }
-
   async deleteUserRefreshTokens(userId: number): Promise<void> {
-    await db.delete(refreshTokens).where(eq(refreshTokens.userId, userId));
+    return this.security.deleteUserRefreshTokens(userId);
   }
 
   async createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<SelectEmailVerificationToken> {
-    const result = await db.insert(emailVerificationTokens).values(token).returning();
-    return result[0];
+    return this.security.createEmailVerificationToken(token);
   }
-
   async getEmailVerificationToken(token: string): Promise<SelectEmailVerificationToken | undefined> {
-    const result = await db
-      .select()
-      .from(emailVerificationTokens)
-      .where(and(
-        eq(emailVerificationTokens.token, token),
-        gt(emailVerificationTokens.expiresAt, new Date())
-      ))
-      .limit(1);
-    return result[0];
+    return this.security.getEmailVerificationToken(token) ?? undefined;
   }
-
   async deleteEmailVerificationToken(token: string): Promise<void> {
-    await db.delete(emailVerificationTokens).where(eq(emailVerificationTokens.token, token));
+    return this.security.deleteEmailVerificationToken(token);
   }
-
+  // Note: getEmailVerificationTokenByUserId has special expiration logic - kept as direct implementation
   async getEmailVerificationTokenByUserId(userId: number): Promise<SelectEmailVerificationToken | undefined> {
     const result = await db
       .select()
@@ -1782,53 +1765,32 @@ export class DbStorage implements IStorage {
   }
 
   async createPasswordResetToken(token: InsertPasswordResetToken): Promise<SelectPasswordResetToken> {
-    const result = await db.insert(passwordResetTokens).values(token).returning();
-    return result[0];
+    return this.security.createPasswordResetToken(token);
   }
-
   async getPasswordResetToken(token: string): Promise<SelectPasswordResetToken | undefined> {
-    const result = await db
-      .select()
-      .from(passwordResetTokens)
-      .where(and(
-        eq(passwordResetTokens.token, token),
-        gt(passwordResetTokens.expiresAt, new Date())
-      ))
-      .limit(1);
-    return result[0];
+    return this.security.getPasswordResetToken(token) ?? undefined;
   }
-
   async deletePasswordResetToken(token: string): Promise<void> {
-    await db.delete(passwordResetTokens).where(eq(passwordResetTokens.token, token));
+    return this.security.deletePasswordResetToken(token);
   }
-
   async deleteUserPasswordResetTokens(userId: number): Promise<void> {
-    await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
+    return this.security.deleteUserPasswordResetTokens(userId);
   }
 
   async createTwoFactorSecret(secret: InsertTwoFactorSecret): Promise<SelectTwoFactorSecret> {
-    const result = await db.insert(twoFactorSecrets).values(secret).returning();
-    return result[0];
+    return this.security.createTwoFactorSecret(secret);
   }
-
   async getTwoFactorSecret(userId: number): Promise<SelectTwoFactorSecret | undefined> {
-    const result = await db
-      .select()
-      .from(twoFactorSecrets)
-      .where(eq(twoFactorSecrets.userId, userId))
-      .limit(1);
-    return result[0];
+    return this.security.getTwoFactorSecret(userId) ?? undefined;
   }
-
   async updateTwoFactorSecret(userId: number, secret: Partial<SelectTwoFactorSecret>): Promise<void> {
     await db
       .update(twoFactorSecrets)
       .set(secret)
       .where(eq(twoFactorSecrets.userId, userId));
   }
-
   async deleteTwoFactorSecret(userId: number): Promise<void> {
-    await db.delete(twoFactorSecrets).where(eq(twoFactorSecrets.userId, userId));
+    return this.security.deleteTwoFactorSecret(userId);
   }
 
   async createPost(post: InsertPost): Promise<SelectPost> {
@@ -6589,410 +6551,240 @@ export class DbStorage implements IStorage {
   
   // Teacher Profiles
   async getTeacherProfile(userId: number): Promise<SelectTeacherProfile | null> {
-    const result = await db.select().from(teacherProfiles).where(eq(teacherProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getTeacherProfile(userId);
   }
-  
   async createTeacherProfile(data: InsertTeacherProfile): Promise<SelectTeacherProfile> {
-    const [result] = await db.insert(teacherProfiles).values(data).returning();
-    return result;
+    return this.profiles.createTeacherProfile(data);
   }
-  
   async updateTeacherProfile(userId: number, data: Partial<SelectTeacherProfile>): Promise<SelectTeacherProfile | null> {
-    const [result] = await db
-      .update(teacherProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(teacherProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateTeacherProfile(userId, data);
   }
-  
   async deleteTeacherProfile(userId: number): Promise<void> {
-    await db.delete(teacherProfiles).where(eq(teacherProfiles.userId, userId));
+    return this.profiles.deleteTeacherProfile(userId);
   }
-  
+
   // DJ Profiles
   async getDJProfile(userId: number): Promise<SelectDJProfile | null> {
-    const result = await db.select().from(djProfiles).where(eq(djProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getDJProfile(userId);
   }
-  
   async createDJProfile(data: InsertDJProfile): Promise<SelectDJProfile> {
-    const [result] = await db.insert(djProfiles).values(data).returning();
-    return result;
+    return this.profiles.createDJProfile(data);
   }
-  
   async updateDJProfile(userId: number, data: Partial<SelectDJProfile>): Promise<SelectDJProfile | null> {
-    const [result] = await db
-      .update(djProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(djProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateDJProfile(userId, data);
   }
-  
   async deleteDJProfile(userId: number): Promise<void> {
-    await db.delete(djProfiles).where(eq(djProfiles.userId, userId));
+    return this.profiles.deleteDJProfile(userId);
   }
-  
+
   // Photographer Profiles
   async getPhotographerProfile(userId: number): Promise<SelectPhotographerProfile | null> {
-    const result = await db.select().from(photographerProfiles).where(eq(photographerProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getPhotographerProfile(userId);
   }
-  
   async createPhotographerProfile(data: InsertPhotographerProfile): Promise<SelectPhotographerProfile> {
-    const [result] = await db.insert(photographerProfiles).values(data).returning();
-    return result;
+    return this.profiles.createPhotographerProfile(data);
   }
-  
   async updatePhotographerProfile(userId: number, data: Partial<SelectPhotographerProfile>): Promise<SelectPhotographerProfile | null> {
-    const [result] = await db
-      .update(photographerProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(photographerProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updatePhotographerProfile(userId, data);
   }
-  
   async deletePhotographerProfile(userId: number): Promise<void> {
-    await db.delete(photographerProfiles).where(eq(photographerProfiles.userId, userId));
+    return this.profiles.deletePhotographerProfile(userId);
   }
-  
+
   // Performer Profiles
   async getPerformerProfile(userId: number): Promise<SelectPerformerProfile | null> {
-    const result = await db.select().from(performerProfiles).where(eq(performerProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getPerformerProfile(userId);
   }
-  
   async createPerformerProfile(data: InsertPerformerProfile): Promise<SelectPerformerProfile> {
-    const [result] = await db.insert(performerProfiles).values(data).returning();
-    return result;
+    return this.profiles.createPerformerProfile(data);
   }
-  
   async updatePerformerProfile(userId: number, data: Partial<SelectPerformerProfile>): Promise<SelectPerformerProfile | null> {
-    const [result] = await db
-      .update(performerProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(performerProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updatePerformerProfile(userId, data);
   }
-  
   async deletePerformerProfile(userId: number): Promise<void> {
-    await db.delete(performerProfiles).where(eq(performerProfiles.userId, userId));
+    return this.profiles.deletePerformerProfile(userId);
   }
-  
+
   // Vendor Profiles
   async getVendorProfile(userId: number): Promise<SelectVendorProfile | null> {
-    const result = await db.select().from(vendorProfiles).where(eq(vendorProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getVendorProfile(userId);
   }
-  
   async createVendorProfile(data: InsertVendorProfile): Promise<SelectVendorProfile> {
-    const [result] = await db.insert(vendorProfiles).values(data).returning();
-    return result;
+    return this.profiles.createVendorProfile(data);
   }
-  
   async updateVendorProfile(userId: number, data: Partial<SelectVendorProfile>): Promise<SelectVendorProfile | null> {
-    const [result] = await db
-      .update(vendorProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(vendorProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateVendorProfile(userId, data);
   }
-  
   async deleteVendorProfile(userId: number): Promise<void> {
-    await db.delete(vendorProfiles).where(eq(vendorProfiles.userId, userId));
+    return this.profiles.deleteVendorProfile(userId);
   }
-  
+
   // Musician Profiles
   async getMusicianProfile(userId: number): Promise<SelectMusicianProfile | null> {
-    const result = await db.select().from(musicianProfiles).where(eq(musicianProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getMusicianProfile(userId);
   }
-  
   async createMusicianProfile(data: InsertMusicianProfile): Promise<SelectMusicianProfile> {
-    const [result] = await db.insert(musicianProfiles).values(data).returning();
-    return result;
+    return this.profiles.createMusicianProfile(data);
   }
-  
   async updateMusicianProfile(userId: number, data: Partial<SelectMusicianProfile>): Promise<SelectMusicianProfile | null> {
-    const [result] = await db
-      .update(musicianProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(musicianProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateMusicianProfile(userId, data);
   }
-  
   async deleteMusicianProfile(userId: number): Promise<void> {
-    await db.delete(musicianProfiles).where(eq(musicianProfiles.userId, userId));
+    return this.profiles.deleteMusicianProfile(userId);
   }
-  
+
   // Choreographer Profiles
   async getChoreographerProfile(userId: number): Promise<SelectChoreographerProfile | null> {
-    const result = await db.select().from(choreographerProfiles).where(eq(choreographerProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getChoreographerProfile(userId);
   }
-  
   async createChoreographerProfile(data: InsertChoreographerProfile): Promise<SelectChoreographerProfile> {
-    const [result] = await db.insert(choreographerProfiles).values(data).returning();
-    return result;
+    return this.profiles.createChoreographerProfile(data);
   }
-  
   async updateChoreographerProfile(userId: number, data: Partial<SelectChoreographerProfile>): Promise<SelectChoreographerProfile | null> {
-    const [result] = await db
-      .update(choreographerProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(choreographerProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateChoreographerProfile(userId, data);
   }
-  
   async deleteChoreographerProfile(userId: number): Promise<void> {
-    await db.delete(choreographerProfiles).where(eq(choreographerProfiles.userId, userId));
+    return this.profiles.deleteChoreographerProfile(userId);
   }
-  
+
   // Tango School Profiles
   async getTangoSchoolProfile(userId: number): Promise<SelectTangoSchoolProfile | null> {
-    const result = await db.select().from(tangoSchoolProfiles).where(eq(tangoSchoolProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getTangoSchoolProfile(userId);
   }
-  
   async createTangoSchoolProfile(data: InsertTangoSchoolProfile): Promise<SelectTangoSchoolProfile> {
-    const [result] = await db.insert(tangoSchoolProfiles).values(data).returning();
-    return result;
+    return this.profiles.createTangoSchoolProfile(data);
   }
-  
   async updateTangoSchoolProfile(userId: number, data: Partial<SelectTangoSchoolProfile>): Promise<SelectTangoSchoolProfile | null> {
-    const [result] = await db
-      .update(tangoSchoolProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(tangoSchoolProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateTangoSchoolProfile(userId, data);
   }
-  
   async deleteTangoSchoolProfile(userId: number): Promise<void> {
-    await db.delete(tangoSchoolProfiles).where(eq(tangoSchoolProfiles.userId, userId));
+    return this.profiles.deleteTangoSchoolProfile(userId);
   }
-  
+
   // Tango Hotel Profiles
   async getTangoHotelProfile(userId: number): Promise<SelectTangoHotelProfile | null> {
-    const result = await db.select().from(tangoHotelProfiles).where(eq(tangoHotelProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getTangoHotelProfile(userId);
   }
-  
   async createTangoHotelProfile(data: InsertTangoHotelProfile): Promise<SelectTangoHotelProfile> {
-    const [result] = await db.insert(tangoHotelProfiles).values(data).returning();
-    return result;
+    return this.profiles.createTangoHotelProfile(data);
   }
-  
   async updateTangoHotelProfile(userId: number, data: Partial<SelectTangoHotelProfile>): Promise<SelectTangoHotelProfile | null> {
-    const [result] = await db
-      .update(tangoHotelProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(tangoHotelProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateTangoHotelProfile(userId, data);
   }
-  
   async deleteTangoHotelProfile(userId: number): Promise<void> {
-    await db.delete(tangoHotelProfiles).where(eq(tangoHotelProfiles.userId, userId));
+    return this.profiles.deleteTangoHotelProfile(userId);
   }
-  
+
   // Wellness Profiles
   async getWellnessProfile(userId: number): Promise<SelectWellnessProfile | null> {
-    const result = await db.select().from(wellnessProfiles).where(eq(wellnessProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getWellnessProfile(userId);
   }
-  
   async createWellnessProfile(data: InsertWellnessProfile): Promise<SelectWellnessProfile> {
-    const [result] = await db.insert(wellnessProfiles).values(data).returning();
-    return result;
+    return this.profiles.createWellnessProfile(data);
   }
-  
   async updateWellnessProfile(userId: number, data: Partial<SelectWellnessProfile>): Promise<SelectWellnessProfile | null> {
-    const [result] = await db
-      .update(wellnessProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(wellnessProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateWellnessProfile(userId, data);
   }
-  
   async deleteWellnessProfile(userId: number): Promise<void> {
-    await db.delete(wellnessProfiles).where(eq(wellnessProfiles.userId, userId));
+    return this.profiles.deleteWellnessProfile(userId);
   }
-  
+
   // Tour Operator Profiles
   async getTourOperatorProfile(userId: number): Promise<SelectTourOperatorProfile | null> {
-    const result = await db.select().from(tourOperatorProfiles).where(eq(tourOperatorProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getTourOperatorProfile(userId);
   }
-  
   async createTourOperatorProfile(data: InsertTourOperatorProfile): Promise<SelectTourOperatorProfile> {
-    const [result] = await db.insert(tourOperatorProfiles).values(data).returning();
-    return result;
+    return this.profiles.createTourOperatorProfile(data);
   }
-  
   async updateTourOperatorProfile(userId: number, data: Partial<SelectTourOperatorProfile>): Promise<SelectTourOperatorProfile | null> {
-    const [result] = await db
-      .update(tourOperatorProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(tourOperatorProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateTourOperatorProfile(userId, data);
   }
-  
   async deleteTourOperatorProfile(userId: number): Promise<void> {
-    await db.delete(tourOperatorProfiles).where(eq(tourOperatorProfiles.userId, userId));
+    return this.profiles.deleteTourOperatorProfile(userId);
   }
-  
+
   // Host Venue Profiles
   async getHostVenueProfile(userId: number): Promise<SelectHostVenueProfile | null> {
-    const result = await db.select().from(hostVenueProfiles).where(eq(hostVenueProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getHostVenueProfile(userId);
   }
-  
   async createHostVenueProfile(data: InsertHostVenueProfile): Promise<SelectHostVenueProfile> {
-    const [result] = await db.insert(hostVenueProfiles).values(data).returning();
-    return result;
+    return this.profiles.createHostVenueProfile(data);
   }
-  
   async updateHostVenueProfile(userId: number, data: Partial<SelectHostVenueProfile>): Promise<SelectHostVenueProfile | null> {
-    const [result] = await db
-      .update(hostVenueProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(hostVenueProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateHostVenueProfile(userId, data);
   }
-  
   async deleteHostVenueProfile(userId: number): Promise<void> {
-    await db.delete(hostVenueProfiles).where(eq(hostVenueProfiles.userId, userId));
+    return this.profiles.deleteHostVenueProfile(userId);
   }
-  
+
   // Tango Guide Profiles
   async getTangoGuideProfile(userId: number): Promise<SelectTangoGuideProfile | null> {
-    const result = await db.select().from(tangoGuideProfiles).where(eq(tangoGuideProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getTangoGuideProfile(userId);
   }
-  
   async createTangoGuideProfile(data: InsertTangoGuideProfile): Promise<SelectTangoGuideProfile> {
-    const [result] = await db.insert(tangoGuideProfiles).values(data).returning();
-    return result;
+    return this.profiles.createTangoGuideProfile(data);
   }
-  
   async updateTangoGuideProfile(userId: number, data: Partial<SelectTangoGuideProfile>): Promise<SelectTangoGuideProfile | null> {
-    const [result] = await db
-      .update(tangoGuideProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(tangoGuideProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateTangoGuideProfile(userId, data);
   }
-  
   async deleteTangoGuideProfile(userId: number): Promise<void> {
-    await db.delete(tangoGuideProfiles).where(eq(tangoGuideProfiles.userId, userId));
+    return this.profiles.deleteTangoGuideProfile(userId);
   }
-  
+
   // Content Creator Profiles
   async getContentCreatorProfile(userId: number): Promise<SelectContentCreatorProfile | null> {
-    const result = await db.select().from(contentCreatorProfiles).where(eq(contentCreatorProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getContentCreatorProfile(userId);
   }
-  
   async createContentCreatorProfile(data: InsertContentCreatorProfile): Promise<SelectContentCreatorProfile> {
-    const [result] = await db.insert(contentCreatorProfiles).values(data).returning();
-    return result;
+    return this.profiles.createContentCreatorProfile(data);
   }
-  
   async updateContentCreatorProfile(userId: number, data: Partial<SelectContentCreatorProfile>): Promise<SelectContentCreatorProfile | null> {
-    const [result] = await db
-      .update(contentCreatorProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(contentCreatorProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateContentCreatorProfile(userId, data);
   }
-  
   async deleteContentCreatorProfile(userId: number): Promise<void> {
-    await db.delete(contentCreatorProfiles).where(eq(contentCreatorProfiles.userId, userId));
+    return this.profiles.deleteContentCreatorProfile(userId);
   }
-  
+
   // Learning Resource Profiles
   async getLearningResourceProfile(userId: number): Promise<SelectLearningResourceProfile | null> {
-    const result = await db.select().from(learningResourceProfiles).where(eq(learningResourceProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getLearningResourceProfile(userId);
   }
-  
   async createLearningResourceProfile(data: InsertLearningResourceProfile): Promise<SelectLearningResourceProfile> {
-    const [result] = await db.insert(learningResourceProfiles).values(data).returning();
-    return result;
+    return this.profiles.createLearningResourceProfile(data);
   }
-  
   async updateLearningResourceProfile(userId: number, data: Partial<SelectLearningResourceProfile>): Promise<SelectLearningResourceProfile | null> {
-    const [result] = await db
-      .update(learningResourceProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(learningResourceProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateLearningResourceProfile(userId, data);
   }
-  
   async deleteLearningResourceProfile(userId: number): Promise<void> {
-    await db.delete(learningResourceProfiles).where(eq(learningResourceProfiles.userId, userId));
+    return this.profiles.deleteLearningResourceProfile(userId);
   }
-  
+
   // Taxi Dancer Profiles
   async getTaxiDancerProfile(userId: number): Promise<SelectTaxiDancerProfile | null> {
-    const result = await db.select().from(taxiDancerProfiles).where(eq(taxiDancerProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getTaxiDancerProfile(userId);
   }
-  
   async createTaxiDancerProfile(data: InsertTaxiDancerProfile): Promise<SelectTaxiDancerProfile> {
-    const [result] = await db.insert(taxiDancerProfiles).values(data).returning();
-    return result;
+    return this.profiles.createTaxiDancerProfile(data);
   }
-  
   async updateTaxiDancerProfile(userId: number, data: Partial<SelectTaxiDancerProfile>): Promise<SelectTaxiDancerProfile | null> {
-    const [result] = await db
-      .update(taxiDancerProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(taxiDancerProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateTaxiDancerProfile(userId, data);
   }
-  
   async deleteTaxiDancerProfile(userId: number): Promise<void> {
-    await db.delete(taxiDancerProfiles).where(eq(taxiDancerProfiles.userId, userId));
+    return this.profiles.deleteTaxiDancerProfile(userId);
   }
-  
+
   // Organizer Profiles
   async getOrganizerProfile(userId: number): Promise<SelectOrganizerProfile | null> {
-    const result = await db.select().from(organizerProfiles).where(eq(organizerProfiles.userId, userId)).limit(1);
-    return result[0] || null;
+    return this.profiles.getOrganizerProfile(userId);
   }
-  
   async createOrganizerProfile(data: InsertOrganizerProfile): Promise<SelectOrganizerProfile> {
-    const [result] = await db.insert(organizerProfiles).values(data).returning();
-    return result;
+    return this.profiles.createOrganizerProfile(data);
   }
-  
   async updateOrganizerProfile(userId: number, data: Partial<SelectOrganizerProfile>): Promise<SelectOrganizerProfile | null> {
-    const [result] = await db
-      .update(organizerProfiles)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(organizerProfiles.userId, userId))
-      .returning();
-    return result || null;
+    return this.profiles.updateOrganizerProfile(userId, data);
   }
-  
   async deleteOrganizerProfile(userId: number): Promise<void> {
-    await db.delete(organizerProfiles).where(eq(organizerProfiles.userId, userId));
+    return this.profiles.deleteOrganizerProfile(userId);
   }
   
   // BATCH 15: Enhanced Profile Search Methods with Advanced Filtering

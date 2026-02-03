@@ -12,11 +12,11 @@ import { authenticateToken, type AuthRequest, requireRoleLevel } from "../middle
 import { apiRateLimiter } from "../middleware/rateLimiter";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
-import { QualityValidatorService } from "../services/validation/qualityValidator";
-import { LearningCoordinatorService } from "../services/learning/learningCoordinator";
-import { PatternRecognitionEngine } from "../services/intelligence/patternRecognition";
-import { AgentCollaborationService } from "../services/collaboration/agentCollaborationService";
-import { KnowledgeGraphService } from "../services/knowledge/knowledgeGraphService";
+import { QualityValidatorService } from "../services/qualityValidator";
+import { LearningCoordinator } from "../services/learningCoordinator";
+import { PatternRecognition } from "../services/patternRecognition";
+import { AgentCollaborationService } from "../services/agentCollaborationService";
+import { KnowledgeGraphService } from "../services/knowledgeGraphService";
 import { db } from "../../shared/db";
 import { esaAgents, agentTasks } from "../../shared/platform-schema";
 import { 
@@ -258,7 +258,7 @@ router.post("/learn", authenticateToken, requireRoleLevel(5), async (req: AuthRe
   try {
     const learning = captureLearningSchema.parse(req.body);
 
-    const result = await LearningCoordinatorService.captureLearning(learning);
+    const result = await LearningCoordinator.captureLearning(learning);
 
     res.json({
       success: true,
@@ -301,7 +301,7 @@ router.get("/patterns", authenticateToken, async (req: AuthRequest, res: Respons
     }
 
     // Semantic search
-    const results = await LearningCoordinatorService.searchKnowledge(
+    const results = await LearningCoordinator.searchKnowledge(
       query as string,
       parseInt(limit as string)
     );
@@ -320,7 +320,7 @@ router.post("/patterns/search", authenticateToken, async (req: AuthRequest, res:
   try {
     const search = searchPatternsSchema.parse(req.body);
 
-    const results = await LearningCoordinatorService.searchKnowledge(
+    const results = await LearningCoordinator.searchKnowledge(
       search.query,
       search.limit
     );
@@ -355,7 +355,7 @@ router.post("/find-solution", authenticateToken, requireRoleLevel(5), async (req
   try {
     const problemSignature = findSolutionSchema.parse(req.body);
 
-    const matches = await PatternRecognitionEngine.findSimilarProblems(problemSignature);
+    const matches = await PatternRecognition.findSimilarProblems(problemSignature);
 
     res.json({
       matches,
@@ -389,7 +389,7 @@ router.get("/patterns/:id", authenticateToken, async (req: AuthRequest, res: Res
     }
 
     // Get pattern statistics
-    const stats = await PatternRecognitionEngine.getPatternStatistics(patternId);
+    const stats = await PatternRecognition.getPatternStatistics(patternId);
 
     res.json({
       pattern: pattern[0],
@@ -408,7 +408,7 @@ router.post("/distribute-knowledge", authenticateToken, requireRoleLevel(6), asy
   try {
     const distribution = distributeKnowledgeSchema.parse(req.body);
 
-    const result = await LearningCoordinatorService.distributeKnowledge(
+    const result = await LearningCoordinator.distributeKnowledge(
       distribution.patternId,
       distribution.targetAgents,
       distribution.priority
@@ -505,7 +505,7 @@ router.get("/learning-cycles", authenticateToken, requireRoleLevel(4), async (re
       .orderBy(desc(learningPatterns.createdAt))
       .limit(parseInt(limit as string));
 
-    const cycleMetrics = await LearningCoordinatorService.getLearningCycleMetrics();
+    const cycleMetrics = await LearningCoordinator.getLearningCycleMetrics();
 
     res.json({
       recentPatterns,
@@ -528,7 +528,7 @@ router.post("/synthesize-patterns", authenticateToken, requireRoleLevel(6), asyn
       return res.status(400).json({ error: "At least 2 pattern IDs required for synthesis" });
     }
 
-    const synthesis = await LearningCoordinatorService.synthesizePatterns(patternIds);
+    const synthesis = await LearningCoordinator.synthesizePatterns(patternIds);
 
     res.json({
       success: true,
@@ -832,7 +832,7 @@ router.get("/knowledge/search", authenticateToken, requireRoleLevel(3), apiRateL
     const maxResults = parseInt(limit as string);
 
     // Semantic search using Learning Coordinator
-    const learningCoordinator = new LearningCoordinatorService();
+    const learningCoordinator = new LearningCoordinator();
     const results = await learningCoordinator.searchKnowledge(
       q as string,
       maxResults
@@ -878,7 +878,7 @@ router.post("/distribute", authenticateToken, requireRoleLevel(4), apiRateLimite
       return res.status(400).json({ error: "patternId is required" });
     }
 
-    const learningCoordinator = new LearningCoordinatorService();
+    const learningCoordinator = new LearningCoordinator();
     
     // Distribute knowledge
     const result = await learningCoordinator.distributeKnowledge(

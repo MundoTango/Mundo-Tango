@@ -1,9 +1,9 @@
 import { Router, type Request, Response } from "express";
-import { roleAdapterAgent, type SubscriptionTier } from "../services/mrBlue/roleAdapterAgent";
-import { avatarAgent, type AvatarEmotion } from "../services/mrBlue/avatarAgent";
-import { tourGuideAgent } from "../services/mrBlue/tourGuideAgent";
-import { subscriptionAgent } from "../services/mrBlue/subscriptionAgent";
-import { qualityValidatorAgent } from "../services/mrBlue/qualityValidatorAgent";
+import { roleAdapterAgent, type SubscriptionTier } from "../services/roleAdapterAgent";
+import { avatarAgent, type AvatarEmotion } from "../services/avatarAgent";
+import { tourGuideAgent } from "../services/tourGuideAgent";
+import { subscriptionAgent } from "../services/subscriptionAgent";
+import { qualityValidatorAgent } from "../services/qualityValidatorAgent";
 
 const router = Router();
 

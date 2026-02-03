@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ErrorHandler } from '../utils/errorHandler';
-import { facebookMrBlueContextService } from '../services/facebook/FacebookMrBlueContextService';
+import { facebookMrBlueContextService } from '../services/FacebookMrBlueContextService';
 class MrblueController {
   async applyFix(req: Request, res: Response) {
     try {

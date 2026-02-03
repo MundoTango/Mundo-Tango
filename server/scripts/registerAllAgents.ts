@@ -15,7 +15,7 @@
  * Total: 1,157+ agents registered in A2A Protocol
  */
 
-import { universalAgentScanner } from '../services/agent-registry/UniversalAgentScanner';
+import { universalAgentScanner } from '../services/UniversalAgentScanner';
 import { db } from '../../shared/db';
 import { agents } from '../../shared/schema';
 import { eq } from 'drizzle-orm';

@@ -7,7 +7,7 @@
  * Usage: npx tsx server/scripts/execute-pattern101.ts
  */
 
-import { MrBlueInternalExecutor } from '../services/mrBlue/MrBlueInternalExecutor';
+import { MrBlueInternalExecutor } from '../services/MrBlueInternalExecutor';
 
 interface PlaybookTask {
   id: string;

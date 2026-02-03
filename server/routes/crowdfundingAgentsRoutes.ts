@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { crowdfundingOrchestrator } from '../services/crowdfunding/CrowdfundingOrchestrator';
+import { crowdfundingOrchestrator } from '../services/CrowdfundingOrchestrator';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { db } from '@shared/db';
 import { fundingCampaigns } from '@shared/schema';

@@ -16,8 +16,8 @@ import * as cheerio from 'cheerio';
 import { db } from '@shared/db';
 import { scrapedEvents, eventScrapingSources, scrapedCommunityData } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
-import { languageAwareFieldMapper, SupportedLanguage } from '../../services/scraping/LanguageAwareFieldMapper';
-import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
+import { languageAwareFieldMapper, SupportedLanguage } from '../../services/LanguageAwareFieldMapper';
+import { detailDiscoveryService } from '../../services/DetailDiscoveryService';
 
 interface ScrapedEventData {
   title: string;

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { N8nWebhookService } from '../services/messaging/N8nWebhookService';
+import { N8nWebhookService } from '../services/N8nWebhookService';
 import { n8nClient } from '../services/n8nClient';
 
 const router = Router();

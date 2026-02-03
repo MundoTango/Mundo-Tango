@@ -7,9 +7,9 @@
  */
 
 import { Router, type Request, Response } from "express";
-import { VibeCodingService } from "../services/mrBlue/VibeCodingService";
-import * as VibeCodingTools from "../services/mrBlue/VibeCodingToolService";
-import { orchestrateAI } from "../services/ai/AIOrchestrator";
+import { VibeCodingService } from "../services/VibeCodingService";
+import * as VibeCodingTools from "../services/VibeCodingToolService";
+import { orchestrateAI } from "../services/AIOrchestrator";
 import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
 import { db } from "../db";
 import { users } from "@shared/schema";

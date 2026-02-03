@@ -13,10 +13,10 @@ import {
   getCriticalIssues,
   type TroubleshootingIssue,
 } from "../knowledge/mr-blue-troubleshooting-kb";
-import { legalOrchestrator } from "../services/legal/LegalOrchestrator";
-import { ElevenLabsVoiceService } from "../services/premium/elevenlabsVoiceService";
-import { browserAutomationService } from "../services/mrBlue/BrowserAutomationService";
-import { facebookMessengerService } from "../services/mrBlue/FacebookMessengerService";
+import { legalOrchestrator } from "../services/LegalOrchestrator";
+import { ElevenLabsVoiceService } from "../services/elevenlabsVoiceService";
+import { browserAutomationService } from "../services/BrowserAutomationService";
+import { facebookMessengerService } from "../services/FacebookMessengerService";
 import { mrBlueDataService } from "../services/mr-blue-data-service";
 import { db } from "@db";
 import {
@@ -31,9 +31,9 @@ import { storage } from "../storage";
 import {
   taskExecutorService,
   isGodLevelUser,
-} from "../services/mrBlue/TaskExecutorService";
-import * as VibeCodingTools from "../services/mrBlue/VibeCodingToolService";
-import { vibeCodingMasterLoop } from "../services/mrBlue/VibeCodingMasterLoop";
+} from "../services/TaskExecutorService";
+import * as VibeCodingTools from "../services/VibeCodingToolService";
+import { vibeCodingMasterLoop } from "../services/VibeCodingMasterLoop";
 
 
 // MB.MD GOD COMMAND #7: Timeout wrapper for auto-fix retry logic

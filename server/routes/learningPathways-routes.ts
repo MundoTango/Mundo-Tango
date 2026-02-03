@@ -1,15 +1,15 @@
 import { Router, type Request, Response } from "express";
-import { learningCoordinator } from "../services/mrBlue/learningCoordinator";
-import { chatFeedbackPathway } from "../services/pathways/chatFeedbackPathway";
-import { volunteerTestingPathway } from "../services/pathways/volunteerTestingPathway";
-import { liveSessionPathway } from "../services/pathways/liveSessionPathway";
-import { visualEditorPathway } from "../services/pathways/visualEditorPathway";
-import { telemetryPathway } from "../services/pathways/telemetryPathway";
-import { codeGenerationPathway } from "../services/pathways/codeGenerationPathway";
-import { tourCompletionPathway } from "../services/pathways/tourCompletionPathway";
-import { featureUsagePathway } from "../services/pathways/featureUsagePathway";
-import { errorPatternPathway } from "../services/pathways/errorPatternPathway";
-import { socialSentimentPathway } from "../services/pathways/socialSentimentPathway";
+import { learningCoordinator } from "../services/learningCoordinator";
+import { chatFeedbackPathway } from "../services/chatFeedbackPathway";
+import { volunteerTestingPathway } from "../services/volunteerTestingPathway";
+import { liveSessionPathway } from "../services/liveSessionPathway";
+import { visualEditorPathway } from "../services/visualEditorPathway";
+import { telemetryPathway } from "../services/telemetryPathway";
+import { codeGenerationPathway } from "../services/codeGenerationPathway";
+import { tourCompletionPathway } from "../services/tourCompletionPathway";
+import { featureUsagePathway } from "../services/featureUsagePathway";
+import { errorPatternPathway } from "../services/errorPatternPathway";
+import { socialSentimentPathway } from "../services/socialSentimentPathway";
 
 export function registerLearningPathwaysRoutes(app: Router) {
   // ============================================================================

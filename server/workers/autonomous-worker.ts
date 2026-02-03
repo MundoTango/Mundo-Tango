@@ -1,7 +1,7 @@
 import { Worker, Job, Queue } from 'bullmq';
 import { getRedisClient, isRedisConnected } from '../config/redis-optional';
 import { jobDuration, jobTotal } from '../monitoring/prometheus';
-import { AutonomousEngine } from '../services/mrBlue/AutonomousEngine';
+import { AutonomousEngine } from '../services/AutonomousEngine';
 import { ConversationOrchestrator } from '../services/ConversationOrchestrator';
 
 /**
