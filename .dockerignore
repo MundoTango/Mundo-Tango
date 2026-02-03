@@ -8,7 +8,9 @@
 # These are the main contributors to image size
 # ==========================================
 lancedb_data/
-attached_assets/
+attached_assets/*
+!attached_assets/stock_images/
+!attached_assets/optimized/
 .local/
 .cache/
 .npm/
