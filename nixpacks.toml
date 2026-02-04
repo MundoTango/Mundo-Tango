@@ -1,0 +1,15 @@
+# Nixpacks configuration for Railway deployment
+# This overrides auto-detection to use the correct build script
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "ffmpeg", "imagemagick"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+# Use the shell build script directly, not via Turbo
+cmds = ["bash scripts/build.sh"]
+
+[start]
+cmd = "npm run start"
