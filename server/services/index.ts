@@ -125,7 +125,6 @@ export function getLeadershipHierarchy(): {
   };
 }
 
-// Initialize on module load
-initializeLeadershipAgents().catch(console.error);
-
-console.log('[LeadershipAgents] Module loaded');
+// Leadership agents are initialized on demand, not on module load
+// Call initializeLeadershipAgents() explicitly when needed to save startup memory
+console.log('[LeadershipAgents] Module loaded (init deferred)');

@@ -55,7 +55,9 @@ const app = express();
 // ============================================================================
 // When AUTOSCALE_MODE=true, background workers/schedulers are disabled
 // This allows the app to run on Autoscale deployments without long-running processes
-const AUTOSCALE_MODE = process.env.AUTOSCALE_MODE === 'true';
+// Auto-enable on Railway unless explicitly opted out (saves ~15-25MB RAM)
+const AUTOSCALE_MODE = process.env.AUTOSCALE_MODE === 'true' 
+  || (!!process.env.RAILWAY_ENVIRONMENT && process.env.AUTOSCALE_MODE !== 'false');
 if (AUTOSCALE_MODE) {
   console.log("🚀 AUTOSCALE_MODE enabled - Background workers disabled for Autoscale deployment");
 } else {
